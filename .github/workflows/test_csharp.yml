@@ -1,0 +1,39 @@
+name: Run C# programs
+
+on:
+  push:
+    paths:
+      - 'epi_judge_csharp/**'
+      - 'epi_judge_csharp_solutions/**'
+      - 'test_data/**'
+      - 'config.json'
+      - '.github/workflows/test_csharp.yml'
+  pull_request:
+    paths:
+      - 'epi_judge_csharp/**'
+      - 'epi_judge_csharp_solutions/**'
+      - 'test_data/**'
+      - 'config.json'
+      - '.github/workflows/test_csharp.yml'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Build stubs
+        run: dotnet build epi_judge_csharp/EpiJudge.csproj --configuration Release
+      - name: Build solutions
+        run: dotnet build epi_judge_csharp_solutions/EpiJudge.Solutions.csproj --configuration Release
+      - name: Verify reference solutions
+        run: |
+          dotnet run --project epi_judge_csharp_solutions --configuration Release --no-build -- count_bits --no-update-js --no-tty
+          dotnet run --project epi_judge_csharp_solutions --configuration Release --no-build -- anagrams --no-update-js --no-tty
+      - name: Verify stubs fail judge tests
+        shell: bash
+        run: |
+          ! dotnet run --project epi_judge_csharp --configuration Release --no-build -- count_bits --no-update-js --no-tty
+          ! dotnet run --project epi_judge_csharp --configuration Release --no-build -- anagrams --no-update-js --no-tty

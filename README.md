@@ -6,9 +6,18 @@
 
 EPI Judge is meant to serve as a companion to our book Elements of Programming Interviews. Specifically, this project consists of the following:
 
-- **Stub programs** for each problem in our book in Python, Java, and C++
+- **Stub programs** for each problem in our book in Python, Java, and C++, plus
+  the first C# judge problems
 - **Test-cases** that cover common corner-case and performance bugs
 - A **framework** for running these tests on your implementation on your machine
+
+## Repository contribution policy
+
+This repository is maintained through the owner's fork. **Never push branches,
+commits, or tags to `adnanaziz/EPIJudge`, and never open a pull request against
+that upstream repository.** Push changes only to the owner's fork. Pull requests
+from other contributors may be reviewed and tested locally, but validated fixes
+must be merged and pushed only to the owner's fork.
 
 ## Installation
 
@@ -65,6 +74,21 @@ You can also use the provided Makefile: `make <program_name>`. You can also use 
 The default Makefile target is the last edited file.
 
     $ make anagrams
+
+### C#
+
+C# support requires the .NET 8 SDK. The initial judge includes `count_bits` and
+`anagrams`, with matching editable stubs and reference solutions. Run a stub
+from the repository root with:
+
+    $ dotnet run --project epi_judge_csharp -- count_bits
+
+Run its reference solution with:
+
+    $ dotnet run --project epi_judge_csharp_solutions -- count_bits
+
+The C# runner reads the same files in `test_data` as the other languages. Pass
+an alternate corpus with `--test-data-dir <path>` after the problem name.
 
 
 ## FAQ
