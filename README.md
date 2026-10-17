@@ -6,8 +6,10 @@
 
 Open **`EPIJudge.Web.slnx`** in Visual Studio 2026, select **EpiJudge.Web** as the
 startup project with the **Website** profile, and press **F5**. This local
-version supports Count Bits, Two Sum, and Group Anagrams with a React editor,
-real C# compilation, and results from the existing TSV tests.
+version includes all **218 problems in this repository**, with a React editor,
+topic filtering, C# starter methods, real compilation, and results from the
+existing TSV tests. The repository catalog is smaller than the book's complete
+set of exercises and variants.
 
 See the [website guide](EpiJudge.Web/README.md) for setup, usage, and the scope
 of local code execution.

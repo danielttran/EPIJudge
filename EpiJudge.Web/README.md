@@ -1,9 +1,9 @@
 # EPI Practice website
 
 A local React + TypeScript website with an ASP.NET Core API and a C# execution
-worker. The first release supports **Count Bits**, **Two Sum**, and **Group
-Anagrams**, using the repository's real TSV test files. The other C# exercises
-remain available through the existing console judge.
+worker. All **218 problems included in this repository** are available through
+the website, using their real TSV test files. This is the repository's catalog,
+not every exercise or variant in every edition of the EPI book.
 
 ![The local React workspace showing a C# solution and passing test results](../docs/website-preview.png)
 
@@ -38,7 +38,7 @@ reuse them. The npm dependency versions are recorded in `package-lock.json`.
 
 ## Use the website
 
-1. Select a problem from the library.
+1. Select a problem from the library. Search by title or ID, or filter by topic.
 2. Implement the method inside the supplied `Solution` class. Keep its name,
    parameters, and return type so the harness can call it.
 3. Click **Run** (Ctrl+Enter) for the first three visible cases in that problem's TSV.
@@ -61,10 +61,46 @@ restores the current problem's starter code after confirmation.
 | `EpiJudge.Runner` | Problem descriptions, TSV adapter, compilation, execution, comparison |
 | `test_data` | Existing EPI test corpus |
 
-`ProblemCatalog.cs` defines each web problem's statement, starter method,
-examples, and trusted harness invocation. Adding another web problem requires
-adapting and validating its test protocol; registering a console stub alone
-does not make a problem web-ready.
+`ProblemCatalog.cs` keeps the original three APIs compatible with saved code.
+The other entries are embedded from `EpiJudge.Runner/catalog.json`. Regenerate
+that file after editing descriptions or signatures in
+`scripts/generate_web_catalog.py`:
+
+```powershell
+python scripts/generate_web_catalog.py
+```
+
+Each exercise includes a statement, C# starter, and examples drawn from its TSV.
+New exercises are marked **Unrated**, rather than assigning invented difficulty
+levels. These are practice stubs for you to solve, not prefilled solutions.
+
+### C# contracts and grading
+
+- Lists and arrays use `List<T>`; record-like values use value tuples.
+- `using EpiJudge.TestFramework;` supplies `ListNode<T>`, `BinaryTreeNode<T>`,
+  `PostingListNode`, and `GraphVertex`. Their members are documented in the
+  exercise's constraints. Keep the namespace import in the starter.
+- Several APIs return the normalized value used by the original test wrapper:
+  for example, closest stars returns distances, and tree traversal exercises
+  return values. Follow the displayed C# signature and description.
+- In-place partitioning and Sudoku are checked after mutation. Shared-list,
+  graph-copy, and posting-list exercises check object identity and links.
+- Queue, stack, cache, and credit exercises expose multiple methods on
+  `Solution`. `Initialize` resets the state for the next command sequence;
+  operation results are checked against the recorded commands.
+- Problems with multiple valid outputs have dedicated validators. Their visible
+  expected output may be a property such as `true`, a shortest interval's length,
+  or a tree's height, rather than the object your method returns.
+- Randomized exercises draw 100,000 samples per batch and check legal values,
+  frequencies, and (for uniform distributions) pairs and triples. Up to three
+  batches allow for rare statistical failures. These checks are statistical,
+  not a proof of randomness, and can take longer than ordinary exercises.
+- Floating-point results use relative tolerance `1e-9` with an absolute floor of
+  `1e-9`. Order is ignored only for exercises that permit it; sequence order
+  remains significant inside permutations and word decompositions.
+
+The web adapters are separate from the older console scaffold. A console stub
+alone does not register a working web exercise.
 
 ## Terminal workflow
 
@@ -101,6 +137,34 @@ redaction against the local API.
 Add `-CheckFrontend` when running the Website profile to also check that React
 and hot reload are served directly without a redirect.
 
+### Catalog and adapter audit
+
+From the repository root, run:
+
+```powershell
+dotnet build scripts/WebAudit/WebAudit.csproj --configuration Release --maxcpucount:1
+dotnet scripts/WebAudit/bin/Release/net10.0/WebAudit.dll
+```
+
+This checks all catalog IDs and counts, deserializes every corpus argument,
+round-trips the expected result types, exercises every custom adapter against
+reference fixtures, rejects selected broken implementations, compiles all 218
+real starters with their generated harnesses, and runs a regression through the
+actual submission worker. The fixtures do not implement every ordinary problem;
+this is an audit of catalog wiring and grading, not proof that every conceivable
+incorrect solution will be rejected.
+
+With Website running, the HTTP regression suite also checks real submissions
+covering primitive values, tuples, mutable arrays, trees, graph copies, posting
+lists, caches, randomness, and floating-point results:
+
+```powershell
+./scripts/Verify-Web.ps1 -BaseUrl http://localhost:5178 -CheckFrontend
+```
+
+The intentional infinite-loop check takes 60 seconds. Use `-SkipTimeout` for a
+faster repeat after already checking process termination.
+
 ## Execution scope
 
 This release is for **your own trusted code on your local machine**. It binds
@@ -109,7 +173,8 @@ Development environment. Each attempt compiles a temporary .NET project,
 executes it as a separate process, and removes its temporary directory.
 
 The runner allows one attempt at a time, limits compilation to 45 seconds,
-limits execution to 5 seconds for the complete test run, caps captured output,
+limits execution to 60 seconds for the complete test run, caps captured output
+at 16 million characters per output stream,
 and kills timed-out process trees. These process controls are not an operating
 system sandbox: submitted C# has your user's file and network permissions.
 Public submissions require an isolated worker with resource and network

@@ -32,7 +32,7 @@ internal static class ProcessHost
             int count;
             while ((count = await reader.ReadAsync(buffer)) > 0)
             {
-                if (content.Length + count <= 4_000_000) content.Append(buffer, 0, count);
+                if (content.Length + count <= 16_000_000) content.Append(buffer, 0, count);
                 else { Interlocked.Exchange(ref outputLimitExceeded, 1); Kill(); }
             }
             return content.ToString();

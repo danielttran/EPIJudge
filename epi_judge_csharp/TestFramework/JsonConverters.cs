@@ -91,7 +91,8 @@ internal sealed class ValueTupleConverterFactory : JsonConverterFactory
         var values = document.RootElement.EnumerateArray().ToArray();
         if (values.Length != arity)
             throw new JsonException($"Expected {arity} tuple values, got {values.Length}.");
-        return values;
+        // Elements must outlive the temporary document used to parse the tuple.
+        return values.Select(value => value.Clone()).ToArray();
     }
 }
 
@@ -106,6 +107,7 @@ internal sealed class BinaryTreeNodeConverterFactory : JsonConverterFactory
 
     private sealed class BinaryTreeNodeConverter<T> : JsonConverter<BinaryTreeNode<T>>
     {
+        public override bool HandleNull => true;
         public override BinaryTreeNode<T>? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             using var document = JsonDocument.ParseValue(ref reader);
@@ -136,6 +138,12 @@ internal sealed class BinaryTreeNodeConverterFactory : JsonConverterFactory
                 }
                 ++index;
             }
+            int InitializeSize(BinaryTreeNode<T>? node)
+            {
+                if (node is null) return 0;
+                return node.Size = 1 + InitializeSize(node.Left) + InitializeSize(node.Right);
+            }
+            InitializeSize(root);
             return root;
         }
 
@@ -149,6 +157,7 @@ internal sealed class BinaryTreeNodeConverterFactory : JsonConverterFactory
             }
 
             var values = new List<BinaryTreeNode<T>?>();
+            var visited = new HashSet<BinaryTreeNode<T>>(ReferenceEqualityComparer.Instance);
             var queue = new Queue<BinaryTreeNode<T>?>();
             queue.Enqueue(value);
             while (queue.Count > 0)
@@ -157,6 +166,7 @@ internal sealed class BinaryTreeNodeConverterFactory : JsonConverterFactory
                 values.Add(node);
                 if (node is not null)
                 {
+                    if (!visited.Add(node)) throw new JsonException("The output tree contains a cycle or a shared child.");
                     queue.Enqueue(node.Left);
                     queue.Enqueue(node.Right);
                 }
@@ -188,6 +198,7 @@ internal sealed class ListNodeConverterFactory : JsonConverterFactory
 
     private sealed class ListNodeConverter<T> : JsonConverter<ListNode<T>>
     {
+        public override bool HandleNull => true;
         public override ListNode<T>? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             var values = JsonSerializer.Deserialize<List<T>>(ref reader, options) ?? [];

@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Text.Json;
+using EpiJudge.TestFramework;
 
 namespace EpiJudge.Runner;
 
@@ -7,7 +8,8 @@ public sealed record CaseResult(int Number, bool Passed, string? Input, string? 
     string? Actual, string? Error, double ElapsedMs, bool Hidden);
 public sealed record SubmissionResult(string Id, string Status, int Passed, int Total,
     double ElapsedMs, string? Diagnostics, IReadOnlyList<CaseResult> Cases);
-internal sealed record ExecutionResult(JsonElement? Actual, string? Error, double ElapsedMs);
+internal sealed record ExecutionResult(JsonElement? Actual, string? Error, double ElapsedMs,
+    bool ValidationFailed = false, string? ValidationMessage = null);
 
 public sealed class SubmissionRunner(string repositoryRoot)
 {
@@ -25,17 +27,17 @@ public sealed class SubmissionRunner(string repositoryRoot)
         {
             var tests = ProblemCatalog.LoadTests(repositoryRoot, problem.Id, examplesOnly);
             Directory.CreateDirectory(directory);
-            await File.WriteAllTextAsync(Path.Combine(directory, "Submission.csproj"), ProjectSource, cancellation);
+            await File.WriteAllTextAsync(Path.Combine(directory, "Submission.csproj"), CreateProject(), cancellation);
             await File.WriteAllTextAsync(Path.Combine(directory, "NuGet.Config"), "<configuration><packageSources><clear /></packageSources></configuration>", cancellation);
             await File.WriteAllTextAsync(Path.Combine(directory, "Solution.cs"), code, cancellation);
             await File.WriteAllTextAsync(Path.Combine(directory, "Harness.cs"), CreateHarness(problem), cancellation);
-            var build = await ProcessHost.RunAsync("dotnet", ["build", "Submission.csproj", "--configuration", "Release", "--nologo", "--verbosity", "quiet", "--disable-build-servers"], directory, null, TimeSpan.FromSeconds(45), cancellation);
+            var build = await ProcessHost.RunAsync("dotnet", ["build", "Submission.csproj", "--configuration", "Release", "--nologo", "--verbosity", "quiet", "--disable-build-servers", "--maxcpucount:1"], directory, null, TimeSpan.FromSeconds(45), cancellation);
             if (build.TimedOut) return Result("Compilation timed out", tests.Count, "The compiler exceeded its 45-second limit.");
             if (build.ExitCode != 0)
                 return Result("Compilation error", tests.Count, Sanitize(build.Output + build.Error));
             var input = JsonSerializer.Serialize(tests.Select(test => test.Arguments));
-            var execution = await ProcessHost.RunAsync("dotnet", ["bin/Release/net10.0/Submission.dll"], directory, input, TimeSpan.FromSeconds(5), cancellation);
-            if (execution.TimedOut) return Result("Time limit exceeded", tests.Count, "Execution exceeded the 5-second limit. Check for an infinite loop.");
+            var execution = await ProcessHost.RunAsync("dotnet", ["bin/Release/net10.0/Submission.dll"], directory, input, TimeSpan.FromSeconds(60), cancellation);
+            if (execution.TimedOut) return Result("Time limit exceeded", tests.Count, "Execution exceeded the 60-second limit. Check for an infinite loop.");
             if (execution.OutputLimitExceeded) return Result("Output limit exceeded", tests.Count, "The process produced too much output.");
             if (execution.ExitCode != 0) return Result("Runtime error", tests.Count, Sanitize(execution.Error));
             List<ExecutionResult>? values;
@@ -50,7 +52,8 @@ public sealed class SubmissionRunner(string repositoryRoot)
             for (var i = 0; i < tests.Count; ++i)
             {
                 var value = values[i];
-                var correct = value.Error is null && value.Actual is { } actual && Equal(tests[i].Expected, actual, problem.Unordered);
+                var correct = !value.ValidationFailed && value.Error is null && value.Actual is { } actual && Equal(tests[i].Expected, actual,
+                    problem.Unordered ? "nested" : problem.Comparison);
                 if (correct) ++passed;
                 runtimeError |= value.Error is not null;
                 // Hidden submissions return counts and a generic failure only; no case contents.
@@ -60,7 +63,9 @@ public sealed class SubmissionRunner(string repositoryRoot)
                         hidden ? null : string.Join(", ", tests[i].Arguments.Select(argument => argument.GetRawText())),
                         hidden ? null : tests[i].Expected.GetRawText(),
                         hidden ? null : value.Actual?.GetRawText(),
-                        hidden && value.Error is not null ? "Your code threw an exception on this hidden case." : value.Error,
+                        hidden ? value.Error is not null ? "Your code threw an exception on this hidden case."
+                            : value.ValidationFailed ? "The result violates the problem contract on this hidden case." : null
+                            : value.Error ?? value.ValidationMessage,
                         value.ElapsedMs, hidden));
             }
             var status = passed == tests.Count ? "Accepted" : runtimeError ? "Runtime error" : "Wrong answer";
@@ -79,24 +84,30 @@ public sealed class SubmissionRunner(string repositoryRoot)
         }
     }
 
-    private static bool Equal(JsonElement expected, JsonElement actual, bool unordered)
+    private static bool Equal(JsonElement expected, JsonElement actual, string comparison)
     {
         if (expected.ValueKind != actual.ValueKind) return false;
+        if (expected.ValueKind == JsonValueKind.Number)
+        {
+            if (expected.TryGetInt64(out long e) && actual.TryGetInt64(out long a)) return e == a;
+            double leftNumber = expected.GetDouble(), rightNumber = actual.GetDouble();
+            return double.IsFinite(rightNumber) && Math.Abs(leftNumber-rightNumber) <= 1e-9*Math.Max(1, Math.Abs(leftNumber));
+        }
         if (expected.ValueKind != JsonValueKind.Array) return expected.ToString() == actual.ToString();
         var left = expected.EnumerateArray().ToList();
         var right = actual.EnumerateArray().ToList();
         if (left.Count != right.Count) return false;
-        if (!unordered) return left.Select((item, i) => Equal(item, right[i], false)).All(match => match);
+        if (comparison == "ordered") return left.Select((item, i) => Equal(item, right[i], "ordered")).All(match => match);
         foreach (var item in left)
         {
-            var index = right.FindIndex(candidate => Equal(item, candidate, true));
+            var index = right.FindIndex(candidate => Equal(item, candidate, comparison == "nested" ? "nested" : "ordered"));
             if (index < 0) return false;
             right.RemoveAt(index);
         }
         return true;
     }
 
-    private const string ProjectSource = """
+    private static string CreateProject() => """
         <Project Sdk="Microsoft.NET.Sdk">
           <PropertyGroup>
             <OutputType>Exe</OutputType><TargetFramework>net10.0</TargetFramework>
@@ -105,12 +116,19 @@ public sealed class SubmissionRunner(string repositoryRoot)
             <StartupObject>JudgeEntryPoint</StartupObject>
           </PropertyGroup>
           <ItemGroup><Compile Include="Solution.cs" /><Compile Include="Harness.cs" /></ItemGroup>
+          <ItemGroup>
+            <Reference Include="EpiJudge.Runner"><HintPath>RUNNER_PATH</HintPath></Reference>
+            <Reference Include="EpiJudge.TestFramework"><HintPath>FRAMEWORK_PATH</HintPath></Reference>
+          </ItemGroup>
         </Project>
-        """;
+        """.Replace("RUNNER_PATH", System.Security.SecurityElement.Escape(typeof(SubmissionRunner).Assembly.Location))
+           .Replace("FRAMEWORK_PATH", System.Security.SecurityElement.Escape(typeof(JudgeJson).Assembly.Location));
 
     private static string CreateHarness(Problem problem) => """
         using System.Diagnostics;
         using System.Text.Json;
+        using EpiJudge.Runner;
+        using EpiJudge.TestFramework;
 
         internal static class JudgeEntryPoint
         {
@@ -126,10 +144,17 @@ public sealed class SubmissionRunner(string repositoryRoot)
                     var clock = Stopwatch.StartNew();
                     JsonElement? actual = null;
                     string? error = null;
+                    bool validationFailed = false;
+                    string? validationMessage = null;
                     try
                     {
                         Console.SetOut(TextWriter.Null);
-                        actual = JsonSerializer.SerializeToElement(INVOKE_SOLUTION);
+                        actual = JsonSerializer.SerializeToElement(INVOKE_SOLUTION, JudgeJson.Options);
+                    }
+                    catch (JudgeValidationException exception)
+                    {
+                        validationFailed = true;
+                        validationMessage = exception.Message.Length > 2000 ? exception.Message[..2000] : exception.Message;
                     }
                     catch (Exception exception)
                     {
@@ -137,7 +162,7 @@ public sealed class SubmissionRunner(string repositoryRoot)
                         if (error.Length > 2000) error = error[..2000];
                     }
                     finally { Console.SetOut(output); }
-                    results.Add(new { actual, error, elapsedMs = clock.Elapsed.TotalMilliseconds });
+                    results.Add(new { actual, error, validationFailed, validationMessage, elapsedMs = clock.Elapsed.TotalMilliseconds });
                 }
                 output.Write(JsonSerializer.Serialize(results));
             }

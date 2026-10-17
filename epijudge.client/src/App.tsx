@@ -28,6 +28,7 @@ type Problem = {
   description: string;
   constraints: string[];
   signature: string;
+  testCount: number;
   starterCode: string;
   examples: { input: string; output: string; explanation: string }[];
 };
@@ -80,6 +81,7 @@ export default function App() {
   const [selected, setSelected] = useState(load('epi:selected', 'count_bits'));
   const [code, setCode] = useState('');
   const [query, setQuery] = useState('');
+  const [topic, setTopic] = useState('');
   const [result, setResult] = useState<Result | null>(null);
   const [error, setError] = useState('');
   const [loadError, setLoadError] = useState('');
@@ -189,9 +191,13 @@ export default function App() {
   const runCommand = useCallback(() => currentAttemptRef.current(), []);
   const submitCommand = useCallback(() => currentSubmitRef.current(), []);
   const shownCase = result?.cases[activeCase];
-  const visibleProblems = problems.filter((item) =>
-    `${item.title} ${item.topic}`.toLowerCase().includes(query.toLowerCase()),
+  const visibleProblems = problems.filter(
+    (item) =>
+      (!topic || item.topic === topic) &&
+      `${item.title} ${item.topic} ${item.id}`.toLowerCase().includes(query.toLowerCase()),
   );
+  const topics = [...new Set(problems.map((item) => item.topic))].sort();
+  const solvedCount = problems.filter((item) => solved.has(item.id)).length;
 
   return (
     <div className="app-shell">
@@ -221,7 +227,7 @@ export default function App() {
             <span>
               <Code2 size={17} /> Problem library
             </span>
-            <span className="count-chip">{problems.length || 3}</span>
+            <span className="count-chip">{problems.length}</span>
           </div>
           <label className="search-box">
             <Search size={15} />
@@ -232,7 +238,20 @@ export default function App() {
               aria-label="Search problems"
             />
           </label>
-          <div className="sidebar-label">AVAILABLE EXERCISES</div>
+          <select
+            className="topic-filter"
+            value={topic}
+            onChange={(event) => setTopic(event.target.value)}
+            aria-label="Filter by topic"
+          >
+            <option value="">All topics</option>
+            {topics.map((name) => (
+              <option key={name} value={name}>
+                {name}
+              </option>
+            ))}
+          </select>
+          <div className="sidebar-label">{visibleProblems.length} EXERCISES</div>
           <nav className="problem-list" aria-label="Problems">
             {visibleProblems.map((item, index) => (
               <button
@@ -262,22 +281,18 @@ export default function App() {
           </nav>
           <div className="library-note">
             <span className="tiny-dot" /> Built on the EPI test corpus
-            <p>
-              3 web-ready exercises.
-              <br />
-              218 problems in the C# catalog.
-            </p>
+            <p>All {problems.length} repository exercises available in C#.</p>
           </div>
           <div className="progress-card">
             <div>
               <span>Your progress</span>
               <strong>
-                {solved.size}
-                <small> / {problems.length || 3}</small>
+                {solvedCount}
+                <small> / {problems.length}</small>
               </strong>
             </div>
             <div className="progress-track">
-              <i style={{ width: `${(solved.size / (problems.length || 3)) * 100}%` }} />
+              <i style={{ width: `${(solvedCount / Math.max(1, problems.length)) * 100}%` }} />
             </div>
             <p>One problem at a time.</p>
           </div>
@@ -319,6 +334,9 @@ export default function App() {
                   {problem.difficulty}
                 </span>
                 <span>{problem.topic}</span>
+                {typeof problem.testCount === 'number' && (
+                  <span>{problem.testCount.toLocaleString()} test cases</span>
+                )}
                 {solved.has(problem.id) && (
                   <span className="solved-tag">
                     <Check size={12} /> Solved

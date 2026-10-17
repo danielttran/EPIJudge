@@ -38,7 +38,7 @@ app.UseStaticFiles();
 app.MapGet("/api/problems", (ProblemCatalog catalog) => catalog.Problems.Select(problem => new
 {
     problem.Id, problem.Title, problem.Topic, problem.Difficulty, problem.Description,
-    problem.Constraints, problem.Signature, problem.StarterCode, problem.Examples
+    problem.Constraints, problem.Signature, problem.StarterCode, problem.Examples, problem.TestCount
 }));
 app.MapGet("/api/health", () => new { status = "ready", language = "C#", runtime = ".NET 10", execution = "trusted-local-only" });
 app.MapPost("/api/submissions", async (SubmissionRequest request, HttpContext context,

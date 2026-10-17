@@ -6,6 +6,8 @@ public sealed class BinaryTreeNode<T>(T data)
     public BinaryTreeNode<T>? Left { get; set; }
     public BinaryTreeNode<T>? Right { get; set; }
     public BinaryTreeNode<T>? Parent { get; set; }
+    public BinaryTreeNode<T>? Next { get; set; }
+    public int Size { get; set; }
 }
 
 public sealed class ListNode<T>(T data)
