@@ -64,10 +64,12 @@
  * @param data - data from problem_mappings.json
  */
 function translateProblemMappings(data) {
-    function translateLanguageEntry(name, dirname, data) {
+    function translateLanguageEntry(name, dirname, data, optional = false) {
         let lang_field = Object.keys(data).find(x => x.startsWith(name));
         if (!lang_field) {
-            console.log(`Can't find ${name} entry in ${data}`);
+            if (!optional) {
+                console.log(`Can't find ${name} entry in ${data}`);
+            }
             return null
         }
         data = data[lang_field];
@@ -80,9 +82,10 @@ function translateProblemMappings(data) {
             name: name,
             cpp: translateLanguageEntry('C++', 'epi_judge_cpp/', data),
             java: translateLanguageEntry('Java', 'epi_judge_java/epi/', data),
-            python: translateLanguageEntry('Python', 'epi_judge_python/', data)
+            python: translateLanguageEntry('Python', 'epi_judge_python/', data),
+            csharp: translateLanguageEntry('C#', 'epi_judge_csharp/Problems/', data, true)
         };
-        if (result.cpp || result.java || result.python) {
+        if (result.cpp || result.java || result.python || result.csharp) {
             return result;
         } else {
             return null;
@@ -94,21 +97,25 @@ function translateProblemMappings(data) {
         let progress = {
             cpp: 0,
             java: 0,
-            python: 0
+            python: 0,
+            csharp: 0
         };
         for (let problem in chapter_data) {
             if (chapter_data.hasOwnProperty(problem) && chapter_data[problem]) {
                 let result = translateProblem(problem, chapter_data[problem]);
                 if (result) {
                     problems.push(result);
-                    if (result.cpp.passed === result.cpp.total) {
+                    if (result.cpp && result.cpp.passed === result.cpp.total) {
                         progress.cpp += 1;
                     }
-                    if (result.java.passed === result.java.total) {
+                    if (result.java && result.java.passed === result.java.total) {
                         progress.java += 1;
                     }
-                    if (result.python.passed === result.python.total) {
+                    if (result.python && result.python.passed === result.python.total) {
                         progress.python += 1;
+                    }
+                    if (result.csharp && result.csharp.passed === result.csharp.total) {
+                        progress.csharp += 1;
                     }
                 }
             }

@@ -12,6 +12,10 @@ problem_mapping = {
             "Python: count_bits.py": {
                 "passed": 0,
                 "total": 10001
+            },
+            "C#: CountBits.cs": {
+                "passed": 0,
+                "total": 10001
             }
         },
         "4.01 Computing the parity of a word": {
@@ -24,6 +28,10 @@ problem_mapping = {
                 "total": 10000
             },
             "Python: parity.py": {
+                "passed": 0,
+                "total": 10000
+            },
+            "C#: Parity.cs": {
                 "passed": 0,
                 "total": 10000
             }
@@ -40,6 +48,10 @@ problem_mapping = {
             "Python: swap_bits.py": {
                 "passed": 0,
                 "total": 10001
+            },
+            "C#: SwapBits.cs": {
+                "passed": 0,
+                "total": 10001
             }
         },
         "4.03 Reverse bits": {
@@ -54,6 +66,10 @@ problem_mapping = {
             "Python: reverse_bits.py": {
                 "passed": 0,
                 "total": 10000
+            },
+            "C#: ReverseBits.cs": {
+                "passed": 0,
+                "total": 10000
             }
         },
         "4.04 Find a closest integer with the same weight": {
@@ -65,7 +81,11 @@ problem_mapping = {
                 "passed": 0,
                 "total": 10000
             },
-            "Python: closest_int_same_weight.py": { 
+            "Python: closest_int_same_weight.py": {
+                "passed": 0,
+                "total": 10000
+            },
+            "C#: ClosestIntSameWeight.cs": {
                 "passed": 0,
                 "total": 10000
             }
@@ -82,6 +102,10 @@ problem_mapping = {
             "Python: primitive_multiply.py": {
                 "passed": 0,
                 "total": 10006
+            },
+            "C#: PrimitiveMultiply.cs": {
+                "passed": 0,
+                "total": 10006
             }
         },
         "4.06 Compute quotient without arithmetical operators": {
@@ -94,6 +118,10 @@ problem_mapping = {
                 "total": 10000
             },
             "Python: primitive_divide.py": {
+                "passed": 0,
+                "total": 10000
+            },
+            "C#: PrimitiveDivide.cs": {
                 "passed": 0,
                 "total": 10000
             }
@@ -110,6 +138,10 @@ problem_mapping = {
             "Python: power_x_y.py": {
                 "passed": 0,
                 "total": 10002
+            },
+            "C#: PowerXY.cs": {
+                "passed": 0,
+                "total": 10002
             }
         },
         "4.08 Reverse digits": {
@@ -122,6 +154,10 @@ problem_mapping = {
                 "total": 19952
             },
             "Python: reverse_digits.py": {
+                "passed": 0,
+                "total": 19952
+            },
+            "C#: ReverseDigits.cs": {
                 "passed": 0,
                 "total": 19952
             }
@@ -138,6 +174,10 @@ problem_mapping = {
             "Python: is_number_palindromic.py": {
                 "passed": 0,
                 "total": 20000
+            },
+            "C#: IsNumberPalindromic.cs": {
+                "passed": 0,
+                "total": 20000
             }
         },
         "4.10 Generate uniform random numbers": {
@@ -152,6 +192,10 @@ problem_mapping = {
             "Python: uniform_random_number.py": {
                 "passed": 0,
                 "total": 7
+            },
+            "C#: UniformRandomNumber.cs": {
+                "passed": 0,
+                "total": 7
             }
         },
         "4.11 Rectangle intersection": {
@@ -164,6 +208,10 @@ problem_mapping = {
                 "total": 10000
             },
             "Python: rectangle_intersection.py": {
+                "passed": 0,
+                "total": 10000
+            },
+            "C#: RectangleIntersection.cs": {
                 "passed": 0,
                 "total": 10000
             }
@@ -182,6 +230,10 @@ problem_mapping = {
             "Python: even_odd_array.py": {
                 "passed": 0,
                 "total": 1001
+            },
+            "C#: EvenOddArray.cs": {
+                "passed": 0,
+                "total": 1001
             }
         },
         "5.01 The Dutch national flag problem": {
@@ -194,6 +246,10 @@ problem_mapping = {
                 "total": 204
             },
             "Python: dutch_national_flag.py": {
+                "passed": 0,
+                "total": 204
+            },
+            "C#: DutchNationalFlag.cs": {
                 "passed": 0,
                 "total": 204
             }
@@ -210,6 +266,10 @@ problem_mapping = {
             "Python: int_as_array_increment.py": {
                 "passed": 0,
                 "total": 505
+            },
+            "C#: IntAsArrayIncrement.cs": {
+                "passed": 0,
+                "total": 505
             }
         },
         "5.03 Multiply two arbitrary-precision integers": {
@@ -222,6 +282,10 @@ problem_mapping = {
                 "total": 1000
             },
             "Python: int_as_array_multiply.py": {
+                "passed": 0,
+                "total": 1000
+            },
+            "C#: IntAsArrayMultiply.cs": {
                 "passed": 0,
                 "total": 1000
             }
@@ -238,6 +302,10 @@ problem_mapping = {
             "Python: advance_by_offsets.py": {
                 "passed": 0,
                 "total": 2004
+            },
+            "C#: AdvanceByOffsets.cs": {
+                "passed": 0,
+                "total": 2004
             }
         },
         "5.05 Delete duplicates from a sorted array": {
@@ -250,6 +318,10 @@ problem_mapping = {
                 "total": 2003
             },
             "Python: sorted_array_remove_dups.py": {
+                "passed": 0,
+                "total": 2003
+            },
+            "C#: SortedArrayRemoveDups.cs": {
                 "passed": 0,
                 "total": 2003
             }
@@ -266,6 +338,10 @@ problem_mapping = {
             "Python: buy_and_sell_stock.py": {
                 "passed": 0,
                 "total": 402
+            },
+            "C#: BuyAndSellStock.cs": {
+                "passed": 0,
+                "total": 402
             }
         },
         "5.07 Buy and sell a stock twice": {
@@ -278,6 +354,10 @@ problem_mapping = {
                 "total": 402
             },
             "Python: buy_and_sell_stock_twice.py": {
+                "passed": 0,
+                "total": 402
+            },
+            "C#: BuyAndSellStockTwice.cs": {
                 "passed": 0,
                 "total": 402
             }
@@ -294,6 +374,10 @@ problem_mapping = {
             "Python: alternating_array.py": {
                 "passed": 0,
                 "total": 203
+            },
+            "C#: AlternatingArray.cs": {
+                "passed": 0,
+                "total": 203
             }
         },
         "5.09 Enumerate all primes to n": {
@@ -306,6 +390,10 @@ problem_mapping = {
                 "total": 24
             },
             "Python: prime_sieve.py": {
+                "passed": 0,
+                "total": 24
+            },
+            "C#: PrimeSieve.cs": {
                 "passed": 0,
                 "total": 24
             }
@@ -322,6 +410,10 @@ problem_mapping = {
             "Python: apply_permutation.py": {
                 "passed": 0,
                 "total": 101
+            },
+            "C#: ApplyPermutation.cs": {
+                "passed": 0,
+                "total": 101
             }
         },
         "5.11 Compute the next permutation": {
@@ -334,6 +426,10 @@ problem_mapping = {
                 "total": 2001
             },
             "Python: next_permutation.py": {
+                "passed": 0,
+                "total": 2001
+            },
+            "C#: NextPermutation.cs": {
                 "passed": 0,
                 "total": 2001
             }
@@ -350,6 +446,10 @@ problem_mapping = {
             "Python: offline_sampling.py": {
                 "passed": 0,
                 "total": 8
+            },
+            "C#: OfflineSampling.cs": {
+                "passed": 0,
+                "total": 8
             }
         },
         "5.13 Sample online data": {
@@ -362,6 +462,10 @@ problem_mapping = {
                 "total": 7
             },
             "Python: online_sampling.py": {
+                "passed": 0,
+                "total": 7
+            },
+            "C#: OnlineSampling.cs": {
                 "passed": 0,
                 "total": 7
             }
@@ -378,6 +482,10 @@ problem_mapping = {
             "Python: random_permutation.py": {
                 "passed": 0,
                 "total": 6
+            },
+            "C#: RandomPermutation.cs": {
+                "passed": 0,
+                "total": 6
             }
         },
         "5.15 Compute a random subset": {
@@ -390,6 +498,10 @@ problem_mapping = {
                 "total": 9
             },
             "Python: random_subset.py": {
+                "passed": 0,
+                "total": 9
+            },
+            "C#: RandomSubset.cs": {
                 "passed": 0,
                 "total": 9
             }
@@ -406,6 +518,10 @@ problem_mapping = {
             "Python: nonuniform_random_number.py": {
                 "passed": 0,
                 "total": 10
+            },
+            "C#: NonuniformRandomNumber.cs": {
+                "passed": 0,
+                "total": 10
             }
         },
         "5.17 The Sudoku checker problem": {
@@ -418,6 +534,10 @@ problem_mapping = {
                 "total": 745
             },
             "Python: is_valid_sudoku.py": {
+                "passed": 0,
+                "total": 745
+            },
+            "C#: IsValidSudoku.cs": {
                 "passed": 0,
                 "total": 745
             }
@@ -434,6 +554,10 @@ problem_mapping = {
             "Python: spiral_ordering.py": {
                 "passed": 0,
                 "total": 51
+            },
+            "C#: SpiralOrdering.cs": {
+                "passed": 0,
+                "total": 51
             }
         },
         "5.19 Rotate a 2D array": {
@@ -448,6 +572,10 @@ problem_mapping = {
             "Python: matrix_rotation.py": {
                 "passed": 0,
                 "total": 51
+            },
+            "C#: MatrixRotation.cs": {
+                "passed": 0,
+                "total": 51
             }
         },
         "5.20 Compute rows in Pascal's Triangle": {
@@ -460,6 +588,10 @@ problem_mapping = {
                 "total": 35
             },
             "Python: pascal_triangle.py": {
+                "passed": 0,
+                "total": 35
+            },
+            "C#: PascalTriangle.cs": {
                 "passed": 0,
                 "total": 35
             }
@@ -478,6 +610,10 @@ problem_mapping = {
             "Python: is_string_palindromic.py": {
                 "passed": 0,
                 "total": 10000
+            },
+            "C#: IsStringPalindromic.cs": {
+                "passed": 0,
+                "total": 10000
             }
         },
         "6.01 Interconvert strings and integers": {
@@ -490,6 +626,10 @@ problem_mapping = {
                 "total": 15002
             },
             "Python: string_integer_interconversion.py": {
+                "passed": 0,
+                "total": 15002
+            },
+            "C#: StringIntegerInterconversion.cs": {
                 "passed": 0,
                 "total": 15002
             }
@@ -506,6 +646,10 @@ problem_mapping = {
             "Python: convert_base.py": {
                 "passed": 0,
                 "total": 20001
+            },
+            "C#: ConvertBase.cs": {
+                "passed": 0,
+                "total": 20001
             }
         },
         "6.03 Compute the spreadsheet column encoding": {
@@ -518,6 +662,10 @@ problem_mapping = {
                 "total": 10000
             },
             "Python: spreadsheet_encoding.py": {
+                "passed": 0,
+                "total": 10000
+            },
+            "C#: SpreadsheetEncoding.cs": {
                 "passed": 0,
                 "total": 10000
             }
@@ -534,6 +682,10 @@ problem_mapping = {
             "Python: replace_and_remove.py": {
                 "passed": 0,
                 "total": 501
+            },
+            "C#: ReplaceAndRemove.cs": {
+                "passed": 0,
+                "total": 501
             }
         },
         "6.05 Test palindromicity": {
@@ -546,6 +698,10 @@ problem_mapping = {
                 "total": 305
             },
             "Python: is_string_palindromic_punctuation.py": {
+                "passed": 0,
+                "total": 305
+            },
+            "C#: IsStringPalindromicPunctuation.cs": {
                 "passed": 0,
                 "total": 305
             }
@@ -562,6 +718,10 @@ problem_mapping = {
             "Python: reverse_words.py": {
                 "passed": 0,
                 "total": 103
+            },
+            "C#: ReverseWords.cs": {
+                "passed": 0,
+                "total": 103
             }
         },
         "6.07 The look-and-say problem": {
@@ -574,6 +734,10 @@ problem_mapping = {
                 "total": 40
             },
             "Python: look_and_say.py": {
+                "passed": 0,
+                "total": 40
+            },
+            "C#: LookAndSay.cs": {
                 "passed": 0,
                 "total": 40
             }
@@ -590,6 +754,10 @@ problem_mapping = {
             "Python: roman_to_integer.py": {
                 "passed": 0,
                 "total": 3999
+            },
+            "C#: RomanToInteger.cs": {
+                "passed": 0,
+                "total": 3999
             }
         },
         "6.09 Compute all valid IP addresses": {
@@ -602,6 +770,10 @@ problem_mapping = {
                 "total": 10008
             },
             "Python: valid_ip_addresses.py": {
+                "passed": 0,
+                "total": 10008
+            },
+            "C#: ValidIpAddresses.cs": {
                 "passed": 0,
                 "total": 10008
             }
@@ -618,6 +790,10 @@ problem_mapping = {
             "Python: snake_string.py": {
                 "passed": 0,
                 "total": 500
+            },
+            "C#: SnakeString.cs": {
+                "passed": 0,
+                "total": 500
             }
         },
         "6.11 Implement run-length encoding": {
@@ -632,6 +808,10 @@ problem_mapping = {
             "Python: run_length_compression.py": {
                 "passed": 0,
                 "total": 200
+            },
+            "C#: RunLengthCompression.cs": {
+                "passed": 0,
+                "total": 200
             }
         },
         "6.12 Find the first occurrence of a substring": {
@@ -644,6 +824,10 @@ problem_mapping = {
                 "total": 835
             },
             "Python: substring_match.py": {
+                "passed": 0,
+                "total": 835
+            },
+            "C#: SubstringMatch.cs": {
                 "passed": 0,
                 "total": 835
             }
@@ -686,6 +870,10 @@ problem_mapping = {
             "Python: search_in_list.py": {
                 "passed": 0,
                 "total": 505
+            },
+            "C#: DeleteFromList.cs": {
+                "passed": 0,
+                "total": 457
             }
         },
         "7.01 Merge two sorted lists": {
@@ -698,6 +886,10 @@ problem_mapping = {
                 "total": 501
             },
             "Python: sorted_lists_merge.py": {
+                "passed": 0,
+                "total": 501
+            },
+            "C#: SortedListsMerge.cs": {
                 "passed": 0,
                 "total": 501
             }
@@ -714,6 +906,10 @@ problem_mapping = {
             "Python: reverse_sublist.py": {
                 "passed": 0,
                 "total": 210
+            },
+            "C#: ReverseSublist.cs": {
+                "passed": 0,
+                "total": 210
             }
         },
         "7.03 Test for cyclicity": {
@@ -726,6 +922,10 @@ problem_mapping = {
                 "total": 102
             },
             "Python: is_list_cyclic.py": {
+                "passed": 0,
+                "total": 102
+            },
+            "C#: IsListCyclic.cs": {
                 "passed": 0,
                 "total": 102
             }
@@ -742,6 +942,10 @@ problem_mapping = {
             "Python: do_terminated_lists_overlap.py": {
                 "passed": 0,
                 "total": 106
+            },
+            "C#: DoTerminatedListsOverlap.cs": {
+                "passed": 0,
+                "total": 106
             }
         },
         "7.05 Test for overlapping lists---lists may have cycles": {
@@ -754,6 +958,10 @@ problem_mapping = {
                 "total": 120
             },
             "Python: do_lists_overlap.py": {
+                "passed": 0,
+                "total": 120
+            },
+            "C#: DoListsOverlap.cs": {
                 "passed": 0,
                 "total": 120
             }
@@ -770,6 +978,10 @@ problem_mapping = {
             "Python: delete_node_from_list.py": {
                 "passed": 0,
                 "total": 512
+            },
+            "C#: DeleteNodeFromList.cs": {
+                "passed": 0,
+                "total": 512
             }
         },
         "7.07 Remove the kth last element from a list": {
@@ -782,6 +994,10 @@ problem_mapping = {
                 "total": 306
             },
             "Python: delete_kth_last_from_list.py": {
+                "passed": 0,
+                "total": 306
+            },
+            "C#: DeleteKthLastFromList.cs": {
                 "passed": 0,
                 "total": 306
             }
@@ -798,6 +1014,10 @@ problem_mapping = {
             "Python: remove_duplicates_from_sorted_list.py": {
                 "passed": 0,
                 "total": 203
+            },
+            "C#: RemoveDuplicatesFromSortedList.cs": {
+                "passed": 0,
+                "total": 203
             }
         },
         "7.09 Implement cyclic right shift for singly linked lists": {
@@ -810,6 +1030,10 @@ problem_mapping = {
                 "total": 507
             },
             "Python: list_cyclic_right_shift.py": {
+                "passed": 0,
+                "total": 507
+            },
+            "C#: ListCyclicRightShift.cs": {
                 "passed": 0,
                 "total": 507
             }
@@ -826,6 +1050,10 @@ problem_mapping = {
             "Python: even_odd_list_merge.py": {
                 "passed": 0,
                 "total": 1015
+            },
+            "C#: EvenOddListMerge.cs": {
+                "passed": 0,
+                "total": 1015
             }
         },
         "7.11 Test whether a singly linked list is palindromic": {
@@ -838,6 +1066,10 @@ problem_mapping = {
                 "total": 203
             },
             "Python: is_list_palindromic.py": {
+                "passed": 0,
+                "total": 203
+            },
+            "C#: IsListPalindromic.cs": {
                 "passed": 0,
                 "total": 203
             }
@@ -854,6 +1086,10 @@ problem_mapping = {
             "Python: pivot_list.py": {
                 "passed": 0,
                 "total": 208
+            },
+            "C#: PivotList.cs": {
+                "passed": 0,
+                "total": 208
             }
         },
         "7.13 Add list-based integers": {
@@ -866,6 +1102,10 @@ problem_mapping = {
                 "total": 2002
             },
             "Python: int_as_list_add.py": {
+                "passed": 0,
+                "total": 2002
+            },
+            "C#: IntAsListAdd.cs": {
                 "passed": 0,
                 "total": 2002
             }
@@ -884,6 +1124,10 @@ problem_mapping = {
             "Python: stack_with_max.py": {
                 "passed": 0,
                 "total": 101
+            },
+            "C#: StackWithMax.cs": {
+                "passed": 0,
+                "total": 101
             }
         },
         "8.02 Evaluate RPN expressions": {
@@ -896,6 +1140,10 @@ problem_mapping = {
                 "total": 108
             },
             "Python: evaluate_rpn.py": {
+                "passed": 0,
+                "total": 108
+            },
+            "C#: EvaluateRpn.cs": {
                 "passed": 0,
                 "total": 108
             }
@@ -912,6 +1160,10 @@ problem_mapping = {
             "Python: is_valid_parenthesization.py": {
                 "passed": 0,
                 "total": 78
+            },
+            "C#: IsValidParenthesization.cs": {
+                "passed": 0,
+                "total": 78
             }
         },
         "8.04 Normalize pathnames": {
@@ -924,6 +1176,10 @@ problem_mapping = {
                 "total": 255
             },
             "Python: directory_path_normalization.py": {
+                "passed": 0,
+                "total": 255
+            },
+            "C#: DirectoryPathNormalization.cs": {
                 "passed": 0,
                 "total": 255
             }
@@ -940,6 +1196,10 @@ problem_mapping = {
             "Python: sunset_view.py": {
                 "passed": 0,
                 "total": 101
+            },
+            "C#: SunsetView.cs": {
+                "passed": 0,
+                "total": 101
             }
         },
         "8.06 Compute binary tree nodes in order of increasing depth": {
@@ -952,6 +1212,10 @@ problem_mapping = {
                 "total": 3852
             },
             "Python: tree_level_order.py": {
+                "passed": 0,
+                "total": 3852
+            },
+            "C#: TreeLevelOrder.cs": {
                 "passed": 0,
                 "total": 3852
             }
@@ -968,6 +1232,10 @@ problem_mapping = {
             "Python: circular_queue.py": {
                 "passed": 0,
                 "total": 65
+            },
+            "C#: CircularQueue.cs": {
+                "passed": 0,
+                "total": 65
             }
         },
         "8.08 Implement a queue using stacks": {
@@ -982,6 +1250,10 @@ problem_mapping = {
             "Python: queue_from_stacks.py": {
                 "passed": 0,
                 "total": 65
+            },
+            "C#: QueueFromStacks.cs": {
+                "passed": 0,
+                "total": 65
             }
         },
         "8.09 Implement a queue with max API": {
@@ -994,6 +1266,10 @@ problem_mapping = {
                 "total": 201
             },
             "Python: queue_with_max.py": {
+                "passed": 0,
+                "total": 201
+            },
+            "C#: QueueWithMax.cs": {
                 "passed": 0,
                 "total": 201
             }
@@ -1012,6 +1288,10 @@ problem_mapping = {
             "Python: is_tree_balanced.py": {
                 "passed": 0,
                 "total": 3852
+            },
+            "C#: IsTreeBalanced.cs": {
+                "passed": 0,
+                "total": 3852
             }
         },
         "9.02 Test if a binary tree is symmetric": {
@@ -1026,6 +1306,10 @@ problem_mapping = {
             "Python: is_tree_symmetric.py": {
                 "passed": 0,
                 "total": 3852
+            },
+            "C#: IsTreeSymmetric.cs": {
+                "passed": 0,
+                "total": 3852
             }
         },
         "9.03 Compute the lowest common ancestor in a binary tree": {
@@ -1038,6 +1322,10 @@ problem_mapping = {
                 "total": 948
             },
             "Python: lowest_common_ancestor.py": {
+                "passed": 0,
+                "total": 948
+            },
+            "C#: LowestCommonAncestor.cs": {
                 "passed": 0,
                 "total": 948
             }
@@ -1068,6 +1356,10 @@ problem_mapping = {
             "Python: sum_root_to_leaf.py": {
                 "passed": 0,
                 "total": 3849
+            },
+            "C#: SumRootToLeaf.cs": {
+                "passed": 0,
+                "total": 3849
             }
         },
         "9.06 Find a root to leaf path with specified sum": {
@@ -1080,6 +1372,10 @@ problem_mapping = {
                 "total": 7690
             },
             "Python: path_sum.py": {
+                "passed": 0,
+                "total": 7690
+            },
+            "C#: PathSum.cs": {
                 "passed": 0,
                 "total": 7690
             }
@@ -1096,6 +1392,10 @@ problem_mapping = {
             "Python: tree_inorder.py": {
                 "passed": 0,
                 "total": 3852
+            },
+            "C#: TreeInorder.cs": {
+                "passed": 0,
+                "total": 3852
             }
         },
         "9.08 Compute the kth node in an inorder traversal": {
@@ -1108,6 +1408,10 @@ problem_mapping = {
                 "total": 3851
             },
             "Python: kth_node_in_tree.py": {
+                "passed": 0,
+                "total": 3851
+            },
+            "C#: KthNodeInTree.cs": {
                 "passed": 0,
                 "total": 3851
             }
@@ -1124,6 +1428,10 @@ problem_mapping = {
             "Python: successor_in_tree.py": {
                 "passed": 0,
                 "total": 948
+            },
+            "C#: SuccessorInTree.cs": {
+                "passed": 0,
+                "total": 948
             }
         },
         "9.10 Implement an inorder traversal with constant space": {
@@ -1136,6 +1444,10 @@ problem_mapping = {
                 "total": 3852
             },
             "Python: tree_with_parent_inorder.py": {
+                "passed": 0,
+                "total": 3852
+            },
+            "C#: TreeWithParentInorder.cs": {
                 "passed": 0,
                 "total": 3852
             }
@@ -1152,6 +1464,10 @@ problem_mapping = {
             "Python: tree_from_preorder_inorder.py": {
                 "passed": 0,
                 "total": 3852
+            },
+            "C#: TreeFromPreorderInorder.cs": {
+                "passed": 0,
+                "total": 3852
             }
         },
         "9.12 Reconstruct a binary tree from a preorder traversal with markers": {
@@ -1164,6 +1480,10 @@ problem_mapping = {
                 "total": 3852
             },
             "Python: tree_from_preorder_with_null.py": {
+                "passed": 0,
+                "total": 3852
+            },
+            "C#: TreeFromPreorderWithNull.cs": {
                 "passed": 0,
                 "total": 3852
             }
@@ -1180,6 +1500,10 @@ problem_mapping = {
             "Python: tree_connect_leaves.py": {
                 "passed": 0,
                 "total": 3852
+            },
+            "C#: TreeConnectLeaves.cs": {
+                "passed": 0,
+                "total": 3852
             }
         },
         "9.14 Compute the exterior of a binary tree": {
@@ -1194,6 +1518,10 @@ problem_mapping = {
             "Python: tree_exterior.py": {
                 "passed": 0,
                 "total": 3852
+            },
+            "C#: TreeExterior.cs": {
+                "passed": 0,
+                "total": 3852
             }
         },
         "9.15 Compute the right sibling tree": {
@@ -1206,6 +1534,10 @@ problem_mapping = {
                 "total": 10
             },
             "Python: tree_right_sibling.py": {
+                "passed": 0,
+                "total": 10
+            },
+            "C#: TreeRightSibling.cs": {
                 "passed": 0,
                 "total": 10
             }
@@ -1224,6 +1556,10 @@ problem_mapping = {
             "Python: sorted_arrays_merge.py": {
                 "passed": 0,
                 "total": 152
+            },
+            "C#: SortedArraysMerge.cs": {
+                "passed": 0,
+                "total": 152
             }
         },
         "10.02 Sort an increasing-decreasing array": {
@@ -1236,6 +1572,10 @@ problem_mapping = {
                 "total": 203
             },
             "Python: sort_increasing_decreasing_array.py": {
+                "passed": 0,
+                "total": 203
+            },
+            "C#: SortIncreasingDecreasingArray.cs": {
                 "passed": 0,
                 "total": 203
             }
@@ -1252,6 +1592,10 @@ problem_mapping = {
             "Python: sort_almost_sorted_array.py": {
                 "passed": 0,
                 "total": 101
+            },
+            "C#: SortAlmostSortedArray.cs": {
+                "passed": 0,
+                "total": 101
             }
         },
         "10.04 Compute the k closest stars": {
@@ -1264,6 +1608,10 @@ problem_mapping = {
                 "total": 51
             },
             "Python: k_closest_stars.py": {
+                "passed": 0,
+                "total": 51
+            },
+            "C#: KClosestStars.cs": {
                 "passed": 0,
                 "total": 51
             }
@@ -1280,6 +1628,10 @@ problem_mapping = {
             "Python: online_median.py": {
                 "passed": 0,
                 "total": 55
+            },
+            "C#: OnlineMedian.cs": {
+                "passed": 0,
+                "total": 55
             }
         },
         "10.06 Compute the k largest elements in a max-heap": {
@@ -1292,6 +1644,10 @@ problem_mapping = {
                 "total": 102
             },
             "Python: k_largest_in_heap.py": {
+                "passed": 0,
+                "total": 102
+            },
+            "C#: KLargestInHeap.cs": {
                 "passed": 0,
                 "total": 102
             }
@@ -1310,6 +1666,10 @@ problem_mapping = {
             "Python: search_first_key.py": {
                 "passed": 0,
                 "total": 314
+            },
+            "C#: SearchFirstKey.cs": {
+                "passed": 0,
+                "total": 314
             }
         },
         "11.02 Search a sorted array for entry equal to its index": {
@@ -1322,6 +1682,10 @@ problem_mapping = {
                 "total": 501
             },
             "Python: search_entry_equal_to_index.py": {
+                "passed": 0,
+                "total": 501
+            },
+            "C#: SearchEntryEqualToIndex.cs": {
                 "passed": 0,
                 "total": 501
             }
@@ -1338,6 +1702,10 @@ problem_mapping = {
             "Python: search_shifted_sorted_array.py": {
                 "passed": 0,
                 "total": 307
+            },
+            "C#: SearchShiftedSortedArray.cs": {
+                "passed": 0,
+                "total": 307
             }
         },
         "11.04 Compute the integer square root": {
@@ -1350,6 +1718,10 @@ problem_mapping = {
                 "total": 2000
             },
             "Python: int_square_root.py": {
+                "passed": 0,
+                "total": 2000
+            },
+            "C#: IntSquareRoot.cs": {
                 "passed": 0,
                 "total": 2000
             }
@@ -1366,6 +1738,10 @@ problem_mapping = {
             "Python: real_square_root.py": {
                 "passed": 0,
                 "total": 11003
+            },
+            "C#: RealSquareRoot.cs": {
+                "passed": 0,
+                "total": 11003
             }
         },
         "11.06 Search in a 2D sorted array": {
@@ -1378,6 +1754,10 @@ problem_mapping = {
                 "total": 194
             },
             "Python: search_row_col_sorted_matrix.py": {
+                "passed": 0,
+                "total": 194
+            },
+            "C#: SearchRowColSortedMatrix.cs": {
                 "passed": 0,
                 "total": 194
             }
@@ -1394,6 +1774,10 @@ problem_mapping = {
             "Python: search_for_min_max_in_array.py": {
                 "passed": 0,
                 "total": 501
+            },
+            "C#: SearchForMinMaxInArray.cs": {
+                "passed": 0,
+                "total": 501
             }
         },
         "11.08 Find the kth largest element": {
@@ -1408,6 +1792,10 @@ problem_mapping = {
             "Python: kth_largest_in_array.py": {
                 "passed": 0,
                 "total": 503
+            },
+            "C#: KthLargestInArray.cs": {
+                "passed": 0,
+                "total": 503
             }
         },
         "11.09 Find the missing IP address": {
@@ -1420,6 +1808,10 @@ problem_mapping = {
                 "total": 100
             },
             "Python: absent_value_array.py": {
+                "passed": 0,
+                "total": 100
+            },
+            "C#: AbsentValueArray.cs": {
                 "passed": 0,
                 "total": 100
             }
@@ -1452,6 +1844,10 @@ problem_mapping = {
             "Python: anagrams.py": {
                 "passed": 0,
                 "total": 9
+            },
+            "C#: Anagrams.cs": {
+                "passed": 0,
+                "total": 9
             }
         },
         "12.01 Test for palindromic permutations": {
@@ -1464,6 +1860,10 @@ problem_mapping = {
                 "total": 305
             },
             "Python: is_string_permutable_to_palindrome.py": {
+                "passed": 0,
+                "total": 305
+            },
+            "C#: IsStringPermutableToPalindrome.cs": {
                 "passed": 0,
                 "total": 305
             }
@@ -1480,6 +1880,10 @@ problem_mapping = {
             "Python: is_anonymous_letter_constructible.py": {
                 "passed": 0,
                 "total": 212
+            },
+            "C#: IsAnonymousLetterConstructible.cs": {
+                "passed": 0,
+                "total": 212
             }
         },
         "12.03 Implement an ISBN cache": {
@@ -1492,6 +1896,10 @@ problem_mapping = {
                 "total": 101
             },
             "Python: lru_cache.py": {
+                "passed": 0,
+                "total": 101
+            },
+            "C#: LruCache.cs": {
                 "passed": 0,
                 "total": 101
             }
@@ -1522,6 +1930,10 @@ problem_mapping = {
             "Python: nearest_repeated_entries.py": {
                 "passed": 0,
                 "total": 505
+            },
+            "C#: NearestRepeatedEntries.cs": {
+                "passed": 0,
+                "total": 505
             }
         },
         "12.06 Find the smallest subarray covering all values": {
@@ -1534,6 +1946,10 @@ problem_mapping = {
                 "total": 904
             },
             "Python: smallest_subarray_covering_set.py": {
+                "passed": 0,
+                "total": 904
+            },
+            "C#: SmallestSubarrayCoveringSet.cs": {
                 "passed": 0,
                 "total": 904
             }
@@ -1550,6 +1966,10 @@ problem_mapping = {
             "Python: smallest_subarray_covering_all_values.py": {
                 "passed": 0,
                 "total": 629
+            },
+            "C#: SmallestSubarrayCoveringAllValues.cs": {
+                "passed": 0,
+                "total": 629
             }
         },
         "12.08 Find the longest subarray with distinct entries": {
@@ -1562,6 +1982,10 @@ problem_mapping = {
                 "total": 987
             },
             "Python: longest_subarray_with_distinct_values.py": {
+                "passed": 0,
+                "total": 987
+            },
+            "C#: LongestSubarrayWithDistinctValues.cs": {
                 "passed": 0,
                 "total": 987
             }
@@ -1578,6 +2002,10 @@ problem_mapping = {
             "Python: longest_contained_interval.py": {
                 "passed": 0,
                 "total": 203
+            },
+            "C#: LongestContainedInterval.cs": {
+                "passed": 0,
+                "total": 203
             }
         },
         "12.10 Compute all string decompositions": {
@@ -1592,6 +2020,10 @@ problem_mapping = {
             "Python: string_decompositions_into_dictionary_words.py": {
                 "passed": 0,
                 "total": 171
+            },
+            "C#: StringDecompositionsIntoDictionaryWords.cs": {
+                "passed": 0,
+                "total": 171
             }
         },
         "12.11 Test the Collatz conjecture": {
@@ -1604,6 +2036,10 @@ problem_mapping = {
                 "total": 7
             },
             "Python: collatz_checker.py": {
+                "passed": 0,
+                "total": 7
+            },
+            "C#: CollatzChecker.cs": {
                 "passed": 0,
                 "total": 7
             }
@@ -1622,6 +2058,10 @@ problem_mapping = {
             "Python: intersect_sorted_arrays.py": {
                 "passed": 0,
                 "total": 202
+            },
+            "C#: IntersectSortedArrays.cs": {
+                "passed": 0,
+                "total": 202
             }
         },
         "13.02 Merge two sorted arrays": {
@@ -1634,6 +2074,10 @@ problem_mapping = {
                 "total": 201
             },
             "Python: two_sorted_arrays_merge.py": {
+                "passed": 0,
+                "total": 201
+            },
+            "C#: TwoSortedArraysMerge.cs": {
                 "passed": 0,
                 "total": 201
             }
@@ -1650,6 +2094,10 @@ problem_mapping = {
             "Python: h_index.py": {
                 "passed": 0,
                 "total": 1001
+            },
+            "C#: HIndex.cs": {
+                "passed": 0,
+                "total": 1001
             }
         },
         "13.04 Remove first-name duplicates": {
@@ -1662,6 +2110,10 @@ problem_mapping = {
                 "total": 202
             },
             "Python: remove_duplicates.py": {
+                "passed": 0,
+                "total": 202
+            },
+            "C#: RemoveDuplicates.cs": {
                 "passed": 0,
                 "total": 202
             }
@@ -1678,6 +2130,10 @@ problem_mapping = {
             "Python: smallest_nonconstructible_value.py": {
                 "passed": 0,
                 "total": 308
+            },
+            "C#: SmallestNonconstructibleValue.cs": {
+                "passed": 0,
+                "total": 308
             }
         },
         "13.06 Render a calendar": {
@@ -1690,6 +2146,10 @@ problem_mapping = {
                 "total": 97
             },
             "Python: calendar_rendering.py": {
+                "passed": 0,
+                "total": 97
+            },
+            "C#: CalendarRendering.cs": {
                 "passed": 0,
                 "total": 97
             }
@@ -1706,6 +2166,10 @@ problem_mapping = {
             "Python: interval_add.py": {
                 "passed": 0,
                 "total": 103
+            },
+            "C#: IntervalAdd.cs": {
+                "passed": 0,
+                "total": 103
             }
         },
         "13.08 Compute the union of intervals": {
@@ -1718,6 +2182,10 @@ problem_mapping = {
                 "total": 191
             },
             "Python: intervals_union.py": {
+                "passed": 0,
+                "total": 191
+            },
+            "C#: IntervalsUnion.cs": {
                 "passed": 0,
                 "total": 191
             }
@@ -1734,6 +2202,10 @@ problem_mapping = {
             "Python: group_equal_entries.py": {
                 "passed": 0,
                 "total": 33
+            },
+            "C#: GroupEqualEntries.cs": {
+                "passed": 0,
+                "total": 33
             }
         },
         "13.10 Team photo day---1": {
@@ -1746,6 +2218,10 @@ problem_mapping = {
                 "total": 105
             },
             "Python: is_array_dominated.py": {
+                "passed": 0,
+                "total": 105
+            },
+            "C#: IsArrayDominated.cs": {
                 "passed": 0,
                 "total": 105
             }
@@ -1762,6 +2238,10 @@ problem_mapping = {
             "Python: sort_list.py": {
                 "passed": 0,
                 "total": 209
+            },
+            "C#: SortList.cs": {
+                "passed": 0,
+                "total": 209
             }
         },
         "13.12 Compute a salary threshold": {
@@ -1774,6 +2254,10 @@ problem_mapping = {
                 "total": 1005
             },
             "Python: find_salary_threshold.py": {
+                "passed": 0,
+                "total": 1005
+            },
+            "C#: FindSalaryThreshold.cs": {
                 "passed": 0,
                 "total": 1005
             }
@@ -1792,6 +2276,10 @@ problem_mapping = {
             "Python: search_in_bst.py": {
                 "passed": 0,
                 "total": 955
+            },
+            "C#: SearchInBst.cs": {
+                "passed": 0,
+                "total": 955
             }
         },
         "14.01 Test if a binary tree satisfies the BST property": {
@@ -1804,6 +2292,10 @@ problem_mapping = {
                 "total": 3139
             },
             "Python: is_tree_a_bst.py": {
+                "passed": 0,
+                "total": 3139
+            },
+            "C#: IsTreeABst.cs": {
                 "passed": 0,
                 "total": 3139
             }
@@ -1820,6 +2312,10 @@ problem_mapping = {
             "Python: search_first_greater_value_in_bst.py": {
                 "passed": 0,
                 "total": 949
+            },
+            "C#: SearchFirstGreaterValueInBst.cs": {
+                "passed": 0,
+                "total": 949
             }
         },
         "14.03 Find the k largest elements in a BST": {
@@ -1832,6 +2328,10 @@ problem_mapping = {
                 "total": 949
             },
             "Python: k_largest_values_in_bst.py": {
+                "passed": 0,
+                "total": 949
+            },
+            "C#: KLargestValuesInBst.cs": {
                 "passed": 0,
                 "total": 949
             }
@@ -1848,6 +2348,10 @@ problem_mapping = {
             "Python: lowest_common_ancestor_in_bst.py": {
                 "passed": 0,
                 "total": 951
+            },
+            "C#: LowestCommonAncestorInBst.cs": {
+                "passed": 0,
+                "total": 951
             }
         },
         "14.05 Reconstruct a BST from traversal data": {
@@ -1860,6 +2364,10 @@ problem_mapping = {
                 "total": 950
             },
             "Python: bst_from_preorder.py": {
+                "passed": 0,
+                "total": 950
+            },
+            "C#: BstFromPreorder.cs": {
                 "passed": 0,
                 "total": 950
             }
@@ -1876,6 +2384,10 @@ problem_mapping = {
             "Python: minimum_distance_3_sorted_arrays.py": {
                 "passed": 0,
                 "total": 51
+            },
+            "C#: MinimumDistance3SortedArrays.cs": {
+                "passed": 0,
+                "total": 51
             }
         },
         "14.07 Enumerate extended integers": {
@@ -1888,6 +2400,10 @@ problem_mapping = {
                 "total": 13
             },
             "Python: a_b_sqrt2.py": {
+                "passed": 0,
+                "total": 13
+            },
+            "C#: ABSqrt2.cs": {
                 "passed": 0,
                 "total": 13
             }
@@ -1904,6 +2420,10 @@ problem_mapping = {
             "Python: bst_from_sorted_array.py": {
                 "passed": 0,
                 "total": 87
+            },
+            "C#: BstFromSortedArray.cs": {
+                "passed": 0,
+                "total": 87
             }
         },
         "14.09 Test if three BST nodes are totally ordered": {
@@ -1916,6 +2436,10 @@ problem_mapping = {
                 "total": 958
             },
             "Python: descendant_and_ancestor_in_bst.py": {
+                "passed": 0,
+                "total": 958
+            },
+            "C#: DescendantAndAncestorInBst.cs": {
                 "passed": 0,
                 "total": 958
             }
@@ -1932,6 +2456,10 @@ problem_mapping = {
             "Python: range_lookup_in_bst.py": {
                 "passed": 0,
                 "total": 954
+            },
+            "C#: RangeLookupInBst.cs": {
+                "passed": 0,
+                "total": 954
             }
         },
         "14.11 Add credits": {
@@ -1944,6 +2472,10 @@ problem_mapping = {
                 "total": 201
             },
             "Python: adding_credits.py": {
+                "passed": 0,
+                "total": 201
+            },
+            "C#: AddingCredits.cs": {
                 "passed": 0,
                 "total": 201
             }
@@ -1976,6 +2508,10 @@ problem_mapping = {
             "Python: hanoi.py": {
                 "passed": 0,
                 "total": 10
+            },
+            "C#: Hanoi.cs": {
+                "passed": 0,
+                "total": 10
             }
         },
         "15.02 Compute all mnemonics for a phone number": {
@@ -1988,6 +2524,10 @@ problem_mapping = {
                 "total": 102
             },
             "Python: phone_number_mnemonic.py": {
+                "passed": 0,
+                "total": 102
+            },
+            "C#: PhoneNumberMnemonic.cs": {
                 "passed": 0,
                 "total": 102
             }
@@ -2004,6 +2544,10 @@ problem_mapping = {
             "Python: n_queens.py": {
                 "passed": 0,
                 "total": 10
+            },
+            "C#: NQueens.cs": {
+                "passed": 0,
+                "total": 10
             }
         },
         "15.04 Generate permutations": {
@@ -2016,6 +2560,10 @@ problem_mapping = {
                 "total": 8
             },
             "Python: permutations.py": {
+                "passed": 0,
+                "total": 8
+            },
+            "C#: Permutations.cs": {
                 "passed": 0,
                 "total": 8
             }
@@ -2032,6 +2580,10 @@ problem_mapping = {
             "Python: power_set.py": {
                 "passed": 0,
                 "total": 15
+            },
+            "C#: PowerSet.cs": {
+                "passed": 0,
+                "total": 15
             }
         },
         "15.06 Generate all subsets of size k": {
@@ -2044,6 +2596,10 @@ problem_mapping = {
                 "total": 120
             },
             "Python: combinations.py": {
+                "passed": 0,
+                "total": 120
+            },
+            "C#: Combinations.cs": {
                 "passed": 0,
                 "total": 120
             }
@@ -2060,6 +2616,10 @@ problem_mapping = {
             "Python: enumerate_balanced_parentheses.py": {
                 "passed": 0,
                 "total": 11
+            },
+            "C#: EnumerateBalancedParentheses.cs": {
+                "passed": 0,
+                "total": 11
             }
         },
         "15.08 Generate palindromic decompositions": {
@@ -2072,6 +2632,10 @@ problem_mapping = {
                 "total": 522
             },
             "Python: enumerate_palindromic_decompositions.py": {
+                "passed": 0,
+                "total": 522
+            },
+            "C#: EnumeratePalindromicDecompositions.cs": {
                 "passed": 0,
                 "total": 522
             }
@@ -2088,6 +2652,10 @@ problem_mapping = {
             "Python: enumerate_trees.py": {
                 "passed": 0,
                 "total": 10
+            },
+            "C#: EnumerateTrees.cs": {
+                "passed": 0,
+                "total": 10
             }
         },
         "15.10 Implement a Sudoku solver": {
@@ -2102,6 +2670,10 @@ problem_mapping = {
             "Python: sudoku_solve.py": {
                 "passed": 0,
                 "total": 400
+            },
+            "C#: SudokuSolve.cs": {
+                "passed": 0,
+                "total": 400
             }
         },
         "15.11 Compute a Gray code": {
@@ -2114,6 +2686,10 @@ problem_mapping = {
                 "total": 10
             },
             "Python: gray_code.py": {
+                "passed": 0,
+                "total": 10
+            },
+            "C#: GrayCode.cs": {
                 "passed": 0,
                 "total": 10
             }
@@ -2144,6 +2720,10 @@ problem_mapping = {
             "Python: max_sum_subarray.py": {
                 "passed": 0,
                 "total": 1001
+            },
+            "C#: Fibonacci.cs": {
+                "passed": 0,
+                "total": 46
             }
         },
         "16.01 Count the number of score combinations": {
@@ -2156,6 +2736,10 @@ problem_mapping = {
                 "total": 1003
             },
             "Python: number_of_score_combinations.py": {
+                "passed": 0,
+                "total": 1003
+            },
+            "C#: NumberOfScoreCombinations.cs": {
                 "passed": 0,
                 "total": 1003
             }
@@ -2172,6 +2756,10 @@ problem_mapping = {
             "Python: levenshtein_distance.py": {
                 "passed": 0,
                 "total": 100
+            },
+            "C#: LevenshteinDistance.cs": {
+                "passed": 0,
+                "total": 100
             }
         },
         "16.03 Count the number of ways to traverse a 2D array": {
@@ -2184,6 +2772,10 @@ problem_mapping = {
                 "total": 1775
             },
             "Python: number_of_traversals_matrix.py": {
+                "passed": 0,
+                "total": 1775
+            },
+            "C#: NumberOfTraversalsMatrix.cs": {
                 "passed": 0,
                 "total": 1775
             }
@@ -2200,6 +2792,10 @@ problem_mapping = {
             "Python: binomial_coefficients.py": {
                 "passed": 0,
                 "total": 5906
+            },
+            "C#: BinomialCoefficients.cs": {
+                "passed": 0,
+                "total": 5906
             }
         },
         "16.05 Search for a sequence in a 2D array": {
@@ -2212,6 +2808,10 @@ problem_mapping = {
                 "total": 186
             },
             "Python: is_string_in_matrix.py": {
+                "passed": 0,
+                "total": 186
+            },
+            "C#: IsStringInMatrix.cs": {
                 "passed": 0,
                 "total": 186
             }
@@ -2228,6 +2828,10 @@ problem_mapping = {
             "Python: knapsack.py": {
                 "passed": 0,
                 "total": 100
+            },
+            "C#: Knapsack.cs": {
+                "passed": 0,
+                "total": 100
             }
         },
         "16.07 Building a search index for domains": {
@@ -2240,6 +2844,10 @@ problem_mapping = {
                 "total": 41
             },
             "Python: is_string_decomposable_into_words.py": {
+                "passed": 0,
+                "total": 41
+            },
+            "C#: IsStringDecomposableIntoWords.cs": {
                 "passed": 0,
                 "total": 41
             }
@@ -2256,6 +2864,10 @@ problem_mapping = {
             "Python: minimum_weight_path_in_a_triangle.py": {
                 "passed": 0,
                 "total": 101
+            },
+            "C#: MinimumWeightPathInATriangle.cs": {
+                "passed": 0,
+                "total": 101
             }
         },
         "16.09 Pick up coins for maximum gain": {
@@ -2268,6 +2880,10 @@ problem_mapping = {
                 "total": 162
             },
             "Python: picking_up_coins.py": {
+                "passed": 0,
+                "total": 162
+            },
+            "C#: PickingUpCoins.cs": {
                 "passed": 0,
                 "total": 162
             }
@@ -2284,6 +2900,10 @@ problem_mapping = {
             "Python: number_of_traversals_staircase.py": {
                 "passed": 0,
                 "total": 546
+            },
+            "C#: NumberOfTraversalsStaircase.cs": {
+                "passed": 0,
+                "total": 546
             }
         },
         "16.11 The pretty printing problem": {
@@ -2298,6 +2918,10 @@ problem_mapping = {
             "Python: pretty_printing.py": {
                 "passed": 0,
                 "total": 102
+            },
+            "C#: PrettyPrinting.cs": {
+                "passed": 0,
+                "total": 102
             }
         },
         "16.12 Find the longest nondecreasing subsequence": {
@@ -2310,6 +2934,10 @@ problem_mapping = {
                 "total": 200
             },
             "Python: longest_nondecreasing_subsequence.py": {
+                "passed": 0,
+                "total": 200
+            },
+            "C#: LongestNondecreasingSubsequence.cs": {
                 "passed": 0,
                 "total": 200
             }
@@ -2328,6 +2956,10 @@ problem_mapping = {
             "Python: making_change.py": {
                 "passed": 0,
                 "total": 49999
+            },
+            "C#: MakingChange.cs": {
+                "passed": 0,
+                "total": 49999
             }
         },
         "17.01 Compute an optimum assignment of tasks": {
@@ -2342,6 +2974,10 @@ problem_mapping = {
             "Python: task_pairing.py": {
                 "passed": 0,
                 "total": 500
+            },
+            "C#: TaskPairing.cs": {
+                "passed": 0,
+                "total": 500
             }
         },
         "17.02 Schedule to minimize waiting time": {
@@ -2354,6 +2990,10 @@ problem_mapping = {
                 "total": 501
             },
             "Python: minimum_waiting_time.py": {
+                "passed": 0,
+                "total": 501
+            },
+            "C#: MinimumWaitingTime.cs": {
                 "passed": 0,
                 "total": 501
             }
@@ -2382,6 +3022,10 @@ problem_mapping = {
             "Python: two_sum.py": {
                 "passed": 0,
                 "total": 1005
+            },
+            "C#: MinimumPointsCoveringIntervals.cs": {
+                "passed": 0,
+                "total": 103
             }
         },
         "17.04 The 3-sum problem": {
@@ -2394,6 +3038,10 @@ problem_mapping = {
                 "total": 1008
             },
             "Python: three_sum.py": {
+                "passed": 0,
+                "total": 1008
+            },
+            "C#: ThreeSum.cs": {
                 "passed": 0,
                 "total": 1008
             }
@@ -2410,6 +3058,10 @@ problem_mapping = {
             "Python: majority_element.py": {
                 "passed": 0,
                 "total": 201
+            },
+            "C#: MajorityElement.cs": {
+                "passed": 0,
+                "total": 201
             }
         },
         "17.06 The gasup problem": {
@@ -2422,6 +3074,10 @@ problem_mapping = {
                 "total": 202
             },
             "Python: refueling_schedule.py": {
+                "passed": 0,
+                "total": 202
+            },
+            "C#: RefuelingSchedule.cs": {
                 "passed": 0,
                 "total": 202
             }
@@ -2438,6 +3094,10 @@ problem_mapping = {
             "Python: max_trapped_water.py": {
                 "passed": 0,
                 "total": 204
+            },
+            "C#: MaxTrappedWater.cs": {
+                "passed": 0,
+                "total": 204
             }
         },
         "17.08 Compute the largest rectangle under the skyline": {
@@ -2450,6 +3110,10 @@ problem_mapping = {
                 "total": 1004
             },
             "Python: largest_rectangle_under_skyline.py": {
+                "passed": 0,
+                "total": 1004
+            },
+            "C#: LargestRectangleUnderSkyline.cs": {
                 "passed": 0,
                 "total": 1004
             }
@@ -2466,6 +3130,10 @@ problem_mapping = {
                 "total": 101
             },
             "Python: search_maze.py": {
+                "passed": 0,
+                "total": 101
+            },
+            "C#: SearchMaze.cs": {
                 "passed": 0,
                 "total": 101
             }
@@ -2496,6 +3164,10 @@ problem_mapping = {
             "Python: matrix_enclosed_regions.py": {
                 "passed": 0,
                 "total": 51
+            },
+            "C#: MatrixEnclosedRegions.cs": {
+                "passed": 0,
+                "total": 51
             }
         },
         "18.04 Deadlock detection": {
@@ -2508,6 +3180,10 @@ problem_mapping = {
                 "total": 71
             },
             "Python: deadlock_detection.py": {
+                "passed": 0,
+                "total": 71
+            },
+            "C#: DeadlockDetection.cs": {
                 "passed": 0,
                 "total": 71
             }
@@ -2524,6 +3200,10 @@ problem_mapping = {
             "Python: graph_clone.py": {
                 "passed": 0,
                 "total": 91
+            },
+            "C#: GraphClone.cs": {
+                "passed": 0,
+                "total": 91
             }
         },
         "18.06 Making wired connections": {
@@ -2536,6 +3216,10 @@ problem_mapping = {
                 "total": 85
             },
             "Python: is_circuit_wirable.py": {
+                "passed": 0,
+                "total": 85
+            },
+            "C#: IsCircuitWirable.cs": {
                 "passed": 0,
                 "total": 85
             }
@@ -2552,6 +3236,10 @@ problem_mapping = {
             "Python: string_transformability.py": {
                 "passed": 0,
                 "total": 48
+            },
+            "C#: StringTransformability.cs": {
+                "passed": 0,
+                "total": 48
             }
         },
         "18.08 Team photo day---2": {
@@ -2564,6 +3252,10 @@ problem_mapping = {
                 "total": 69
             },
             "Python: max_teams_in_photograph.py": {
+                "passed": 0,
+                "total": 69
+            },
+            "C#: MaxTeamsInPhotograph.cs": {
                 "passed": 0,
                 "total": 69
             }
@@ -2582,6 +3274,10 @@ problem_mapping = {
             "Python: gcd.py": {
                 "passed": 0,
                 "total": 10034
+            },
+            "C#: Gcd.cs": {
+                "passed": 0,
+                "total": 10034
             }
         },
         "24.02 Find the first missing positive entry": {
@@ -2594,6 +3290,10 @@ problem_mapping = {
                 "total": 1001
             },
             "Python: first_missing_positive_entry.py": {
+                "passed": 0,
+                "total": 1001
+            },
+            "C#: FirstMissingPositiveEntry.cs": {
                 "passed": 0,
                 "total": 1001
             }
@@ -2610,6 +3310,10 @@ problem_mapping = {
             "Python: buy_and_sell_stock_k_times.py": {
                 "passed": 0,
                 "total": 201
+            },
+            "C#: BuyAndSellStockKTimes.cs": {
+                "passed": 0,
+                "total": 201
             }
         },
         "24.04 Compute the maximum product of all entries but one": {
@@ -2622,6 +3326,10 @@ problem_mapping = {
                 "total": 35
             },
             "Python: max_product_all_but_one.py": {
+                "passed": 0,
+                "total": 35
+            },
+            "C#: MaxProductAllButOne.cs": {
                 "passed": 0,
                 "total": 35
             }
@@ -2638,6 +3346,10 @@ problem_mapping = {
             "Python: longest_increasing_subarray.py": {
                 "passed": 0,
                 "total": 100
+            },
+            "C#: LongestIncreasingSubarray.cs": {
+                "passed": 0,
+                "total": 100
             }
         },
         "24.06 Rotate an array": {
@@ -2650,6 +3362,10 @@ problem_mapping = {
                 "total": 101
             },
             "Python: rotate_array.py": {
+                "passed": 0,
+                "total": 101
+            },
+            "C#: RotateArray.cs": {
                 "passed": 0,
                 "total": 101
             }
@@ -2666,6 +3382,10 @@ problem_mapping = {
             "Python: rook_attack.py": {
                 "passed": 0,
                 "total": 201
+            },
+            "C#: RookAttack.cs": {
+                "passed": 0,
+                "total": 201
             }
         },
         "24.08 Justify text": {
@@ -2678,6 +3398,10 @@ problem_mapping = {
                 "total": 30
             },
             "Python: left_right_justify_text.py": {
+                "passed": 0,
+                "total": 30
+            },
+            "C#: LeftRightJustifyText.cs": {
                 "passed": 0,
                 "total": 30
             }
@@ -2694,6 +3418,10 @@ problem_mapping = {
             "Python: zip_list.py": {
                 "passed": 0,
                 "total": 51
+            },
+            "C#: ZipList.cs": {
+                "passed": 0,
+                "total": 51
             }
         },
         "24.10 Copy a postings list": {
@@ -2708,6 +3436,10 @@ problem_mapping = {
             "Python: copy_posting_list.py": {
                 "passed": 0,
                 "total": 34
+            },
+            "C#: CopyPostingList.cs": {
+                "passed": 0,
+                "total": 32
             }
         },
         "24.11 Compute the longest substring with matching parens": {
@@ -2720,6 +3452,10 @@ problem_mapping = {
                 "total": 342
             },
             "Python: longest_substring_with_matching_parentheses.py": {
+                "passed": 0,
+                "total": 342
+            },
+            "C#: LongestSubstringWithMatchingParentheses.cs": {
                 "passed": 0,
                 "total": 342
             }
@@ -2736,6 +3472,10 @@ problem_mapping = {
             "Python: max_of_sliding_window.py": {
                 "passed": 0,
                 "total": 149
+            },
+            "C#: MaxOfSlidingWindow.cs": {
+                "passed": 0,
+                "total": 149
             }
         },
         "24.13 Compute fair bonuses": {
@@ -2748,6 +3488,10 @@ problem_mapping = {
                 "total": 106
             },
             "Python: bonus.py": {
+                "passed": 0,
+                "total": 106
+            },
+            "C#: Bonus.cs": {
                 "passed": 0,
                 "total": 106
             }
@@ -2764,6 +3508,10 @@ problem_mapping = {
             "Python: search_unknown_length_array.py": {
                 "passed": 0,
                 "total": 206
+            },
+            "C#: SearchUnknownLengthArray.cs": {
+                "passed": 0,
+                "total": 206
             }
         },
         "24.15 Search in two sorted arrays": {
@@ -2776,6 +3524,10 @@ problem_mapping = {
                 "total": 201
             },
             "Python: kth_largest_element_in_two_sorted_arrays.py": {
+                "passed": 0,
+                "total": 201
+            },
+            "C#: KthLargestElementInTwoSortedArrays.cs": {
                 "passed": 0,
                 "total": 201
             }
@@ -2792,6 +3544,10 @@ problem_mapping = {
             "Python: kth_largest_element_in_long_array.py": {
                 "passed": 0,
                 "total": 503
+            },
+            "C#: KthLargestElementInLongArray.cs": {
+                "passed": 0,
+                "total": 503
             }
         },
         "24.17 Find an element that appears only once": {
@@ -2804,6 +3560,10 @@ problem_mapping = {
                 "total": 102
             },
             "Python: element_appearing_once.py": {
+                "passed": 0,
+                "total": 102
+            },
+            "C#: ElementAppearingOnce.cs": {
                 "passed": 0,
                 "total": 102
             }
@@ -2820,6 +3580,10 @@ problem_mapping = {
             "Python: line_through_most_points.py": {
                 "passed": 0,
                 "total": 282
+            },
+            "C#: LineThroughMostPoints.cs": {
+                "passed": 0,
+                "total": 282
             }
         },
         "24.19 Convert a sorted doubly linked list into a BST": {
@@ -2832,6 +3596,10 @@ problem_mapping = {
                 "total": 100
             },
             "Python: sorted_list_to_bst.py": {
+                "passed": 0,
+                "total": 100
+            },
+            "C#: SortedListToBst.cs": {
                 "passed": 0,
                 "total": 100
             }
@@ -2848,6 +3616,10 @@ problem_mapping = {
             "Python: bst_to_sorted_list.py": {
                 "passed": 0,
                 "total": 950
+            },
+            "C#: BstToSortedList.cs": {
+                "passed": 0,
+                "total": 950
             }
         },
         "24.21 Merge two BSTs": {
@@ -2860,6 +3632,10 @@ problem_mapping = {
                 "total": 474
             },
             "Python: bst_merge.py": {
+                "passed": 0,
+                "total": 474
+            },
+            "C#: BstMerge.cs": {
                 "passed": 0,
                 "total": 474
             }
@@ -2876,6 +3652,10 @@ problem_mapping = {
             "Python: regular_expression.py": {
                 "passed": 0,
                 "total": 1596
+            },
+            "C#: RegularExpression.cs": {
+                "passed": 0,
+                "total": 1596
             }
         },
         "24.23 Synthesize an expression": {
@@ -2888,6 +3668,10 @@ problem_mapping = {
                 "total": 101
             },
             "Python: insert_operators_in_string.py": {
+                "passed": 0,
+                "total": 101
+            },
+            "C#: InsertOperatorsInString.cs": {
                 "passed": 0,
                 "total": 101
             }
@@ -2904,6 +3688,10 @@ problem_mapping = {
             "Python: count_inversions.py": {
                 "passed": 0,
                 "total": 1001
+            },
+            "C#: CountInversions.cs": {
+                "passed": 0,
+                "total": 1001
             }
         },
         "24.25 Draw the skyline": {
@@ -2916,6 +3704,10 @@ problem_mapping = {
                 "total": 30
             },
             "Python: drawing_skyline.py": {
+                "passed": 0,
+                "total": 30
+            },
+            "C#: DrawingSkyline.cs": {
                 "passed": 0,
                 "total": 30
             }
@@ -2932,6 +3724,10 @@ problem_mapping = {
             "Python: defective_jugs.py": {
                 "passed": 0,
                 "total": 200
+            },
+            "C#: DefectiveJugs.cs": {
+                "passed": 0,
+                "total": 200
             }
         },
         "24.27 Compute the maximum subarray sum in a circular array": {
@@ -2946,6 +3742,10 @@ problem_mapping = {
             "Python: maximum_subarray_in_circular_array.py": {
                 "passed": 0,
                 "total": 501
+            },
+            "C#: MaximumSubarrayInCircularArray.cs": {
+                "passed": 0,
+                "total": 501
             }
         },
         "24.28 Determine the critical height": {
@@ -2958,6 +3758,10 @@ problem_mapping = {
                 "total": 3829
             },
             "Python: max_safe_height.py": {
+                "passed": 0,
+                "total": 3829
+            },
+            "C#: MaxSafeHeight.cs": {
                 "passed": 0,
                 "total": 3829
             }
@@ -2986,6 +3790,10 @@ problem_mapping = {
             "Python: max_submatrix.py": {
                 "passed": 0,
                 "total": 100
+            },
+            "C#: MaxSquareSubmatrix.cs": {
+                "passed": 0,
+                "total": 101
             }
         },
         "24.30 Implement Huffman coding": {
@@ -2998,6 +3806,10 @@ problem_mapping = {
                 "total": 11
             },
             "Python: huffman_coding.py": {
+                "passed": 0,
+                "total": 11
+            },
+            "C#: HuffmanCoding.cs": {
                 "passed": 0,
                 "total": 11
             }
@@ -3014,6 +3826,10 @@ problem_mapping = {
             "Python: max_water_trappable.py": {
                 "passed": 0,
                 "total": 1001
+            },
+            "C#: MaxWaterTrappable.cs": {
+                "passed": 0,
+                "total": 1001
             }
         },
         "24.32 The heavy hitter problem": {
@@ -3026,6 +3842,10 @@ problem_mapping = {
                 "total": 265
             },
             "Python: search_frequent_items.py": {
+                "passed": 0,
+                "total": 265
+            },
+            "C#: SearchFrequentItems.cs": {
                 "passed": 0,
                 "total": 265
             }
@@ -3042,6 +3862,10 @@ problem_mapping = {
             "Python: longest_subarray_with_sum_constraint.py": {
                 "passed": 0,
                 "total": 102
+            },
+            "C#: LongestSubarrayWithSumConstraint.cs": {
+                "passed": 0,
+                "total": 102
             }
         },
         "24.34 Road network": {
@@ -3054,6 +3878,10 @@ problem_mapping = {
                 "total": 50
             },
             "Python: road_network.py": {
+                "passed": 0,
+                "total": 50
+            },
+            "C#: RoadNetwork.cs": {
                 "passed": 0,
                 "total": 50
             }
@@ -3070,6 +3898,72 @@ problem_mapping = {
             "Python: arbitrage.py": {
                 "passed": 0,
                 "total": 201
+            },
+            "C#: Arbitrage.cs": {
+                "passed": 0,
+                "total": 201
+            }
+        }
+    },
+    "C# Additional Problems": {
+        "Additional: find missing and duplicate": {
+            "C#: FindMissingAndDuplicate.cs": {
+                "passed": 0,
+                "total": 50
+            }
+        },
+        "Additional: insert in list": {
+            "C#: InsertInList.cs": {
+                "passed": 0,
+                "total": 504
+            }
+        },
+        "Additional: max submatrix": {
+            "C#: MaxSubmatrix.cs": {
+                "passed": 0,
+                "total": 100
+            }
+        },
+        "Additional: max sum subarray": {
+            "C#: MaxSumSubarray.cs": {
+                "passed": 0,
+                "total": 1001
+            }
+        },
+        "Additional: painting": {
+            "C#: Painting.cs": {
+                "passed": 0,
+                "total": 50
+            }
+        },
+        "Additional: reverse list": {
+            "C#: ReverseList.cs": {
+                "passed": 0,
+                "total": 507
+            }
+        },
+        "Additional: search in list": {
+            "C#: SearchInList.cs": {
+                "passed": 0,
+                "total": 505
+            }
+        },
+        "Additional: tree postorder": {
+            "C#: TreePostorder.cs": {
+                "passed": 0,
+                "total": 3852
+            }
+        },
+        "Additional: tree preorder": {
+            "C#: TreePreorder.cs": {
+                "passed": 0,
+                "total": 3852
+            }
+        },
+        "Additional: two sum": {
+            "C#: TwoSum.cs": {
+                "passed": 0,
+                "total": 1005
             }
         }
     }

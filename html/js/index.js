@@ -5,7 +5,7 @@
 // [ ] links
 const EPI_DATA = translateProblemMappings(problem_mapping);
 
-const ALL_LANGUAGES = ['cpp', 'java', 'python'];
+const ALL_LANGUAGES = ['cpp', 'java', 'python', 'csharp'];
 
 Vue.component('donut', {
     props: ['x', 'size', 'width', 'rad', 'lineWidth', 'font'],
@@ -94,7 +94,7 @@ Vue.component('problem-card', {
           <div class="problem-card-wide mdl-card mdl-shadow--2dp" @mouseover="hover = true" @mouseleave="hover = false">
             <div class="problem-card-content mdl-card__supporting-text">
               <span class="problem-name">{{problem.name}}</span>
-              <problem-plot v-for="l in this.$root.langs" 
+              <problem-plot v-for="l in this.$root.langs" v-if="problem[l]" :key="l"
                             :data=problem[l] :extended="hover" :lang=l>
               </problem-plot>
             </div>
@@ -195,8 +195,8 @@ const epi = new Vue({
             chapters: EPI_DATA,
             selected_chapter: null,
             all_langs: ALL_LANGUAGES,
-            langs_enabled: {"cpp": true, "java": true, "python": true},
-            langs_displayname: {"cpp": "C++", "java": "Java", "python": "Python"}
+            langs_enabled: {"cpp": true, "java": true, "python": true, "csharp": true},
+            langs_displayname: {"cpp": "C++", "java": "Java", "python": "Python", "csharp": "C#"}
         }
     },
     computed: {

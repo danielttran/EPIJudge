@@ -22,6 +22,7 @@ class Language(enum.Enum):
     CPP = 'cpp'
     JAVA = 'java'
     PYTHON = 'python'
+    CSHARP = 'csharp'
 
 
 def strip_ascii_codes(s: str) -> str:
@@ -93,6 +94,15 @@ def get_exec_args(file: Path, lang: Language, test_data_dir: Path) -> List[str]:
             str(file.parent.parent),
             file.with_suffix('').name
         ]  # Ad-hoc version
+    if lang == Language.CSHARP:
+        project_dir = file.parent.parent if file.parent.name == 'Problems' else file.parent
+        project_name = 'EpiJudge.csproj' if file.parent.name == 'Problems' else 'EpiJudge.Solutions.csproj'
+        problem_name = re.sub(r'([A-Z])([A-Z][a-z])', r'\1_\2', file.stem)
+        problem_name = re.sub(r'([a-z0-9])([A-Z])', r'\1_\2', problem_name).lower()
+        return [
+            'dotnet', 'run', '--project', str(project_dir / project_name),
+            '--configuration', 'Release', '--', problem_name
+        ] + common_args
     raise NotImplementedError()
 
 
@@ -126,6 +136,9 @@ def scan_lang_folder(src_dir: Path, build_dir: Optional[Path],
             f for f in (src_dir / 'epi').glob("*.java") if
             (find_str_in_file(f, '@EpiTest') and f.name not in EXCLUDED_FILES)
         ])
+    elif lang == Language.CSHARP:
+        problem_dir = src_dir / 'Problems' if mode == TestMode.STUB else src_dir
+        return sorted(f for f in problem_dir.glob('*.cs') if f.name != 'Program.cs')
 
     raise NotImplementedError()
 
@@ -137,7 +150,8 @@ def scan_lang_folder(src_dir: Path, build_dir: Optional[Path],
               help='Build directory (for C++)',
               type=click.Path(file_okay=False, exists=True))
 @click.argument('lang',
-                type=click.Choice([Language.CPP.value, Language.JAVA.value, Language.PYTHON.value]))
+                type=click.Choice([Language.CPP.value, Language.JAVA.value,
+                                   Language.PYTHON.value, Language.CSHARP.value]))
 @click.argument('mode', type=click.Choice([TestMode.STUB.value, TestMode.SOLUTION.value]))
 @click.argument('src_dir', type=click.Path(file_okay=False, exists=True))
 def check_judge(build_dir: str, src_dir: str, lang: str, mode: str) -> None:

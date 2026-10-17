@@ -2,12 +2,22 @@
 
 ## Beta 5
 
+## React + C# practice website
+
+Open **`EPIJudge.Web.slnx`** in Visual Studio 2026, select **EpiJudge.Web** as the
+startup project with the **Website** profile, and press **F5**. This local
+version supports Count Bits, Two Sum, and Group Anagrams with a React editor,
+real C# compilation, and results from the existing TSV tests.
+
+See the [website guide](EpiJudge.Web/README.md) for setup, usage, and the scope
+of local code execution.
+
 ## Introduction
 
 EPI Judge is meant to serve as a companion to our book Elements of Programming Interviews. Specifically, this project consists of the following:
 
 - **Stub programs** for each problem in our book in Python, Java, and C++, plus
-  the first C# judge problems
+  C# stubs for the shared test-data catalog
 - **Test-cases** that cover common corner-case and performance bugs
 - A **framework** for running these tests on your implementation on your machine
 
@@ -77,18 +87,38 @@ The default Makefile target is the last edited file.
 
 ### C#
 
-C# support requires the .NET 8 SDK. The initial judge includes `count_bits` and
-`anagrams`, with matching editable stubs and reference solutions. Run a stub
-from the repository root with:
+C# support requires the .NET 8 SDK. The C# judge includes an editable stub for
+each of the 218 problem files in `test_data`. C# reference solutions are
+currently provided for `count_bits` and `anagrams`.
+
+Open `EPIJudge.slnx` in Visual Studio 2026 to work with the C# judge, test
+framework, and reference solutions together. The progress dashboard lists all
+218 C# problems and links to each stub. To start a new implementation, open
+`epi_judge_csharp/Problems/<ProblemName>.cs` and replace its TODO body. Run a
+stub from the repository root with:
 
     $ dotnet run --project epi_judge_csharp -- count_bits
 
-Run its reference solution with:
+Run a C# reference solution where one exists with:
 
     $ dotnet run --project epi_judge_csharp_solutions -- count_bits
 
 The C# runner reads the same files in `test_data` as the other languages. Pass
 an alternate corpus with `--test-data-dir <path>` after the problem name.
+The C# type mapper supports the catalog's arrays, sets, tuples, binary trees,
+and linked lists. Stubs that correspond to void-valued TSV tests act as test
+wrappers and should throw when an expected behavior is not met. The shared
+judge command can also run all C# stubs or the available reference solutions:
+
+    $ python epijudge_ci_test_tool.py csharp stub .
+    $ python epijudge_ci_test_tool.py csharp solution .
+
+After adding test data, regenerate the C# catalog and any missing stubs with:
+
+    $ python epi_judge_csharp/generate_problem_catalog.py
+    $ python epi_judge_csharp/generate_problem_stubs.py
+
+For step-by-step C# usage, see the [C# Judge README](epi_judge_csharp/README.md).
 
 
 ## FAQ
