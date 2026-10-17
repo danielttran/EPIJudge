@@ -21,26 +21,26 @@ public sealed class ProblemCatalog
 
     private static readonly Problem[] Curated =
     [
-        new("count_bits", "Count Bits", "Primitive types", "Easy",
+        new("count_bits", "Count Bits", "Primitive types", "Unrated",
             "Count the number of bits set to 1 in the 32-bit binary representation of an integer. Return the count. Treat negative inputs as their 32-bit two's-complement representation.",
             ["Input is a signed 32-bit integer.", "Return an integer from 0 to 32.", "Try solving it without converting the input to a string."],
             "int CountBits(int x)",
             "public class Solution\n{\n    public int CountBits(int x)\n    {\n        // Write your solution here.\n        return 0;\n    }\n}\n",
-            [new("x = 0", "0", "No bits are set."), new("x = 7", "3", "7 is 111 in binary."), new("x = -1", "32", "All 32 bits are set.")],
+            [new("x = 0", "0", "Illustrative example: no bits are set."), new("x = 7", "3", "Illustrative example: 7 is 111 in binary."), new("x = -1", "32", "Illustrative C# example: all 32 bits are set.")],
             "new Solution().CountBits(arguments[0].GetInt32())", TestCount: 10001),
-        new("two_sum", "Two Sum", "Arrays", "Easy",
+        new("two_sum", "Two Sum", "Arrays", "Unrated",
             "Given an array sorted in nondecreasing order and a target, determine whether two values in the array add up to the target. Return true if they do. This EPI variant allows you to use the same array element twice.",
             ["The input array is sorted.", "You may reuse the same element, so [3] with target 6 returns true.", "Return a boolean rather than the indices."],
             "bool HasTwoSum(List<int> values, int target)",
             "public class Solution\n{\n    public bool HasTwoSum(List<int> values, int target)\n    {\n        // Write your solution here.\n        return false;\n    }\n}\n",
-            [new("values = [-2, 1, 2, 4, 7, 11], target = 6", "true", "2 + 4 = 6."), new("values = [3], target = 6", "true", "The same element may be used twice.")],
+            [new("values = [-2, 1, 2, 4, 7, 11], target = 6", "true", "Illustrative example: 2 + 4 = 6."), new("values = [3], target = 6", "true", "Illustrative example: the same element may be used twice.")],
             "new Solution().HasTwoSum(arguments[0].Deserialize<List<int>>()!, arguments[1].GetInt32())", ArgumentCount: 2, TestCount: 1005),
-        new("anagrams", "Group Anagrams", "Hash tables", "Medium",
+        new("anagrams", "Group Anagrams", "Hash tables", "Unrated",
             "Group dictionary entries that contain exactly the same characters with the same frequencies. Return only groups containing at least two entries. Character case and spaces are significant. The order of groups and words does not matter.",
             ["Each input entry is a string.", "Omit groups that contain just one entry.", "Keep each input entry intact in the output."],
             "List<List<string>> FindAnagrams(List<string> dictionary)",
             "public class Solution\n{\n    public List<List<string>> FindAnagrams(List<string> dictionary)\n    {\n        // Write your solution here.\n        return [];\n    }\n}\n",
-            [new("dictionary = [\"eat\", \"tea\", \"tan\", \"ate\"]", "[[\"eat\", \"tea\", \"ate\"]]", "Only the three entries with the same characters form a group.")],
+            [new("dictionary = [\"eat\", \"tea\", \"tan\", \"ate\"]", "[[\"eat\", \"tea\", \"ate\"]]", "Illustrative example: only the three entries with the same characters form a group.")],
             "new Solution().FindAnagrams(arguments[0].Deserialize<List<string>>()!)", true, TestCount: 9)
     ];
 

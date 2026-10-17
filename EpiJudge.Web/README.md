@@ -70,9 +70,16 @@ that file after editing descriptions or signatures in
 python scripts/generate_web_catalog.py
 ```
 
-Each exercise includes a statement, C# starter, and examples drawn from its TSV.
-New exercises are marked **Unrated**, rather than assigning invented difficulty
-levels. These are practice stubs for you to solve, not prefilled solutions.
+Each exercise includes a statement, C# starter, and examples. Statements are
+source-backed paraphrases for the displayed C# API, not verbatim book text.
+Examples use TSV cases or explicitly labeled, verified illustrations. Custom
+examples show the actual C# return value or required mutation rather than the
+test wrapper's internal boolean, height, or interval length.
+
+All exercises are marked **Unrated** because the repository does not supply
+difficulty ratings. These are practice stubs for you to solve, not prefilled solutions.
+The wording review and source references are recorded in
+`docs/problem-wording-review.md` and `docs/problem-wording-sources.json`.
 
 ### C# contracts and grading
 
@@ -164,6 +171,18 @@ lists, caches, randomness, and floating-point results:
 
 The intentional infinite-loop check takes 60 seconds. Use `-SkipTimeout` for a
 faster repeat after already checking process termination.
+
+For the wording, source hashes, translated examples, and sensitive conventions:
+
+```powershell
+python scripts/generate_web_catalog.py
+python scripts/verify_problem_wording.py
+```
+
+The wording checks compare selected sensitive conventions against the original
+Python reference functions and corpus. The source manifest covers all 218 IDs
+and normalizes line endings when hashing files. Regenerate it after changing
+statements or the referenced sources.
 
 ## Execution scope
 

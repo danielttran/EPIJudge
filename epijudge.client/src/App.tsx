@@ -344,7 +344,7 @@ export default function App() {
                 )}
               </div>
               <p className="description-copy">{problem.description}</p>
-              <div className="signature-label">YOUR METHOD</div>
+              <div className="signature-label">YOUR C# API</div>
               <code className="method-signature">{problem.signature}</code>
               <h2>Examples</h2>
               {problem.examples.map((example, index) => (
@@ -356,7 +356,7 @@ export default function App() {
                       <code>{example.input}</code>
                     </div>
                     <div>
-                      <span>Output</span>
+                      <span>Expected result</span>
                       <code>{example.output}</code>
                     </div>
                   </div>
