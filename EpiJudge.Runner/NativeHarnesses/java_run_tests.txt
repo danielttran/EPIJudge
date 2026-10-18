@@ -1,0 +1,37 @@
+  private static TestResult runTests(GenericTestHandler handler, TestConfig config) {
+    List<List<String>> rows = TestUtils.splitTsvFile(Paths.get(config.testDataDir, config.testDataFile));
+    handler.parseSignature(rows.get(0));
+    try (PrintWriter report = new PrintWriter("native-results.jsonl", "UTF-8")) {
+      for (int i = 1; i < rows.size(); ++i) {
+        List<String> fields = rows.get(i);
+        fields = fields.subList(0, fields.size() - 1);
+        JsonObject row = new JsonObject().add("number", i).add("status", "Accepted")
+            .add("actual", Json.NULL).add("error", Json.NULL);
+        long start = System.nanoTime();
+        try {
+          handler.runTest(0, config.metricsOverride, fields);
+        } catch (TestFailure e) {
+          row.set("status", "Wrong answer");
+          row.set("error", e.getDescription());
+          for (TestFailure.Property p : e.getProperties()) {
+            if (p.rawName() == TestFailure.PropertyName.RESULT) {
+              String value = String.valueOf(p.value());
+              row.set("actual", value.substring(0, Math.min(2000, value.length())));
+            }
+          }
+        } catch (TimeoutException e) {
+          row.set("status", "Time limit exceeded");
+        } catch (Throwable e) {
+          row.set("status", "Runtime error");
+          String message = e.getClass().getSimpleName() + ": " + e.getMessage();
+          row.set("error", message.substring(0, Math.min(2000, message.length())));
+        }
+        row.add("elapsedMs", (System.nanoTime() - start) / 1000000.0);
+        report.println(row.toString());
+        report.flush();
+      }
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+    return TestResult.PASSED;
+  }

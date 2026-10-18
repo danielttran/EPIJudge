@@ -15,7 +15,7 @@ void Check(string label, Action action)
     try { action(); Console.WriteLine("PASS " + label); }
     catch (Exception ex) { var error = label + ": " + ex.GetBaseException().Message; failures.Add(error); Console.WriteLine("FAIL " + error); }
 }
-var protocols = JsonDocument.Parse(File.ReadAllText(Path.Combine(root,"epi_judge_csharp/problem_catalog.json")))
+var protocols = JsonDocument.Parse(File.ReadAllText(Path.Combine(root,"scripts/problem_catalog.json")))
     .RootElement.GetProperty("problems").EnumerateArray().ToDictionary(x => x.GetProperty("id").GetString()!);
 Check("Catalog completeness", () => {
     Require(catalog.Problems.Count == 218 && catalog.Problems.Select(p => p.Id).Distinct().Count() == 218, "Expected 218 unique IDs.");

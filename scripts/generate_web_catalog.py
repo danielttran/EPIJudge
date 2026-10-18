@@ -4,17 +4,14 @@ Run with Python from any directory. No third party modules are required.
 Descriptions describe the C# API (some Python wrapper records are C# tuples).
 """
 import ast
-import importlib.util
 import hashlib
 import json
 import re
 from pathlib import Path
 from web_problem_examples import custom_example
+import web_catalog_types as stubs
 
 ROOT = Path(__file__).resolve().parents[1]
-spec = importlib.util.spec_from_file_location('stubs', ROOT / 'epi_judge_csharp/generate_problem_stubs.py')
-stubs = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(stubs)
 
 NOTES = """
 a_b_sqrt2|Return the first k distinct numbers of the form a + b√2 in increasing order, where a and b are nonnegative integers. Include zero.
@@ -285,6 +282,83 @@ CUSTOM['queue_from_stacks'] = [('void','Initialize',''),('void','Enqueue','int v
 CUSTOM['queue_with_max'] = CUSTOM['queue_from_stacks'] + [('int','Max','')]
 CUSTOM['stack_with_max'] = [('void','Initialize',''),('void','Push','int value'),('int','Pop',''),('bool','Empty',''),('int','Max','')]
 
+def to_camel(s):
+    parts = s.split('_')
+    return parts[0] + ''.join(p[:1].upper() + p[1:] for p in parts[1:])
+
+def js_doc_type(grammar):
+    if grammar in ("int", "long", "float"): return "number"
+    if grammar == "bool": return "boolean"
+    if grammar == "string": return "string"
+    if grammar == "void": return "void"
+    inner = stubs.inner_type(grammar, "array")
+    if inner is not None: return f"{js_doc_type(inner)}[]"
+    inner = stubs.inner_type(grammar, "set")
+    if inner is not None: return f"Set<{js_doc_type(inner)}>"
+    inner = stubs.inner_type(grammar, "binary_tree")
+    if inner is not None: return "BinaryTreeNode"
+    inner = stubs.inner_type(grammar, "linked_list")
+    if inner is not None: return "ListNode"
+    inner = stubs.inner_type(grammar, "tuple")
+    if inner is not None:
+        parts = stubs.split_types(inner)
+        return f"[{', '.join(js_doc_type(p) for p in parts)}]"
+    return "any"
+
+def js_default_val(grammar):
+    if grammar in ("int", "long", "float"): return "0"
+    if grammar == "bool": return "false"
+    if grammar == "string": return "''"
+    if grammar.startswith("array("): return "[]"
+    if grammar.startswith("set("): return "new Set()"
+    if grammar.startswith("binary_tree(") or grammar.startswith("linked_list("): return "null"
+    if grammar.startswith("tuple("):
+        parts = stubs.split_types(grammar[6:-1])
+        return f"[{', '.join(js_default_val(p) for p in parts)}]"
+    return "null"
+
+JS_CUSTOM = {
+    'absent_value_array': ('function findMissingElement(stream)', '/**\n * @param {number[]} stream\n * @return {number}\n */\nfunction findMissingElement(stream) {\n    // Return any non-negative integer absent from stream.\n    return 0;\n}\n\nmodule.exports = { findMissingElement };\n', 'findMissingElement'),
+    'alternating_array': ('function rearrange(values)', '/**\n * @param {number[]} values\n * @return {void}\n */\nfunction rearrange(values) {\n    // Rearrange values in place so A[0] <= A[1] >= A[2] <= A[3]...\n}\n\nmodule.exports = { rearrange };\n', 'rearrange'),
+    'even_odd_array': ('function evenOdd(values)', '/**\n * @param {number[]} values\n * @return {void}\n */\nfunction evenOdd(values) {\n    // Reorder values in place so even numbers precede odd numbers.\n}\n\nmodule.exports = { evenOdd };\n', 'evenOdd'),
+    'dutch_national_flag': ('function dutchFlagPartition(pivotIndex, values)', '/**\n * @param {number} pivotIndex\n * @param {number[]} values\n * @return {void}\n */\nfunction dutchFlagPartition(pivotIndex, values) {\n    // Partition values in place around the pivot element.\n}\n\nmodule.exports = { dutchFlagPartition };\n', 'dutchFlagPartition'),
+    'group_equal_entries': ('function groupByAge(people)', '/**\n * @param {[number, string][]} people\n * @return {void}\n */\nfunction groupByAge(people) {\n    // Reorder people in place so entries with the same age are contiguous.\n}\n\nmodule.exports = { groupByAge };\n', 'groupByAge'),
+    'gray_code': ('function grayCode(numBits)', '/**\n * @param {number} numBits\n * @return {number[]}\n */\nfunction grayCode(numBits) {\n    return [];\n}\n\nmodule.exports = { grayCode };\n', 'grayCode'),
+    'hanoi': ('function computeTowerHanoi(numRings)', '/**\n * @param {number} numRings\n * @return {number[][]}\n */\nfunction computeTowerHanoi(numRings) {\n    return [];\n}\n\nmodule.exports = { computeTowerHanoi };\n', 'computeTowerHanoi'),
+    'is_array_dominated': ('function validPlacementExists(team0, team1)', '/**\n * @param {number[]} team0\n * @param {number[]} team1\n * @return {boolean}\n */\nfunction validPlacementExists(team0, team1) {\n    return false;\n}\n\nmodule.exports = { validPlacementExists };\n', 'validPlacementExists'),
+    'is_string_decomposable_into_words': ('function decomposeIntoDictionaryWords(domain, dictionary)', '/**\n * @param {string} domain\n * @param {Set<string>} dictionary\n * @return {string[]}\n */\nfunction decomposeIntoDictionaryWords(domain, dictionary) {\n    return [];\n}\n\nmodule.exports = { decomposeIntoDictionaryWords };\n', 'decomposeIntoDictionaryWords'),
+    'search_entry_equal_to_index': ('function searchEntryEqualToItsIndex(values)', '/**\n * @param {number[]} values\n * @return {number}\n */\nfunction searchEntryEqualToItsIndex(values) {\n    return -1;\n}\n\nmodule.exports = { searchEntryEqualToItsIndex };\n', 'searchEntryEqualToItsIndex'),
+    'refueling_schedule': ('function findAmpleCity(gallons, distances)', '/**\n * @param {number[]} gallons\n * @param {number[]} distances\n * @return {number}\n */\nfunction findAmpleCity(gallons, distances) {\n    return 0;\n}\n\nmodule.exports = { findAmpleCity };\n', 'findAmpleCity'),
+    'run_length_compression': ('encoding(text), decoding(encoded)', '/**\n * @param {string} text\n * @return {string}\n */\nfunction encoding(text) {\n    return "";\n}\n\n/**\n * @param {string} encoded\n * @return {string}\n */\nfunction decoding(encoded) {\n    return "";\n}\n\nmodule.exports = { encoding, decoding };\n', 'run_length_compression'),
+    'string_integer_interconversion': ('intToString(value), stringToInt(text)', '/**\n * @param {number} value\n * @return {string}\n */\nfunction intToString(value) {\n    return "";\n}\n\n/**\n * @param {string} text\n * @return {number}\n */\nfunction stringToInt(text) {\n    return 0;\n}\n\nmodule.exports = { intToString, stringToInt };\n', 'string_integer_interconversion'),
+    'pivot_list': ('function listPivoting(head, x)', '/**\n * @param {ListNode} head\n * @param {number} x\n * @return {ListNode}\n */\nfunction listPivoting(head, x) {\n    return null;\n}\n\nmodule.exports = { listPivoting };\n', 'listPivoting'),
+    'is_list_cyclic': ('function hasCycle(head)', '/**\n * @param {ListNode} head\n * @return {ListNode}\n */\nfunction hasCycle(head) {\n    return null;\n}\n\nmodule.exports = { hasCycle };\n', 'hasCycle'),
+    'do_lists_overlap': ('function overlappingLists(first, second)', '/**\n * @param {ListNode} first\n * @param {ListNode} second\n * @return {ListNode}\n */\nfunction overlappingLists(first, second) {\n    return null;\n}\n\nmodule.exports = { overlappingLists };\n', 'overlappingLists'),
+    'do_terminated_lists_overlap': ('function overlappingLists(first, second)', '/**\n * @param {ListNode} first\n * @param {ListNode} second\n * @return {ListNode}\n */\nfunction overlappingLists(first, second) {\n    return null;\n}\n\nmodule.exports = { overlappingLists };\n', 'overlappingLists'),
+    'copy_posting_list': ('function copyPostingsList(head)', '/**\n * @param {PostingListNode} head\n * @return {PostingListNode}\n */\nfunction copyPostingsList(head) {\n    return null;\n}\n\nmodule.exports = { copyPostingsList };\n', 'copyPostingsList'),
+    'graph_clone': ('function cloneGraph(graph)', '/**\n * @param {GraphVertex} graph\n * @return {GraphVertex}\n */\nfunction cloneGraph(graph) {\n    return null;\n}\n\nmodule.exports = { cloneGraph };\n', 'cloneGraph'),
+    'sorted_list_to_bst': ('function buildBstFromSortedDoublyList(head, count)', '/**\n * @param {BinaryTreeNode} head\n * @param {number} count\n * @return {BinaryTreeNode}\n */\nfunction buildBstFromSortedDoublyList(head, count) {\n    return null;\n}\n\nmodule.exports = { buildBstFromSortedDoublyList };\n', 'buildBstFromSortedDoublyList'),
+    'sudoku_solve': ('function solveSudoku(board)', '/**\n * @param {number[][]} board\n * @return {void}\n */\nfunction solveSudoku(board) {\n}\n\nmodule.exports = { solveSudoku };\n', 'solveSudoku'),
+    'nonuniform_random_number': ('function nonuniformRandomNumberGeneration(values, probabilities)', '/**\n * @param {number[]} values\n * @param {number[]} probabilities\n * @return {number}\n */\nfunction nonuniformRandomNumberGeneration(values, probabilities) {\n    return 0;\n}\n\nmodule.exports = { nonuniformRandomNumberGeneration };\n', 'nonuniformRandomNumberGeneration'),
+    'uniform_random_number': ('function uniformRandom(lower, upper)', '/**\n * @param {number} lower\n * @param {number} upper\n * @return {number}\n */\nfunction uniformRandom(lower, upper) {\n    return lower;\n}\n\nmodule.exports = { uniformRandom };\n', 'uniformRandom'),
+    'random_permutation': ('function computeRandomPermutation(n)', '/**\n * @param {number} n\n * @return {number[]}\n */\nfunction computeRandomPermutation(n) {\n    return [];\n}\n\nmodule.exports = { computeRandomPermutation };\n', 'computeRandomPermutation'),
+    'random_subset': ('function randomSubset(n, k)', '/**\n * @param {number} n\n * @param {number} k\n * @return {number[]}\n */\nfunction randomSubset(n, k) {\n    return [];\n}\n\nmodule.exports = { randomSubset };\n', 'randomSubset'),
+    'offline_sampling': ('function randomSampling(k, values)', '/**\n * @param {number} k\n * @param {number[]} values\n * @return {void}\n */\nfunction randomSampling(k, values) {\n}\n\nmodule.exports = { randomSampling };\n', 'randomSampling'),
+    'online_sampling': ('function onlineRandomSample(stream, k)', '/**\n * @param {number[]} stream\n * @param {number} k\n * @return {number[]}\n */\nfunction onlineRandomSample(stream, k) {\n    return [];\n}\n\nmodule.exports = { onlineRandomSample };\n', 'onlineRandomSample'),
+    'bst_from_sorted_array': ('function buildMinHeightBstFromSortedArray(values)', '/**\n * @param {number[]} values\n * @return {BinaryTreeNode}\n */\nfunction buildMinHeightBstFromSortedArray(values) {\n    return null;\n}\n\nmodule.exports = { buildMinHeightBstFromSortedArray };\n', 'buildMinHeightBstFromSortedArray'),
+    'bst_to_sorted_list': ('function bstToDoublyLinkedList(tree)', '/**\n * @param {BinaryTreeNode} tree\n * @return {BinaryTreeNode}\n */\nfunction bstToDoublyLinkedList(tree) {\n    return null;\n}\n\nmodule.exports = { bstToDoublyLinkedList };\n', 'bstToDoublyLinkedList'),
+    'tree_right_sibling': ('function constructRightSibling(tree)', '/**\n * @param {BinaryTreeNode} tree\n * @return {void}\n */\nfunction constructRightSibling(tree) {\n}\n\nmodule.exports = { constructRightSibling };\n', 'constructRightSibling'),
+    'search_maze': ('function searchMaze(maze, start, end)', '/**\n * @param {number[][]} maze\n * @param {[number, number]} start\n * @param {[number, number]} end\n * @return {[number, number][]}\n */\nfunction searchMaze(maze, start, end) {\n    return [];\n}\n\nmodule.exports = { searchMaze };\n', 'searchMaze'),
+    'smallest_subarray_covering_set': ('function findSmallestSubarrayCoveringSet(paragraph, keywords)', '/**\n * @param {string[]} paragraph\n * @param {Set<string>} keywords\n * @return {[number, number]}\n */\nfunction findSmallestSubarrayCoveringSet(paragraph, keywords) {\n    return [0, 0];\n}\n\nmodule.exports = { findSmallestSubarrayCoveringSet };\n', 'findSmallestSubarrayCoveringSet'),
+    'smallest_subarray_covering_all_values': ('function findSmallestSequentiallyCoveringSubset(paragraph, keywords)', '/**\n * @param {string[]} paragraph\n * @param {string[]} keywords\n * @return {[number, number]}\n */\nfunction findSmallestSequentiallyCoveringSubset(paragraph, keywords) {\n    return [0, 0];\n}\n\nmodule.exports = { findSmallestSequentiallyCoveringSubset };\n', 'findSmallestSequentiallyCoveringSubset'),
+    'circular_queue': ('class CircularQueue', 'class CircularQueue {\n    constructor(capacity) {\n        // Initialize queue.\n    }\n    enqueue(value) {\n    }\n    dequeue() {\n        return 0;\n    }\n    size() {\n        return 0;\n    }\n}\n\nmodule.exports = { CircularQueue };\n', 'CircularQueue'),
+    'lru_cache': ('class LruCache', 'class LruCache {\n    constructor(capacity) {\n        // Initialize cache.\n    }\n    lookup(isbn) {\n        return -1;\n    }\n    insert(isbn, price) {\n    }\n    erase(isbn) {\n        return false;\n    }\n}\n\nmodule.exports = { LruCache };\n', 'LruCache'),
+    'stack_with_max': ('class StackWithMax', 'class StackWithMax {\n    constructor() {\n        // Initialize stack.\n    }\n    push(value) {\n    }\n    pop() {\n        return 0;\n    }\n    empty() {\n        return true;\n    }\n    max() {\n        return 0;\n    }\n}\n\nmodule.exports = { StackWithMax };\n', 'StackWithMax'),
+    'queue_from_stacks': ('class QueueFromStacks', 'class QueueFromStacks {\n    constructor() {\n        // Initialize queue.\n    }\n    enqueue(value) {\n    }\n    dequeue() {\n        return 0;\n    }\n}\n\nmodule.exports = { QueueFromStacks };\n', 'QueueFromStacks'),
+    'queue_with_max': ('class QueueWithMax', 'class QueueWithMax {\n    constructor() {\n        // Initialize queue.\n    }\n    enqueue(value) {\n    }\n    dequeue() {\n        return 0;\n    }\n    max() {\n        return 0;\n    }\n}\n\nmodule.exports = { QueueWithMax };\n', 'QueueWithMax'),
+    'adding_credits': ('class AddingCredits', 'class AddingCredits {\n    constructor() {\n        // Initialize database.\n    }\n    insert(clientId, credit) {\n    }\n    remove(clientId) {\n        return false;\n    }\n    lookup(clientId) {\n        return -1;\n    }\n    addAll(amount) {\n    }\n    max() {\n        return "";\n    }\n}\n\nmodule.exports = { AddingCredits };\n', 'AddingCredits')
+}
+
 def pascal(s):
     return ''.join(w[:1].upper()+w[1:] for w in s.split('_'))
 
@@ -293,14 +367,14 @@ def source_hash(path):
     return hashlib.sha256(path.read_text(encoding='utf-8').encode('utf-8')).hexdigest()
 
 def main():
-    mapping = json.loads((ROOT/'problem_mapping.js').read_text().split('=',1)[1].strip().rstrip(';'))
+    mapping = json.loads((ROOT/'scripts/problem-mapping.json').read_text())
     locations = {}
     for chapter, rows in mapping.items():
         for title, langs in rows.items():
             for entry in langs:
                 if entry.startswith(('Python: ', 'C++: ')):
                     locations.setdefault(Path(entry.split(': ',1)[1]).stem, (chapter, title))
-    problems = json.loads((ROOT/'epi_judge_csharp/problem_catalog.json').read_text())['problems']
+    problems = json.loads((ROOT/'scripts/problem_catalog.json').read_text())['problems']
     sources = {}
     for file in sorted((ROOT/'epi_judge_python').glob('*.py')):
         text = file.read_text()
@@ -345,6 +419,38 @@ def main():
         for typ,name,args in methods:
             code += f'    public {typ} {name}({args})\n    {{\n        // Write your solution here.\n        throw new NotImplementedException();\n    }}\n\n'
         code = code.rstrip()+'\n}\n'
+        if id in JS_CUSTOM:
+            js_sig, js_code, js_inv = JS_CUSTOM[id]
+        else:
+            fn_name = to_camel(re.sub(r'_(wrapper|test)$', '', target or id))
+            js_args = [x.strip('@') for x in argnames]
+            js_sig = f'function {fn_name}(' + ', '.join(js_args) + ')'
+            js_inv = fn_name
+            param_docs = '\n'.join(f' * @param {{{js_doc_type(t)}}} {name}' for t, name in zip(p['argumentTypes'], js_args))
+            ret_doc = f' * @return {{{js_doc_type(p["resultType"])}}}'
+            def_ret = js_default_val(p['resultType'])
+            ret_stmt = f'    return {def_ret};\n' if p['resultType'] != 'void' else ''
+            doc_str = f'/**\n{param_docs}\n{ret_doc}\n */\n' if param_docs else f'/**\n{ret_doc}\n */\n'
+            js_code = f'{doc_str}function {fn_name}(' + ', '.join(js_args) + f') {{\n    // Write your solution here.\n{ret_stmt}}}\n\nmodule.exports = {{ {fn_name} }};\n'
+        source_text = source.read_text(encoding='utf-8')
+        source_tree = ast.parse(source_text)
+        main_line = None
+        for n in source_tree.body:
+            if isinstance(n, ast.If) and isinstance(n.test, ast.Compare):
+                main_line = n.lineno
+                break
+        py_lines = source_text.splitlines()[:main_line-1] if main_line else source_text.splitlines()
+        py_starter = '\n'.join(py_lines).strip() + '\n'
+
+        py_defs = []
+        for n in source_tree.body:
+            if isinstance(n, ast.FunctionDef) and not n.name.endswith('_wrapper'):
+                py_defs.append(source_text.splitlines()[n.lineno-1].strip().rstrip(':'))
+            elif isinstance(n, ast.ClassDef):
+                py_defs.append('class ' + n.name)
+        py_sig = '\n'.join(py_defs) if py_defs else (py_lines[-1].strip() if py_lines else '')
+        py_target = target or id
+
         topic,title = locations.get(source.stem, locations.get(id, ('Additional problems', id.replace('_',' ').title())))
         disambiguate = {
             'even_odd_array': 'Even/Odd Partition', 'fibonacci': 'Fibonacci', 'max_sum_subarray': 'Maximum Subarray Sum',
@@ -378,7 +484,7 @@ def main():
         comparison = 'ordered'
         if id in {'combinations','power_set'}: comparison='nested'
         elif id in {'enumerate_balanced_parentheses','enumerate_palindromic_decompositions','enumerate_trees','k_closest_stars','k_largest_in_heap','k_largest_values_in_bst','n_queens','permutations','phone_number_mnemonic','remove_duplicates','search_frequent_items','valid_ip_addresses'}: comparison='unordered'
-        result.append(dict(Id=id,Title=title,Topic=topic,Difficulty='Unrated',Description=notes[id],Constraints=constraints,Signature='\n'.join(f'{t} {n}({a})' for t,n,a in methods),StarterCode=code,Examples=examples,Invocation=invocation,ArgumentCount=len(p['argumentTypes']),TestCount=len(lines),Comparison=comparison,ResultType=p['resultType']))
+        result.append(dict(Id=id,Title=title,Topic=topic,Difficulty='Unrated',Description=notes[id],Constraints=constraints,Signature='\n'.join(f'{t} {n}({a})' for t,n,a in methods),StarterCode=code,Examples=examples,Invocation=invocation,ArgumentCount=len(p['argumentTypes']),TestCount=len(lines),Comparison=comparison,ResultType=p['resultType'],JsSignature=js_sig,JsStarterCode=js_code,JsInvocation=js_inv,ArgumentTypes=p['argumentTypes'],PySignature=py_sig,PyStarterCode=py_starter,PyInvocation=py_target,PySourceFile=str(source.name)))
     result.sort(key=lambda p: (p['Topic'],p['Title'],p['Id']))
     (ROOT/'EpiJudge.Runner/catalog.json').write_text(json.dumps(result,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
     (ROOT/'docs/problem-wording-sources.json').write_text(json.dumps(dict(basis='Repository reference implementations and TSV corpus; statements are C# paraphrases, not book quotations.',hashConvention='SHA-256 of UTF-8 text with LF line endings.',

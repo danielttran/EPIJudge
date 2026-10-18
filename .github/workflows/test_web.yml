@@ -1,0 +1,40 @@
+name: Website checks
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  website:
+    runs-on: windows-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: epijudge.client/package-lock.json
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - name: Set up fresh clone and build all projects
+        shell: pwsh
+        run: ./scripts/Setup.ps1
+      - name: Audit all catalog entries, adapters, and C# starters
+        run: dotnet run --project scripts/WebAudit/WebAudit.csproj
+      - name: Verify problem descriptions and provenance
+        run: python scripts/verify_problem_wording.py
+      - name: Verify C# HTTP submissions
+        shell: pwsh
+        run: ./scripts/Verify-Web.ps1 -StartServer
+      - name: Verify C++ and Java HTTP submissions
+        shell: pwsh
+        run: ./scripts/Verify-NativeWeb.ps1 -StartServer

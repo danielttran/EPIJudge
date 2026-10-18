@@ -1,7 +1,8 @@
 # EPI Practice website
 
-A local React + TypeScript website with an ASP.NET Core API and a C# execution
-worker. All **218 problems included in this repository** are available through
+A local React + TypeScript website with an ASP.NET Core API and a submission
+worker supporting **C#, JavaScript, Python, C++17, and Java 21**.
+All **218 problems included in this repository** are available through
 the website, using their real TSV test files. This is the repository's catalog,
 not every exercise or variant in every edition of the EPI book.
 
@@ -17,26 +18,55 @@ The website opens directly at **`http://localhost:5178`** and stays at that URL.
 ASP.NET Core starts Vite in the background and waits until React is ready before
 it begins listening. Frontend requests and hot-reload WebSockets pass through
 the C# server, so there is no SPA proxy landing page or browser redirect.
+Readiness includes the transformed application and editor modules, not just a
+static marker. React and all five Monaco language imports are pre-bundled and
+warmed before opening the workspace, including on an empty dependency cache.
+If the initial scripts fail to load, the HTML fallback shows a reload action
+after 20 seconds instead of remaining indefinitely on "Loading workspace…".
 
-The main `EPIJudge.slnx` also includes the website. Both solutions provide a
-shared **Website** launch configuration that starts the server; the server
-starts the client automatically. Do not start a second Vite instance on the
-same port.
+`EPIJudge.Web.slnx` is the single application solution. Its shared **Website**
+launch configuration starts the server; the server starts the client
+automatically. Each server owns a Vite process on a private port with its own
+dependency cache, so an overlapping restart cannot shut down the new frontend.
 
 Prerequisites are the **.NET 10 SDK**, **Node.js 24 LTS with npm**, and Visual
 Studio's **ASP.NET and web development** workload. Node/npm build and develop
-the frontend; all application APIs and judge execution use C#.
+the frontend. The API and worker are C#; submissions run in their selected language.
 
-On Daniel's machine, Node is installed at
-`C:\Dev\Tools\node-v24.19.0-win-x64` and added to the user PATH. The development
-server launcher also checks the current user PATH, so it can find Node even if
-Visual Studio was open when Node was installed. It launches Vite with Node
-directly rather than relying on npm being available in Visual Studio's PATH.
+Use the repository's `scripts/Setup.ps1` on a fresh clone to check all five
+language toolchains, restore dependencies, and build; then run `Start.ps1`.
+The launcher finds Node from PATH, including the current Windows user PATH.
+It launches Vite directly with Node. Portable tool locations can be specified
+in the ignored `.epijudge-tools.json` file using the supplied example.
 
 The first project build restores .NET and npm dependencies. Subsequent builds
 reuse them. The npm dependency versions are recorded in `package-lock.json`.
 
 ## Use the website
+
+Click **Problem list** in the top toolbar to open the searchable problem drawer.
+Selecting a problem closes it; the close button, Escape, and backdrop also close
+it. Previous/next buttons step through the catalog without opening the drawer.
+The description and editor share the main workspace. Choose a language above
+the editor, and use **Run** or **Submit** in the top toolbar. Test results start
+collapsed, open when code runs, and can be expanded or collapsed from their header.
+
+Choose a language in the editor. C++ and Java provide the original EPI source
+scaffold: implement its TODO methods while retaining the wrappers and main
+function (and Java's `package epi` and class name). Their native signatures can
+differ from the C# contracts described below. Accepted native cases display
+validator confirmation; failing cases show the actual value when available.
+
+For C++ install Visual Studio's C++ build tools on Windows, or put `g++` or
+`clang++` on PATH. Windows builds automatically locate `vcvars64.bat`.
+`EPI_CPP_COMPILER` can select a GCC/Clang executable; `EPI_VCVARS64` can select
+the Visual Studio setup script. C++ submissions use C++17 and have a 60-second
+compile limit and a separate 60-second execution limit.
+
+Java requires JDK 21 or newer. Set `EPI_JAVA_HOME` or `JAVA_HOME` if it is not
+on PATH. Java compiles for Java 21 with a 45-second compile limit and a separate
+60-second execution limit. Python requires Python 3.10+ on PATH or
+`EPI_PYTHON_PATH`. No machine-specific installation paths are built into the runner.
 
 1. Select a problem from the library. Search by title or ID, or filter by topic.
 2. Implement the method inside the supplied `Solution` class. Keep its name,
@@ -59,6 +89,7 @@ restores the current problem's starter code after confirmation.
 | `epijudge.client` | React, TypeScript, Vite, and the Monaco C# editor |
 | `EpiJudge.Web` | ASP.NET Core endpoints, frontend startup, and same-origin development proxy |
 | `EpiJudge.Runner` | Problem descriptions, TSV adapter, compilation, execution, comparison |
+| `EpiJudge.TestFramework` | Shared C# nodes, serialization, and grading support |
 | `test_data` | Existing EPI test corpus |
 
 `ProblemCatalog.cs` keeps the original three APIs compatible with saved code.
@@ -106,8 +137,8 @@ The wording review and source references are recorded in
   `1e-9`. Order is ignored only for exercises that permit it; sequence order
   remains significant inside permutations and word decompositions.
 
-The web adapters are separate from the older console scaffold. A console stub
-alone does not register a working web exercise.
+The website's C# starters and invocation contracts are maintained in
+`EpiJudge.Runner`. Adding a source file alone does not register a web exercise.
 
 ## Terminal workflow
 
@@ -185,6 +216,18 @@ and normalizes line endings when hashing files. Regenerate it after changing
 statements or the referenced sources.
 
 ## Execution scope
+
+Native website regression checks, including full corpus submissions for
+representative custom wrappers, compiler/runtime errors, hidden-case redaction,
+and process timeouts, are available with:
+
+```powershell
+./scripts/Verify-NativeWeb.ps1 -StartServer
+```
+
+This uses focused fixtures in `scripts/NativeWebFixtures`, not the full native
+solution trees. It checks representative grading paths, not all 218 solutions
+in both native languages.
 
 This release is for **your own trusted code on your local machine**. It binds
 to localhost, rejects remote API callers, and enables compilation only in the

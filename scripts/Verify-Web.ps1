@@ -1,23 +1,47 @@
-param([string]$BaseUrl = 'http://localhost:5178', [switch]$CheckFrontend, [switch]$SkipTimeout)
+param([string]$BaseUrl = 'http://localhost:5178', [switch]$CheckFrontend, [switch]$SkipTimeout, [switch]$StartServer)
 $ErrorActionPreference = 'Stop'
+$testServer = $null
+try {
+if ($StartServer) {
+    $root = Split-Path $PSScriptRoot -Parent
+    $env:ASPNETCORE_ENVIRONMENT = 'Development'
+    $env:Frontend__Enabled = if ($CheckFrontend) { 'true' } else { 'false' }
+    $logRoot = Join-Path $root '.epi-runs'
+    New-Item -ItemType Directory -Force -Path $logRoot | Out-Null
+    $dll = Join-Path $root 'EpiJudge.Web\bin\Debug\net10.0\EpiJudge.Web.dll'
+    $content = Join-Path $root 'EpiJudge.Web'
+    $testServer = Start-Process dotnet -ArgumentList @("`"$dll`"", '--urls', $BaseUrl, '--contentRoot', "`"$content`"") -WorkingDirectory $root -WindowStyle Hidden -PassThru -RedirectStandardOutput "$logRoot\web-audit.log" -RedirectStandardError "$logRoot\web-audit.err"
+    $ready = $false
+    for ($i = 0; $i -lt 60; $i++) {
+        try { $null = Invoke-RestMethod "$BaseUrl/api/health" -NoProxy -TimeoutSec 1; $ready = $true; break } catch { Start-Sleep -Milliseconds 500 }
+    }
+    if (!$ready) { throw 'Temporary website audit server did not start.' }
+}
 
 if ($CheckFrontend) {
-    $homePage = Invoke-WebRequest "$BaseUrl/" -MaximumRedirection 0
+    $homePage = Invoke-WebRequest "$BaseUrl/" -MaximumRedirection 0 -NoProxy
     if ([int]$homePage.StatusCode -ne 200 -or $homePage.Headers.Location -or
         -not $homePage.Content.Contains('/src/main.tsx') -or $homePage.Content.Contains('Launching the SPA proxy')) {
         throw 'The website must serve React directly with HTTP 200 and no redirect.'
     }
-    $vite = Invoke-WebRequest "$BaseUrl/@vite/client"
+    $vite = Invoke-WebRequest "$BaseUrl/@vite/client" -NoProxy
     if ([int]$vite.StatusCode -ne 200 -or -not $vite.Content.Contains('/__vite_hmr')) {
         throw 'The frontend client and hot-reload path are not available through the website origin.'
     }
     Write-Output 'Direct website launch: HTTP 200, no redirect, same-origin hot reload'
+    foreach ($entry in @('/src/main.tsx', '/src/Editor.tsx')) {
+        $module = Invoke-WebRequest "$BaseUrl$entry" -NoProxy -TimeoutSec 20
+        if ([int]$module.StatusCode -ne 200 -or $module.Content -notmatch 'import ') {
+            throw "Frontend entry module did not finish transforming: $entry"
+        }
+    }
+    Write-Output 'Frontend startup: application and editor modules ready'
 }
 
-function Invoke-Judge([string]$Problem, [string]$Code, [string]$Mode = 'run') {
-    Invoke-RestMethod "$BaseUrl/api/submissions" -Method Post -ContentType 'application/json' `
+function Invoke-Judge([string]$Problem, [string]$Code, [string]$Mode = 'run', [string]$Language = 'csharp') {
+    Invoke-RestMethod "$BaseUrl/api/submissions" -Method Post -ContentType 'application/json' -NoProxy `
         -Headers @{ 'X-EpiJudge-Client' = 'local-editor' } `
-        -Body (@{ problemId = $Problem; code = $Code; mode = $Mode } | ConvertTo-Json) -TimeoutSec 90
+        -Body (@{ problemId = $Problem; code = $Code; mode = $Mode; language = $Language } | ConvertTo-Json) -TimeoutSec 90
 }
 function Assert-Status($Result, [string]$Expected, [string]$Label) {
     if ($Result.status -ne $Expected) { throw "$Label expected $Expected, got $($Result.status): $($Result.diagnostics)" }
@@ -72,14 +96,14 @@ foreach ($case in $hidden.cases) {
     if (-not $case.hidden -or $null -ne $case.input -or $null -ne $case.expected -or $null -ne $case.actual) { throw 'Hidden case contents were exposed.' }
 }
 try {
-    Invoke-RestMethod "$BaseUrl/api/submissions" -Method Post -ContentType 'application/json' `
+    Invoke-RestMethod "$BaseUrl/api/submissions" -Method Post -ContentType 'application/json' -NoProxy `
         -Body (@{ problemId = 'count_bits'; code = $countBits; mode = 'run' } | ConvertTo-Json) | Out-Null
     throw 'A request without the client header was accepted.'
 } catch [Microsoft.PowerShell.Commands.HttpResponseException] {
     if ([int]$_.Exception.Response.StatusCode -ne 403) { throw }
     Write-Output 'Cross-origin form protection: 403'
 }
-$catalog = Invoke-RestMethod "$BaseUrl/api/problems"
+$catalog = Invoke-RestMethod "$BaseUrl/api/problems" -NoProxy
 if ($catalog.Count -ne 218 -or @($catalog.id | Sort-Object -Unique).Count -ne 218) { throw 'Expected 218 unique web problems.' }
 foreach ($problem in $catalog) {
     if ($problem.testCount -le 0 -or -not $problem.starterCode -or -not $problem.description -or $problem.invocation) {
@@ -131,4 +155,27 @@ public class Solution {
 }
 '@
 Assert-Status (Invoke-Judge 'online_median' $medianSolution 'submit') 'Accepted' 'Floating-point full corpus'
+$countBitsJs = 'function countBits(x) { x >>>= 0; let count = 0; while (x) { count += x & 1; x >>>= 1; } return count; } module.exports = { countBits };'
+Assert-Status (Invoke-Judge 'count_bits' $countBitsJs 'run' 'javascript') 'Accepted' 'JavaScript smoke check'
+Assert-Status (Invoke-Judge 'count_bits' $countBitsJs 'submit' 'javascript') 'Accepted' 'JavaScript Count Bits full corpus'
+$countBitsPy = "def count_bits(x: int) -> int:`n    return (x & 0xffffffff).bit_count()`n"
+Assert-Status (Invoke-Judge 'count_bits' $countBitsPy 'run' 'python') 'Accepted' 'Python smoke check'
+Assert-Status (Invoke-Judge 'count_bits' $countBitsPy 'submit' 'python') 'Accepted' 'Python Count Bits full corpus'
+$reverseListPy = @'
+def reverse_list(head):
+    previous = None
+    while head:
+        next_node = head.next
+        head.next = previous
+        previous = head
+        head = next_node
+    return previous
+'@
+Assert-Status (Invoke-Judge 'reverse_list' $reverseListPy 'submit' 'python') 'Accepted' 'Python reverse-list full corpus'
 Write-Output 'Website runner checks passed.'
+} finally {
+    if ($testServer -and !$testServer.HasExited) {
+        try { Invoke-RestMethod "$BaseUrl/api/internal/shutdown" -Method Post -NoProxy -TimeoutSec 5 | Out-Null } catch { }
+        if (!$testServer.WaitForExit(10000)) { $testServer.Kill($true) }
+    }
+}

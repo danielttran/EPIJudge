@@ -1,4 +1,7 @@
 using System.Diagnostics;
+using System.Net;
+using System.Net.Sockets;
+using EpiJudge.Runner;
 
 namespace EpiJudge.Web;
 
@@ -10,20 +13,15 @@ internal sealed class FrontendDevelopmentServer(
     ILogger<FrontendDevelopmentServer> logger) : IHostedService, IDisposable
 {
     private Process? process;
+    private string? ownedCacheDirectory;
     private readonly Queue<string> recentOutput = new();
     private readonly object outputLock = new();
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        var port = configuration.GetValue("Frontend:Port", 5173);
+        var port = configuration.GetValue<int>("Frontend:Port");
         var address = $"http://127.0.0.1:{port}";
-        using var client = new HttpClient { Timeout = TimeSpan.FromSeconds(1) };
-        if (await IsReady(client, address, cancellationToken))
-        {
-            logger.LogInformation("Using the EPI React development server already running on port {Port}.", port);
-            return;
-        }
-
+        using var client = new HttpClient { Timeout = TimeSpan.FromSeconds(10) };
         var directory = Path.GetFullPath(Path.Combine(environment.ContentRootPath, "../epijudge.client"));
         var vite = Path.Combine(directory, "node_modules", "vite", "bin", "vite.js");
         if (!File.Exists(vite))
@@ -41,6 +39,11 @@ internal sealed class FrontendDevelopmentServer(
             info.ArgumentList.Add(argument);
         var publicUrl = (configuration["urls"] ?? "http://localhost:5178").Split(';')[0];
         info.Environment["EPI_WEB_PORT"] = new Uri(publicUrl).Port.ToString();
+        if (string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("EPI_VITE_CACHE_DIR")))
+        {
+            ownedCacheDirectory = Path.GetFullPath(Path.Combine(directory, "../.epi-runs", "vite-" + Guid.NewGuid().ToString("N")));
+            info.Environment["EPI_VITE_CACHE_DIR"] = ownedCacheDirectory;
+        }
         process = new Process { StartInfo = info };
         process.OutputDataReceived += CaptureOutput;
         process.ErrorDataReceived += CaptureOutput;
@@ -51,7 +54,7 @@ internal sealed class FrontendDevelopmentServer(
         try
         {
             var deadline = Stopwatch.StartNew();
-            while (deadline.Elapsed < TimeSpan.FromSeconds(30))
+            while (deadline.Elapsed < TimeSpan.FromSeconds(60))
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 if (process.HasExited)
@@ -63,31 +66,12 @@ internal sealed class FrontendDevelopmentServer(
                 }
                 await Task.Delay(200, cancellationToken);
             }
-            throw new TimeoutException($"React did not become ready within 30 seconds. {LastOutput()}");
+            throw new TimeoutException($"React modules did not become ready within 60 seconds. {LastOutput()}");
         }
         catch { StopProcess(); throw; }
     }
 
-    private string FindNode()
-    {
-        var configuredPath = configuration["Frontend:NodePath"];
-        if (!string.IsNullOrWhiteSpace(configuredPath))
-            return File.Exists(configuredPath) ? configuredPath : throw new FileNotFoundException("Frontend:NodePath does not point to node.exe.", configuredPath);
-
-        // Visual Studio can retain an old PATH after Node is installed. Read
-        // the current user PATH too, without requiring the IDE to restart.
-        var paths = Environment.GetEnvironmentVariable("PATH") ?? "";
-        if (OperatingSystem.IsWindows())
-            paths += ";" + Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.User)
-                + ";" + Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.Machine);
-        var filename = OperatingSystem.IsWindows() ? "node.exe" : "node";
-        foreach (var path in paths.Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries))
-        {
-            var candidate = Path.Combine(Environment.ExpandEnvironmentVariables(path.Trim().Trim('"')), filename);
-            if (File.Exists(candidate)) return candidate;
-        }
-        throw new FileNotFoundException("Node.js could not be found. Install Node.js 24 LTS or set Frontend:NodePath in appsettings.Development.json.");
-    }
+    private string FindNode() => NodeLocator.FindNode(configuration["Frontend:NodePath"]);
 
     private static async Task<bool> IsReady(HttpClient client, string address, CancellationToken cancellationToken)
     {
@@ -96,7 +80,14 @@ internal sealed class FrontendDevelopmentServer(
             // A marker distinguishes this application from an unrelated server
             // that happens to be using the same development port.
             var marker = await client.GetStringAsync(address + "/epi-client.json", cancellationToken);
-            return marker.Contains("\"epijudge-client\"", StringComparison.Ordinal);
+            if (!marker.Contains("\"epijudge-client\"", StringComparison.Ordinal)) return false;
+            // A static marker can respond while Vite is still optimizing JS.
+            // Wait for the actual app and eager editor modules, not just HTML.
+            var modules = await Task.WhenAll(
+                client.GetStringAsync(address + "/src/main.tsx", cancellationToken),
+                client.GetStringAsync(address + "/src/Editor.tsx", cancellationToken));
+            return modules[0].Contains("createRoot", StringComparison.Ordinal) &&
+                   modules[1].Contains("monaco.editor.create", StringComparison.Ordinal);
         }
         catch (HttpRequestException) { return false; }
         catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested) { return false; }
@@ -114,10 +105,27 @@ internal sealed class FrontendDevelopmentServer(
     }
 
     private string LastOutput() { lock (outputLock) return string.Join(Environment.NewLine, recentOutput); }
+    internal static int FindAvailablePort()
+    {
+        using var listener = new TcpListener(IPAddress.Loopback, 0);
+        listener.Start();
+        return ((IPEndPoint)listener.LocalEndpoint).Port;
+    }
     private void StopProcess()
     {
-        try { if (process is { HasExited: false }) process.Kill(entireProcessTree: true); }
+        try
+        {
+            if (process is { HasExited: false })
+            {
+                process.Kill(entireProcessTree: true);
+                process.WaitForExit(3000);
+            }
+            if (ownedCacheDirectory is not null && Directory.Exists(ownedCacheDirectory))
+                Directory.Delete(ownedCacheDirectory, recursive: true);
+        }
         catch (InvalidOperationException) { }
+        catch (IOException) { }
+        catch (UnauthorizedAccessException) { }
     }
     public Task StopAsync(CancellationToken cancellationToken) { StopProcess(); return Task.CompletedTask; }
     public void Dispose() { StopProcess(); process?.Dispose(); }

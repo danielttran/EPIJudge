@@ -1,9 +1,15 @@
-import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import CodeEditor from './Editor';
 import {
   Braces,
   Check,
   CheckCircle2,
   ChevronRight,
+  ChevronLeft,
+  ChevronDown,
+  ChevronUp,
+  PanelLeft,
+  X,
   Circle,
   Clock3,
   Code2,
@@ -18,7 +24,7 @@ import {
   Terminal,
   XCircle,
 } from 'lucide-react';
-const CodeEditor = lazy(() => import('./Editor'));
+import { ErrorBoundary } from './ErrorBoundary';
 
 type Problem = {
   id: string;
@@ -30,8 +36,100 @@ type Problem = {
   signature: string;
   testCount: number;
   starterCode: string;
+  jsSignature?: string;
+  jsStarterCode?: string;
+  pySignature?: string;
+  pyStarterCode?: string;
+  starters?: Record<
+    string,
+    { signature: string; starterCode: string; filename: string; runtime: string }
+  >;
   examples: { input: string; output: string; explanation: string }[];
 };
+
+type LanguageConfig = {
+  id: string;
+  shortLabel: string;
+  label: string;
+  runtime: string;
+  filename: string;
+  monacoLang: string;
+};
+
+const LANGUAGES: LanguageConfig[] = [
+  {
+    id: 'csharp',
+    shortLabel: 'C#',
+    label: 'C# (.NET 10)',
+    runtime: 'C# .NET 10',
+    filename: 'Solution.cs',
+    monacoLang: 'csharp',
+  },
+  {
+    id: 'javascript',
+    shortLabel: 'JS',
+    label: 'JavaScript (Node.js 24)',
+    runtime: 'JavaScript Node.js 24',
+    filename: 'solution.js',
+    monacoLang: 'javascript',
+  },
+  {
+    id: 'python',
+    shortLabel: 'PY',
+    label: 'Python (Python 3.14)',
+    runtime: 'Python 3.14',
+    filename: 'solution.py',
+    monacoLang: 'python',
+  },
+  {
+    id: 'cpp',
+    shortLabel: 'C++',
+    label: 'C++ (C++17)',
+    runtime: 'C++17',
+    filename: 'solution.cpp',
+    monacoLang: 'cpp',
+  },
+  {
+    id: 'java',
+    shortLabel: 'JAVA',
+    label: 'Java (JDK 21)',
+    runtime: 'Java 21',
+    filename: 'Solution.java',
+    monacoLang: 'java',
+  },
+];
+
+function getStarterCode(p: Problem, lang: string): string {
+  if (p.starters?.[lang]) return p.starters[lang].starterCode;
+  if (lang === 'python') {
+    return p.starters?.python?.starterCode || p.pyStarterCode || p.starterCode;
+  }
+  if (lang === 'javascript') {
+    return p.starters?.javascript?.starterCode || p.jsStarterCode || p.starterCode;
+  }
+  return p.starters?.csharp?.starterCode || p.starterCode;
+}
+
+function getSignature(p: Problem, lang: string): string {
+  if (p.starters?.[lang]) return p.starters[lang].signature;
+  if (lang === 'python') {
+    return p.starters?.python?.signature || p.pySignature || p.signature;
+  }
+  if (lang === 'javascript') {
+    return p.starters?.javascript?.signature || p.jsSignature || p.signature;
+  }
+  return p.starters?.csharp?.signature || p.signature;
+}
+
+function getStoredCode(p: Problem, lang: string): string {
+  const scoped = load<string | null>('epi:code:' + lang + ':' + p.id, null);
+  if (scoped !== null) return scoped;
+  if (lang === 'csharp') {
+    const legacy = load<string | null>('epi:code:' + p.id, null);
+    if (legacy !== null) return legacy;
+  }
+  return getStarterCode(p, lang);
+}
 type TestCase = {
   number: number;
   passed: boolean;
@@ -77,6 +175,15 @@ function save(key: string, value: unknown) {
 }
 
 export default function App() {
+  const [libraryOpen, setLibraryOpen] = useState(false);
+  const [resultsOpen, setResultsOpen] = useState(false);
+  const libraryDialog = useRef<HTMLDialogElement>(null);
+  const libraryTrigger = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    if (libraryOpen) libraryDialog.current?.showModal();
+    else libraryDialog.current?.close();
+  }, [libraryOpen]);
+  const [language, setLanguage] = useState<string>(() => load('epi:language', 'csharp'));
   const [problems, setProblems] = useState<Problem[]>([]);
   const [selected, setSelected] = useState(load('epi:selected', 'count_bits'));
   const [code, setCode] = useState('');
@@ -96,6 +203,8 @@ export default function App() {
   const currentAttemptRef = useRef<() => void>(() => {});
   const currentSubmitRef = useRef<() => void>(() => {});
   const solved = new Set(solvedIds);
+
+  const currentLang = LANGUAGES.find((l) => l.id === language) ?? LANGUAGES[0];
 
   useEffect(() => {
     const controller = new AbortController();
@@ -119,21 +228,27 @@ export default function App() {
 
   useEffect(() => {
     if (!problem) return;
-    setCode(load('epi:code:' + problem.id, problem.starterCode));
+    setCode(getStoredCode(problem, language));
     setResult(null);
     setError('');
     setActiveCase(0);
     save('epi:selected', problem.id);
-  }, [problem?.id]);
+  }, [problem?.id, language]);
+
+  const handleLanguageChange = (newLang: string) => {
+    setLanguage(newLang);
+    save('epi:language', newLang);
+  };
 
   const changeCode = (value: string) => {
     setCode(value);
-    if (problem) save('epi:code:' + problem.id, value);
+    if (problem) save(`epi:code:${language}:${problem.id}`, value);
   };
   const execute = async (mode: 'run' | 'submit') => {
     if (!problem || busyRef.current) return;
     busyRef.current = true;
     setBusy(true);
+    setResultsOpen(true);
     setActiveMode(mode);
     setError('');
     setResult(null);
@@ -143,7 +258,7 @@ export default function App() {
       const response = await fetch('/api/submissions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-EpiJudge-Client': 'local-editor' },
-        body: JSON.stringify({ problemId: problem.id, code, mode }),
+        body: JSON.stringify({ problemId: problem.id, code, mode, language }),
       });
       if (!response.ok) {
         const detail = await response.json().catch(() => ({}));
@@ -212,96 +327,180 @@ export default function App() {
           </span>
         </a>
         <span className="topbar-rule" />
-        <span className="workspace-label">C# WORKSPACE</span>
+        <button
+          ref={libraryTrigger}
+          className="library-toggle"
+          aria-label="Toggle problem list"
+          aria-expanded={libraryOpen}
+          aria-controls="problem-library"
+          onClick={() => setLibraryOpen(true)}
+        >
+          <PanelLeft size={18} /> <span>Problem list</span>
+        </button>
+        <div className="problem-stepping">
+          <button
+            className="icon-button"
+            aria-label="Previous problem"
+            disabled={busy || !problem || problems.indexOf(problem) === 0}
+            onClick={() =>
+              setSelected(problems[problems.findIndex((p) => p.id === selected) - 1].id)
+            }
+          >
+            <ChevronLeft size={18} />
+          </button>
+          <button
+            className="icon-button"
+            aria-label="Next problem"
+            disabled={busy || !problem || problems.indexOf(problem) === problems.length - 1}
+            onClick={() =>
+              setSelected(problems[problems.findIndex((p) => p.id === selected) + 1].id)
+            }
+          >
+            <ChevronRight size={18} />
+          </button>
+        </div>
+        <div className="topbar-actions">
+          <button
+            className="run-button"
+            disabled={busy || !problem || !code.trim()}
+            onClick={() => void execute('run')}
+          >
+            {busy && activeMode === 'run' ? (
+              <LoaderCircle className="spin" size={15} />
+            ) : (
+              <Play size={15} />
+            )}{' '}
+            Run <kbd>Ctrl ↵</kbd>
+          </button>
+          <button
+            className="submit-button"
+            disabled={busy || !problem || !code.trim()}
+            onClick={() => void execute('submit')}
+          >
+            {busy && activeMode === 'submit' ? (
+              <LoaderCircle className="spin" size={15} />
+            ) : (
+              <Send size={15} />
+            )}{' '}
+            Submit
+          </button>
+        </div>
         <div className="topbar-right">
           <span className="local-badge">
             <i /> Local development
           </span>
-          <span className="avatar">C#</span>
+          <span className="avatar">{currentLang.shortLabel}</span>
         </div>
       </header>
 
       <main className="workspace">
-        <aside className="sidebar">
-          <div className="library-heading">
-            <span>
-              <Code2 size={17} /> Problem library
-            </span>
-            <span className="count-chip">{problems.length}</span>
-          </div>
-          <label className="search-box">
-            <Search size={15} />
-            <input
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder="Find a problem…"
-              aria-label="Search problems"
-            />
-          </label>
-          <select
-            className="topic-filter"
-            value={topic}
-            onChange={(event) => setTopic(event.target.value)}
-            aria-label="Filter by topic"
-          >
-            <option value="">All topics</option>
-            {topics.map((name) => (
-              <option key={name} value={name}>
-                {name}
-              </option>
-            ))}
-          </select>
-          <div className="sidebar-label">{visibleProblems.length} EXERCISES</div>
-          <nav className="problem-list" aria-label="Problems">
-            {visibleProblems.map((item, index) => (
+        <dialog
+          ref={libraryDialog}
+          id="problem-library"
+          className="library-dialog"
+          aria-label="Problem library"
+          onClose={() => {
+            setLibraryOpen(false);
+            libraryTrigger.current?.focus();
+          }}
+          onClick={(event) => {
+            if (event.target === event.currentTarget) setLibraryOpen(false);
+          }}
+        >
+          <aside className="sidebar">
+            <div className="library-heading">
+              <span>
+                <Code2 size={17} /> Problem library
+              </span>
+              <span className="count-chip">{problems.length}</span>
               <button
-                key={item.id}
-                disabled={busy}
-                className={'problem-link ' + (item.id === selected ? 'selected' : '')}
-                onClick={() => {
-                  setSelected(item.id);
-                  setTab('results');
-                }}
+                className="icon-button"
+                aria-label="Close problem list"
+                onClick={() => setLibraryOpen(false)}
               >
-                <span className={'problem-indicator ' + (solved.has(item.id) ? 'solved' : '')}>
-                  {solved.has(item.id) ? <CheckCircle2 size={16} /> : <Circle size={15} />}
-                </span>
-                <span className="problem-link-text">
-                  <strong>
-                    {String(problems.indexOf(item) + 1 || index + 1).padStart(2, '0')}. {item.title}
-                  </strong>
-                  <span>{item.topic}</span>
-                </span>
-                <ChevronRight size={14} className="problem-arrow" />
+                <X size={20} />
               </button>
-            ))}
-            {problems.length > 0 && visibleProblems.length === 0 && (
-              <p className="sidebar-empty">No matching problems.</p>
-            )}
-          </nav>
-          <div className="library-note">
-            <span className="tiny-dot" /> Built on the EPI test corpus
-            <p>All {problems.length} repository exercises available in C#.</p>
-          </div>
-          <div className="progress-card">
-            <div>
-              <span>Your progress</span>
-              <strong>
-                {solvedCount}
-                <small> / {problems.length}</small>
-              </strong>
             </div>
-            <div className="progress-track">
-              <i style={{ width: `${(solvedCount / Math.max(1, problems.length)) * 100}%` }} />
+            <label className="search-box">
+              <Search size={15} />
+              <input
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                placeholder="Find a problem…"
+                aria-label="Search problems"
+              />
+            </label>
+            <select
+              className="topic-filter"
+              value={topic}
+              onChange={(event) => setTopic(event.target.value)}
+              aria-label="Filter by topic"
+            >
+              <option value="">All topics</option>
+              {topics.map((name) => (
+                <option key={name} value={name}>
+                  {name}
+                </option>
+              ))}
+            </select>
+            <div className="sidebar-label">{visibleProblems.length} EXERCISES</div>
+            <nav className="problem-list" aria-label="Problems">
+              {visibleProblems.map((item, index) => (
+                <button
+                  key={item.id}
+                  disabled={busy}
+                  className={'problem-link ' + (item.id === selected ? 'selected' : '')}
+                  title={item.title + ' · ' + item.topic}
+                  aria-current={item.id === selected ? 'page' : undefined}
+                  onClick={() => {
+                    setSelected(item.id);
+                    setTab('results');
+                    setLibraryOpen(false);
+                  }}
+                >
+                  <span className={'problem-indicator ' + (solved.has(item.id) ? 'solved' : '')}>
+                    {solved.has(item.id) ? <CheckCircle2 size={16} /> : <Circle size={15} />}
+                  </span>
+                  <span className="problem-link-text">
+                    <strong>
+                      {String(problems.indexOf(item) + 1 || index + 1).padStart(2, '0')}.{' '}
+                      {item.title}
+                    </strong>
+                  </span>
+                  <ChevronRight size={14} className="problem-arrow" />
+                </button>
+              ))}
+              {problems.length > 0 && visibleProblems.length === 0 && (
+                <p className="sidebar-empty">No matching problems.</p>
+              )}
+            </nav>
+            <div className="library-note">
+              <span className="tiny-dot" /> Built on the EPI test corpus
+              <p>
+                All {problems.length} repository exercises available in C#, JavaScript, Python, C++,
+                and Java.
+              </p>
             </div>
-            <p>One problem at a time.</p>
-          </div>
-          <div className="sidebar-footer">
-            <Braces size={15} />
-            <span>React + ASP.NET Core</span>
-            <span className="version">v0.1</span>
-          </div>
-        </aside>
+            <div className="progress-card">
+              <div>
+                <span>Your progress</span>
+                <strong>
+                  {solvedCount}
+                  <small> / {problems.length}</small>
+                </strong>
+              </div>
+              <div className="progress-track">
+                <i style={{ width: `${(solvedCount / Math.max(1, problems.length)) * 100}%` }} />
+              </div>
+              <p>One problem at a time.</p>
+            </div>
+            <div className="sidebar-footer">
+              <Braces size={15} />
+              <span>React + ASP.NET Core</span>
+              <span className="version">v0.1</span>
+            </div>
+          </aside>
+        </dialog>
 
         <section className="problem-pane">
           <div className="pane-heading">
@@ -328,7 +527,9 @@ export default function App() {
               <div className="breadcrumb">
                 Practice <ChevronRight size={12} /> {problem.topic}
               </div>
-              <h1>{problem.title}</h1>
+              <h1>
+                {problems.indexOf(problem) + 1}. {problem.title}
+              </h1>
               <div className="problem-tags">
                 <span className={'difficulty ' + problem.difficulty.toLowerCase()}>
                   {problem.difficulty}
@@ -344,8 +545,8 @@ export default function App() {
                 )}
               </div>
               <p className="description-copy">{problem.description}</p>
-              <div className="signature-label">YOUR C# API</div>
-              <code className="method-signature">{problem.signature}</code>
+              <div className="signature-label">YOUR {currentLang.shortLabel.toUpperCase()} API</div>
+              <code className="method-signature">{getSignature(problem, language)}</code>
               <h2>Examples</h2>
               {problem.examples.map((example, index) => (
                 <section className="example" key={index}>
@@ -364,6 +565,13 @@ export default function App() {
                 </section>
               ))}
               <h2>Keep in mind</h2>
+              {(language === 'cpp' || language === 'java') && (
+                <p className="practice-tip">
+                  Implement the TODO methods in the supplied {currentLang.shortLabel} file. Keep its
+                  class names, wrappers, and main function. These languages use the original EPI
+                  types; follow the supplied code where it differs from the C# types below.
+                </p>
+              )}
               <ul className="constraints">
                 {problem.constraints.map((item) => (
                   <li key={item}>{item}</li>
@@ -387,12 +595,12 @@ export default function App() {
           <div className="editor-panel">
             <div className="editor-toolbar">
               <span className="editor-file">
-                <FileCode2 size={16} /> Solution.cs
+                <Code2 size={16} /> Code
                 <span className="file-dot" />
               </span>
               <div className="editor-tools">
                 <span className="language-badge">
-                  C# <small>.NET 10</small>
+                  {currentLang.label} <small>{currentLang.runtime}</small>
                 </span>
                 <button
                   className="icon-button"
@@ -403,79 +611,103 @@ export default function App() {
                     if (
                       problem &&
                       confirm(
-                        'Reset this problem to its starter code? Your saved edits will be replaced.',
+                        `Reset this problem to its ${currentLang.label} starter code? Your saved edits will be replaced.`,
                       )
                     )
-                      changeCode(problem.starterCode);
+                      changeCode(getStarterCode(problem, language));
                   }}
                 >
                   <RotateCcw size={15} />
                 </button>
               </div>
             </div>
+            <div className="editor-language-row">
+              {' '}
+              <div className="language-selector-wrapper">
+                <select
+                  className="language-select"
+                  value={language}
+                  onChange={(e) => handleLanguageChange(e.target.value)}
+                  disabled={busy}
+                  aria-label="Select programming language"
+                >
+                  {LANGUAGES.map((lang) => (
+                    <option key={lang.id} value={lang.id}>
+                      {lang.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <span>Saved in this browser</span>
+            </div>
             <div className="editor-container">
-              <Suspense fallback={<div className="editor-loading">Preparing your editor…</div>}>
+              <ErrorBoundary
+                fallback={(err, reset) => (
+                  <div className="editor-loading" style={{ flexDirection: 'column', gap: '12px' }}>
+                    <p style={{ color: '#fca5a5', margin: 0 }}>
+                      Couldn’t open the editor. Your saved code is safe.
+                    </p>
+                    <small>{err.message}</small>
+                    <button type="button" className="secondary-button" onClick={() => reset()}>
+                      Retry loading editor
+                    </button>
+                  </div>
+                )}
+              >
                 <CodeEditor
                   code={code}
                   onChange={changeCode}
                   onRun={runCommand}
                   onSubmit={submitCommand}
                   busy={busy}
+                  language={currentLang.monacoLang}
                 />
-              </Suspense>
+              </ErrorBoundary>
             </div>
             <div className="editor-actions">
               <span>
                 <span className="saved-dot" /> Saved in this browser
               </span>
-              <div>
-                <button
-                  className="run-button"
-                  disabled={busy || !problem || !code.trim()}
-                  onClick={() => void execute('run')}
-                >
-                  {busy && activeMode === 'run' ? (
-                    <LoaderCircle className="spin" size={15} />
-                  ) : (
-                    <Play size={15} />
-                  )}{' '}
-                  Run <kbd>Ctrl ↵</kbd>
-                </button>
-                <button
-                  className="submit-button"
-                  disabled={busy || !problem || !code.trim()}
-                  onClick={() => void execute('submit')}
-                >
-                  {busy && activeMode === 'submit' ? (
-                    <LoaderCircle className="spin" size={15} />
-                  ) : (
-                    <Send size={15} />
-                  )}{' '}
-                  Submit
-                </button>
-              </div>
             </div>
           </div>
 
-          <section className="results-panel" aria-live="polite">
+          <section
+            className={'results-panel' + (resultsOpen ? '' : ' collapsed')}
+            aria-live="polite"
+          >
             <div className="results-tabs">
               <button
                 className={tab === 'results' ? 'active' : ''}
-                onClick={() => setTab('results')}
+                onClick={() => {
+                  setTab('results');
+                  setResultsOpen(true);
+                }}
               >
                 <Terminal size={15} /> Test results
               </button>
               <button
                 className={tab === 'history' ? 'active' : ''}
-                onClick={() => setTab('history')}
+                onClick={() => {
+                  setTab('history');
+                  setResultsOpen(true);
+                }}
               >
                 <History size={15} /> History
               </button>
               <span className="results-caption">
                 {busy ? 'RUNNER ACTIVE' : 'READY WHEN YOU ARE'}
               </span>
+              <button
+                className="results-toggle"
+                aria-label={resultsOpen ? 'Collapse results' : 'Expand results'}
+                aria-expanded={resultsOpen}
+                aria-controls="test-results-body"
+                onClick={() => setResultsOpen((value) => !value)}
+              >
+                {resultsOpen ? <ChevronDown size={16} /> : <ChevronUp size={16} />}
+              </button>
             </div>
-            <div className="results-body">
+            <div className="results-body" id="test-results-body">
               {tab === 'history' ? (
                 <div className="history-list">
                   {attempts.filter((attempt) => attempt.problemId === selected).length === 0 ? (
@@ -514,7 +746,7 @@ export default function App() {
               ) : busy ? (
                 <EmptyState
                   icon={<LoaderCircle className="spin" size={28} />}
-                  title="Compiling and running your C#…"
+                  title={`Compiling and running your ${currentLang.shortLabel}…`}
                   text={
                     activeMode === 'submit'
                       ? 'Checking the full EPI test file. This may take a few seconds.'
@@ -596,7 +828,11 @@ export default function App() {
                             <div>
                               <span>Your output</span>
                               <code className={shownCase.passed ? '' : 'negative'}>
-                                {shownCase.error ?? shownCase.actual ?? 'No output'}
+                                {shownCase.error ||
+                                  shownCase.actual ||
+                                  (shownCase.passed && (language === 'cpp' || language === 'java')
+                                    ? 'Accepted by the problem validator'
+                                    : 'No output')}
                               </code>
                             </div>
                           </div>
