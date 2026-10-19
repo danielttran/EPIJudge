@@ -46,14 +46,14 @@ public static class PracticeEndpoints
             "application/json", $"epi-answers-{DateTime.UtcNow:yyyy-MM-dd}.json"));
         group.MapPost("/import", (PracticeBackup backup, ProblemCatalog catalog, PracticeStore store) =>
         {
-            if (!Validate(backup, catalog)) return Results.BadRequest(new { message = "This is not a valid EPI Practice version 1 backup." });
+            if (!PracticeBackupValidator.Validate(backup, id => catalog.Find(id) is not null)) return Results.BadRequest(new { message = "This is not a valid EPI Practice version 1 backup." });
             store.Import(backup);
             return Results.Ok(new { message = "Imported answers and history. Existing drafts were kept." });
         });
         group.MapPost("/migrate", (LegacyImport legacy, ProblemCatalog catalog, PracticeStore store) =>
         {
             var backup = new PracticeBackup(1, legacy.Drafts, legacy.Attempts, legacy.SolvedIds);
-            if (string.IsNullOrWhiteSpace(legacy.MigrationId) || legacy.MigrationId.Length > 100 || !Validate(backup, catalog))
+            if (string.IsNullOrWhiteSpace(legacy.MigrationId) || legacy.MigrationId.Length > 100 || !PracticeBackupValidator.Validate(backup, id => catalog.Find(id) is not null))
                 return Results.BadRequest(new { message = "Browser data could not be migrated. Your original browser data has been retained." });
             // Legacy summaries have no recoverable source code or language.
             var imported = store.Import(backup with { Attempts = backup.Attempts.Select(a => a with { Legacy = true }).ToArray() }, legacy.MigrationId);
@@ -61,18 +61,4 @@ public static class PracticeEndpoints
         });
     }
 
-    private static bool Validate(PracticeBackup? backup, ProblemCatalog catalog)
-    {
-        if (backup is not { Version: 1, Drafts: not null, Attempts: not null, SolvedIds: not null }
-            || backup.Drafts.Length > 2000 || backup.Attempts.Length > 100_000 || backup.SolvedIds.Length > 1000) return false;
-        return backup.Drafts.All(d => d is not null && catalog.Find(d.ProblemId) is not null && ValidLanguage(d.Language)
-                && d.Code is { Length: <= 40_000 } && DateTimeOffset.TryParse(d.UpdatedAt, out _))
-            && backup.Attempts.All(a => a is not null && a.Id is { Length: > 0 and <= 200 } && catalog.Find(a.ProblemId) is not null
-                && (a.Language is null || ValidLanguage(a.Language)) && (a.Code is null || a.Code.Length <= 40_000)
-                && a.Mode is "run" or "submit" && a.Status is { Length: > 0 and <= 100 }
-                && (a.Result is null || (a.Result.Cases is not null && a.Result.Cases.Count <= 10_001 && a.Result.Cases.All(c => c is not null)))
-                && a.Passed >= 0 && a.Total >= a.Passed && double.IsFinite(a.ElapsedMs) && a.ElapsedMs >= 0
-                && DateTimeOffset.TryParse(a.Timestamp, out _))
-            && backup.SolvedIds.All(id => catalog.Find(id) is not null);
-    }
 }

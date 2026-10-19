@@ -1,103 +1,17 @@
 using System.Text.Json;
-using System.Diagnostics;
+using static EpiJudge.Web.PracticeDatabase;
 using EpiJudge.Runner;
 using Microsoft.Data.Sqlite;
 
 namespace EpiJudge.Web;
 
-public sealed record Draft(string ProblemId, string Language, string Code, long Revision, string UpdatedAt);
-public sealed record DraftWrite(string Code, long Revision);
-public sealed record ProblemProgress(string ProblemId, string Status, string[] AcceptedLanguages);
-public sealed record SavedAttempt(string Id, string ProblemId, string? Language, string? Code,
-    string Mode, string Status, int Passed, int Total, double ElapsedMs, string Timestamp,
-    SubmissionResult? Result, bool Legacy = false, long Sequence = 0);
-public sealed record PracticeBackup(int Version, Draft[] Drafts, SavedAttempt[] Attempts, string[] SolvedIds);
-public sealed record LegacyImport(string MigrationId, Draft[] Drafts, SavedAttempt[] Attempts, string[] SolvedIds);
-
 // One local profile. All writes use parameterized SQL and short transactions;
 // grading never holds a database transaction open.
-public sealed class PracticeStore
+public sealed class PracticeStore(PracticeDatabase database) : IAttemptStore
 {
+    private const string AttemptColumns = "sequence,id,problem,language,code,mode,status,passed,total,elapsed,timestamp,result,legacy";
     private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web);
-    private readonly string connectionString;
-    private static readonly string Owner = $"{Environment.ProcessId}:{Process.GetCurrentProcess().StartTime.ToUniversalTime().Ticks}";
-
-    public PracticeStore(IConfiguration configuration)
-    {
-        var directory = configuration["Practice:DataDirectory"] ?? Environment.GetEnvironmentVariable("EPI_DATA_DIR")
-            ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "EPIJudge");
-        Directory.CreateDirectory(directory);
-        connectionString = new SqliteConnectionStringBuilder
-        {
-            DataSource = Path.Combine(Path.GetFullPath(directory), "practice.db"), DefaultTimeout = 10,
-        }.ToString();
-        using var db = Open();
-        using (var version = Command(db, null, "PRAGMA user_version"))
-            if (Convert.ToInt32(version.ExecuteScalar()) > 1)
-                throw new InvalidOperationException("This answer database was created by a newer EPI Practice version.");
-        using var command = db.CreateCommand();
-        command.CommandText = """
-            PRAGMA journal_mode=WAL;
-            CREATE TABLE IF NOT EXISTS drafts (
-                problem TEXT NOT NULL, language TEXT NOT NULL, code TEXT NOT NULL,
-                revision INTEGER NOT NULL, updated TEXT NOT NULL, PRIMARY KEY(problem, language));
-            CREATE TABLE IF NOT EXISTS attempts (
-                sequence INTEGER PRIMARY KEY AUTOINCREMENT, id TEXT NOT NULL UNIQUE,
-                problem TEXT NOT NULL, language TEXT, code TEXT, mode TEXT NOT NULL,
-                status TEXT NOT NULL, passed INTEGER NOT NULL, total INTEGER NOT NULL,
-                elapsed REAL NOT NULL, timestamp TEXT NOT NULL, result TEXT, legacy INTEGER NOT NULL, owner TEXT);
-            CREATE INDEX IF NOT EXISTS attempt_problem ON attempts(problem, sequence DESC);
-            CREATE TABLE IF NOT EXISTS legacy_solved (problem TEXT PRIMARY KEY);
-            CREATE TABLE IF NOT EXISTS migrations (id TEXT PRIMARY KEY);
-            PRAGMA user_version=1;
-            """;
-        command.ExecuteNonQuery();
-        RecoverInterruptedAttempts(db);
-    }
-
-    private static void RecoverInterruptedAttempts(SqliteConnection db)
-    {
-        var abandoned = new List<string>();
-        using (var command = Command(db, null, "SELECT id,owner FROM attempts WHERE status='Running'"))
-        using (var reader = command.ExecuteReader())
-        {
-            while (reader.Read())
-            {
-                var parts = reader.IsDBNull(1) ? [] : reader.GetString(1).Split(':');
-                var alive = false;
-                if (parts.Length == 2 && int.TryParse(parts[0], out var pid) && long.TryParse(parts[1], out var ticks))
-                {
-                    try { using var process = Process.GetProcessById(pid); alive = process.StartTime.ToUniversalTime().Ticks == ticks; }
-                    catch (ArgumentException) { }
-                    catch (InvalidOperationException) { }
-                    catch (System.ComponentModel.Win32Exception) { alive = true; }
-                }
-                if (!alive) abandoned.Add(reader.GetString(0));
-            }
-        }
-        foreach (var id in abandoned)
-        {
-            using var command = Command(db, null, "UPDATE attempts SET status='Interrupted' WHERE id=$id AND status='Running'", ("$id", id));
-            command.ExecuteNonQuery();
-        }
-    }
-
-    private SqliteConnection Open()
-    {
-        var db = new SqliteConnection(connectionString);
-        db.Open();
-        return db;
-    }
-
-    private static SqliteCommand Command(SqliteConnection db, SqliteTransaction? tx, string sql,
-        params (string Name, object? Value)[] values)
-    {
-        var command = db.CreateCommand();
-        command.Transaction = tx;
-        command.CommandText = sql;
-        foreach (var (name, value) in values) command.Parameters.AddWithValue(name, value ?? DBNull.Value);
-        return command;
-    }
+    private SqliteConnection Open() => database.Open();
 
     private static Draft ReadDraft(SqliteDataReader reader) => new(reader.GetString(0), reader.GetString(1),
         reader.GetString(2), reader.GetInt64(3), reader.GetString(4));
@@ -125,7 +39,10 @@ public sealed class PracticeStore
         Draft? current = null;
         using (var find = Command(db, tx, "SELECT problem,language,code,revision,updated FROM drafts WHERE problem=$p AND language=$l",
             ("$p", problem), ("$l", language)))
-        using (var reader = find.ExecuteReader()) if (reader.Read()) current = ReadDraft(reader);
+        using (var reader = find.ExecuteReader())
+        {
+            if (reader.Read()) current = ReadDraft(reader);
+        }
         if (current?.Code == write.Code) return (true, current);
         if ((current?.Revision ?? 0) != write.Revision) return (false, current);
         var draft = new Draft(problem, language, write.Code, write.Revision + 1, DateTimeOffset.UtcNow.ToString("O"));
@@ -162,8 +79,9 @@ public sealed class PracticeStore
     public SavedAttempt[] History(string? problem = null, long before = long.MaxValue, int limit = 50, bool includeCode = false)
     {
         using var db = Open();
-        using var command = Command(db, null, """
-            SELECT * FROM attempts WHERE ($p IS NULL OR problem=$p) AND sequence < $before
+        using var command = Command(db, null, $"""
+            SELECT sequence,id,problem,language,{(includeCode ? "code" : "NULL")},mode,status,passed,total,elapsed,timestamp,{(includeCode ? "result" : "NULL")},legacy
+            FROM attempts WHERE ($p IS NULL OR problem=$p) AND sequence < $before
             ORDER BY sequence DESC LIMIT $limit
             """, ("$p", problem), ("$before", before), ("$limit", limit));
         using var reader = command.ExecuteReader();
@@ -171,7 +89,7 @@ public sealed class PracticeStore
         while (reader.Read())
         {
             var attempt = ReadAttempt(reader);
-            results.Add(includeCode ? attempt : attempt with { Code = null, Result = null });
+            results.Add(attempt);
         }
         return results.ToArray();
     }
@@ -179,7 +97,7 @@ public sealed class PracticeStore
     public SavedAttempt? Attempt(string id)
     {
         using var db = Open();
-        using var command = Command(db, null, "SELECT * FROM attempts WHERE id=$id", ("$id", id));
+        using var command = Command(db, null, $"SELECT {AttemptColumns} FROM attempts WHERE id=$id", ("$id", id));
         using var reader = command.ExecuteReader();
         return reader.Read() ? ReadAttempt(reader) : null;
     }
@@ -192,20 +110,10 @@ public sealed class PracticeStore
             UNION ALL SELECT problem,NULL,'submit','Accepted' FROM legacy_solved
             """);
         using var reader = command.ExecuteReader();
-        var states = new Dictionary<string, (bool Solved, HashSet<string> Languages)>();
+        var entries = new List<ProgressEntry>();
         while (reader.Read())
-        {
-            var id = reader.GetString(0);
-            if (!states.TryGetValue(id, out var state)) state = (false, new());
-            if (reader.GetString(2) == "submit" && reader.GetString(3) == "Accepted")
-            {
-                state.Solved = true;
-                if (!reader.IsDBNull(1)) state.Languages.Add(reader.GetString(1));
-            }
-            states[id] = state;
-        }
-        return states.Select(p => new ProblemProgress(p.Key, p.Value.Solved ? "solved" : "attempted",
-            p.Value.Languages.Order().ToArray())).ToArray();
+            entries.Add(new(reader.GetString(0), reader.IsDBNull(1) ? null : reader.GetString(1), reader.GetString(2), reader.GetString(3)));
+        return PracticeProgress.Calculate(entries);
     }
 
     private static void InsertAttempt(SqliteConnection db, SqliteTransaction? tx, SavedAttempt a)
@@ -229,11 +137,20 @@ public sealed class PracticeStore
         var attempts = new List<SavedAttempt>();
         var solved = new HashSet<string>();
         using (var command = Command(db, tx, "SELECT problem,language,code,revision,updated FROM drafts"))
-        using (var reader = command.ExecuteReader()) while (reader.Read()) drafts.Add(ReadDraft(reader));
-        using (var command = Command(db, tx, "SELECT * FROM attempts ORDER BY sequence DESC"))
-        using (var reader = command.ExecuteReader()) while (reader.Read()) attempts.Add(ReadAttempt(reader));
+        using (var reader = command.ExecuteReader())
+        {
+            while (reader.Read()) drafts.Add(ReadDraft(reader));
+        }
+        using (var command = Command(db, tx, $"SELECT {AttemptColumns} FROM attempts ORDER BY sequence DESC"))
+        using (var reader = command.ExecuteReader())
+        {
+            while (reader.Read()) attempts.Add(ReadAttempt(reader));
+        }
         using (var command = Command(db, tx, "SELECT problem FROM legacy_solved"))
-        using (var reader = command.ExecuteReader()) while (reader.Read()) solved.Add(reader.GetString(0));
+        using (var reader = command.ExecuteReader())
+        {
+            while (reader.Read()) solved.Add(reader.GetString(0));
+        }
         foreach (var attempt in attempts.Where(a => a.Mode == "submit" && a.Status == "Accepted")) solved.Add(attempt.ProblemId);
         tx.Commit();
         return new(1, drafts.ToArray(), attempts.ToArray(), solved.ToArray());

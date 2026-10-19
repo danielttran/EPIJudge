@@ -30,6 +30,11 @@ jobs:
         run: ./scripts/Setup.ps1
       - name: Audit all catalog entries, adapters, and C# starters
         run: dotnet run --project scripts/WebAudit/WebAudit.csproj
+      - name: Run backend unit and SQLite integration tests
+        run: dotnet test EpiJudge.Tests/EpiJudge.Tests.csproj --no-restore --collect:"XPlat Code Coverage"
+      - name: Run frontend unit and component tests with coverage gates
+        working-directory: epijudge.client
+        run: npm run test:coverage
       - name: Verify problem descriptions and provenance
         run: python scripts/verify_problem_wording.py
       - name: Verify C# HTTP submissions
@@ -41,3 +46,11 @@ jobs:
       - name: Verify answer storage, migration, and backups
         shell: pwsh
         run: ./scripts/Verify-Practice.ps1
+      - name: Upload test coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-coverage
+          path: |
+            EpiJudge.Tests/TestResults/**/coverage.cobertura.xml
+            epijudge.client/coverage/coverage-summary.json

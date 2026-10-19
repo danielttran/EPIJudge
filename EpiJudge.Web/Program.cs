@@ -23,7 +23,11 @@ ToolchainConfiguration.ApplyLocalOverrides(repositoryRoot);
 builder.Services.AddSingleton<ProblemCatalog>();
 builder.Services.AddSingleton(new NativeProblemCatalog(repositoryRoot));
 builder.Services.AddSingleton(new SubmissionRunner(repositoryRoot));
+builder.Services.AddSingleton<PracticeDatabase>();
 builder.Services.AddSingleton<PracticeStore>();
+builder.Services.AddSingleton<IAttemptStore>(services => services.GetRequiredService<PracticeStore>());
+builder.Services.AddSingleton<ISubmissionRunner>(services => services.GetRequiredService<SubmissionRunner>());
+builder.Services.AddSingleton<SubmissionService>();
 var serveReact = builder.Environment.IsDevelopment() && builder.Configuration.GetValue("Frontend:Enabled", true);
 if (serveReact)
 {
@@ -106,7 +110,7 @@ app.MapGet("/api/problems", (ProblemCatalog catalog, NativeProblemCatalog native
 app.MapGet("/api/health", () => new { status = "ready", languages = new[] { "C#", "JavaScript", "Python", "C++", "Java" }, execution = "trusted-local-only" });
 app.MapPractice();
 app.MapPost("/api/submissions", async (SubmissionRequest request, HttpContext context,
-    ProblemCatalog catalog, SubmissionRunner runner, PracticeStore store, ILogger<Program> logger) =>
+    ProblemCatalog catalog, SubmissionService submissions) =>
 {
     if (!app.Environment.IsDevelopment()) return Results.Problem("Local code execution requires the Development environment.", statusCode: 503);
     if (context.Request.Headers["X-EpiJudge-Client"] != "local-editor") return Results.StatusCode(403);
@@ -118,30 +122,15 @@ app.MapPost("/api/submissions", async (SubmissionRequest request, HttpContext co
     if (string.IsNullOrWhiteSpace(request.Code) || request.Code.Length > 40_000)
         return Results.BadRequest(new { message = "Code must contain between 1 and 40,000 characters." });
     var language = request.Language switch { null => "csharp", "js" => "javascript", "py" => "python", _ => request.Language };
-    // Capture the exact source before execution, even if the request is interrupted.
-    var attempt = store.BeginAttempt(problem.Id, language, request.Code, request.Mode);
-    try
+    var outcome = await submissions.Execute(problem, language, request.Code, request.Mode, context.RequestAborted);
+    return outcome.Failure switch
     {
-        var result = await runner.RunAsync(problem, request.Code, request.Mode == "run", request.Language ?? "csharp", context.RequestAborted);
-        if (result is null)
-        {
-            store.CompleteAttempt(attempt.Id, new(attempt.Id, "Not run", 0, 0, 0, "The runner was busy.", []));
-            return Results.Json(new { message = "The runner is busy. Try again in a moment." }, statusCode: 429);
-        }
-        store.CompleteAttempt(attempt.Id, result);
-        return Results.Ok(result with { Id = attempt.Id });
-    }
-    catch (OperationCanceledException) when (context.RequestAborted.IsCancellationRequested)
-    {
-        store.CompleteAttempt(attempt.Id, new(attempt.Id, "Interrupted", 0, 0, 0, "The request was interrupted. Your source code was saved.", []));
-        return Results.StatusCode(499);
-    }
-    catch (Exception exception)
-    {
-        logger.LogError(exception, "Submission execution failed");
-        store.CompleteAttempt(attempt.Id, new(attempt.Id, "Runner error", 0, 0, 0, "The runner could not start. Your source code was saved.", []));
-        return Results.Problem("The local runner could not start. Check the server output and runtime dependencies.");
-    }
+        null => Results.Ok(outcome.Result),
+        SubmissionFailure.Busy => Results.Json(new { message = "The runner is busy. Try again in a moment." }, statusCode: 429),
+        SubmissionFailure.Interrupted => Results.StatusCode(499),
+        SubmissionFailure.Storage => Results.Problem("Could not save the submission or its result. Your browser recovery copy is retained; retry saving.", statusCode: 503),
+        _ => Results.Problem("The local runner could not start. Check the server output and runtime dependencies.")
+    };
 });
 app.MapPost("/api/internal/shutdown", (IHostApplicationLifetime lifetime) =>
 {

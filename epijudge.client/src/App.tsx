@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import CodeEditor from './Editor';
+import { ProblemLibrary } from './ProblemLibrary';
+import { HistoryPanel } from './HistoryPanel';
+import { EmptyState } from './EmptyState';
 import {
   Braces,
-  Download,
-  Upload,
+  Code2,
   Check,
   CheckCircle2,
   ChevronRight,
@@ -11,17 +13,13 @@ import {
   ChevronDown,
   ChevronUp,
   PanelLeft,
-  X,
-  Circle,
   Clock3,
-  Code2,
   FileCode2,
   FlaskConical,
   History,
   LoaderCircle,
   Play,
   RotateCcw,
-  Search,
   Send,
   Terminal,
   XCircle,
@@ -29,135 +27,9 @@ import {
 import { ErrorBoundary } from './ErrorBoundary';
 import { usePractice } from './practiceStorage';
 
-type Problem = {
-  id: string;
-  title: string;
-  topic: string;
-  difficulty: string;
-  description: string;
-  constraints: string[];
-  signature: string;
-  testCount: number;
-  starterCode: string;
-  jsSignature?: string;
-  jsStarterCode?: string;
-  pySignature?: string;
-  pyStarterCode?: string;
-  starters?: Record<
-    string,
-    { signature: string; starterCode: string; filename: string; runtime: string }
-  >;
-  examples: { input: string; output: string; explanation: string }[];
-};
-
-type LanguageConfig = {
-  id: string;
-  shortLabel: string;
-  label: string;
-  runtime: string;
-  filename: string;
-  monacoLang: string;
-};
-
-const LANGUAGES: LanguageConfig[] = [
-  {
-    id: 'csharp',
-    shortLabel: 'C#',
-    label: 'C# (.NET 10)',
-    runtime: 'C# .NET 10',
-    filename: 'Solution.cs',
-    monacoLang: 'csharp',
-  },
-  {
-    id: 'javascript',
-    shortLabel: 'JS',
-    label: 'JavaScript (Node.js 24)',
-    runtime: 'JavaScript Node.js 24',
-    filename: 'solution.js',
-    monacoLang: 'javascript',
-  },
-  {
-    id: 'python',
-    shortLabel: 'PY',
-    label: 'Python (Python 3.14)',
-    runtime: 'Python 3.14',
-    filename: 'solution.py',
-    monacoLang: 'python',
-  },
-  {
-    id: 'cpp',
-    shortLabel: 'C++',
-    label: 'C++ (C++17)',
-    runtime: 'C++17',
-    filename: 'solution.cpp',
-    monacoLang: 'cpp',
-  },
-  {
-    id: 'java',
-    shortLabel: 'JAVA',
-    label: 'Java (JDK 21)',
-    runtime: 'Java 21',
-    filename: 'Solution.java',
-    monacoLang: 'java',
-  },
-];
-
-function getStarterCode(p: Problem, lang: string): string {
-  if (p.starters?.[lang]) return p.starters[lang].starterCode;
-  if (lang === 'python') {
-    return p.starters?.python?.starterCode || p.pyStarterCode || p.starterCode;
-  }
-  if (lang === 'javascript') {
-    return p.starters?.javascript?.starterCode || p.jsStarterCode || p.starterCode;
-  }
-  return p.starters?.csharp?.starterCode || p.starterCode;
-}
-
-function getSignature(p: Problem, lang: string): string {
-  if (p.starters?.[lang]) return p.starters[lang].signature;
-  if (lang === 'python') {
-    return p.starters?.python?.signature || p.pySignature || p.signature;
-  }
-  if (lang === 'javascript') {
-    return p.starters?.javascript?.signature || p.jsSignature || p.signature;
-  }
-  return p.starters?.csharp?.signature || p.signature;
-}
-
-type TestCase = {
-  number: number;
-  passed: boolean;
-  input: string | null;
-  expected: string | null;
-  actual: string | null;
-  error: string | null;
-  elapsedMs: number;
-  hidden: boolean;
-};
-type Result = {
-  id: string;
-  status: string;
-  passed: number;
-  total: number;
-  elapsedMs: number;
-  diagnostics: string | null;
-  cases: TestCase[];
-};
-type Attempt = {
-  id: string;
-  problemId: string;
-  mode: string;
-  status: string;
-  passed: number;
-  total: number;
-  elapsedMs: number;
-  timestamp: string;
-  language: string | null;
-  code: string | null;
-  result: Result | null;
-  legacy: boolean;
-  sequence: number;
-};
+import { LANGUAGES, getStarterCode, getSignature, type Problem } from './workspaceModels';
+import { useSubmissionHistory } from './useSubmissionHistory';
+import { useSubmission } from './useSubmission';
 
 function load<T>(key: string, fallback: T): T {
   try {
@@ -177,32 +49,16 @@ function save(key: string, value: unknown) {
 export default function App() {
   const [libraryOpen, setLibraryOpen] = useState(false);
   const [resultsOpen, setResultsOpen] = useState(false);
-  const libraryDialog = useRef<HTMLDialogElement>(null);
   const libraryTrigger = useRef<HTMLButtonElement>(null);
-  useEffect(() => {
-    if (libraryOpen) libraryDialog.current?.showModal();
-    else libraryDialog.current?.close();
-  }, [libraryOpen]);
   const [language, setLanguage] = useState<string>(() => load('epi:language', 'csharp'));
   const [problems, setProblems] = useState<Problem[]>([]);
   const [selected, setSelected] = useState(load('epi:selected', 'count_bits'));
   const practice = usePractice(problems);
-  const importInput = useRef<HTMLInputElement>(null);
   const [storageNotice, setStorageNotice] = useState('');
+  const [syncWarning, setSyncWarning] = useState('');
   const [historyVersion, setHistoryVersion] = useState(0);
-  const [historyError, setHistoryError] = useState('');
-  const [hasMoreHistory, setHasMoreHistory] = useState(false);
-  const [viewedAttempt, setViewedAttempt] = useState<Attempt | null>(null);
-  const [query, setQuery] = useState('');
-  const [topic, setTopic] = useState('');
-  const [result, setResult] = useState<Result | null>(null);
-  const [error, setError] = useState('');
   const [loadError, setLoadError] = useState('');
-  const [busy, setBusy] = useState(false);
-  const busyRef = useRef(false);
-  const [activeMode, setActiveMode] = useState('run');
   const [tab, setTab] = useState<'results' | 'history'>('results');
-  const [attempts, setAttempts] = useState<Attempt[]>([]);
   const [activeCase, setActiveCase] = useState(0);
   const problem = problems.find((item) => item.id === selected);
   const currentAttemptRef = useRef<() => void>(() => {});
@@ -242,9 +98,6 @@ export default function App() {
 
   useEffect(() => {
     if (!problem) return;
-    setViewedAttempt(null);
-    setResult(null);
-    setError('');
     setActiveCase(0);
     save('epi:selected', problem.id);
   }, [problem?.id, language]);
@@ -254,28 +107,7 @@ export default function App() {
     save('epi:language', newLang);
   };
 
-  useEffect(() => {
-    if (!problem || !practice.ready) return;
-    const controller = new AbortController();
-    setAttempts([]);
-    setHistoryError('');
-    fetch('/api/practice/history?problemId=' + encodeURIComponent(problem.id), {
-      signal: controller.signal,
-      cache: 'no-store',
-    })
-      .then((response) => {
-        if (!response.ok) throw new Error('Could not load saved history.');
-        return response.json() as Promise<Attempt[]>;
-      })
-      .then((items) => {
-        setAttempts(items);
-        setHasMoreHistory(items.length === 50);
-      })
-      .catch((reason) => {
-        if (reason.name !== 'AbortError') setHistoryError(reason.message);
-      });
-    return () => controller.abort();
-  }, [problem?.id, practice.ready, historyVersion]);
+  const history = useSubmissionHistory(problem?.id, language, practice.ready, historyVersion);
 
   const changeCode = (value: string) => {
     if (problem) practice.edit(problem.id, language, value);
@@ -290,66 +122,20 @@ export default function App() {
       );
     }
   };
-  const viewAnswer = async (attempt: Attempt) => {
-    try {
-      const response = await fetch('/api/practice/history/' + encodeURIComponent(attempt.id), {
-        cache: 'no-store',
-      });
-      if (!response.ok) throw new Error('Could not open saved answer.');
-      setViewedAttempt(await response.json());
-    } catch (reason) {
-      setHistoryError(reason instanceof Error ? reason.message : 'Could not open answer.');
-    }
-  };
-  const loadOlder = async () => {
-    if (!problem || !attempts.length) return;
-    try {
-      const response = await fetch(
-        `/api/practice/history?problemId=${encodeURIComponent(problem.id)}&before=${attempts[attempts.length - 1].sequence}`,
-        { cache: 'no-store' },
-      );
-      if (!response.ok) throw new Error('Could not load older attempts.');
-      const older: Attempt[] = await response.json();
-      setAttempts((previous) => [...previous, ...older]);
-      setHasMoreHistory(older.length === 50);
-    } catch (reason) {
-      setHistoryError(reason instanceof Error ? reason.message : 'Could not load history.');
-    }
-  };
-  const execute = async (mode: 'run' | 'submit') => {
-    if (!problem || busyRef.current || !practice.ready) return;
-    busyRef.current = true;
-    setBusy(true);
-    setResultsOpen(true);
-    setActiveMode(mode);
-    setError('');
-    setResult(null);
-    setTab('results');
-    setActiveCase(0);
-    try {
-      await practice.flush();
-      const response = await fetch('/api/submissions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-EpiJudge-Client': 'local-editor' },
-        body: JSON.stringify({ problemId: problem.id, code, mode, language }),
-      });
-      if (!response.ok) {
-        const detail = await response.json().catch(() => ({}));
-        throw new Error(
-          detail.message ?? detail.detail ?? 'The runner could not complete this request.',
-        );
-      }
-      const next: Result = await response.json();
-      setResult(next);
-      await practice.refresh();
-      setHistoryVersion((value) => value + 1);
-    } catch (reason) {
-      setError(reason instanceof Error ? reason.message : 'Could not reach the local runner.');
-    } finally {
-      busyRef.current = false;
-      setBusy(false);
-    }
-  };
+  const { result, error, busy, activeMode, execute } = useSubmission({
+    problemId: problem?.id,
+    language,
+    code,
+    practice,
+    onStarted: () => {
+      setSyncWarning('');
+      setResultsOpen(true);
+      setTab('results');
+      setActiveCase(0);
+    },
+    onCompleted: () => setHistoryVersion((value) => value + 1),
+    onRefreshError: (message) => setSyncWarning(message),
+  });
   currentAttemptRef.current = () => {
     void execute('run');
   };
@@ -359,13 +145,6 @@ export default function App() {
   const runCommand = useCallback(() => currentAttemptRef.current(), []);
   const submitCommand = useCallback(() => currentSubmitRef.current(), []);
   const shownCase = result?.cases[activeCase];
-  const visibleProblems = problems.filter(
-    (item) =>
-      (!topic || item.topic === topic) &&
-      `${item.title} ${item.topic} ${item.id}`.toLowerCase().includes(query.toLowerCase()),
-  );
-  const topics = [...new Set(problems.map((item) => item.topic))].sort();
-  const solvedCount = problems.filter((item) => solved.has(item.id)).length;
 
   return (
     <div className="app-shell">
@@ -447,173 +226,29 @@ export default function App() {
       </header>
 
       <main className="workspace">
-        <dialog
-          ref={libraryDialog}
-          id="problem-library"
-          className="library-dialog"
-          aria-label="Problem library"
+        <ProblemLibrary
+          open={libraryOpen}
+          problems={problems}
+          selected={selected}
+          busy={busy}
+          practice={practice}
+          storageNotice={storageNotice}
           onClose={() => {
             setLibraryOpen(false);
             libraryTrigger.current?.focus();
           }}
-          onClick={(event) => {
-            if (event.target === event.currentTarget) setLibraryOpen(false);
+          onSelect={(id) => {
+            setSelected(id);
+            setTab('results');
           }}
-        >
-          <aside className="sidebar">
-            <div className="library-heading">
-              <span>
-                <Code2 size={17} /> Problem library
-              </span>
-              <span className="count-chip">{problems.length}</span>
-              <button
-                className="icon-button"
-                aria-label="Close problem list"
-                onClick={() => setLibraryOpen(false)}
-              >
-                <X size={20} />
-              </button>
-            </div>
-            <label className="search-box">
-              <Search size={15} />
-              <input
-                value={query}
-                onChange={(event) => setQuery(event.target.value)}
-                placeholder="Find a problem…"
-                aria-label="Search problems"
-              />
-            </label>
-            <select
-              className="topic-filter"
-              value={topic}
-              onChange={(event) => setTopic(event.target.value)}
-              aria-label="Filter by topic"
-            >
-              <option value="">All topics</option>
-              {topics.map((name) => (
-                <option key={name} value={name}>
-                  {name}
-                </option>
-              ))}
-            </select>
-            <div className="sidebar-label">{visibleProblems.length} EXERCISES</div>
-            <nav className="problem-list" aria-label="Problems">
-              {visibleProblems.map((item, index) => (
-                <button
-                  key={item.id}
-                  disabled={busy}
-                  className={
-                    'problem-link ' +
-                    (practice.progress[item.id]?.status ?? '') +
-                    (item.id === selected ? ' selected' : '')
-                  }
-                  title={
-                    item.title +
-                    ' · ' +
-                    item.topic +
-                    ' · ' +
-                    (practice.progress[item.id]?.status ?? 'Not started')
-                  }
-                  aria-label={`${String(problems.indexOf(item) + 1).padStart(2, '0')}. ${item.title} — ${practice.progress[item.id]?.status ?? 'Not started'}`}
-                  aria-current={item.id === selected ? 'page' : undefined}
-                  onClick={() => {
-                    setSelected(item.id);
-                    setTab('results');
-                    setLibraryOpen(false);
-                  }}
-                >
-                  <span
-                    className={'problem-indicator ' + (practice.progress[item.id]?.status ?? '')}
-                  >
-                    {solved.has(item.id) ? (
-                      <CheckCircle2 size={16} />
-                    ) : practice.progress[item.id]?.status === 'attempted' ? (
-                      <Clock3 size={16} />
-                    ) : (
-                      <Circle size={15} />
-                    )}
-                  </span>
-                  <span className="problem-link-text">
-                    <strong>
-                      {String(problems.indexOf(item) + 1 || index + 1).padStart(2, '0')}.{' '}
-                      {item.title}
-                    </strong>
-                  </span>
-                  <ChevronRight size={14} className="problem-arrow" />
-                </button>
-              ))}
-              {problems.length > 0 && visibleProblems.length === 0 && (
-                <p className="sidebar-empty">No matching problems.</p>
-              )}
-            </nav>
-            <div className="library-note">
-              <span className="tiny-dot" /> Built on the EPI test corpus
-              <p>
-                All {problems.length} repository exercises available in C#, JavaScript, Python, C++,
-                and Java.
-              </p>
-            </div>
-            <div className="status-legend">
-              <span className="solved">● Solved</span>
-              <span className="attempted">● Attempted</span>
-            </div>
-            <div className="backup-actions">
-              <button
-                disabled={!practice.ready}
-                onClick={() =>
-                  void storageAction(() => practice.exportAnswers(), 'Answers exported.')
-                }
-              >
-                <Download size={14} /> Export answers
-              </button>
-              <button
-                disabled={!practice.ready || busy}
-                onClick={() => importInput.current?.click()}
-              >
-                <Upload size={14} /> Import answers
-              </button>
-              <input
-                ref={importInput}
-                type="file"
-                accept="application/json,.json"
-                hidden
-                aria-label="Import answers file"
-                onChange={(event) => {
-                  const file = event.target.files?.[0];
-                  if (file)
-                    void storageAction(async () => {
-                      await practice.importAnswers(file);
-                      setHistoryVersion((value) => value + 1);
-                    }, 'Imported answers and history. Existing drafts were kept.');
-                  event.target.value = '';
-                }}
-              />
-            </div>
-            {storageNotice && (
-              <p className="storage-notice" role="status">
-                {storageNotice}
-              </p>
-            )}
-            <div className="progress-card">
-              <div>
-                <span>Your progress</span>
-                <strong>
-                  {solvedCount}
-                  <small> / {problems.length}</small>
-                </strong>
-              </div>
-              <div className="progress-track">
-                <i style={{ width: `${(solvedCount / Math.max(1, problems.length)) * 100}%` }} />
-              </div>
-              <p>One problem at a time.</p>
-            </div>
-            <div className="sidebar-footer">
-              <Braces size={15} />
-              <span>React + ASP.NET Core</span>
-              <span className="version">v0.1</span>
-            </div>
-          </aside>
-        </dialog>
+          onExport={() => storageAction(() => practice.exportAnswers(), 'Answers exported.')}
+          onImport={(file) =>
+            storageAction(async () => {
+              await practice.importAnswers(file);
+              setHistoryVersion((value) => value + 1);
+            }, 'Imported answers and history. Existing drafts were kept.')
+          }
+        />
 
         <section className="problem-pane">
           <div className="pane-heading">
@@ -757,8 +392,28 @@ export default function App() {
                   ))}
                 </select>
               </div>
-              <span>Saved in this browser</span>
+              <span>Autosaved on this computer</span>
             </div>
+            {syncWarning && (
+              <div className="save-warning" role="status">
+                <span>{syncWarning}</span>
+                <button
+                  onClick={async () => {
+                    try {
+                      await practice.refresh();
+                      setHistoryVersion((value) => value + 1);
+                      setSyncWarning('');
+                    } catch {
+                      setSyncWarning(
+                        'Could not refresh progress. Your graded answer is still saved.',
+                      );
+                    }
+                  }}
+                >
+                  Retry synchronization
+                </button>
+              </div>
+            )}
             {(practice.error || saveConflict) && (
               <div className="save-warning" role="status">
                 <span>
@@ -852,100 +507,16 @@ export default function App() {
             </div>
             <div className="results-body" id="test-results-body">
               {tab === 'history' ? (
-                <div className="history-list">
-                  {historyError && (
-                    <p className="save-warning">
-                      {historyError}
-                      <button onClick={() => setHistoryVersion((v) => v + 1)}>Retry history</button>
-                    </p>
-                  )}
-                  {viewedAttempt && (
-                    <div className="saved-answer">
-                      <div>
-                        <strong>
-                          {viewedAttempt.language ?? 'Legacy'} · {viewedAttempt.status}
-                        </strong>
-                        <button onClick={() => setViewedAttempt(null)}>Close answer</button>
-                      </div>
-                      <p>
-                        {new Date(viewedAttempt.timestamp).toLocaleString()} ·{' '}
-                        {viewedAttempt.passed}/{viewedAttempt.total} cases ·{' '}
-                        {viewedAttempt.elapsedMs.toFixed(1)} ms
-                      </p>
-                      {viewedAttempt.code !== null ? (
-                        <>
-                          <pre tabIndex={0} aria-label="Saved answer code">
-                            {viewedAttempt.code}
-                          </pre>
-                          <button
-                            disabled={busy}
-                            onClick={() => {
-                              if (!viewedAttempt.language || viewedAttempt.code === null) return;
-                              handleLanguageChange(viewedAttempt.language);
-                              practice.edit(
-                                viewedAttempt.problemId,
-                                viewedAttempt.language,
-                                viewedAttempt.code,
-                              );
-                              setViewedAttempt(null);
-                            }}
-                          >
-                            Restore to editor
-                          </button>
-                        </>
-                      ) : (
-                        <p>
-                          This legacy entry contains only a result summary. Its original code was
-                          not saved.
-                        </p>
-                      )}
-                      {viewedAttempt.result?.diagnostics && (
-                        <pre>{viewedAttempt.result.diagnostics}</pre>
-                      )}
-                    </div>
-                  )}
-                  {hasMoreHistory && (
-                    <button className="history-more" onClick={() => void loadOlder()}>
-                      Load older attempts
-                    </button>
-                  )}
-                  {attempts.filter((attempt) => attempt.problemId === selected).length === 0 ? (
-                    <EmptyState
-                      icon={<History size={25} />}
-                      title="Your attempts live here"
-                      text="Run or submit your code to start a local history."
-                    />
-                  ) : (
-                    attempts
-                      .filter((attempt) => attempt.problemId === selected)
-                      .map((attempt) => (
-                        <div className="history-item" key={attempt.id}>
-                          <span className={attempt.status === 'Accepted' ? 'positive' : 'negative'}>
-                            {attempt.status === 'Accepted' ? (
-                              <CheckCircle2 size={16} />
-                            ) : (
-                              <XCircle size={16} />
-                            )}
-                            {attempt.status}
-                          </span>
-                          <span>
-                            {attempt.language ?? 'Legacy'} ·{' '}
-                            {attempt.mode === 'submit' ? 'Submit' : 'Run'} · {attempt.passed}/
-                            {attempt.total}
-                          </span>
-                          <button onClick={() => void viewAnswer(attempt)}>
-                            {attempt.legacy ? 'Legacy summary' : 'View answer'}
-                          </button>
-                          <time>
-                            {new Date(attempt.timestamp).toLocaleTimeString([], {
-                              hour: '2-digit',
-                              minute: '2-digit',
-                            })}
-                          </time>
-                        </div>
-                      ))
-                  )}
-                </div>
+                <HistoryPanel
+                  history={history}
+                  busy={busy}
+                  onRetry={() => setHistoryVersion((value) => value + 1)}
+                  onRestore={(answer) => {
+                    if (!answer.language || answer.code === null) return;
+                    handleLanguageChange(answer.language);
+                    practice.edit(answer.problemId, answer.language, answer.code);
+                  }}
+                />
               ) : busy ? (
                 <EmptyState
                   icon={<LoaderCircle className="spin" size={28} />}
@@ -1053,16 +624,6 @@ export default function App() {
           </section>
         </section>
       </main>
-    </div>
-  );
-}
-
-function EmptyState({ icon, title, text }: { icon: React.ReactNode; title: string; text: string }) {
-  return (
-    <div className="empty-state">
-      <div className="empty-icon">{icon}</div>
-      <strong>{title}</strong>
-      <p>{text}</p>
     </div>
   );
 }

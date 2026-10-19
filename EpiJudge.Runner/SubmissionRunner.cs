@@ -11,7 +11,12 @@ public sealed record SubmissionResult(string Id, string Status, int Passed, int 
 internal sealed record ExecutionResult(JsonElement? Actual, string? Error, double ElapsedMs,
     bool ValidationFailed = false, string? ValidationMessage = null);
 
-public sealed class SubmissionRunner(string repositoryRoot)
+public interface ISubmissionRunner
+{
+    Task<SubmissionResult?> RunAsync(Problem problem, string code, bool examplesOnly, string language, CancellationToken cancellation);
+}
+
+public sealed class SubmissionRunner(string repositoryRoot) : ISubmissionRunner
 {
     private readonly SemaphoreSlim gate = new(1, 1);
     private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true };

@@ -65,9 +65,11 @@ metadata is preserved in `scripts/problem-mapping.json` for catalog tooling.
 
 ```powershell
 dotnet build EPIJudge.Web.slnx
+dotnet test EpiJudge.Tests/EpiJudge.Tests.csproj --no-restore
 cd epijudge.client
 npm ci
 npm run build
+npm run test:coverage
 cd ..
 dotnet run --project scripts/WebAudit/WebAudit.csproj
 python scripts/verify_problem_wording.py
@@ -80,6 +82,8 @@ The HTTP checks start and stop their own hidden local test servers. Add
 `-CheckFrontend` to the C# HTTP suite to check the direct React development
 launch. Both HTTP suites include intentional 60-second timeout checks;
 `-SkipTimeout` skips them on a repeat run.
+
+See [TESTING.md](TESTING.md) for the test layers, coverage scope, and code boundaries.
 
 To regenerate catalogs:
 
