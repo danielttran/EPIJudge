@@ -78,9 +78,40 @@ Run results include the input, expected value, actual value, and any runtime
 exception. Submit returns totals and a status without revealing hidden case
 contents. Compiler diagnostics appear in the results panel.
 
-Code, the latest 50 attempt summaries, and solved status are saved in this
-browser's local storage. There are no accounts or shared database yet. Reset
-restores the current problem's starter code after confirmation.
+Drafts, exact Run/Submit source snapshots, verdicts, and progress are saved in
+SQLite for one local profile. On Windows the default file is
+`%LOCALAPPDATA%\EPIJudge\practice.db`, outside this checkout. Set `EPI_DATA_DIR`
+or `Practice:DataDirectory` to choose another directory. No separate database
+installation is needed. This is local persistence, not automatic cloud sync.
+
+The editor autosaves after a short typing pause and keeps browser recovery
+copies until the server confirms a save. Each problem and language has its own
+draft. Revision checks prevent another tab from silently overwriting it; the
+editor offers **Use saved version** or **Keep my version** if a conflict occurs.
+Green marks an accepted full Submit; orange marks attempts without an accepted
+Submit. Later failures do not remove solved status. Editing alone does not mark
+a problem attempted.
+
+**History** lists saved attempts with language, verdict, and time, with older
+entries available through pagination. **View answer** shows the original code;
+**Restore to editor** copies it to the corresponding language draft. Reset
+changes only the draft and never deletes history or solved status.
+
+Existing browser drafts, solved flags, and history are imported automatically
+and idempotently. Old summaries do not have recoverable code or language and
+are labeled **Legacy summary**. Original browser data is retained.
+
+Use **Export answers** in the problem drawer to download a JSON backup, then
+**Import answers** on another machine. Import merges history and missing drafts,
+preserving existing drafts. Keep backups private: they contain your source code.
+Import supports version 1 backups up to 64 MB. Copying the Git repository alone
+does not copy personal answers. The SQLite database and its WAL files should
+stay together; use Export for a portable, consistent backup while the app runs.
+
+`scripts/Verify-Practice.ps1` tests persistence with temporary isolated databases,
+including restarts, concurrency, colors' underlying status rules, migration,
+pagination, and backup restore. The other HTTP suites also isolate their data
+when invoked with `-StartServer`, so tests do not change personal progress.
 
 ## Project layout
 

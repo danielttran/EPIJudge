@@ -8,6 +8,7 @@ if ($StartServer) {
     $env:Frontend__Enabled = if ($CheckFrontend) { 'true' } else { 'false' }
     $logRoot = Join-Path $root '.epi-runs'
     New-Item -ItemType Directory -Force -Path $logRoot | Out-Null
+    $env:Practice__DataDirectory = Join-Path $logRoot ('test-web-data-' + [guid]::NewGuid().ToString('N'))
     $dll = Join-Path $root 'EpiJudge.Web\bin\Debug\net10.0\EpiJudge.Web.dll'
     $content = Join-Path $root 'EpiJudge.Web'
     $testServer = Start-Process dotnet -ArgumentList @("`"$dll`"", '--urls', $BaseUrl, '--contentRoot', "`"$content`"") -WorkingDirectory $root -WindowStyle Hidden -PassThru -RedirectStandardOutput "$logRoot\web-audit.log" -RedirectStandardError "$logRoot\web-audit.err"

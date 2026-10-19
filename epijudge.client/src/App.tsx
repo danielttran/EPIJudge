@@ -2,6 +2,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import CodeEditor from './Editor';
 import {
   Braces,
+  Download,
+  Upload,
   Check,
   CheckCircle2,
   ChevronRight,
@@ -25,6 +27,7 @@ import {
   XCircle,
 } from 'lucide-react';
 import { ErrorBoundary } from './ErrorBoundary';
+import { usePractice } from './practiceStorage';
 
 type Problem = {
   id: string;
@@ -121,15 +124,6 @@ function getSignature(p: Problem, lang: string): string {
   return p.starters?.csharp?.signature || p.signature;
 }
 
-function getStoredCode(p: Problem, lang: string): string {
-  const scoped = load<string | null>('epi:code:' + lang + ':' + p.id, null);
-  if (scoped !== null) return scoped;
-  if (lang === 'csharp') {
-    const legacy = load<string | null>('epi:code:' + p.id, null);
-    if (legacy !== null) return legacy;
-  }
-  return getStarterCode(p, lang);
-}
 type TestCase = {
   number: number;
   passed: boolean;
@@ -156,7 +150,13 @@ type Attempt = {
   status: string;
   passed: number;
   total: number;
+  elapsedMs: number;
   timestamp: string;
+  language: string | null;
+  code: string | null;
+  result: Result | null;
+  legacy: boolean;
+  sequence: number;
 };
 
 function load<T>(key: string, fallback: T): T {
@@ -186,7 +186,13 @@ export default function App() {
   const [language, setLanguage] = useState<string>(() => load('epi:language', 'csharp'));
   const [problems, setProblems] = useState<Problem[]>([]);
   const [selected, setSelected] = useState(load('epi:selected', 'count_bits'));
-  const [code, setCode] = useState('');
+  const practice = usePractice(problems);
+  const importInput = useRef<HTMLInputElement>(null);
+  const [storageNotice, setStorageNotice] = useState('');
+  const [historyVersion, setHistoryVersion] = useState(0);
+  const [historyError, setHistoryError] = useState('');
+  const [hasMoreHistory, setHasMoreHistory] = useState(false);
+  const [viewedAttempt, setViewedAttempt] = useState<Attempt | null>(null);
   const [query, setQuery] = useState('');
   const [topic, setTopic] = useState('');
   const [result, setResult] = useState<Result | null>(null);
@@ -196,13 +202,21 @@ export default function App() {
   const busyRef = useRef(false);
   const [activeMode, setActiveMode] = useState('run');
   const [tab, setTab] = useState<'results' | 'history'>('results');
-  const [attempts, setAttempts] = useState<Attempt[]>(load('epi:attempts', []));
-  const [solvedIds, setSolvedIds] = useState<string[]>(load('epi:solved', []));
+  const [attempts, setAttempts] = useState<Attempt[]>([]);
   const [activeCase, setActiveCase] = useState(0);
   const problem = problems.find((item) => item.id === selected);
   const currentAttemptRef = useRef<() => void>(() => {});
   const currentSubmitRef = useRef<() => void>(() => {});
-  const solved = new Set(solvedIds);
+  const solved = new Set(
+    Object.values(practice.progress)
+      .filter((p) => p.status === 'solved')
+      .map((p) => p.problemId),
+  );
+  const code = problem
+    ? practice.codeFor(problem.id, language, getStarterCode(problem, language))
+    : '';
+  const saveStatus = problem ? practice.status(problem.id, language) : 'Loading saved answer…';
+  const saveConflict = problem ? practice.conflict(problem.id, language) : undefined;
 
   const currentLang = LANGUAGES.find((l) => l.id === language) ?? LANGUAGES[0];
 
@@ -228,7 +242,7 @@ export default function App() {
 
   useEffect(() => {
     if (!problem) return;
-    setCode(getStoredCode(problem, language));
+    setViewedAttempt(null);
     setResult(null);
     setError('');
     setActiveCase(0);
@@ -240,12 +254,70 @@ export default function App() {
     save('epi:language', newLang);
   };
 
+  useEffect(() => {
+    if (!problem || !practice.ready) return;
+    const controller = new AbortController();
+    setAttempts([]);
+    setHistoryError('');
+    fetch('/api/practice/history?problemId=' + encodeURIComponent(problem.id), {
+      signal: controller.signal,
+      cache: 'no-store',
+    })
+      .then((response) => {
+        if (!response.ok) throw new Error('Could not load saved history.');
+        return response.json() as Promise<Attempt[]>;
+      })
+      .then((items) => {
+        setAttempts(items);
+        setHasMoreHistory(items.length === 50);
+      })
+      .catch((reason) => {
+        if (reason.name !== 'AbortError') setHistoryError(reason.message);
+      });
+    return () => controller.abort();
+  }, [problem?.id, practice.ready, historyVersion]);
+
   const changeCode = (value: string) => {
-    setCode(value);
-    if (problem) save(`epi:code:${language}:${problem.id}`, value);
+    if (problem) practice.edit(problem.id, language, value);
+  };
+  const storageAction = async (action: () => Promise<unknown>, message = '') => {
+    try {
+      await action();
+      setStorageNotice(message);
+    } catch (reason) {
+      setStorageNotice(
+        reason instanceof Error ? reason.message : 'Could not access saved answers.',
+      );
+    }
+  };
+  const viewAnswer = async (attempt: Attempt) => {
+    try {
+      const response = await fetch('/api/practice/history/' + encodeURIComponent(attempt.id), {
+        cache: 'no-store',
+      });
+      if (!response.ok) throw new Error('Could not open saved answer.');
+      setViewedAttempt(await response.json());
+    } catch (reason) {
+      setHistoryError(reason instanceof Error ? reason.message : 'Could not open answer.');
+    }
+  };
+  const loadOlder = async () => {
+    if (!problem || !attempts.length) return;
+    try {
+      const response = await fetch(
+        `/api/practice/history?problemId=${encodeURIComponent(problem.id)}&before=${attempts[attempts.length - 1].sequence}`,
+        { cache: 'no-store' },
+      );
+      if (!response.ok) throw new Error('Could not load older attempts.');
+      const older: Attempt[] = await response.json();
+      setAttempts((previous) => [...previous, ...older]);
+      setHasMoreHistory(older.length === 50);
+    } catch (reason) {
+      setHistoryError(reason instanceof Error ? reason.message : 'Could not load history.');
+    }
   };
   const execute = async (mode: 'run' | 'submit') => {
-    if (!problem || busyRef.current) return;
+    if (!problem || busyRef.current || !practice.ready) return;
     busyRef.current = true;
     setBusy(true);
     setResultsOpen(true);
@@ -255,6 +327,7 @@ export default function App() {
     setTab('results');
     setActiveCase(0);
     try {
+      await practice.flush();
       const response = await fetch('/api/submissions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-EpiJudge-Client': 'local-editor' },
@@ -268,28 +341,8 @@ export default function App() {
       }
       const next: Result = await response.json();
       setResult(next);
-      if (mode === 'submit' && next.status === 'Accepted')
-        setSolvedIds((previous) => {
-          const updated = [...new Set([...previous, problem.id])];
-          save('epi:solved', updated);
-          return updated;
-        });
-      setAttempts((previous) => {
-        const updated = [
-          {
-            id: next.id,
-            problemId: problem.id,
-            mode,
-            status: next.status,
-            passed: next.passed,
-            total: next.total,
-            timestamp: new Date().toISOString(),
-          },
-          ...previous,
-        ].slice(0, 50);
-        save('epi:attempts', updated);
-        return updated;
-      });
+      await practice.refresh();
+      setHistoryVersion((value) => value + 1);
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : 'Could not reach the local runner.');
     } finally {
@@ -362,7 +415,7 @@ export default function App() {
         <div className="topbar-actions">
           <button
             className="run-button"
-            disabled={busy || !problem || !code.trim()}
+            disabled={busy || !practice.ready || !problem || !code.trim()}
             onClick={() => void execute('run')}
           >
             {busy && activeMode === 'run' ? (
@@ -374,7 +427,7 @@ export default function App() {
           </button>
           <button
             className="submit-button"
-            disabled={busy || !problem || !code.trim()}
+            disabled={busy || !practice.ready || !problem || !code.trim()}
             onClick={() => void execute('submit')}
           >
             {busy && activeMode === 'submit' ? (
@@ -387,7 +440,7 @@ export default function App() {
         </div>
         <div className="topbar-right">
           <span className="local-badge">
-            <i /> Local development
+            <i /> Local profile
           </span>
           <span className="avatar">{currentLang.shortLabel}</span>
         </div>
@@ -449,8 +502,19 @@ export default function App() {
                 <button
                   key={item.id}
                   disabled={busy}
-                  className={'problem-link ' + (item.id === selected ? 'selected' : '')}
-                  title={item.title + ' · ' + item.topic}
+                  className={
+                    'problem-link ' +
+                    (practice.progress[item.id]?.status ?? '') +
+                    (item.id === selected ? ' selected' : '')
+                  }
+                  title={
+                    item.title +
+                    ' · ' +
+                    item.topic +
+                    ' · ' +
+                    (practice.progress[item.id]?.status ?? 'Not started')
+                  }
+                  aria-label={`${String(problems.indexOf(item) + 1).padStart(2, '0')}. ${item.title} — ${practice.progress[item.id]?.status ?? 'Not started'}`}
                   aria-current={item.id === selected ? 'page' : undefined}
                   onClick={() => {
                     setSelected(item.id);
@@ -458,8 +522,16 @@ export default function App() {
                     setLibraryOpen(false);
                   }}
                 >
-                  <span className={'problem-indicator ' + (solved.has(item.id) ? 'solved' : '')}>
-                    {solved.has(item.id) ? <CheckCircle2 size={16} /> : <Circle size={15} />}
+                  <span
+                    className={'problem-indicator ' + (practice.progress[item.id]?.status ?? '')}
+                  >
+                    {solved.has(item.id) ? (
+                      <CheckCircle2 size={16} />
+                    ) : practice.progress[item.id]?.status === 'attempted' ? (
+                      <Clock3 size={16} />
+                    ) : (
+                      <Circle size={15} />
+                    )}
                   </span>
                   <span className="problem-link-text">
                     <strong>
@@ -481,6 +553,47 @@ export default function App() {
                 and Java.
               </p>
             </div>
+            <div className="status-legend">
+              <span className="solved">● Solved</span>
+              <span className="attempted">● Attempted</span>
+            </div>
+            <div className="backup-actions">
+              <button
+                disabled={!practice.ready}
+                onClick={() =>
+                  void storageAction(() => practice.exportAnswers(), 'Answers exported.')
+                }
+              >
+                <Download size={14} /> Export answers
+              </button>
+              <button
+                disabled={!practice.ready || busy}
+                onClick={() => importInput.current?.click()}
+              >
+                <Upload size={14} /> Import answers
+              </button>
+              <input
+                ref={importInput}
+                type="file"
+                accept="application/json,.json"
+                hidden
+                aria-label="Import answers file"
+                onChange={(event) => {
+                  const file = event.target.files?.[0];
+                  if (file)
+                    void storageAction(async () => {
+                      await practice.importAnswers(file);
+                      setHistoryVersion((value) => value + 1);
+                    }, 'Imported answers and history. Existing drafts were kept.');
+                  event.target.value = '';
+                }}
+              />
+            </div>
+            {storageNotice && (
+              <p className="storage-notice" role="status">
+                {storageNotice}
+              </p>
+            )}
             <div className="progress-card">
               <div>
                 <span>Your progress</span>
@@ -543,6 +656,12 @@ export default function App() {
                     <Check size={12} /> Solved
                   </span>
                 )}
+                {!solved.has(problem.id) &&
+                  practice.progress[problem.id]?.status === 'attempted' && (
+                    <span className="attempted-tag">
+                      <Clock3 size={12} /> Attempted
+                    </span>
+                  )}
               </div>
               <p className="description-copy">{problem.description}</p>
               <div className="signature-label">YOUR {currentLang.shortLabel.toUpperCase()} API</div>
@@ -606,7 +725,7 @@ export default function App() {
                   className="icon-button"
                   title="Reset to starter code"
                   aria-label="Reset to starter code"
-                  disabled={busy || !problem}
+                  disabled={busy || !practice.ready || !problem}
                   onClick={() => {
                     if (
                       problem &&
@@ -628,7 +747,7 @@ export default function App() {
                   className="language-select"
                   value={language}
                   onChange={(e) => handleLanguageChange(e.target.value)}
-                  disabled={busy}
+                  disabled={busy || !practice.ready}
                   aria-label="Select programming language"
                 >
                   {LANGUAGES.map((lang) => (
@@ -640,6 +759,29 @@ export default function App() {
               </div>
               <span>Saved in this browser</span>
             </div>
+            {(practice.error || saveConflict) && (
+              <div className="save-warning" role="status">
+                <span>
+                  {saveConflict
+                    ? 'This answer changed in another tab. Choose which version to keep.'
+                    : practice.error}
+                </span>
+                {saveConflict && problem ? (
+                  <>
+                    <button onClick={() => practice.resolve(problem.id, language, true)}>
+                      Use saved version
+                    </button>
+                    <button onClick={() => practice.resolve(problem.id, language, false)}>
+                      Keep my version
+                    </button>
+                  </>
+                ) : (
+                  <button onClick={() => void storageAction(() => practice.flush())}>
+                    Retry save
+                  </button>
+                )}
+              </div>
+            )}
             <div className="editor-container">
               <ErrorBoundary
                 fallback={(err, reset) => (
@@ -659,14 +801,15 @@ export default function App() {
                   onChange={changeCode}
                   onRun={runCommand}
                   onSubmit={submitCommand}
-                  busy={busy}
+                  busy={busy || !practice.ready}
                   language={currentLang.monacoLang}
                 />
               </ErrorBoundary>
             </div>
             <div className="editor-actions">
               <span>
-                <span className="saved-dot" /> Saved in this browser
+                <span className={'saved-dot ' + (saveStatus === 'Saved' ? 'saved' : 'pending')} />{' '}
+                <span role="status">{saveStatus}</span>
               </span>
             </div>
           </div>
@@ -710,6 +853,62 @@ export default function App() {
             <div className="results-body" id="test-results-body">
               {tab === 'history' ? (
                 <div className="history-list">
+                  {historyError && (
+                    <p className="save-warning">
+                      {historyError}
+                      <button onClick={() => setHistoryVersion((v) => v + 1)}>Retry history</button>
+                    </p>
+                  )}
+                  {viewedAttempt && (
+                    <div className="saved-answer">
+                      <div>
+                        <strong>
+                          {viewedAttempt.language ?? 'Legacy'} · {viewedAttempt.status}
+                        </strong>
+                        <button onClick={() => setViewedAttempt(null)}>Close answer</button>
+                      </div>
+                      <p>
+                        {new Date(viewedAttempt.timestamp).toLocaleString()} ·{' '}
+                        {viewedAttempt.passed}/{viewedAttempt.total} cases ·{' '}
+                        {viewedAttempt.elapsedMs.toFixed(1)} ms
+                      </p>
+                      {viewedAttempt.code !== null ? (
+                        <>
+                          <pre tabIndex={0} aria-label="Saved answer code">
+                            {viewedAttempt.code}
+                          </pre>
+                          <button
+                            disabled={busy}
+                            onClick={() => {
+                              if (!viewedAttempt.language || viewedAttempt.code === null) return;
+                              handleLanguageChange(viewedAttempt.language);
+                              practice.edit(
+                                viewedAttempt.problemId,
+                                viewedAttempt.language,
+                                viewedAttempt.code,
+                              );
+                              setViewedAttempt(null);
+                            }}
+                          >
+                            Restore to editor
+                          </button>
+                        </>
+                      ) : (
+                        <p>
+                          This legacy entry contains only a result summary. Its original code was
+                          not saved.
+                        </p>
+                      )}
+                      {viewedAttempt.result?.diagnostics && (
+                        <pre>{viewedAttempt.result.diagnostics}</pre>
+                      )}
+                    </div>
+                  )}
+                  {hasMoreHistory && (
+                    <button className="history-more" onClick={() => void loadOlder()}>
+                      Load older attempts
+                    </button>
+                  )}
                   {attempts.filter((attempt) => attempt.problemId === selected).length === 0 ? (
                     <EmptyState
                       icon={<History size={25} />}
@@ -730,9 +929,13 @@ export default function App() {
                             {attempt.status}
                           </span>
                           <span>
+                            {attempt.language ?? 'Legacy'} ·{' '}
                             {attempt.mode === 'submit' ? 'Submit' : 'Run'} · {attempt.passed}/
                             {attempt.total}
                           </span>
+                          <button onClick={() => void viewAnswer(attempt)}>
+                            {attempt.legacy ? 'Legacy summary' : 'View answer'}
+                          </button>
                           <time>
                             {new Date(attempt.timestamp).toLocaleTimeString([], {
                               hour: '2-digit',

@@ -37,7 +37,11 @@ dotnet run --project EpiJudge.Web --launch-profile Website
 See the [website guide](EpiJudge.Web/README.md) for prerequisites, language
 contracts, compiler setup, and troubleshooting. The site runs trusted local
 code; accounts and a public submission service are outside this local app.
-Code and practice progress are stored in your browser.
+Answers, submission history, and progress are saved in a local SQLite database
+outside the repository. The editor autosaves each problem/language separately;
+green means solved by an accepted Submit, orange means attempted without an
+accepted Submit. Browser recovery copies protect edits during connection issues.
+Open the problem list to export/import answers for another machine.
 
 ## Repository layout
 
@@ -69,6 +73,7 @@ dotnet run --project scripts/WebAudit/WebAudit.csproj
 python scripts/verify_problem_wording.py
 ./scripts/Verify-Web.ps1 -StartServer
 ./scripts/Verify-NativeWeb.ps1 -StartServer
+./scripts/Verify-Practice.ps1
 ```
 
 The HTTP checks start and stop their own hidden local test servers. Add
