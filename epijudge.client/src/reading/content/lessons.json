@@ -1,0 +1,442 @@
+[
+  {
+    "id": "reading-parent-pointer-lca",
+    "title": "LCA with parent pointers",
+    "topic": "Trees",
+    "bookReferences": ["9.4"],
+    "checkpoints": [
+      {
+        "id": "contract",
+        "label": "I can state the contract and assumptions."
+      },
+      {
+        "id": "trace",
+        "label": "I traced a concrete example and an edge case."
+      },
+      {
+        "id": "tradeoffs",
+        "label": "I can explain the tradeoffs without looking."
+      }
+    ],
+    "quizzes": [
+      {
+        "id": "understanding",
+        "prompt": "Why align depths before moving together?",
+        "options": [
+          "To compare nodes at the same distance from the root",
+          "To sort the node values",
+          "To balance the tree"
+        ],
+        "correctIndex": 0,
+        "explanation": "At equal depths, simultaneous parent steps cannot skip the first shared ancestor."
+      }
+    ],
+    "hints": ["Draw two paths with different lengths and trace their meeting point."],
+    "simulation": null,
+    "sources": []
+  },
+  {
+    "id": "reading-close-ancestor-lca",
+    "title": "Finding a nearby common ancestor",
+    "topic": "Trees",
+    "bookReferences": ["12.4"],
+    "checkpoints": [
+      {
+        "id": "contract",
+        "label": "I can state the contract and assumptions."
+      },
+      {
+        "id": "trace",
+        "label": "I traced a concrete example and an edge case."
+      },
+      {
+        "id": "tradeoffs",
+        "label": "I can explain the tradeoffs without looking."
+      }
+    ],
+    "quizzes": [
+      {
+        "id": "understanding",
+        "prompt": "What belongs in the visited set?",
+        "options": ["Node identities", "Only the root value", "Sorted depths"],
+        "correctIndex": 0,
+        "explanation": "Identity distinguishes equal-valued nodes and allows the upward paths to meet correctly."
+      }
+    ],
+    "hints": [
+      "Compare the number of parent steps for a close ancestor beneath a very distant root."
+    ],
+    "simulation": null,
+    "sources": []
+  },
+  {
+    "id": "reading-shared-state",
+    "title": "Shared state and interleavings",
+    "topic": "Concurrency",
+    "bookReferences": ["19.3"],
+    "checkpoints": [
+      {
+        "id": "contract",
+        "label": "I can state the contract and assumptions."
+      },
+      {
+        "id": "trace",
+        "label": "I traced a concrete example and an edge case."
+      },
+      {
+        "id": "tradeoffs",
+        "label": "I can explain the tradeoffs without looking."
+      }
+    ],
+    "quizzes": [
+      {
+        "id": "understanding",
+        "prompt": "Which region must one lock protect?",
+        "options": [
+          "The complete read-modify-write sequence",
+          "Only local arithmetic",
+          "Only the last write"
+        ],
+        "correctIndex": 0,
+        "explanation": "Protecting just the write still permits both threads to read the same old value."
+      }
+    ],
+    "hints": [
+      "Use the simulator to produce a final counter of one, then repeat with the lock enabled."
+    ],
+    "simulation": "race",
+    "sources": ["https://docs.oracle.com/javase/tutorial/essential/concurrency/interfere.html"]
+  },
+  {
+    "id": "reading-readers-writers",
+    "title": "Readers, writers, and fairness",
+    "topic": "Concurrency",
+    "bookReferences": ["19.6"],
+    "checkpoints": [
+      {
+        "id": "contract",
+        "label": "I can state the contract and assumptions."
+      },
+      {
+        "id": "trace",
+        "label": "I traced a concrete example and an edge case."
+      },
+      {
+        "id": "tradeoffs",
+        "label": "I can explain the tradeoffs without looking."
+      }
+    ],
+    "quizzes": [
+      {
+        "id": "understanding",
+        "prompt": "Why check a wait predicate again after waking?",
+        "options": [
+          "The required condition may no longer hold",
+          "Every wake grants exclusive access",
+          "It makes the data immutable"
+        ],
+        "correctIndex": 0,
+        "explanation": "Other threads may change the state before the waking thread reacquires coordination."
+      }
+    ],
+    "hints": ["Write the admission predicates and explain whether a waiting writer can starve."],
+    "simulation": null,
+    "sources": []
+  },
+  {
+    "id": "reading-timers",
+    "title": "Timers and scheduling",
+    "topic": "Concurrency",
+    "bookReferences": ["19.8"],
+    "checkpoints": [
+      {
+        "id": "contract",
+        "label": "I can state the contract and assumptions."
+      },
+      {
+        "id": "trace",
+        "label": "I traced a concrete example and an edge case."
+      },
+      {
+        "id": "tradeoffs",
+        "label": "I can explain the tradeoffs without looking."
+      }
+    ],
+    "quizzes": [
+      {
+        "id": "understanding",
+        "prompt": "Which insertion needs to interrupt the scheduler\u2019s current wait?",
+        "options": [
+          "A task earlier than the current earliest deadline",
+          "Only a task at the latest deadline",
+          "Every completed task"
+        ],
+        "correctIndex": 0,
+        "explanation": "The old wait would otherwise oversleep the new earliest deadline."
+      }
+    ],
+    "hints": ["Trace insertion, cancellation, wakeup, and dispatch for three tasks."],
+    "simulation": null,
+    "sources": []
+  },
+  {
+    "id": "reading-parallel-cache",
+    "title": "Parallel work and shared caches",
+    "topic": "Concurrency",
+    "bookReferences": ["19.9"],
+    "checkpoints": [
+      {
+        "id": "contract",
+        "label": "I can state the contract and assumptions."
+      },
+      {
+        "id": "trace",
+        "label": "I traced a concrete example and an edge case."
+      },
+      {
+        "id": "tradeoffs",
+        "label": "I can explain the tradeoffs without looking."
+      }
+    ],
+    "quizzes": [
+      {
+        "id": "understanding",
+        "prompt": "Where should the expensive computation run?",
+        "options": [
+          "Outside the global cache lock",
+          "Inside the global lock",
+          "Only after all waiters cancel"
+        ],
+        "correctIndex": 0,
+        "explanation": "A short coordination section lets unrelated keys make progress while work is running."
+      }
+    ],
+    "hints": [
+      "Draw the state transitions for missing, in-flight, completed, expired, and failed entries."
+    ],
+    "simulation": null,
+    "sources": []
+  },
+  {
+    "id": "reading-journey-planner",
+    "title": "Design a constrained journey planner",
+    "topic": "System design",
+    "bookReferences": ["20.13"],
+    "checkpoints": [
+      {
+        "id": "contract",
+        "label": "I can state the contract and assumptions."
+      },
+      {
+        "id": "trace",
+        "label": "I traced a concrete example and an edge case."
+      },
+      {
+        "id": "tradeoffs",
+        "label": "I can explain the tradeoffs without looking."
+      }
+    ],
+    "quizzes": [
+      {
+        "id": "understanding",
+        "prompt": "When can one label per location discard a useful route?",
+        "options": [
+          "When time and cost both affect future choices",
+          "When every edge has identical cost and no schedule",
+          "When only the start vertex exists"
+        ],
+        "correctIndex": 0,
+        "explanation": "A slightly more expensive early arrival can enable a later connection that a cheaper arrival misses."
+      }
+    ],
+    "hints": ["Specify inputs, objective, freshness requirements, and one adversarial itinerary."],
+    "simulation": null,
+    "sources": []
+  },
+  {
+    "id": "reading-advertising",
+    "title": "Design an advertising service",
+    "topic": "System design",
+    "bookReferences": ["20.15"],
+    "checkpoints": [
+      {
+        "id": "contract",
+        "label": "I can state the contract and assumptions."
+      },
+      {
+        "id": "trace",
+        "label": "I traced a concrete example and an edge case."
+      },
+      {
+        "id": "tradeoffs",
+        "label": "I can explain the tradeoffs without looking."
+      }
+    ],
+    "quizzes": [
+      {
+        "id": "understanding",
+        "prompt": "Why give billing events stable identifiers?",
+        "options": [
+          "To deduplicate retried events",
+          "To guarantee every impression converts",
+          "To remove all latency"
+        ],
+        "correctIndex": 0,
+        "explanation": "A durable identifier lets accounting recognize repeated delivery of the same logical event."
+      }
+    ],
+    "hints": ["Draw the selection path and the asynchronous accounting path with failure cases."],
+    "simulation": null,
+    "sources": []
+  },
+  {
+    "id": "reading-recommendations",
+    "title": "Design a recommendation service",
+    "topic": "System design",
+    "bookReferences": ["20.16"],
+    "checkpoints": [
+      {
+        "id": "contract",
+        "label": "I can state the contract and assumptions."
+      },
+      {
+        "id": "trace",
+        "label": "I traced a concrete example and an edge case."
+      },
+      {
+        "id": "tradeoffs",
+        "label": "I can explain the tradeoffs without looking."
+      }
+    ],
+    "quizzes": [
+      {
+        "id": "understanding",
+        "prompt": "What is reranking useful for?",
+        "options": [
+          "Applying diversity and availability constraints",
+          "Recovering candidates never retrieved",
+          "Guaranteeing all users choose the first item"
+        ],
+        "correctIndex": 0,
+        "explanation": "Reranking adjusts the retrieved, scored set for additional product constraints."
+      }
+    ],
+    "hints": ["Sketch a cold-start fallback and an experiment that could falsify your design."],
+    "simulation": null,
+    "sources": ["https://developers.google.com/machine-learning/recommendation/overview"]
+  },
+  {
+    "id": "reading-spell-checker",
+    "title": "Design a spell checker",
+    "topic": "System design",
+    "bookReferences": ["20.1"],
+    "checkpoints": [
+      {
+        "id": "contract",
+        "label": "I can state the contract and assumptions."
+      },
+      {
+        "id": "trace",
+        "label": "I traced a concrete example and an edge case."
+      },
+      {
+        "id": "tradeoffs",
+        "label": "I can explain the tradeoffs without looking."
+      }
+    ],
+    "quizzes": [
+      {
+        "id": "understanding",
+        "prompt": "Why keep the unchanged token as an option?",
+        "options": [
+          "The token may be correct despite being rare",
+          "It makes every candidate equally likely",
+          "It eliminates tokenization"
+        ],
+        "correctIndex": 0,
+        "explanation": "Names and specialized terms can be valid even when absent from the main dictionary."
+      }
+    ],
+    "hints": [
+      "Define an abstention policy and three tests where automatic replacement would be harmful."
+    ],
+    "simulation": null,
+    "sources": ["https://www.norvig.com/spell-correct.html"]
+  },
+  {
+    "id": "reading-normalization",
+    "title": "Design a text normalization service",
+    "topic": "System design",
+    "bookReferences": ["20.2"],
+    "checkpoints": [
+      {
+        "id": "contract",
+        "label": "I can state the contract and assumptions."
+      },
+      {
+        "id": "trace",
+        "label": "I traced a concrete example and an edge case."
+      },
+      {
+        "id": "tradeoffs",
+        "label": "I can explain the tradeoffs without looking."
+      }
+    ],
+    "quizzes": [
+      {
+        "id": "understanding",
+        "prompt": "Why version the normalization pipeline?",
+        "options": [
+          "Indexed documents and queries must use compatible rules",
+          "Every language uses identical stemming",
+          "It prevents all false matches"
+        ],
+        "correctIndex": 0,
+        "explanation": "Changing transformations can make old index terms incompatible with new query terms."
+      }
+    ],
+    "hints": [
+      "Write a transformation contract and identify which original information must survive."
+    ],
+    "simulation": null,
+    "sources": []
+  },
+  {
+    "id": "reading-distributed-sort",
+    "title": "Design a distributed sort",
+    "topic": "System design",
+    "bookReferences": ["20.9"],
+    "checkpoints": [
+      {
+        "id": "contract",
+        "label": "I can state the contract and assumptions."
+      },
+      {
+        "id": "trace",
+        "label": "I traced a concrete example and an edge case."
+      },
+      {
+        "id": "tradeoffs",
+        "label": "I can explain the tradeoffs without looking."
+      }
+    ],
+    "quizzes": [
+      {
+        "id": "understanding",
+        "prompt": "Which partitioning supports ordered concatenation?",
+        "options": [
+          "Non-overlapping ordered key ranges",
+          "Arbitrary hash buckets",
+          "Random worker assignment"
+        ],
+        "correctIndex": 0,
+        "explanation": "Range boundaries establish the relationship between each locally sorted output partition."
+      }
+    ],
+    "hints": ["Specify the partition invariant, retry protocol, and a skew mitigation strategy."],
+    "simulation": null,
+    "sources": [
+      "https://hadoop.apache.org/docs/current/hadoop-mapreduce-client/hadoop-mapreduce-client-core/MapReduceTutorial.html"
+    ]
+  }
+]

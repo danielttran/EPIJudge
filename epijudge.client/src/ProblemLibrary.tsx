@@ -13,6 +13,8 @@ import {
 } from 'lucide-react';
 import type { Problem } from './workspaceModels';
 import type { PracticeClient } from './practiceClient';
+import { libraryEntries, selectedStudyPlan, STUDY_PLANS } from './studyPlans';
+import { EMPTY_READING_JSON, parseReading, READING_LESSONS } from './reading/readingLessons';
 
 type Props = {
   open: boolean;
@@ -21,6 +23,8 @@ type Props = {
   busy: boolean;
   practice: PracticeClient;
   storageNotice: string;
+  filter: string;
+  onFilterChange(value: string): void;
   onClose(): void;
   onSelect(id: string): void;
   onExport(): Promise<unknown>;
@@ -34,6 +38,8 @@ export function ProblemLibrary({
   busy,
   practice,
   storageNotice,
+  filter,
+  onFilterChange,
   onClose,
   onSelect,
   onExport,
@@ -42,7 +48,6 @@ export function ProblemLibrary({
   const libraryDialog = useRef<HTMLDialogElement>(null);
   const importInput = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState('');
-  const [topic, setTopic] = useState('');
   useEffect(() => {
     if (open) libraryDialog.current?.showModal();
     else if (libraryDialog.current?.open) libraryDialog.current.close();
@@ -52,12 +57,9 @@ export function ProblemLibrary({
       .filter((p) => p.status === 'solved')
       .map((p) => p.problemId),
   );
-  const visibleProblems = problems.filter(
-    (item) =>
-      (!topic || item.topic === topic) &&
-      `${item.title} ${item.topic} ${item.id}`.toLowerCase().includes(query.toLowerCase()),
-  );
-  const topics = [...new Set(problems.map((item) => item.topic))].sort();
+  const entries = libraryEntries(problems, filter, query);
+  const plan = selectedStudyPlan(filter);
+  const topics = [...new Set([...problems, ...READING_LESSONS].map((item) => item.topic))].sort();
   const solvedCount = problems.filter((item) => solved.has(item.id)).length;
   return (
     <dialog
@@ -75,7 +77,7 @@ export function ProblemLibrary({
           <span>
             <Code2 size={17} /> Problem library
           </span>
-          <span className="count-chip">{problems.length}</span>
+          <span className="count-chip">{entries.length}</span>
           <button className="icon-button" aria-label="Close problem list" onClick={() => onClose()}>
             <X size={20} />
           </button>
@@ -91,60 +93,100 @@ export function ProblemLibrary({
         </label>
         <select
           className="topic-filter"
-          value={topic}
-          onChange={(event) => setTopic(event.target.value)}
-          aria-label="Filter by topic"
+          value={filter}
+          onChange={(event) => onFilterChange(event.target.value)}
+          aria-label="Filter by topic or study plan"
         >
           <option value="">All topics</option>
-          {topics.map((name) => (
-            <option key={name} value={name}>
-              {name}
-            </option>
-          ))}
+          <option value="kind:coding">Coding</option>
+          <option value="kind:reading">Reading &amp; Design</option>
+          <optgroup label="Study plans">
+            {STUDY_PLANS.map((plan) => (
+              <option key={plan.id} value={`plan:${plan.id}`}>
+                {plan.label}
+              </option>
+            ))}
+          </optgroup>
+          <optgroup label="Topics">
+            {topics.map((name) => (
+              <option key={name} value={name}>
+                {name}
+              </option>
+            ))}
+          </optgroup>
         </select>
-        <div className="sidebar-label">{visibleProblems.length} EXERCISES</div>
+        {plan && (
+          <p className="study-plan-note">
+            Follow this list in order. Ungraded items open a reading or design companion.
+          </p>
+        )}
+        <div className="sidebar-label">
+          {entries.length} ITEMS
+          {plan ? ` · ${entries.filter((e) => e.problem).length} CODING` : ''}
+          {entries.some((e) => e.lesson)
+            ? ` · ${entries.filter((e) => e.lesson).length} READING`
+            : ''}
+        </div>
         <nav className="problem-list" aria-label="Problems">
-          {visibleProblems.map((item, index) => (
-            <button
-              key={item.id}
-              disabled={busy}
-              className={
-                'problem-link ' +
-                (practice.progress[item.id]?.status ?? '') +
-                (item.id === selected ? ' selected' : '')
-              }
-              title={
-                item.title +
-                ' · ' +
-                item.topic +
-                ' · ' +
-                (practice.progress[item.id]?.status ?? 'Not started')
-              }
-              aria-label={`${String(problems.indexOf(item) + 1).padStart(2, '0')}. ${item.title} — ${practice.progress[item.id]?.status ?? 'Not started'}`}
-              aria-current={item.id === selected ? 'page' : undefined}
-              onClick={() => {
-                onSelect(item.id);
-                onClose();
-              }}
-            >
-              <span className={'problem-indicator ' + (practice.progress[item.id]?.status ?? '')}>
-                {solved.has(item.id) ? (
-                  <CheckCircle2 size={16} />
-                ) : practice.progress[item.id]?.status === 'attempted' ? (
-                  <Clock3 size={16} />
-                ) : (
-                  <Circle size={15} />
+          {entries.map((entry) => {
+            const item = entry.problem;
+            const lesson = entry.lesson;
+            const id = item?.id ?? lesson?.id;
+            const status = item
+              ? (practice.progress[item.id]?.status ?? '')
+              : lesson &&
+                  parseReading(practice.codeFor(lesson.id, 'reading', EMPTY_READING_JSON)).reviewed
+                ? 'reviewed'
+                : '';
+            return (
+              <button
+                key={entry.number}
+                disabled={busy || !id}
+                className={
+                  'problem-link ' +
+                  status +
+                  (id === selected ? ' selected' : '') +
+                  (!id ? ' book-only' : '')
+                }
+                title={
+                  entry.title +
+                  ' · ' +
+                  entry.topic +
+                  ' · ' +
+                  (entry.reason ?? (status || 'Not started'))
+                }
+                aria-label={`${entry.number}. ${entry.title} — ${item ? status || 'Not started' : lesson ? status || 'Reading companion' : 'Book only'}`}
+                aria-current={id === selected ? 'page' : undefined}
+                onClick={() => {
+                  if (!id) return;
+                  onSelect(id);
+                  onClose();
+                }}
+              >
+                <span className={'problem-indicator ' + status}>
+                  {(item && solved.has(item.id)) || status === 'reviewed' ? (
+                    <CheckCircle2 size={16} />
+                  ) : status === 'attempted' ? (
+                    <Clock3 size={16} />
+                  ) : (
+                    <Circle size={15} />
+                  )}
+                </span>
+                <span className="problem-link-text">
+                  <strong>
+                    {entry.number}. {entry.title}
+                  </strong>
+                </span>
+                {lesson && (
+                  <span className="reading-badge">
+                    {status === 'reviewed' ? 'Reviewed' : 'Read'}
+                  </span>
                 )}
-              </span>
-              <span className="problem-link-text">
-                <strong>
-                  {String(problems.indexOf(item) + 1 || index + 1).padStart(2, '0')}. {item.title}
-                </strong>
-              </span>
-              <ChevronRight size={14} className="problem-arrow" />
-            </button>
-          ))}
-          {problems.length > 0 && visibleProblems.length === 0 && (
+                {id && <ChevronRight size={14} className="problem-arrow" />}
+              </button>
+            );
+          })}
+          {problems.length > 0 && entries.length === 0 && (
             <p className="sidebar-empty">No matching problems.</p>
           )}
         </nav>
@@ -158,6 +200,7 @@ export function ProblemLibrary({
         <div className="status-legend">
           <span className="solved">● Solved</span>
           <span className="attempted">● Attempted</span>
+          <span className="reviewed">● Reviewed</span>
         </div>
         <div className="backup-actions">
           <button disabled={!practice.ready} onClick={() => void onExport()}>
@@ -186,7 +229,7 @@ export function ProblemLibrary({
         )}
         <div className="progress-card">
           <div>
-            <span>Your progress</span>
+            <span>Overall coding progress</span>
             <strong>
               {solvedCount}
               <small> / {problems.length}</small>

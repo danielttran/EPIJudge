@@ -3,7 +3,7 @@ import { DraftRecovery, read, write } from './draftRecovery';
 import { request, saveDraft, downloadBackup, importBackup } from './practiceApi';
 import { migrateLegacyAnswers } from './legacyMigration';
 
-const languages = ['csharp', 'javascript', 'python', 'cpp', 'java'];
+const languages = ['csharp', 'javascript', 'python', 'cpp', 'java', 'reading'];
 const keyFor = (problem: string, language: string) => `${language}:${problem}`;
 
 export class PracticeClient {

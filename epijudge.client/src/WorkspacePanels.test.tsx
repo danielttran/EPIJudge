@@ -41,12 +41,18 @@ function library(open = true) {
     busy: false,
     practice,
     storageNotice: '',
+    filter: '',
+    onFilterChange: vi.fn((value: string) => {
+      props.filter = value;
+      view.rerender(<ProblemLibrary {...props} />);
+    }),
     onClose: vi.fn(),
     onSelect: vi.fn(),
     onExport: vi.fn(async () => {}),
     onImport: vi.fn(async (_file: File) => {}),
   };
-  return { props, ...render(<ProblemLibrary {...props} />) };
+  const view = render(<ProblemLibrary {...props} />);
+  return { props, ...view };
 }
 it('opens and closes the drawer using the native dialog lifecycle', () => {
   const { props, rerender } = library(false);
@@ -73,10 +79,34 @@ it('renders solved and attempted problem markers, filters the list, and selects 
   fireEvent.click(screen.getByRole('button', { name: '03. Anagrams — Not started' }));
   expect(props.onSelect).toHaveBeenCalledWith('anagrams');
   expect(props.onClose).toHaveBeenCalledOnce();
-  fireEvent.change(screen.getByRole('combobox', { name: 'Filter by topic' }), {
+  fireEvent.change(screen.getByRole('combobox', { name: 'Filter by topic or study plan' }), {
     target: { value: 'Bits' },
   });
   expect(screen.getByText('No matching problems.')).toBeTruthy();
+});
+it('offers all four plans, uses guide order, and opens reading companions', () => {
+  const { props } = library();
+  const select = screen.getByRole('combobox', { name: 'Filter by topic or study plan' });
+  for (const name of [
+    '3 days — Hackathon',
+    '7 days — Finals cram',
+    '1 month — Term project',
+    '4 months — Algorithms class',
+  ])
+    expect(screen.getByRole('option', { name })).toBeTruthy();
+  fireEvent.change(select, { target: { value: 'plan:3-days' } });
+  expect(props.onFilterChange).toHaveBeenCalledWith('plan:3-days');
+  const buttons = screen.getByRole('navigation', { name: 'Problems' }).querySelectorAll('button');
+  expect(buttons[0].textContent).toContain('4.1. Computing the parity');
+  expect(buttons[0].disabled).toBe(false);
+  expect(buttons).toHaveLength(18);
+  expect(screen.queryByRole('group', { name: 'Study plan workload' })).toBeNull();
+  expect(screen.queryByRole('button', { name: /^Review/ })).toBeNull();
+  expect(screen.queryByRole('button', { name: /9.4/ })).toBeNull();
+  fireEvent.click(screen.getByRole('button', { name: /19.3.*Reading companion/ }));
+  expect(props.onSelect).toHaveBeenCalledWith('reading-shared-state');
+  expect(screen.getByText(/Follow this list in order/)).toBeTruthy();
+  expect(screen.getByRole('dialog').textContent).not.toMatch(/2019/);
 });
 it('disables problem selection and import while grading, and invokes backup actions', async () => {
   const { props, rerender } = library();

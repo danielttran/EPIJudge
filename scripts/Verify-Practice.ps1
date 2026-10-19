@@ -110,9 +110,24 @@ try {
         }
     }
 
+    $readingId='reading-shared-state'
+    $readingCode=@{version=1;notes="My explanation of a lost update. λ";reviewed=$true;checkpoints=@('contract');answers=@{understanding=0}} | ConvertTo-Json -Depth 10 -Compress
+    $reading=Api "/api/practice/drafts/$readingId/reading" 'PUT' @{code=$readingCode;revision=0}
+    Assert ($reading.code -ceq $readingCode -and $reading.revision -eq 1) 'Reading document autosave preserves notes and review state'
+    $badReading=Invoke-WebRequest "$BaseUrl/api/practice/drafts/$readingId/reading" -Method Put -Headers $headers -ContentType application/json -Body (@{code='{}';revision=1}|ConvertTo-Json) -NoProxy -SkipHttpErrorCheck
+    Assert ($badReading.StatusCode -eq 400) 'Malformed reading document rejected'
+    $badReading=Invoke-WebRequest "$BaseUrl/api/practice/drafts/count_bits/reading" -Method Put -Headers $headers -ContentType application/json -Body (@{code=$readingCode;revision=0}|ConvertTo-Json) -NoProxy -SkipHttpErrorCheck
+    Assert ($badReading.StatusCode -eq 400) 'Reading cannot replace a coding draft'
+    $badReading=Invoke-WebRequest "$BaseUrl/api/practice/drafts/$readingId/python" -Method Put -Headers $headers -ContentType application/json -Body (@{code='pass';revision=0}|ConvertTo-Json) -NoProxy -SkipHttpErrorCheck
+    Assert ($badReading.StatusCode -eq 400) 'Reading cannot use an executable language'
+    $readingConflict=Invoke-WebRequest "$BaseUrl/api/practice/drafts/$readingId/reading" -Method Put -Headers $headers -ContentType application/json -Body (@{code=$readingCode.Replace('lost update','different explanation');revision=0}|ConvertTo-Json) -NoProxy -SkipHttpErrorCheck
+    Assert ($readingConflict.StatusCode -eq 409) 'Stale reading save cannot overwrite another tab'
+    Assert (@((Api '/api/practice').progress | Where-Object problemId -eq $readingId).Count -eq 0) 'Manual reading review never marks a coding problem solved'
+
     Stop-TestServer
     Start-TestServer 'primary'
     $state=Api '/api/practice'
+    Assert (@($state.drafts | Where-Object problemId -eq $readingId)[0].code -ceq $readingCode) 'Reading notes and review survive server restart'
     Assert (@($state.drafts | Where-Object {$_.problemId -eq 'count_bits'}).Count -eq 5) 'All five language drafts survive server restart'
     Assert ((Api "/api/practice/history/$($accepted.id)").code -ceq $correct) 'Submission code survives server restart'
     Assert (@($state.progress | Where-Object problemId -eq count_bits)[0].status -eq 'solved') 'Green solved status survives server restart'
@@ -125,6 +140,7 @@ try {
     Start-TestServer 'restored'
     $null=Api '/api/practice/import' 'POST' $backup
     $restored=Api '/api/practice'
+    Assert (@($restored.drafts | Where-Object problemId -eq $readingId)[0].code -ceq $readingCode) 'Reading notes and review transfer to a new database through backup'
     Assert ($restored.drafts.Count -eq $backup.drafts.Count) 'Backup restores drafts into a new database'
     Assert ((Api "/api/practice/history/$($accepted.id)").code -ceq $correct) 'Backup restores exact historical source'
     $null=Api '/api/practice/import' 'POST' $backup

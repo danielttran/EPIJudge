@@ -7,14 +7,25 @@ the HTTP grading suites also need the language toolchains listed in README.md.
 ## Fast regression checks
 
 ```powershell
-dotnet test EpiJudge.Tests/EpiJudge.Tests.csproj
-cd epijudge.client
-npm ci
-npm run test:coverage
+./Test.ps1
+# Include backend reports and enforce frontend coverage thresholds:
+./Test.ps1 -Coverage
+```
+
+Run these from the repository root. The website can stay open: `Test.ps1`
+builds the test project and all its dependencies under `.epi-runs/test-build/`,
+away from the DLLs loaded by the development server. It stops on a failed check.
+It installs frontend dependencies if `node_modules` is missing.
+
+To run just one side:
+
+```powershell
+dotnet test EpiJudge.Tests/EpiJudge.Tests.csproj --artifacts-path .epi-runs/test-build -p:ShouldRunNpmInstall=false
+npm --prefix epijudge.client test
 ```
 
 `npm test` runs once without coverage; `npm run test:watch` watches changes.
-`dotnet test EpiJudge.Tests/EpiJudge.Tests.csproj --collect:"XPlat Code Coverage"`
+`dotnet test EpiJudge.Tests/EpiJudge.Tests.csproj --artifacts-path .epi-runs/test-build --collect:"XPlat Code Coverage"`
 writes a Cobertura report under `EpiJudge.Tests/TestResults/`.
 Frontend reports are under `epijudge.client/coverage/`. These folders are ignored.
 
@@ -51,12 +62,36 @@ python scripts/verify_problem_wording.py
 ```
 
 Stop a running development server before rebuilding its DLLs on Windows.
+Use Ctrl+C in its terminal (or stop debugging in Visual Studio), then rebuild.
+If a build reports a DLL locked by `.NET Host`, a server is still running;
+retrying the same build will not release that lock. The isolated test command
+above avoids this problem without stopping the site.
 Run dependency installation and solution builds sequentially: the JavaScript
 project can run its own npm install when package metadata changes.
 The HTTP scripts start and stop temporary servers and use isolated practice data,
 leaving the normal profile database untouched. Use different `-BaseUrl` ports
 when running the suites concurrently. Intentional infinite-loop tests can take
 over a minute. The GitHub workflow runs both the fast and integration checks.
+
+To test isolated Release binaries with the HTTP suites, pass
+`-DllPath <absolute path to EpiJudge.Web.dll>` to any of the three scripts.
+This avoids accidentally testing an older Debug build or rebuilding locked DLLs.
+
+## Compiler and unused-code checks
+
+The application, framework, test, and catalog-audit C# projects treat warnings as
+errors. TypeScript rejects unused imports/locals/parameters, unreachable code,
+unused labels, and switch fallthrough during its normal build. These project
+settings do not promote warnings in user-submitted solution code to errors.
+
+```powershell
+dotnet build EPIJudge.Web.slnx -c Release --artifacts-path .epi-runs/compiler-audit -p:ShouldRunNpmInstall=false -p:WarningLevel=9999 -p:EnforceCodeStyleInBuild=true -warnaserror
+dotnet format analyzers EPIJudge.Web.slnx --no-restore --diagnostics IDE0005 IDE0051 IDE0052 --verify-no-changes --severity info
+```
+
+Roslyn skips the JavaScript `.esproj`; the TypeScript build checks that project.
+Unused public APIs and runtime-generated/reflection-based entry points require
+reference tracing and execution tests, not deletion based only on analyzer output.
 
 ## Responsibility boundaries
 

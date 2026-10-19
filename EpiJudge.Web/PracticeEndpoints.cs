@@ -1,6 +1,5 @@
 using System.Text.Json;
 using EpiJudge.Runner;
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Data.Sqlite;
 
 namespace EpiJudge.Web;
@@ -29,7 +28,10 @@ public static class PracticeEndpoints
         group.MapPut("/drafts/{problemId}/{language}", (string problemId, string language,
             DraftWrite write, ProblemCatalog catalog, PracticeStore store) =>
         {
-            if (catalog.Find(problemId) is null || !ValidLanguage(language) || write.Code is null || write.Code.Length > 40_000 || write.Revision < 0)
+            var valid = language == "reading"
+                ? ReadingCatalog.ValidDocument(problemId, write.Code)
+                : catalog.Find(problemId) is not null && ValidLanguage(language) && write.Code is { Length: <= 40_000 };
+            if (!valid || write.Revision < 0)
                 return Results.BadRequest(new { message = "Invalid problem, language, draft, or revision." });
             var result = store.SaveDraft(problemId, language, write);
             return result.Saved ? Results.Ok(result.Draft) : Results.Conflict(new

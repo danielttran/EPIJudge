@@ -12,9 +12,10 @@ public static class PracticeBackupValidator
     }
 
     private static bool ValidDraft(Draft? draft, Func<string, bool> knownProblem) =>
-        draft is not null && draft.ProblemId is not null && knownProblem(draft.ProblemId)
-        && PracticeEndpoints.ValidLanguage(draft.Language)
-        && draft.Code is { Length: <= 40_000 } && draft.Revision >= 0
+        draft is not null && draft.ProblemId is not null
+        && (draft.Language == "reading" ? ReadingCatalog.ValidDocument(draft.ProblemId, draft.Code)
+            : knownProblem(draft.ProblemId) && PracticeEndpoints.ValidLanguage(draft.Language) && draft.Code is { Length: <= 40_000 })
+        && draft.Revision >= 0
         && DateTimeOffset.TryParse(draft.UpdatedAt, out _);
 
     private static bool ValidAttempt(SavedAttempt? attempt, Func<string, bool> knownProblem)

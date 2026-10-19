@@ -63,14 +63,24 @@ metadata is preserved in `scripts/problem-mapping.json` for catalog tooling.
 
 ## Build and verify
 
+Run the fast backend and frontend tests from the repository root. The website
+can stay running because test builds use a separate output folder:
+
 ```powershell
-dotnet build EPIJudge.Web.slnx
-dotnet test EpiJudge.Tests/EpiJudge.Tests.csproj --no-restore
+./Test.ps1
+# Or include coverage reports and coverage thresholds:
+./Test.ps1 -Coverage
+```
+
+For a full rebuild and grading checks, first stop the website with Ctrl+C in
+its terminal or Stop Debugging in Visual Studio, then run:
+
+```powershell
 cd epijudge.client
 npm ci
 npm run build
-npm run test:coverage
 cd ..
+dotnet build EPIJudge.Web.slnx
 dotnet run --project scripts/WebAudit/WebAudit.csproj
 python scripts/verify_problem_wording.py
 ./scripts/Verify-Web.ps1 -StartServer
@@ -84,6 +94,15 @@ launch. Both HTTP suites include intentional 60-second timeout checks;
 `-SkipTimeout` skips them on a repeat run.
 
 See [TESTING.md](TESTING.md) for the test layers, coverage scope, and code boundaries.
+
+The problem dropdown also includes 3-day, 7-day, 1-month, and 4-month study plans
+from a linked study-guide transcription. See [BOOK-COVERAGE.md](BOOK-COVERAGE.md)
+for sources, plan ordering, unavailable references, and book-versus-judge counts.
+
+Choose **Reading & Design** in that dropdown for twelve original study companions,
+interactive checkpoints and quizzes, a concurrency simulator, and a notes panel.
+Notes and review progress autosave to SQLite and travel with Export/Import answers.
+Purple **Reviewed** is separate from green coding acceptance. See [READING.md](READING.md).
 
 To regenerate catalogs:
 

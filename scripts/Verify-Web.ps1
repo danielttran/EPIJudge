@@ -1,4 +1,4 @@
-param([string]$BaseUrl = 'http://localhost:5178', [switch]$CheckFrontend, [switch]$SkipTimeout, [switch]$StartServer)
+param([string]$BaseUrl = 'http://localhost:5178', [switch]$CheckFrontend, [switch]$SkipTimeout, [switch]$StartServer, [string]$DllPath)
 $ErrorActionPreference = 'Stop'
 $testServer = $null
 try {
@@ -9,7 +9,7 @@ if ($StartServer) {
     $logRoot = Join-Path $root '.epi-runs'
     New-Item -ItemType Directory -Force -Path $logRoot | Out-Null
     $env:Practice__DataDirectory = Join-Path $logRoot ('test-web-data-' + [guid]::NewGuid().ToString('N'))
-    $dll = Join-Path $root 'EpiJudge.Web\bin\Debug\net10.0\EpiJudge.Web.dll'
+    $dll = if ($DllPath) { [IO.Path]::GetFullPath($DllPath) } else { Join-Path $root 'EpiJudge.Web\bin\Debug\net10.0\EpiJudge.Web.dll' }
     $content = Join-Path $root 'EpiJudge.Web'
     $testServer = Start-Process dotnet -ArgumentList @("`"$dll`"", '--urls', $BaseUrl, '--contentRoot', "`"$content`"") -WorkingDirectory $root -WindowStyle Hidden -PassThru -RedirectStandardOutput "$logRoot\web-audit.log" -RedirectStandardError "$logRoot\web-audit.err"
     $ready = $false

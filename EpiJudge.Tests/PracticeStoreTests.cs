@@ -18,6 +18,28 @@ public sealed class PracticeStoreTests : IDisposable
         new(id, "count_bits", language, "immutable source", mode, status, 3, 3, 1, "2026-01-01T00:00:00Z", Result(status));
 
     [Fact]
+    public void ReadingNotesAndReviewPersistAndRoundTripWithoutChangingCodingProgress()
+    {
+        const string id = "reading-shared-state";
+        const string code = "{\"version\":1,\"notes\":\"my reasoning λ\",\"reviewed\":true,\"checkpoints\":[],\"answers\":{}}";
+        var store = CreateStore();
+        Assert.True(store.SaveDraft(id, "reading", new(code, 0)).Saved);
+        var restored = CreateStore();
+        Assert.Equal(code, Assert.Single(restored.Drafts()).Code);
+        Assert.Empty(restored.Progress());
+        Assert.Empty(restored.History());
+        var backup = restored.Export();
+        Assert.True(PracticeBackupValidator.Validate(backup, _ => false));
+        Assert.Equal(code, Assert.Single(backup.Drafts).Code);
+        // A second database receives the same reading document through normal import.
+        var destination = new PracticeStore(new PracticeDatabase(new ConfigurationBuilder().AddInMemoryCollection(
+            new Dictionary<string, string?> { ["Practice:DataDirectory"] = Path.Combine(directory, "imported") }).Build()));
+        destination.Import(backup);
+        Assert.Equal(code, Assert.Single(destination.Drafts()).Code);
+        Assert.Empty(destination.Progress());
+    }
+
+    [Fact]
     public void EmptyDatabaseHasNoDraftsHistoryOrProgress()
     {
         var store = CreateStore();

@@ -85,8 +85,8 @@ beforeEach(() => {
     if (options?.method === 'PUT') {
       const body = JSON.parse(options.body as string);
       return json({
-        problemId: 'count_bits',
-        language: 'csharp',
+        problemId: url.split('/').at(-2),
+        language: url.split('/').at(-1),
         ...body,
         revision: body.revision + 1,
         updatedAt: 'now',
@@ -144,6 +144,71 @@ it('loads the workspace, switches problem/language, and restores a per-language 
     ),
   );
 });
+it('opens reading from the filter, saves work, and retains the selection after remount', async () => {
+  await loaded();
+  fireEvent.click(screen.getByRole('button', { name: 'Toggle problem list' }));
+  fireEvent.change(screen.getByRole('combobox', { name: 'Filter by topic or study plan' }), {
+    target: { value: 'kind:reading' },
+  });
+  fireEvent.click(screen.getByRole('button', { name: /R01.*Reading companion/ }));
+  const notes = screen.getByRole('textbox', { name: 'Your notes and design response' });
+  expect(screen.queryByRole('button', { name: 'Submit' })).toBeNull();
+  fireEvent.change(notes, { target: { value: 'A node is identified by its object identity.' } });
+  fireEvent.click(screen.getByRole('button', { name: 'Mark reviewed' }));
+  await waitFor(() =>
+    expect(
+      fetchMock.mock.calls.some(
+        ([url, options]) =>
+          url.endsWith('/reading-parent-pointer-lca/reading') && options?.method === 'PUT',
+      ),
+    ).toBe(true),
+  );
+  const call = fetchMock.mock.calls.find(([url]) =>
+    url.endsWith('/reading-parent-pointer-lca/reading'),
+  )!;
+  const saved = {
+    problemId: 'reading-parent-pointer-lca',
+    language: 'reading',
+    ...JSON.parse(call[1]!.body as string),
+    revision: 1,
+    updatedAt: 'now',
+  };
+  const previousFetch = fetchMock.getMockImplementation()! as (
+    url: string,
+    options?: RequestInit,
+  ) => Promise<Response>;
+  fetchMock.mockImplementation((url: string, options?: RequestInit) =>
+    url === '/api/practice'
+      ? Promise.resolve(json({ drafts: [saved], progress: [] }))
+      : previousFetch(url, options),
+  );
+  cleanup();
+  render(<App />);
+  await waitFor(() =>
+    expect(
+      (
+        screen.getByRole('textbox', {
+          name: 'Your notes and design response',
+        }) as HTMLTextAreaElement
+      ).value,
+    ).toContain('object identity'),
+  );
+  expect(screen.getByRole('button', { name: 'Undo review' })).toBeTruthy();
+  fireEvent.click(screen.getByRole('button', { name: 'Toggle problem list' }));
+  expect(screen.getByRole('button', { name: /R01.*reviewed/ }).classList.contains('reviewed')).toBe(
+    true,
+  );
+  fireEvent.click(screen.getByRole('button', { name: /R02.*Reading companion/ }));
+  expect(
+    (screen.getByRole('textbox', { name: 'Your notes and design response' }) as HTMLTextAreaElement)
+      .value,
+  ).toBe('');
+  fireEvent.click(screen.getByRole('button', { name: 'Previous problem' }));
+  expect(
+    (screen.getByRole('textbox', { name: 'Your notes and design response' }) as HTMLTextAreaElement)
+      .value,
+  ).toContain('object identity');
+}, 15_000);
 it.each([
   ['submit', 'Accepted', 'solved'],
   ['submit', 'Wrong answer', 'attempted'],
@@ -166,8 +231,58 @@ it.each([
   const row = screen.getByRole('button', { name: `01. Count Bits — ${expected}` });
   expect(row.classList.contains(expected)).toBe(true);
 });
-it('shows catalog failures instead of staying on Loading workspace', async () => {
-  fetchMock.mockResolvedValueOnce(json({}, 503));
-  render(<App />);
-  expect(await screen.findByRole('heading', { name: 'Couldn’t load the library' })).toBeTruthy();
+it.each(['count_bits', 'reading-shared-state'])(
+  'shows catalog failures for %s instead of staying on Loading workspace',
+  async (selected) => {
+    localStorage.setItem('epi:selected', JSON.stringify(selected));
+    fetchMock.mockResolvedValueOnce(json({}, 503));
+    render(<App />);
+    expect(await screen.findByRole('heading', { name: 'Couldn’t load the library' })).toBeTruthy();
+  },
+);
+it('remembers the selected plan and steps through coding and reading in guide order', async () => {
+  await loaded();
+  fireEvent.click(screen.getByRole('button', { name: 'Toggle problem list' }));
+  fireEvent.change(screen.getByRole('combobox', { name: 'Filter by topic or study plan' }), {
+    target: { value: 'plan:3-days' },
+  });
+  expect(JSON.parse(localStorage.getItem('epi:libraryFilter')!)).toBe('plan:3-days');
+  fireEvent.click(screen.getByRole('button', { name: 'Close problem list' }));
+  // Count Bits is a bootcamp outside this plan. Next enters the plan at parity.
+  fireEvent.click(screen.getByRole('button', { name: 'Next problem' }));
+  expect(await screen.findByRole('heading', { name: '2. Parity' })).toBeTruthy();
+  fireEvent.click(screen.getByRole('button', { name: 'Next problem' }));
+  expect(
+    await screen.findByRole('heading', { name: 'Shared state and interleavings' }),
+  ).toBeTruthy();
+  expect(screen.queryByRole('button', { name: 'Submit' })).toBeNull();
+});
+
+it('discards the retired tab preference and keeps navigation in the single plan list', async () => {
+  localStorage.setItem('epi:studyPhase', JSON.stringify('Review'));
+  localStorage.setItem('epi:libraryFilter', JSON.stringify('plan:3-days'));
+  const storedAnswer = 'Unrelated saved answer';
+  localStorage.setItem('epi:code:python:parity', JSON.stringify(storedAnswer));
+  await loaded();
+  expect(localStorage.getItem('epi:studyPhase')).toBeNull();
+  expect(JSON.parse(localStorage.getItem('epi:code:python:parity')!)).toBe(storedAnswer);
+  fireEvent.click(screen.getByRole('button', { name: 'Toggle problem list' }));
+  const rows = within(screen.getByRole('navigation', { name: 'Problems' })).getAllByRole('button');
+  expect(rows).toHaveLength(18);
+  expect(screen.queryByRole('group', { name: 'Study plan workload' })).toBeNull();
+  expect(screen.queryByRole('button', { name: /9.4/ })).toBeNull();
+  fireEvent.click(screen.getByRole('button', { name: 'Close problem list' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Next problem' }));
+  expect(await screen.findByRole('heading', { name: '2. Parity' })).toBeTruthy();
+  fireEvent.click(screen.getByRole('button', { name: 'Next problem' }));
+  expect(
+    await screen.findByRole('heading', { name: 'Shared state and interleavings' }),
+  ).toBeTruthy();
+  fireEvent.click(screen.getByRole('button', { name: 'Next problem' }));
+  expect(
+    await screen.findByRole('heading', { name: 'Design a constrained journey planner' }),
+  ).toBeTruthy();
+  expect((screen.getByRole('button', { name: 'Next problem' }) as HTMLButtonElement).disabled).toBe(
+    true,
+  );
 });

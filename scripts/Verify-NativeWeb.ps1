@@ -1,7 +1,8 @@
 param(
     [string]$BaseUrl = 'http://localhost:5189',
     [switch]$StartServer,
-    [switch]$SkipTimeout
+    [switch]$SkipTimeout,
+    [string]$DllPath
 )
 $ErrorActionPreference = 'Stop'
 $root = Split-Path $PSScriptRoot -Parent
@@ -34,7 +35,7 @@ try {
         $logRoot = Join-Path $root '.epi-runs'
         New-Item -ItemType Directory -Force -Path $logRoot | Out-Null
         $env:Practice__DataDirectory = Join-Path $logRoot ('test-native-data-' + [guid]::NewGuid().ToString('N'))
-        $dll = Join-Path $root 'EpiJudge.Web\bin\Debug\net10.0\EpiJudge.Web.dll'
+        $dll = if ($DllPath) { [IO.Path]::GetFullPath($DllPath) } else { Join-Path $root 'EpiJudge.Web\bin\Debug\net10.0\EpiJudge.Web.dll' }
         $content = Join-Path $root 'EpiJudge.Web'
         $server = Start-Process dotnet -ArgumentList @("`"$dll`"", '--urls', $BaseUrl, '--contentRoot', "`"$content`"") -WorkingDirectory $root -WindowStyle Hidden -PassThru -RedirectStandardOutput "$logRoot\native-audit.log" -RedirectStandardError "$logRoot\native-audit.err"
         $ready = $false
