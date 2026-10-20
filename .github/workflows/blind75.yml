@@ -31,11 +31,13 @@ jobs:
         run: python scripts/blind75/validate.py
       - name: Execute every starter, correct algorithm and contract-breaking algorithm
         run: dotnet run --project scripts/Blind75Audit -- all ${{ matrix.language }}
+      - name: Reject codec implementations that depend on static memory
+        run: dotnet run --no-build --project scripts/Blind75Audit -- adversarial ${{ matrix.language }}
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: blind75-${{ matrix.language }}
-          path: .epi-runs/blind75-audit-all-*.json
+          path: .epi-runs/blind75-audit-*.json
 
   browser-and-http:
     runs-on: ubuntu-latest

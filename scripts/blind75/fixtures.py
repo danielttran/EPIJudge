@@ -1,11 +1,13 @@
 """Generate actual test-only algorithms and deliberate contract violations.
 
 Every positive fixture computes its answer without reading expected outputs.
-Python ordinary-function fixtures execute the independent mathematical oracle.
+Python ordinary-function fixtures use independent implementations in python_algorithms.py.
 """
 import json
 from algorithms import body as ordinary_body
 from negative import make as negative_fixture
+from codec_adversaries import bodies as codec_adversary
+from python_algorithms import body as python_body, HELPERS as PY_HELPERS
 from generate import ROOT, LANGS, STATE, starter
 
 CSPROBE=r'''
@@ -185,19 +187,16 @@ def bodymap(s,lang):
     if mode=='median':return {'AddNum':select('values.Add(value);values.Sort();','this.values.push(value);this.values.sort((a,b)=>a-b);','self.values.append(value);self.values.sort()','values.push_back(value);std::sort(values.begin(),values.end());','values.add(value);Collections.sort(values);'),'FindMedian':select('int n=values.Count;return ((double)values[(n-1)/2]+values[n/2])/2;','const n=this.values.length;return (this.values[Math.floor((n-1)/2)]+this.values[Math.floor(n/2)])/2;','n=len(self.values)\nreturn (self.values[(n-1)//2]+self.values[n//2])/2','auto n=values.size();return (static_cast<double>(values[(n-1)/2])+values[n/2])/2;','int n=values.size();return ((double)values.get((n-1)/2)+values.get(n/2))/2;')}
     return None
 
-def python_oracle(s):
-    oracle=(ROOT/'scripts/blind75/oracle.py').read_text()
-    oracle=oracle.replace('class Node:','class OracleNode:').replace('Node(', 'OracleNode(')
-    arg=', '.join(p['name'] for p in s['params'])
-    return {s['method']:f'return solve(SPEC, [{arg}])'},'\n'+oracle+'\nSPEC='+repr({k:s[k] for k in ['method','mode','title','id']})+'\n'
 
 def fixture(s,lang,cases,variant="correct"):
     fields="";helper=None
     bodies=bodymap(s,lang) or ordinary_body(s,lang);extra=PROBES[lang] if bodies else ''
     if bodies is None:
         assert lang=='python', (s['id'],lang)
-        bodies,extra=python_oracle(s)
+        bodies=python_body(s);extra=PY_HELPERS
+        assert bodies is not None, s['id']
     if variant=='incorrect':bodies,extra,fields,helper=negative_fixture(s,lang,bodies,extra)
+    if variant=='adversarial':bodies,fields=codec_adversary(s['mode'],lang)
     source=starter(s,lang,bodies)['starterCode']
     if helper:
         if lang in ('python','javascript'):source+='\n'+helper
@@ -218,7 +217,7 @@ def generate():
     for s in catalog:
         cases=json.loads((ROOT/'blind75/cases'/f'{s["id"]}.json').read_text())
         for lang in LANGS:
-            for variant in ['correct','incorrect']:
+            for variant in ['correct','incorrect']+(['adversarial'] if s['mode'] in ('strings_codec','tree_codec') else []):
                 source=fixture(s,lang,cases,variant)
                 path=ROOT/'scripts/blind75/fixtures'/variant/lang/s['id']/s['starters'][lang]['filename'];path.parent.mkdir(parents=True,exist_ok=True);path.write_text(source)
     print('Generated 375 actual algorithm fixtures and 375 nonconstant/contract-breaking negative fixtures.')

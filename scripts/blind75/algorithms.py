@@ -1,7 +1,7 @@
 """Actual test-only implementations for all ordinary Blind 75 function contracts.
 
 C#, JavaScript, C++ and Java implementations are independent of expected outputs.
-Python fixtures use oracle.py's executable algorithms. Order below: CS, JS, CPP, Java.
+Python fixtures use python_algorithms.py. Order below: CS, JS, CPP, Java.
 """
 BODIES={}
 def add(method,cs,js,cpp,java):BODIES[method]=(cs,js,cpp,java)

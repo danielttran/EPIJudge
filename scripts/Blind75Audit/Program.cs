@@ -13,16 +13,31 @@ var chosen=args.Skip(1).FirstOrDefault();
 var selected=args.ElementAtOrDefault(2)?.Split(',').ToHashSet();
 string Sha(string text)=>Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(text)));
 var harnessMethod=typeof(Blind75Catalog).GetMethod("Harness",BindingFlags.NonPublic|BindingFlags.Static)!;
+if (kind == "describe")
+{
+    Directory.CreateDirectory(Path.Combine(root, ".epi-runs"));
+    var files = Directory.GetFiles(Path.Combine(root, "EpiJudge.Runner"), "*.cs")
+        .Concat(Directory.GetFiles(Path.Combine(root, "blind75", "runtime")))
+        .Append(Path.Combine(root, "blind75", "catalog.json"));
+    var sourceFiles = files.ToDictionary(p => Path.GetRelativePath(root, p).Replace('\\', '/'), p => Sha(File.ReadAllText(p)));
+    var harnesses = Blind75Catalog.Definitions.SelectMany(d => languages.Select(language => new {
+        problem=d.Id, language, harnessSha256=Sha((string)harnessMethod.Invoke(null, [d,language])!)
+    }));
+    File.WriteAllText(Path.Combine(root, ".epi-runs", "blind75-harnesses.json"), JsonSerializer.Serialize(new {sourceFiles,harnesses}));
+    Console.WriteLine("Wrote current compiled harness and source fingerprints.");
+    return 0;
+}
 var rows=new List<object>();
 var failures=0;
 foreach(var language in languages.Where(l=>chosen is null||l==chosen))
 foreach(var def in Blind75Catalog.Definitions.Where(d=>selected is null||selected.Contains(d.Id)))
 {
     var problem=Blind75Catalog.Problems.Single(p=>p.Id==def.Id);
-    foreach(var variant in new[]{"starter","correct","incorrect"}.Where(v=>kind=="all"||v==kind))
+    foreach(var variant in new[]{"starter","correct","incorrect","adversarial"}.Where(v=>kind=="all"?v!="adversarial":v==kind))
     {
         var filename=def.Starters[language].Filename;
         var path=Path.Combine(root,"scripts","blind75","fixtures",variant,language,def.Id,filename);
+        if (variant=="adversarial" && !File.Exists(path)) continue;
         var code=variant=="starter"?def.Starters[language].StarterCode:File.ReadAllText(path);
         var result=await runner.RunAsync(problem,code,false,language,CancellationToken.None);
         var success=variant switch

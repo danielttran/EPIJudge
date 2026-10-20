@@ -118,15 +118,20 @@ Run the five-language matrix from the root:
 ```powershell
 python scripts/blind75/validate.py
 dotnet run --project scripts/Blind75Audit -- all
+dotnet run --project scripts/Blind75Audit -- adversarial
+dotnet run --project scripts/Blind75Audit -- describe
+python scripts/blind75/evidence.py
 ```
 
 This executes 375 typed starters, 375 actual correct algorithm fixtures, and
-375 deliberately incorrect algorithms. Negative fixtures include correct-looking
+375 deliberately incorrect algorithms, followed by 10 static-memory codec
+adversaries. Negative fixtures include correct-looking
 outputs with copied nodes, aliased graphs, replaced matrix rows, altered original
 values, partial-word matches and incorrect medians. Each report under
 `.epi-runs/blind75-audit-*.json` records source, corpus and harness hashes.
 `all <language>` selects one language. Reports from targeted reruns can be
-validated against all current inputs with `python scripts/blind75/evidence.py`.
+validated against all current inputs with `python scripts/blind75/evidence.py`
+after `describe` refreshes the compiled-harness fingerprints.
 
 The browser/HTTP suite starts temporary local profiles. It exercises the real
 Monaco editor, all five language drafts, Submit, history restoration, backup
