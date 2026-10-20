@@ -234,6 +234,54 @@ public sealed class PracticeStoreTests : IDisposable
         Assert.Equal("Running", CreateStore().Attempt(a.Id)!.Status);
     }
 
+    [Theory]
+    [InlineData("-1:123")]
+    [InlineData("0:123")]
+    [InlineData("1:0")]
+    [InlineData("malformed")]
+    public void MalformedOwnersCannotKeepAttemptsRunning(string owner)
+    {
+        var store = CreateStore();
+        var attempt = store.BeginAttempt("blind75_two_sum", "python", "saved source", "run");
+        using var db = new SqliteConnection($"Data Source={Path.Combine(directory, "practice.db")}");
+        db.Open();
+        using var command = db.CreateCommand();
+        command.CommandText = "UPDATE attempts SET owner=$owner";
+        command.Parameters.AddWithValue("$owner", owner);
+        command.ExecuteNonQuery();
+        var recovered = CreateStore().Attempt(attempt.Id)!;
+        Assert.Equal("Interrupted", recovered.Status);
+        Assert.Equal("saved source", recovered.Code);
+    }
+
+    [Fact]
+    public void BlindAndEpiDraftsHistoryAndBackupsKeepSeparateIdentities()
+    {
+        var store = CreateStore();
+        var languages = new[] { "csharp", "javascript", "python", "cpp", "java" };
+        foreach (var language in languages)
+        foreach (var id in new[] { "two_sum", "blind75_two_sum" })
+        {
+            var source = id + ":" + language;
+            Assert.True(store.SaveDraft(id, language, new(source, 0)).Saved);
+            var attempt = store.BeginAttempt(id, language, source, "submit");
+            store.CompleteAttempt(attempt.Id, Result());
+        }
+        var backup = store.Export();
+        Assert.True(PracticeBackupValidator.Validate(backup, id => new ProblemCatalog().Find(id) is not null));
+        Assert.Equal(10, backup.Drafts.Length);
+        Assert.Equal(10, backup.Attempts.Length);
+        var restored = new PracticeStore(new PracticeDatabase(new ConfigurationBuilder().AddInMemoryCollection(
+            new Dictionary<string, string?> { ["Practice:DataDirectory"] = Path.Combine(directory, "blind-restored") }).Build()));
+        restored.Import(backup);
+        restored.Import(backup);
+        Assert.Equal(10, restored.Drafts().Length);
+        Assert.Equal(10, restored.History(includeCode: true).Length);
+        foreach (var draft in restored.Drafts())
+            Assert.Equal(draft.ProblemId + ":" + draft.Language, draft.Code);
+        Assert.Equal(2, restored.Progress().Length);
+    }
+
     [Fact]
     public void StartupRecoversDeadOwnerAndRejectsNewerSchema()
     {

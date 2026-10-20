@@ -6,6 +6,7 @@ using EpiJudge.TestFramework;
 
 var root = ProblemCatalog.FindRepositoryRoot(AppContext.BaseDirectory);
 var catalog = new ProblemCatalog();
+var epiProblems = catalog.Problems.Where(p => p.Collection == "epi").ToArray();
 var failures = new List<string>();
 var equal = typeof(SubmissionRunner).GetMethod("Equal", BindingFlags.NonPublic | BindingFlags.Static)!;
 bool Equal(JsonElement left, JsonElement right, string mode = "ordered") => (bool)equal.Invoke(null, [left, right, mode])!;
@@ -18,12 +19,13 @@ void Check(string label, Action action)
 var protocols = JsonDocument.Parse(File.ReadAllText(Path.Combine(root,"scripts/problem_catalog.json")))
     .RootElement.GetProperty("problems").EnumerateArray().ToDictionary(x => x.GetProperty("id").GetString()!);
 Check("Catalog completeness", () => {
-    Require(catalog.Problems.Count == 218 && catalog.Problems.Select(p => p.Id).Distinct().Count() == 218, "Expected 218 unique IDs.");
-    Require(protocols.Keys.Order().SequenceEqual(catalog.Problems.Select(p => p.Id).Order()), "Catalog IDs differ from canonical IDs.");
-    Require(catalog.Problems.All(p => p.Examples.Length > 0 && p.TestCount > 0 && !string.IsNullOrWhiteSpace(p.Description)), "Incomplete problem metadata.");
+    Require(catalog.Problems.Count == 293 && Blind75Catalog.Problems.Count == 75, "Expected 218 EPI plus 75 Blind entries.");
+    Require(epiProblems.Length == 218 && epiProblems.Select(p => p.Id).Distinct().Count() == 218, "Expected 218 unique IDs.");
+    Require(protocols.Keys.Order().SequenceEqual(epiProblems.Select(p => p.Id).Order()), "Catalog IDs differ from canonical IDs.");
+    Require(epiProblems.All(p => p.Examples.Length > 0 && p.TestCount > 0 && !string.IsNullOrWhiteSpace(p.Description)), "Incomplete problem metadata.");
 });
 long rows = 0, arguments = 0;
-foreach (var problem in catalog.Problems)
+foreach (var problem in epiProblems)
 {
     Check("Corpus " + problem.Id, () => {
         var protocol = protocols[problem.Id];
@@ -57,7 +59,7 @@ Check("Ordered and unordered comparisons", () => {
     Require(!Equal(J("9007199254740992"),J("9007199254740993")), "Large integer precision lost.");
 });
 
-var custom = catalog.Problems.Where(p => p.Invocation.StartsWith("JudgeAdapters.Invoke")).ToArray();
+var custom = epiProblems.Where(p => p.Invocation.StartsWith("JudgeAdapters.Invoke")).ToArray();
 foreach (var problem in custom)
 {
     Check("Adapter " + problem.Id, () => {
@@ -108,8 +110,8 @@ Check("Compile every real starter and generated harness", () => {
         .Replace("<StartupObject>JudgeEntryPoint</StartupObject>","");
     File.WriteAllText(Path.Combine(directory,"Submission.csproj"),project);
     File.WriteAllText(Path.Combine(directory,"NuGet.Config"),"<configuration><packageSources><clear /></packageSources></configuration>");
-    File.WriteAllText(Path.Combine(directory,"Solution.cs"),string.Join("\n",catalog.Problems.Select(p => $"namespace Audit_{p.Id} {{\n{p.StarterCode}\n}}")));
-    File.WriteAllText(Path.Combine(directory,"Harness.cs"),string.Join("\n",catalog.Problems.Select(p => $"namespace Audit_{p.Id} {{\n{harness.Invoke(null,[p])}\n}}")));
+    File.WriteAllText(Path.Combine(directory,"Solution.cs"),string.Join("\n",epiProblems.Select(p => $"namespace Audit_{p.Id} {{\n{p.StarterCode}\n}}")));
+    File.WriteAllText(Path.Combine(directory,"Harness.cs"),string.Join("\n",epiProblems.Select(p => $"namespace Audit_{p.Id} {{\n{harness.Invoke(null,[p])}\n}}")));
     using var process = Process.Start(new ProcessStartInfo("dotnet", "build Submission.csproj --configuration Release --verbosity quiet --disable-build-servers --maxcpucount:1") {
         WorkingDirectory = directory, UseShellExecute=false, RedirectStandardOutput=true, RedirectStandardError=true, CreateNoWindow=true
     })!;

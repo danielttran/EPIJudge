@@ -8,6 +8,10 @@ export type Problem = {
   signature: string;
   testCount: number;
   starterCode: string;
+  collection?: string;
+  position?: number;
+  diagram?: string | null;
+  diagramAlt?: string | null;
   jsSignature?: string;
   jsStarterCode?: string;
   pySignature?: string;

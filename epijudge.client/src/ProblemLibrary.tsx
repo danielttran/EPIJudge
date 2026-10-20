@@ -100,6 +100,10 @@ export function ProblemLibrary({
           <option value="">All topics</option>
           <option value="kind:coding">Coding</option>
           <option value="kind:reading">Reading &amp; Design</option>
+          <optgroup label="Collections">
+            <option value="collection:epi">EPI — 218 problems</option>
+            <option value="collection:blind75">Blind 75 — Crackr order</option>
+          </optgroup>
           <optgroup label="Study plans">
             {STUDY_PLANS.map((plan) => (
               <option key={plan.id} value={`plan:${plan.id}`}>
@@ -191,7 +195,7 @@ export function ProblemLibrary({
           )}
         </nav>
         <div className="library-note">
-          <span className="tiny-dot" /> Built on the EPI test corpus
+          <span className="tiny-dot" /> EPI and Blind 75 practice
           <p>
             All {problems.length} repository exercises available in C#, JavaScript, Python, C++, and
             Java.

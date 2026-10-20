@@ -90,6 +90,7 @@ app.MapGet("/api/problems", (ProblemCatalog catalog, NativeProblemCatalog native
     {
         problem.Id, problem.Title, problem.Topic, problem.Difficulty, problem.Description,
         problem.Constraints,
+        problem.Collection, problem.Position, problem.Diagram, problem.DiagramAlt,
         Signature = nativeStarter?.Signature ?? (isPy ? (problem.PySignature ?? problem.Signature) : isJs ? (problem.JsSignature ?? problem.Signature) : problem.Signature),
         StarterCode = nativeStarter?.StarterCode ?? (isPy ? (problem.PyStarterCode ?? problem.StarterCode) : isJs ? (problem.JsStarterCode ?? problem.StarterCode) : problem.StarterCode),
         problem.JsSignature,

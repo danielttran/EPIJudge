@@ -52,11 +52,17 @@ export function libraryEntries(problems: Problem[], filter: string, query = ''):
     }
   } else {
     entries = problems.flatMap((problem, index) =>
-      !filter || filter === 'kind:coding' || problem.topic === filter
+      !filter ||
+      filter === 'kind:coding' ||
+      (filter.startsWith('collection:') && (problem.collection ?? 'epi') === filter.slice(11)) ||
+      problem.topic === filter
         ? [
             {
               problem,
-              number: String(index + 1).padStart(2, '0'),
+              number:
+                problem.collection === 'blind75'
+                  ? `B${String(problem.position).padStart(2, '0')}`
+                  : String(index + 1).padStart(2, '0'),
               title: problem.title,
               topic: problem.topic,
             },

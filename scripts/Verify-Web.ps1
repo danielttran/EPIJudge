@@ -1,5 +1,7 @@
 param([string]$BaseUrl = 'http://localhost:5178', [switch]$CheckFrontend, [switch]$SkipTimeout, [switch]$StartServer, [string]$DllPath)
 $ErrorActionPreference = 'Stop'
+$startWindowOptions = @{}
+if ($IsWindows) { $startWindowOptions.WindowStyle = 'Hidden' }
 $testServer = $null
 try {
 if ($StartServer) {
@@ -11,7 +13,7 @@ if ($StartServer) {
     $env:Practice__DataDirectory = Join-Path $logRoot ('test-web-data-' + [guid]::NewGuid().ToString('N'))
     $dll = if ($DllPath) { [IO.Path]::GetFullPath($DllPath) } else { Join-Path $root 'EpiJudge.Web\bin\Debug\net10.0\EpiJudge.Web.dll' }
     $content = Join-Path $root 'EpiJudge.Web'
-    $testServer = Start-Process dotnet -ArgumentList @("`"$dll`"", '--urls', $BaseUrl, '--contentRoot', "`"$content`"") -WorkingDirectory $root -WindowStyle Hidden -PassThru -RedirectStandardOutput "$logRoot\web-audit.log" -RedirectStandardError "$logRoot\web-audit.err"
+    $testServer = Start-Process dotnet -ArgumentList @("`"$dll`"", '--urls', $BaseUrl, '--contentRoot', "`"$content`"") -WorkingDirectory $root @startWindowOptions -PassThru -RedirectStandardOutput (Join-Path $logRoot 'web-audit.log') -RedirectStandardError (Join-Path $logRoot 'web-audit.err')
     $ready = $false
     for ($i = 0; $i -lt 60; $i++) {
         try { $null = Invoke-RestMethod "$BaseUrl/api/health" -NoProxy -TimeoutSec 1; $ready = $true; break } catch { Start-Sleep -Milliseconds 500 }
@@ -105,13 +107,13 @@ try {
     Write-Output 'Cross-origin form protection: 403'
 }
 $catalog = Invoke-RestMethod "$BaseUrl/api/problems" -NoProxy
-if ($catalog.Count -ne 218 -or @($catalog.id | Sort-Object -Unique).Count -ne 218) { throw 'Expected 218 unique web problems.' }
+if ($catalog.Count -ne 293 -or @($catalog.id | Sort-Object -Unique).Count -ne 293) { throw 'Expected 293 unique web problems.' }
 foreach ($problem in $catalog) {
     if ($problem.testCount -le 0 -or -not $problem.starterCode -or -not $problem.description -or $problem.invocation) {
         throw "Incomplete or internal metadata for $($problem.id)."
     }
 }
-Write-Output 'Catalog API: 218 unique exercises with test counts; internal invocations excluded'
+Write-Output 'Catalog API: 293 unique exercises with test counts; internal invocations excluded'
 
 $fixtureCode = Get-Content (Join-Path $PSScriptRoot 'WebAudit/Fixtures.cs') -Raw
 $fixtureTypes = [ordered]@{

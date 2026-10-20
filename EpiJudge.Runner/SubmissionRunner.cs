@@ -33,6 +33,8 @@ public sealed class SubmissionRunner(string repositoryRoot) : ISubmissionRunner
         var clock = Stopwatch.StartNew();
         try
         {
+            if (Blind75Catalog.Find(problem.Id) is { } blind)
+                return await Blind75SubmissionRunner.RunAsync(repositoryRoot, directory, id, problem, blind, code, examplesOnly, language, cancellation);
             if (language is "cpp" or "java")
                 return await NativeSubmissionRunner.RunAsync(repositoryRoot, directory, id, problem, code, examplesOnly, language, cancellation);
             if (language is not ("csharp" or "javascript" or "js" or "python" or "py"))
@@ -123,7 +125,7 @@ public sealed class SubmissionRunner(string repositoryRoot) : ISubmissionRunner
         }
     }
 
-    private static bool Equal(JsonElement expected, JsonElement actual, string comparison)
+    internal static bool Equal(JsonElement expected, JsonElement actual, string comparison)
     {
         if (expected.ValueKind != actual.ValueKind) return false;
         if (expected.ValueKind == JsonValueKind.Number)

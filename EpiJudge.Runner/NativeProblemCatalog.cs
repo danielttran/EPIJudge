@@ -37,7 +37,8 @@ public sealed class NativeProblemCatalog
         }
     }
 
-    public NativeStarter GetStarter(string language, string problemId) => Get(language, problemId).Starter;
+    public NativeStarter GetStarter(string language, string problemId) =>
+        Blind75Catalog.Find(problemId) is { } blind ? blind.Starters[language] : Get(language, problemId).Starter;
     internal NativeProblem Get(string language, string problemId) => entries.TryGetValue((language, problemId), out var entry)
         ? entry : throw new InvalidOperationException($"No {language} wrapper is registered for {problemId}.");
 }

@@ -285,7 +285,9 @@ export default function App() {
                 <span className="active-pane-tab">
                   <FileCode2 size={16} /> Description
                 </span>
-                <span className="muted">EPI COLLECTION</span>
+                <span className="muted">
+                  {problem?.collection === 'blind75' ? 'BLIND 75 COLLECTION' : 'EPI COLLECTION'}
+                </span>
               </div>
               {loadError ? (
                 <div className="page-error">
@@ -306,7 +308,10 @@ export default function App() {
                     Practice <ChevronRight size={12} /> {problem.topic}
                   </div>
                   <h1>
-                    {problems.indexOf(problem) + 1}. {problem.title}
+                    {problem.collection === 'blind75'
+                      ? `B${String(problem.position).padStart(2, '0')}`
+                      : problems.indexOf(problem) + 1}
+                    . {problem.title}
                   </h1>
                   <div className="problem-tags">
                     <span className={'difficulty ' + problem.difficulty.toLowerCase()}>
@@ -329,6 +334,12 @@ export default function App() {
                       )}
                   </div>
                   <p className="description-copy">{problem.description}</p>
+                  {problem.diagram && (
+                    <figure className="problem-diagram">
+                      <img src={problem.diagram} alt={problem.diagramAlt ?? ''} />
+                      <figcaption>{problem.diagramAlt}</figcaption>
+                    </figure>
+                  )}
                   <div className="signature-label">
                     YOUR {currentLang.shortLabel.toUpperCase()} API
                   </div>
@@ -351,13 +362,15 @@ export default function App() {
                     </section>
                   ))}
                   <h2>Keep in mind</h2>
-                  {(language === 'cpp' || language === 'java') && (
-                    <p className="practice-tip">
-                      Implement the TODO methods in the supplied {currentLang.shortLabel} file. Keep
-                      its class names, wrappers, and main function. These languages use the original
-                      EPI types; follow the supplied code where it differs from the C# types below.
-                    </p>
-                  )}
+                  {problem.collection !== 'blind75' &&
+                    (language === 'cpp' || language === 'java') && (
+                      <p className="practice-tip">
+                        Implement the TODO methods in the supplied {currentLang.shortLabel} file.
+                        Keep its class names, wrappers, and main function. These languages use the
+                        original EPI types; follow the supplied code where it differs from the C#
+                        types below.
+                      </p>
+                    )}
                   <ul className="constraints">
                     {problem.constraints.map((item) => (
                       <li key={item}>{item}</li>
@@ -366,13 +379,14 @@ export default function App() {
                   <div className="practice-tip">
                     <FlaskConical size={18} />
                     <p>
-                      <strong>Make it work, then make it better.</strong>Run checks 3 visible TSV
-                      cases. Submit checks the entire test file.
+                      <strong>Make it work, then make it better.</strong>Run checks three visible
+                      cases. Submit checks the full problem corpus.
                     </p>
                   </div>
                   <p className="attribution">
-                    Practice data from Elements of Programming Interviews Judge. For trusted local
-                    use.
+                    {problem.collection === 'blind75'
+                      ? 'Original Blind 75 statements, test corpora, and local illustrations. For trusted local use.'
+                      : 'Practice data from Elements of Programming Interviews Judge. For trusted local use.'}
                   </p>
                 </article>
               )}

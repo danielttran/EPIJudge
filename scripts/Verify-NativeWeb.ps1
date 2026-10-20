@@ -5,6 +5,8 @@ param(
     [string]$DllPath
 )
 $ErrorActionPreference = 'Stop'
+$startWindowOptions = @{}
+if ($IsWindows) { $startWindowOptions.WindowStyle = 'Hidden' }
 $root = Split-Path $PSScriptRoot -Parent
 $server = $null
 $failures = [System.Collections.Generic.List[string]]::new()
@@ -37,7 +39,7 @@ try {
         $env:Practice__DataDirectory = Join-Path $logRoot ('test-native-data-' + [guid]::NewGuid().ToString('N'))
         $dll = if ($DllPath) { [IO.Path]::GetFullPath($DllPath) } else { Join-Path $root 'EpiJudge.Web\bin\Debug\net10.0\EpiJudge.Web.dll' }
         $content = Join-Path $root 'EpiJudge.Web'
-        $server = Start-Process dotnet -ArgumentList @("`"$dll`"", '--urls', $BaseUrl, '--contentRoot', "`"$content`"") -WorkingDirectory $root -WindowStyle Hidden -PassThru -RedirectStandardOutput "$logRoot\native-audit.log" -RedirectStandardError "$logRoot\native-audit.err"
+        $server = Start-Process dotnet -ArgumentList @("`"$dll`"", '--urls', $BaseUrl, '--contentRoot', "`"$content`"") -WorkingDirectory $root @startWindowOptions -PassThru -RedirectStandardOutput (Join-Path $logRoot 'native-audit.log') -RedirectStandardError (Join-Path $logRoot 'native-audit.err')
         $ready = $false
         for ($i=0; $i -lt 20; $i++) {
             try { $null = Invoke-RestMethod "$BaseUrl/api/health" -NoProxy -TimeoutSec 1; $ready=$true; break } catch { Start-Sleep -Milliseconds 500 }
@@ -47,8 +49,8 @@ try {
     $problems = Invoke-RestMethod "$BaseUrl/api/problems" -NoProxy -TimeoutSec 20
     foreach ($language in @('cpp','java')) {
         $starters = @($problems | Where-Object { $_.starters.$language.starterCode })
-        if ($starters.Count -ne 218) { throw "$language requires 218 starters, got $($starters.Count)" }
-        Write-Output "PASS $language catalog: 218 starters"
+        if ($starters.Count -ne 293) { throw "$language requires 293 starters, got $($starters.Count)" }
+        Write-Output "PASS $language catalog: 293 starters"
         $folder = Join-Path $PSScriptRoot "NativeWebFixtures\$language"
         $countFile = if ($language -eq 'cpp') {'count_bits.cc'} else {'CountBits.java'}
         $accepted = Get-Content (Join-Path $folder $countFile) -Raw

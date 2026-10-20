@@ -1,7 +1,7 @@
 # EPI Practice
 
-A local LeetCode-style practice website for the 218 EPI problems in this
-repository. Solve problems in **C#, JavaScript, Python, C++17, or Java 21**
+A local practice website for the **218 EPI problems** and a separate **Blind 75**
+collection in the exact [Crackr order](https://www.crackr.dev/blind75). Solve problems in **C#, JavaScript, Python, C++17, or Java 21**
 using the browser editor, Run, and Submit.
 
 ## Start the website
@@ -42,6 +42,12 @@ outside the repository. The editor autosaves each problem/language separately;
 green means solved by an accepted Submit, orange means attempted without an
 accepted Submit. Browser recovery copies protect edits during connection issues.
 Open the problem list to export/import answers for another machine.
+
+The problem list has separate **EPI — 218 problems** and **Blind 75 — Crackr order**
+filters. Blind entries have `B01` through `B75` labels and independent IDs, drafts,
+and history. Their original statements, examples, corpora, and 35 local SVGs run
+without LeetCode or external image requests. Similar EPI titles retain their
+existing contracts. See [Blind 75 contracts and validation](blind75/README.md).
 
 ## Repository layout
 

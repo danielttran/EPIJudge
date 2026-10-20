@@ -1,5 +1,7 @@
 param([string]$BaseUrl = 'http://localhost:5196', [string]$DllPath, [switch]$CheckFrontend)
 $ErrorActionPreference = 'Stop'
+$startWindowOptions = @{}
+if ($IsWindows) { $startWindowOptions.WindowStyle = 'Hidden' }
 $root = Split-Path $PSScriptRoot -Parent
 if (!$DllPath) { $DllPath = Join-Path $root 'EpiJudge.Web/bin/Debug/net10.0/EpiJudge.Web.dll' }
 $testRoot = Join-Path $root ('.epi-runs/practice-tests-' + [guid]::NewGuid().ToString('N'))
@@ -36,7 +38,7 @@ function Start-TestServer([string]$DataName) {
     $env:Practice__DataDirectory=Join-Path $testRoot $DataName
     $script:launch++
     $env:EPI_VITE_CACHE_DIR=Join-Path $testRoot "vite-cache-$launch"
-    $script:server=Start-Process dotnet -ArgumentList @("`"$DllPath`"",'--urls',$BaseUrl,'--contentRoot',"`"$(Join-Path $root 'EpiJudge.Web')`"") -WorkingDirectory $root -WindowStyle Hidden -PassThru -RedirectStandardOutput (Join-Path $testRoot "server-$launch.log") -RedirectStandardError (Join-Path $testRoot "server-$launch.err")
+    $script:server=Start-Process dotnet -ArgumentList @("`"$DllPath`"",'--urls',$BaseUrl,'--contentRoot',"`"$(Join-Path $root 'EpiJudge.Web')`"") -WorkingDirectory $root @startWindowOptions -PassThru -RedirectStandardOutput (Join-Path $testRoot "server-$launch.log") -RedirectStandardError (Join-Path $testRoot "server-$launch.err")
     for($i=0;$i -lt 90;$i++) {
         try { $null=Invoke-RestMethod "$BaseUrl/api/health" -NoProxy -TimeoutSec 1; return } catch { Start-Sleep -Milliseconds 500 }
     }

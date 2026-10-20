@@ -43,7 +43,7 @@ else {
     else { Write-Output "PASS Python $version"; $env:EPI_PYTHON_PATH = $python }
 }
 $javaHome = if ($env:EPI_JAVA_HOME) { $env:EPI_JAVA_HOME } else { $env:JAVA_HOME }
-$javac = if ($javaHome) { Join-Path $javaHome ('bin' + [IO.Path]::DirectorySeparatorChar + 'javac.exe') } else { Find-Tool 'javac' '' }
+$javac = if ($javaHome) { Join-Path $javaHome ('bin' + [IO.Path]::DirectorySeparatorChar + $(if ($IsWindows) { 'javac.exe' } else { 'javac' })) } else { Find-Tool 'javac' '' }
 if ($javaHome -and !(Test-Path -LiteralPath $javac)) { $javac = Join-Path $javaHome 'bin/javac' }
 if (!$javac -or !(Test-Path -LiteralPath $javac)) { $missing.Add('JDK 21+ on PATH or JAVA_HOME: https://adoptium.net/temurin/releases/?version=21') }
 else {

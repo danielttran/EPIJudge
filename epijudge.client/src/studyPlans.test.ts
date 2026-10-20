@@ -118,3 +118,47 @@ it('keeps excluded exercises and all reading companions available outside study 
     ).toBe(true);
   expect(libraryEntries(problems, '').filter((entry) => entry.lesson)).toHaveLength(12);
 });
+
+it('keeps Blind 75 separate, ordered, searchable, and distinct from similar EPI titles', () => {
+  const blind = [
+    {
+      id: 'blind75_two_sum',
+      title: 'Two Sum',
+      topic: 'Arrays',
+      collection: 'blind75',
+      position: 1,
+    },
+    {
+      id: 'blind75_combination_sum',
+      title: 'Combination Sum',
+      topic: 'Arrays',
+      collection: 'blind75',
+      position: 9,
+    },
+    {
+      id: 'blind75_combination_sum_iv',
+      title: 'Combination Sum IV',
+      topic: 'Dynamic Programming',
+      collection: 'blind75',
+      position: 70,
+    },
+  ] as Problem[];
+  const combined = [...problems, ...blind];
+  expect(libraryEntries(combined, 'collection:epi').map((e) => e.problem?.id)).toEqual(
+    problems.map((p) => p.id),
+  );
+  const entries = libraryEntries(combined, 'collection:blind75');
+  expect(entries.map((e) => e.problem?.id)).toEqual(blind.map((p) => p.id));
+  expect(entries.map((e) => e.number)).toEqual(['B01', 'B09', 'B70']);
+  expect(entries.every((e) => !e.lesson)).toBe(true);
+  expect(
+    libraryEntries(combined, 'collection:blind75', 'COMBINATION').map((e) => e.number),
+  ).toEqual(['B09', 'B70']);
+  expect(libraryEntries(combined, 'collection:blind75', 'missing query')).toEqual([]);
+  expect(libraryEntries(combined, 'plan:3-days').map((e) => e.number)).toEqual(
+    libraryEntries(problems, 'plan:3-days').map((e) => e.number),
+  );
+  expect(new Set(libraryEntries(combined, '').map((e) => e.number)).size).toBe(
+    libraryEntries(combined, '').length,
+  );
+});

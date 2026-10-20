@@ -1,0 +1,85 @@
+name: Blind 75 checks
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  algorithms:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [csharp, javascript, python, cpp, java]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - name: Validate independently authored inputs and expected results
+        run: python scripts/blind75/validate.py
+      - name: Execute every starter, correct algorithm and contract-breaking algorithm
+        run: dotnet run --project scripts/Blind75Audit -- all ${{ matrix.language }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: blind75-${{ matrix.language }}
+          path: .epi-runs/blind75-audit-all-*.json
+
+  browser-and-http:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: epijudge.client/package-lock.json
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - run: npm --prefix epijudge.client ci
+      - run: npm --prefix epijudge.client run build
+      - run: node epijudge.client/node_modules/playwright-core/cli.js install --with-deps chromium
+      - run: dotnet build EPIJudge.Web.slnx -c Release -p:ShouldRunNpmInstall=false -warnaserror
+      - name: Check deterministic generated sources and local artwork
+        run: |
+          python scripts/blind75/generate.py
+          python scripts/blind75/fixtures.py
+          python scripts/blind75/diagrams.py
+          python scripts/blind75/generate.py
+          git diff --exit-code -- blind75 scripts/blind75/fixtures EpiJudge.Web/wwwroot/blind75
+      - name: Check Python syntax and undefined or unused names
+        run: |
+          python -m pip install ruff==0.17.1
+          ruff check --select F,E9 scripts/blind75/*.py scripts/verify_blind75_http.py
+      - name: Exercise HTTP errors, five real timeouts, Monaco, recovery and offline assets
+        run: python scripts/verify_blind75_http.py --dll EpiJudge.Web/bin/Release/net10.0/EpiJudge.Web.dll --browser
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: blind75-browser-http
+          path: |
+            .epi-runs/blind75-http.json
+            .epi-runs/blind75-browser*.json
+            .epi-runs/blind75-browser*.png
+            .epi-runs/blind75-browser-failure.txt

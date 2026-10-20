@@ -2,8 +2,9 @@
 
 A local React + TypeScript website with an ASP.NET Core API and a submission
 worker supporting **C#, JavaScript, Python, C++17, and Java 21**.
-All **218 problems included in this repository** are available through
-the website, using their real TSV test files. This is the repository's catalog,
+All **218 EPI problems** remain available with their real TSV test files.
+A separate **75-problem Blind 75 collection** adds original statements, local
+artwork and independent test corpora in the exact Crackr order. This is the repository's catalog,
 not every exercise or variant in every edition of the EPI book.
 
 ![The local React workspace showing a C# solution and passing test results](../docs/website-preview.png)
@@ -51,11 +52,18 @@ The description and editor share the main workspace. Choose a language above
 the editor, and use **Run** or **Submit** in the top toolbar. Test results start
 collapsed, open when code runs, and can be expanded or collapsed from their header.
 
-Choose a language in the editor. C++ and Java provide the original EPI source
+For EPI exercises, choose a language in the editor. C++ and Java provide the original EPI source
 scaffold: implement its TODO methods while retaining the wrappers and main
 function (and Java's `package epi` and class name). Their native signatures can
 differ from the C# contracts described below. Accepted native cases display
 validator confirmation; failing cases show the actual value when available.
+
+Blind 75 uses the typed scaffold displayed for the selected language, including
+its `Solution`, `Codec`, `Trie`, `WordDictionary`, or `MedianFinder` class when
+applicable. Its supplied node types use `val`, `next`, `left`, `right`, and
+`neighbors`. Implement the displayed methods and keep those definitions;
+C++ and Java harness entry points are supplied by the runner. Existing EPI
+node types and wrapper contracts remain unchanged.
 
 For C++ install Visual Studio's C++ build tools on Windows, or put `g++` or
 `clang++` on PATH. Windows builds automatically locate `vcvars64.bat`.

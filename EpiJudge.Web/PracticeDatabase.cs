@@ -55,7 +55,8 @@ public sealed class PracticeDatabase
             {
                 var parts = reader.IsDBNull(1) ? [] : reader.GetString(1).Split(':');
                 var alive = false;
-                if (parts.Length == 2 && int.TryParse(parts[0], out var pid) && long.TryParse(parts[1], out var ticks))
+                if (parts.Length == 2 && int.TryParse(parts[0], out var pid) && pid > 0 &&
+                    long.TryParse(parts[1], out var ticks) && ticks > 0)
                 {
                     try
                     {

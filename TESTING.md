@@ -110,3 +110,36 @@ reference tracing and execution tests, not deletion based only on analyzer outpu
 The database schema and backup version remain unchanged. New abstractions should
 earn their place through a real responsibility or external boundary; do not add
 one interface per class or mock SQL to test database behavior.
+
+## Blind 75 acceptance
+
+Run the five-language matrix from the root:
+
+```powershell
+python scripts/blind75/validate.py
+dotnet run --project scripts/Blind75Audit -- all
+```
+
+This executes 375 typed starters, 375 actual correct algorithm fixtures, and
+375 deliberately incorrect algorithms. Negative fixtures include correct-looking
+outputs with copied nodes, aliased graphs, replaced matrix rows, altered original
+values, partial-word matches and incorrect medians. Each report under
+`.epi-runs/blind75-audit-*.json` records source, corpus and harness hashes.
+`all <language>` selects one language. Reports from targeted reruns can be
+validated against all current inputs with `python scripts/blind75/evidence.py`.
+
+The browser/HTTP suite starts temporary local profiles. It exercises the real
+Monaco editor, all five language drafts, Submit, history restoration, backup
+transfer, failed-save recovery, all local diagrams with external origins blocked,
+invalid requests, syntax/runtime errors, busy responses, five real timeouts and
+recovery after each timeout:
+
+```powershell
+node epijudge.client/node_modules/playwright-core/cli.js install chromium
+python scripts/verify_blind75_http.py --dll EpiJudge.Web/bin/Release/net10.0/EpiJudge.Web.dll --browser
+```
+
+Build Release and the frontend first. `CHROMIUM_PATH` may select an installed
+Chromium executable. `--no-timeouts` is a diagnostic shortcut and is explicitly
+reported as skipped; it is not final acceptance. The existing Windows workflow
+remains, while `Blind 75 checks` adds Linux/Python 3.14 execution and browser checks.
