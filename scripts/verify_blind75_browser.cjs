@@ -5,6 +5,7 @@ const assert=require('node:assert/strict');
 const {chromium}=require('../epijudge.client/node_modules/playwright-core');
 const base=process.argv[2];
 const root=path.resolve(__dirname,'..');
+fs.mkdirSync(path.join(root,'.epi-runs'),{recursive:true});
 const messages=[];
 function pass(label){messages.push(label);console.log('PASS browser '+label);}
 async function until(predicate,label){const end=Date.now()+20000;while(Date.now()<end){if(await predicate())return;await new Promise(r=>setTimeout(r,100));}throw Error('Timed out: '+label);}

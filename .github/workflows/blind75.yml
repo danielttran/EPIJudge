@@ -59,6 +59,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.14'
+      - name: Regress clean-checkout artifact initialization
+        run: python -m unittest discover -s scripts -p test_blind75_http.py -v
       - run: npm --prefix epijudge.client ci
       - run: npm --prefix epijudge.client run build
       - run: node epijudge.client/node_modules/playwright-core/cli.js install --with-deps chromium
@@ -73,7 +75,7 @@ jobs:
       - name: Check Python syntax and undefined or unused names
         run: |
           python -m pip install ruff==0.17.1
-          ruff check --select F,E9 scripts/blind75/*.py scripts/verify_blind75_http.py
+          ruff check --select F,E9 scripts/blind75/*.py scripts/verify_blind75_http.py scripts/test_blind75_http.py
       - name: Exercise HTTP errors, five real timeouts, Monaco, recovery and offline assets
         run: python scripts/verify_blind75_http.py --dll EpiJudge.Web/bin/Release/net10.0/EpiJudge.Web.dll --browser
       - uses: actions/upload-artifact@v4

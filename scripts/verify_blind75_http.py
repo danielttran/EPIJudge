@@ -12,6 +12,11 @@ ROOT=Path(__file__).resolve().parents[1]
 LANGUAGES=['csharp','javascript','python','cpp','java']
 HEADERS={'X-EpiJudge-Client':'local-editor','Content-Type':'application/json'}
 CHECKS=[]
+def create_run_directory(root):
+    artifact_root=root/'.epi-runs'
+    artifact_root.mkdir(parents=True,exist_ok=True)
+    return Path(tempfile.mkdtemp(prefix='blind75-http-',dir=artifact_root))
+
 def check(ok,label):
     if not ok:raise AssertionError(label)
     CHECKS.append(label);print('PASS '+label,flush=True)
@@ -52,7 +57,7 @@ def judge(base,s,lang,code,mode='submit'):
 def main():
     parser=argparse.ArgumentParser();parser.add_argument('--dll',type=Path,required=True);parser.add_argument('--browser',action='store_true');parser.add_argument('--no-timeouts',action='store_true');args=parser.parse_args()
     catalog=json.loads((ROOT/'blind75/catalog.json').read_text());by_id={p['id']:p for p in catalog};number=by_id['blind75_number_of_1_bits'];two=by_id['blind75_two_sum']
-    run_dir=Path(tempfile.mkdtemp(prefix='blind75-http-',dir=ROOT/'.epi-runs'))
+    run_dir=create_run_directory(ROOT)
     with ExitStack() as stack:
         server=Server(args.dll.resolve(),run_dir);stack.callback(server.close);base=server.base
         problems=api(base,'/api/problems');check(len(problems)==293,'API retains 218 EPI plus 75 Blind entries');check(sum(p['collection']=='epi' for p in problems)==218,'EPI identity count remains 218')

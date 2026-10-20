@@ -133,6 +133,14 @@ values, partial-word matches and incorrect medians. Each report under
 validated against all current inputs with `python scripts/blind75/evidence.py`
 after `describe` refreshes the compiled-harness fingerprints.
 
+The clean-checkout startup regression runs on isolated temporary directories,
+including a missing `.epi-runs` directory, repeated runs that preserve existing
+evidence, nested missing parents, and a conflicting file:
+
+```powershell
+python -m unittest discover -s scripts -p test_blind75_http.py -v
+```
+
 The browser/HTTP suite starts temporary local profiles. It exercises the real
 Monaco editor, all five language drafts, Submit, history restoration, backup
 transfer, failed-save recovery, all local diagrams with external origins blocked,

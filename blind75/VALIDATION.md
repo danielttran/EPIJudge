@@ -49,6 +49,16 @@ The mathematical oracle is separate from every positive algorithm fixture.
   nonpositive PID could be treated as alive. Positive PID/start-time validation
   fixes that demonstrated case; new regressions preserve source and interrupt
   malformed owners while the existing live-owner regression still passes.
+- CI run 39456991228 exposed a missing `.epi-runs` parent at HTTP-suite startup
+  on a clean checkout. The HTTP and standalone browser scripts now create their
+  artifact directory. Four filesystem regressions cover clean and nested paths,
+  unique runs that preserve saved evidence, and a conflicting file. The complete
+  HTTP/browser suite was rerun in a detached worktree with `.epi-runs` confirmed
+  absent at startup: all 153 HTTP checks and six browser groups passed, including
+  all five real timeouts, with zero external requests or page errors. This rerun
+  reused the validated Release DLL, frontend build and installed dependencies;
+  existing workspace evidence was retained. Python lint and browser syntax checks
+  passed. Related PowerShell and C# audit writers already create their parents.
 
 ## Evidence and platform scope
 
