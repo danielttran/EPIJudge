@@ -119,6 +119,13 @@ const pauseUntil = async (predicate, label) => {
       "search text renders safely",
     );
     await page.getByRole("link", { name: "Clear filters" }).click();
+    await page.getByRole("searchbox").fill("Foundations");
+    await pauseUntil(
+      async () => (await page.locator(".learn-card").count()) === 4,
+      "displayed topic search",
+    );
+    check(true, "search finds articles by their displayed topic name");
+    await page.getByRole("searchbox").fill("");
     await page
       .getByRole("combobox", { name: "Source", exact: true })
       .selectOption("other");

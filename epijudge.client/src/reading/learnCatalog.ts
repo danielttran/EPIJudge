@@ -69,7 +69,7 @@ export function filterArticles(topic: string, source: string, query: string) {
     (article) =>
       (!topic || article.topicId === topic) &&
       (!source || article.sourceId === source) &&
-      `${article.title} ${article.description} ${article.originalTopic} ${article.sourceLabel} ${article.lesson.body}`
+      `${article.title} ${article.description} ${article.originalTopic} ${LEARN_TOPICS.find((item) => item.id === article.topicId)?.title ?? ''} ${article.sourceLabel} ${article.lesson.body}`
         .toLocaleLowerCase()
         .includes(search),
   );

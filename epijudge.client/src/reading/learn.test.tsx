@@ -83,6 +83,7 @@ it('retains all 334 runnable questions and only links to real, explicitly mapped
 it('searches local content, composes topic/source filters and returns honest empty results', () => {
   expect(filterArticles('', '', '')).toHaveLength(12);
   expect(filterArticles('foundations', 'other', '')).toHaveLength(4);
+  expect(filterArticles('', '', 'Foundations')).toHaveLength(4);
   expect(filterArticles('trees-graphs', '', 'IDENTITY')).toHaveLength(2);
   expect(filterArticles('', 'interviewcake', '')).toEqual([]);
   expect(filterArticles('unknown', '', '')).toEqual([]);
