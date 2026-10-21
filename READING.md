@@ -83,11 +83,19 @@ document rejection, and lost updates with and without a lock.
 `python scripts/verify_learn_inventory.py` audits all twelve mappings and unchanged
 bodies, source labels, word counts, durations, section anchors, and related targets,
 alongside the 218/75/41 runnable inventory. After building the website, run
-`python scripts/verify_learn_http.py --dll EpiJudge.Web/bin/Release/net10.0/EpiJudge.Web.dll --browser`
+`python scripts/verify_learn_http.py --dll EpiJudge.Web/bin/Release/net10.0/EpiJudge.Web.dll --browser --layout`
 for an isolated profile with real desktop/mobile Chromium, all article deep links,
 search/filter history, keyboard navigation, legacy redirects, notes, drafts, backup
-restoration, missing/API-error states, and offline assets. The Solutions workflow
-runs these checks and retains reports and screenshots. No archived course import
+restoration, missing/API-error states, and offline assets. The additional layout
+audit runs 16 states at desktop 1440×1000, tablet 820×1180, phone 320×740, and
+native Chromium 200% zoom (a 720×456 CSS viewport in a 1440×1000 window).
+It checks text wrapping, overflow, article/sidebar geometry, covered controls,
+scroll and keyboard reachability, expanded helpers/results, loading and error
+states. Long-title stress content is temporary browser DOM data, never saved
+as an article. It verifies full-surface screenshots, including at native zoom.
+The Solutions workflow runs these checks and retains reports and screenshots.
+This is Chromium coverage, not a claim about every browser or physical device.
+No archived course import
 or external article content is needed.
 
 The [acceptance notes and reviewed desktop/mobile screenshots](docs/learn/VALIDATION.md)

@@ -40,6 +40,12 @@ input:focus-visible {
   outline: 2px solid #f6ad55;
   outline-offset: 3px;
 }
+select:focus-visible,
+textarea:not(.inputarea):focus-visible,
+summary:focus-visible {
+  outline: 2px solid #f6ad55;
+  outline-offset: 3px;
+}
 a {
   color: inherit;
   text-decoration: none;
@@ -1720,6 +1726,11 @@ h2 {
   background: #2cce73;
 }
 @media (max-width: 1000px) {
+  .topbar-actions {
+    position: static;
+    transform: none;
+    margin-left: auto;
+  }
   .brand > span:last-child,
   .local-badge {
     display: none;
@@ -2064,6 +2075,20 @@ h2 {
   line-height: 1.4;
   margin: 12px 0 10px;
 }
+.learn-card > * {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+.learn-breadcrumb > *,
+.learn-related,
+.learn-pagination a {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.learn-article-grid .reading-body {
+  overflow-wrap: anywhere;
+}
 .learn-card p {
   color: #aaa;
   font-size: 13px;
@@ -2382,4 +2407,50 @@ h2 {
   color: inherit;
   text-decoration: underline;
   text-underline-offset: 0.15em;
+}
+
+/* Reflow constrained Practice layouts instead of letting fixed panels cover controls. */
+.coding-pane .provided-code-reference {
+  max-height: min(320px, 35dvh);
+}
+@media (max-width: 900px) {
+  .workspace:not(.learn-workspace) {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    min-height: calc(100dvh - 48px);
+  }
+  .workspace:not(.learn-workspace) > .problem-pane {
+    height: 48dvh;
+    min-height: 280px;
+    flex-shrink: 0;
+  }
+  .coding-pane {
+    height: auto;
+    min-height: 620px;
+    flex-shrink: 0;
+  }
+  .coding-pane .editor-panel {
+    min-height: 440px;
+  }
+  .coding-pane .editor-container {
+    height: 320px;
+    flex: 0 0 320px;
+    min-height: 160px;
+  }
+}
+@media (max-width: 560px) {
+  .topbar {
+    gap: 4px;
+    padding: 0 8px;
+  }
+  .topbar .brand {
+    display: none;
+  }
+  .library-toggle span {
+    display: none;
+  }
+  .topbar-actions button {
+    padding: 6px 8px;
+  }
 }
