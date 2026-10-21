@@ -6,7 +6,8 @@ namespace EpiJudge.Web;
 // The normal application still uses the concrete runner and SQLite store.
 public interface IAttemptStore
 {
-    SavedAttempt BeginAttempt(string problem, string language, string code, string mode);
+    SavedAttempt BeginAttempt(string problem, string language, string code, string mode,
+        string codeFormat = "legacy-v1");
     void CompleteAttempt(string id, SubmissionResult result);
 }
 
@@ -15,12 +16,13 @@ public sealed record SubmissionOutcome(SubmissionResult? Result, SubmissionFailu
 
 public sealed class SubmissionService(IAttemptStore store, ISubmissionRunner runner, ILogger<SubmissionService> logger)
 {
-    public async Task<SubmissionOutcome> Execute(Problem problem, string language, string code, string mode, CancellationToken cancellation)
+    public async Task<SubmissionOutcome> Execute(Problem problem, string language, string code, string mode,
+        CancellationToken cancellation, string codeFormat = "legacy-v1")
     {
         SavedAttempt attempt;
         try
         {
-            attempt = store.BeginAttempt(problem.Id, language, code, mode);
+            attempt = store.BeginAttempt(problem.Id, language, code, mode, codeFormat);
         }
         catch (Exception exception)
         {
@@ -32,7 +34,8 @@ public sealed class SubmissionService(IAttemptStore store, ISubmissionRunner run
         SubmissionFailure? failure = null;
         try
         {
-            var executed = await runner.RunAsync(problem, code, mode == "run", language, cancellation);
+            var prepared = CallableCodeCatalog.Prepare(problem.Id, language, code, codeFormat);
+            var executed = await runner.RunAsync(problem, prepared.Code, mode == "run", language, cancellation);
             if (executed is null)
             {
                 result = new(attempt.Id, "Not run", 0, 0, 0, "The runner was busy.", []);
@@ -40,7 +43,7 @@ public sealed class SubmissionService(IAttemptStore store, ISubmissionRunner run
             }
             else
             {
-                result = executed with { Id = attempt.Id };
+                result = CallableCodeCatalog.MapResult(executed, prepared) with { Id = attempt.Id };
             }
         }
         catch (OperationCanceledException) when (cancellation.IsCancellationRequested)

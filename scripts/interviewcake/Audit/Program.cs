@@ -5,8 +5,11 @@ using System.Text.Json;
 using EpiJudge.Runner;
 var root=ProblemCatalog.FindRepositoryRoot(AppContext.BaseDirectory);
 ToolchainConfiguration.ApplyLocalOverrides(root);
-var language=args.ElementAtOrDefault(0);if(language=="all")language=null;
-var kind=args.ElementAtOrDefault(1)??"all";var selected=args.ElementAtOrDefault(2)?.Split(',').ToHashSet();
+var callable=args.Contains("--callable");
+var positional=args.Where(a=>!a.StartsWith("--",StringComparison.Ordinal)).ToArray();
+var language=positional.ElementAtOrDefault(0);if(language=="all")language=null;
+var kind=positional.ElementAtOrDefault(1)??"all";var selected=positional.ElementAtOrDefault(2)?.Split(',').ToHashSet();
+using var callableDocument=callable?JsonDocument.Parse(File.ReadAllText(Path.Combine(root,"workspace-code/catalog.json"))):null;
 if(language is not null&&!SolutionCatalog.Languages.Contains(language))throw new ArgumentException("Choose one of the five supported languages or all.");
 if(kind is not ("all" or "starter" or "correct" or "incorrect"))throw new ArgumentException("Choose all, starter, correct or incorrect.");
 if(selected is not null&&selected.Any(id=>InterviewCakeCatalog.Find(id) is null))throw new ArgumentException("Unknown Interview Cake problem ID.");
@@ -27,11 +30,22 @@ foreach(var variant in new[]{"starter","correct","incorrect"}.Where(v=>kind=="al
 {
     var extension=lang switch{"csharp"=>"cs","javascript"=>"js","python"=>"py","cpp"=>"cpp",_=>"java"};
     var code=variant=="starter"?def.Starters[lang].StarterCode:File.ReadAllText(Path.Combine(root,variant=="correct"?"solutions":"interviewcake/fixtures/incorrect",lang,def.Id+"."+extension));
+    if(callable)
+    {
+        var entry=CallableCodeCatalog.Find(def.Id,lang)??throw new InvalidOperationException("Missing callable contract.");
+        code=variant switch{
+            "starter"=>entry.StarterCode,
+            "correct"=>entry.SolutionCode,
+            _=>callableDocument!.RootElement.GetProperty("entries").EnumerateArray().Single(e=>e.GetProperty("problemId").GetString()==def.Id&&e.GetProperty("language").GetString()==lang).GetProperty("incorrectCode").GetString()??throw new InvalidOperationException("Missing callable incorrect fixture.")
+        };
+    }
+    var prepared=CallableCodeCatalog.Prepare(def.Id,lang,code,callable?CallableCodeCatalog.CallableFormat:CallableCodeCatalog.LegacyFormat);
     var problem=InterviewCakeCatalog.Problems.Single(p=>p.Id==def.Id);
     var attemptId=Guid.NewGuid().ToString("N");var attemptDirectory=Path.Combine(directory,attemptId);
     // Invoke the same typed runner used by public submissions, retaining its report
     // until this audit checks every executed row. Public runner cleanup is tested separately.
-    var result=await (Task<SubmissionResult>)runnerMethod.Invoke(null,[root,attemptDirectory,attemptId,problem,def,code,false,lang,CancellationToken.None])!;
+    var result=await (Task<SubmissionResult>)runnerMethod.Invoke(null,[root,attemptDirectory,attemptId,problem,def,prepared.Code,false,lang,CancellationToken.None])!;
+    result=CallableCodeCatalog.MapResult(result,prepared);
     var executionPath=Path.Combine(attemptDirectory,"results.json");var executionReportRows=0;string? executionReportSha256=null;
     if(File.Exists(executionPath))
     {
@@ -47,10 +61,11 @@ foreach(var variant in new[]{"starter","correct","incorrect"}.Where(v=>kind=="al
     };
     success=success&&executionReportRows==problem.TestCount;
     if(!success)failures++;
-    evidence.Add(new{problemId=problem.Id,language=lang,variant,success,result,executionReportRows,executionReportSha256,codeSha256=Sha(code),corpusSha256=Sha(File.ReadAllText(Path.Combine(root,"interviewcake/cases",def.Id+".json"))),harnessSha256=Sha((string)harness.Invoke(null,[def,lang])!)});
+    evidence.Add(new{problemId=problem.Id,language=lang,variant,success,result,executionReportRows,executionReportSha256,codeFormat=callable?CallableCodeCatalog.CallableFormat:CallableCodeCatalog.LegacyFormat,codeSha256=Sha(code),composedCodeSha256=Sha(prepared.Code),corpusSha256=Sha(File.ReadAllText(Path.Combine(root,"interviewcake/cases",def.Id+".json"))),harnessSha256=Sha((string)harness.Invoke(null,[def,lang])!)});
     Console.WriteLine($"{(success?"PASS":"FAIL")} {lang} {variant} {problem.Id} {result?.Status} {result?.Passed}/{result?.Total}");
     if(!success)Console.WriteLine(result?.Diagnostics??JsonSerializer.Serialize(result));
-    File.WriteAllText(Path.Combine(directory,$"interviewcake-audit-{language??"all"}-{kind}-{runId}.json"),JsonSerializer.Serialize(new{runId,runnerSha256,catalogSha256,entryPoint="InterviewCakeSubmissionRunner.RunAsync (the public submission route uses this same implementation)",evidence,failures},new JsonSerializerOptions{WriteIndented=true}));
+    var reportPrefix=callable?"interviewcake-audit-callable":"interviewcake-audit";
+    File.WriteAllText(Path.Combine(directory,$"{reportPrefix}-{language??"all"}-{kind}-{runId}.json"),JsonSerializer.Serialize(new{runId,runnerSha256,catalogSha256,callableCatalogSha256=callable?Sha(File.ReadAllText(Path.Combine(root,"workspace-code/catalog.json"))):null,entryPoint="InterviewCakeSubmissionRunner.RunAsync (the public submission route uses this same implementation)",evidence,failures},new JsonSerializerOptions{WriteIndented=true}));
     try{if(Directory.Exists(attemptDirectory))Directory.Delete(attemptDirectory,true);}catch(IOException){}catch(UnauthorizedAccessException){}
 }
 Console.WriteLine($"Completed {evidence.Count} executions; {failures} failures.");return failures==0?0:1;

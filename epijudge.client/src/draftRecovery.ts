@@ -1,4 +1,4 @@
-import type { Pending } from './practiceModels';
+import { codeFormatOrLegacy, type CodeFormat, type Pending } from './practiceModels';
 
 export function read<T>(key: string, fallback: T): T {
   try {
@@ -38,7 +38,10 @@ export class DraftRecovery {
             pending &&
             typeof pending.code === 'string' &&
             Number.isSafeInteger(pending.revision) &&
-            pending.revision >= 0
+            pending.revision >= 0 &&
+            (pending.codeFormat === undefined ||
+              pending.codeFormat === 'legacy-v1' ||
+              pending.codeFormat === 'callable-v1')
           )
             copies.push(pending);
         }
@@ -48,14 +51,15 @@ export class DraftRecovery {
       return null;
     }
   }
-  clear(key: string, code: string) {
+  clear(key: string, code: string, codeFormat: CodeFormat = 'legacy-v1') {
     try {
       for (let i = localStorage.length - 1; i >= 0; i--) {
         const storageKey = localStorage.key(i)!;
         if (
           storageKey.startsWith('epi:pending:') &&
           storageKey.endsWith(':' + key) &&
-          read<Pending | null>(storageKey, null)?.code === code
+          read<Pending | null>(storageKey, null)?.code === code &&
+          codeFormatOrLegacy(read<Pending | null>(storageKey, null)?.codeFormat) === codeFormat
         )
           localStorage.removeItem(storageKey);
       }

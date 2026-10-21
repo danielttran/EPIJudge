@@ -22,12 +22,21 @@ public sealed class PracticeDatabase
         using var db = Open();
         using (var version = Command(db, null, "PRAGMA user_version"))
         {
-            if (Convert.ToInt32(version.ExecuteScalar()) > 1)
+            if (Convert.ToInt32(version.ExecuteScalar()) > 2)
+                throw new InvalidOperationException("This answer database was created by a newer EPI Practice version.");
+        }
+        using (var journal = Command(db, null, "PRAGMA journal_mode=WAL")) journal.ExecuteNonQuery();
+        using var transaction = db.BeginTransaction();
+        int schemaVersion;
+        using (var version = Command(db, transaction, "PRAGMA user_version"))
+        {
+            schemaVersion = Convert.ToInt32(version.ExecuteScalar());
+            if (schemaVersion > 2)
                 throw new InvalidOperationException("This answer database was created by a newer EPI Practice version.");
         }
         using var command = db.CreateCommand();
+        command.Transaction = transaction;
         command.CommandText = """
-            PRAGMA journal_mode=WAL;
             CREATE TABLE IF NOT EXISTS drafts (
                 problem TEXT NOT NULL, language TEXT NOT NULL, code TEXT NOT NULL,
                 revision INTEGER NOT NULL, updated TEXT NOT NULL, PRIMARY KEY(problem, language));
@@ -39,9 +48,18 @@ public sealed class PracticeDatabase
             CREATE INDEX IF NOT EXISTS attempt_problem ON attempts(problem, sequence DESC);
             CREATE TABLE IF NOT EXISTS legacy_solved (problem TEXT PRIMARY KEY);
             CREATE TABLE IF NOT EXISTS migrations (id TEXT PRIMARY KEY);
-            PRAGMA user_version=1;
             """;
         command.ExecuteNonQuery();
+        if (schemaVersion < 2)
+        {
+            using var migration = Command(db, transaction, """
+                ALTER TABLE drafts ADD COLUMN code_format TEXT NOT NULL DEFAULT 'legacy-v1';
+                ALTER TABLE attempts ADD COLUMN code_format TEXT NOT NULL DEFAULT 'legacy-v1';
+                PRAGMA user_version=2;
+                """);
+            migration.ExecuteNonQuery();
+        }
+        transaction.Commit();
         RecoverInterruptedAttempts(db);
     }
 

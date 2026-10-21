@@ -1,0 +1,147 @@
+name: Callable code checks
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  visible-code:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: epijudge.client/package-lock.json
+      - run: npm --prefix epijudge.client ci
+      - run: python -m pip install -r scripts/code_workspace/requirements.txt
+      - name: Require every visible starter and solution to be clean and reproducible
+        run: |
+          python scripts/code_workspace/native.py
+          python scripts/code_workspace/managed.py
+          python scripts/code_workspace/isolated.py
+          python scripts/code_workspace/build.py --check
+          python scripts/code_workspace/audit.py
+          python -m unittest discover -s scripts/code_workspace -p 'test_*.py' -v
+          git diff --exit-code -- workspace-code
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: callable-code-content
+          include-hidden-files: true
+          path: .epi-runs/callable-content-audit.json
+
+  executable-code:
+    runs-on: ubuntu-latest
+    timeout-minutes: 100
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [csharp, javascript, python, cpp, java]
+        role: [solution, starter]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+      - name: Execute every visible callable solution against its full corpus
+        if: matrix.role == 'solution'
+        run: dotnet run --project scripts/SolutionsAudit -c Release -- --callable --language=${{ matrix.language }} --report=callable-correct-${{ matrix.language }}
+      - name: Compile and execute every visible starter through its real judge
+        if: matrix.role == 'starter'
+        run: dotnet run --project scripts/SolutionsAudit -c Release -- --callable --starters --language=${{ matrix.language }} --report=callable-starter-${{ matrix.language }}
+      - name: Preserve structural and boundary contracts
+        if: matrix.role == 'solution'
+        run: dotnet run --no-build --project scripts/SolutionsAudit -c Release -- boundaries --callable --language=${{ matrix.language }}
+      - name: Record current compiled harness fingerprints
+        if: matrix.role == 'solution'
+        run: dotnet run --no-build --project scripts/SolutionsAudit -c Release -- describe --callable
+      - name: Check all original detailed walkthroughs
+        if: matrix.role == 'solution' && matrix.language == 'csharp'
+        run: dotnet run --no-build --project scripts/SolutionsAudit -c Release -- walkthroughs --callable
+      - name: Check every Interview Cake positive and negative fixture
+        if: matrix.role == 'solution'
+        run: dotnet run --project scripts/interviewcake/Audit -c Release -- ${{ matrix.language }} all --callable
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: callable-code-${{ matrix.language }}-${{ matrix.role }}
+          include-hidden-files: true
+          if-no-files-found: error
+          path: |
+            .epi-runs/solutions-audit-callable-*.json
+            .epi-runs/solutions-callable-*.json
+            .epi-runs/solutions-harnesses.json
+            .epi-runs/interviewcake-audit-callable-*.json
+            .epi-runs/interviewcake-executions/
+
+  complete-coverage:
+    needs: [visible-code, executable-code]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: callable-code-*
+          path: .epi-runs
+          merge-multiple: true
+      - run: python scripts/code_workspace/evidence.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: callable-code-complete-evidence
+          path: workspace-code/validation-results.json
+
+  browser-and-compatibility:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: epijudge.client/package-lock.json
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+      - run: npm --prefix epijudge.client ci
+      - run: npm --prefix epijudge.client run build
+      - run: npm --prefix epijudge.client test
+      - run: dotnet test EpiJudge.Tests/EpiJudge.Tests.csproj -c Release -p:ShouldRunNpmInstall=false
+      - run: node epijudge.client/node_modules/playwright-core/cli.js install --with-deps chromium
+      - run: python scripts/code_workspace/verify_http.py --dll EpiJudge.Web/bin/Release/net10.0/EpiJudge.Web.dll --browser
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: callable-code-browser-evidence
+          include-hidden-files: true
+          path: |
+            .epi-runs/callable-http.json
+            .epi-runs/callable-browser.json
+            .epi-runs/code-cleanup-after/

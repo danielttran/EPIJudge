@@ -32,7 +32,16 @@ import {
 import { ErrorBoundary } from './ErrorBoundary';
 import { usePractice } from './practiceStorage';
 
-import { LANGUAGES, getStarterCode, getSignature, type Problem } from './workspaceModels';
+import {
+  LANGUAGES,
+  getStarterCode,
+  getStarterFormat,
+  getCodeReferences,
+  getSignature,
+  type Problem,
+} from './workspaceModels';
+import type { CodeFormat } from './practiceModels';
+import { CodeReferences } from './CodeReferences';
 import { useSubmissionHistory } from './useSubmissionHistory';
 import { useSubmission } from './useSubmission';
 
@@ -86,9 +95,15 @@ export default function App() {
       .filter((p) => p.status === 'solved')
       .map((p) => p.problemId),
   );
-  const code = problem
-    ? practice.codeFor(problem.id, language, getStarterCode(problem, language))
-    : '';
+  const document = problem
+    ? practice.documentFor(
+        problem.id,
+        language,
+        getStarterCode(problem, language),
+        getStarterFormat(problem, language),
+      )
+    : { code: '', codeFormat: 'legacy-v1' as const };
+  const { code, codeFormat } = document;
   const saveStatus = problem ? practice.status(problem.id, language) : 'Loading saved answer…';
   const saveConflict = problem ? practice.conflict(problem.id, language) : undefined;
 
@@ -133,7 +148,7 @@ export default function App() {
   const history = useSubmissionHistory(problem?.id, language, practice.ready, historyVersion);
 
   const changeCode = (value: string) => {
-    if (problem) practice.edit(problem.id, language, value);
+    if (problem) practice.edit(problem.id, language, value, codeFormat);
   };
   const storageAction = async (action: () => Promise<unknown>, message = '') => {
     try {
@@ -149,6 +164,7 @@ export default function App() {
     problemId: problem?.id,
     language,
     code,
+    codeFormat,
     practice,
     onStarted: () => {
       setSyncWarning('');
@@ -499,7 +515,12 @@ export default function App() {
                             `Reset this problem to its ${currentLang.label} starter code? Your saved edits will be replaced.`,
                           )
                         )
-                          changeCode(getStarterCode(problem, language));
+                          practice.edit(
+                            problem.id,
+                            language,
+                            getStarterCode(problem, language),
+                            getStarterFormat(problem, language),
+                          );
                       }}
                     >
                       <RotateCcw size={15} />
@@ -523,8 +544,34 @@ export default function App() {
                       ))}
                     </select>
                   </div>
+                  <select
+                    className="code-format-select"
+                    aria-label="Code format"
+                    value={codeFormat}
+                    disabled={busy || !practice.ready || !problem}
+                    onChange={(event) => {
+                      if (problem)
+                        practice.edit(problem.id, language, code, event.target.value as CodeFormat);
+                    }}
+                  >
+                    <option value="callable-v1">Function / class</option>
+                    <option value="legacy-v1">Full program (compatibility)</option>
+                  </select>
                   <span>Autosaved on this computer</span>
                 </div>
+                {codeFormat === 'legacy-v1' && (
+                  <p className="code-format-notice">
+                    Full program mode keeps your saved code unchanged. Choose Function / class when
+                    pasting code from a Solution tab.
+                  </p>
+                )}
+                {problem && (
+                  <CodeReferences
+                    key={`${problem.id}:${language}`}
+                    references={getCodeReferences(problem, language)}
+                    language={language}
+                  />
+                )}
                 {syncWarning && (
                   <div className="save-warning" role="status">
                     <span>{syncWarning}</span>
@@ -549,7 +596,8 @@ export default function App() {
                   <div className="save-warning" role="status">
                     <span>
                       {saveConflict
-                        ? 'This answer changed in another tab. Choose which version to keep.'
+                        ? practice.error ||
+                          'This answer changed in another tab. Choose which version to keep.'
                         : practice.error}
                     </span>
                     {saveConflict && problem ? (
@@ -650,7 +698,12 @@ export default function App() {
                       onRestore={(answer) => {
                         if (!answer.language || answer.code === null) return;
                         handleLanguageChange(answer.language);
-                        practice.edit(answer.problemId, answer.language, answer.code);
+                        practice.edit(
+                          answer.problemId,
+                          answer.language,
+                          answer.code,
+                          answer.codeFormat ?? 'legacy-v1',
+                        );
                       }}
                     />
                   ) : busy ? (

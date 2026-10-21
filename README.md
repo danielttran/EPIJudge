@@ -11,6 +11,11 @@ correctness arguments, original walkthroughs and edge cases. Reading a solution
 leaves your editor draft and selected programming language intact. All solution
 content is stored locally; see [coverage and validation](solutions/README.md).
 
+The editor and Solution tab show the callable algorithm, with only the required
+data structures available in a collapsed, read-only reference. Judge drivers and
+test infrastructure stay outside the editor. Existing full-program drafts and
+backups keep their original format. See [displayed code and compatibility](workspace-code/README.md).
+
 ## Start the website
 
 On a new Windows machine, install the .NET 10 SDK, Node.js 24 LTS, Python
@@ -69,6 +74,7 @@ existing contracts. See [Blind 75 contracts and validation](blind75/README.md) a
 | `epi_judge_cpp/`, `epi_judge_java/`, `epi_judge_python/` | Native starters, wrappers, and language frameworks used by the website |
 | `epi_judge_*_solutions/` | Completed reference answers retained for study and verification; these are not websites |
 | `scripts/` | Catalog maintenance and website regression tools |
+| `workspace-code/` | Generated callable starters, displayed solutions, required references, and complete artifact coverage |
 
 **EPIJudge.Web.slnx is the only application solution.** The old root Vue
 progress dashboard and standalone C# console project are retired. The shared

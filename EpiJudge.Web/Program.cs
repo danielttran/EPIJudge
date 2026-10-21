@@ -82,40 +82,59 @@ app.MapGet("/api/languages", () => new[]
     new { id = "cpp", name = "C++", runtime = "C++17", filename = "solution.cpp", monacoLanguage = "cpp" },
     new { id = "java", name = "Java", runtime = "Java 21", filename = "Solution.java", monacoLanguage = "java" }
 });
-app.MapGet("/api/problems", (ProblemCatalog catalog, NativeProblemCatalog native, string? lang) => catalog.Problems.Select(problem =>
+app.MapGet("/api/problems", (ProblemCatalog catalog, string? lang) => catalog.Problems.Select(problem =>
 {
-    var isJs = lang is "javascript" or "js";
-    var isPy = lang is "python" or "py";
-    var nativeStarter = lang is "cpp" or "java" ? native.GetStarter(lang, problem.Id) : null;
+    var selectedLanguage = lang switch { "js" => "javascript", "py" => "python", null => "csharp", _ => lang };
+    var starters = SolutionCatalog.Languages.ToDictionary(language => language, language =>
+        CallableCodeCatalog.Find(problem.Id, language)
+        ?? throw new InvalidOperationException($"Missing callable starter: {problem.Id}/{language}"));
+    var selected = starters.GetValueOrDefault(selectedLanguage) ?? starters["csharp"];
     return new
     {
         problem.Id, problem.Title, problem.Topic, problem.Difficulty, problem.Description,
         problem.Constraints,
         problem.Collection, problem.Position, problem.Diagram, problem.DiagramAlt,
         problem.SourceUrl, problem.SourceAttribution,
-        Signature = nativeStarter?.Signature ?? (isPy ? (problem.PySignature ?? problem.Signature) : isJs ? (problem.JsSignature ?? problem.Signature) : problem.Signature),
-        StarterCode = nativeStarter?.StarterCode ?? (isPy ? (problem.PyStarterCode ?? problem.StarterCode) : isJs ? (problem.JsStarterCode ?? problem.StarterCode) : problem.StarterCode),
-        problem.JsSignature,
-        problem.JsStarterCode,
-        problem.PySignature,
-        problem.PyStarterCode,
-        Starters = new Dictionary<string, object>
+        Signature = selected.Signature,
+        StarterCode = selected.StarterCode,
+        CodeFormat = "callable-v1",
+        selected.References,
+        JsSignature = starters["javascript"].Signature,
+        JsStarterCode = starters["javascript"].StarterCode,
+        PySignature = starters["python"].Signature,
+        PyStarterCode = starters["python"].StarterCode,
+        Starters = starters.ToDictionary(pair => pair.Key, pair => (object)new
         {
-            ["csharp"] = new { signature = problem.Signature, starterCode = problem.StarterCode, filename = "Solution.cs", runtime = "C# .NET 10" },
-            ["javascript"] = new { signature = problem.JsSignature ?? problem.Signature, starterCode = problem.JsStarterCode ?? problem.StarterCode, filename = "solution.js", runtime = "JavaScript Node.js 24" },
-            ["python"] = new { signature = problem.PySignature ?? problem.Signature, starterCode = problem.PyStarterCode ?? problem.StarterCode, filename = "solution.py", runtime = "Python 3.14" },
-            ["cpp"] = native.GetStarter("cpp", problem.Id),
-            ["java"] = native.GetStarter("java", problem.Id)
-        },
+            signature = pair.Value.Signature,
+            starterCode = pair.Value.StarterCode,
+            filename = pair.Value.Filename,
+            runtime = pair.Key switch
+            {
+                "csharp" => "C# .NET 10", "javascript" => "JavaScript Node.js 24",
+                "python" => "Python 3.14", "cpp" => "C++17", _ => "Java 21"
+            },
+            codeFormat = "callable-v1",
+            references = pair.Value.References
+        }),
         problem.Examples, problem.TestCount
     };
 }));
 app.MapGet("/api/problems/{problemId}/solution", (string problemId, string? language, SolutionCatalog solutions) =>
 {
     language ??= "csharp";
-    if(!SolutionCatalog.Languages.Contains(language,StringComparer.Ordinal))
-        return Results.BadRequest(new {message="Choose a supported solution language."});
-    return solutions.Find(problemId,language) is {} solution ? Results.Ok(solution) : Results.NotFound(new {message="No solution is available for this question."});
+    if (!SolutionCatalog.Languages.Contains(language, StringComparer.Ordinal))
+        return Results.BadRequest(new { message = "Choose a supported solution language." });
+    if (solutions.Find(problemId, language) is not { } solution)
+        return Results.NotFound(new { message = "No solution is available for this question." });
+    var callable = CallableCodeCatalog.Find(problemId, language)
+        ?? throw new InvalidOperationException($"Missing callable solution: {problemId}/{language}");
+    return Results.Ok(new
+    {
+        solution.ProblemId, solution.Collection, solution.Language,
+        Code = callable.SolutionCode, CodeFormat = "callable-v1", callable.References,
+        solution.Explanation, solution.TimeComplexity, solution.SpaceComplexity,
+        solution.Attribution, solution.Correctness, solution.Walkthrough, solution.EdgeCases
+    });
 });
 app.MapGet("/api/health", () => new { status = "ready", languages = new[] { "C#", "JavaScript", "Python", "C++", "Java" }, execution = "trusted-local-only" });
 app.MapPractice();
@@ -132,7 +151,10 @@ app.MapPost("/api/submissions", async (SubmissionRequest request, HttpContext co
     if (string.IsNullOrWhiteSpace(request.Code) || request.Code.Length > 40_000)
         return Results.BadRequest(new { message = "Code must contain between 1 and 40,000 characters." });
     var language = request.Language switch { null => "csharp", "js" => "javascript", "py" => "python", _ => request.Language };
-    var outcome = await submissions.Execute(problem, language, request.Code, request.Mode, context.RequestAborted);
+    var codeFormat = request.CodeFormat ?? "legacy-v1";
+    if (!PracticeEndpoints.ValidCodeFormat(codeFormat))
+        return Results.BadRequest(new { message = "Choose a supported code format." });
+    var outcome = await submissions.Execute(problem, language, request.Code, request.Mode, context.RequestAborted, codeFormat);
     return outcome.Failure switch
     {
         null => Results.Ok(outcome.Result),
@@ -168,4 +190,5 @@ else
 }
 app.Run();
 
-public sealed record SubmissionRequest(string? ProblemId, string? Code, string? Mode, string? Language = "csharp");
+public sealed record SubmissionRequest(string? ProblemId, string? Code, string? Mode, string? Language = "csharp",
+    string? CodeFormat = "legacy-v1");

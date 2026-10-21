@@ -29,6 +29,10 @@ if(args.Contains("inventory"))
     Console.WriteLine($"Recorded {catalog.Problems.Count} questions and {catalog.Problems.Count*languages.Length} language combinations.");return 0;
 }
 var files=args.Contains("--files");
+var callable=args.Contains("--callable");
+var starters=args.Contains("--starters");
+if(starters&&!callable)throw new ArgumentException("Starter acceptance requires the explicit callable contract.");
+if(files&&callable)throw new ArgumentException("Callable acceptance must use embedded displayed metadata.");
 var chosen=args.FirstOrDefault(a=>a.StartsWith("--ids="))?[6..].Split(',').ToHashSet();
 var batch=args.FirstOrDefault(a=>a.StartsWith("--batch="))?[8..];
 if(batch is not null)chosen=JsonSerializer.Deserialize<string[]>(File.ReadAllText(Path.Combine(root,"scripts","solutions",$"batch-{batch}.json")))!.ToHashSet();
@@ -47,6 +51,7 @@ var sourcePaths=Directory.GetFiles(Path.Combine(root,"EpiJudge.Runner"),"*",Sear
     .Concat(Directory.GetFiles(Path.Combine(root,"EpiJudge.TestFramework"),"*.cs",SearchOption.AllDirectories).Where(p=>!p.Split(Path.DirectorySeparatorChar).Any(s=>s is "obj" or "bin")))
     .Concat(Directory.GetFiles(Path.Combine(root,"blind75","runtime"))).Append(Path.Combine(root,"blind75","catalog.json"))
     .Concat(Directory.GetFiles(Path.Combine(root,"interviewcake","runtime"))).Append(Path.Combine(root,"interviewcake","catalog.json"));
+if(callable)sourcePaths=sourcePaths.Append(Path.Combine(root,"workspace-code","catalog.json"));
 var sourceHashes=sourcePaths.Distinct().Order().ToDictionary(p=>Path.GetRelativePath(root,p).Replace('\\','/'),FileSha);
 string Harness(Problem p,string language)
 {
@@ -69,6 +74,17 @@ if(args.Contains("describe"))
     Console.WriteLine("Recorded all current compiled harness fingerprints.");return 0;
 }
 var embedded=files?null:new SolutionCatalog(catalog);
+var callableEntries=callable?JsonSerializer.Deserialize<CallableSource>(File.ReadAllText(Path.Combine(root,"workspace-code","catalog.json")),json)!.Entries:null;
+string VisibleCode(Problem problem,string language)
+{
+    if(!callable)return embedded!.Find(problem.Id,language)!.Code;
+    var entry=CallableCodeCatalog.Find(problem.Id,language)??throw new InvalidOperationException("Missing callable contract.");
+    var source=callableEntries!.Single(e=>e.ProblemId==problem.Id&&e.Language==language);
+    if(entry!=source&&!JsonSerializer.Serialize(entry).Equals(JsonSerializer.Serialize(source),StringComparison.Ordinal))
+        throw new InvalidOperationException("Embedded callable code differs from checked-in source; rebuild the audit.");
+    return starters?entry.StarterCode:entry.SolutionCode;
+}
+PreparedCode PrepareCode(Problem problem,string language,string code)=>CallableCodeCatalog.Prepare(problem.Id,language,code,callable?CallableCodeCatalog.CallableFormat:CallableCodeCatalog.LegacyFormat);
 var failures=0;
 var rows=new List<object>();
 var walkthroughs=args.Contains("walkthroughs");
@@ -82,7 +98,7 @@ if(args.Contains("boundaries")||walkthroughs)
         var example=notes.RootElement.GetProperty("walkthroughCase");
         return new Boundary(p.Id,example.GetProperty("arguments").EnumerateArray().Select(a=>a.Clone()).ToArray(),example.GetProperty("expected").Clone(),"Original solution walkthrough");
     }).ToArray():paths.SelectMany(path=>JsonSerializer.Deserialize<Boundary[]>(File.ReadAllText(path),json)!).ToArray();
-    var diagnosticLabel=walkthroughs?"walkthroughs":"boundaries";
+    var diagnosticLabel=(callable?"callable-":"")+(walkthroughs?"walkthroughs":"boundaries");
     var temporaryRoot=Path.Combine(artifactRoot,"solutions-boundaries-"+Guid.NewGuid().ToString("N"));
     Directory.CreateDirectory(Path.Combine(temporaryRoot,"test_data"));Directory.CreateDirectory(Path.Combine(temporaryRoot,"blind75","cases"));Directory.CreateDirectory(Path.Combine(temporaryRoot,"interviewcake","cases"));
     void CopyDirectory(string source,string destination)
@@ -107,11 +123,11 @@ if(args.Contains("boundaries")||walkthroughs)
             }
             foreach(var language in languages.Where(l=>selectedLanguage is null?(!walkthroughs||l=="csharp"):l==selectedLanguage))
             {
-                var code=embedded!.Find(problem.Id,language)!.Code;SubmissionResult? outcome=null;string? error=null;
-                try{outcome=await runner.RunAsync(problem with{TestCount=subset.Length},code,false,language,CancellationToken.None);}catch(Exception ex){error=ex.ToString();}
+                var code=VisibleCode(problem,language);SubmissionResult? outcome=null;string? error=null;
+                try{var prepared=PrepareCode(problem,language,code);outcome=await runner.RunAsync(problem with{TestCount=subset.Length},prepared.Code,false,language,CancellationToken.None);if(outcome is not null)outcome=CallableCodeCatalog.MapResult(outcome,prepared);}catch(Exception ex){error=ex.ToString();}
                 var success=outcome?.Status=="Accepted"&&outcome.Passed==subset.Length&&outcome.Total==subset.Length;
                 if(!success)failures++;
-                rows.Add(new{problemId=problem.Id,language,success,codeSha256=Sha(code),cases=subset,result=outcome,failure=error});
+                rows.Add(new{problemId=problem.Id,language,success,codeFormat=callable?CallableCodeCatalog.CallableFormat:CallableCodeCatalog.LegacyFormat,codeSha256=Sha(code),composedCodeSha256=Sha(PrepareCode(problem,language,code).Code),cases=subset,result=outcome,failure=error});
                 Console.WriteLine($"{(success?"PASS":"FAIL")} {diagnosticLabel} {language} {problem.Id} {outcome?.Status} {outcome?.Passed}/{subset.Length}");
                 if(!success)Console.WriteLine(error??JsonSerializer.Serialize(outcome,json));
                 File.WriteAllText(Path.Combine(artifactRoot,"solutions-"+diagnosticLabel+(selectedLanguage is null?"":"-"+selectedLanguage)+".json"),JsonSerializer.Serialize(new{sourceHashes,fixtureHashes=paths.ToDictionary(p=>Path.GetRelativePath(root,p).Replace('\\','/'),FileSha),executions=rows,totalCases=cases.Count(c=>chosen is null||chosen.Contains(c.ProblemId))*languages.Count(l=>selectedLanguage is null?(!walkthroughs||l=="csharp"):l==selectedLanguage),failures},json)+"\n");
@@ -130,8 +146,8 @@ foreach(var language in languages.Where(l=>selectedLanguage is null||l==selected
     SubmissionResult? result=null;string? failure=null;var code="";
     try
     {
-        code=files?File.ReadAllText(codePath):embedded!.Find(problem.Id,language)!.Code;
-        if(code!=File.ReadAllText(codePath))throw new InvalidOperationException("Displayed embedded code differs from source; rebuild the audit.");
+        code=files?File.ReadAllText(codePath):VisibleCode(problem,language);
+        if(!callable&&code!=File.ReadAllText(codePath))throw new InvalidOperationException("Displayed embedded code differs from source; rebuild the audit.");
         if(!files)
         {
             var displayed=embedded!.Find(problem.Id,language)!;
@@ -144,13 +160,18 @@ foreach(var language in languages.Where(l=>selectedLanguage is null||l==selected
                 throw new InvalidOperationException("Displayed explanation differs from source notes; rebuild the resource and audit.");
         }
         if(code.Length>40_000)throw new InvalidOperationException("Solution exceeds the submission API code limit.");
-        result=await liveRunner.RunAsync(problem,code,false,language,CancellationToken.None);
-        if(result?.Status!="Accepted"||result.Passed!=problem.TestCount||result.Total!=problem.TestCount)failure=result?.Diagnostics??JsonSerializer.Serialize(result);
+        var prepared=PrepareCode(problem,language,code);
+        result=await liveRunner.RunAsync(problem,prepared.Code,false,language,CancellationToken.None);
+        if(result is not null)result=CallableCodeCatalog.MapResult(result,prepared);
+        var successStatus=starters
+            ? result?.Status=="Accepted"&&result.Passed==problem.TestCount || result is {Status:"Wrong answer" or "Runtime error",Cases.Count:>0}
+            : result?.Status=="Accepted"&&result.Passed==problem.TestCount;
+        if(!successStatus||result?.Total!=problem.TestCount)failure=result?.Diagnostics??JsonSerializer.Serialize(result);
     }
     catch(Exception ex){failure=ex.ToString();}
     var success=failure is null;if(!success)failures++;
     var corpus=problem.Collection is "blind75" or "interviewcake"?Path.Combine(root,problem.Collection,"cases",problem.Id+".json"):Path.Combine(root,"test_data",problem.Id+".tsv");
-    rows.Add(new{problemId=problem.Id,collection=problem.Collection,language,success,displayedEmbeddedCode=!files,codeSha256=Sha(code),notesSha256=File.Exists(notesPath)?FileSha(notesPath):null,corpusSha256=FileSha(corpus),harnessSha256=Sha(Harness(problem,language)),result,failure});
+    rows.Add(new{problemId=problem.Id,collection=problem.Collection,language,success,displayedEmbeddedCode=!files,codeFormat=callable?CallableCodeCatalog.CallableFormat:CallableCodeCatalog.LegacyFormat,role=starters?"starter":"solution",codeSha256=Sha(code),composedCodeSha256=Sha(PrepareCode(problem,language,code).Code),notesSha256=File.Exists(notesPath)?FileSha(notesPath):null,corpusSha256=FileSha(corpus),harnessSha256=Sha(Harness(problem,language)),result,failure});
     File.WriteAllText(Path.Combine(artifactRoot,"solutions-audit-"+reportName+".json"),JsonSerializer.Serialize(new{schemaVersion=2,sourceHashes,executions=rows},json)+"\n");
     Console.WriteLine($"{(success?"PASS":"FAIL")} {language} {problem.Id} {result?.Status} {result?.Passed}/{result?.Total}");if(failure is not null)Console.WriteLine(failure);
 }
@@ -158,3 +179,4 @@ Console.WriteLine($"Recorded {rows.Count} complete-corpus executions; {failures}
 internal sealed record Coverage(CoverageEntry[] Entries);
 internal sealed record CoverageEntry(string ProblemId,string Collection,string Language,int TestCount,string CodePath,string NotesPath,string Filename);
 internal sealed record Boundary(string ProblemId,JsonElement[] Arguments,JsonElement Expected,string Reason);
+internal sealed record CallableSource(CallableCodeDefinition[] Entries);

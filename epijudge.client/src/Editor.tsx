@@ -116,10 +116,12 @@ export function ReadOnlyCode({
   code,
   language,
   label,
+  className = 'solution-code',
 }: {
   code: string;
   language: string;
   label: string;
+  className?: string;
 }) {
   const container = useRef<HTMLDivElement>(null);
   const instance = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
@@ -167,5 +169,5 @@ export function ReadOnlyCode({
     editor.updateOptions({ ariaLabel: label });
   }, [code, language, label]);
 
-  return <div ref={container} className="solution-code" style={{ height }} />;
+  return <div ref={container} className={className} style={{ height }} />;
 }

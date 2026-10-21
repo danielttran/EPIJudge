@@ -48,6 +48,27 @@ it('loads only the selected local endpoint and renders selectable code, approach
   expect(screen.queryByRole('textbox')).toBeNull();
   expect(screen.queryByRole('button', { name: /editor/i })).toBeNull();
 });
+it('shows required references separately and copies only the visible callable implementation', async () => {
+  const writeText = vi.fn(async () => {});
+  Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText } });
+  fetchMock.mockResolvedValue(
+    response({
+      ...answer('count_bits', 'public int CountBits(int x) {\n    return 0;\n}'),
+      codeFormat: 'callable-v1',
+      references: [{ title: 'Required API', code: 'int Helper();', names: ['Helper'] }],
+    }),
+  );
+  render(<SolutionPanel problemId="count_bits" title="Count Bits" language="csharp" />);
+  await screen.findByLabelText('C# reference solution code');
+  expect(screen.getByText('Provided types and APIs').closest('details')!.open).toBe(false);
+  fireEvent.click(screen.getByText('Provided types and APIs'));
+  expect((await screen.findByLabelText('Required API provided reference')).textContent).toBe(
+    'int Helper();',
+  );
+  fireEvent.click(screen.getByRole('button', { name: 'Copy code' }));
+  await screen.findByText('Code copied.');
+  expect(writeText).toHaveBeenCalledWith('public int CountBits(int x) {\n    return 0;\n}');
+});
 it('treats a missing solution as unavailable without rendering an empty code block', async () => {
   fetchMock.mockResolvedValue(response({}, 404));
   render(<SolutionPanel problemId="unknown" title="Unknown" language="csharp" />);

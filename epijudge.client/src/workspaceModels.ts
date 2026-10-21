@@ -1,3 +1,7 @@
+import type { CodeFormat } from './practiceModels';
+
+export type CodeReference = { title: string; code: string; names: string[] };
+
 export type Problem = {
   id: string;
   title: string;
@@ -8,6 +12,8 @@ export type Problem = {
   signature: string;
   testCount: number;
   starterCode: string;
+  codeFormat?: CodeFormat;
+  references?: CodeReference[];
   collection?: string;
   position?: number;
   diagram?: string | null;
@@ -20,7 +26,14 @@ export type Problem = {
   pyStarterCode?: string;
   starters?: Record<
     string,
-    { signature: string; starterCode: string; filename: string; runtime: string }
+    {
+      signature: string;
+      starterCode: string;
+      filename: string;
+      runtime: string;
+      codeFormat?: CodeFormat;
+      references?: CodeReference[];
+    }
   >;
   examples: { input: string; output: string; explanation: string }[];
 };
@@ -88,6 +101,14 @@ export function getStarterCode(p: Problem, lang: string): string {
   return p.starters?.csharp?.starterCode || p.starterCode;
 }
 
+export function getStarterFormat(p: Problem, lang: string): CodeFormat {
+  return p.starters?.[lang]?.codeFormat ?? p.codeFormat ?? 'legacy-v1';
+}
+
+export function getCodeReferences(p: Problem, lang: string): CodeReference[] {
+  return p.starters?.[lang]?.references ?? p.references ?? [];
+}
+
 export function getSignature(p: Problem, lang: string): string {
   if (p.starters?.[lang]) return p.starters[lang].signature;
   if (lang === 'python') {
@@ -132,4 +153,5 @@ export type Attempt = {
   result: Result | null;
   legacy: boolean;
   sequence: number;
+  codeFormat?: CodeFormat;
 };

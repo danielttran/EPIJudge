@@ -11,9 +11,11 @@ $root = Split-Path $PSScriptRoot -Parent
 $server = $null
 $failures = [System.Collections.Generic.List[string]]::new()
 $checks = 0
-function Check-Submission($Language, $Problem, $Code, $Mode, $Expected, [switch]$CheckHidden) {
+function Check-Submission($Language, $Problem, $Code, $Mode, $Expected, [switch]$CheckHidden, [string]$CodeFormat) {
     $script:checks++
-    $body = @{ problemId=$Problem; language=$Language; code=$Code; mode=$Mode } | ConvertTo-Json -Compress
+    $request = @{ problemId=$Problem; language=$Language; code=$Code; mode=$Mode }
+    if ($CodeFormat) { $request.codeFormat = $CodeFormat }
+    $body = $request | ConvertTo-Json -Compress
     $result = Invoke-RestMethod "$BaseUrl/api/submissions" -Method Post -ContentType 'application/json' -Body $body -NoProxy -TimeoutSec 135 -Headers @{'X-EpiJudge-Client'='local-editor'}
     $label = "$Language $Problem $Mode $Expected"
     if ($result.status -ne $Expected) {
@@ -29,6 +31,11 @@ function Check-Submission($Language, $Problem, $Code, $Mode, $Expected, [switch]
             }
         }
     }
+}
+function Replace-ScaffoldThrow($Code, $Language, $Replacement) {
+    $scaffoldThrow = if ($Language -eq 'cpp') { 'throw std::logic_error("Implement this method");' } else { 'throw new UnsupportedOperationException("Implement this method");' }
+    if (!$Code.Contains($scaffoldThrow)) { throw "$Language starter has no expected scaffold throw to replace" }
+    return $Code.Replace($scaffoldThrow, $Replacement)
 }
 try {
     if ($StartServer) {
@@ -50,17 +57,20 @@ try {
     foreach ($language in @('cpp','java')) {
         $starters = @($problems | Where-Object { $_.starters.$language.starterCode })
         if ($starters.Count -ne 334) { throw "$language requires 334 starters, got $($starters.Count)" }
+        if (@($starters | Where-Object { $_.starters.$language.codeFormat -ne 'callable-v1' }).Count) { throw "$language starters require an explicit callable format" }
         Write-Output "PASS $language catalog: 334 starters"
         $folder = Join-Path $PSScriptRoot "NativeWebFixtures\$language"
         $countFile = if ($language -eq 'cpp') {'count_bits.cc'} else {'CountBits.java'}
         $accepted = Get-Content (Join-Path $folder $countFile) -Raw
         Check-Submission $language 'count_bits' $accepted 'run' 'Accepted'
         Check-Submission $language 'count_bits' $accepted 'submit' 'Accepted' -CheckHidden
-        $stub = ($problems | Where-Object id -eq 'count_bits').starters.$language.starterCode
-        Check-Submission $language 'count_bits' $stub 'submit' 'Wrong answer' -CheckHidden
-        Check-Submission $language 'count_bits' ($stub + "`ninvalid syntax!!!") 'run' 'Compilation error'
+        $starter = ($problems | Where-Object id -eq 'count_bits').starters.$language
+        $stub = $starter.starterCode
+        $wrongCount = Replace-ScaffoldThrow $stub $language 'return 0;'
+        Check-Submission $language 'count_bits' $wrongCount 'submit' 'Wrong answer' -CheckHidden -CodeFormat $starter.codeFormat
+        Check-Submission $language 'count_bits' ($stub + "`ninvalid syntax!!!") 'run' 'Compilation error' -CodeFormat $starter.codeFormat
         $exception = if ($language -eq 'cpp') {'throw std::runtime_error("native audit");'} else {'throw new RuntimeException("native audit");'}
-        Check-Submission $language 'count_bits' ($stub.Replace('return 0;', $exception)) 'run' 'Runtime error'
+        Check-Submission $language 'count_bits' (Replace-ScaffoldThrow $stub $language $exception) 'run' 'Runtime error' -CodeFormat $starter.codeFormat
         foreach ($pair in @(
             @('anagrams','anagrams.cc','Anagrams.java'),
             @('reverse_list','reverse_list.cc','ReverseList.java'),
@@ -71,10 +81,11 @@ try {
             $filename = if ($language -eq 'cpp') {$pair[1]} else {$pair[2]}
             Check-Submission $language $pair[0] (Get-Content (Join-Path $folder $filename) -Raw) 'submit' 'Accepted' -CheckHidden
         }
-        $brokenPartition = ($problems | Where-Object id -eq 'dutch_national_flag').starters.$language.starterCode
-        Check-Submission $language 'dutch_national_flag' $brokenPartition 'submit' 'Wrong answer' -CheckHidden
+        $partitionStarter = ($problems | Where-Object id -eq 'dutch_national_flag').starters.$language
+        $brokenPartition = Replace-ScaffoldThrow $partitionStarter.starterCode $language 'return;'
+        Check-Submission $language 'dutch_national_flag' $brokenPartition 'submit' 'Wrong answer' -CheckHidden -CodeFormat $partitionStarter.codeFormat
         if (!$SkipTimeout) {
-            Check-Submission $language 'count_bits' ($stub.Replace('return 0;', 'while (true) {}')) 'run' 'Time limit exceeded'
+            Check-Submission $language 'count_bits' (Replace-ScaffoldThrow $stub $language 'while (true) {}') 'run' 'Time limit exceeded' -CodeFormat $starter.codeFormat
         }
     }
     if ($failures.Count) { throw ($failures -join "`n") }

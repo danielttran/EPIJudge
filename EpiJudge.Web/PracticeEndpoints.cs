@@ -7,6 +7,7 @@ namespace EpiJudge.Web;
 public static class PracticeEndpoints
 {
     public static bool ValidLanguage(string? language) => language is "csharp" or "javascript" or "python" or "cpp" or "java";
+    public static bool ValidCodeFormat(string? format) => format is "legacy-v1" or "callable-v1";
 
     public static void MapPractice(this WebApplication app)
     {
@@ -31,7 +32,8 @@ public static class PracticeEndpoints
             var valid = language == "reading"
                 ? ReadingCatalog.ValidDocument(problemId, write.Code)
                 : catalog.Find(problemId) is not null && ValidLanguage(language) && write.Code is { Length: <= 40_000 };
-            if (!valid || write.Revision < 0)
+            if (!valid || write.Revision < 0 || !ValidCodeFormat(write.CodeFormat)
+                || language == "reading" && write.CodeFormat != "legacy-v1")
                 return Results.BadRequest(new { message = "Invalid problem, language, draft, or revision." });
             var result = store.SaveDraft(problemId, language, write);
             return result.Saved ? Results.Ok(result.Draft) : Results.Conflict(new
@@ -48,7 +50,7 @@ public static class PracticeEndpoints
             "application/json", $"epi-answers-{DateTime.UtcNow:yyyy-MM-dd}.json"));
         group.MapPost("/import", (PracticeBackup backup, ProblemCatalog catalog, PracticeStore store) =>
         {
-            if (!PracticeBackupValidator.Validate(backup, id => catalog.Find(id) is not null)) return Results.BadRequest(new { message = "This is not a valid EPI Practice version 1 backup." });
+            if (!PracticeBackupValidator.Validate(backup, id => catalog.Find(id) is not null)) return Results.BadRequest(new { message = "This is not a valid EPI Practice version 1 or 2 backup." });
             store.Import(backup);
             return Results.Ok(new { message = "Imported answers and history. Existing drafts were kept." });
         });

@@ -41,10 +41,12 @@ if ($CheckFrontend) {
     Write-Output 'Frontend startup: application and editor modules ready'
 }
 
-function Invoke-Judge([string]$Problem, [string]$Code, [string]$Mode = 'run', [string]$Language = 'csharp') {
+function Invoke-Judge([string]$Problem, [string]$Code, [string]$Mode = 'run', [string]$Language = 'csharp', [string]$CodeFormat) {
+    $request = @{ problemId = $Problem; code = $Code; mode = $Mode; language = $Language }
+    if ($CodeFormat) { $request.codeFormat = $CodeFormat }
     Invoke-RestMethod "$BaseUrl/api/submissions" -Method Post -ContentType 'application/json' -NoProxy `
         -Headers @{ 'X-EpiJudge-Client' = 'local-editor' } `
-        -Body (@{ problemId = $Problem; code = $Code; mode = $Mode; language = $Language } | ConvertTo-Json) -TimeoutSec 90
+        -Body ($request | ConvertTo-Json) -TimeoutSec 90
 }
 function Assert-Status($Result, [string]$Expected, [string]$Label) {
     if ($Result.status -ne $Expected) { throw "$Label expected $Expected, got $($Result.status): $($Result.diagnostics)" }
@@ -109,14 +111,20 @@ try {
 $catalog = Invoke-RestMethod "$BaseUrl/api/problems" -NoProxy
 if ($catalog.Count -ne 334 -or @($catalog.id | Sort-Object -Unique).Count -ne 334) { throw 'Expected 334 unique web problems.' }
 foreach ($problem in $catalog) {
-    if ($problem.testCount -le 0 -or -not $problem.starterCode -or -not $problem.description -or $problem.invocation) {
+    if ($problem.testCount -le 0 -or -not $problem.starterCode -or -not $problem.description -or $problem.invocation -or $problem.codeFormat -ne 'callable-v1') {
         throw "Incomplete or internal metadata for $($problem.id)."
+    }
+    foreach ($language in @('csharp','javascript','python','cpp','java')) {
+        if ($problem.starters.$language.codeFormat -ne 'callable-v1') { throw "Missing callable format for $($problem.id)/$language" }
     }
 }
 foreach ($collection in @(@('epi',218), @('blind75',75), @('interviewcake',41))) {
     if (@($catalog | Where-Object collection -eq $collection[0]).Count -ne $collection[1]) { throw "Incorrect collection count for $($collection[0])." }
 }
 Write-Output 'Catalog API: 334 unique exercises with test counts; internal invocations excluded'
+$callable = Invoke-RestMethod "$BaseUrl/api/problems/count_bits/solution?language=csharp" -NoProxy
+if ($callable.codeFormat -ne 'callable-v1' -or -not $callable.code) { throw 'Callable solution format is missing.' }
+Assert-Status (Invoke-Judge 'count_bits' $callable.code 'submit' 'csharp' $callable.codeFormat) 'Accepted' 'Callable C# Count Bits full corpus alongside legacy fixtures'
 
 $fixtureCode = Get-Content (Join-Path $PSScriptRoot 'WebAudit/Fixtures.cs') -Raw
 $fixtureTypes = [ordered]@{

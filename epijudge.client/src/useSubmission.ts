@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import type { Result } from './workspaceModels';
+import type { CodeFormat } from './practiceModels';
 
 type Options = {
   problemId?: string;
   language: string;
   code: string;
+  codeFormat?: CodeFormat;
   practice: { ready: boolean; flush(): Promise<void>; refresh(): Promise<void> };
   onStarted(): void;
   onCompleted(): void;
@@ -47,7 +49,13 @@ export function useSubmission(options: Options) {
       const response = await fetch('/api/submissions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-EpiJudge-Client': 'local-editor' },
-        body: JSON.stringify({ problemId, code, mode, language }),
+        body: JSON.stringify({
+          problemId,
+          code,
+          mode,
+          language,
+          codeFormat: options.codeFormat ?? 'legacy-v1',
+        }),
       });
       if (!response.ok) {
         const detail = await response.json().catch(() => ({}));

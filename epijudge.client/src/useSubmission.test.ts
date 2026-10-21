@@ -59,6 +59,7 @@ it.each(['run', 'submit'] as const)(
       problemId: 'p',
       language: 'python',
       code: 'exact source',
+      codeFormat: 'legacy-v1',
       mode,
     });
     expect(hook.result.current.result).toEqual(graded);
@@ -67,6 +68,20 @@ it.each(['run', 'submit'] as const)(
     expect(hook.result.current.busy).toBe(false);
   },
 );
+it('sends callable format with the unchanged visible source snapshot', async () => {
+  const config = { ...options(), codeFormat: 'callable-v1' as const };
+  const hook = renderHook(() => useSubmission(config));
+  await act(async () => {
+    await hook.result.current.execute('submit');
+  });
+  expect(JSON.parse(fetchMock.mock.calls[0][1].body)).toEqual({
+    problemId: 'p',
+    language: 'python',
+    code: 'exact source',
+    codeFormat: 'callable-v1',
+    mode: 'submit',
+  });
+});
 it('blocks execution until drafts are ready and prevents double submissions', async () => {
   const config = options();
   config.practice.ready = false;

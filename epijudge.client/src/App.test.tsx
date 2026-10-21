@@ -132,6 +132,247 @@ async function loaded() {
   await waitFor(() => expect((editor as HTMLTextAreaElement).disabled).toBe(false));
   return editor;
 }
+it.each(['csharp', 'javascript', 'python', 'cpp', 'java'])(
+  'opens a clean %s starter with its relevant references collapsed',
+  async (language) => {
+    localStorage.setItem('epi:language', JSON.stringify(language));
+    const previous = fetchMock.getMockImplementation()! as (
+      url: string,
+      options?: RequestInit,
+    ) => Promise<Response>;
+    const clean = problem('count_bits', 'Count Bits');
+    clean.starters = Object.fromEntries(
+      ['csharp', 'javascript', 'python', 'cpp', 'java'].map((id) => [
+        id,
+        {
+          signature: id,
+          starterCode: id + ' clean callable',
+          filename: 'solution',
+          runtime: id,
+          codeFormat: 'callable-v1',
+          references: [{ title: id + ' required API', code: id + ' helper', names: ['Required'] }],
+        },
+      ]),
+    );
+    fetchMock.mockImplementation((url: string, options?: RequestInit) =>
+      url === '/api/problems' ? Promise.resolve(json([clean])) : previous(url, options),
+    );
+    const editor = (await loaded()) as HTMLTextAreaElement;
+    expect(editor.value).toBe(language + ' clean callable');
+    expect((screen.getByRole('combobox', { name: 'Code format' }) as HTMLSelectElement).value).toBe(
+      'callable-v1',
+    );
+    expect(screen.getByText('Provided types and APIs').closest('details')!.open).toBe(false);
+    fireEvent.click(screen.getByText('Provided types and APIs'));
+    expect(
+      (await screen.findByLabelText(language + ' required API provided reference')).textContent,
+    ).toBe(language + ' helper');
+    expect(fetchMock.mock.calls.some(([, options]) => options?.method === 'PUT')).toBe(false);
+  },
+);
+it('keeps a legacy full-program draft unchanged until an explicit reset adopts the clean starter', async () => {
+  const source = 'using System;\r\n// my saved λ code\r\nclass Solution {}';
+  const clean = problem('count_bits', 'Count Bits');
+  clean.starters!.csharp.codeFormat = 'callable-v1';
+  const previous = fetchMock.getMockImplementation()! as (
+    url: string,
+    options?: RequestInit,
+  ) => Promise<Response>;
+  fetchMock.mockImplementation((url: string, options?: RequestInit) => {
+    if (url === '/api/problems') return Promise.resolve(json([clean]));
+    if (url === '/api/practice')
+      return Promise.resolve(
+        json({
+          drafts: [
+            {
+              problemId: 'count_bits',
+              language: 'csharp',
+              code: source,
+              revision: 4,
+              updatedAt: 'now',
+            },
+          ],
+          progress: [],
+        }),
+      );
+    return previous(url, options);
+  });
+  const editor = (await loaded()) as HTMLTextAreaElement;
+  // Textarea normalizes its visible line endings; persistence still carries the original string.
+  expect(editor.value).toBe(source.replaceAll('\r\n', '\n'));
+  expect((screen.getByRole('combobox', { name: 'Code format' }) as HTMLSelectElement).value).toBe(
+    'legacy-v1',
+  );
+  expect(fetchMock.mock.calls.some(([, options]) => options?.method === 'PUT')).toBe(false);
+  vi.stubGlobal(
+    'confirm',
+    vi.fn(() => true),
+  );
+  fireEvent.click(screen.getByRole('button', { name: 'Reset to starter code' }));
+  expect(editor.value).toBe('csharp starter');
+  expect((screen.getByRole('combobox', { name: 'Code format' }) as HTMLSelectElement).value).toBe(
+    'callable-v1',
+  );
+  fireEvent.click(screen.getByRole('button', { name: 'Run Ctrl ↵' }));
+  await waitFor(() =>
+    expect(fetchMock.mock.calls.some(([url]) => url === '/api/submissions')).toBe(true),
+  );
+  const body = JSON.parse(
+    fetchMock.mock.calls.find(([url]) => url === '/api/submissions')![1]!.body as string,
+  );
+  expect(body.code).toBe('csharp starter');
+  expect(body.codeFormat).toBe('callable-v1');
+});
+it.each(['legacy-v1', 'callable-v1'] as const)(
+  'restores historical %s source together with its execution format',
+  async (format) => {
+    const previous = fetchMock.getMockImplementation()! as (
+      url: string,
+      options?: RequestInit,
+    ) => Promise<Response>;
+    const attempt = {
+      id: 'historical-format',
+      problemId: 'count_bits',
+      language: 'csharp',
+      code: 'historical source ' + format,
+      codeFormat: format,
+      mode: 'submit',
+      status: 'Accepted',
+      passed: 3,
+      total: 3,
+      elapsedMs: 1,
+      timestamp: '2026-01-01T00:00:00Z',
+      sequence: 1,
+      result: null,
+      legacy: false,
+    };
+    fetchMock.mockImplementation((url: string, options?: RequestInit) => {
+      if (url === '/api/practice/history/historical-format') return Promise.resolve(json(attempt));
+      if (url.startsWith('/api/practice/history?')) return Promise.resolve(json([attempt]));
+      return previous(url, options);
+    });
+    const editor = (await loaded()) as HTMLTextAreaElement;
+    fireEvent.click(screen.getByRole('button', { name: 'History' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'View answer' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Restore to editor' }));
+    expect(editor.value).toBe(attempt.code);
+    expect((screen.getByRole('combobox', { name: 'Code format' }) as HTMLSelectElement).value).toBe(
+      format,
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Run Ctrl ↵' }));
+    await waitFor(() =>
+      expect(fetchMock.mock.calls.some(([url]) => url === '/api/submissions')).toBe(true),
+    );
+    const body = JSON.parse(
+      fetchMock.mock.calls.find(([url]) => url === '/api/submissions')![1]!.body as string,
+    );
+    expect(body.code).toBe(attempt.code);
+    expect(body.codeFormat).toBe(format);
+  },
+);
+it('shows an archive failure while preserving the conflicted editor instead of discarding it', async () => {
+  const previous = fetchMock.getMockImplementation()! as (
+    url: string,
+    options?: RequestInit,
+  ) => Promise<Response>;
+  fetchMock.mockImplementation((url: string, options?: RequestInit) =>
+    options?.method === 'PUT'
+      ? Promise.resolve(
+          json(
+            {
+              draft: {
+                problemId: 'count_bits',
+                language: 'csharp',
+                code: 'remote',
+                revision: 9,
+                updatedAt: 'now',
+              },
+            },
+            409,
+          ),
+        )
+      : previous(url, options),
+  );
+  const editor = (await loaded()) as HTMLTextAreaElement;
+  fireEvent.change(editor, { target: { value: 'my retained source' } });
+  const useSaved = await screen.findByRole('button', { name: 'Use saved version' });
+  const setItem = Storage.prototype.setItem;
+  const archive = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(function (
+    this: Storage,
+    key,
+    value,
+  ) {
+    if (key.startsWith('epi:recovered:')) throw new DOMException('Full', 'QuotaExceededError');
+    setItem.call(this, key, value);
+  });
+  fireEvent.click(useSaved);
+  expect(await screen.findByText(/Could not preserve this browser copy/)).toBeTruthy();
+  expect(editor.value).toBe('my retained source');
+  expect(screen.getByRole('button', { name: 'Keep my version' })).toBeTruthy();
+  archive.mockRestore();
+});
+it.each([
+  [
+    'legacy-v1',
+    'callable-v1',
+    'public class Solution\n{\n    public int CountBits(int x) { return 0; }\n}',
+  ],
+  ['callable-v1', 'legacy-v1', 'using System;\nclass CustomSupport { }\npublic class Solution { }'],
+] as const)(
+  'pastes source verbatim in %s mode and changes execution format only after explicit selection of %s',
+  async (initialFormat, targetFormat, pastedCode) => {
+    const previous = fetchMock.getMockImplementation()! as (
+      url: string,
+      options?: RequestInit,
+    ) => Promise<Response>;
+    const clean = problem('count_bits', 'Count Bits');
+    clean.starters!.csharp.codeFormat = 'callable-v1';
+    fetchMock.mockImplementation((url: string, options?: RequestInit) => {
+      if (url === '/api/problems') return Promise.resolve(json([clean]));
+      if (url === '/api/practice')
+        return Promise.resolve(
+          json({
+            drafts: [
+              {
+                problemId: 'count_bits',
+                language: 'csharp',
+                code: 'previous saved source',
+                codeFormat: initialFormat,
+                revision: 7,
+                updatedAt: 'now',
+              },
+            ],
+            progress: [],
+          }),
+        );
+      return previous(url, options);
+    });
+    const editor = (await loaded()) as HTMLTextAreaElement;
+    const format = screen.getByRole('combobox', { name: 'Code format' }) as HTMLSelectElement;
+    expect(format.value).toBe(initialFormat);
+    fireEvent.change(editor, { target: { value: pastedCode } });
+    expect(editor.value).toBe(pastedCode);
+    expect(format.value).toBe(initialFormat);
+    fireEvent.change(format, { target: { value: targetFormat } });
+    expect(editor.value).toBe(pastedCode);
+    expect(format.value).toBe(targetFormat);
+    fireEvent.click(screen.getByRole('button', { name: 'Run Ctrl ↵' }));
+    await waitFor(() =>
+      expect(fetchMock.mock.calls.some(([url]) => url === '/api/submissions')).toBe(true),
+    );
+    const submitted = JSON.parse(
+      fetchMock.mock.calls.find(([url]) => url === '/api/submissions')![1]!.body as string,
+    );
+    expect(submitted.code).toBe(pastedCode);
+    expect(submitted.codeFormat).toBe(targetFormat);
+    const saved = JSON.parse(
+      fetchMock.mock.calls.filter(([, options]) => options?.method === 'PUT').at(-1)![1]!
+        .body as string,
+    );
+    expect(saved.code).toBe(pastedCode);
+    expect(saved.codeFormat).toBe(targetFormat);
+  },
+);
 it('loads the workspace, switches problem/language, and restores a per-language draft', async () => {
   const editor = await loaded();
   expect((editor as HTMLTextAreaElement).value).toBe('csharp starter');

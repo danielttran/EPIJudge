@@ -14,11 +14,12 @@ public sealed class SubmissionServiceTests
         public SavedAttempt? Snapshot;
         public SubmissionResult? Completed;
         public int Writes;
-        public SavedAttempt BeginAttempt(string problem, string language, string code, string mode)
+        public SavedAttempt BeginAttempt(string problem, string language, string code, string mode,
+            string codeFormat = "legacy-v1")
         {
             Events.Add("begin");
             if (FailBegin) throw new IOException("disk unavailable");
-            return Snapshot = new("saved-id", problem, language, code, mode, "Running", 0, 0, 0, "now", null);
+            return Snapshot = new("saved-id", problem, language, code, mode, "Running", 0, 0, 0, "now", null, CodeFormat: codeFormat);
         }
         public void CompleteAttempt(string id, SubmissionResult result)
         {
@@ -33,13 +34,32 @@ public sealed class SubmissionServiceTests
         public Func<CancellationToken, Task<SubmissionResult?>> Execute = _ => Task.FromResult<SubmissionResult?>(new("runner-id", "Accepted", 3, 3, 1, null, []));
         public bool ExamplesOnly;
         public string? Language;
+        public string? ExecutedCode;
         public Task<SubmissionResult?> RunAsync(Problem problem, string code, bool examplesOnly, string language, CancellationToken cancellation)
         {
             history.Events.Add("run");
-            Assert.Equal(history.Snapshot!.Code, code);
+            ExecutedCode = code;
+            if (history.Snapshot!.CodeFormat == "legacy-v1") Assert.Equal(history.Snapshot.Code, code);
             ExamplesOnly = examplesOnly; Language = language;
             return Execute(cancellation);
         }
+    }
+
+    [Fact]
+    public async Task CallableSubmissionSnapshotsUserCodeAndComposesOnlyTheExecutionCopy()
+    {
+        var definition = CallableCodeCatalog.Find("count_bits", "csharp")!;
+        var history = new History();
+        var runner = new Runner(history);
+        var service = new SubmissionService(history, runner, NullLogger<SubmissionService>.Instance);
+        var outcome = await service.Execute(Problem, "csharp", definition.SolutionCode, "submit", default, "callable-v1");
+        Assert.Null(outcome.Failure);
+        Assert.Equal(definition.SolutionCode, history.Snapshot!.Code);
+        Assert.Equal("callable-v1", history.Snapshot.CodeFormat);
+        Assert.Equal(CallableCodeCatalog.Prepare("count_bits", "csharp", definition.SolutionCode, "callable-v1").Code, runner.ExecutedCode);
+        Assert.Contains(definition.SolutionCode, runner.ExecutedCode);
+        Assert.Contains("#line 1", runner.ExecutedCode);
+        Assert.Equal(new[] { "begin", "run", "complete" }, history.Events);
     }
 
     [Theory]

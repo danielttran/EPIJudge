@@ -293,5 +293,71 @@ public sealed class PracticeStoreTests : IDisposable
         Assert.Throws<InvalidOperationException>(() => CreateStore());
     }
 
+    [Fact]
+    public void VersionOneDatabaseMigratesWithoutChangingAnySourceOrRevision()
+    {
+        Directory.CreateDirectory(directory);
+        const string original = "using System;\r\n// saved λ 🐈\r\npublic class Solution { }\r\n";
+        using (var db = new SqliteConnection($"Data Source={Path.Combine(directory, "practice.db")}"))
+        {
+            db.Open();
+            using var command = db.CreateCommand();
+            command.CommandText = """
+                CREATE TABLE drafts(problem TEXT NOT NULL,language TEXT NOT NULL,code TEXT NOT NULL,
+                    revision INTEGER NOT NULL,updated TEXT NOT NULL,PRIMARY KEY(problem,language));
+                CREATE TABLE attempts(sequence INTEGER PRIMARY KEY AUTOINCREMENT,id TEXT NOT NULL UNIQUE,
+                    problem TEXT NOT NULL,language TEXT,code TEXT,mode TEXT NOT NULL,status TEXT NOT NULL,
+                    passed INTEGER NOT NULL,total INTEGER NOT NULL,elapsed REAL NOT NULL,timestamp TEXT NOT NULL,
+                    result TEXT,legacy INTEGER NOT NULL,owner TEXT);
+                CREATE TABLE legacy_solved(problem TEXT PRIMARY KEY);
+                CREATE TABLE migrations(id TEXT PRIMARY KEY);
+                INSERT INTO drafts VALUES('count_bits','csharp',$source,17,'2026-01-01T00:00:00Z');
+                INSERT INTO attempts(id,problem,language,code,mode,status,passed,total,elapsed,timestamp,result,legacy,owner)
+                    VALUES('old','count_bits','csharp',$source,'submit','Wrong answer',0,3,1,'2026-01-01T00:00:00Z',NULL,0,NULL);
+                PRAGMA user_version=1;
+                """;
+            command.Parameters.AddWithValue("$source", original);
+            command.ExecuteNonQuery();
+        }
+        var store = CreateStore();
+        var draft = Assert.Single(store.Drafts());
+        Assert.Equal(original, draft.Code);
+        Assert.Equal(17, draft.Revision);
+        Assert.Equal("legacy-v1", draft.CodeFormat);
+        Assert.Equal(original, store.Attempt("old")!.Code);
+        Assert.Equal("legacy-v1", store.Attempt("old")!.CodeFormat);
+        Assert.Equal(draft, Assert.Single(CreateStore().Drafts()));
+        Assert.Equal(2, store.Export().Version);
+    }
+
+    [Fact]
+    public void FormatOnlyDraftChangesUseRevisionsAndRoundTripWithHistory()
+    {
+        const string source = "// same code\r\nλ";
+        var store = CreateStore();
+        var old = store.SaveDraft("count_bits", "python", new(source, 0));
+        Assert.False(store.SaveDraft("count_bits", "python", new(source, 0, "callable-v1")).Saved);
+        var clean = store.SaveDraft("count_bits", "python", new(source, 1, "callable-v1"));
+        Assert.True(clean.Saved);
+        Assert.Equal(2, clean.Draft!.Revision);
+        Assert.Equal(source, clean.Draft.Code);
+        Assert.Equal("callable-v1", clean.Draft.CodeFormat);
+        Assert.Equal(clean, store.SaveDraft("count_bits", "python", new(source, 0, "callable-v1")));
+        var attempt = store.BeginAttempt("count_bits", "python", source, "submit", "callable-v1");
+        store.CompleteAttempt(attempt.Id, Result());
+        Assert.Equal("callable-v1", Assert.Single(store.History()).CodeFormat);
+        Assert.Equal(source, store.Attempt(attempt.Id)!.Code);
+        var backup = store.Export();
+        Assert.True(PracticeBackupValidator.Validate(backup, _ => true));
+        var restored = new PracticeStore(new PracticeDatabase(new ConfigurationBuilder().AddInMemoryCollection(
+            new Dictionary<string, string?> { ["Practice:DataDirectory"] = Path.Combine(directory, "formats") }).Build()));
+        restored.Import(backup);
+        Assert.Equal("callable-v1", Assert.Single(restored.Drafts()).CodeFormat);
+        Assert.Equal(source, Assert.Single(restored.Drafts()).Code);
+        Assert.Equal("callable-v1", restored.Attempt(attempt.Id)!.CodeFormat);
+        Assert.Equal(source, restored.Attempt(attempt.Id)!.Code);
+        Assert.Equal("legacy-v1", old.Draft!.CodeFormat);
+    }
+
     public void Dispose() { SqliteConnection.ClearAllPools(); if (Directory.Exists(directory)) Directory.Delete(directory, true); }
 }

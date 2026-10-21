@@ -1,4 +1,12 @@
-import type { Draft, Pending, Progress, CatalogEntry } from './practiceModels';
+import {
+  codeFormatOrLegacy,
+  type CodeDocument,
+  type CodeFormat,
+  type Draft,
+  type Pending,
+  type Progress,
+  type CatalogEntry,
+} from './practiceModels';
 import { DraftRecovery, read, write } from './draftRecovery';
 import { request, saveDraft, downloadBackup, importBackup } from './practiceApi';
 import { migrateLegacyAnswers } from './legacyMigration';
@@ -90,16 +98,30 @@ export class PracticeClient {
   }
 
   codeFor(problem: string, language: string, starter: string) {
-    const key = keyFor(problem, language);
-    return this.pending.get(key)?.code ?? this.drafts.get(key)?.code ?? starter;
+    return this.documentFor(problem, language, starter).code;
   }
 
-  edit(problem: string, language: string, code: string) {
+  documentFor(
+    problem: string,
+    language: string,
+    starter: string,
+    starterFormat: CodeFormat = 'legacy-v1',
+  ): CodeDocument {
+    const key = keyFor(problem, language);
+    const saved = this.pending.get(key) ?? this.drafts.get(key);
+    return saved
+      ? { code: saved.code, codeFormat: codeFormatOrLegacy(saved.codeFormat) }
+      : { code: starter, codeFormat: starterFormat };
+  }
+
+  edit(problem: string, language: string, code: string, codeFormat?: CodeFormat) {
     const key = keyFor(problem, language);
     const previous = this.pending.get(key);
+    const current = previous ?? this.drafts.get(key);
     const pending = {
       code,
       revision: previous?.revision ?? this.drafts.get(key)?.revision ?? 0,
+      codeFormat: codeFormat ?? codeFormatOrLegacy(current?.codeFormat),
       conflict: previous?.conflict,
     };
     this.pending.set(key, pending);
@@ -138,14 +160,32 @@ export class PracticeClient {
     const saved = pending.conflict;
     this.drafts.set(key, saved);
     if (useSaved) {
-      write('epi:recovered:' + key + ':' + Date.now(), pending.code);
+      const recoveredKey = 'epi:recovered:' + key + ':' + Date.now();
+      // One atomic storage entry keeps source and its execution contract together.
+      // Do not discard the active draft or its recovery record if archiving fails.
+      if (
+        !write(recoveredKey, {
+          code: pending.code,
+          codeFormat: codeFormatOrLegacy(pending.codeFormat),
+        })
+      ) {
+        this.error =
+          'Could not preserve this browser copy. Your local draft is still open; free browser storage or keep your version.';
+        this.emit();
+        return;
+      }
       this.pending.delete(key);
-      this.recovery.clear(key, pending.code);
+      this.recovery.clear(key, pending.code, codeFormatOrLegacy(pending.codeFormat));
     } else {
-      this.pending.set(key, { code: pending.code, revision: saved.revision });
+      this.pending.set(key, {
+        code: pending.code,
+        codeFormat: codeFormatOrLegacy(pending.codeFormat),
+        revision: saved.revision,
+      });
       this.recovery.keep(key, this.pending.get(key)!);
       void this.flushKey(key);
     }
+    this.error = '';
     this.emit();
   }
 
@@ -175,9 +215,12 @@ export class PracticeClient {
           const draft = result.draft;
           this.drafts.set(key, draft);
           const pending = this.pending.get(key)!;
-          if (pending.code === sent.code) {
+          if (
+            pending.code === sent.code &&
+            codeFormatOrLegacy(pending.codeFormat) === codeFormatOrLegacy(sent.codeFormat)
+          ) {
             this.pending.delete(key);
-            this.recovery.clear(key, sent.code);
+            this.recovery.clear(key, sent.code, codeFormatOrLegacy(sent.codeFormat));
           } else {
             pending.revision = draft.revision;
             this.recovery.keep(key, pending);

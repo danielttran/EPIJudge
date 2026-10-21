@@ -9,23 +9,23 @@ namespace EpiJudge.Web;
 // grading never holds a database transaction open.
 public sealed class PracticeStore(PracticeDatabase database) : IAttemptStore
 {
-    private const string AttemptColumns = "sequence,id,problem,language,code,mode,status,passed,total,elapsed,timestamp,result,legacy";
+    private const string AttemptColumns = "sequence,id,problem,language,code,mode,status,passed,total,elapsed,timestamp,result,legacy,code_format";
     private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web);
     private SqliteConnection Open() => database.Open();
 
     private static Draft ReadDraft(SqliteDataReader reader) => new(reader.GetString(0), reader.GetString(1),
-        reader.GetString(2), reader.GetInt64(3), reader.GetString(4));
+        reader.GetString(2), reader.GetInt64(3), reader.GetString(4), reader.GetString(5));
 
     private static SavedAttempt ReadAttempt(SqliteDataReader r) => new(r.GetString(1), r.GetString(2),
         r.IsDBNull(3) ? null : r.GetString(3), r.IsDBNull(4) ? null : r.GetString(4), r.GetString(5),
         r.GetString(6), r.GetInt32(7), r.GetInt32(8), r.GetDouble(9), r.GetString(10),
         r.IsDBNull(11) ? null : JsonSerializer.Deserialize<SubmissionResult>(r.GetString(11), Json),
-        r.GetBoolean(12), r.GetInt64(0));
+        r.GetBoolean(12), r.GetInt64(0), r.GetString(13));
 
     public Draft[] Drafts()
     {
         using var db = Open();
-        using var command = Command(db, null, "SELECT problem,language,code,revision,updated FROM drafts");
+        using var command = Command(db, null, "SELECT problem,language,code,revision,updated,code_format FROM drafts");
         using var reader = command.ExecuteReader();
         var results = new List<Draft>();
         while (reader.Read()) results.Add(ReadDraft(reader));
@@ -37,28 +37,28 @@ public sealed class PracticeStore(PracticeDatabase database) : IAttemptStore
         using var db = Open();
         using var tx = db.BeginTransaction();
         Draft? current = null;
-        using (var find = Command(db, tx, "SELECT problem,language,code,revision,updated FROM drafts WHERE problem=$p AND language=$l",
+        using (var find = Command(db, tx, "SELECT problem,language,code,revision,updated,code_format FROM drafts WHERE problem=$p AND language=$l",
             ("$p", problem), ("$l", language)))
         using (var reader = find.ExecuteReader())
         {
             if (reader.Read()) current = ReadDraft(reader);
         }
-        if (current?.Code == write.Code) return (true, current);
+        if (current?.Code == write.Code && current.CodeFormat == write.CodeFormat) return (true, current);
         if ((current?.Revision ?? 0) != write.Revision) return (false, current);
-        var draft = new Draft(problem, language, write.Code, write.Revision + 1, DateTimeOffset.UtcNow.ToString("O"));
+        var draft = new Draft(problem, language, write.Code, write.Revision + 1, DateTimeOffset.UtcNow.ToString("O"), write.CodeFormat);
         using var command = Command(db, tx, """
-            INSERT INTO drafts VALUES ($p,$l,$c,$r,$t) ON CONFLICT(problem,language)
-            DO UPDATE SET code=$c, revision=$r, updated=$t
-            """, ("$p", problem), ("$l", language), ("$c", draft.Code), ("$r", draft.Revision), ("$t", draft.UpdatedAt));
+            INSERT INTO drafts(problem,language,code,revision,updated,code_format) VALUES ($p,$l,$c,$r,$t,$f) ON CONFLICT(problem,language)
+            DO UPDATE SET code=$c, revision=$r, updated=$t, code_format=$f
+            """, ("$p", problem), ("$l", language), ("$c", draft.Code), ("$r", draft.Revision), ("$t", draft.UpdatedAt), ("$f", draft.CodeFormat));
         command.ExecuteNonQuery();
         tx.Commit();
         return (true, draft);
     }
 
-    public SavedAttempt BeginAttempt(string problem, string language, string code, string mode)
+    public SavedAttempt BeginAttempt(string problem, string language, string code, string mode, string codeFormat = "legacy-v1")
     {
         var attempt = new SavedAttempt(Guid.NewGuid().ToString("N"), problem, language, code,
-            mode, "Running", 0, 0, 0, DateTimeOffset.UtcNow.ToString("O"), null);
+            mode, "Running", 0, 0, 0, DateTimeOffset.UtcNow.ToString("O"), null, CodeFormat: codeFormat);
         using var db = Open();
         InsertAttempt(db, null, attempt);
         return attempt;
@@ -80,7 +80,7 @@ public sealed class PracticeStore(PracticeDatabase database) : IAttemptStore
     {
         using var db = Open();
         using var command = Command(db, null, $"""
-            SELECT sequence,id,problem,language,{(includeCode ? "code" : "NULL")},mode,status,passed,total,elapsed,timestamp,{(includeCode ? "result" : "NULL")},legacy
+            SELECT sequence,id,problem,language,{(includeCode ? "code" : "NULL")},mode,status,passed,total,elapsed,timestamp,{(includeCode ? "result" : "NULL")},legacy,code_format
             FROM attempts WHERE ($p IS NULL OR problem=$p) AND sequence < $before
             ORDER BY sequence DESC LIMIT $limit
             """, ("$p", problem), ("$before", before), ("$limit", limit));
@@ -120,12 +120,12 @@ public sealed class PracticeStore(PracticeDatabase database) : IAttemptStore
     {
         var result = a.Result is null ? null : a.Result with { Cases = a.Result.Cases.Where(c => !c.Hidden).Take(3).ToArray() };
         using var command = Command(db, tx, """
-            INSERT OR IGNORE INTO attempts(id,problem,language,code,mode,status,passed,total,elapsed,timestamp,result,legacy,owner)
-            VALUES($id,$p,$l,$c,$m,$s,$pass,$total,$e,$t,$r,$legacy,$owner)
+            INSERT OR IGNORE INTO attempts(id,problem,language,code,mode,status,passed,total,elapsed,timestamp,result,legacy,owner,code_format)
+            VALUES($id,$p,$l,$c,$m,$s,$pass,$total,$e,$t,$r,$legacy,$owner,$format)
             """, ("$id", a.Id), ("$p", a.ProblemId), ("$l", a.Language), ("$c", a.Code),
             ("$m", a.Mode), ("$s", a.Status), ("$pass", a.Passed), ("$total", a.Total),
             ("$e", a.ElapsedMs), ("$t", a.Timestamp), ("$r", result is null ? null : JsonSerializer.Serialize(result, Json)),
-            ("$legacy", a.Legacy), ("$owner", a.Status == "Running" ? Owner : null));
+            ("$legacy", a.Legacy), ("$owner", a.Status == "Running" ? Owner : null), ("$format", a.CodeFormat));
         command.ExecuteNonQuery();
     }
 
@@ -136,7 +136,7 @@ public sealed class PracticeStore(PracticeDatabase database) : IAttemptStore
         var drafts = new List<Draft>();
         var attempts = new List<SavedAttempt>();
         var solved = new HashSet<string>();
-        using (var command = Command(db, tx, "SELECT problem,language,code,revision,updated FROM drafts"))
+        using (var command = Command(db, tx, "SELECT problem,language,code,revision,updated,code_format FROM drafts"))
         using (var reader = command.ExecuteReader())
         {
             while (reader.Read()) drafts.Add(ReadDraft(reader));
@@ -153,7 +153,7 @@ public sealed class PracticeStore(PracticeDatabase database) : IAttemptStore
         }
         foreach (var attempt in attempts.Where(a => a.Mode == "submit" && a.Status == "Accepted")) solved.Add(attempt.ProblemId);
         tx.Commit();
-        return new(1, drafts.ToArray(), attempts.ToArray(), solved.ToArray());
+        return new(2, drafts.ToArray(), attempts.ToArray(), solved.ToArray());
     }
 
     // Merge, never replace: existing drafts and historical code snapshots remain intact.
@@ -168,8 +168,8 @@ public sealed class PracticeStore(PracticeDatabase database) : IAttemptStore
         }
         foreach (var draft in backup.Drafts)
         {
-            using var command = Command(db, tx, "INSERT OR IGNORE INTO drafts VALUES($p,$l,$c,1,$t)",
-                ("$p", draft.ProblemId), ("$l", draft.Language), ("$c", draft.Code), ("$t", draft.UpdatedAt));
+            using var command = Command(db, tx, "INSERT OR IGNORE INTO drafts(problem,language,code,revision,updated,code_format) VALUES($p,$l,$c,1,$t,$f)",
+                ("$p", draft.ProblemId), ("$l", draft.Language), ("$c", draft.Code), ("$t", draft.UpdatedAt), ("$f", draft.CodeFormat));
             command.ExecuteNonQuery();
         }
         // Preserve chronological order for pagination even when the export was newest-first.

@@ -50,7 +50,7 @@ try {
     if($CheckFrontend) { Assert ((Invoke-WebRequest "$BaseUrl/src/Editor.tsx" -NoProxy).StatusCode -eq 200) 'Frontend and editor available' }
     foreach($language in @('csharp','javascript','python','cpp','java')) {
         $draft=Api "/api/practice/drafts/count_bits/$language" 'PUT' @{code="answer-$language ' -- literal SQL text";revision=0}
-        Assert ($draft.revision -eq 1 -and $draft.language -eq $language) "$language draft saved separately"
+        Assert ($draft.revision -eq 1 -and $draft.language -eq $language -and $draft.codeFormat -eq 'legacy-v1') "$language draft saved separately with legacy-default source format"
     }
     $empty=Api '/api/practice/drafts/anagrams/python' 'PUT' @{code='';revision=0}
     Assert ($empty.code -ceq '') 'Empty draft preserved without falling back to a starter'
@@ -83,7 +83,7 @@ try {
     $progress=@((Api '/api/practice').progress | Where-Object problemId -eq count_bits)[0]
     Assert ($progress.status -eq 'solved' -and $progress.acceptedLanguages -contains 'javascript') 'Solved stays green after a later failure'
     $snapshot=Api "/api/practice/history/$($accepted.id)"
-    Assert ($snapshot.code -ceq $correct -and $snapshot.language -eq 'javascript') 'History preserves exact submitted code and language'
+    Assert ($snapshot.code -ceq $correct -and $snapshot.language -eq 'javascript' -and $snapshot.codeFormat -eq 'legacy-v1') 'History preserves exact submitted code, language and legacy-default format'
     Assert (@($snapshot.result.cases | Where-Object hidden).Count -eq 0) 'Stored result contains no hidden cases'
     $null=Api '/api/practice/drafts/count_bits/javascript' 'PUT' @{code='new draft after submission';revision=1}
     Assert ((Api "/api/practice/history/$($accepted.id)").code -ceq $correct) 'Changing a draft cannot alter submitted source'
@@ -112,6 +112,15 @@ try {
         }
     }
 
+    $callable=Api '/api/problems/parity/solution?language=csharp'
+    Assert ($callable.codeFormat -eq 'callable-v1' -and $callable.code) 'Reviewed callable solution has an explicit source format'
+    $callableDraft=Api '/api/practice/drafts/parity/csharp' 'PUT' @{code=$callable.code;revision=0;codeFormat=$callable.codeFormat}
+    Assert ($callableDraft.code -ceq $callable.code -and $callableDraft.codeFormat -eq 'callable-v1') 'Callable draft stores exact visible source without injected support'
+    $callableAttempt=Api '/api/submissions' 'POST' @{problemId='parity';language='csharp';mode='submit';code=$callable.code;codeFormat=$callable.codeFormat}
+    Assert ($callableAttempt.status -eq 'Accepted') 'Callable source grades through the same persistence flow'
+    $callableSnapshot=Api "/api/practice/history/$($callableAttempt.id)"
+    Assert ($callableSnapshot.code -ceq $callable.code -and $callableSnapshot.codeFormat -eq 'callable-v1') 'Callable history preserves visible code and execution format'
+
     $readingId='reading-shared-state'
     $readingCode=@{version=1;notes="My explanation of a lost update. λ";reviewed=$true;checkpoints=@('contract');answers=@{understanding=0}} | ConvertTo-Json -Depth 10 -Compress
     $reading=Api "/api/practice/drafts/$readingId/reading" 'PUT' @{code=$readingCode;revision=0}
@@ -132,9 +141,10 @@ try {
     Assert (@($state.drafts | Where-Object problemId -eq $readingId)[0].code -ceq $readingCode) 'Reading notes and review survive server restart'
     Assert (@($state.drafts | Where-Object {$_.problemId -eq 'count_bits'}).Count -eq 5) 'All five language drafts survive server restart'
     Assert ((Api "/api/practice/history/$($accepted.id)").code -ceq $correct) 'Submission code survives server restart'
+    Assert ((Api "/api/practice/history/$($callableAttempt.id)").codeFormat -eq 'callable-v1') 'Callable execution format survives server restart'
     Assert (@($state.progress | Where-Object problemId -eq count_bits)[0].status -eq 'solved') 'Green solved status survives server restart'
     $backup=Api '/api/practice/export'
-    Assert ($backup.version -eq 1 -and $backup.attempts.Count -ge 5) 'Portable backup includes drafts and history'
+    Assert ($backup.version -eq 2 -and $backup.attempts.Count -ge 5) 'Version 2 portable backup includes drafts, history and source formats'
     $invalid=@{version=999;drafts=@();attempts=@();solvedIds=@()}
     $response=Invoke-WebRequest "$BaseUrl/api/practice/import" -Method Post -Headers $headers -ContentType application/json -Body ($invalid|ConvertTo-Json) -NoProxy -SkipHttpErrorCheck
     Assert ($response.StatusCode -eq 400) 'Invalid backup rejected before writing'
@@ -145,6 +155,10 @@ try {
     Assert (@($restored.drafts | Where-Object problemId -eq $readingId)[0].code -ceq $readingCode) 'Reading notes and review transfer to a new database through backup'
     Assert ($restored.drafts.Count -eq $backup.drafts.Count) 'Backup restores drafts into a new database'
     Assert ((Api "/api/practice/history/$($accepted.id)").code -ceq $correct) 'Backup restores exact historical source'
+    $restoredCallable=Api "/api/practice/history/$($callableAttempt.id)"
+    Assert ($restoredCallable.code -ceq $callable.code -and $restoredCallable.codeFormat -eq 'callable-v1') 'Backup restores callable history without reinterpreting its source'
+    $restoredCallableDraft=@($restored.drafts | Where-Object {$_.problemId -eq 'parity' -and $_.language -eq 'csharp'})[0]
+    Assert ($restoredCallableDraft.code -ceq $callable.code -and $restoredCallableDraft.codeFormat -eq 'callable-v1') 'Backup restores callable draft source and format together'
     $null=Api '/api/practice/import' 'POST' $backup
     Assert (@(Api '/api/practice/history?problemId=count_bits').Count -eq @($backup.attempts | Where-Object problemId -eq count_bits).Count) 'Repeated backup import does not duplicate submissions'
     $draft=@($restored.drafts | Where-Object {$_.problemId -eq 'count_bits' -and $_.language -eq 'python'})[0]
@@ -153,6 +167,11 @@ try {
     Assert (@((Api '/api/practice').drafts | Where-Object {$_.problemId -eq 'count_bits' -and $_.language -eq 'python'})[0].code -ceq 'newer local answer') 'Import never overwrites an existing draft'
     $summaries=1..55 | ForEach-Object { @{id="legacy-page-$_";problemId='anagrams';language=$null;code=$null;mode='run';status='Wrong answer';passed=0;total=3;elapsedMs=0;timestamp=$timestamp;result=$null;legacy=$true} }
     $null=Api '/api/practice/import' 'POST' @{version=1;drafts=@();attempts=@($summaries);solvedIds=@()}
+    $legacyProgram='def has_two_sum(A, t): return any(a + b == t for a in A for b in A)'
+    $null=Api '/api/practice/import' 'POST' @{version=1;drafts=@(@{problemId='two_sum';language='python';code=$legacyProgram;revision=0;updatedAt=$timestamp});attempts=@();solvedIds=@()}
+    $legacyDraft=@((Api '/api/practice').drafts | Where-Object {$_.problemId -eq 'two_sum' -and $_.language -eq 'python'})[0]
+    Assert ($legacyDraft.code -ceq $legacyProgram -and $legacyDraft.codeFormat -eq 'legacy-v1') 'Version 1 backup source remains unchanged and defaults to the legacy execution contract'
+    Assert ((Api "/api/practice/history/$($callableAttempt.id)").codeFormat -eq 'callable-v1') 'Version 1 import cannot change an existing callable history contract'
     $firstPage=@(Api '/api/practice/history?problemId=anagrams')
     $secondPage=@(Api "/api/practice/history?problemId=anagrams&before=$($firstPage[-1].sequence)")
     Assert ($firstPage.Count -eq 50 -and $secondPage.Count -eq 6 -and @(@($firstPage+$secondPage).id | Select-Object -Unique).Count -eq 56) 'History pagination has no omissions or duplicates'

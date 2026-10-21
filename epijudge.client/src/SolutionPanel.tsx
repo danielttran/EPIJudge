@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { Check, Copy, LoaderCircle } from 'lucide-react';
 import { ReadOnlyCode } from './Editor';
+import { CodeReferences } from './CodeReferences';
+import type { CodeReference } from './workspaceModels';
+import type { CodeFormat } from './practiceModels';
 
 const LANGUAGE_NAMES: Record<string, string> = {
   csharp: 'C#',
@@ -21,6 +24,8 @@ type Solution = {
   walkthrough?: string | null;
   correctness?: string | null;
   edgeCases?: string[] | null;
+  codeFormat?: CodeFormat;
+  references?: CodeReference[];
 };
 type State =
   | { scope: string; status: 'loading' }
@@ -35,6 +40,19 @@ function isSolution(value: unknown, problemId: string, language: string): value 
     solution.problemId === problemId &&
     solution.language === language &&
     Object.hasOwn(LANGUAGE_NAMES, language) &&
+    (solution.codeFormat === undefined ||
+      solution.codeFormat === 'legacy-v1' ||
+      solution.codeFormat === 'callable-v1') &&
+    (solution.references === undefined ||
+      (Array.isArray(solution.references) &&
+        solution.references.every(
+          (reference) =>
+            reference &&
+            typeof reference.title === 'string' &&
+            typeof reference.code === 'string' &&
+            Array.isArray(reference.names) &&
+            reference.names.every((name) => typeof name === 'string'),
+        ))) &&
     (solution.walkthrough == null || typeof solution.walkthrough === 'string') &&
     (solution.correctness == null || typeof solution.correctness === 'string') &&
     (solution.edgeCases == null ||
@@ -151,6 +169,11 @@ export function SolutionPanel({
       ) : (
         <>
           <p className="solution-language">{languageName} reference solution</p>
+          <CodeReferences
+            key={scope}
+            references={visible.solution.references ?? []}
+            language={language}
+          />
           <h2>Approach</h2>
           <p className="solution-explanation solution-approach">{visible.solution.explanation}</p>
           {(visible.solution.walkthrough || example) && (

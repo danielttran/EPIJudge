@@ -1,4 +1,4 @@
-import type { Draft } from './practiceModels';
+import type { CodeFormat, Draft } from './practiceModels';
 
 const headers = { 'Content-Type': 'application/json', 'X-EpiJudge-Client': 'local-editor' };
 
@@ -23,13 +23,17 @@ export async function request<T>(path: string, options?: RequestInit): Promise<T
 export async function saveDraft(
   problem: string,
   language: string,
-  write: { code: string; revision: number },
+  write: { code: string; revision: number; codeFormat?: CodeFormat },
 ): Promise<{ saved: true; draft: Draft } | { saved: false; draft: Draft | null }> {
   const response = await fetch(`/api/practice/drafts/${encodeURIComponent(problem)}/${language}`, {
     method: 'PUT',
     signal: AbortSignal.timeout(15_000),
     headers,
-    body: JSON.stringify({ code: write.code, revision: write.revision }),
+    body: JSON.stringify({
+      code: write.code,
+      revision: write.revision,
+      codeFormat: write.codeFormat ?? 'legacy-v1',
+    }),
   });
   if (response.status === 409) return { saved: false, draft: (await response.json()).draft };
   if (!response.ok)

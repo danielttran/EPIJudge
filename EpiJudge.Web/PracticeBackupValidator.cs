@@ -4,10 +4,10 @@ public static class PracticeBackupValidator
 {
     public static bool Validate(PracticeBackup? backup, Func<string, bool> knownProblem)
     {
-        if (backup is not { Version: 1, Drafts: not null, Attempts: not null, SolvedIds: not null }) return false;
+        if (backup is not { Version: 1 or 2, Drafts: not null, Attempts: not null, SolvedIds: not null }) return false;
         if (backup.Drafts.Length > 2000 || backup.Attempts.Length > 100_000 || backup.SolvedIds.Length > 1000) return false;
-        return backup.Drafts.All(d => ValidDraft(d, knownProblem))
-            && backup.Attempts.All(a => ValidAttempt(a, knownProblem))
+        return backup.Drafts.All(d => ValidDraft(d, knownProblem) && (backup.Version == 2 || d.CodeFormat == "legacy-v1"))
+            && backup.Attempts.All(a => ValidAttempt(a, knownProblem) && (backup.Version == 2 || a.CodeFormat == "legacy-v1"))
             && backup.SolvedIds.All(id => id is not null && knownProblem(id));
     }
 
@@ -15,6 +15,8 @@ public static class PracticeBackupValidator
         draft is not null && draft.ProblemId is not null
         && (draft.Language == "reading" ? ReadingCatalog.ValidDocument(draft.ProblemId, draft.Code)
             : knownProblem(draft.ProblemId) && PracticeEndpoints.ValidLanguage(draft.Language) && draft.Code is { Length: <= 40_000 })
+        && PracticeEndpoints.ValidCodeFormat(draft.CodeFormat)
+        && (draft.Language != "reading" || draft.CodeFormat == "legacy-v1")
         && draft.Revision >= 0
         && DateTimeOffset.TryParse(draft.UpdatedAt, out _);
 
@@ -23,6 +25,7 @@ public static class PracticeBackupValidator
         if (attempt is null || attempt.Id is not { Length: > 0 and <= 200 }
             || attempt.ProblemId is null || !knownProblem(attempt.ProblemId)) return false;
         if (attempt.Language is not null && !PracticeEndpoints.ValidLanguage(attempt.Language)) return false;
+        if (!PracticeEndpoints.ValidCodeFormat(attempt.CodeFormat)) return false;
         if (attempt.Code is { Length: > 40_000 } || attempt.Mode is not ("run" or "submit")
             || attempt.Status is not { Length: > 0 and <= 100 }) return false;
         if (attempt.Passed < 0 || attempt.Total < attempt.Passed || !ValidElapsed(attempt.ElapsedMs)

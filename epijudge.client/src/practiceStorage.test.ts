@@ -38,7 +38,10 @@ beforeEach(() => {
       const body = JSON.parse(options.body as string);
       writes.push({ url, ...body });
       const [, language, problemId] = url.match(/drafts\/([^/]+)\/([^/]+)$/) ?? [];
-      return json(draft(body.code, body.revision + 1, language, problemId));
+      return json({
+        ...draft(body.code, body.revision + 1, language, problemId),
+        codeFormat: body.codeFormat ?? 'legacy-v1',
+      });
     }
     if (url === '/api/practice') return json({ drafts: serverDrafts, progress: [] });
     return json({ imported: true });
@@ -51,6 +54,170 @@ afterEach(() => {
 });
 
 describe('draft saving', () => {
+  it('chooses source and format together without converting legacy drafts', async () => {
+    serverDrafts = [draft('legacy full program')];
+    const client = await connected();
+    expect(client.documentFor('count_bits', 'python', 'clean starter', 'callable-v1')).toEqual({
+      code: 'legacy full program',
+      codeFormat: 'legacy-v1',
+    });
+    expect(client.documentFor('parity', 'python', 'clean starter', 'callable-v1')).toEqual({
+      code: 'clean starter',
+      codeFormat: 'callable-v1',
+    });
+    client.edit('count_bits', 'python', 'same visible text', 'callable-v1');
+    await client.flush();
+    expect(client.documentFor('count_bits', 'python', 'unused')).toEqual({
+      code: 'same visible text',
+      codeFormat: 'callable-v1',
+    });
+    client.edit('count_bits', 'python', 'same visible text', 'legacy-v1');
+    await client.flush();
+    expect(client.documentFor('count_bits', 'python', 'unused').codeFormat).toBe('legacy-v1');
+    expect(writes).toHaveLength(2);
+  });
+  it('does not acknowledge a newer format-only edit when an older save completes', async () => {
+    const client = await connected();
+    const response = deferred<Response>();
+    fetchMock.mockImplementationOnce(() => response.promise);
+    client.edit('count_bits', 'python', 'unchanged', 'legacy-v1');
+    const saving = client.flush();
+    client.edit('count_bits', 'python', 'unchanged', 'callable-v1');
+    response.resolve(json({ ...draft('unchanged'), codeFormat: 'legacy-v1' }));
+    await saving;
+    expect(client.documentFor('count_bits', 'python', '').codeFormat).toBe('callable-v1');
+    const lastWrite = fetchMock.mock.calls
+      .filter(([, options]) => options?.method === 'PUT')
+      .at(-1)!;
+    expect(JSON.parse(lastWrite[1].body).codeFormat).toBe('callable-v1');
+    expect(JSON.parse(lastWrite[1].body).revision).toBe(1);
+  });
+  it('never adopts a remote callable format for an older legacy recovery document', async () => {
+    localStorage.setItem(
+      'epi:pending:old:python:count_bits',
+      JSON.stringify({ code: 'old recovered program', revision: 0 }),
+    );
+    serverDrafts = [Object.assign(draft('remote callable', 7), { codeFormat: 'callable-v1' })];
+    const response = deferred<Response>();
+    const previous = fetchMock.getMockImplementation()! as (
+      url: string,
+      options?: RequestInit,
+    ) => Promise<Response>;
+    let held = false;
+    fetchMock.mockImplementation((url: string, options?: RequestInit) => {
+      if (options?.method === 'PUT' && !held) {
+        held = true;
+        return response.promise;
+      }
+      return previous(url, options);
+    });
+    const client = await connected();
+    client.edit('count_bits', 'python', 'edited recovered program');
+    expect(client.documentFor('count_bits', 'python', '').codeFormat).toBe('legacy-v1');
+    response.resolve(json({ ...draft('old recovered program', 8), codeFormat: 'legacy-v1' }));
+    await client.flush();
+    expect(client.documentFor('count_bits', 'python', '')).toEqual({
+      code: 'edited recovered program',
+      codeFormat: 'legacy-v1',
+    });
+  });
+  it.each([true, false])(
+    'retains the chosen code format when resolving a conflict (saved=%s)',
+    async (useSaved) => {
+      const client = await connected();
+      client.edit('count_bits', 'python', 'local full program', 'legacy-v1');
+      fetchMock.mockResolvedValueOnce(
+        json({ draft: { ...draft('remote callable', 8), codeFormat: 'callable-v1' } }, 409),
+      );
+      await expect(client.flush()).rejects.toThrow();
+      client.resolve('count_bits', 'python', useSaved);
+      await client.flush();
+      expect(client.documentFor('count_bits', 'python', '')).toEqual({
+        code: useSaved ? 'remote callable' : 'local full program',
+        codeFormat: useSaved ? 'callable-v1' : 'legacy-v1',
+      });
+      if (useSaved) {
+        const key = Object.keys(localStorage).find((key) => key.startsWith('epi:recovered:'))!;
+        expect(JSON.parse(localStorage.getItem(key)!)).toEqual({
+          code: 'local full program',
+          codeFormat: 'legacy-v1',
+        });
+      }
+    },
+  );
+  it.each(['legacy-v1', 'callable-v1'] as const)(
+    'retains the active %s draft and original recovery when archiving hits quota',
+    async (format) => {
+      const source = 'local source\r\nλ 🐈';
+      const client = await connected();
+      client.edit('count_bits', 'python', source, format);
+      fetchMock.mockResolvedValueOnce(
+        json({ draft: { ...draft('remote source', 8), codeFormat: 'legacy-v1' } }, 409),
+      );
+      await expect(client.flush()).rejects.toThrow();
+      const recoveryKey = Object.keys(localStorage).find((key) => key.startsWith('epi:pending:'))!;
+      const setItem = Storage.prototype.setItem;
+      const archive = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(function (
+        this: Storage,
+        key,
+        value,
+      ) {
+        if (key.startsWith('epi:recovered:')) throw new DOMException('Full', 'QuotaExceededError');
+        setItem.call(this, key, value);
+      });
+      client.resolve('count_bits', 'python', true);
+      expect(client.documentFor('count_bits', 'python', '')).toEqual({
+        code: source,
+        codeFormat: format,
+      });
+      expect(client.conflict('count_bits', 'python')?.code).toBe('remote source');
+      expect(client.error).toContain('Your local draft is still open');
+      expect(JSON.parse(localStorage.getItem(recoveryKey)!)).toEqual(
+        expect.objectContaining({ code: source, codeFormat: format }),
+      );
+      expect(Object.keys(localStorage).some((key) => key.startsWith('epi:recovered:'))).toBe(false);
+      archive.mockRestore();
+      client.resolve('count_bits', 'python', true);
+      await client.flush();
+      expect(client.documentFor('count_bits', 'python', '')).toEqual({
+        code: 'remote source',
+        codeFormat: 'legacy-v1',
+      });
+      expect(localStorage.getItem(recoveryKey)).toBeNull();
+      const savedKey = Object.keys(localStorage).find((key) => key.startsWith('epi:recovered:'))!;
+      expect(JSON.parse(localStorage.getItem(savedKey)!)).toEqual({
+        code: source,
+        codeFormat: format,
+      });
+      expect(client.error).toBe('');
+    },
+  );
+  it('archives source and format in one write rather than risking a partial two-key backup', async () => {
+    const client = await connected();
+    client.edit('count_bits', 'python', 'local callable', 'callable-v1');
+    fetchMock.mockResolvedValueOnce(json({ draft: draft('remote source', 8) }, 409));
+    await expect(client.flush()).rejects.toThrow();
+    const setItem = Storage.prototype.setItem;
+    let archiveWrites = 0;
+    const archive = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(function (
+      this: Storage,
+      key,
+      value,
+    ) {
+      if (key.startsWith('epi:recovered:') && ++archiveWrites > 1)
+        throw new DOMException('Second write failed', 'QuotaExceededError');
+      setItem.call(this, key, value);
+    });
+    client.resolve('count_bits', 'python', true);
+    expect(archiveWrites).toBe(1);
+    const key = Object.keys(localStorage).find((key) => key.startsWith('epi:recovered:'))!;
+    expect(JSON.parse(localStorage.getItem(key)!)).toEqual({
+      code: 'local callable',
+      codeFormat: 'callable-v1',
+    });
+    expect(client.documentFor('count_bits', 'python', '').code).toBe('remote source');
+    archive.mockRestore();
+  });
   it('uses a starter only when no answer exists, preserving an empty answer', async () => {
     serverDrafts = [draft('')];
     const client = await connected();

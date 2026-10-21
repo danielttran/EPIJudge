@@ -1,5 +1,12 @@
 import { expect, it } from 'vitest';
-import { getSignature, getStarterCode, LANGUAGES, type Problem } from './workspaceModels';
+import {
+  getSignature,
+  getStarterCode,
+  getStarterFormat,
+  getCodeReferences,
+  LANGUAGES,
+  type Problem,
+} from './workspaceModels';
 
 const legacy = {
   starterCode: 'C# source',
@@ -40,3 +47,23 @@ it.each(['javascript', 'python', 'unknown'])(
     expect(getSignature(problem, id)).toBe('signature');
   },
 );
+it('reads only the selected language references and defaults old catalog formats to legacy', () => {
+  const reference = { title: 'Node', code: 'class Node {}', names: ['Node'] };
+  const problem = {
+    ...legacy,
+    starters: {
+      python: {
+        starterCode: 'def solve(): pass',
+        signature: 'solve()',
+        filename: 'solution.py',
+        runtime: 'Python',
+        codeFormat: 'callable-v1' as const,
+        references: [reference],
+      },
+    },
+  };
+  expect(getStarterFormat(legacy, 'python')).toBe('legacy-v1');
+  expect(getStarterFormat(problem, 'python')).toBe('callable-v1');
+  expect(getCodeReferences(problem, 'python')).toEqual([reference]);
+  expect(getCodeReferences(problem, 'csharp')).toEqual([]);
+});
