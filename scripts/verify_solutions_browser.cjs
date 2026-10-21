@@ -665,11 +665,8 @@ async function until(predicate, label) {
       "backup export and idempotent restoration preserve existing answers after reading solutions",
     );
 
-    await page.getByRole("button", { name: "Toggle problem list" }).click();
-    await page
-      .getByRole("combobox", { name: "Filter by topic or study plan" })
-      .selectOption("kind:reading");
-    await page.getByRole("button", { name: /R01.*Reading companion/ }).click();
+    await page.getByRole("link", { name: "Learn", exact: true }).click();
+    await page.getByRole("link", { name: /LCA with parent pointers/ }).click();
     assert.equal(await solutionTab.count(), 0);
     assert.equal(
       await page.getByRole("button", { name: "Submit", exact: true }).count(),

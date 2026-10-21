@@ -15,7 +15,7 @@ import type { Problem } from './workspaceModels';
 import type { PracticeClient } from './practiceClient';
 import { libraryEntries, selectedStudyPlan, STUDY_PLANS } from './studyPlans';
 import { availableCollections } from './collections';
-import { EMPTY_READING_JSON, parseReading, READING_LESSONS } from './reading/readingLessons';
+import { EMPTY_READING_JSON, parseReading } from './reading/readingLessons';
 
 type Props = {
   open: boolean;
@@ -60,7 +60,7 @@ export function ProblemLibrary({
   );
   const entries = libraryEntries(problems, filter, query);
   const plan = selectedStudyPlan(filter);
-  const topics = [...new Set([...problems, ...READING_LESSONS].map((item) => item.topic))].sort();
+  const topics = [...new Set(problems.map((item) => item.topic))].sort();
   const solvedCount = problems.filter((item) => solved.has(item.id)).length;
   return (
     <dialog
@@ -100,7 +100,6 @@ export function ProblemLibrary({
         >
           <option value="">All topics</option>
           <option value="kind:coding">Coding</option>
-          <option value="kind:reading">Reading &amp; Design</option>
           <optgroup label="Collections">
             {availableCollections(problems).map((collection) => (
               <option key={collection.id} value={`collection:${collection.id}`}>

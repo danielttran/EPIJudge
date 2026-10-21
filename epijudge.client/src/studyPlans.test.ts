@@ -116,7 +116,7 @@ it('keeps excluded exercises and all reading companions available outside study 
     expect(
       companions.some((entry) => entry.lesson?.bookReferences.includes(reference.number)),
     ).toBe(true);
-  expect(libraryEntries(problems, '').filter((entry) => entry.lesson)).toHaveLength(12);
+  expect(libraryEntries(problems, '').filter((entry) => entry.lesson)).toHaveLength(0);
 });
 
 it('keeps Blind 75 separate, ordered, searchable, and distinct from similar EPI titles', () => {

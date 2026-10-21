@@ -7,6 +7,7 @@ import {
   type ReadingLesson,
 } from './readingLessons';
 import { RaceSimulator } from './RaceSimulator';
+import { headingId } from './learnCatalog';
 
 export function ReadingWorkspace({
   lesson,
@@ -25,7 +26,7 @@ export function ReadingWorkspace({
     <>
       <section className="problem-pane reading-pane" aria-label="Reading lesson">
         <div className="pane-heading">
-          <span>Reading &amp; Design</span>
+          <span>Learn</span>
           <span>ORIGINAL COMPANION</span>
         </div>
         <article className="reading-body">
@@ -41,8 +42,13 @@ export function ReadingWorkspace({
           <Markdown
             skipHtml
             components={{
+              h2: ({ children }) => (
+                <h2 id={headingId(String(children))} tabIndex={-1}>
+                  {children}
+                </h2>
+              ),
               a: ({ children, ...props }) => (
-                <a {...props} target="_blank" rel="noreferrer">
+                <a {...props} target="_blank" rel="noopener noreferrer">
                   {children}
                 </a>
               ),
@@ -63,7 +69,7 @@ export function ReadingWorkspace({
               <ul>
                 {lesson.sources.map((source) => (
                   <li key={source}>
-                    <a href={source} target="_blank" rel="noreferrer">
+                    <a href={source} target="_blank" rel="noopener noreferrer">
                       {new URL(source).hostname}
                     </a>
                   </li>

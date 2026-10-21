@@ -1,6 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { READING_LESSONS, readingLessonById } from './reading/readingLessons';
-import { ReadingWorkspace } from './reading/ReadingWorkspace';
+import { LearnIndex } from './reading/LearnIndex';
+import { LearnArticle } from './reading/LearnArticle';
+import { learnArticleById, learnHref, practiceHref, relatedArticles } from './reading/learnCatalog';
+import { AppLink, appRoute, navigateApp, useAppRoute } from './appNavigation';
 import CodeEditor from './Editor';
 import { ProblemLibrary } from './ProblemLibrary';
 import { HistoryPanel } from './HistoryPanel';
@@ -61,12 +64,16 @@ function save(key: string, value: unknown) {
 }
 
 export default function App() {
+  const route = useAppRoute();
+  const isLearn = route.section === 'learn';
   const [libraryOpen, setLibraryOpen] = useState(false);
   const [resultsOpen, setResultsOpen] = useState(false);
   const libraryTrigger = useRef<HTMLButtonElement>(null);
   const [language, setLanguage] = useState<string>(() => load('epi:language', 'csharp'));
   const [problems, setProblems] = useState<Problem[]>([]);
-  const [selected, setSelected] = useState(load('epi:selected', 'count_bits'));
+  const [selected, setSelected] = useState(
+    () => appRoute().problemId || load('epi:selected', 'count_bits'),
+  );
   const [libraryFilter, setLibraryFilter] = useState(() => load('epi:libraryFilter', ''));
   const practiceCatalog = useMemo(
     () => (problems.length ? [...problems, ...READING_LESSONS.map(({ id }) => ({ id }))] : []),
@@ -84,6 +91,7 @@ export default function App() {
   const [activeCase, setActiveCase] = useState(0);
   const problem = problems.find((item) => item.id === selected);
   const lesson = readingLessonById(selected);
+  const article = learnArticleById(route.articleId);
   const navigation = libraryEntries(problems, libraryFilter)
     .map((entry) => entry.problem ?? entry.lesson)
     .filter((entry) => entry !== undefined);
@@ -107,6 +115,48 @@ export default function App() {
   const saveStatus = problem ? practice.status(problem.id, language) : 'Loading saved answer…';
   const saveConflict = problem ? practice.conflict(problem.id, language) : undefined;
 
+  useEffect(() => {
+    if (problem && !isLearn) save('epi:lastPractice', problem.id);
+  }, [problem?.id, isLearn]);
+
+  const selectEntry = (id: string) => {
+    setSelected(id);
+    if (!readingLessonById(id)) save('epi:lastPractice', id);
+    navigateApp(readingLessonById(id) ? learnHref(id) : practiceHref(id));
+  };
+
+  useEffect(() => {
+    if (route.section === 'practice' && route.problemId) setSelected(route.problemId);
+    else if (route.section === 'practice' && readingLessonById(selected))
+      setSelected(load('epi:lastPractice', 'count_bits'));
+    else if (route.section === 'learn' && article) setSelected(article.id);
+  }, [route.section, route.problemId, article]);
+
+  useEffect(() => {
+    // Old reading selections had no distinct route. Keep their stable IDs and
+    // storage keys and give their existing entry point a canonical Learn URL.
+    const url = new URL(window.location.href);
+    const legacy =
+      url.searchParams.get('lesson') || url.searchParams.get('problem') || url.hash.slice(1);
+    const oldLesson = readingLessonById(legacy || selected);
+    if (libraryFilter === 'kind:reading') {
+      setLibraryFilter('');
+      save('epi:libraryFilter', '');
+    }
+    if (url.pathname.split('/')[1] === 'reading' && article)
+      navigateApp(learnHref(article.id) + url.hash, true);
+    else if (url.pathname === '/' && oldLesson && !route.unknownPath)
+      navigateApp(learnHref(oldLesson.id), true);
+    else if (
+      route.section === 'practice' &&
+      !route.problemId &&
+      !route.unknownPath &&
+      libraryFilter === 'kind:reading'
+    ) {
+      navigateApp('/learn', true);
+    }
+  }, []);
+
   const currentLang = LANGUAGES.find((l) => l.id === language) ?? LANGUAGES[0];
 
   useEffect(() => {
@@ -126,7 +176,11 @@ export default function App() {
       })
       .then((items) => {
         setProblems(items);
-        if (!items.some((item) => item.id === selected) && !readingLessonById(selected))
+        if (
+          !items.some((item) => item.id === selected) &&
+          !readingLessonById(selected) &&
+          !appRoute().problemId
+        )
           setSelected(items[0]?.id ?? 'count_bits');
       })
       .catch((reason) => {
@@ -188,45 +242,78 @@ export default function App() {
   return (
     <div className="app-shell">
       <header className="topbar">
-        <a className="brand" href="/" aria-label="EPI Practice home">
+        <AppLink
+          className="brand"
+          href="/practice"
+          aria-label="EPI Practice home"
+          onClick={(event) => {
+            if (busy) event.preventDefault();
+          }}
+        >
           <span className="brand-mark">
             <Braces size={24} strokeWidth={2.5} />
           </span>
           <span>
             epi<span className="brand-divider">/</span>
-            <strong>practice</strong>
+            <strong>{isLearn ? 'learn' : 'practice'}</strong>
           </span>
-        </a>
-        <span className="topbar-rule" />
-        <button
-          ref={libraryTrigger}
-          className="library-toggle"
-          aria-label="Toggle problem list"
-          aria-expanded={libraryOpen}
-          aria-controls="problem-library"
-          onClick={() => setLibraryOpen(true)}
-        >
-          <PanelLeft size={18} /> <span>Problem list</span>
-        </button>
-        <div className="problem-stepping">
-          <button
-            className="icon-button"
-            aria-label="Previous problem"
-            disabled={busy || navigationIndex <= 0}
-            onClick={() => setSelected(navigation[navigationIndex - 1].id)}
+        </AppLink>
+        <nav className="section-navigation" aria-label="Main navigation">
+          <AppLink
+            href="/learn"
+            aria-current={isLearn ? 'page' : undefined}
+            aria-disabled={busy}
+            onClick={(event) => {
+              if (busy) event.preventDefault();
+            }}
           >
-            <ChevronLeft size={18} />
-          </button>
-          <button
-            className="icon-button"
-            aria-label="Next problem"
-            disabled={busy || !navigation.length || navigationIndex === navigation.length - 1}
-            onClick={() => setSelected(navigation[navigationIndex + 1].id)}
+            Learn
+          </AppLink>
+          <AppLink
+            href={practiceHref(problem?.id ?? load('epi:lastPractice', 'count_bits'))}
+            aria-current={!isLearn ? 'page' : undefined}
+            aria-disabled={busy}
+            onClick={(event) => {
+              if (busy) event.preventDefault();
+            }}
           >
-            <ChevronRight size={18} />
-          </button>
-        </div>
-        {!lesson && (
+            Practice
+          </AppLink>
+        </nav>
+        {!route.unknownPath && (!isLearn || (article && libraryFilter.startsWith('plan:'))) && (
+          <>
+            <span className="topbar-rule" />
+            <button
+              ref={libraryTrigger}
+              className="library-toggle"
+              aria-label={isLearn ? 'Toggle study plan' : 'Toggle problem list'}
+              aria-expanded={libraryOpen}
+              aria-controls="problem-library"
+              onClick={() => setLibraryOpen(true)}
+            >
+              <PanelLeft size={18} /> <span>{isLearn ? 'Study plan' : 'Problem list'}</span>
+            </button>
+            <div className="problem-stepping">
+              <button
+                className="icon-button"
+                aria-label={isLearn ? 'Previous study-plan item' : 'Previous problem'}
+                disabled={busy || navigationIndex <= 0}
+                onClick={() => selectEntry(navigation[navigationIndex - 1].id)}
+              >
+                <ChevronLeft size={18} />
+              </button>
+              <button
+                className="icon-button"
+                aria-label={isLearn ? 'Next study-plan item' : 'Next problem'}
+                disabled={busy || !navigation.length || navigationIndex === navigation.length - 1}
+                onClick={() => selectEntry(navigation[navigationIndex + 1].id)}
+              >
+                <ChevronRight size={18} />
+              </button>
+            </div>
+          </>
+        )}
+        {!isLearn && !route.unknownPath && !lesson && (
           <div className="topbar-actions">
             <button
               className="run-button"
@@ -258,13 +345,13 @@ export default function App() {
           <span className="local-badge">
             <i /> Local profile
           </span>
-          <span className="avatar">{lesson ? 'Read' : currentLang.shortLabel}</span>
+          <span className="avatar">{isLearn ? 'Read' : currentLang.shortLabel}</span>
         </div>
       </header>
 
-      <main className="workspace">
+      <main className={'workspace' + (isLearn || route.unknownPath ? ' learn-workspace' : '')}>
         <ProblemLibrary
-          open={libraryOpen}
+          open={libraryOpen && (!isLearn || libraryFilter.startsWith('plan:'))}
           problems={problems}
           selected={selected}
           busy={busy}
@@ -280,7 +367,7 @@ export default function App() {
             libraryTrigger.current?.focus();
           }}
           onSelect={(id) => {
-            setSelected(id);
+            selectEntry(id);
             setTab('results');
           }}
           onExport={() => storageAction(() => practice.exportAnswers(), 'Answers exported.')}
@@ -292,13 +379,26 @@ export default function App() {
           }
         />
 
-        {lesson ? (
-          <ReadingWorkspace
-            key={lesson.id}
-            lesson={lesson}
-            practice={practice}
-            catalogError={loadError}
-          />
+        {route.unknownPath ||
+        (isLearn && route.articleId && !article) ||
+        (!isLearn && route.problemId && problems.length > 0 && !problem) ? (
+          <section className="learn-empty" role="alert">
+            <h1>{isLearn ? 'Article not found' : 'Page not found'}</h1>
+            <p>This address does not identify an available local item.</p>
+            <AppLink href="/learn">Browse Learn</AppLink>
+            <AppLink href="/practice">Return to Practice</AppLink>
+          </section>
+        ) : isLearn ? (
+          article ? (
+            <LearnArticle
+              article={article}
+              practice={practice}
+              problems={problems}
+              catalogError={loadError}
+            />
+          ) : (
+            <LearnIndex route={route} />
+          )
         ) : (
           <>
             <section className="problem-pane">
@@ -405,6 +505,22 @@ export default function App() {
                         )}
                     </div>
                     <p className="description-copy">{problem.description}</p>
+                    {relatedArticles(problem.id).length > 0 && (
+                      <nav className="related-reading" aria-label="Related reading">
+                        <span>Related reading</span>
+                        {relatedArticles(problem.id).map((reading) => (
+                          <AppLink
+                            key={reading.id}
+                            href={learnHref(reading.id)}
+                            onClick={(event) => {
+                              if (busy) event.preventDefault();
+                            }}
+                          >
+                            {reading.title}
+                          </AppLink>
+                        ))}
+                      </nav>
+                    )}
                     {problem.sourceAttribution && (
                       <p className="source-attribution">
                         {problem.sourceAttribution}{' '}

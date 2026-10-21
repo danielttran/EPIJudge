@@ -119,8 +119,9 @@ The problem dropdown also includes 3-day, 7-day, 1-month, and 4-month study plan
 from a linked study-guide transcription. See [BOOK-COVERAGE.md](BOOK-COVERAGE.md)
 for sources, plan ordering, unavailable references, and book-versus-judge counts.
 
-Choose **Reading & Design** in that dropdown for twelve original study companions,
-interactive checkpoints and quizzes, a concurrency simulator, and a notes panel.
+Choose **Learn** in the top navigation for twelve original study companions,
+grouped by topic with search, source filters, article contents, and related practice.
+The articles retain interactive checkpoints and quizzes, a concurrency simulator, and a notes panel.
 Notes and review progress autosave to SQLite and travel with Export/Import answers.
 Purple **Reviewed** is separate from green coding acceptance. See [READING.md](READING.md).
 

@@ -116,6 +116,11 @@ jobs:
         run: |
           python scripts/verify_solutions_http.py --dll EpiJudge.Web/bin/Release/net10.0/EpiJudge.Web.dll --browser
           python scripts/verify_interviewcake_http.py --dll EpiJudge.Web/bin/Release/net10.0/EpiJudge.Web.dll
+      - name: Audit every Learn article and real reading navigation
+        run: |
+          python scripts/verify_learn_inventory.py
+          node --check scripts/verify_learn_browser.cjs
+          python scripts/verify_learn_http.py --dll EpiJudge.Web/bin/Release/net10.0/EpiJudge.Web.dll --browser
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -127,3 +132,5 @@ jobs:
             .epi-runs/interviewcake-http.json
             .epi-runs/solutions-browser*.json
             .epi-runs/solutions-browser*.png
+            .epi-runs/learn-*.json
+            .epi-runs/learn-views/*.png

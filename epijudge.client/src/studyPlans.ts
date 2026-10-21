@@ -69,7 +69,7 @@ export function libraryEntries(problems: Problem[], filter: string, query = ''):
     );
     entries.push(
       ...READING_LESSONS.flatMap((lesson, index) =>
-        !filter || filter === 'kind:reading' || lesson.topic === filter
+        filter === 'kind:reading'
           ? [
               {
                 lesson,

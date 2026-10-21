@@ -66,6 +66,7 @@ let fetchMock: ReturnType<typeof vi.fn>;
 let progress: Array<{ problemId: string; status: string; acceptedLanguages: string[] }>;
 let grade: Result;
 beforeEach(() => {
+  window.history.replaceState(null, '', '/');
   localStorage.clear();
   vi.stubGlobal('crypto', webcrypto);
   progress = [];
@@ -132,6 +133,55 @@ async function loaded() {
   await waitFor(() => expect((editor as HTMLTextAreaElement).disabled).toBe(false));
   return editor;
 }
+it('opens article deep links and redirects old reading URLs without creating coding attempts', async () => {
+  window.history.replaceState(null, '', '/reading/reading-shared-state');
+  render(<App />);
+  expect(
+    await screen.findByRole('heading', { name: 'Shared state and interleavings' }),
+  ).toBeTruthy();
+  await waitFor(() => expect(window.location.pathname).toBe('/learn/reading-shared-state'));
+  expect(screen.queryByRole('button', { name: 'Submit' })).toBeNull();
+  expect(fetchMock.mock.calls.some(([url]) => url === '/api/submissions')).toBe(false);
+});
+it('moves the retired reading filter into Learn without changing coding drafts', async () => {
+  localStorage.setItem('epi:libraryFilter', JSON.stringify('kind:reading'));
+  localStorage.setItem('epi:code:csharp:count_bits', JSON.stringify('preserved coding draft'));
+  render(<App />);
+  expect(await screen.findByRole('heading', { name: 'Learn' })).toBeTruthy();
+  expect(window.location.pathname).toBe('/learn');
+  expect(JSON.parse(localStorage.getItem('epi:libraryFilter')!)).toBe('');
+  expect(JSON.parse(localStorage.getItem('epi:code:csharp:count_bits')!)).toBe(
+    'preserved coding draft',
+  );
+});
+it('opens the independent Learn index and returns to the last practiced question with its draft intact', async () => {
+  window.history.replaceState(null, '', '/practice?problem=parity');
+  const editor = (await loaded()) as HTMLTextAreaElement;
+  fireEvent.change(editor, { target: { value: 'My parity draft Ω' } });
+  fireEvent.click(screen.getByRole('link', { name: 'Learn' }));
+  expect(screen.getByRole('heading', { name: 'Learn' })).toBeTruthy();
+  fireEvent.click(screen.getByRole('link', { name: /LCA with parent pointers/ }));
+  fireEvent.click(screen.getByRole('link', { name: 'Practice' }));
+  expect(await screen.findByRole('heading', { name: '2. Parity' })).toBeTruthy();
+  expect(
+    (screen.getByRole('textbox', { name: 'Test code editor' }) as HTMLTextAreaElement).value,
+  ).toBe('My parity draft Ω');
+});
+it.each(['/learn/missing', '/learn/%E0%A4%A', '/practice/missing', '/unknown'])(
+  'shows a useful invalid-route state for %s',
+  async (href) => {
+    window.history.replaceState(null, '', href);
+    render(<App />);
+    expect(await screen.findByRole('alert')).toBeTruthy();
+    expect(screen.getByRole('link', { name: 'Browse Learn' })).toBeTruthy();
+  },
+);
+it('does not turn an unknown question deep link into a different question', async () => {
+  window.history.replaceState(null, '', '/practice?problem=not-a-question');
+  render(<App />);
+  expect(await screen.findByRole('heading', { name: 'Page not found' })).toBeTruthy();
+  expect(screen.queryByRole('textbox', { name: 'Test code editor' })).toBeNull();
+});
 it.each(['csharp', 'javascript', 'python', 'cpp', 'java'])(
   'opens a clean %s starter with its relevant references collapsed',
   async (language) => {
@@ -402,11 +452,8 @@ it('loads the workspace, switches problem/language, and restores a per-language 
 });
 it('opens reading from the filter, saves work, and retains the selection after remount', async () => {
   await loaded();
-  fireEvent.click(screen.getByRole('button', { name: 'Toggle problem list' }));
-  fireEvent.change(screen.getByRole('combobox', { name: 'Filter by topic or study plan' }), {
-    target: { value: 'kind:reading' },
-  });
-  fireEvent.click(screen.getByRole('button', { name: /R01.*Reading companion/ }));
+  fireEvent.click(screen.getByRole('link', { name: 'Learn' }));
+  fireEvent.click(screen.getByRole('link', { name: /LCA with parent pointers/ }));
   const notes = screen.getByRole('textbox', { name: 'Your notes and design response' });
   expect(screen.queryByRole('button', { name: 'Submit' })).toBeNull();
   fireEvent.change(notes, { target: { value: 'A node is identified by its object identity.' } });
@@ -450,16 +497,12 @@ it('opens reading from the filter, saves work, and retains the selection after r
     ).toContain('object identity'),
   );
   expect(screen.getByRole('button', { name: 'Undo review' })).toBeTruthy();
-  fireEvent.click(screen.getByRole('button', { name: 'Toggle problem list' }));
-  expect(screen.getByRole('button', { name: /R01.*reviewed/ }).classList.contains('reviewed')).toBe(
-    true,
-  );
-  fireEvent.click(screen.getByRole('button', { name: /R02.*Reading companion/ }));
+  fireEvent.click(screen.getByRole('link', { name: /Next article/ }));
   expect(
     (screen.getByRole('textbox', { name: 'Your notes and design response' }) as HTMLTextAreaElement)
       .value,
   ).toBe('');
-  fireEvent.click(screen.getByRole('button', { name: 'Previous problem' }));
+  fireEvent.click(screen.getByRole('link', { name: /Previous article/ }));
   expect(
     (screen.getByRole('textbox', { name: 'Your notes and design response' }) as HTMLTextAreaElement)
       .value,
@@ -534,13 +577,13 @@ it('discards the retired tab preference and keeps navigation in the single plan 
   expect(
     await screen.findByRole('heading', { name: 'Shared state and interleavings' }),
   ).toBeTruthy();
-  fireEvent.click(screen.getByRole('button', { name: 'Next problem' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Next study-plan item' }));
   expect(
     await screen.findByRole('heading', { name: 'Design a constrained journey planner' }),
   ).toBeTruthy();
-  expect((screen.getByRole('button', { name: 'Next problem' }) as HTMLButtonElement).disabled).toBe(
-    true,
-  );
+  expect(
+    (screen.getByRole('button', { name: 'Next study-plan item' }) as HTMLButtonElement).disabled,
+  ).toBe(true);
 });
 
 it('opens language-specific read-only solutions without overwriting saved drafts or changing the editor language', async () => {
