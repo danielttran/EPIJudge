@@ -53,3 +53,10 @@ Intermediate failures and their fixes remain recorded in the local `.epi-runs/`
 evidence. The Solutions workflow reruns the Learn inventory and browser audit,
 alongside the existing master workflows. Final-master CI results are recorded
 separately after publication. No deployment is part of this change.
+
+The first CI run exposed a test-lifecycle race: a new navigation test could end
+before its debounced save, allowing that request to reach the following test's
+fetch mock. The test now waits for the saved status and verifies its exact single
+write. The starter-view no-write assertion is unchanged. All 214 frontend tests,
+three consecutive 32-test App runs, and the strict build pass after this test-only
+repair; application code and rendered assets are unchanged.

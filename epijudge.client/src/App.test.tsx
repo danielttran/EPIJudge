@@ -166,6 +166,14 @@ it('opens the independent Learn index and returns to the last practiced question
   expect(
     (screen.getByRole('textbox', { name: 'Test code editor' }) as HTMLTextAreaElement).value,
   ).toBe('My parity draft Ω');
+  // Keep this test's debounced persistence inside its own fetch mock lifetime.
+  // The following starter tests deliberately require that viewing writes nothing.
+  await waitFor(() => expect(screen.getByText('Saved')).toBeTruthy(), { timeout: 3000 });
+  const writes = fetchMock.mock.calls.filter(
+    ([url, options]) => url.endsWith('/parity/csharp') && options?.method === 'PUT',
+  );
+  expect(writes).toHaveLength(1);
+  expect(JSON.parse(writes[0][1]!.body as string).code).toBe('My parity draft Ω');
 });
 it.each(['/learn/missing', '/learn/%E0%A4%A', '/practice/missing', '/unknown'])(
   'shows a useful invalid-route state for %s',
