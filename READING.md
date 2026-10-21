@@ -89,3 +89,6 @@ search/filter history, keyboard navigation, legacy redirects, notes, drafts, bac
 restoration, missing/API-error states, and offline assets. The Solutions workflow
 runs these checks and retains reports and screenshots. No archived course import
 or external article content is needed.
+
+The [acceptance notes and reviewed desktop/mobile screenshots](docs/learn/VALIDATION.md)
+record the validation of this move and its source limitations.

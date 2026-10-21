@@ -118,6 +118,10 @@ jobs:
           python scripts/verify_interviewcake_http.py --dll EpiJudge.Web/bin/Release/net10.0/EpiJudge.Web.dll
       - name: Audit every Learn article and real reading navigation
         run: |
+          python -m pip install ruff==0.17.1
+          python -m ruff check scripts/verify_learn_inventory.py scripts/verify_learn_http.py
+          python -m ruff format --check scripts/verify_learn_inventory.py scripts/verify_learn_http.py
+          node epijudge.client/node_modules/prettier/bin/prettier.cjs --check scripts/verify_learn_browser.cjs epijudge.client/src/appNavigation.tsx epijudge.client/src/reading/LearnIndex.tsx epijudge.client/src/reading/LearnArticle.tsx epijudge.client/src/reading/learnCatalog.ts epijudge.client/src/reading/learnInventory.json
           python scripts/verify_learn_inventory.py
           node --check scripts/verify_learn_browser.cjs
           python scripts/verify_learn_http.py --dll EpiJudge.Web/bin/Release/net10.0/EpiJudge.Web.dll --browser
