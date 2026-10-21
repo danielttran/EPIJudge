@@ -1,0 +1,233 @@
+{
+  "interviewcake_second-largest-item-in-bst": {
+    "code": "class Solution {\n    FindSecondLargest(root) {\n        let parent = null, node = root;\n        while (node.Right !== null) { parent = node; node = node.Right; }\n        if (node.Left !== null) {\n            node = node.Left;\n            while (node.Right !== null) node = node.Right;\n            return node.Value;\n        }\n        return parent.Value;\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    FindSecondLargest(root) {\n        let parent = null, node = root;\n        while (node.Right !== null) { parent = node; node = node.Right; }\n        return parent === null ? root.Left.Value : parent.Value;\n    }\n}\n",
+    "incorrectReason": "Assumes the maximum node has no left subtree; its predecessor may instead be the rightmost node of that subtree."
+  },
+  "interviewcake_stock-price": {
+    "code": "class Solution {\n    GetMaxProfit(prices) {\n        let minimum = prices[0], best = prices[1] - prices[0];\n        for (let i = 1; i < prices.length; i++) {\n            best = Math.max(best, prices[i] - minimum);\n            minimum = Math.min(minimum, prices[i]);\n        }\n        return best;\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    GetMaxProfit(prices) {\n        let minimum = prices[0], best = 0;\n        for (let i = 1; i < prices.length; i++) {\n            best = Math.max(best, prices[i] - minimum);\n            minimum = Math.min(minimum, prices[i]);\n        }\n        return best;\n    }\n}\n",
+    "incorrectReason": "Allows skipping the required transaction, incorrectly clamping every all-loss result to zero."
+  },
+  "interviewcake_balanced-binary-tree": {
+    "code": "class Solution {\n    IsBalanced(root) {\n        if (root === null) return true;\n        const stack = [[root, 0]];\n        let shallowest = Infinity, deepest = -Infinity;\n        while (stack.length !== 0) {\n            const [node, depth] = stack.pop();\n            if (node.Left === null && node.Right === null) {\n                shallowest = Math.min(shallowest, depth);\n                deepest = Math.max(deepest, depth);\n                if (deepest - shallowest > 1) return false;\n            }\n            if (node.Left !== null) stack.push([node.Left, depth + 1]);\n            if (node.Right !== null) stack.push([node.Right, depth + 1]);\n        }\n        return true;\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    IsBalanced(root) {\n        function height(node) {\n            if (node === null) return 0;\n            const left = height(node.Left), right = height(node.Right);\n            if (left < 0 || right < 0 || Math.abs(left - right) > 1) return -1;\n            return 1 + Math.max(left, right);\n        }\n        return height(root) >= 0;\n    }\n}\n",
+    "incorrectReason": "Checks AVL-style local subtree heights instead of the specified deepest/shallowest LEAF depths; a one-leaf chain must be accepted."
+  },
+  "interviewcake_bst-checker": {
+    "code": "class Solution {\n    IsBinarySearchTree(root) {\n        const pending = root === null ? [] : [[root, -Infinity, Infinity]];\n        while (pending.length !== 0) {\n            const [node, lower, upper] = pending.pop();\n            if (node.Value <= lower || node.Value >= upper) return false;\n            if (node.Left !== null) pending.push([node.Left, lower, node.Value]);\n            if (node.Right !== null) pending.push([node.Right, node.Value, upper]);\n        }\n        return true;\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    IsBinarySearchTree(root) {\n        if (root === null) return true;\n        if (root.Left !== null && root.Left.Value >= root.Value) return false;\n        if (root.Right !== null && root.Right.Value <= root.Value) return false;\n        return this.IsBinarySearchTree(root.Left) && this.IsBinarySearchTree(root.Right);\n    }\n}\n",
+    "incorrectReason": "Checks only immediate child ordering, missing violations of a more distant ancestor bound."
+  },
+  "interviewcake_bracket-validator": {
+    "code": "class Solution {\n    IsValid(code) {\n        const stack = [], matching = new Map([[')', '('], [']', '['], ['}', '{']]);\n        for (const character of code) {\n            if ('([{'.includes(character)) stack.push(character);\n            else if (matching.has(character) && stack.pop() !== matching.get(character)) return false;\n        }\n        return stack.length === 0;\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    IsValid(code) {\n        const counts = new Map([['(', 0], ['[', 0], ['{', 0]]);\n        const matching = new Map([[')', '('], [']', '['], ['}', '{']]);\n        for (const character of code) {\n            if (counts.has(character)) counts.set(character, counts.get(character) + 1);\n            else if (matching.has(character)) {\n                const opener = matching.get(character);\n                counts.set(opener, counts.get(opener) - 1);\n                if (counts.get(opener) < 0) return false;\n            }\n        }\n        return [...counts.values()].every(count => count === 0);\n    }\n}\n",
+    "incorrectReason": "Independent delimiter counts cannot detect crossed nesting such as ([)]."
+  },
+  "interviewcake_cafe-order-checker": {
+    "code": "class Solution {\n    IsFirstComeFirstServed(takeOut, dineIn, served) {\n        if (served.length !== takeOut.length + dineIn.length) return false;\n        let take = 0, dine = 0;\n        for (const order of served) {\n            if (take < takeOut.length && order === takeOut[take]) take++;\n            else if (dine < dineIn.length && order === dineIn[dine]) dine++;\n            else return false;\n        }\n        return take === takeOut.length && dine === dineIn.length;\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    IsFirstComeFirstServed(takeOut, dineIn, served) {\n        const expected = new Set([...takeOut, ...dineIn]);\n        return served.length === expected.size && new Set(served).size === expected.size && served.every(order => expected.has(order));\n    }\n}\n",
+    "incorrectReason": "Checks only membership and multiplicity, discarding each source queue ordering."
+  },
+  "interviewcake_nth-fibonacci": {
+    "code": "class Solution {\n    Fib(n) {\n        let previous = 0, current = 1;\n        for (let i = 0; i < n; i++) [previous, current] = [current, previous + current];\n        return previous;\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    Fib(n) {\n        let previous = 1, current = 1;\n        for (let i = 0; i < n; i++) [previous, current] = [current, previous + current];\n        return previous;\n    }\n}\n",
+    "incorrectReason": "Uses one-based Fibonacci seeds and returns F(n+1), including the wrong F(0)."
+  },
+  "interviewcake_delete-node": {
+    "code": "class Solution {\n    DeleteNode(nodeToDelete) {\n        nodeToDelete.Value = nodeToDelete.Next.Value;\n        nodeToDelete.Next = nodeToDelete.Next.Next;\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    DeleteNode(nodeToDelete) {\n        nodeToDelete = nodeToDelete.Next;\n    }\n}\n",
+    "incorrectReason": "Rebinding the local parameter cannot change the caller-visible node object or remove a position."
+  },
+  "interviewcake_linked-list-cycles": {
+    "code": "class Solution {\n    ContainsCycle(firstNode) {\n        let slow = firstNode, fast = firstNode;\n        while (fast !== null && fast.Next !== null) {\n            slow = slow.Next; fast = fast.Next.Next;\n            if (slow === fast) return true;\n        }\n        return false;\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    ContainsCycle(firstNode) {\n        const values = new Set();\n        for (let node = firstNode; node !== null; node = node.Next) {\n            if (values.has(node.Value)) return true;\n            values.add(node.Value);\n        }\n        return false;\n    }\n}\n",
+    "incorrectReason": "Confuses equal node values with revisiting the same node identity, falsely rejecting acyclic repeated values."
+  },
+  "interviewcake_find-duplicate-files": {
+    "code": "class Solution {\n    FindDuplicateFiles(startingDirectory) {\n        const directories = [path.resolve(startingDirectory)], groups = new Map(), result = [];\n        while (directories.length !== 0) {\n            const directory = directories.pop();\n            for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {\n                const fullPath = path.join(directory, entry.name);\n                if (entry.isDirectory()) { directories.push(fullPath); continue; }\n                const info = fs.statSync(fullPath), parts = [String(info.size)];\n                const offsets = [0, Math.floor(Math.max(0, info.size - 64) / 2), Math.max(0, info.size - 64)];\n                const handle = fs.openSync(fullPath, 'r');\n                try {\n                    for (const offset of offsets) {\n                        const buffer = Buffer.alloc(Math.min(64, info.size - offset));\n                        if (buffer.length !== 0) fs.readSync(handle, buffer, 0, buffer.length, offset);\n                        parts.push(buffer.toString('hex'));\n                    }\n                } finally { fs.closeSync(handle); }\n                const fingerprint = parts.join(':');\n                const previous = groups.get(fingerprint);\n                if (previous === undefined) groups.set(fingerprint, { fullPath, modified: info.mtimeMs });\n                else if (previous.modified <= info.mtimeMs) result.push(new FilePaths(previous.fullPath, fullPath));\n                else result.push(new FilePaths(fullPath, previous.fullPath));\n            }\n        }\n        return result;\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    FindDuplicateFiles(startingDirectory) {\n        const directories = [path.resolve(startingDirectory)], groups = new Map(), result = [];\n        while (directories.length !== 0) {\n            const directory = directories.pop();\n            for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {\n                const fullPath = path.join(directory, entry.name);\n                if (entry.isDirectory()) { directories.push(fullPath); continue; }\n                const info = fs.statSync(fullPath), parts = [String(info.size)];\n                const offsets = [0, Math.floor(Math.max(0, info.size - 64) / 2), Math.max(0, info.size - 64)];\n                const handle = fs.openSync(fullPath, 'r');\n                try {\n                    for (const offset of offsets) {\n                        const buffer = Buffer.alloc(Math.min(64, info.size - offset));\n                        if (buffer.length !== 0) fs.readSync(handle, buffer, 0, buffer.length, offset);\n                        parts.push(buffer.toString('hex'));\n                    }\n                } finally { fs.closeSync(handle); }\n                const fingerprint = String(info.size);\n                const previous = groups.get(fingerprint);\n                if (previous === undefined) groups.set(fingerprint, { fullPath, modified: info.mtimeMs });\n                else if (previous.modified <= info.mtimeMs) result.push(new FilePaths(previous.fullPath, fullPath));\n                else result.push(new FilePaths(fullPath, previous.fullPath));\n            }\n        }\n        return result;\n    }\n}\n",
+    "incorrectReason": "Groups files by length alone, falsely labeling equal-length files with different sampled bytes as duplicates."
+  },
+  "interviewcake_find-duplicate-optimize-for-space": {
+    "code": "class Solution {\n    FindRepeat(numbers) {\n        let lower = 1, upper = numbers.length - 1;\n        while (lower < upper) {\n            const middle = lower + Math.floor((upper - lower) / 2);\n            let count = 0;\n            for (const value of numbers) if (value <= middle) count++;\n            if (count > middle) upper = middle; else lower = middle + 1;\n        }\n        return lower;\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    FindRepeat(numbers) {\n        let lower = 1, upper = numbers.length - 1;\n        while (lower < upper) {\n            const middle = lower + Math.floor((upper - lower) / 2);\n            let count = 0;\n            for (const value of numbers) if (value <= middle) count++;\n            if (count >= middle) upper = middle; else lower = middle + 1;\n        }\n        return lower;\n    }\n}\n",
+    "incorrectReason": "Treats a prefix exactly at capacity as overcrowded, steering toward a value that may occur only once.",
+    "notes": {
+      "explanation": "Binary-search the value bounds using prefix counts. Count all entries at most middle; if this exceeds middle, keep the lower value bounds, otherwise move the lower bound above middle. Read the original array without sorting or changing it.",
+      "correctness": "Maintain an overfull prefix ending at upper and a non-overfull prefix ending at lower-1. Initially the first contains n+1 entries for n possible values and the empty prefix contains zero. The count comparison preserves these bounds. When lower equals upper, subtracting the two prefix counts shows that this single value occurs at least twice.",
+      "walkthrough": "For [1,3,4,2,3], start with bounds 1..4. At middle 2, exactly two entries are at most 2, so move lower to 3. At middle 3, four entries are at most 3, exceeding three available prefix values, so upper becomes 3. Return 3, leaving the input unchanged."
+    }
+  },
+  "interviewcake_find-duplicate-optimize-for-space-beast-mode": {
+    "code": "class Solution {\n    FindDuplicate(numbers) {\n        let slow = numbers[0], fast = numbers[0];\n        do { slow = numbers[slow]; fast = numbers[numbers[fast]]; } while (slow !== fast);\n        slow = numbers[0];\n        while (slow !== fast) { slow = numbers[slow]; fast = numbers[fast]; }\n        return slow;\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    FindDuplicate(numbers) {\n        let slow = numbers[0], fast = numbers[0];\n        do { slow = numbers[slow]; fast = numbers[numbers[fast]]; } while (slow !== fast);\n        slow = numbers[0];\n        while (slow !== fast) { slow = numbers[slow]; fast = numbers[fast]; }\n        return numbers[slow];\n    }\n}\n",
+    "incorrectReason": "Returns the cycle entry successor instead of its index; that successor need not be a duplicated value."
+  },
+  "interviewcake_find-rotation-point": {
+    "code": "class Solution {\n    FindRotationPoint(words) {\n        let lower = 0, upper = words.length - 1;\n        while (lower < upper) {\n            const middle = lower + Math.floor((upper - lower) / 2);\n            if (words[middle] > words[upper]) lower = middle + 1;\n            else upper = middle;\n        }\n        return lower;\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    FindRotationPoint(words) {\n        let lower = 0, upper = words.length - 1;\n        while (lower < upper) {\n            const middle = lower + Math.floor((upper - lower) / 2);\n            if (words[middle] > words[upper]) lower = middle + 1;\n            else upper = middle;\n        }\n        return lower + 1;\n    }\n}\n",
+    "incorrectReason": "Returns a one-based position even though the specified rotation index is zero-based."
+  },
+  "interviewcake_graph-coloring": {
+    "code": "class Solution {\n    ColorGraph(graph, colors) {\n        for (const node of graph) {\n            const unavailable = new Set();\n            for (const neighbor of node.Neighbors) if (neighbor.Color !== null) unavailable.add(neighbor.Color);\n            node.Color = colors.find(color => !unavailable.has(color));\n        }\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    ColorGraph(graph, colors) {\n        for (const node of graph) {\n            const unavailable = new Set();\n            for (const neighbor of node.Neighbors) if (neighbor.Color !== null) unavailable.add(neighbor.Label);\n            node.Color = colors.find(color => !unavailable.has(color));\n        }\n    }\n}\n",
+    "incorrectReason": "Compares palette colors with neighbor labels instead of assigned colors, permitting adjacent equal colors."
+  },
+  "interviewcake_highest-product-of-3": {
+    "code": "class Solution {\n    HighestProductOf3(values) {\n        let highest = Math.max(values[0], values[1]), lowest = Math.min(values[0], values[1]);\n        let highestPair = values[0] * values[1], lowestPair = highestPair;\n        let best = highestPair * values[2];\n        for (let i = 2; i < values.length; i++) {\n            const value = values[i];\n            best = Math.max(best, value * highestPair, value * lowestPair);\n            highestPair = Math.max(highestPair, value * highest, value * lowest);\n            lowestPair = Math.min(lowestPair, value * highest, value * lowest);\n            highest = Math.max(highest, value); lowest = Math.min(lowest, value);\n        }\n        return best;\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    HighestProductOf3(values) {\n        const largest = values.slice().sort((a, b) => b - a);\n        return largest[0] * largest[1] * largest[2];\n    }\n}\n",
+    "incorrectReason": "Taking only the three largest values misses two large-magnitude negative values whose product is positive."
+  },
+  "interviewcake_queue-two-stacks": {
+    "code": "class QueueTwoStacks {\n    constructor() { this.incoming = []; this.outgoing = []; }\n    Enqueue(item) { this.incoming.push(item); }\n    Dequeue() {\n        if (this.outgoing.length === 0) while (this.incoming.length !== 0) this.outgoing.push(this.incoming.pop());\n        if (this.outgoing.length === 0) throw new Error('empty');\n        return this.outgoing.pop();\n    }\n}\n",
+    "incorrectCode": "class QueueTwoStacks {\n    constructor() { this.items = []; }\n    Enqueue(item) { this.items.push(item); }\n    Dequeue() {\n        if (this.items.length === 0) throw new Error('empty');\n        return this.items.pop();\n    }\n}\n",
+    "incorrectReason": "Implements LIFO removal rather than FIFO order when several enqueued items remain."
+  },
+  "interviewcake_shuffle": {
+    "code": "class Solution {\n    Shuffle(array) {\n        for (let i = array.length - 1; i > 0; i--) {\n            const chosen = RandomSource.GetRandom(0, i);\n            [array[i], array[chosen]] = [array[chosen], array[i]];\n        }\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    Shuffle(array) {\n        for (let i = 0; i < array.length; i++) {\n            const chosen = RandomSource.GetRandom(0, array.length - 1);\n            [array[i], array[chosen]] = [array[chosen], array[i]];\n        }\n    }\n}\n",
+    "incorrectReason": "Swapping each slot with an unrestricted random slot is biased: for three distinct entries, 27 equal-probability choice streams cannot distribute equally over six permutations.",
+    "notes": {
+      "explanation": "Fill positions from right to left. At position i, choose an index uniformly from 0 through i with the supplied random source and swap that occurrence into position i.",
+      "correctness": "Before an iteration, the unfilled prefix contains exactly the remaining occurrences. Each has probability 1/(i+1) of entering position i. Later swaps only touch earlier positions, so the filled suffix is final. Multiplying these conditional probabilities gives 1/n! for every occurrence permutation.",
+      "walkthrough": "Start with [4,8,1]. At i=2, a supplied draw of 0 swaps the final occurrence with index 0, giving [1,8,4]. At i=1, a draw of 0 then gives [8,1,4]. Those choices have probability (1/3)*(1/2)=1/6. The actual draws may produce any of the six equally likely permutations; true denotes the judge validating distribution, multiplicities and mutation of the supplied array."
+    }
+  },
+  "interviewcake_inflight-entertainment": {
+    "code": "class Solution {\n    CanTwoMoviesFillFlight(movieLengths, flightLength) {\n        const seen = new Set();\n        for (const length of movieLengths) {\n            if (seen.has(flightLength - length)) return true;\n            seen.add(length);\n        }\n        return false;\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    CanTwoMoviesFillFlight(movieLengths, flightLength) {\n        const seen = new Set(movieLengths);\n        return movieLengths.some(length => seen.has(flightLength - length));\n    }\n}\n",
+    "incorrectReason": "Preloading every duration allows a single movie entry to pair with itself."
+  },
+  "interviewcake_kth-to-last-node-in-singly-linked-list": {
+    "code": "class Solution {\n    KthToLastNode(k, head) {\n        let leading = head, following = head;\n        for (let i = 0; i < k; i++) leading = leading.Next;\n        while (leading !== null) { leading = leading.Next; following = following.Next; }\n        return following;\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    KthToLastNode(k, head) {\n        let leading = head, following = head;\n        for (let i = 0; i < k; i++) leading = leading.Next;\n        while (leading !== null) { leading = leading.Next; following = following.Next; }\n        return new LinkedListNode(following.Value);\n    }\n}\n",
+    "incorrectReason": "Copies the correct value into a new object instead of returning the required existing node identity."
+  },
+  "interviewcake_largest-stack": {
+    "code": "class MaxStack {\n    constructor() { this.values = []; this.maxima = []; }\n    Push(item) {\n        this.values.push(item);\n        if (this.maxima.length === 0 || item >= this.maxima[this.maxima.length - 1]) this.maxima.push(item);\n    }\n    Pop() {\n        if (this.values.length === 0) throw new Error('empty');\n        const value = this.values.pop();\n        if (value === this.maxima[this.maxima.length - 1]) this.maxima.pop();\n        return value;\n    }\n    GetMax() {\n        if (this.maxima.length === 0) throw new Error('empty');\n        return this.maxima[this.maxima.length - 1];\n    }\n}\n",
+    "incorrectCode": "class MaxStack {\n    constructor() { this.values = []; this.maxima = []; }\n    Push(item) {\n        this.values.push(item);\n        if (this.maxima.length === 0 || item > this.maxima[this.maxima.length - 1]) this.maxima.push(item);\n    }\n    Pop() {\n        if (this.values.length === 0) throw new Error('empty');\n        const value = this.values.pop();\n        if (value === this.maxima[this.maxima.length - 1]) this.maxima.pop();\n        return value;\n    }\n    GetMax() {\n        if (this.maxima.length === 0) throw new Error('empty');\n        return this.maxima[this.maxima.length - 1];\n    }\n}\n",
+    "incorrectReason": "Does not retain repeated maxima; popping one equal maximum incorrectly removes the maximum for remaining equal entries."
+  },
+  "interviewcake_coin": {
+    "code": "class Solution {\n    ChangePossibilitiesBottomUp(amount, denominations) {\n        const ways = Array(amount + 1).fill(0); ways[0] = 1;\n        for (const coin of denominations)\n            for (let value = coin; value <= amount; value++) ways[value] += ways[value - coin];\n        return ways[amount];\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    ChangePossibilitiesBottomUp(amount, denominations) {\n        const ways = Array(amount + 1).fill(0); ways[0] = 1;\n        for (let value = 1; value <= amount; value++)\n            for (const coin of denominations) if (coin <= value) ways[value] += ways[value - coin];\n        return ways[amount];\n    }\n}\n",
+    "incorrectReason": "Iterating amounts before denominations counts different orderings of the same coin multiset as distinct combinations."
+  },
+  "interviewcake_merge-sorted-arrays": {
+    "code": "class Solution {\n    MergeArrays(first, second) {\n        const result = []; let left = 0, right = 0;\n        while (left < first.length && right < second.length)\n            result.push(first[left] <= second[right] ? first[left++] : second[right++]);\n        while (left < first.length) result.push(first[left++]);\n        while (right < second.length) result.push(second[right++]);\n        return result;\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    MergeArrays(first, second) {\n        return [...new Set([...first, ...second])].sort((a, b) => a - b);\n    }\n}\n",
+    "incorrectReason": "A set union discards repeated occurrences that the merged result must preserve."
+  },
+  "interviewcake_merging-ranges": {
+    "code": "class Solution {\n    MergeRanges(meetings) {\n        const sorted = meetings.slice().sort((a, b) => a.StartTime - b.StartTime || a.EndTime - b.EndTime);\n        const result = [];\n        for (const meeting of sorted) {\n            const last = result[result.length - 1];\n            if (last !== undefined && meeting.StartTime <= last.EndTime) last.EndTime = Math.max(last.EndTime, meeting.EndTime);\n            else result.push(new Meeting(meeting.StartTime, meeting.EndTime));\n        }\n        return result;\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    MergeRanges(meetings) {\n        meetings.sort((a, b) => a.StartTime - b.StartTime);\n        const result = [];\n        for (const meeting of meetings) {\n            const last = result[result.length - 1];\n            if (last !== undefined && meeting.StartTime <= last.EndTime) last.EndTime = Math.max(last.EndTime, meeting.EndTime);\n            else result.push(meeting);\n        }\n        return result;\n    }\n}\n",
+    "incorrectReason": "Computes union values while sorting the original list and returning/mutating original interval objects, violating preservation and fresh-result contracts."
+  },
+  "interviewcake_mesh-message": {
+    "code": "class Solution {\n    BfsGetPath(graph, start, end) {\n        const previous = new Map([[start, null]]), queue = [start];\n        for (let head = 0; head < queue.length; head++) {\n            const node = queue[head]; if (node === end) break;\n            for (const neighbor of graph[node]) if (!previous.has(neighbor)) { previous.set(neighbor, node); queue.push(neighbor); }\n        }\n        if (!previous.has(end)) return null;\n        const route = []; for (let node = end; node !== null; node = previous.get(node)) route.push(node);\n        route.reverse(); return route;\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    BfsGetPath(graph, start, end) {\n        const previous = new Map([[start, null]]), queue = [start];\n        for (let head = 0; head < queue.length; head++) {\n            const node = queue[head]; if (node === end) break;\n            for (const neighbor of graph[node]) if (!previous.has(neighbor)) { previous.set(neighbor, node); queue.push(neighbor); }\n        }\n        if (!previous.has(end)) return [];\n        const route = []; for (let node = end; node !== null; node = previous.get(node)) route.push(node);\n        route.reverse(); return route;\n    }\n}\n",
+    "incorrectReason": "Returns an empty route instead of the explicitly required null when the endpoints are disconnected."
+  },
+  "interviewcake_compress-url-list": {
+    "code": "class Trie {\n    constructor() { this.root = { children: new Map(), terminal: false }; }\n    AddWord(word) {\n        let node = this.root;\n        for (const character of word) {\n            if (!node.children.has(character)) node.children.set(character, { children: new Map(), terminal: false });\n            node = node.children.get(character);\n        }\n        if (node.terminal) return false;\n        node.terminal = true; return true;\n    }\n}\n",
+    "incorrectCode": "class Trie {\n    constructor() { this.root = new Map(); }\n    AddWord(word) {\n        let node = this.root, created = false;\n        for (const character of word) {\n            if (!node.has(character)) { node.set(character, new Map()); created = true; }\n            node = node.get(character);\n        }\n        return created;\n    }\n}\n",
+    "incorrectReason": "Confuses an existing prefix path with an inserted complete word; first insertion of a prefix or the empty key incorrectly reports false."
+  },
+  "interviewcake_matching-parens": {
+    "code": "class Solution {\n    GetClosingParen(sentence, openingParenIndex) {\n        let depth = 0;\n        for (let i = openingParenIndex; i < sentence.length; i++) {\n            if (sentence[i] === '(') depth++;\n            else if (sentence[i] === ')' && --depth === 0) return i;\n        }\n        throw new Error('unmatched opener');\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    GetClosingParen(sentence, openingParenIndex) {\n        return sentence.indexOf(')', openingParenIndex + 1);\n    }\n}\n",
+    "incorrectReason": "Returns the first closing parenthesis, ignoring nested pairs that must close before the supplied opener.",
+    "notes": {
+      "explanation": "Scan from the supplied opener, including that character. Increment depth for each opener and decrement it for each closer; return when a closer first brings depth back to zero.",
+      "correctness": "After consuming the designated opener, depth counts the still-unclosed openers within that outer pair, including the outer opener itself. Nested pairs increase and then decrease this count. The first return to zero therefore closes the designated opener rather than an inner pair."
+    }
+  },
+  "interviewcake_permutation-palindrome": {
+    "code": "class Solution {\n    HasPalindromePermutation(text) {\n        const odd = new Set();\n        for (const character of text) { if (odd.has(character)) odd.delete(character); else odd.add(character); }\n        return odd.size <= 1;\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    HasPalindromePermutation(text) {\n        const odd = new Set();\n        for (const character of text) { if (odd.has(character)) odd.delete(character); else odd.add(character); }\n        return odd.size === 0;\n    }\n}\n",
+    "incorrectReason": "Rejects every valid odd-length palindrome multiset with its permitted single odd-frequency center."
+  },
+  "interviewcake_product-of-other-numbers": {
+    "code": "class Solution {\n    GetProductsOfAllIntsExceptAtIndex(values) {\n        const products = Array(values.length); let prefix = 1;\n        for (let i = 0; i < values.length; i++) { products[i] = prefix; prefix *= values[i]; }\n        let suffix = 1;\n        for (let i = values.length - 1; i >= 0; i--) { products[i] *= suffix; suffix *= values[i]; }\n        return products;\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    GetProductsOfAllIntsExceptAtIndex(values) {\n        let product = 1; for (const value of values) product *= value;\n        return values.map(value => product / value);\n    }\n}\n",
+    "incorrectReason": "The division shortcut fails on zero entries and violates the required division-free approach."
+  },
+  "interviewcake_rectangular-love": {
+    "code": "class Solution {\n    FindRectangularOverlap(first, second) {\n        const left = Math.max(first.LeftX, second.LeftX), bottom = Math.max(first.BottomY, second.BottomY);\n        const right = Math.min(first.LeftX + first.Width, second.LeftX + second.Width);\n        const top = Math.min(first.BottomY + first.Height, second.BottomY + second.Height);\n        if (right <= left || top <= bottom) return new Rectangle();\n        return new Rectangle(left, bottom, right - left, top - bottom);\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    FindRectangularOverlap(first, second) {\n        const left = Math.max(first.LeftX, second.LeftX), bottom = Math.max(first.BottomY, second.BottomY);\n        const right = Math.min(first.LeftX + first.Width, second.LeftX + second.Width);\n        const top = Math.min(first.BottomY + first.Height, second.BottomY + second.Height);\n        if (right < left || top < bottom) return new Rectangle();\n        return new Rectangle(left, bottom, right - left, top - bottom);\n    }\n}\n",
+    "incorrectReason": "Treats boundary contact as an area intersection instead of returning the required all-zero no-overlap rectangle."
+  },
+  "interviewcake_recursive-string-permutations": {
+    "code": "class Solution {\n    GetPermutations(text) {\n        const counts = new Map(), output = new Set();\n        for (const character of text) counts.set(character, (counts.get(character) || 0) + 1);\n        function build(prefix) {\n            if (prefix.length === text.length) { output.add(prefix); return; }\n            for (const [character, count] of counts) if (count !== 0) {\n                counts.set(character, count - 1); build(prefix + character); counts.set(character, count);\n            }\n        }\n        build(''); return output;\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    GetPermutations(text) {\n        if (text.length === 0) return new Set();\n        const counts = new Map(), output = new Set();\n        for (const character of text) counts.set(character, (counts.get(character) || 0) + 1);\n        function build(prefix) {\n            if (prefix.length === text.length) { output.add(prefix); return; }\n            for (const [character, count] of counts) if (count !== 0) {\n                counts.set(character, count - 1); build(prefix + character); counts.set(character, count);\n            }\n        }\n        build(''); return output;\n    }\n}\n",
+    "incorrectReason": "Omits the empty string permutation, although the empty input has one valid permutation rather than zero.",
+    "notes": {
+      "explanation": "Count each distinct character, then build prefixes recursively. For every character with a positive remaining count, append it, recurse with that count reduced, and restore the count before exploring the next choice. Store complete strings in a set.",
+      "correctness": "At each recursion level, the remaining counts are exactly the unused occurrences of the original input. Every chosen character preserves that invariant, so a completed prefix is a valid permutation. Every valid permutation determines a sequence of available-character choices and is therefore generated. Choosing characters by value rather than occurrence gives one path for each distinct string, including the empty string at the initial base case.",
+      "walkthrough": "For ab, the initial counts are a:1 and b:1. Choosing a leaves only b, so the first branch emits ab. Restoring both counts lets the next branch choose b then a and emit ba. For an empty input, the initial empty prefix is already complete and the result contains the empty string.",
+      "timeComplexity": "O(n * n!) worst-case time for n distinct characters, including prefix and result-string construction; repeated characters reduce the number of distinct branches.",
+      "spaceComplexity": "O(n * n!) result storage in the worst case. The recursion has depth O(n), and simultaneously retained immutable prefix strings can occupy O(n²) additional characters."
+    }
+  },
+  "interviewcake_reverse-linked-list": {
+    "code": "class Solution {\n    Reverse(head) {\n        let previous = null, current = head;\n        while (current !== null) {\n            const next = current.Next; current.Next = previous;\n            previous = current; current = next;\n        }\n        return previous;\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    Reverse(head) {\n        let result = null;\n        for (let node = head; node !== null; node = node.Next) result = new LinkedListNode(node.Value, result);\n        return result;\n    }\n}\n",
+    "incorrectReason": "Returns reversed values in newly allocated nodes instead of reversing the required original objects and links."
+  },
+  "interviewcake_reverse-string-in-place": {
+    "code": "class Solution {\n    Reverse(characters) {\n        for (let left = 0, right = characters.length - 1; left < right; left++, right--)\n            [characters[left], characters[right]] = [characters[right], characters[left]];\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    Reverse(characters) {\n        characters = characters.slice().reverse();\n    }\n}\n",
+    "incorrectReason": "Reverses a copy and rebinds the local parameter, leaving the caller-owned mutable character array unchanged."
+  },
+  "interviewcake_reverse-words": {
+    "code": "class Solution {\n    ReverseWords(message) {\n        function reverse(left, right) {\n            while (left < right) { [message[left], message[right]] = [message[right], message[left]]; left++; right--; }\n        }\n        reverse(0, message.length - 1); let start = 0;\n        for (let end = 0; end <= message.length; end++) if (end === message.length || message[end] === ' ') {\n            reverse(start, end - 1); start = end + 1;\n        }\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    ReverseWords(message) {\n        for (let left = 0, right = message.length - 1; left < right; left++, right--)\n            [message[left], message[right]] = [message[right], message[left]];\n    }\n}\n",
+    "incorrectReason": "Reverses the entire message but forgets to restore the internal character order of each word."
+  },
+  "interviewcake_simulate-5-sided-die": {
+    "code": "class Solution {\n    Rand5() {\n        while (true) {\n            const value = RandomSource.Rand7();\n            if (value <= 5) return value;\n        }\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    Rand5() {\n        return (RandomSource.Rand7() - 1) % 5 + 1;\n    }\n}\n",
+    "incorrectReason": "Modulo maps seven equally likely draws onto five outcomes unevenly instead of rejecting source values 6 and 7."
+  },
+  "interviewcake_simulate-7-sided-die": {
+    "code": "class Solution {\n    Rand7() {\n        while (true) {\n            const value = (RandomSource.Rand5() - 1) * 5 + RandomSource.Rand5() - 1;\n            if (value < 21) return value % 7 + 1;\n        }\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    Rand7() {\n        const value = (RandomSource.Rand5() - 1) * 5 + RandomSource.Rand5() - 1;\n        return value % 7 + 1;\n    }\n}\n",
+    "incorrectReason": "Skips rejection of the last four draw pairs, giving some output faces four preimages and others only three."
+  },
+  "interviewcake_temperature-tracker": {
+    "code": "class TempTracker {\n    constructor() {\n        this.count = 0; this.total = 0; this.minimum = null; this.maximum = null;\n        this.counts = Array(111).fill(0); this.mode = null; this.modeCount = 0;\n    }\n    Insert(temperature) {\n        this.count++; this.total += temperature;\n        this.minimum = this.minimum === null ? temperature : Math.min(this.minimum, temperature);\n        this.maximum = this.maximum === null ? temperature : Math.max(this.maximum, temperature);\n        this.counts[temperature]++;\n        if (this.counts[temperature] > this.modeCount) { this.mode = temperature; this.modeCount = this.counts[temperature]; }\n    }\n    GetMin() { return this.minimum; }\n    GetMax() { return this.maximum; }\n    GetMean() { return this.count === 0 ? null : this.total / this.count; }\n    GetMode() { return this.mode; }\n}\n",
+    "incorrectCode": "class TempTracker {\n    constructor() {\n        this.count = 0; this.total = 0; this.minimum = null; this.maximum = null;\n        this.counts = Array(111).fill(0); this.mode = null; this.modeCount = 0;\n    }\n    Insert(temperature) {\n        this.count++; this.total += temperature;\n        this.minimum = this.minimum === null ? temperature : Math.min(this.minimum, temperature);\n        this.maximum = this.maximum === null ? temperature : Math.max(this.maximum, temperature);\n        this.counts[temperature]++;\n        if (this.counts[temperature] > this.modeCount) { this.mode = temperature; this.modeCount = this.counts[temperature]; }\n    }\n    GetMin() { return this.minimum; }\n    GetMax() { return this.maximum; }\n    GetMean() { return this.count === 0 ? null : Math.trunc(this.total / this.count); }\n    GetMode() { return this.mode; }\n}\n",
+    "incorrectReason": "Truncates nonintegral means even though GetMean must preserve the arithmetic fractional result."
+  },
+  "interviewcake_cake-thief": {
+    "code": "class Solution {\n    MaxDuffelBagValue(types, capacity) {\n        for (const type of types) if (type.Weight === 0 && type.Value > 0) throw new InfinityException();\n        const best = Array(capacity + 1).fill(0);\n        for (let weight = 1; weight <= capacity; weight++)\n            for (const type of types) if (type.Weight > 0 && type.Weight <= weight)\n                best[weight] = Math.max(best[weight], best[weight - type.Weight] + type.Value);\n        return best[capacity];\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    MaxDuffelBagValue(types, capacity) {\n        for (const type of types) if (type.Weight === 0 && type.Value > 0) throw new InfinityException();\n        const best = Array(capacity + 1).fill(0);\n        for (const type of types) if (type.Weight > 0)\n            for (let weight = capacity; weight >= type.Weight; weight--)\n                best[weight] = Math.max(best[weight], best[weight - type.Weight] + type.Value);\n        return best[capacity];\n    }\n}\n",
+    "incorrectReason": "Uses a descending 0/1-knapsack update, allowing each cake type only once instead of an unbounded number of whole items."
+  },
+  "interviewcake_find-unique-int-among-duplicates": {
+    "code": "class Solution {\n    FindUniqueDeliveryId(deliveryIds) {\n        let unique = 0; for (const value of deliveryIds) unique ^= value;\n        return unique;\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    FindUniqueDeliveryId(deliveryIds) {\n        let total = 0, distinctTotal = 0; const distinct = new Set();\n        for (const value of deliveryIds) { total += value; if (!distinct.has(value)) { distinct.add(value); distinctTotal += value; } }\n        return total - 2 * distinctTotal;\n    }\n}\n",
+    "incorrectReason": "Reverses the sign in the distinct-sum identity, returning the negative of the unique positive ID."
+  },
+  "interviewcake_top-scores": {
+    "code": "class Solution {\n    SortScores(scores, highestPossibleScore) {\n        const counts = Array(highestPossibleScore + 1).fill(0), sorted = [];\n        for (const score of scores) counts[score]++;\n        for (let score = highestPossibleScore; score >= 0; score--)\n            for (let copy = 0; copy < counts[score]; copy++) sorted.push(score);\n        return sorted;\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    SortScores(scores, highestPossibleScore) {\n        const counts = Array(highestPossibleScore + 1).fill(0), sorted = [];\n        for (const score of scores) counts[score]++;\n        for (let score = 0; score <= highestPossibleScore; score++)\n            for (let copy = 0; copy < counts[score]; copy++) sorted.push(score);\n        return sorted;\n    }\n}\n",
+    "incorrectReason": "Emits the counting-sort buckets in ascending order instead of the requested nonincreasing order."
+  },
+  "interviewcake_which-appears-twice": {
+    "code": "class Solution {\n    FindRepeat(numbers) {\n        let repeat = 0; for (const value of numbers) repeat ^= value;\n        for (let value = 1; value <= numbers.length - 1; value++) repeat ^= value;\n        return repeat;\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    FindRepeat(numbers) {\n        let repeat = 0; for (const value of numbers) repeat ^= value;\n        for (let value = 1; value < numbers.length - 1; value++) repeat ^= value;\n        return repeat;\n    }\n}\n",
+    "incorrectReason": "Omits the largest domain value from the XOR cancellation loop, an off-by-one error that changes the duplicated value."
+  },
+  "interviewcake_word-cloud": {
+    "code": "class WordCloudData {\n    constructor(input) {\n        this.WordsToCounts = Object.create(null);\n        const words = input.match(/[A-Za-z]+(?:['-][A-Za-z]+)*/g) || [];\n        for (const raw of words) {\n            const word = raw.toLowerCase();\n            this.WordsToCounts[word] = (this.WordsToCounts[word] || 0) + 1;\n        }\n    }\n}\n",
+    "incorrectCode": "class WordCloudData {\n    constructor(input) {\n        this.WordsToCounts = Object.create(null);\n        const words = input.match(/[A-Za-z]+/g) || [];\n        for (const raw of words) {\n            const word = raw.toLowerCase();\n            this.WordsToCounts[word] = (this.WordsToCounts[word] || 0) + 1;\n        }\n    }\n}\n",
+    "incorrectReason": "Drops internal apostrophes and hyphens, splitting valid bank words such as contractions and hyphenated compounds.",
+    "notes": {
+      "explanation": "Match maximal tokens of ASCII letters joined by internal apostrophes or hyphens followed by more letters. Lowercase each matched token and increment a null-prototype dictionary, so ordinary words such as constructor cannot collide with inherited properties.",
+      "correctness": "The expression starts each token with at least one letter and extends it only through another letter block joined by one allowed connector. Each maximal token under the disclosed grammar is therefore matched once; separators are excluded. Lowercasing sends all permitted case variants to the same key, and one increment per match records exactly their occurrence count.",
+      "spaceComplexity": "O(n) result storage and O(n) auxiliary matched-token storage for n input characters; the regular-expression match call materializes the token array."
+    }
+  }
+}

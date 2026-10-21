@@ -35,6 +35,8 @@ public sealed class SubmissionRunner(string repositoryRoot) : ISubmissionRunner
         {
             if (Blind75Catalog.Find(problem.Id) is { } blind)
                 return await Blind75SubmissionRunner.RunAsync(repositoryRoot, directory, id, problem, blind, code, examplesOnly, language, cancellation);
+            if (InterviewCakeCatalog.Find(problem.Id) is { } cake)
+                return await InterviewCakeSubmissionRunner.RunAsync(repositoryRoot, directory, id, problem, cake, code, examplesOnly, language, cancellation);
             if (language is "cpp" or "java")
                 return await NativeSubmissionRunner.RunAsync(repositoryRoot, directory, id, problem, code, examplesOnly, language, cancellation);
             if (language is not ("csharp" or "javascript" or "js" or "python" or "py"))
@@ -62,7 +64,7 @@ public sealed class SubmissionRunner(string repositoryRoot) : ISubmissionRunner
                 await File.WriteAllTextAsync(Path.Combine(directory, "solution.py"), code, cancellation);
                 await File.WriteAllTextAsync(Path.Combine(directory, "harness.py"), CreatePyHarness(problem, repositoryRoot, examplesOnly), cancellation);
                 var py = PythonLocator.FindPython();
-                execution = await ProcessHost.RunAsync(py, ["harness.py"], directory, null, TimeSpan.FromSeconds(30), cancellation);
+                execution = await ProcessHost.RunAsync(py, ["harness.py"], directory, null, PythonExecutionBudget(problem.Id), cancellation);
             }
             else
             {
@@ -210,382 +212,24 @@ public sealed class SubmissionRunner(string repositoryRoot) : ISubmissionRunner
         }
         """.Replace("INVOKE_SOLUTION", problem.Invocation);
 
-    private static readonly HashSet<string> CustomJsProblems =
-    [
-        "absent_value_array", "alternating_array", "even_odd_array", "dutch_national_flag",
-        "gray_code", "run_length_compression", "string_integer_interconversion", "reverse_list",
-        "pivot_list", "is_list_cyclic", "circular_queue", "stack_with_max", "queue_from_stacks",
-        "queue_with_max", "lru_cache", "adding_credits"
-    ];
-
     private static string CreateJsHarness(Problem problem)
     {
-        var isCustom = CustomJsProblems.Contains(problem.Id);
-        var targetName = problem.JsInvocation ?? "solution";
-
-        var argConversions = new System.Text.StringBuilder();
-        if (problem.ArgumentTypes is { Length: > 0 } argTypes)
-        {
-            for (var i = 0; i < argTypes.Length; i++)
-            {
-                var type = argTypes[i];
-                if (type.StartsWith("linked_list"))
-                    argConversions.AppendLine($"if (Array.isArray(convertedArgs[{i}])) convertedArgs[{i}] = arrayToListNode(convertedArgs[{i}]);");
-                else if (type.StartsWith("binary_tree"))
-                    argConversions.AppendLine($"if (Array.isArray(convertedArgs[{i}])) convertedArgs[{i}] = arrayToBinaryTree(convertedArgs[{i}]);");
-                else if (type.StartsWith("set"))
-                    argConversions.AppendLine($"if (Array.isArray(convertedArgs[{i}])) convertedArgs[{i}] = new Set(convertedArgs[{i}]);");
-            }
-        }
-
-        var template = """
-            const fs = require('fs');
-            const { performance } = require('perf_hooks');
-
-            class JudgeValidationException extends Error {
-                constructor(message) {
-                    super(message);
-                    this.name = 'JudgeValidationException';
-                }
-            }
-
-            function check(condition, message = 'The result violates the problem contract.') {
-                if (!condition) throw new JudgeValidationException(message);
-            }
-
-            class ListNode {
-                constructor(data = 0, next = null) {
-                    this.data = data;
-                    this.next = next;
-                }
-            }
-
-            class BinaryTreeNode {
-                constructor(data = 0, left = null, right = null, parent = null) {
-                    this.data = data;
-                    this.left = left;
-                    this.right = right;
-                    this.parent = parent;
-                }
-            }
-
-            class PostingListNode {
-                constructor(order = 0, next = null, jump = null) {
-                    this.order = order;
-                    this.next = next;
-                    this.jump = jump;
-                }
-            }
-
-            class GraphVertex {
-                constructor(label = 0) {
-                    this.label = label;
-                    this.edges = [];
-                }
-            }
-
-            function arrayToListNode(arr) {
-                if (!arr || !arr.length) return null;
-                const head = new ListNode(arr[0]);
-                let curr = head;
-                for (let i = 1; i < arr.length; i++) {
-                    curr.next = new ListNode(arr[i]);
-                    curr = curr.next;
-                }
-                return head;
-            }
-
-            function listNodeToArray(head) {
-                const res = [];
-                const seen = new Set();
-                while (head && !seen.has(head)) {
-                    seen.add(head);
-                    res.push(head.data);
-                    head = head.next;
-                }
-                return res;
-            }
-
-            function listNodes(head) {
-                const nodes = [];
-                const seen = new Set();
-                while (head && !seen.has(head)) {
-                    seen.add(head);
-                    nodes.push(head);
-                    head = head.next;
-                }
-                return nodes;
-            }
-
-            function arrayToBinaryTree(arr) {
-                if (!arr || !arr.length || arr[0] === null) return null;
-                const root = new BinaryTreeNode(arr[0]);
-                const queue = [root];
-                let i = 1;
-                while (queue.length > 0 && i < arr.length) {
-                    const curr = queue.shift();
-                    if (i < arr.length && arr[i] !== null) {
-                        curr.left = new BinaryTreeNode(arr[i], null, null, curr);
-                        queue.push(curr.left);
-                    }
-                    i++;
-                    if (i < arr.length && arr[i] !== null) {
-                        curr.right = new BinaryTreeNode(arr[i], null, null, curr);
-                        queue.push(curr.right);
-                    }
-                    i++;
-                }
-                return root;
-            }
-
-            function binaryTreeToLevelOrder(root) {
-                if (!root) return [];
-                const result = [];
-                const queue = [root];
-                while (queue.length > 0) {
-                    const curr = queue.shift();
-                    if (curr) {
-                        result.push(curr.data);
-                        queue.push(curr.left);
-                        queue.push(curr.right);
-                    } else {
-                        result.push(null);
-                    }
-                }
-                while (result.length > 0 && result[result.length - 1] === null) {
-                    result.pop();
-                }
-                return result;
-            }
-
-            global.ListNode = ListNode;
-            global.BinaryTreeNode = BinaryTreeNode;
-            global.PostingListNode = PostingListNode;
-            global.GraphVertex = GraphVertex;
-
-            const mod = require('./solution.js');
-
-            function resolveTarget(name) {
-                if (name && typeof mod[name] === 'function') return mod[name];
-                if (typeof mod === 'function') return mod;
-                if (mod && typeof mod === 'object') {
-                    if (typeof mod.Solution === 'function') return mod.Solution;
-                    for (const k of Object.keys(mod)) {
-                        if (typeof mod[k] === 'function') return mod[k];
-                    }
-                }
-                if (name && typeof global[name] === 'function') return global[name];
-                throw new Error('Could not find function or class ' + name);
-            }
-
-            function invokeCustom(id, args, mod) {
-                switch (id) {
-                    case 'absent_value_array': {
-                        const fn = resolveTarget('findMissingElement');
-                        const missing = fn(args[0]);
-                        check(missing >= 0 && !args[0].includes(missing));
-                        return true;
-                    }
-                    case 'alternating_array': {
-                        const values = [...args[0]];
-                        const fn = resolveTarget('rearrange');
-                        fn(values);
-                        for (let i = 1; i < values.length; i++) {
-                            check(i % 2 === 1 ? values[i-1] <= values[i] : values[i-1] >= values[i]);
-                        }
-                        return true;
-                    }
-                    case 'even_odd_array': {
-                        const values = [...args[0]];
-                        const fn = resolveTarget('evenOdd');
-                        fn(values);
-                        let seenOdd = false;
-                        for (const v of values) {
-                            if ((v & 1) !== 0) seenOdd = true;
-                            else check(!seenOdd, 'Even values must precede odd values.');
-                        }
-                        return true;
-                    }
-                    case 'dutch_national_flag': {
-                        const values = [...args[0]];
-                        const pivot = values[args[1]];
-                        const fn = resolveTarget('dutchFlagPartition');
-                        fn(args[1], values);
-                        let state = 0;
-                        for (const v of values) {
-                            const group = v < pivot ? 0 : v === pivot ? 1 : 2;
-                            check(group >= state, 'Partition order violated.');
-                            state = group;
-                        }
-                        return true;
-                    }
-                    case 'gray_code': {
-                        const fn = resolveTarget('grayCode');
-                        const res = fn(args[0]);
-                        check(res.length === (1 << args[0]));
-                        check(new Set(res).size === res.length);
-                        return true;
-                    }
-                    case 'run_length_compression': {
-                        const enc = resolveTarget('encoding')(args[1]);
-                        const dec = resolveTarget('decoding')(args[0]);
-                        check(enc === args[0] && dec === args[1]);
-                        return true;
-                    }
-                    case 'string_integer_interconversion': {
-                        const s = resolveTarget('intToString')(args[0]);
-                        const n = resolveTarget('stringToInt')(args[1]);
-                        check(String(s) === String(args[0]) && Number(n) === Number(args[0]));
-                        return true;
-                    }
-                    case 'reverse_list': {
-                        const head = arrayToListNode(args[0]);
-                        const fn = resolveTarget('reverseList');
-                        return listNodeToArray(fn(head));
-                    }
-                    case 'pivot_list': {
-                        const head = arrayToListNode(args[0]);
-                        const fn = resolveTarget('listPivoting');
-                        const res = fn(head, args[1]);
-                        return listNodeToArray(res);
-                    }
-                    case 'is_list_cyclic': {
-                        const head = arrayToListNode(args[0]);
-                        const nodes = listNodes(head);
-                        const cycleVal = args[1];
-                        let start = null;
-                        if (cycleVal !== -1) {
-                            start = nodes.find(n => n.data === cycleVal);
-                            if (start && nodes.length > 0) nodes[nodes.length - 1].next = start;
-                        }
-                        const fn = resolveTarget('hasCycle');
-                        const res = fn(head);
-                        check(res === start, 'Return node at beginning of cycle or null.');
-                        return true;
-                    }
-                    case 'circular_queue': {
-                        const Cls = resolveTarget('CircularQueue');
-                        let q = null;
-                        for (const [op, val] of args[0]) {
-                            if (op === 'Queue') q = new Cls(val);
-                            else if (op === 'enqueue') q.enqueue(val);
-                            else if (op === 'dequeue') check(q.dequeue() === val);
-                            else if (op === 'size') check(q.size() === val);
-                        }
-                        return true;
-                    }
-                    case 'stack_with_max': {
-                        const Cls = resolveTarget('StackWithMax');
-                        const s = new Cls();
-                        for (const [op, val] of args[0]) {
-                            if (op === 'Stack') {}
-                            else if (op === 'push') s.push(val);
-                            else if (op === 'pop') check(s.pop() === val);
-                            else if (op === 'max') check(s.max() === val);
-                            else if (op === 'empty') check(Boolean(s.empty()) === (val === 1));
-                        }
-                        return true;
-                    }
-                    case 'queue_from_stacks': {
-                        const Cls = resolveTarget('QueueFromStacks');
-                        const q = new Cls();
-                        for (const [op, val] of args[0]) {
-                            if (op === 'Queue') {}
-                            else if (op === 'enqueue') q.enqueue(val);
-                            else if (op === 'dequeue') check(q.dequeue() === val);
-                        }
-                        return true;
-                    }
-                    case 'queue_with_max': {
-                        const Cls = resolveTarget('QueueWithMax');
-                        const q = new Cls();
-                        for (const [op, val] of args[0]) {
-                            if (op === 'QueueWithMax') {}
-                            else if (op === 'enqueue') q.enqueue(val);
-                            else if (op === 'dequeue') check(q.dequeue() === val);
-                            else if (op === 'max') check(q.max() === val);
-                        }
-                        return true;
-                    }
-                    case 'lru_cache': {
-                        const Cls = resolveTarget('LruCache');
-                        let c = null;
-                        for (const [op, k, v] of args[0]) {
-                            if (op === 'LruCache') c = new Cls(k);
-                            else if (op === 'lookup') check(c.lookup(k) === v);
-                            else if (op === 'insert') c.insert(k, v);
-                            else if (op === 'erase') check(Boolean(c.erase(k)) === (v === 1));
-                        }
-                        return true;
-                    }
-                    case 'adding_credits': {
-                        const Cls = resolveTarget('AddingCredits');
-                        const db = new Cls();
-                        for (const [op, text, val] of args[0]) {
-                            if (op === 'ClientsCreditsInfo') {}
-                            else if (op === 'insert') db.insert(text, val);
-                            else if (op === 'remove') check(Boolean(db.remove(text)) === (val === 1));
-                            else if (op === 'lookup') check(db.lookup(text) === val);
-                            else if (op === 'add_all') db.addAll(val);
-                            else if (op === 'max') check(db.max() === text);
-                        }
-                        return true;
-                    }
-                    default:
-                        throw new Error('Unknown custom problem: ' + id);
-                }
-            }
-
-            function runAllTests() {
-                const input = fs.readFileSync(0, 'utf-8');
-                const tests = JSON.parse(input);
-                const results = [];
-                const isCustom = IS_CUSTOM_BOOL;
-                const targetName = "TARGET_NAME_STR";
-
-                for (const test of tests) {
-                    const start = performance.now();
-                    let actual = null;
-                    let error = null;
-                    let validationFailed = false;
-                    let validationMessage = null;
-
-                    try {
-                        if (isCustom) {
-                            actual = invokeCustom("PROBLEM_ID_STR", test, mod);
-                        } else {
-                            const fn = resolveTarget(targetName);
-                            const convertedArgs = test.slice();
-                            ARG_CONVERSIONS
-                            let res = fn(...convertedArgs);
-                            if (res instanceof ListNode) res = listNodeToArray(res);
-                            else if (res instanceof BinaryTreeNode) res = binaryTreeToLevelOrder(res);
-                            actual = res;
-                        }
-                    } catch (err) {
-                        if (err instanceof JudgeValidationException) {
-                            validationFailed = true;
-                            validationMessage = (err.message || '').slice(0, 2000);
-                        } else {
-                            error = (err.name || 'Error') + ': ' + (err.message || String(err));
-                            if (error.length > 2000) error = error.slice(0, 2000);
-                        }
-                    }
-                    const elapsedMs = performance.now() - start;
-                    results.push({ actual, error, validationFailed, validationMessage, elapsedMs });
-                }
-                process.stdout.write(JSON.stringify(results));
-            }
-
-            runAllTests();
-            """;
-
-        return template
-            .Replace("IS_CUSTOM_BOOL", isCustom ? "true" : "false")
-            .Replace("TARGET_NAME_STR", targetName)
-            .Replace("PROBLEM_ID_STR", problem.Id)
-            .Replace("ARG_CONVERSIONS", argConversions.ToString());
+        using var stream=typeof(SubmissionRunner).Assembly.GetManifestResourceStream("EpiJudge.Runner.EpiJavascriptHarness.js")
+            ?? throw new InvalidOperationException("The JavaScript protocol harness is missing.");
+        using var reader=new StreamReader(stream);
+        return reader.ReadToEnd()
+            .Replace("__TARGET_NAME__",JsonSerializer.Serialize(problem.JsInvocation ?? "solution"))
+            .Replace("__PROBLEM_ID__",JsonSerializer.Serialize(problem.Id))
+            .Replace("__ARGUMENT_TYPES_JSON__",JsonSerializer.Serialize(problem.ArgumentTypes ?? []))
+            .Replace("__RESULT_TYPE__",JsonSerializer.Serialize(problem.ResultType));
     }
+
+    // These original EPI wrappers deliberately perform 100,000 to 1,000,000
+    // statistical trials per case, including validation outside the timed algorithm.
+    // Retain their full sample sizes while keeping ordinary Python submissions bounded.
+    internal static TimeSpan PythonExecutionBudget(string problemId) => TimeSpan.FromSeconds(problemId is
+        "random_permutation" or "random_subset" or "online_sampling" or "offline_sampling" or
+        "nonuniform_random_number" or "uniform_random_number" ? 180 : 30);
 
     private static string CreatePyHarness(Problem problem, string repositoryRoot, bool examplesOnly)
     {
@@ -609,6 +253,19 @@ public sealed class SubmissionRunner(string repositoryRoot) : ISubmissionRunner
             spec = importlib.util.spec_from_file_location("ref_problem_mod", ref_path)
             ref_mod = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(ref_mod)
+
+            # Preserve the original task comparator before user symbols are overlaid.
+            comparator = None
+            for call in ast.walk(ast.parse(ref_path.read_text(encoding="utf-8"))):
+                if not isinstance(call, ast.Call):
+                    continue
+                called = call.func.attr if isinstance(call.func, ast.Attribute) else call.func.id if isinstance(call.func, ast.Name) else ""
+                if called != "generic_test_main":
+                    continue
+                expression = call.args[3] if len(call.args) > 3 else next((item.value for item in call.keywords if item.arg == "comparator"), None)
+                if expression is not None:
+                    comparator = eval(compile(ast.Expression(expression), str(ref_path), "eval"), ref_mod.__dict__)
+                break
 
             # Execute user's solution
             sol_path = Path("solution.py")
@@ -649,7 +306,7 @@ public sealed class SubmissionRunner(string repositoryRoot) : ISubmissionRunner
 
             tsv_path = Path("{{repoRootEscaped}}/test_data/{{problem.Id}}.tsv")
             test_data = split_tsv_file(str(tsv_path))
-            handler = GenericTestHandler(target_fn, None)
+            handler = GenericTestHandler(target_fn, comparator)
             handler.parse_signature(test_data[0])
 
             def serialize_val(v):
@@ -681,6 +338,12 @@ public sealed class SubmissionRunner(string repositoryRoot) : ISubmissionRunner
                         actual = json.loads(expected_raw)
                     except Exception:
                         actual = True
+                    # EPI allows trailing nulls in level-order tree fixtures. Match
+                    # the outer judge's canonical representation after the original
+                    # framework has checked the actual returned tree structurally.
+                    if {{(problem.ResultType.StartsWith("binary_tree(", StringComparison.Ordinal) ? "True" : "False")}} and isinstance(actual, list):
+                        while actual and actual[-1] is None:
+                            actual.pop()
                 except TestFailure as tf:
                     validation_failed = True
                     validation_message = str(tf)[:2000]

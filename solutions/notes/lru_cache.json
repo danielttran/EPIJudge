@@ -1,0 +1,60 @@
+{
+  "explanation": "A dictionary locates each cache node, and a linked list tracks recency. Lookup and reinsertion move a node to the front; reinsertion deliberately preserves its old price. New entries evict the back node when capacity is reached.",
+  "timeComplexity": "O(1) expected per Lookup, Insert and Erase; O(c) to Initialize an existing cache",
+  "spaceComplexity": "O(c), where c is capacity",
+  "attribution": "Original C# implementation written for EPI Practice from the displayed contract; no upstream reference code copied.",
+  "correctness": "The dictionary and linked list contain exactly the same keys, and list order is most-recent to least-recent. Lookup and reinsertion move the located node to the front without changing its stored price. Removing the back node before a new insertion therefore evicts exactly the least-recent key; erasure removes both representations together.",
+  "walkthrough": "With capacity 2, insert (1,10), insert (2,20), reinsert (1,99), then insert (3,30). Key 1 still costs 10 and is recent, so key 2 is evicted. Lookups return 10, \u22121 and 30 for keys 1, 2 and 3.",
+  "edgeCases": [
+    "Reinserting a key preserves its old price.",
+    "A missing lookup returns \u22121 and does not add a key.",
+    "Initialize resets all stored entries and recency."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          "LruCache",
+          2,
+          0
+        ],
+        [
+          "insert",
+          1,
+          10
+        ],
+        [
+          "insert",
+          2,
+          20
+        ],
+        [
+          "insert",
+          1,
+          99
+        ],
+        [
+          "insert",
+          3,
+          30
+        ],
+        [
+          "lookup",
+          1,
+          10
+        ],
+        [
+          "lookup",
+          2,
+          -1
+        ],
+        [
+          "lookup",
+          3,
+          30
+        ]
+      ]
+    ],
+    "expected": true
+  }
+}

@@ -7,6 +7,11 @@ import type { Problem, Result } from './workspaceModels';
 // Exercise the real App, hooks, and persistence client together. Monaco is an
 // external editor surface; its props are represented by an ordinary textarea.
 vi.mock('./Editor', () => ({
+  ReadOnlyCode: ({ code, label }: { code: string; label: string }) => (
+    <pre aria-label={label}>
+      <code>{code}</code>
+    </pre>
+  ),
   default: ({
     code,
     onChange,
@@ -80,6 +85,16 @@ beforeEach(() => {
   fetchMock = vi.fn(async (url: string, options?: RequestInit) => {
     if (url === '/api/problems')
       return json([problem('count_bits', 'Count Bits'), problem('parity', 'Parity')]);
+    if (url.startsWith('/api/problems/') && url.includes('/solution?language='))
+      return json({
+        problemId: url.split('/')[3],
+        language: new URL(url, 'http://local').searchParams.get('language'),
+        code: `// Reference for ${url.split('/')[3]}`,
+        explanation: 'Use the algorithm required by this question contract.',
+        timeComplexity: 'O(n).',
+        spaceComplexity: 'O(1).',
+        attribution: 'Original test reference.',
+      });
     if (url === '/api/practice') return json({ drafts: [], progress });
     if (url.startsWith('/api/practice/history')) return json([]);
     if (options?.method === 'PUT') {
@@ -285,4 +300,107 @@ it('discards the retired tab preference and keeps navigation in the single plan 
   expect((screen.getByRole('button', { name: 'Next problem' }) as HTMLButtonElement).disabled).toBe(
     true,
   );
+});
+
+it('opens language-specific read-only solutions without overwriting saved drafts or changing the editor language', async () => {
+  const editor = (await loaded()) as HTMLTextAreaElement;
+  expect(fetchMock.mock.calls.some(([url]) => url.includes('/solution?language='))).toBe(false);
+  fireEvent.change(editor, { target: { value: 'my independent C# draft' } });
+  await waitFor(() =>
+    expect(
+      fetchMock.mock.calls.some(
+        ([url, options]) => url.endsWith('/count_bits/csharp') && options?.method === 'PUT',
+      ),
+    ).toBe(true),
+  );
+  const writes = fetchMock.mock.calls.filter(([, options]) => options?.method === 'PUT').length;
+  fireEvent.click(screen.getByRole('tab', { name: 'Solution' }));
+  expect(await screen.findByLabelText('C# reference solution code')).toBeTruthy();
+  expect(editor.value).toBe('my independent C# draft');
+  expect(screen.queryByRole('button', { name: /copy.*editor|replace.*editor/i })).toBeNull();
+  fireEvent.change(screen.getByRole('combobox', { name: 'Select programming language' }), {
+    target: { value: 'python' },
+  });
+  expect(editor.value).toBe('python starter');
+  expect(await screen.findByText('Python reference solution')).toBeTruthy();
+  fireEvent.change(screen.getByRole('combobox', { name: 'Select programming language' }), {
+    target: { value: 'csharp' },
+  });
+  expect(editor.value).toBe('my independent C# draft');
+  fireEvent.click(screen.getByRole('tab', { name: 'Problem' }));
+  expect(screen.getByRole('heading', { name: '1. Count Bits' })).toBeTruthy();
+  expect(fetchMock.mock.calls.filter(([, options]) => options?.method === 'PUT')).toHaveLength(
+    writes,
+  );
+  expect(fetchMock.mock.calls.some(([url]) => url === '/api/submissions')).toBe(false);
+});
+
+it('keeps the Solution view on selection changes and loads only the new question answer', async () => {
+  const editor = (await loaded()) as HTMLTextAreaElement;
+  fireEvent.click(screen.getByRole('tab', { name: 'Solution' }));
+  expect(await screen.findByText('// Reference for count_bits')).toBeTruthy();
+  fireEvent.click(screen.getByRole('button', { name: 'Next problem' }));
+  expect(await screen.findByText('// Reference for parity')).toBeTruthy();
+  expect(screen.queryByText('// Reference for count_bits')).toBeNull();
+  expect(screen.getByRole('heading', { name: 'Parity — Solution' })).toBeTruthy();
+  expect(editor.value).toBe('csharp starter');
+  fireEvent.click(screen.getByRole('button', { name: 'Previous problem' }));
+  expect(await screen.findByText('// Reference for count_bits')).toBeTruthy();
+  expect(screen.getByRole('tab', { name: 'Solution' }).getAttribute('aria-selected')).toBe('true');
+  expect(fetchMock.mock.calls.some(([, options]) => options?.method === 'PUT')).toBe(false);
+});
+
+it('supports keyboard tab navigation with associated panels and keeps editor focus separate', async () => {
+  const editor = await loaded();
+  const description = screen.getByRole('tab', { name: 'Problem' });
+  const solution = screen.getByRole('tab', { name: 'Solution' });
+  description.focus();
+  fireEvent.keyDown(description, { key: 'ArrowRight' });
+  expect(document.activeElement).toBe(solution);
+  expect(solution.tabIndex).toBe(0);
+  expect(description.tabIndex).toBe(-1);
+  expect(await screen.findByRole('tabpanel', { name: 'Solution' })).toBeTruthy();
+  expect(screen.queryByRole('tabpanel', { name: 'Problem' })).toBeNull();
+  fireEvent.keyDown(solution, { key: 'ArrowLeft' });
+  expect(document.activeElement).toBe(description);
+  expect(screen.getByRole('tabpanel', { name: 'Problem' })).toBeTruthy();
+  fireEvent.keyDown(description, { key: 'End' });
+  expect(document.activeElement).toBe(solution);
+  fireEvent.keyDown(solution, { key: 'Home' });
+  expect(document.activeElement).toBe(description);
+  fireEvent.keyDown(description, { key: 'x' });
+  expect(document.activeElement).toBe(description);
+  expect((editor as HTMLTextAreaElement).value).toBe('csharp starter');
+});
+
+it('renders independent Interview Cake attribution and a safe explicit source reference', async () => {
+  const original = fetchMock.getMockImplementation()! as (
+    url: string,
+    options?: RequestInit,
+  ) => Promise<Response>;
+  fetchMock.mockImplementation((url: string, options?: RequestInit) =>
+    url === '/api/problems'
+      ? Promise.resolve(
+          json([
+            {
+              ...problem('interviewcake_stock-price', 'Apple Stocks'),
+              collection: 'interviewcake',
+              position: 2,
+              sourceAttribution:
+                'Independently authored exercise based on the Interview Cake algorithm task. No affiliation.',
+              sourceUrl: 'https://www.interviewcake.com/question/csharp/stock-price',
+            },
+          ]),
+        )
+      : original(url, options),
+  );
+  render(<App />);
+  const source = await screen.findByRole('link', { name: 'Original task reference' });
+  expect(source.getAttribute('href')).toBe(
+    'https://www.interviewcake.com/question/csharp/stock-price',
+  );
+  expect(source.getAttribute('target')).toBe('_blank');
+  expect(source.getAttribute('rel')).toBe('noopener noreferrer');
+  expect(screen.getByText(/Independently authored exercise/)).toBeTruthy();
+  expect(screen.getByRole('heading', { name: 'IC02. Apple Stocks' })).toBeTruthy();
 });

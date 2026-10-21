@@ -107,13 +107,16 @@ try {
     Write-Output 'Cross-origin form protection: 403'
 }
 $catalog = Invoke-RestMethod "$BaseUrl/api/problems" -NoProxy
-if ($catalog.Count -ne 293 -or @($catalog.id | Sort-Object -Unique).Count -ne 293) { throw 'Expected 293 unique web problems.' }
+if ($catalog.Count -ne 334 -or @($catalog.id | Sort-Object -Unique).Count -ne 334) { throw 'Expected 334 unique web problems.' }
 foreach ($problem in $catalog) {
     if ($problem.testCount -le 0 -or -not $problem.starterCode -or -not $problem.description -or $problem.invocation) {
         throw "Incomplete or internal metadata for $($problem.id)."
     }
 }
-Write-Output 'Catalog API: 293 unique exercises with test counts; internal invocations excluded'
+foreach ($collection in @(@('epi',218), @('blind75',75), @('interviewcake',41))) {
+    if (@($catalog | Where-Object collection -eq $collection[0]).Count -ne $collection[1]) { throw "Incorrect collection count for $($collection[0])." }
+}
+Write-Output 'Catalog API: 334 unique exercises with test counts; internal invocations excluded'
 
 $fixtureCode = Get-Content (Join-Path $PSScriptRoot 'WebAudit/Fixtures.cs') -Raw
 $fixtureTypes = [ordered]@{

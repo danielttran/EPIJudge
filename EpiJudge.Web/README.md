@@ -52,6 +52,13 @@ The description and editor share the main workspace. Choose a language above
 the editor, and use **Run** or **Submit** in the top toolbar. Test results start
 collapsed, open when code runs, and can be expanded or collapsed from their header.
 
+Use the **Problem** and **Solution** tabs above the question pane to switch
+between the task and the reference answer for the selected language. The solution includes its approach,
+time and space complexity, complete submission code and attribution. Viewing it
+does not replace editor text, submit an answer or mark the question solved. Your
+editor can remain in any of the five supported languages. The tabs support
+Left/Right arrows, Home and End; failed solution loads offer a retry.
+
 For EPI exercises, choose a language in the editor. C++ and Java provide the original EPI source
 scaffold: implement its TODO methods while retaining the wrappers and main
 function (and Java's `package epi` and class name). Their native signatures can
@@ -147,7 +154,7 @@ examples show the actual C# return value or required mutation rather than the
 test wrapper's internal boolean, height, or interval length.
 
 All exercises are marked **Unrated** because the repository does not supply
-difficulty ratings. These are practice stubs for you to solve, not prefilled solutions.
+difficulty ratings. The editor starts with a practice stub; the separate Solution tab provides a tested reference implementation.
 The wording review and source references are recorded in
 `docs/problem-wording-review.md` and `docs/problem-wording-sources.json`.
 

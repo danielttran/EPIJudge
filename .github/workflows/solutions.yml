@@ -1,0 +1,129 @@
+name: Solutions and collections checks
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  displayed-algorithms:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [csharp, javascript, python, cpp, java]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+      - name: Verify explicit inventory and reproducible offline solutions
+        run: |
+          dotnet run --project scripts/SolutionsAudit -- inventory
+          python scripts/solutions/build_catalog.py
+          python scripts/interviewcake/validate.py
+          git diff --exit-code -- solutions/coverage.json solutions/catalog.json
+      - name: Check solution tooling syntax and undefined names
+        run: |
+          python -m pip install ruff==0.17.1
+          ruff check --select F,E9 scripts/solutions/*.py scripts/interviewcake/*.py scripts/verify_solutions_http.py scripts/verify_interviewcake_http.py
+      - name: Verify exact statistical-checker equivalence
+        if: matrix.language == 'python'
+        run: python -m unittest discover -s scripts/solutions -p test_random_checker.py -v
+      - name: Execute each displayed solution against its full corpus
+        run: dotnet run --project scripts/SolutionsAudit -- --language=${{ matrix.language }} --report=ci-${{ matrix.language }}
+      - name: Check additive boundary contracts without modifying original corpora
+        run: dotnet run --no-build --project scripts/SolutionsAudit -- boundaries --language=${{ matrix.language }}
+      - name: Execute every Interview Cake scaffold and positive/negative fixture
+        run: dotnet run --project scripts/interviewcake/Audit -- ${{ matrix.language }} all
+      - name: Validate every original detailed CSharp walkthrough
+        if: matrix.language == 'csharp'
+        run: dotnet run --no-build --project scripts/SolutionsAudit -- walkthroughs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: displayed-solutions-algorithms-${{ matrix.language }}
+          include-hidden-files: true
+          if-no-files-found: error
+          path: |
+            .epi-runs/solutions-audit-*.json
+            .epi-runs/solutions-boundaries-*.json
+            .epi-runs/solutions-walkthroughs.json
+            .epi-runs/interviewcake-audit-*.json
+            .epi-runs/interviewcake-executions/
+
+  complete-coverage:
+    needs: displayed-algorithms
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: displayed-solutions-algorithms-*
+          path: .epi-runs
+          merge-multiple: true
+      - run: dotnet run --project scripts/SolutionsAudit -- describe
+      - name: Require current acceptance evidence for every question and language
+        run: python scripts/solutions/evidence.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: displayed-solutions-complete-evidence
+          path: solutions/validation-results.json
+
+  browser-and-storage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: epijudge.client/package-lock.json
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+      - run: npm --prefix epijudge.client ci
+      - run: npm --prefix epijudge.client run build
+      - run: npm --prefix epijudge.client test
+      - run: dotnet test EpiJudge.Tests/EpiJudge.Tests.csproj -c Release -p:ShouldRunNpmInstall=false
+      - run: node epijudge.client/node_modules/playwright-core/cli.js install --with-deps chromium
+      - name: Verify all solution payloads, real tabs, offline assets and unchanged drafts
+        run: |
+          python scripts/verify_solutions_http.py --dll EpiJudge.Web/bin/Release/net10.0/EpiJudge.Web.dll --browser
+          python scripts/verify_interviewcake_http.py --dll EpiJudge.Web/bin/Release/net10.0/EpiJudge.Web.dll
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: displayed-solutions-browser
+          include-hidden-files: true
+          if-no-files-found: error
+          path: |
+            .epi-runs/solutions-http.json
+            .epi-runs/interviewcake-http.json
+            .epi-runs/solutions-browser*.json
+            .epi-runs/solutions-browser*.png

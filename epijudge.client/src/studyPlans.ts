@@ -1,4 +1,5 @@
 import guide from './studyGuide.json';
+import { problemNumber } from './collections';
 import type { Problem } from './workspaceModels';
 import { READING_LESSONS, type ReadingLesson } from './reading/readingLessons';
 
@@ -59,10 +60,7 @@ export function libraryEntries(problems: Problem[], filter: string, query = ''):
         ? [
             {
               problem,
-              number:
-                problem.collection === 'blind75'
-                  ? `B${String(problem.position).padStart(2, '0')}`
-                  : String(index + 1).padStart(2, '0'),
+              number: problemNumber(problem, index, true),
               title: problem.title,
               topic: problem.topic,
             },

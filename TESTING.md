@@ -4,6 +4,60 @@ Run `./scripts/Setup.ps1` on a new clone to check the prerequisites, restore
 packages, and build the solution. Unit tests need .NET 10 and Node.js 24;
 the HTTP grading suites also need the language toolchains listed in README.md.
 
+## Displayed solutions and the Interview Cake collection
+
+`solutions/coverage.json` enumerates all 334 runnable questions (218 EPI,
+75 Blind 75, 41 Interview Cake) in all five languages, for 1,670 displayed
+solutions. Rebuild the resource after source or explanation changes:
+
+```powershell
+dotnet run --project scripts/SolutionsAudit -- inventory
+python scripts/solutions/build_catalog.py
+python -m unittest discover -s scripts/solutions -p test_random_checker.py -v
+dotnet run --project scripts/SolutionsAudit -- --report=all
+dotnet run --no-build --project scripts/SolutionsAudit -- boundaries
+dotnet run --no-build --project scripts/SolutionsAudit -- walkthroughs
+dotnet run --project scripts/interviewcake/Audit -- csharp all
+# Repeat the preceding Interview Cake command for javascript, python, cpp and java.
+dotnet run --no-build --project scripts/SolutionsAudit -- describe
+python scripts/solutions/evidence.py
+dotnet build EPIJudge.Web.slnx -c Release --disable-build-servers --maxcpucount:1
+python scripts/verify_solutions_http.py --dll EpiJudge.Web/bin/Release/net10.0/EpiJudge.Web.dll --browser
+python scripts/verify_interviewcake_http.py --dll EpiJudge.Web/bin/Release/net10.0/EpiJudge.Web.dll
+```
+
+`SolutionsAudit` runs the exact embedded source through the editor's submission
+contract, with every available corpus row. `--language=python` (or another
+supported language) partitions the matrix. `--ids=a,b` selects targeted reruns;
+`--batch=1` through `--batch=5` select the original disjoint EPI authoring groups.
+`--files` is an author diagnostic and cannot satisfy final displayed-code
+acceptance. The evidence tool checks every explicit pair against current source,
+metadata, corpus and compiled-harness fingerprints. Boundary audits exercise all
+five languages; walkthrough audits execute the detailed original C# examples.
+Both use isolated temporary corpora, leaving original test data unchanged.
+
+The Interview Cake audit separately executes each of its 41 starters, actual
+correct algorithms and deliberately flawed algorithms in every language. Its
+property checks cover valid alternative duplicates, paths, modes and colorings;
+mutable node identity and preserved inputs; stateful sequences; real controlled
+filesystem fixtures; injected random choices, exact small permutation
+probabilities and deterministic distribution checks. Finite tests do not prove
+asymptotic bounds or universal random independence. Disclosed bounded domains and
+adapter choices are recorded in `interviewcake/provenance/contracts.json`.
+
+The HTTP suite compares all 1,670 payloads with the generated resource and checks
+that reads change no practice storage. Chromium covers all three collections,
+selected-language solution switching, independent editor drafts, keyboard tabs,
+loading/error/retry/unavailable states, copy failures, narrow layouts, local
+artwork and backup preservation. It uses Playwright's installed Chromium or
+`CHROMIUM_PATH`. The UI has no action that replaces the editor with a solution.
+
+The cloud verification ran the current Python solutions on both Python 3.12.14
+and an isolated Python 3.14.8 installation; CI explicitly uses Python 3.14.
+The complete algorithm matrix runs on Linux. Windows build, native smoke and
+storage checks are covered by the existing Windows workflow. Run a fresh-checkout locked dependency install and
+build when changing generated content or build initialization.
+
 ## Fast regression checks
 
 ```powershell

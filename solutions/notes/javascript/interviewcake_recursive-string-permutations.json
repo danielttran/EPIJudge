@@ -1,0 +1,22 @@
+{
+  "explanation": "Count each distinct character, then build prefixes recursively. For every character with a positive remaining count, append it, recurse with that count reduced, and restore the count before exploring the next choice. Store complete strings in a set.",
+  "correctness": "At each recursion level, the remaining counts are exactly the unused occurrences of the original input. Every chosen character preserves that invariant, so a completed prefix is a valid permutation. Every valid permutation determines a sequence of available-character choices and is therefore generated. Choosing characters by value rather than occurrence gives one path for each distinct string, including the empty string at the initial base case.",
+  "walkthrough": "For ab, the initial counts are a:1 and b:1. Choosing a leaves only b, so the first branch emits ab. Restoring both counts lets the next branch choose b then a and emit ba. For an empty input, the initial empty prefix is already complete and the result contains the empty string.",
+  "edgeCases": [
+    "Empty string has one permutation",
+    "singleton",
+    "repeated characters under the bank extension."
+  ],
+  "timeComplexity": "O(n * n!) worst-case time for n distinct characters, including prefix and result-string construction; repeated characters reduce the number of distinct branches.",
+  "spaceComplexity": "O(n * n!) result storage in the worst case. The recursion has depth O(n), and simultaneously retained immutable prefix strings can occupy O(n²) additional characters.",
+  "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
+  "walkthroughCase": {
+    "arguments": [
+      "ab"
+    ],
+    "expected": [
+      "ab",
+      "ba"
+    ]
+  }
+}

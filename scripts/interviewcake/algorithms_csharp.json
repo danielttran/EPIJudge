@@ -1,0 +1,211 @@
+{
+  "interviewcake_second-largest-item-in-bst": {
+    "code": "public class Solution\n{\n    public int FindSecondLargest(BinaryTreeNode? root)\n    {\n        if (root is null || (root.Left is null && root.Right is null)) throw new ArgumentException();\n        BinaryTreeNode? parent = null;\n        var node = root;\n        while (node.Right is not null) { parent = node; node = node.Right; }\n        if (node.Left is null) return parent!.Value;\n        node = node.Left;\n        while (node.Right is not null) node = node.Right;\n        return node.Value;\n    }\n}\n",
+    "incorrectCode": "public class Solution\n{\n    public int FindSecondLargest(BinaryTreeNode? root)\n    {\n        if (root is null) throw new ArgumentException();\n        var node=root;\n        while(node.Right?.Right is not null) node=node.Right;\n        return node.Value;\n    }\n}\n",
+    "incorrectReason": "Assumes the predecessor is always the largest key's parent; misses a left subtree below the largest node."
+  },
+  "interviewcake_stock-price": {
+    "code": "public class Solution\n{\n    public int GetMaxProfit(int[] prices)\n    {\n        if (prices.Length < 2) throw new ArgumentException();\n        int minimum=prices[0], best=prices[1]-prices[0];\n        for(int i=1;i<prices.Length;i++)\n        {\n            best=Math.Max(best,prices[i]-minimum);\n            minimum=Math.Min(minimum,prices[i]);\n        }\n        return best;\n    }\n}\n",
+    "incorrectCode": "public class Solution\n{\n    public int GetMaxProfit(int[] prices)\n    {\n        int minimum=prices[0], best=0;\n        foreach(int price in prices) { best=Math.Max(best,price-minimum); minimum=Math.Min(minimum,price); }\n        return best;\n    }\n}\n",
+    "incorrectReason": "Allows no transaction and returns zero rather than the required negative profit for declining prices."
+  },
+  "interviewcake_balanced-binary-tree": {
+    "code": "public class Solution\n{\n    public bool IsBalanced(BinaryTreeNode? root)\n    {\n        if(root is null) return true;\n        var pending=new Stack<(BinaryTreeNode Node,int Depth)>();\n        pending.Push((root,0));\n        int minimum=int.MaxValue, maximum=0;\n        while(pending.Count>0)\n        {\n            var (node,depth)=pending.Pop();\n            if(node.Left is null && node.Right is null)\n            {\n                minimum=Math.Min(minimum,depth); maximum=Math.Max(maximum,depth);\n                if(maximum-minimum>1) return false;\n            }\n            if(node.Left is not null) pending.Push((node.Left,depth+1));\n            if(node.Right is not null) pending.Push((node.Right,depth+1));\n        }\n        return true;\n    }\n}\n",
+    "incorrectCode": "public class Solution\n{\n    private int Height(BinaryTreeNode? node)\n    {\n        if(node is null) return 0;\n        int left=Height(node.Left),right=Height(node.Right);\n        return left<0 || right<0 || Math.Abs(left-right)>1 ? -1 : Math.Max(left,right)+1;\n    }\n    public bool IsBalanced(BinaryTreeNode? root) => Height(root)>=0;\n}\n",
+    "incorrectReason": "Checks AVL height balance instead of the required global leaf-depth spread; rejects a one-leaf chain."
+  },
+  "interviewcake_bst-checker": {
+    "code": "public class Solution\n{\n    public bool IsBinarySearchTree(BinaryTreeNode? root)\n    {\n        var pending=new Stack<(BinaryTreeNode Node,long Lower,long Upper)>();\n        if(root is not null) pending.Push((root,long.MinValue,long.MaxValue));\n        while(pending.Count>0)\n        {\n            var (node,lower,upper)=pending.Pop();\n            if(node.Value<=lower || node.Value>=upper) return false;\n            if(node.Left is not null) pending.Push((node.Left,lower,node.Value));\n            if(node.Right is not null) pending.Push((node.Right,node.Value,upper));\n        }\n        return true;\n    }\n}\n",
+    "incorrectCode": "public class Solution\n{\n    public bool IsBinarySearchTree(BinaryTreeNode? root) => root is null ||\n        (root.Left is null || root.Left.Value<root.Value) &&\n        (root.Right is null || root.Right.Value>root.Value) &&\n        IsBinarySearchTree(root.Left) && IsBinarySearchTree(root.Right);\n}\n",
+    "incorrectReason": "Checks only immediate children and misses ordering restrictions inherited from more distant ancestors."
+  },
+  "interviewcake_bracket-validator": {
+    "code": "public class Solution\n{\n    public bool IsValid(string code)\n    {\n        var stack=new Stack<char>();\n        foreach(char c in code)\n        {\n            if(c is '(' or '[' or '{') stack.Push(c);\n            else if(c is ')' or ']' or '}')\n            {\n                char wanted=c==')'?'(':c==']'?'[':'{';\n                if(stack.Count==0 || stack.Pop()!=wanted) return false;\n            }\n        }\n        return stack.Count==0;\n    }\n}\n",
+    "incorrectCode": "public class Solution\n{\n    public bool IsValid(string code)\n    {\n        int depth=0;\n        foreach(char c in code)\n        {\n            if(c is '(' or '[' or '{') depth++;\n            else if(c is ')' or ']' or '}') { if(--depth<0) return false; }\n        }\n        return depth==0;\n    }\n}\n",
+    "incorrectReason": "Counts delimiters without tracking types, accepting mismatched or crossing pairs."
+  },
+  "interviewcake_cafe-order-checker": {
+    "code": "public class Solution\n{\n    public bool IsFirstComeFirstServed(int[] takeOut,int[] dineIn,int[] served)\n    {\n        int a=0,b=0;\n        foreach(int order in served)\n        {\n            if(a<takeOut.Length && takeOut[a]==order) a++;\n            else if(b<dineIn.Length && dineIn[b]==order) b++;\n            else return false;\n        }\n        return a==takeOut.Length && b==dineIn.Length;\n    }\n}\n",
+    "incorrectCode": "public class Solution\n{\n    public bool IsFirstComeFirstServed(int[] takeOut,int[] dineIn,int[] served)\n    {\n        var available=new HashSet<int>(takeOut.Concat(dineIn));\n        return served.Length==takeOut.Length+dineIn.Length && served.All(available.Remove);\n    }\n}\n",
+    "incorrectReason": "Checks membership and counts but ignores order within each source queue."
+  },
+  "interviewcake_nth-fibonacci": {
+    "code": "public class Solution\n{\n    public int Fib(int n)\n    {\n        if(n<0) throw new ArgumentException();\n        int previous=0,current=1;\n        for(int i=0;i<n;i++) (previous,current)=(current,previous+current);\n        return previous;\n    }\n}\n",
+    "incorrectCode": "public class Solution\n{\n    public int Fib(int n)\n    {\n        int previous=1,current=1;\n        for(int i=0;i<n;i++) (previous,current)=(current,previous+current);\n        return previous;\n    }\n}\n",
+    "incorrectReason": "Uses one-based seed values and computes F(n+1) instead of F(n)."
+  },
+  "interviewcake_delete-node": {
+    "code": "public class Solution\n{\n    public void DeleteNode(LinkedListNode? nodeToDelete)\n    {\n        if(nodeToDelete?.Next is null) throw new InvalidOperationException();\n        nodeToDelete.Value=nodeToDelete.Next.Value;\n        nodeToDelete.Next=nodeToDelete.Next.Next;\n    }\n}\n",
+    "incorrectCode": "public class Solution\n{\n    public void DeleteNode(LinkedListNode? nodeToDelete)\n    {\n        if(nodeToDelete?.Next is null) throw new InvalidOperationException();\n        nodeToDelete.Next=nodeToDelete.Next.Next;\n    }\n}\n",
+    "incorrectReason": "Bypasses the successor without copying its value, deleting the wrong logical position."
+  },
+  "interviewcake_linked-list-cycles": {
+    "code": "public class Solution\n{\n    public bool ContainsCycle(LinkedListNode? firstNode)\n    {\n        var slow=firstNode; var fast=firstNode;\n        while(fast?.Next is not null)\n        {\n            slow=slow!.Next; fast=fast.Next.Next;\n            if(ReferenceEquals(slow,fast)) return true;\n        }\n        return false;\n    }\n}\n",
+    "incorrectCode": "public class Solution\n{\n    public bool ContainsCycle(LinkedListNode? firstNode)\n    {\n        var values=new HashSet<int>();\n        while(firstNode is not null)\n        {\n            if(!values.Add(firstNode.Value)) return true;\n            firstNode=firstNode.Next;\n        }\n        return false;\n    }\n}\n",
+    "incorrectReason": "Uses payload equality instead of node identity, misclassifying repeated values in a finite list."
+  },
+  "interviewcake_find-duplicate-files": {
+    "code": "public class Solution\n{\n    public IList<FilePaths> FindDuplicateFiles(string startingDirectory)\n    {\n        var groups=new Dictionary<string,FileInfo>();\n        var result=new List<FilePaths>();\n        foreach(string path in Directory.EnumerateFiles(startingDirectory,\"*\",SearchOption.AllDirectories))\n        {\n            var file=new FileInfo(path);\n            using var stream=file.OpenRead();\n            long last=Math.Max(0,stream.Length-64);\n            var fingerprint=new StringBuilder().Append(stream.Length).Append(':');\n            foreach(long offset in new[]{0L,last/2,last})\n            {\n                stream.Position=offset;\n                var bytes=new byte[(int)Math.Min(64,stream.Length-offset)];\n                stream.ReadExactly(bytes);\n                fingerprint.Append(Convert.ToHexString(bytes)).Append(':');\n            }\n            string key=fingerprint.ToString();\n            if(groups.TryGetValue(key,out var first))\n            {\n                bool earlier=first.LastWriteTimeUtc<=file.LastWriteTimeUtc;\n                result.Add(earlier?new FilePaths(first.FullName,file.FullName):new FilePaths(file.FullName,first.FullName));\n            }\n            else groups[key]=file;\n        }\n        return result;\n    }\n}\n",
+    "incorrectCode": "public class Solution\n{\n    public IList<FilePaths> FindDuplicateFiles(string startingDirectory)\n    {\n        var seen=new Dictionary<string,string>(); var result=new List<FilePaths>();\n        foreach(string path in Directory.EnumerateFiles(startingDirectory))\n        {\n            string content=Convert.ToHexString(File.ReadAllBytes(path));\n            if(seen.TryGetValue(content,out var first)) result.Add(new FilePaths(first,path));\n            else seen[content]=path;\n        }\n        return result;\n    }\n}\n",
+    "incorrectReason": "Inspects only top-level files, missing duplicates in nested directories; also silently replaces approximate matching with exact bytes."
+  },
+  "interviewcake_find-duplicate-optimize-for-space": {
+    "code": "public class Solution\n{\n    public int FindRepeat(int[] numbers)\n    {\n        int lower=1,upper=numbers.Length-1;\n        while(lower<upper)\n        {\n            int middle=lower+(upper-lower)/2,count=0;\n            foreach(int value in numbers) if(value>=lower && value<=middle) count++;\n            if(count>middle-lower+1) upper=middle;\n            else lower=middle+1;\n        }\n        return lower;\n    }\n}\n",
+    "incorrectCode": "public class Solution\n{\n    public int FindRepeat(int[] numbers)\n    {\n        Array.Sort(numbers);\n        for(int i=1;i<numbers.Length;i++) if(numbers[i]==numbers[i-1]) return numbers[i];\n        throw new ArgumentException();\n    }\n}\n",
+    "incorrectReason": "Finds a duplicate by sorting in place, violating the explicit read-only input contract."
+  },
+  "interviewcake_find-duplicate-optimize-for-space-beast-mode": {
+    "code": "public class Solution\n{\n    public int FindDuplicate(int[] numbers)\n    {\n        int slow=numbers[0],fast=numbers[numbers[0]];\n        while(slow!=fast) { slow=numbers[slow]; fast=numbers[numbers[fast]]; }\n        int entry=0;\n        while(entry!=slow) { entry=numbers[entry]; slow=numbers[slow]; }\n        return entry;\n    }\n}\n",
+    "incorrectCode": "public class Solution\n{\n    public int FindDuplicate(int[] numbers)\n    {\n        Array.Sort(numbers);\n        for(int i=1;i<numbers.Length;i++) if(numbers[i]==numbers[i-1]) return numbers[i];\n        throw new ArgumentException();\n    }\n}\n",
+    "incorrectReason": "Sorts the caller array and uses O(n log n) time instead of the required non-destructive linear algorithm."
+  },
+  "interviewcake_find-rotation-point": {
+    "code": "public class Solution\n{\n    public int FindRotationPoint(string[]? words)\n    {\n        if(words is null || words.Length==0) throw new ArgumentException();\n        int lower=0,upper=words.Length-1;\n        while(lower<upper)\n        {\n            int middle=lower+(upper-lower)/2;\n            if(string.CompareOrdinal(words[middle],words[upper])>0) lower=middle+1;\n            else upper=middle;\n        }\n        return lower;\n    }\n}\n",
+    "incorrectCode": "public class Solution\n{\n    public int FindRotationPoint(string[]? words)\n    {\n        if(words is null || words.Length==0) throw new ArgumentException();\n        int lower=0,upper=words.Length-1;\n        while(lower<upper)\n        {\n            int middle=(lower+upper)/2;\n            if(string.CompareOrdinal(words[middle],words[0])<0) lower=middle+1;\n            else upper=middle;\n        }\n        return lower;\n    }\n}\n",
+    "incorrectReason": "Reverses the binary-search partition and searches toward the pre-wrap segment."
+  },
+  "interviewcake_graph-coloring": {
+    "code": "public class Solution\n{\n    public void ColorGraph(GraphNode[] graph,string[]? colors)\n    {\n        if(colors is null) throw new ArgumentException();\n        foreach(var node in graph)\n        {\n            if(node.Neighbors.Contains(node)) throw new ArgumentException();\n            var forbidden=new HashSet<string>();\n            foreach(var neighbor in node.Neighbors) if(neighbor.Color is not null) forbidden.Add(neighbor.Color);\n            foreach(string color in colors)\n                if(!forbidden.Contains(color)) { node.Color=color; break; }\n        }\n    }\n}\n",
+    "incorrectCode": "public class Solution\n{\n    public void ColorGraph(GraphNode[] graph,string[]? colors)\n    {\n        if(colors is null) throw new ArgumentException();\n        var seen=new HashSet<GraphNode>();\n        void Visit(GraphNode node)\n        {\n            if(!seen.Add(node)) return;\n            var forbidden=node.Neighbors.Where(n=>n.Color is not null).Select(n=>n.Color).ToHashSet();\n            node.Color=colors.First(c=>!forbidden.Contains(c));\n            foreach(var next in node.Neighbors) Visit(next);\n        }\n        if(graph.Length>0) Visit(graph[0]);\n    }\n}\n",
+    "incorrectReason": "Colors only the first connected component, leaving disconnected and isolated supplied vertices uncolored."
+  },
+  "interviewcake_highest-product-of-3": {
+    "code": "public class Solution\n{\n    public int HighestProductOf3(int[] values)\n    {\n        if(values.Length<3) throw new ArgumentException();\n        int high=Math.Max(values[0],values[1]),low=Math.Min(values[0],values[1]);\n        int highTwo=values[0]*values[1],lowTwo=highTwo,best=highTwo*values[2];\n        for(int i=2;i<values.Length;i++)\n        {\n            int x=values[i];\n            best=Math.Max(best,Math.Max(x*highTwo,x*lowTwo));\n            highTwo=Math.Max(highTwo,Math.Max(x*high,x*low));\n            lowTwo=Math.Min(lowTwo,Math.Min(x*high,x*low));\n            high=Math.Max(high,x); low=Math.Min(low,x);\n        }\n        return best;\n    }\n}\n",
+    "incorrectCode": "public class Solution\n{\n    public int HighestProductOf3(int[] values)\n    {\n        var sorted=values.OrderByDescending(x=>x).Take(3).ToArray();\n        return sorted[0]*sorted[1]*sorted[2];\n    }\n}\n",
+    "incorrectReason": "Selects the three greatest values and misses products formed by two large-magnitude negatives."
+  },
+  "interviewcake_queue-two-stacks": {
+    "code": "public class QueueTwoStacks\n{\n    private readonly Stack<int> incoming=new();\n    private readonly Stack<int> outgoing=new();\n    public void Enqueue(int item) => incoming.Push(item);\n    public int Dequeue()\n    {\n        if(outgoing.Count==0) while(incoming.Count>0) outgoing.Push(incoming.Pop());\n        if(outgoing.Count==0) throw new InvalidOperationException();\n        return outgoing.Pop();\n    }\n}\n",
+    "incorrectCode": "public class QueueTwoStacks\n{\n    private readonly Stack<int> incoming=new();\n    private readonly Stack<int> outgoing=new();\n    public void Enqueue(int item) => incoming.Push(item);\n    public int Dequeue()\n    {\n        if(incoming.Count>0) return incoming.Pop();\n        return outgoing.Pop();\n    }\n}\n",
+    "incorrectReason": "Pops from the incoming stack and produces LIFO rather than FIFO order."
+  },
+  "interviewcake_shuffle": {
+    "code": "public class Solution\n{\n    public void Shuffle(int[] array)\n    {\n        for(int i=0;i+1<array.Length;i++)\n        {\n            int selected=RandomSource.GetRandom(i,array.Length-1);\n            (array[i],array[selected])=(array[selected],array[i]);\n        }\n    }\n}\n",
+    "incorrectCode": "public class Solution\n{\n    public void Shuffle(int[] array)\n    {\n        for(int i=0;i+1<array.Length;i++)\n        {\n            int selected=RandomSource.GetRandom(i+1,array.Length-1);\n            (array[i],array[selected])=(array[selected],array[i]);\n        }\n    }\n}\n",
+    "incorrectReason": "Excludes retaining the current occurrence, so not all permutations are possible."
+  },
+  "interviewcake_inflight-entertainment": {
+    "code": "public class Solution\n{\n    public bool CanTwoMoviesFillFlight(int[] movieLengths,int flightLength)\n    {\n        var earlier=new HashSet<int>();\n        foreach(int length in movieLengths)\n        {\n            if(earlier.Contains(flightLength-length)) return true;\n            earlier.Add(length);\n        }\n        return false;\n    }\n}\n",
+    "incorrectCode": "public class Solution\n{\n    public bool CanTwoMoviesFillFlight(int[] movieLengths,int flightLength)\n    {\n        var available=movieLengths.ToHashSet();\n        return movieLengths.Any(length=>available.Contains(flightLength-length));\n    }\n}\n",
+    "incorrectReason": "Allows the same array position to serve as both movies."
+  },
+  "interviewcake_kth-to-last-node-in-singly-linked-list": {
+    "code": "public class Solution\n{\n    public LinkedListNode KthToLastNode(int k,LinkedListNode? head)\n    {\n        if(k<1) throw new ArgumentOutOfRangeException(nameof(k));\n        var lead=head;\n        for(int i=0;i<k;i++) { if(lead is null) throw new ArgumentOutOfRangeException(nameof(k)); lead=lead.Next; }\n        var follow=head;\n        while(lead is not null) { lead=lead.Next; follow=follow!.Next; }\n        return follow!;\n    }\n}\n",
+    "incorrectCode": "public class Solution\n{\n    public LinkedListNode KthToLastNode(int k,LinkedListNode? head)\n    {\n        var lead=head;\n        for(int i=0;i<k;i++) lead=lead!.Next;\n        var follow=head;\n        while(lead is not null) { lead=lead.Next; follow=follow!.Next; }\n        return new LinkedListNode(follow!.Value);\n    }\n}\n",
+    "incorrectReason": "Computes the right payload but returns a new node rather than the required original object identity."
+  },
+  "interviewcake_largest-stack": {
+    "code": "public class MaxStack\n{\n    private readonly Stack<int> values=new();\n    private readonly Stack<int> maxima=new();\n    public void Push(int item)\n    {\n        values.Push(item);\n        if(maxima.Count==0 || item>=maxima.Peek()) maxima.Push(item);\n    }\n    public int Pop()\n    {\n        int value=values.Pop();\n        if(value==maxima.Peek()) maxima.Pop();\n        return value;\n    }\n    public int GetMax() => maxima.Peek();\n}\n",
+    "incorrectCode": "public class MaxStack\n{\n    private readonly Stack<int> values=new();\n    private readonly Stack<int> maxima=new();\n    public void Push(int item) { values.Push(item); if(maxima.Count==0 || item>maxima.Peek()) maxima.Push(item); }\n    public int Pop() { int value=values.Pop(); if(value==maxima.Peek()) maxima.Pop(); return value; }\n    public int GetMax() => maxima.Peek();\n}\n",
+    "incorrectReason": "Stores a maximum only on strict increase, losing remaining copies when one repeated maximum is popped."
+  },
+  "interviewcake_coin": {
+    "code": "public class Solution\n{\n    public int ChangePossibilitiesBottomUp(int amount,int[] denominations)\n    {\n        var ways=new int[amount+1]; ways[0]=1;\n        foreach(int coin in denominations)\n            for(int subtotal=coin;subtotal<=amount;subtotal++) ways[subtotal]+=ways[subtotal-coin];\n        return ways[amount];\n    }\n}\n",
+    "incorrectCode": "public class Solution\n{\n    public int ChangePossibilitiesBottomUp(int amount,int[] denominations)\n    {\n        var ways=new int[amount+1]; ways[0]=1;\n        for(int subtotal=1;subtotal<=amount;subtotal++)\n            foreach(int coin in denominations) if(coin<=subtotal) ways[subtotal]+=ways[subtotal-coin];\n        return ways[amount];\n    }\n}\n",
+    "incorrectReason": "Reverses the dynamic-programming loops and counts ordered sequences instead of unordered combinations."
+  },
+  "interviewcake_merge-sorted-arrays": {
+    "code": "public class Solution\n{\n    public int[] MergeArrays(int[] first,int[] second)\n    {\n        var result=new int[first.Length+second.Length]; int a=0,b=0;\n        for(int i=0;i<result.Length;i++)\n            result[i]=b==second.Length || a<first.Length && first[a]<=second[b] ? first[a++] : second[b++];\n        return result;\n    }\n}\n",
+    "incorrectCode": "public class Solution\n{\n    public int[] MergeArrays(int[] first,int[] second)\n    {\n        return first.Concat(second).Distinct().OrderBy(x=>x).ToArray();\n    }\n}\n",
+    "incorrectReason": "Removes repeated values instead of preserving every input occurrence."
+  },
+  "interviewcake_merging-ranges": {
+    "code": "public class Solution\n{\n    public List<Meeting> MergeRanges(List<Meeting> meetings)\n    {\n        var result=new List<Meeting>();\n        foreach(var meeting in meetings.OrderBy(m=>m.StartTime))\n        {\n            if(result.Count==0 || meeting.StartTime>result[^1].EndTime) result.Add(new Meeting(meeting.StartTime,meeting.EndTime));\n            else result[^1].EndTime=Math.Max(result[^1].EndTime,meeting.EndTime);\n        }\n        return result;\n    }\n}\n",
+    "incorrectCode": "public class Solution\n{\n    public List<Meeting> MergeRanges(List<Meeting> meetings)\n    {\n        var result=new List<Meeting>();\n        foreach(var meeting in meetings.OrderBy(m=>m.StartTime))\n        {\n            if(result.Count==0 || meeting.StartTime>=result[^1].EndTime) result.Add(new Meeting(meeting.StartTime,meeting.EndTime));\n            else result[^1].EndTime=Math.Max(result[^1].EndTime,meeting.EndTime);\n        }\n        return result;\n    }\n}\n",
+    "incorrectReason": "Treats touching endpoints as separate ranges instead of condensing their union."
+  },
+  "interviewcake_mesh-message": {
+    "code": "public class Solution\n{\n    public string[]? BfsGetPath(Dictionary<string,string[]> graph,string start,string end)\n    {\n        if(!graph.ContainsKey(start) || !graph.ContainsKey(end)) throw new ArgumentException();\n        var previous=new Dictionary<string,string?>{{start,null}};\n        var queue=new Queue<string>(); queue.Enqueue(start);\n        while(queue.Count>0)\n        {\n            string current=queue.Dequeue();\n            if(current==end)\n            {\n                var path=new List<string>();\n                for(string? at=end;at is not null;at=previous[at]) path.Add(at);\n                path.Reverse(); return path.ToArray();\n            }\n            foreach(string next in graph[current])\n                if(!previous.ContainsKey(next)) { previous[next]=current; queue.Enqueue(next); }\n        }\n        return null;\n    }\n}\n",
+    "incorrectCode": "public class Solution\n{\n    public string[]? BfsGetPath(Dictionary<string,string[]> graph,string start,string end)\n    {\n        var seen=new HashSet<string>();\n        var path=new List<string>();\n        bool Visit(string node)\n        {\n            if(!seen.Add(node)) return false;\n            path.Add(node); if(node==end) return true;\n            foreach(string next in graph[node]) if(Visit(next)) return true;\n            path.RemoveAt(path.Count-1); return false;\n        }\n        return Visit(start)?path.ToArray():null;\n    }\n}\n",
+    "incorrectReason": "Returns the first depth-first route, which can be longer than a minimum-edge route."
+  },
+  "interviewcake_compress-url-list": {
+    "code": "public class Trie\n{\n    private sealed class Node { public readonly Dictionary<char,Node> Children=new(); public bool Terminal; }\n    private readonly Node root=new();\n    public bool AddWord(string word)\n    {\n        var node=root;\n        foreach(char c in word)\n        {\n            if(!node.Children.TryGetValue(c,out var child)) { child=new Node(); node.Children[c]=child; }\n            node=child;\n        }\n        bool added=!node.Terminal; node.Terminal=true; return added;\n    }\n}\n",
+    "incorrectCode": "public class Trie\n{\n    private sealed class Node { public readonly Dictionary<char,Node> Children=new(); }\n    private readonly Node root=new();\n    public bool AddWord(string word)\n    {\n        var node=root; bool added=false;\n        foreach(char c in word)\n        {\n            if(!node.Children.TryGetValue(c,out var child)) { child=new Node(); node.Children[c]=child; added=true; }\n            node=child;\n        }\n        return added;\n    }\n}\n",
+    "incorrectReason": "Confuses an existing prefix with a complete inserted key; has no terminal marker."
+  },
+  "interviewcake_matching-parens": {
+    "code": "public class Solution\n{\n    public int GetClosingParen(string sentence,int openingParenIndex)\n    {\n        int depth=0;\n        for(int i=openingParenIndex;i<sentence.Length;i++)\n        {\n            if(sentence[i]=='(') depth++;\n            else if(sentence[i]==')' && --depth==0) return i;\n        }\n        throw new ArgumentException(\"No matching closing parenthesis.\");\n    }\n}\n",
+    "incorrectCode": "public class Solution\n{\n    public int GetClosingParen(string sentence,int openingParenIndex)\n    {\n        int closer=sentence.IndexOf(')',openingParenIndex+1);\n        if(closer<0) throw new ArgumentException();\n        return closer;\n    }\n}\n",
+    "incorrectReason": "Returns the first closer without accounting for nested openers."
+  },
+  "interviewcake_permutation-palindrome": {
+    "code": "public class Solution\n{\n    public bool HasPalindromePermutation(string text)\n    {\n        var odd=new HashSet<char>();\n        foreach(char c in text) if(!odd.Add(c)) odd.Remove(c);\n        return odd.Count<=1;\n    }\n}\n",
+    "incorrectCode": "public class Solution\n{\n    public bool HasPalindromePermutation(string text)\n    {\n        var odd=new HashSet<char>();\n        foreach(char c in text) if(!odd.Add(c)) odd.Remove(c);\n        return odd.Count==0;\n    }\n}\n",
+    "incorrectReason": "Rejects every valid odd-length palindrome permutation with one odd-frequency character."
+  },
+  "interviewcake_product-of-other-numbers": {
+    "code": "public class Solution\n{\n    public int[] GetProductsOfAllIntsExceptAtIndex(int[] values)\n    {\n        if(values.Length<2) throw new ArgumentException();\n        var result=new int[values.Length]; int prefix=1;\n        for(int i=0;i<values.Length;i++) { result[i]=prefix; prefix*=values[i]; }\n        int suffix=1;\n        for(int i=values.Length-1;i>=0;i--) { result[i]*=suffix; suffix*=values[i]; }\n        return result;\n    }\n}\n",
+    "incorrectCode": "public class Solution\n{\n    public int[] GetProductsOfAllIntsExceptAtIndex(int[] values)\n    {\n        int product=1; foreach(int value in values) product*=value;\n        return values.Select(value=>value==0?0:product/value).ToArray();\n    }\n}\n",
+    "incorrectReason": "Uses division and loses the nonzero product at a single zero position."
+  },
+  "interviewcake_rectangular-love": {
+    "code": "public class Solution\n{\n    public Rectangle FindRectangularOverlap(Rectangle first,Rectangle second)\n    {\n        int left=Math.Max(first.LeftX,second.LeftX),bottom=Math.Max(first.BottomY,second.BottomY);\n        int right=Math.Min(first.LeftX+first.Width,second.LeftX+second.Width);\n        int top=Math.Min(first.BottomY+first.Height,second.BottomY+second.Height);\n        return right<=left || top<=bottom ? new Rectangle() : new Rectangle(left,bottom,right-left,top-bottom);\n    }\n}\n",
+    "incorrectCode": "public class Solution\n{\n    public Rectangle FindRectangularOverlap(Rectangle first,Rectangle second)\n    {\n        int left=Math.Min(first.LeftX,second.LeftX),bottom=Math.Min(first.BottomY,second.BottomY);\n        int right=Math.Max(first.LeftX+first.Width,second.LeftX+second.Width);\n        int top=Math.Max(first.BottomY+first.Height,second.BottomY+second.Height);\n        return new Rectangle(left,bottom,right-left,top-bottom);\n    }\n}\n",
+    "incorrectReason": "Computes the bounding union box instead of the positive-area intersection."
+  },
+  "interviewcake_recursive-string-permutations": {
+    "code": "public class Solution\n{\n    public ISet<string> GetPermutations(string text)\n    {\n        if(text.Length==0) return new HashSet<string>{\"\"};\n        var result=new HashSet<string>();\n        foreach(string rest in GetPermutations(text[1..]))\n            for(int i=0;i<=rest.Length;i++) result.Add(rest.Insert(i,text[..1]));\n        return result;\n    }\n}\n",
+    "incorrectCode": "public class Solution\n{\n    public ISet<string> GetPermutations(string text)\n    {\n        if(text.Length==0) return new HashSet<string>{\"\"};\n        var result=new HashSet<string>();\n        foreach(string rest in GetPermutations(text[1..])) result.Add(text[0]+rest);\n        return result;\n    }\n}\n",
+    "incorrectReason": "Recurses but inserts the first character in only one position, omitting most permutations."
+  },
+  "interviewcake_reverse-linked-list": {
+    "code": "public class Solution\n{\n    public LinkedListNode? Reverse(LinkedListNode? head)\n    {\n        LinkedListNode? previous=null;\n        while(head is not null)\n        {\n            var next=head.Next; head.Next=previous; previous=head; head=next;\n        }\n        return previous;\n    }\n}\n",
+    "incorrectCode": "public class Solution\n{\n    public LinkedListNode? Reverse(LinkedListNode? head)\n    {\n        LinkedListNode? result=null;\n        while(head is not null) { result=new LinkedListNode(head.Value,result); head=head.Next; }\n        return result;\n    }\n}\n",
+    "incorrectReason": "Builds new nodes with reversed values instead of reusing and rewiring the original nodes."
+  },
+  "interviewcake_reverse-string-in-place": {
+    "code": "public class Solution\n{\n    public void Reverse(char[] characters)\n    {\n        for(int left=0,right=characters.Length-1;left<right;left++,right--)\n            (characters[left],characters[right])=(characters[right],characters[left]);\n    }\n}\n",
+    "incorrectCode": "public class Solution\n{\n    public void Reverse(char[] characters)\n    {\n        characters=characters.Reverse().ToArray();\n    }\n}\n",
+    "incorrectReason": "Reassigns the local parameter to a new array and leaves the caller array unchanged."
+  },
+  "interviewcake_reverse-words": {
+    "code": "public class Solution\n{\n    private static void ReverseRange(char[] message,int left,int right)\n    {\n        while(left<right) { (message[left],message[right])=(message[right],message[left]); left++; right--; }\n    }\n    public void ReverseWords(char[] message)\n    {\n        ReverseRange(message,0,message.Length-1); int start=0;\n        for(int end=0;end<=message.Length;end++)\n            if(end==message.Length || message[end]==' ') { ReverseRange(message,start,end-1); start=end+1; }\n    }\n}\n",
+    "incorrectCode": "public class Solution\n{\n    public void ReverseWords(char[] message)\n    {\n        Array.Reverse(message);\n    }\n}\n",
+    "incorrectReason": "Reverses characters globally without restoring each word's internal order."
+  },
+  "interviewcake_simulate-5-sided-die": {
+    "code": "public class Solution\n{\n    public int Rand5()\n    {\n        while(true) { int value=RandomSource.Rand7(); if(value<=5) return value; }\n    }\n}\n",
+    "incorrectCode": "public class Solution\n{\n    public int Rand5() => (RandomSource.Rand7()-1)%5+1;\n}\n",
+    "incorrectReason": "Maps seven equally likely states modulo five, biasing two output values."
+  },
+  "interviewcake_simulate-7-sided-die": {
+    "code": "public class Solution\n{\n    public int Rand7()\n    {\n        while(true)\n        {\n            int state=(RandomSource.Rand5()-1)*5+RandomSource.Rand5()-1;\n            if(state<21) return state%7+1;\n        }\n    }\n}\n",
+    "incorrectCode": "public class Solution\n{\n    public int Rand7()\n    {\n        int state=(RandomSource.Rand5()-1)*5+RandomSource.Rand5()-1;\n        return state%7+1;\n    }\n}\n",
+    "incorrectReason": "Maps all twenty-five equiprobable states modulo seven instead of rejecting the last four."
+  },
+  "interviewcake_temperature-tracker": {
+    "code": "public class TempTracker\n{\n    private readonly int[] counts=new int[111];\n    private long sum,count;\n    private int minimum=110,maximum=0,mode=0;\n    public void Insert(int temperature)\n    {\n        if(temperature<0 || temperature>110) throw new ArgumentOutOfRangeException(nameof(temperature));\n        counts[temperature]++; count++; sum+=temperature;\n        minimum=Math.Min(minimum,temperature); maximum=Math.Max(maximum,temperature);\n        if(counts[temperature]>counts[mode]) mode=temperature;\n    }\n    public int? GetMin() => count==0?null:minimum;\n    public int? GetMax() => count==0?null:maximum;\n    public double? GetMean() => count==0?null:(double)sum/count;\n    public int? GetMode() => count==0?null:mode;\n}\n",
+    "incorrectCode": "public class TempTracker\n{\n    private readonly List<int> values=new();\n    public void Insert(int temperature) => values.Add(temperature);\n    public int? GetMin() => values.Count==0?null:values.Max();\n    public int? GetMax() => values.Count==0?null:values.Max();\n    public double? GetMean() => values.Count==0?null:values.Average();\n    public int? GetMode() => values.Count==0?null:values.GroupBy(x=>x).OrderByDescending(g=>g.Count()).First().Key;\n}\n",
+    "incorrectReason": "Uses the maximum for both extrema, failing after distinct temperature insertions."
+  },
+  "interviewcake_cake-thief": {
+    "code": "public class Solution\n{\n    public long MaxDuffelBagValue(CakeType[] types,int capacity)\n    {\n        foreach(var type in types) if(type.Weight==0 && type.Value>0) throw new InfinityException();\n        var best=new long[capacity+1];\n        for(int weight=1;weight<=capacity;weight++)\n            foreach(var type in types)\n                if(type.Weight>0 && type.Weight<=weight) best[weight]=Math.Max(best[weight],best[weight-type.Weight]+type.Value);\n        return best[capacity];\n    }\n}\n",
+    "incorrectCode": "public class Solution\n{\n    public long MaxDuffelBagValue(CakeType[] types,int capacity)\n    {\n        var best=new long[capacity+1];\n        foreach(var type in types)\n            for(int weight=capacity;weight>=type.Weight;weight--) best[weight]=Math.Max(best[weight],best[weight-type.Weight]+type.Value);\n        return best[capacity];\n    }\n}\n",
+    "incorrectReason": "Solves zero-or-one knapsack instead of allowing unlimited copies, and misses the unbounded zero-weight case."
+  },
+  "interviewcake_find-unique-int-among-duplicates": {
+    "code": "public class Solution\n{\n    public int FindUniqueDeliveryId(int[] deliveryIds)\n    {\n        int unique=0; foreach(int id in deliveryIds) unique^=id; return unique;\n    }\n}\n",
+    "incorrectCode": "public class Solution\n{\n    public int FindUniqueDeliveryId(int[] deliveryIds)\n    {\n        int sum=0; foreach(int id in deliveryIds) sum+=id;\n        return sum%2;\n    }\n}\n",
+    "incorrectReason": "Uses numeric-sum parity rather than cancellation by bitwise XOR, losing the unique identifier."
+  },
+  "interviewcake_top-scores": {
+    "code": "public class Solution\n{\n    public int[] SortScores(int[] scores,int highestPossibleScore)\n    {\n        var counts=new int[highestPossibleScore+1];\n        foreach(int score in scores) counts[score]++;\n        var result=new int[scores.Length]; int position=0;\n        for(int score=highestPossibleScore;score>=0;score--)\n            for(int occurrence=0;occurrence<counts[score];occurrence++) result[position++]=score;\n        return result;\n    }\n}\n",
+    "incorrectCode": "public class Solution\n{\n    public int[] SortScores(int[] scores,int highestPossibleScore)\n    {\n        var result=(int[])scores.Clone(); Array.Sort(result); return result;\n    }\n}\n",
+    "incorrectReason": "Sorts scores in ascending rather than nonincreasing order."
+  },
+  "interviewcake_which-appears-twice": {
+    "code": "public class Solution\n{\n    public int FindRepeat(int[] numbers)\n    {\n        long n=numbers.Length-1,total=0;\n        foreach(int value in numbers) total+=value;\n        return (int)(total-n*(n+1)/2);\n    }\n}\n",
+    "incorrectCode": "public class Solution\n{\n    public int FindRepeat(int[] numbers)\n    {\n        int n=numbers.Length,total=0;\n        foreach(int value in numbers) total+=value;\n        return total-n*(n+1)/2;\n    }\n}\n",
+    "incorrectReason": "Uses array length instead of range upper bound n=length-1 in the arithmetic-series subtraction.",
+    "notes": {
+      "explanation": "Subtract n(n+1)/2 from the widened sum of all entries; the difference is the one extra occurrence.",
+      "correctness": "The promised array contains one copy of each integer in 1..n plus one extra value x. Subtracting the exact required-range sum leaves x. Widen before multiplication to preserve arithmetic."
+    }
+  },
+  "interviewcake_word-cloud": {
+    "code": "public class WordCloudData\n{\n    public IDictionary<string,int> WordsToCounts { get; }=new Dictionary<string,int>();\n    private static bool Letter(char c) => c is >= 'a' and <= 'z' or >= 'A' and <= 'Z';\n    public WordCloudData(string input)\n    {\n        int start=0;\n        while(start<input.Length)\n        {\n            if(!Letter(input[start])) { start++; continue; }\n            int end=start+1;\n            while(end<input.Length)\n            {\n                if(Letter(input[end])) { end++; continue; }\n                if(input[end] is '\\'' or '-' && end+1<input.Length && Letter(input[end-1]) && Letter(input[end+1])) { end++; continue; }\n                break;\n            }\n            string key=input[start..end].ToLowerInvariant();\n            WordsToCounts.TryGetValue(key,out int count); WordsToCounts[key]=count+1; start=end;\n        }\n    }\n}\n",
+    "incorrectCode": "public class WordCloudData\n{\n    public IDictionary<string,int> WordsToCounts { get; }=new Dictionary<string,int>();\n    public WordCloudData(string input)\n    {\n        foreach(string token in input.Split(' ',StringSplitOptions.RemoveEmptyEntries))\n        {\n            string key=token.ToLowerInvariant();\n            WordsToCounts.TryGetValue(key,out int count); WordsToCounts[key]=count+1;\n        }\n    }\n}\n",
+    "incorrectReason": "Splits only on spaces and counts punctuation as part of keys, violating the disclosed lexical policy."
+  }
+}

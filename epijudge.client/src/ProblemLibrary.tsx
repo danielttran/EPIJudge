@@ -14,6 +14,7 @@ import {
 import type { Problem } from './workspaceModels';
 import type { PracticeClient } from './practiceClient';
 import { libraryEntries, selectedStudyPlan, STUDY_PLANS } from './studyPlans';
+import { availableCollections } from './collections';
 import { EMPTY_READING_JSON, parseReading, READING_LESSONS } from './reading/readingLessons';
 
 type Props = {
@@ -101,8 +102,11 @@ export function ProblemLibrary({
           <option value="kind:coding">Coding</option>
           <option value="kind:reading">Reading &amp; Design</option>
           <optgroup label="Collections">
-            <option value="collection:epi">EPI — 218 problems</option>
-            <option value="collection:blind75">Blind 75 — Crackr order</option>
+            {availableCollections(problems).map((collection) => (
+              <option key={collection.id} value={`collection:${collection.id}`}>
+                {collection.name} — {collection.count} problems
+              </option>
+            ))}
           </optgroup>
           <optgroup label="Study plans">
             {STUDY_PLANS.map((plan) => (
@@ -195,7 +199,7 @@ export function ProblemLibrary({
           )}
         </nav>
         <div className="library-note">
-          <span className="tiny-dot" /> EPI and Blind 75 practice
+          <span className="tiny-dot" /> Practice collections
           <p>
             All {problems.length} repository exercises available in C#, JavaScript, Python, C++, and
             Java.

@@ -1,0 +1,207 @@
+{
+  "interviewcake_second-largest-item-in-bst": {
+    "code": "class Solution:\n    def FindSecondLargest(self, root: BinaryTreeNode | None) -> int:\n        parent = None\n        node = root\n        while node.Right is not None:\n            parent, node = node, node.Right\n        if node.Left is None:\n            return parent.Value\n        node = node.Left\n        while node.Right is not None:\n            node = node.Right\n        return node.Value\n",
+    "incorrectCode": "class Solution:\n    def FindSecondLargest(self, root: BinaryTreeNode | None) -> int:\n        parent = root\n        node = root\n        while node.Right is not None:\n            parent, node = node, node.Right\n        return parent.Value\n",
+    "incorrectReason": "Always returns the largest node's parent, ignoring the predecessor in the largest node's left subtree."
+  },
+  "interviewcake_stock-price": {
+    "code": "class Solution:\n    def GetMaxProfit(self, prices: list[int]) -> int:\n        minimum = prices[0]\n        best = prices[1] - prices[0]\n        for index in range(1, len(prices)):\n            price = prices[index]\n            best = max(best, price - minimum)\n            minimum = min(minimum, price)\n        return best\n",
+    "incorrectCode": "class Solution:\n    def GetMaxProfit(self, prices: list[int]) -> int:\n        minimum, best = prices[0], 0\n        for price in prices[1:]:\n            best = max(best, price - minimum)\n            minimum = min(minimum, price)\n        return best\n",
+    "incorrectReason": "Permits skipping the required trade, incorrectly returning zero when all possible profits are negative."
+  },
+  "interviewcake_balanced-binary-tree": {
+    "code": "class Solution:\n    def IsBalanced(self, root: BinaryTreeNode | None) -> bool:\n        if root is None:\n            return True\n        pending = [(root, 0)]\n        shallowest = None\n        deepest = 0\n        while pending:\n            node, depth = pending.pop()\n            if node.Left is None and node.Right is None:\n                shallowest = depth if shallowest is None else min(shallowest, depth)\n                deepest = max(deepest, depth)\n                if deepest - shallowest > 1:\n                    return False\n            else:\n                if node.Left is not None:\n                    pending.append((node.Left, depth + 1))\n                if node.Right is not None:\n                    pending.append((node.Right, depth + 1))\n        return True\n",
+    "incorrectCode": "class Solution:\n    def IsBalanced(self, root: BinaryTreeNode | None) -> bool:\n        def height(node):\n            if node is None:\n                return 0\n            left, right = height(node.Left), height(node.Right)\n            if left < 0 or right < 0 or abs(left - right) > 1:\n                return -1\n            return max(left, right) + 1\n        return height(root) >= 0\n",
+    "incorrectReason": "Checks the different AVL subtree-height condition; a long single-leaf chain is valid under the required leaf-depth contract."
+  },
+  "interviewcake_bst-checker": {
+    "code": "class Solution:\n    def IsBinarySearchTree(self, root: BinaryTreeNode | None) -> bool:\n        pending = [(root, None, None)]\n        while pending:\n            node, lower, upper = pending.pop()\n            if node is None:\n                continue\n            if lower is not None and node.Value <= lower:\n                return False\n            if upper is not None and node.Value >= upper:\n                return False\n            pending.append((node.Left, lower, node.Value))\n            pending.append((node.Right, node.Value, upper))\n        return True\n",
+    "incorrectCode": "class Solution:\n    def IsBinarySearchTree(self, root: BinaryTreeNode | None) -> bool:\n        pending = [root]\n        while pending:\n            node = pending.pop()\n            if node is None:\n                continue\n            if node.Left is not None and node.Left.Value >= node.Value:\n                return False\n            if node.Right is not None and node.Right.Value <= node.Value:\n                return False\n            pending.extend((node.Left, node.Right))\n        return True\n",
+    "incorrectReason": "Validates only parent-child comparisons and misses violations of ordering bounds inherited from higher ancestors."
+  },
+  "interviewcake_bracket-validator": {
+    "code": "class Solution:\n    def IsValid(self, code: str) -> bool:\n        stack = []\n        opener = {')': '(', ']': '[', '}': '{'}\n        for char in code:\n            if char in '([{':\n                stack.append(char)\n            elif char in opener:\n                if not stack or stack.pop() != opener[char]:\n                    return False\n        return not stack\n",
+    "incorrectCode": "class Solution:\n    def IsValid(self, code: str) -> bool:\n        counts = {'(': 0, '[': 0, '{': 0}\n        opener = {')': '(', ']': '[', '}': '{'}\n        for char in code:\n            if char in counts:\n                counts[char] += 1\n            elif char in opener:\n                key = opener[char]\n                counts[key] -= 1\n                if counts[key] < 0:\n                    return False\n        return all(count == 0 for count in counts.values())\n",
+    "incorrectReason": "Counts each delimiter type independently, accepting crossed nesting such as ([)]."
+  },
+  "interviewcake_cafe-order-checker": {
+    "code": "class Solution:\n    def IsFirstComeFirstServed(self, takeOut: list[int], dineIn: list[int], served: list[int]) -> bool:\n        if len(served) != len(takeOut) + len(dineIn):\n            return False\n        take_index = dine_index = 0\n        for order in served:\n            if take_index < len(takeOut) and order == takeOut[take_index]:\n                take_index += 1\n            elif dine_index < len(dineIn) and order == dineIn[dine_index]:\n                dine_index += 1\n            else:\n                return False\n        return take_index == len(takeOut) and dine_index == len(dineIn)\n",
+    "incorrectCode": "class Solution:\n    def IsFirstComeFirstServed(self, takeOut: list[int], dineIn: list[int], served: list[int]) -> bool:\n        return sorted(takeOut + dineIn) == sorted(served)\n",
+    "incorrectReason": "Checks only occurrence membership, losing each source queue's required order."
+  },
+  "interviewcake_nth-fibonacci": {
+    "code": "class Solution:\n    def Fib(self, n: int) -> int:\n        current, following = 0, 1\n        for _ in range(n):\n            current, following = following, current + following\n        return current\n",
+    "incorrectCode": "class Solution:\n    def Fib(self, n: int) -> int:\n        current, following = 1, 1\n        for _ in range(n):\n            current, following = following, current + following\n        return current\n",
+    "incorrectReason": "Starts with F(1) rather than F(0), shifting all returned Fibonacci indices by one."
+  },
+  "interviewcake_delete-node": {
+    "code": "class Solution:\n    def DeleteNode(self, nodeToDelete: LinkedListNode | None) -> None:\n        successor = nodeToDelete.Next\n        nodeToDelete.Value = successor.Value\n        nodeToDelete.Next = successor.Next\n",
+    "incorrectCode": "class Solution:\n    def DeleteNode(self, nodeToDelete: LinkedListNode | None) -> None:\n        nodeToDelete.Next = nodeToDelete.Next.Next\n",
+    "incorrectReason": "Bypasses the successor without transferring its value, deleting the wrong logical list position."
+  },
+  "interviewcake_linked-list-cycles": {
+    "code": "class Solution:\n    def ContainsCycle(self, firstNode: LinkedListNode | None) -> bool:\n        slow = fast = firstNode\n        while fast is not None and fast.Next is not None:\n            slow = slow.Next\n            fast = fast.Next.Next\n            if slow is fast:\n                return True\n        return False\n",
+    "incorrectCode": "class Solution:\n    def ContainsCycle(self, firstNode: LinkedListNode | None) -> bool:\n        values = set()\n        node = firstNode\n        while node is not None:\n            if node.Value in values:\n                return True\n            values.add(node.Value)\n            node = node.Next\n        return False\n",
+    "incorrectReason": "Confuses repeated payload values with revisiting the same node object."
+  },
+  "interviewcake_find-duplicate-files": {
+    "code": "class Solution:\n    def FindDuplicateFiles(self, startingDirectory: str) -> list[FilePaths]:\n        seen = {}\n        duplicates = []\n        for path in Path(startingDirectory).rglob('*'):\n            if not path.is_file():\n                continue\n            full_path = str(path.resolve())\n            metadata = path.stat()\n            last = max(0, metadata.st_size - 64)\n            with path.open('rb') as stream:\n                samples = []\n                for offset in (0, last // 2, last):\n                    stream.seek(offset)\n                    samples.append(stream.read(64))\n            fingerprint = (metadata.st_size, tuple(samples))\n            if fingerprint in seen:\n                previous, earlier_time = seen[fingerprint]\n                if earlier_time <= metadata.st_mtime_ns:\n                    duplicates.append(FilePaths(previous, full_path))\n                else:\n                    duplicates.append(FilePaths(full_path, previous))\n            else:\n                seen[fingerprint] = (full_path, metadata.st_mtime_ns)\n        return duplicates\n",
+    "incorrectCode": "class Solution:\n    def FindDuplicateFiles(self, startingDirectory: str) -> list[FilePaths]:\n        seen = {}\n        duplicates = []\n        for path in Path(startingDirectory).rglob('*'):\n            if not path.is_file():\n                continue\n            metadata = path.stat()\n            full_path = str(path.resolve())\n            if metadata.st_size in seen:\n                previous, earlier_time = seen[metadata.st_size]\n                if earlier_time <= metadata.st_mtime_ns:\n                    duplicates.append(FilePaths(previous, full_path))\n                else:\n                    duplicates.append(FilePaths(full_path, previous))\n            else:\n                seen[metadata.st_size] = (full_path, metadata.st_mtime_ns)\n        return duplicates\n",
+    "incorrectReason": "Groups solely by byte length, falsely reporting equal-sized files with different sampled bytes."
+  },
+  "interviewcake_find-duplicate-optimize-for-space": {
+    "code": "class Solution:\n    def FindRepeat(self, numbers: list[int]) -> int:\n        lower, upper = 1, len(numbers) - 1\n        while lower < upper:\n            middle = (lower + upper) // 2\n            count = 0\n            for value in numbers:\n                if lower <= value <= middle:\n                    count += 1\n            if count > middle - lower + 1:\n                upper = middle\n            else:\n                lower = middle + 1\n        return lower\n",
+    "incorrectCode": "class Solution:\n    def FindRepeat(self, numbers: list[int]) -> int:\n        n = len(numbers) - 1\n        return sum(numbers) - n * (n + 1) // 2\n",
+    "incorrectReason": "Assumes every domain value occurs once except one doubled value, which is not guaranteed by this broader duplicate contract."
+  },
+  "interviewcake_find-duplicate-optimize-for-space-beast-mode": {
+    "code": "class Solution:\n    def FindDuplicate(self, numbers: list[int]) -> int:\n        slow = fast = 0\n        while True:\n            slow = numbers[slow]\n            fast = numbers[numbers[fast]]\n            if slow == fast:\n                break\n        entry = 0\n        while entry != slow:\n            entry = numbers[entry]\n            slow = numbers[slow]\n        return entry\n",
+    "incorrectCode": "class Solution:\n    def FindDuplicate(self, numbers: list[int]) -> int:\n        n = len(numbers) - 1\n        return sum(numbers) - n * (n + 1) // 2\n",
+    "incorrectReason": "The sum-difference shortcut assumes a single extra occurrence and fails when several values repeat or one appears more than twice."
+  },
+  "interviewcake_find-rotation-point": {
+    "code": "class Solution:\n    def FindRotationPoint(self, words: list[str] | None) -> int:\n        lower, upper = 0, len(words) - 1\n        while lower < upper:\n            middle = (lower + upper) // 2\n            if words[middle] > words[upper]:\n                lower = middle + 1\n            else:\n                upper = middle\n        return lower\n",
+    "incorrectCode": "class Solution:\n    def FindRotationPoint(self, words: list[str] | None) -> int:\n        for index in range(1, len(words)):\n            if words[index] < words[index - 1]:\n                return index\n        return len(words) - 1\n",
+    "incorrectReason": "Returns the last index rather than zero when the input is an unrotated sorted list."
+  },
+  "interviewcake_graph-coloring": {
+    "code": "class Solution:\n    def ColorGraph(self, graph: list[GraphNode], colors: list[str] | None) -> None:\n        for node in graph:\n            unavailable = {neighbor.Color for neighbor in node.Neighbors}\n            for color in colors:\n                if color not in unavailable:\n                    node.Color = color\n                    break\n",
+    "incorrectCode": "class Solution:\n    def ColorGraph(self, graph: list[GraphNode], colors: list[str] | None) -> None:\n        for index, node in enumerate(graph):\n            node.Color = colors[index % min(2, len(colors))]\n",
+    "incorrectReason": "Alternates only two colors without inspecting edges; triangles require the available third color."
+  },
+  "interviewcake_highest-product-of-3": {
+    "code": "class Solution:\n    def HighestProductOf3(self, values: list[int]) -> int:\n        high = max(values[0], values[1])\n        low = min(values[0], values[1])\n        high_pair = low_pair = values[0] * values[1]\n        best = high_pair * values[2]\n        for index in range(2, len(values)):\n            value = values[index]\n            best = max(best, value * high_pair, value * low_pair)\n            high_pair = max(high_pair, value * high, value * low)\n            low_pair = min(low_pair, value * high, value * low)\n            high = max(high, value)\n            low = min(low, value)\n        return best\n",
+    "incorrectCode": "class Solution:\n    def HighestProductOf3(self, values: list[int]) -> int:\n        largest = sorted(values)[-3:]\n        return largest[0] * largest[1] * largest[2]\n",
+    "incorrectReason": "Uses the three greatest values, missing a larger product formed by two very negative values and the greatest positive value."
+  },
+  "interviewcake_queue-two-stacks": {
+    "code": "class QueueTwoStacks:\n    def __init__(self):\n        self._incoming = []\n        self._outgoing = []\n\n    def Enqueue(self, item: int) -> None:\n        self._incoming.append(item)\n\n    def Dequeue(self) -> int:\n        if not self._outgoing:\n            while self._incoming:\n                self._outgoing.append(self._incoming.pop())\n        if not self._outgoing:\n            raise IndexError('empty queue')\n        return self._outgoing.pop()\n",
+    "incorrectCode": "class QueueTwoStacks:\n    def __init__(self):\n        self._incoming = []\n        self._outgoing = []\n\n    def Enqueue(self, item: int) -> None:\n        self._incoming.append(item)\n\n    def Dequeue(self) -> int:\n        if self._incoming:\n            return self._incoming.pop()\n        if self._outgoing:\n            return self._outgoing.pop()\n        raise IndexError('empty queue')\n",
+    "incorrectReason": "Removes directly from the input stack, giving LIFO behavior instead of FIFO."
+  },
+  "interviewcake_shuffle": {
+    "code": "class Solution:\n    def Shuffle(self, array: list[int]) -> None:\n        for index in range(len(array)):\n            other = RandomSource.GetRandom(index, len(array) - 1)\n            array[index], array[other] = array[other], array[index]\n",
+    "incorrectCode": "class Solution:\n    def Shuffle(self, array: list[int]) -> None:\n        for index in range(len(array)):\n            other = RandomSource.GetRandom(0, len(array) - 1)\n            array[index], array[other] = array[other], array[index]\n",
+    "incorrectReason": "Swaps each position with the entire array, producing unequal permutation probabilities instead of Fisher-Yates uniformity."
+  },
+  "interviewcake_inflight-entertainment": {
+    "code": "class Solution:\n    def CanTwoMoviesFillFlight(self, movieLengths: list[int], flightLength: int) -> bool:\n        seen = set()\n        for duration in movieLengths:\n            if flightLength - duration in seen:\n                return True\n            seen.add(duration)\n        return False\n",
+    "incorrectCode": "class Solution:\n    def CanTwoMoviesFillFlight(self, movieLengths: list[int], flightLength: int) -> bool:\n        durations = set(movieLengths)\n        return any(flightLength - duration in durations for duration in movieLengths)\n",
+    "incorrectReason": "May select the same movie position twice when a single duration equals half the flight length."
+  },
+  "interviewcake_kth-to-last-node-in-singly-linked-list": {
+    "code": "class Solution:\n    def KthToLastNode(self, k: int, head: LinkedListNode | None) -> LinkedListNode:\n        leading = head\n        for _ in range(k):\n            leading = leading.Next\n        following = head\n        while leading is not None:\n            leading = leading.Next\n            following = following.Next\n        return following\n",
+    "incorrectCode": "class Solution:\n    def KthToLastNode(self, k: int, head: LinkedListNode | None) -> LinkedListNode:\n        nodes = []\n        while head is not None:\n            nodes.append(head)\n            head = head.Next\n        return LinkedListNode(nodes[-k].Value)\n",
+    "incorrectReason": "Returns a new node with the expected value instead of the required existing node identity."
+  },
+  "interviewcake_largest-stack": {
+    "code": "class MaxStack:\n    def __init__(self):\n        self._items = []\n        self._maxima = []\n\n    def Push(self, item: int) -> None:\n        self._items.append(item)\n        if not self._maxima or item >= self._maxima[-1]:\n            self._maxima.append(item)\n\n    def Pop(self) -> int:\n        if not self._items:\n            raise IndexError('empty stack')\n        item = self._items.pop()\n        if item == self._maxima[-1]:\n            self._maxima.pop()\n        return item\n\n    def GetMax(self) -> int:\n        if not self._maxima:\n            raise IndexError('empty stack')\n        return self._maxima[-1]\n",
+    "incorrectCode": "class MaxStack:\n    def __init__(self):\n        self._items = []\n        self._maxima = []\n\n    def Push(self, item: int) -> None:\n        self._items.append(item)\n        if not self._maxima or item > self._maxima[-1]:\n            self._maxima.append(item)\n\n    def Pop(self) -> int:\n        if not self._items:\n            raise IndexError('empty stack')\n        item = self._items.pop()\n        if item == self._maxima[-1]:\n            self._maxima.pop()\n        return item\n\n    def GetMax(self) -> int:\n        if not self._maxima:\n            raise IndexError('empty stack')\n        return self._maxima[-1]\n",
+    "incorrectReason": "Fails to retain duplicate maxima, so popping one maximum erases the maximum still present below it."
+  },
+  "interviewcake_coin": {
+    "code": "class Solution:\n    def ChangePossibilitiesBottomUp(self, amount: int, denominations: list[int]) -> int:\n        ways = [0] * (amount + 1)\n        ways[0] = 1\n        for coin in denominations:\n            for total in range(coin, amount + 1):\n                ways[total] += ways[total - coin]\n        return ways[amount]\n",
+    "incorrectCode": "class Solution:\n    def ChangePossibilitiesBottomUp(self, amount: int, denominations: list[int]) -> int:\n        ways = [0] * (amount + 1)\n        ways[0] = 1\n        for total in range(1, amount + 1):\n            for coin in denominations:\n                if coin <= total:\n                    ways[total] += ways[total - coin]\n        return ways[amount]\n",
+    "incorrectReason": "Counts ordered coin sequences rather than unordered denomination combinations."
+  },
+  "interviewcake_merge-sorted-arrays": {
+    "code": "class Solution:\n    def MergeArrays(self, first: list[int], second: list[int]) -> list[int]:\n        result = []\n        left = right = 0\n        while left < len(first) and right < len(second):\n            if first[left] <= second[right]:\n                result.append(first[left])\n                left += 1\n            else:\n                result.append(second[right])\n                right += 1\n        while left < len(first):\n            result.append(first[left])\n            left += 1\n        while right < len(second):\n            result.append(second[right])\n            right += 1\n        return result\n",
+    "incorrectCode": "class Solution:\n    def MergeArrays(self, first: list[int], second: list[int]) -> list[int]:\n        return sorted(set(first + second))\n",
+    "incorrectReason": "Treats the inputs as a set union, dropping repeated occurrences that the merge must preserve."
+  },
+  "interviewcake_merging-ranges": {
+    "code": "class Solution:\n    def MergeRanges(self, meetings: list[Meeting]) -> list[Meeting]:\n        ordered = sorted(meetings, key=lambda meeting: meeting.StartTime)\n        result = []\n        for meeting in ordered:\n            if result and meeting.StartTime <= result[-1].EndTime:\n                result[-1].EndTime = max(result[-1].EndTime, meeting.EndTime)\n            else:\n                result.append(Meeting(meeting.StartTime, meeting.EndTime))\n        return result\n",
+    "incorrectCode": "class Solution:\n    def MergeRanges(self, meetings: list[Meeting]) -> list[Meeting]:\n        result = []\n        for meeting in sorted(meetings, key=lambda meeting: meeting.StartTime):\n            if result and meeting.StartTime < result[-1].EndTime:\n                result[-1].EndTime = max(result[-1].EndTime, meeting.EndTime)\n            else:\n                result.append(Meeting(meeting.StartTime, meeting.EndTime))\n        return result\n",
+    "incorrectReason": "Uses strict overlap and leaves intervals that touch at a boundary unmerged."
+  },
+  "interviewcake_mesh-message": {
+    "code": "class Solution:\n    def BfsGetPath(self, graph: dict[str, list[str]], start: str, end: str) -> list[str] | None:\n        previous = {start: None}\n        pending = deque([start])\n        while pending:\n            vertex = pending.popleft()\n            if vertex == end:\n                route = []\n                while vertex is not None:\n                    route.append(vertex)\n                    vertex = previous[vertex]\n                route.reverse()\n                return route\n            for neighbor in graph[vertex]:\n                if neighbor not in previous:\n                    previous[neighbor] = vertex\n                    pending.append(neighbor)\n        return None\n",
+    "incorrectCode": "class Solution:\n    def BfsGetPath(self, graph: dict[str, list[str]], start: str, end: str) -> list[str] | None:\n        pending = [(start, [start])]\n        visited = set()\n        while pending:\n            vertex, route = pending.pop()\n            if vertex == end:\n                return route\n            if vertex in visited:\n                continue\n            visited.add(vertex)\n            for neighbor in graph[vertex]:\n                if neighbor not in visited:\n                    pending.append((neighbor, route + [neighbor]))\n        return None\n",
+    "incorrectReason": "Uses a depth-first stack, so the first route found can be longer than the required minimum-edge route."
+  },
+  "interviewcake_compress-url-list": {
+    "code": "class Trie:\n    def __init__(self):\n        self._root = {}\n\n    def AddWord(self, word: str) -> bool:\n        node = self._root\n        for char in word:\n            if char not in node:\n                node[char] = {}\n            node = node[char]\n        if None in node:\n            return False\n        node[None] = True\n        return True\n",
+    "incorrectCode": "class Trie:\n    def __init__(self):\n        self._root = {}\n\n    def AddWord(self, word: str) -> bool:\n        node = self._root\n        created = False\n        for char in word:\n            if char not in node:\n                node[char] = {}\n                created = True\n            node = node[char]\n        return created\n",
+    "incorrectReason": "Has no terminal marker, so an existing path is mistaken for an already-inserted complete prefix key, including the empty key."
+  },
+  "interviewcake_matching-parens": {
+    "code": "class Solution:\n    def GetClosingParen(self, sentence: str, openingParenIndex: int) -> int:\n        depth = 0\n        for index in range(openingParenIndex + 1, len(sentence)):\n            if sentence[index] == '(':\n                depth += 1\n            elif sentence[index] == ')':\n                if depth == 0:\n                    return index\n                depth -= 1\n        raise ValueError('unmatched opening parenthesis')\n",
+    "incorrectCode": "class Solution:\n    def GetClosingParen(self, sentence: str, openingParenIndex: int) -> int:\n        return sentence.index(')', openingParenIndex + 1)\n",
+    "incorrectReason": "Chooses the next closer without accounting for nested opening parentheses."
+  },
+  "interviewcake_permutation-palindrome": {
+    "code": "class Solution:\n    def HasPalindromePermutation(self, text: str) -> bool:\n        odd = set()\n        for char in text:\n            if char in odd:\n                odd.remove(char)\n            else:\n                odd.add(char)\n        return len(odd) <= 1\n",
+    "incorrectCode": "class Solution:\n    def HasPalindromePermutation(self, text: str) -> bool:\n        odd = set()\n        for char in text:\n            if char in odd:\n                odd.remove(char)\n            else:\n                odd.add(char)\n        return not odd\n",
+    "incorrectReason": "Requires every count to be even, incorrectly rejecting palindromes with one odd-frequency center letter."
+  },
+  "interviewcake_product-of-other-numbers": {
+    "code": "class Solution:\n    def GetProductsOfAllIntsExceptAtIndex(self, values: list[int]) -> list[int]:\n        products = [1] * len(values)\n        prefix = 1\n        for index in range(len(values)):\n            products[index] = prefix\n            prefix *= values[index]\n        suffix = 1\n        for index in range(len(values) - 1, -1, -1):\n            products[index] *= suffix\n            suffix *= values[index]\n        return products\n",
+    "incorrectCode": "class Solution:\n    def GetProductsOfAllIntsExceptAtIndex(self, values: list[int]) -> list[int]:\n        total = 1\n        for value in values:\n            total *= value\n        return [total // value if value else 0 for value in values]\n",
+    "incorrectReason": "Divides the total product and guesses zero for a zero divisor, losing the nonzero result at the only zero position."
+  },
+  "interviewcake_rectangular-love": {
+    "code": "class Solution:\n    def FindRectangularOverlap(self, first: Rectangle, second: Rectangle) -> Rectangle:\n        left = max(first.LeftX, second.LeftX)\n        right = min(first.LeftX + first.Width, second.LeftX + second.Width)\n        bottom = max(first.BottomY, second.BottomY)\n        top = min(first.BottomY + first.Height, second.BottomY + second.Height)\n        if left >= right or bottom >= top:\n            return Rectangle()\n        return Rectangle(left, bottom, right - left, top - bottom)\n",
+    "incorrectCode": "class Solution:\n    def FindRectangularOverlap(self, first: Rectangle, second: Rectangle) -> Rectangle:\n        left = max(first.LeftX, second.LeftX)\n        right = min(first.LeftX + first.Width, second.LeftX + second.Width)\n        bottom = max(first.BottomY, second.BottomY)\n        top = min(first.BottomY + first.Height, second.BottomY + second.Height)\n        if left > right or bottom > top:\n            return Rectangle()\n        return Rectangle(left, bottom, right - left, top - bottom)\n",
+    "incorrectReason": "Treats edge contact as an intersection and returns a zero-width rectangle at nonzero coordinates instead of the no-overlap sentinel."
+  },
+  "interviewcake_recursive-string-permutations": {
+    "code": "class Solution:\n    def GetPermutations(self, text: str) -> set[str]:\n        if len(text) <= 1:\n            return {text}\n        result = set()\n        for smaller in self.GetPermutations(text[1:]):\n            for index in range(len(smaller) + 1):\n                result.add(smaller[:index] + text[0] + smaller[index:])\n        return result\n",
+    "incorrectCode": "class Solution:\n    def GetPermutations(self, text: str) -> set[str]:\n        if not text:\n            return set()\n        if len(text) == 1:\n            return {text}\n        result = set()\n        for smaller in self.GetPermutations(text[1:]):\n            for index in range(len(smaller) + 1):\n                result.add(smaller[:index] + text[0] + smaller[index:])\n        return result\n",
+    "incorrectReason": "Returns no permutation for the empty string, omitting the one valid empty ordering."
+  },
+  "interviewcake_reverse-linked-list": {
+    "code": "class Solution:\n    def Reverse(self, head: LinkedListNode | None) -> LinkedListNode | None:\n        previous = None\n        current = head\n        while current is not None:\n            following = current.Next\n            current.Next = previous\n            previous, current = current, following\n        return previous\n",
+    "incorrectCode": "class Solution:\n    def Reverse(self, head: LinkedListNode | None) -> LinkedListNode | None:\n        result = None\n        while head is not None:\n            result = LinkedListNode(head.Value, result)\n            head = head.Next\n        return result\n",
+    "incorrectReason": "Builds a reversed copy, violating original-node identity and leaving the input links unreversed."
+  },
+  "interviewcake_reverse-string-in-place": {
+    "code": "class Solution:\n    def Reverse(self, characters: list[str]) -> None:\n        left, right = 0, len(characters) - 1\n        while left < right:\n            characters[left], characters[right] = characters[right], characters[left]\n            left += 1\n            right -= 1\n",
+    "incorrectCode": "class Solution:\n    def Reverse(self, characters: list[str]) -> None:\n        characters = characters[::-1]\n",
+    "incorrectReason": "Rebinds a local name to a reversed copy, leaving the caller's mutable character array unchanged."
+  },
+  "interviewcake_reverse-words": {
+    "code": "class Solution:\n    def ReverseWords(self, message: list[str]) -> None:\n        def reverse_range(left, right):\n            while left < right:\n                message[left], message[right] = message[right], message[left]\n                left += 1\n                right -= 1\n        reverse_range(0, len(message) - 1)\n        start = 0\n        for end in range(len(message) + 1):\n            if end == len(message) or message[end] == ' ':\n                reverse_range(start, end - 1)\n                start = end + 1\n",
+    "incorrectCode": "class Solution:\n    def ReverseWords(self, message: list[str]) -> None:\n        left, right = 0, len(message) - 1\n        while left < right:\n            message[left], message[right] = message[right], message[left]\n            left += 1\n            right -= 1\n",
+    "incorrectReason": "Reverses the entire character sequence but never restores the spelling inside each reversed word."
+  },
+  "interviewcake_simulate-5-sided-die": {
+    "code": "class Solution:\n    def Rand5(self) -> int:\n        while True:\n            draw = RandomSource.Rand7()\n            if draw <= 5:\n                return draw\n",
+    "incorrectCode": "class Solution:\n    def Rand5(self) -> int:\n        return (RandomSource.Rand7() - 1) % 5 + 1\n",
+    "incorrectReason": "Maps seven equally likely source outcomes onto five outputs without rejection, making outputs 1 and 2 twice as likely."
+  },
+  "interviewcake_simulate-7-sided-die": {
+    "code": "class Solution:\n    def Rand7(self) -> int:\n        while True:\n            first = RandomSource.Rand5() - 1\n            second = RandomSource.Rand5() - 1\n            state = first * 5 + second\n            if state < 21:\n                return state % 7 + 1\n",
+    "incorrectCode": "class Solution:\n    def Rand7(self) -> int:\n        state = (RandomSource.Rand5() - 1) * 5 + RandomSource.Rand5() - 1\n        return state % 7 + 1\n",
+    "incorrectReason": "Maps all 25 equiprobable source pairs modulo seven rather than rejecting the final four states, creating unequal output frequencies."
+  },
+  "interviewcake_temperature-tracker": {
+    "code": "class TempTracker:\n    def __init__(self):\n        self._frequencies = [0] * 111\n        self._count = 0\n        self._sum = 0\n        self._minimum = None\n        self._maximum = None\n        self._mode = None\n        self._mode_count = 0\n\n    def Insert(self, temperature: int) -> None:\n        self._count += 1\n        self._sum += temperature\n        self._frequencies[temperature] += 1\n        if self._minimum is None or temperature < self._minimum:\n            self._minimum = temperature\n        if self._maximum is None or temperature > self._maximum:\n            self._maximum = temperature\n        if self._frequencies[temperature] > self._mode_count:\n            self._mode = temperature\n            self._mode_count = self._frequencies[temperature]\n\n    def GetMin(self) -> int | None:\n        return self._minimum\n\n    def GetMax(self) -> int | None:\n        return self._maximum\n\n    def GetMean(self) -> float | None:\n        return self._sum / self._count if self._count else None\n\n    def GetMode(self) -> int | None:\n        return self._mode\n",
+    "incorrectCode": "class TempTracker:\n    def __init__(self):\n        self._values = []\n\n    def Insert(self, temperature: int) -> None:\n        self._values.append(temperature)\n\n    def GetMin(self) -> int | None:\n        return min(self._values) if self._values else None\n\n    def GetMax(self) -> int | None:\n        return max(self._values) if self._values else None\n\n    def GetMean(self) -> float | None:\n        return sum(self._values) // len(self._values) if self._values else None\n\n    def GetMode(self) -> int | None:\n        return max(self._values, key=self._values.count) if self._values else None\n",
+    "incorrectReason": "Truncates the arithmetic mean with integer division instead of returning the required fractional statistic."
+  },
+  "interviewcake_cake-thief": {
+    "code": "class Solution:\n    def MaxDuffelBagValue(self, types: list[CakeType], capacity: int) -> int:\n        for cake in types:\n            if cake.Weight == 0 and cake.Value > 0:\n                raise InfinityException('unbounded value')\n        best = [0] * (capacity + 1)\n        for room in range(1, capacity + 1):\n            for cake in types:\n                if 0 < cake.Weight <= room:\n                    best[room] = max(best[room], cake.Value + best[room - cake.Weight])\n        return best[capacity]\n",
+    "incorrectCode": "class Solution:\n    def MaxDuffelBagValue(self, types: list[CakeType], capacity: int) -> int:\n        for cake in types:\n            if cake.Weight == 0 and cake.Value > 0:\n                raise InfinityException('unbounded value')\n        best = [0] * (capacity + 1)\n        for cake in types:\n            if cake.Weight == 0:\n                continue\n            for room in range(capacity, cake.Weight - 1, -1):\n                best[room] = max(best[room], cake.Value + best[room - cake.Weight])\n        return best[capacity]\n",
+    "incorrectReason": "Uses descending-capacity 0/1 knapsack updates, allowing only one of each type instead of unlimited copies."
+  },
+  "interviewcake_find-unique-int-among-duplicates": {
+    "code": "class Solution:\n    def FindUniqueDeliveryId(self, deliveryIds: list[int]) -> int:\n        unique = 0\n        for delivery in deliveryIds:\n            unique ^= delivery\n        return unique\n",
+    "incorrectCode": "class Solution:\n    def FindUniqueDeliveryId(self, deliveryIds: list[int]) -> int:\n        return sum(deliveryIds) - 2 * sum(set(deliveryIds))\n",
+    "incorrectReason": "Reverses the set-sum cancellation formula, returning the negative of the unique positive identifier."
+  },
+  "interviewcake_top-scores": {
+    "code": "class Solution:\n    def SortScores(self, scores: list[int], highestPossibleScore: int) -> list[int]:\n        counts = [0] * (highestPossibleScore + 1)\n        for score in scores:\n            counts[score] += 1\n        ordered = []\n        for score in range(highestPossibleScore, -1, -1):\n            for _ in range(counts[score]):\n                ordered.append(score)\n        return ordered\n",
+    "incorrectCode": "class Solution:\n    def SortScores(self, scores: list[int], highestPossibleScore: int) -> list[int]:\n        counts = [0] * (highestPossibleScore + 1)\n        for score in scores:\n            counts[score] += 1\n        ordered = []\n        for score in range(highestPossibleScore + 1):\n            ordered.extend([score] * counts[score])\n        return ordered\n",
+    "incorrectReason": "Emits counting buckets in ascending order rather than the required nonincreasing score order."
+  },
+  "interviewcake_which-appears-twice": {
+    "code": "class Solution:\n    def FindRepeat(self, numbers: list[int]) -> int:\n        repeated = 0\n        for value in numbers:\n            repeated ^= value\n        for value in range(1, len(numbers)):\n            repeated ^= value\n        return repeated\n",
+    "incorrectCode": "class Solution:\n    def FindRepeat(self, numbers: list[int]) -> int:\n        repeated = 0\n        for value in numbers:\n            repeated ^= value\n        return repeated\n",
+    "incorrectReason": "Omits cancellation of the required domain 1..n, leaving the XOR of all single occurrences mixed into the answer."
+  },
+  "interviewcake_word-cloud": {
+    "code": "class WordCloudData:\n    def __init__(self, input: str):\n        self.WordsToCounts: dict[str, int] = {}\n        def is_letter(char):\n            return 'a' <= char <= 'z' or 'A' <= char <= 'Z'\n        index = 0\n        while index < len(input):\n            if not is_letter(input[index]):\n                index += 1\n                continue\n            start = index\n            index += 1\n            while index < len(input):\n                if is_letter(input[index]):\n                    index += 1\n                elif (input[index] in \"'-\" and is_letter(input[index - 1])\n                      and index + 1 < len(input) and is_letter(input[index + 1])):\n                    index += 1\n                else:\n                    break\n            word = input[start:index].lower()\n            self.WordsToCounts[word] = self.WordsToCounts.get(word, 0) + 1\n",
+    "incorrectCode": "class WordCloudData:\n    def __init__(self, input: str):\n        self.WordsToCounts: dict[str, int] = {}\n        for token in input.split():\n            word = token.strip(\".,;:!?'\").lower()\n            if word:\n                self.WordsToCounts[word] = self.WordsToCounts.get(word, 0) + 1\n",
+    "incorrectReason": "Splits only on whitespace and trims selected punctuation, so internal invalid separators such as doubled hyphens are counted as part of a word."
+  }
+}

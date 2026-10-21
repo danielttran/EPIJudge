@@ -12,6 +12,8 @@ export type Problem = {
   position?: number;
   diagram?: string | null;
   diagramAlt?: string | null;
+  sourceUrl?: string | null;
+  sourceAttribution?: string | null;
   jsSignature?: string;
   jsStarterCode?: string;
   pySignature?: string;

@@ -19,7 +19,7 @@ void Check(string label, Action action)
 var protocols = JsonDocument.Parse(File.ReadAllText(Path.Combine(root,"scripts/problem_catalog.json")))
     .RootElement.GetProperty("problems").EnumerateArray().ToDictionary(x => x.GetProperty("id").GetString()!);
 Check("Catalog completeness", () => {
-    Require(catalog.Problems.Count == 293 && Blind75Catalog.Problems.Count == 75, "Expected 218 EPI plus 75 Blind entries.");
+    Require(catalog.Problems.Count == 334 && Blind75Catalog.Problems.Count == 75 && InterviewCakeCatalog.Problems.Count == 41, "Expected 218 EPI, 75 Blind and 41 Interview Cake entries.");
     Require(epiProblems.Length == 218 && epiProblems.Select(p => p.Id).Distinct().Count() == 218, "Expected 218 unique IDs.");
     Require(protocols.Keys.Order().SequenceEqual(epiProblems.Select(p => p.Id).Order()), "Catalog IDs differ from canonical IDs.");
     Require(epiProblems.All(p => p.Examples.Length > 0 && p.TestCount > 0 && !string.IsNullOrWhiteSpace(p.Description)), "Incomplete problem metadata.");

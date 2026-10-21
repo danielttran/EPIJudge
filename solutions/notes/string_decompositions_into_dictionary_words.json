@@ -1,0 +1,26 @@
+{
+  "explanation": "For each possible word alignment, slide a window in whole-word steps. Track word multiplicities; reset at unknown words and shrink when a word is overrepresented. Record windows containing exactly the supplied multiset, then sort their starting indices.",
+  "timeComplexity": "O(nw + mw + r log r) expected time, for text length n, word length w, m words and r matches; substring hashing/copying costs O(w).",
+  "spaceComplexity": "O(mw + r) stored character/output space, plus transient word substrings.",
+  "attribution": "Original C# implementation and explanation authored for EPI Practice from the displayed problem contract; EPI problem attribution remains in the collection.",
+  "correctness": "For each word alignment, the window contains only required words and never exceeds a required multiplicity after shrinking. Its count tracks the number of complete words in the window. When that count equals the supplied word count, every required multiplicity must match exactly. Every possible starting position belongs to one alignment, so processing all alignments finds every match; sorting gives increasing indices.",
+  "walkthrough": "For xoakashashoakz and words [oak, ash], both words have length 3. At alignment 1, the tokens are oak, ash, ash, oak. The first oak/ash pair gives index 1. The repeated ash forces the window to shrink; the final ash/oak pair gives index 7. Return [1, 7].",
+  "edgeCases": [
+    "Repeated supplied words require their full multiplicities.",
+    "Matches can overlap and can begin in different word alignments.",
+    "All supplied words share one positive length; text shorter than their combined length has no match."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      "xoakashashoakz",
+      [
+        "oak",
+        "ash"
+      ]
+    ],
+    "expected": [
+      1,
+      7
+    ]
+  }
+}

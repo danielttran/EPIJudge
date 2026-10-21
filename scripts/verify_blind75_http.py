@@ -60,10 +60,10 @@ def main():
     run_dir=create_run_directory(ROOT)
     with ExitStack() as stack:
         server=Server(args.dll.resolve(),run_dir);stack.callback(server.close);base=server.base
-        problems=api(base,'/api/problems');check(len(problems)==293,'API retains 218 EPI plus 75 Blind entries');check(sum(p['collection']=='epi' for p in problems)==218,'EPI identity count remains 218')
+        problems=api(base,'/api/problems');check(len(problems)==334,'API retains 218 EPI plus 75 Blind and 41 Interview Cake entries');check(sum(p['collection']=='epi' for p in problems)==218,'EPI identity count remains 218')
         check([p['title'] for p in problems if p['collection']=='blind75']==(ROOT/'blind75/source-order.txt').read_text().splitlines(),'HTTP catalog has exact Crackr ordering')
-        check(all(set(p['starters'])==set(LANGUAGES) for p in problems),'all 293 API entries expose five starters');check(all('invocation' not in p and 'harnessConfigs' not in p for p in problems),'API omits internal grading configuration')
-        for lang in LANGUAGES:check(len(api(base,'/api/problems?lang='+lang))==293,lang+' catalog query remains supported')
+        check(all(set(p['starters'])==set(LANGUAGES) for p in problems),'all 334 API entries expose five starters');check(all('invocation' not in p and 'harnessConfigs' not in p for p in problems),'API omits internal grading configuration')
+        for lang in LANGUAGES:check(len(api(base,'/api/problems?lang='+lang))==334,lang+' catalog query remains supported')
         for asset in json.loads((ROOT/'blind75/diagrams.json').read_text()):
             status,data,headers=request(base,asset['path']);check(status==200 and data==(ROOT/'EpiJudge.Web/wwwroot'/asset['path'].lstrip('/')).read_bytes(),asset['id']+' local SVG served byte-for-byte')
             check(headers.get('Content-Type','').startswith('image/svg+xml'),'SVG has correct media type')

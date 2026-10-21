@@ -1,0 +1,18 @@
+{
+  "explanation": "Read only the active prefix. Skip b, append two d characters for a, and copy any other character. Returning a new list excludes unused buffer capacity.",
+  "timeComplexity": "O(size).",
+  "spaceComplexity": "O(size) for the returned list; O(1) beyond output.",
+  "attribution": "Original C# implementation and explanation authored for EPI Practice from the displayed problem contract.",
+  "correctness": "After each consumed input character, result equals the required transformation of the consumed active prefix. Appending dd for a, nothing for b, and the original value otherwise preserves this invariant. Stopping at size ensures unused buffer capacity cannot leak into the result.",
+  "walkthrough": "For size=5 and buffer [\"a\",\"c\",\"b\",\"a\",\"e\",\"\", \"\"], read only a,c,b,a,e. Their contributions are dd,c,nothing,dd,e. Return [\"d\",\"d\",\"c\",\"d\",\"d\",\"e\"], ignoring both unused buffer cells.",
+  "edgeCases": [
+    "size=0 returns an empty result.",
+    "Unused buffer entries are never processed.",
+    "Every a expands to exactly two d characters.",
+    "Removing b can shrink the output even when expansion capacity exists."
+  ],
+  "walkthroughCase": {
+    "arguments": [5, ["a", "c", "b", "a", "e", "", ""]],
+    "expected": ["d", "d", "c", "d", "d", "e"]
+  }
+}

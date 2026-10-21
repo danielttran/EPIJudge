@@ -1,0 +1,68 @@
+{
+  "explanation": "Store each value together with the maximum of its stack prefix. Pop reveals the previous prefix maximum immediately. Initialize clears the logical stack; the underlying value-tuple stack retains its allocated capacity.",
+  "timeComplexity": "Push is O(1) amortized, with O(p) when its backing array grows; Pop, Max, Empty and Initialize are O(1) for these value-only entries.",
+  "spaceComplexity": "O(p) retained space for the peak number of entries over the object lifetime, including across Initialize calls.",
+  "attribution": "Original C# implementation and explanation authored for EPI Practice from the displayed problem contract; EPI problem attribution remains in the collection.",
+  "correctness": "Every stored pair holds its pushed value and the maximum of the prefix ending at that entry. Push computes that prefix maximum from the old top and the new value. Pop removes exactly the last prefix, exposing the correct maximum for the remaining stack. Initialize clears every pair, and Empty checks whether any prefix remains. Duplicate maxima remain represented independently.",
+  "walkthrough": "Initialize, push -4, push 7, and push another 7. The stored prefix maxima are -4, 7, 7. Pop one 7: Max still returns 7. Pop the second 7: Max returns -4. Pop -4: Empty becomes true. The supplied operation trace checks these results, so the stateful adapter returns true.",
+  "edgeCases": [
+    "Duplicate maximum values must survive until their last copy is popped.",
+    "All-negative stacks must not use zero as their maximum baseline.",
+    "Pop and Max require a nonempty stack; Initialize discards prior state."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          "Stack",
+          0
+        ],
+        [
+          "push",
+          -4
+        ],
+        [
+          "push",
+          7
+        ],
+        [
+          "push",
+          7
+        ],
+        [
+          "max",
+          7
+        ],
+        [
+          "pop",
+          7
+        ],
+        [
+          "max",
+          7
+        ],
+        [
+          "pop",
+          7
+        ],
+        [
+          "max",
+          -4
+        ],
+        [
+          "empty",
+          0
+        ],
+        [
+          "pop",
+          -4
+        ],
+        [
+          "empty",
+          1
+        ]
+      ]
+    ],
+    "expected": true
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "explanation": "Match maximal tokens of ASCII letters joined by internal apostrophes or hyphens followed by more letters. Lowercase each matched token and increment a null-prototype dictionary, so ordinary words such as constructor cannot collide with inherited properties.",
+  "correctness": "The expression starts each token with at least one letter and extends it only through another letter block joined by one allowed connector. Each maximal token under the disclosed grammar is therefore matched once; separators are excluded. Lowercasing sends all permitted case variants to the same key, and one increment per match records exactly their occurrence count.",
+  "walkthrough": "For \"Owls fly; OWLS don't crawl. Fly-by owls!\", punctuation ends tokens but internal apostrophes and letter-surrounded hyphens remain. Lowercasing combines Owls, OWLS and owls into count 3. The other keys are fly, don't, crawl and fly-by, each counted once under the disclosed bank policy.",
+  "edgeCases": [
+    "Empty text",
+    "mixed case",
+    "internal apostrophes/hyphens",
+    "repeated punctuation",
+    "leading/trailing punctuation."
+  ],
+  "timeComplexity": "O(n) time for n text characters.",
+  "spaceComplexity": "O(n) result storage and O(n) auxiliary matched-token storage for n input characters; the regular-expression match call materializes the token array.",
+  "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
+  "walkthroughCase": {
+    "arguments": [
+      "Owls fly; OWLS don't crawl. Fly-by owls!"
+    ],
+    "expected": {
+      "owls": 3,
+      "fly": 1,
+      "don't": 1,
+      "crawl": 1,
+      "fly-by": 1
+    }
+  }
+}

@@ -49,8 +49,8 @@ try {
     $problems = Invoke-RestMethod "$BaseUrl/api/problems" -NoProxy -TimeoutSec 20
     foreach ($language in @('cpp','java')) {
         $starters = @($problems | Where-Object { $_.starters.$language.starterCode })
-        if ($starters.Count -ne 293) { throw "$language requires 293 starters, got $($starters.Count)" }
-        Write-Output "PASS $language catalog: 293 starters"
+        if ($starters.Count -ne 334) { throw "$language requires 334 starters, got $($starters.Count)" }
+        Write-Output "PASS $language catalog: 334 starters"
         $folder = Join-Path $PSScriptRoot "NativeWebFixtures\$language"
         $countFile = if ($language -eq 'cpp') {'count_bits.cc'} else {'CountBits.java'}
         $accepted = Get-Content (Join-Path $folder $countFile) -Raw

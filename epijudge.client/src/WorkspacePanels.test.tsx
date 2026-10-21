@@ -179,3 +179,26 @@ it('shows retry and empty-history states', () => {
   fireEvent.click(screen.getByRole('button', { name: 'Retry history' }));
   expect(props.onRetry).toHaveBeenCalledOnce();
 });
+
+it('offers collection choices only for questions actually registered by the API', () => {
+  const { props, rerender } = library();
+  expect(screen.getByRole('option', { name: 'EPI — 3 problems' })).toBeTruthy();
+  expect(screen.queryByRole('option', { name: /Interview Cake/ })).toBeNull();
+  const registered = {
+    id: 'test_registered_interviewcake',
+    title: 'API fixture question',
+    topic: 'Arrays',
+    collection: 'interviewcake',
+    position: 41,
+  } as Problem;
+  rerender(
+    <ProblemLibrary
+      {...props}
+      problems={[...problems, registered]}
+      filter="collection:interviewcake"
+    />,
+  );
+  expect(screen.getByRole('option', { name: 'Interview Cake — 1 problems' })).toBeTruthy();
+  fireEvent.click(screen.getByRole('button', { name: 'IC41. API fixture question — Not started' }));
+  expect(props.onSelect).toHaveBeenCalledWith(registered.id);
+});

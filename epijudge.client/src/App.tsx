@@ -5,7 +5,9 @@ import CodeEditor from './Editor';
 import { ProblemLibrary } from './ProblemLibrary';
 import { HistoryPanel } from './HistoryPanel';
 import { EmptyState } from './EmptyState';
+import { SolutionPanel } from './SolutionPanel';
 import { libraryEntries } from './studyPlans';
+import { collectionName, problemNumber } from './collections';
 import {
   Braces,
   Code2,
@@ -67,6 +69,9 @@ export default function App() {
   const [historyVersion, setHistoryVersion] = useState(0);
   const [loadError, setLoadError] = useState('');
   const [tab, setTab] = useState<'results' | 'history'>('results');
+  const [problemTab, setProblemTab] = useState<'description' | 'solution'>('description');
+  const descriptionTab = useRef<HTMLButtonElement>(null);
+  const solutionTab = useRef<HTMLButtonElement>(null);
   const [activeCase, setActiveCase] = useState(0);
   const problem = problems.find((item) => item.id === selected);
   const lesson = readingLessonById(selected);
@@ -282,114 +287,193 @@ export default function App() {
           <>
             <section className="problem-pane">
               <div className="pane-heading">
-                <span className="active-pane-tab">
-                  <FileCode2 size={16} /> Description
-                </span>
-                <span className="muted">
-                  {problem?.collection === 'blind75' ? 'BLIND 75 COLLECTION' : 'EPI COLLECTION'}
-                </span>
-              </div>
-              {loadError ? (
-                <div className="page-error">
-                  <XCircle />
-                  <h2>Couldn’t load the library</h2>
-                  <p>{loadError}</p>
-                  <button className="secondary-button" onClick={() => location.reload()}>
-                    Try again
+                <div
+                  className="problem-tabs"
+                  role="tablist"
+                  aria-label="Question content"
+                  onKeyDown={(event) => {
+                    if (!problem || !['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key))
+                      return;
+                    event.preventDefault();
+                    const next =
+                      event.key === 'Home'
+                        ? 'description'
+                        : event.key === 'End'
+                          ? 'solution'
+                          : problemTab === 'description'
+                            ? 'solution'
+                            : 'description';
+                    setProblemTab(next);
+                    (next === 'description' ? descriptionTab : solutionTab).current?.focus();
+                  }}
+                >
+                  <button
+                    ref={descriptionTab}
+                    id="description-tab"
+                    role="tab"
+                    type="button"
+                    className="problem-content-tab"
+                    aria-selected={problemTab === 'description'}
+                    aria-controls="description-panel"
+                    tabIndex={problemTab === 'description' ? 0 : -1}
+                    disabled={!problem}
+                    onClick={() => setProblemTab('description')}
+                  >
+                    <FileCode2 size={16} /> Problem
+                  </button>
+                  <button
+                    ref={solutionTab}
+                    id="solution-tab"
+                    role="tab"
+                    type="button"
+                    className="problem-content-tab"
+                    aria-selected={problemTab === 'solution'}
+                    aria-controls="solution-panel"
+                    tabIndex={problemTab === 'solution' ? 0 : -1}
+                    disabled={!problem}
+                    onClick={() => setProblemTab('solution')}
+                  >
+                    <Code2 size={16} /> Solution
                   </button>
                 </div>
-              ) : !problem ? (
-                <div className="loading-state">
-                  <LoaderCircle className="spin" /> Loading your workspace…
-                </div>
-              ) : (
-                <article className="problem-description">
-                  <div className="breadcrumb">
-                    Practice <ChevronRight size={12} /> {problem.topic}
+                <span className="muted">
+                  {collectionName(problem?.collection).toUpperCase()} COLLECTION
+                </span>
+              </div>
+              <div
+                id="description-panel"
+                role="tabpanel"
+                aria-labelledby="description-tab"
+                className="problem-tab-panel"
+                hidden={problemTab !== 'description'}
+              >
+                {loadError ? (
+                  <div className="page-error">
+                    <XCircle />
+                    <h2>Couldn’t load the library</h2>
+                    <p>{loadError}</p>
+                    <button className="secondary-button" onClick={() => location.reload()}>
+                      Try again
+                    </button>
                   </div>
-                  <h1>
-                    {problem.collection === 'blind75'
-                      ? `B${String(problem.position).padStart(2, '0')}`
-                      : problems.indexOf(problem) + 1}
-                    . {problem.title}
-                  </h1>
-                  <div className="problem-tags">
-                    <span className={'difficulty ' + problem.difficulty.toLowerCase()}>
-                      {problem.difficulty}
-                    </span>
-                    <span>{problem.topic}</span>
-                    {typeof problem.testCount === 'number' && (
-                      <span>{problem.testCount.toLocaleString()} test cases</span>
-                    )}
-                    {solved.has(problem.id) && (
-                      <span className="solved-tag">
-                        <Check size={12} /> Solved
+                ) : !problem ? (
+                  <div className="loading-state">
+                    <LoaderCircle className="spin" /> Loading your workspace…
+                  </div>
+                ) : (
+                  <article className="problem-description">
+                    <div className="breadcrumb">
+                      Practice <ChevronRight size={12} /> {problem.topic}
+                    </div>
+                    <h1>
+                      {problemNumber(problem, problems.indexOf(problem))}. {problem.title}
+                    </h1>
+                    <div className="problem-tags">
+                      <span className={'difficulty ' + problem.difficulty.toLowerCase()}>
+                        {problem.difficulty}
                       </span>
-                    )}
-                    {!solved.has(problem.id) &&
-                      practice.progress[problem.id]?.status === 'attempted' && (
-                        <span className="attempted-tag">
-                          <Clock3 size={12} /> Attempted
+                      <span>{problem.topic}</span>
+                      {typeof problem.testCount === 'number' && (
+                        <span>{problem.testCount.toLocaleString()} test cases</span>
+                      )}
+                      {solved.has(problem.id) && (
+                        <span className="solved-tag">
+                          <Check size={12} /> Solved
                         </span>
                       )}
-                  </div>
-                  <p className="description-copy">{problem.description}</p>
-                  {problem.diagram && (
-                    <figure className="problem-diagram">
-                      <img src={problem.diagram} alt={problem.diagramAlt ?? ''} />
-                      <figcaption>{problem.diagramAlt}</figcaption>
-                    </figure>
-                  )}
-                  <div className="signature-label">
-                    YOUR {currentLang.shortLabel.toUpperCase()} API
-                  </div>
-                  <code className="method-signature">{getSignature(problem, language)}</code>
-                  <h2>Examples</h2>
-                  {problem.examples.map((example, index) => (
-                    <section className="example" key={index}>
-                      <div className="example-number">EXAMPLE {index + 1}</div>
-                      <div className="example-code">
-                        <div>
-                          <span>Input</span>
-                          <code>{example.input}</code>
-                        </div>
-                        <div>
-                          <span>Expected result</span>
-                          <code>{example.output}</code>
-                        </div>
-                      </div>
-                      <p>{example.explanation}</p>
-                    </section>
-                  ))}
-                  <h2>Keep in mind</h2>
-                  {problem.collection !== 'blind75' &&
-                    (language === 'cpp' || language === 'java') && (
-                      <p className="practice-tip">
-                        Implement the TODO methods in the supplied {currentLang.shortLabel} file.
-                        Keep its class names, wrappers, and main function. These languages use the
-                        original EPI types; follow the supplied code where it differs from the C#
-                        types below.
+                      {!solved.has(problem.id) &&
+                        practice.progress[problem.id]?.status === 'attempted' && (
+                          <span className="attempted-tag">
+                            <Clock3 size={12} /> Attempted
+                          </span>
+                        )}
+                    </div>
+                    <p className="description-copy">{problem.description}</p>
+                    {problem.sourceAttribution && (
+                      <p className="source-attribution">
+                        {problem.sourceAttribution}{' '}
+                        {problem.sourceUrl?.startsWith(
+                          'https://www.interviewcake.com/question/',
+                        ) && (
+                          <a href={problem.sourceUrl} target="_blank" rel="noopener noreferrer">
+                            Original task reference
+                          </a>
+                        )}
                       </p>
                     )}
-                  <ul className="constraints">
-                    {problem.constraints.map((item) => (
-                      <li key={item}>{item}</li>
+                    {problem.diagram && (
+                      <figure className="problem-diagram">
+                        <img src={problem.diagram} alt={problem.diagramAlt ?? ''} />
+                        <figcaption>{problem.diagramAlt}</figcaption>
+                      </figure>
+                    )}
+                    <div className="signature-label">
+                      YOUR {currentLang.shortLabel.toUpperCase()} API
+                    </div>
+                    <code className="method-signature">{getSignature(problem, language)}</code>
+                    <h2>Examples</h2>
+                    {problem.examples.map((example, index) => (
+                      <section className="example" key={index}>
+                        <div className="example-number">EXAMPLE {index + 1}</div>
+                        <div className="example-code">
+                          <div>
+                            <span>Input</span>
+                            <code>{example.input}</code>
+                          </div>
+                          <div>
+                            <span>Expected result</span>
+                            <code>{example.output}</code>
+                          </div>
+                        </div>
+                        <p>{example.explanation}</p>
+                      </section>
                     ))}
-                  </ul>
-                  <div className="practice-tip">
-                    <FlaskConical size={18} />
-                    <p>
-                      <strong>Make it work, then make it better.</strong>Run checks three visible
-                      cases. Submit checks the full problem corpus.
+                    <h2>Keep in mind</h2>
+                    {(problem.collection ?? 'epi') === 'epi' &&
+                      (language === 'cpp' || language === 'java') && (
+                        <p className="practice-tip">
+                          Implement the TODO methods in the supplied {currentLang.shortLabel} file.
+                          Keep its class names, wrappers, and main function. These languages use the
+                          original EPI types; follow the supplied code where it differs from the C#
+                          types below.
+                        </p>
+                      )}
+                    <ul className="constraints">
+                      {problem.constraints.map((item) => (
+                        <li key={item}>{item}</li>
+                      ))}
+                    </ul>
+                    <div className="practice-tip">
+                      <FlaskConical size={18} />
+                      <p>
+                        <strong>Make it work, then make it better.</strong>Run checks three visible
+                        cases. Submit checks the full problem corpus.
+                      </p>
+                    </div>
+                    <p className="attribution">
+                      {(problem.collection ?? 'epi') === 'epi'
+                        ? 'Practice data from Elements of Programming Interviews Judge. For trusted local use.'
+                        : `Original ${collectionName(problem.collection)} statements, test corpora, and local illustrations. For trusted local use.`}
                     </p>
-                  </div>
-                  <p className="attribution">
-                    {problem.collection === 'blind75'
-                      ? 'Original Blind 75 statements, test corpora, and local illustrations. For trusted local use.'
-                      : 'Practice data from Elements of Programming Interviews Judge. For trusted local use.'}
-                  </p>
-                </article>
-              )}
+                  </article>
+                )}
+              </div>
+              <div
+                id="solution-panel"
+                role="tabpanel"
+                aria-labelledby="solution-tab"
+                className="problem-tab-panel"
+                hidden={problemTab !== 'solution'}
+              >
+                {problem && problemTab === 'solution' && (
+                  <SolutionPanel
+                    problemId={problem.id}
+                    title={problem.title}
+                    language={currentLang.id}
+                    example={problem.examples[0]}
+                  />
+                )}
+              </div>
             </section>
 
             <section className="coding-pane" aria-label="Code and results">

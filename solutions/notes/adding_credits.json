@@ -1,0 +1,70 @@
+{
+  "explanation": "Store every credit relative to one global offset. AddAll changes only the offset, while a sorted set of normalized credits identifies a maximum client. Replacing or removing a client updates both indexes.",
+  "timeComplexity": "Insert/Remove/Max: O(log n); Lookup: O(1) expected; AddAll: O(1)",
+  "spaceComplexity": "O(n)",
+  "attribution": "Original C# implementation and explanation authored for EPI Practice from the displayed problem contract.",
+  "correctness": "Each stored credit plus the common offset equals that client\u2019s observable credit. AddAll preserves this invariant by changing only the offset. Insertion/removal updates both the client map and ordered ranking, so the highest ranked normalized credit also has the highest observable credit.",
+  "walkthrough": "Insert client Nora with credit 4, then AddAll(6): Lookup(Nora) is 10. Reinsert Nora with credit 3, which replaces its absolute credit. Max is Nora; after removal Lookup is \u22121 and Max is empty.",
+  "edgeCases": [
+    "Reinserting a client replaces its credit.",
+    "Missing removal returns false and missing lookup returns \u22121.",
+    "Initialize clears both indexes and resets the offset."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          "ClientsCreditsInfo",
+          "",
+          0
+        ],
+        [
+          "insert",
+          "Nora",
+          4
+        ],
+        [
+          "add_all",
+          "",
+          6
+        ],
+        [
+          "lookup",
+          "Nora",
+          10
+        ],
+        [
+          "insert",
+          "Nora",
+          3
+        ],
+        [
+          "lookup",
+          "Nora",
+          3
+        ],
+        [
+          "max",
+          "Nora",
+          0
+        ],
+        [
+          "remove",
+          "Nora",
+          1
+        ],
+        [
+          "lookup",
+          "Nora",
+          -1
+        ],
+        [
+          "max",
+          "",
+          0
+        ]
+      ]
+    ],
+    "expected": true
+  }
+}

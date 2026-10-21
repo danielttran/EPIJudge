@@ -1,0 +1,227 @@
+{
+  "interviewcake_second-largest-item-in-bst": {
+    "code": "class Solution {\n    public int FindSecondLargest(BinaryTreeNode root) {\n        BinaryTreeNode previous = null, current = root;\n        while (current.Right != null) { previous = current; current = current.Right; }\n        if (current.Left != null) {\n            current = current.Left;\n            while (current.Right != null) current = current.Right;\n            return current.Value;\n        }\n        return previous.Value;\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    public int FindSecondLargest(BinaryTreeNode root) {\n        while (root.Right != null) root = root.Right;\n        return root.Value;\n    }\n}\n",
+    "incorrectReason": "Searches for the largest key instead of its predecessor."
+  },
+  "interviewcake_stock-price": {
+    "code": "class Solution {\n    public int GetMaxProfit(int[] prices) {\n        int minimum = prices[0], best = prices[1] - prices[0];\n        for (int sale = 1; sale < prices.length; sale++) {\n            best = Math.max(best, prices[sale] - minimum);\n            minimum = Math.min(minimum, prices[sale]);\n        }\n        return best;\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    public int GetMaxProfit(int[] prices) {\n        int minimum = prices[0], best = prices[1] - prices[0];\n        for (int sale = 1; sale < prices.length; sale++) {\n            best = Math.max(best, prices[sale] - minimum);\n            minimum = Math.min(minimum, prices[sale]);\n        }\n        return Math.max(0,best);\n    }\n}\n",
+    "incorrectReason": "Allows skipping the required trade when all legal profits are negative."
+  },
+  "interviewcake_balanced-binary-tree": {
+    "code": "class Solution {\n    private record Entry(BinaryTreeNode node, int depth) {}\n    public boolean IsBalanced(BinaryTreeNode root) {\n        if (root == null) return true;\n        ArrayDeque<Entry> pending = new ArrayDeque<>(); pending.push(new Entry(root,0));\n        int shallowest = Integer.MAX_VALUE, deepest = 0;\n        while (!pending.isEmpty()) {\n            Entry current = pending.pop(); BinaryTreeNode node = current.node();\n            if (node.Left == null && node.Right == null) {\n                shallowest = Math.min(shallowest,current.depth()); deepest = Math.max(deepest,current.depth());\n                if (deepest-shallowest > 1) return false;\n            }\n            if (node.Left != null) pending.push(new Entry(node.Left,current.depth()+1));\n            if (node.Right != null) pending.push(new Entry(node.Right,current.depth()+1));\n        }\n        return true;\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    public boolean IsBalanced(BinaryTreeNode root) {\n        if (root == null) return true;\n        ArrayList<BinaryTreeNode> order = new ArrayList<>(); ArrayDeque<BinaryTreeNode> pending = new ArrayDeque<>(); pending.push(root);\n        while (!pending.isEmpty()) { BinaryTreeNode node=pending.pop(); order.add(node); if(node.Left!=null)pending.push(node.Left);if(node.Right!=null)pending.push(node.Right); }\n        Map<BinaryTreeNode,Integer> heights = new IdentityHashMap<>();\n        for(int i=order.size()-1;i>=0;i--){BinaryTreeNode node=order.get(i);int left=heights.getOrDefault(node.Left,0),right=heights.getOrDefault(node.Right,0);if(Math.abs(left-right)>1)return false;heights.put(node,1+Math.max(left,right));}\n        return true;\n    }\n}\n",
+    "incorrectReason": "Checks per-node AVL height balance, which wrongly rejects an allowed one-leaf chain."
+  },
+  "interviewcake_bst-checker": {
+    "code": "class Solution {\n    private record Entry(BinaryTreeNode node,long low,long high) {}\n    public boolean IsBinarySearchTree(BinaryTreeNode root) {\n        if (root == null) return true;\n        var pending = new ArrayDeque<Entry>(); pending.push(new Entry(root,Long.MIN_VALUE,Long.MAX_VALUE));\n        while (!pending.isEmpty()) {\n            var current=pending.pop(); var node=current.node();\n            if(node.Value<=current.low()||node.Value>=current.high())return false;\n            if(node.Left!=null)pending.push(new Entry(node.Left,current.low(),node.Value));\n            if(node.Right!=null)pending.push(new Entry(node.Right,node.Value,current.high()));\n        }\n        return true;\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    public boolean IsBinarySearchTree(BinaryTreeNode root) {\n        if(root==null)return true;\n        if(root.Left!=null&&root.Left.Value>=root.Value)return false;\n        if(root.Right!=null&&root.Right.Value<=root.Value)return false;\n        return IsBinarySearchTree(root.Left)&&IsBinarySearchTree(root.Right);\n    }\n}\n",
+    "incorrectReason": "Checks only parent-child comparisons and misses a descendant violating an ancestor bound."
+  },
+  "interviewcake_bracket-validator": {
+    "code": "class Solution {\n    public boolean IsValid(String code) {\n        var open = new ArrayDeque<Character>();\n        for (char c : code.toCharArray()) {\n            if (c=='('||c=='['||c=='{') open.push(c);\n            else if(c==')'||c==']'||c=='}') {\n                if(open.isEmpty())return false;\n                char left=open.pop();\n                if((c==')'&&left!='(')||(c==']'&&left!='[')||(c=='}'&&left!='{'))return false;\n            }\n        }\n        return open.isEmpty();\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    public boolean IsValid(String code) {\n        int count=0;\n        for(char c:code.toCharArray()){\n            if(c=='('||c=='['||c=='{')count++;\n            else if(c==')'||c==']'||c=='}'){if(count==0)return false;count--;}\n        }\n        return count==0;\n    }\n}\n",
+    "incorrectReason": "Balances delimiter counts without checking matching delimiter kinds or proper nesting."
+  },
+  "interviewcake_cafe-order-checker": {
+    "code": "class Solution {\n    public boolean IsFirstComeFirstServed(int[] takeOut, int[] dineIn, int[] served) {\n        if(served.length!=takeOut.length+dineIn.length)return false;\n        int take=0,dine=0;\n        for(int order:served){\n            if(take<takeOut.length&&takeOut[take]==order)take++;\n            else if(dine<dineIn.length&&dineIn[dine]==order)dine++;\n            else return false;\n        }\n        return take==takeOut.length&&dine==dineIn.length;\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    public boolean IsFirstComeFirstServed(int[] takeOut, int[] dineIn, int[] served) {\n        if(served.length!=takeOut.length+dineIn.length)return false;\n        var remaining=new HashSet<Integer>();for(int x:takeOut)remaining.add(x);for(int x:dineIn)remaining.add(x);\n        for(int x:served)if(!remaining.remove(x))return false;\n        return remaining.isEmpty();\n    }\n}\n",
+    "incorrectReason": "Checks only membership and total count, losing each source queue\u2019s required order."
+  },
+  "interviewcake_nth-fibonacci": {
+    "code": "class Solution {\n    public int Fib(int n) {\n        int previous=0,current=1;\n        for(int i=0;i<n;i++){int next=previous+current;previous=current;current=next;}\n        return previous;\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    public int Fib(int n) {\n        int previous=1,current=1;\n        for(int i=1;i<n;i++){int next=previous+current;previous=current;current=next;}\n        return current;\n    }\n}\n",
+    "incorrectReason": "Uses one for F(0), violating the declared zero base case."
+  },
+  "interviewcake_delete-node": {
+    "code": "class Solution {\n    public void DeleteNode(LinkedListNode nodeToDelete) {\n        nodeToDelete.Value=nodeToDelete.Next.Value;\n        nodeToDelete.Next=nodeToDelete.Next.Next;\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    public void DeleteNode(LinkedListNode nodeToDelete) {\n        nodeToDelete.Next=nodeToDelete.Next.Next;\n    }\n}\n",
+    "incorrectReason": "Bypasses the successor without copying its value into the target object."
+  },
+  "interviewcake_linked-list-cycles": {
+    "code": "class Solution {\n    public boolean ContainsCycle(LinkedListNode firstNode) {\n        LinkedListNode slow=firstNode,fast=firstNode;\n        while(fast!=null&&fast.Next!=null){slow=slow.Next;fast=fast.Next.Next;if(slow==fast)return true;}\n        return false;\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    public boolean ContainsCycle(LinkedListNode firstNode) {\n        var seen=new HashSet<Integer>();\n        for(var node=firstNode;node!=null;node=node.Next)if(!seen.add(node.Value))return true;\n        return false;\n    }\n}\n",
+    "incorrectReason": "Treats repeated values in separate node objects as evidence of a cycle."
+  },
+  "interviewcake_find-duplicate-files": {
+    "code": "class Solution {\n    private static String Fingerprint(Path file) throws IOException {\n        long size=Files.size(file);int count=(int)Math.min(64L,size);\n        long end=Math.max(0L,size-64L); long[] offsets={0L,end/2L,end};\n        StringBuilder key=new StringBuilder().append(size);\n        try(RandomAccessFile input=new RandomAccessFile(file.toFile(),\"r\")){\n            for(long offset:offsets){byte[] sample=new byte[count];input.seek(offset);input.readFully(sample);key.append(':').append(Base64.getEncoder().encodeToString(sample));}\n        }\n        return key.toString();\n    }\n    public List<FilePaths> FindDuplicateFiles(String startingDirectory) {\n        var firstByFingerprint=new HashMap<String,Path>();var result=new ArrayList<FilePaths>();\n        try(var paths=Files.walk(Paths.get(startingDirectory))){\n            var files=paths.filter(Files::isRegularFile).iterator();\n            while(files.hasNext()){\n                Path file=files.next().toAbsolutePath().normalize();String key=Fingerprint(file);\n                Path earlier=firstByFingerprint.putIfAbsent(key,file);\n                if(earlier!=null){\n                    Path original=earlier,duplicate=file;\n                    if(Files.getLastModifiedTime(file).toMillis()<Files.getLastModifiedTime(earlier).toMillis()){original=file;duplicate=earlier;}\n                    result.add(new FilePaths(original.toString(),duplicate.toString()));\n                }\n            }\n        }catch(IOException error){throw new UncheckedIOException(error);}\n        return result;\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    private static String Fingerprint(Path file) throws IOException {\n        long size=Files.size(file);int count=(int)Math.min(64L,size);\n        long end=Math.max(0L,size-64L); long[] offsets={0L,end/2L,end};\n        StringBuilder key=new StringBuilder().append(size);\n        try(RandomAccessFile input=new RandomAccessFile(file.toFile(),\"r\")){\n            for(long offset:offsets){byte[] sample=new byte[count];input.seek(offset);input.readFully(sample);key.append(':').append(Base64.getEncoder().encodeToString(sample));}\n        }\n        return key.toString();\n    }\n    public List<FilePaths> FindDuplicateFiles(String startingDirectory) {\n        var firstByFingerprint=new HashMap<String,Path>();var result=new ArrayList<FilePaths>();\n        try(var paths=Files.walk(Paths.get(startingDirectory))){\n            var files=paths.filter(Files::isRegularFile).iterator();\n            while(files.hasNext()){\n                Path file=files.next().toAbsolutePath().normalize();String key=Long.toString(Files.size(file));\n                Path earlier=firstByFingerprint.putIfAbsent(key,file);\n                if(earlier!=null){\n                    Path original=earlier,duplicate=file;\n                    if(Files.getLastModifiedTime(file).toMillis()<Files.getLastModifiedTime(earlier).toMillis()){original=file;duplicate=earlier;}\n                    result.add(new FilePaths(original.toString(),duplicate.toString()));\n                }\n            }\n        }catch(IOException error){throw new UncheckedIOException(error);}\n        return result;\n    }\n}\n",
+    "incorrectReason": "Groups equal-sized files without comparing the specified bounded samples, creating false candidate pairs."
+  },
+  "interviewcake_find-duplicate-optimize-for-space": {
+    "code": "class Solution {\n    public int FindRepeat(int[] numbers) {\n        int low=1,high=numbers.length-1;\n        while(low<high){int middle=low+(high-low)/2,count=0;for(int value:numbers)if(value<=middle)count++;if(count>middle)high=middle;else low=middle+1;}\n        return low;\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    public int FindRepeat(int[] numbers) {\n        for(int i=1;i<numbers.length;i++)if(numbers[i]==numbers[i-1])return numbers[i];\n        return numbers[0];\n    }\n}\n",
+    "incorrectReason": "Looks only for adjacent repeats even though the array is unsorted."
+  },
+  "interviewcake_find-duplicate-optimize-for-space-beast-mode": {
+    "code": "class Solution {\n    public int FindDuplicate(int[] numbers) {\n        int slow=0,fast=0;\n        do{slow=numbers[slow];fast=numbers[numbers[fast]];}while(slow!=fast);\n        int entry=0;\n        while(entry!=slow){entry=numbers[entry];slow=numbers[slow];}\n        return entry;\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    public int FindDuplicate(int[] numbers) {\n        for(int i=0;i<numbers.length;i++){\n            int value=Math.abs(numbers[i]);\n            if(numbers[value]<0)return value;\n            numbers[value]=-numbers[value];\n        }\n        return Math.abs(numbers[0]);\n    }\n}\n",
+    "incorrectReason": "Marks visited positions by negating entries, violating the input-preservation contract even when the repeated value is found."
+  },
+  "interviewcake_find-rotation-point": {
+    "code": "class Solution {\n    public int FindRotationPoint(String[] words) {\n        int low=0,high=words.length-1;\n        while(low<high){int middle=low+(high-low)/2;if(words[middle].compareTo(words[high])>0)low=middle+1;else high=middle;}\n        return low;\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    public int FindRotationPoint(String[] words) {\n        if(words[0].compareTo(words[words.length-1])<=0)return words.length-1;\n        int low=0,high=words.length-1;\n        while(low<high){int middle=low+(high-low)/2;if(words[middle].compareTo(words[high])>0)low=middle+1;else high=middle;}\n        return low;\n    }\n}\n",
+    "incorrectReason": "Returns the final index for an unrotated multiword array instead of the explicit bank extension\u2019s zero index."
+  },
+  "interviewcake_graph-coloring": {
+    "code": "class Solution {\n    public void ColorGraph(GraphNode[] graph, String[] colors) {\n        for(GraphNode node:graph){\n            var unavailable=new HashSet<String>();\n            for(GraphNode neighbor:node.Neighbors)if(neighbor.Color!=null)unavailable.add(neighbor.Color);\n            for(String color:colors)if(!unavailable.contains(color)){node.Color=color;break;}\n        }\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    public void ColorGraph(GraphNode[] graph, String[] colors) {\n        for(int i=0;i<graph.length;i++)graph[i].Color=colors[i%Math.min(2,colors.length)];\n    }\n}\n",
+    "incorrectReason": "Assumes two alternating colors suffice even for a graph containing an odd cycle."
+  },
+  "interviewcake_highest-product-of-3": {
+    "code": "class Solution {\n    public int HighestProductOf3(int[] values) {\n        int highest=Math.max(values[0],values[1]),lowest=Math.min(values[0],values[1]);\n        int highPair=values[0]*values[1],lowPair=highPair,best=highPair*values[2];\n        for(int i=2;i<values.length;i++){\n            int value=values[i];best=Math.max(best,Math.max(value*highPair,value*lowPair));\n            highPair=Math.max(highPair,Math.max(value*highest,value*lowest));lowPair=Math.min(lowPair,Math.min(value*highest,value*lowest));\n            highest=Math.max(highest,value);lowest=Math.min(lowest,value);\n        }\n        return best;\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    public int HighestProductOf3(int[] values) {\n        int[] sorted=values.clone();Arrays.sort(sorted);\n        return sorted[sorted.length-1]*sorted[sorted.length-2]*sorted[sorted.length-3];\n    }\n}\n",
+    "incorrectReason": "Considers only the three largest values and misses two negative values multiplying with a large positive."
+  },
+  "interviewcake_queue-two-stacks": {
+    "code": "class QueueTwoStacks {\n    private final Stack<Integer> incoming=new Stack<>(),outgoing=new Stack<>();\n    public void Enqueue(int item){incoming.push(item);}\n    public int Dequeue(){\n        if(outgoing.empty())while(!incoming.empty())outgoing.push(incoming.pop());\n        if(outgoing.empty())throw new NoSuchElementException();\n        return outgoing.pop();\n    }\n}\n",
+    "incorrectCode": "class QueueTwoStacks {\n    private final Stack<Integer> values=new Stack<>();\n    public void Enqueue(int item){values.push(item);}\n    public int Dequeue(){return values.pop();}\n}\n",
+    "incorrectReason": "Uses stack order for dequeues, returning the latest enqueued occurrence rather than the oldest."
+  },
+  "interviewcake_shuffle": {
+    "code": "class Solution {\n    public void Shuffle(int[] array) {\n        for(int i=0;i<array.length;i++){int selected=RandomSource.GetRandom(i,array.length-1);int saved=array[i];array[i]=array[selected];array[selected]=saved;}\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    public void Shuffle(int[] array) {\n        for(int i=0;i<array.length;i++){int selected=RandomSource.GetRandom(0,array.length-1);int saved=array[i];array[i]=array[selected];array[selected]=saved;}\n    }\n}\n",
+    "incorrectReason": "Swaps each position with the full array rather than the remaining suffix, producing a biased permutation distribution."
+  },
+  "interviewcake_inflight-entertainment": {
+    "code": "class Solution {\n    public boolean CanTwoMoviesFillFlight(int[] movieLengths, int flightLength) {\n        var seen=new HashSet<Integer>();\n        for(int movie:movieLengths){if(seen.contains(flightLength-movie))return true;seen.add(movie);}\n        return false;\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    public boolean CanTwoMoviesFillFlight(int[] movieLengths, int flightLength) {\n        var all=new HashSet<Integer>();for(int movie:movieLengths)all.add(movie);\n        for(int movie:movieLengths)if(all.contains(flightLength-movie))return true;\n        return false;\n    }\n}\n",
+    "incorrectReason": "Allows the same movie position to supply both halves of the target."
+  },
+  "interviewcake_kth-to-last-node-in-singly-linked-list": {
+    "code": "class Solution {\n    public LinkedListNode KthToLastNode(int k, LinkedListNode head) {\n        LinkedListNode lead=head;\n        for(int i=0;i<k;i++)lead=lead.Next;\n        LinkedListNode answer=head;\n        while(lead!=null){lead=lead.Next;answer=answer.Next;}\n        return answer;\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    public LinkedListNode KthToLastNode(int k, LinkedListNode head) {\n        LinkedListNode lead=head;\n        for(int i=0;i<=k&&lead!=null;i++)lead=lead.Next;\n        LinkedListNode answer=head;\n        while(lead!=null){lead=lead.Next;answer=answer.Next;}\n        return answer;\n    }\n}\n",
+    "incorrectReason": "Uses a k+1-node lead, treating k as zero-based rather than the required one-based count from the tail."
+  },
+  "interviewcake_largest-stack": {
+    "code": "class MaxStack {\n    private final Stack<Integer> values=new Stack<>(),maxima=new Stack<>();\n    public void Push(int item){values.push(item);maxima.push(maxima.empty()?item:Math.max(item,maxima.peek()));}\n    public int Pop(){int answer=values.pop();maxima.pop();return answer;}\n    public int GetMax(){return maxima.peek();}\n}\n",
+    "incorrectCode": "class MaxStack {\n    private final Stack<Integer> values=new Stack<>();private int maximum=Integer.MIN_VALUE;\n    public void Push(int item){values.push(item);maximum=Math.max(maximum,item);}\n    public int Pop(){return values.pop();}\n    public int GetMax(){if(values.empty())throw new EmptyStackException();return maximum;}\n}\n",
+    "incorrectReason": "Never rolls the cached maximum back after the maximum entry is popped.",
+    "notes": {
+      "timeComplexity": "O(1) amortized time for Push and O(1) time for Pop and GetMax, using Java array-backed stacks."
+    }
+  },
+  "interviewcake_coin": {
+    "code": "class Solution {\n    public int ChangePossibilitiesBottomUp(int amount, int[] denominations) {\n        int[] ways=new int[amount+1];ways[0]=1;\n        for(int coin:denominations)for(int total=coin;total<=amount;total++)ways[total]+=ways[total-coin];\n        return ways[amount];\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    public int ChangePossibilitiesBottomUp(int amount, int[] denominations) {\n        int[] ways=new int[amount+1];ways[0]=1;\n        for(int total=1;total<=amount;total++)for(int coin:denominations)if(coin<=total)ways[total]+=ways[total-coin];\n        return ways[amount];\n    }\n}\n",
+    "incorrectReason": "Counts ordered play sequences instead of unordered denomination combinations."
+  },
+  "interviewcake_merge-sorted-arrays": {
+    "code": "class Solution {\n    public int[] MergeArrays(int[] first, int[] second) {\n        int[] result=new int[first.length+second.length];int left=0,right=0;\n        for(int i=0;i<result.length;i++)result[i]=right==second.length||(left<first.length&&first[left]<=second[right])?first[left++]:second[right++];\n        return result;\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    public int[] MergeArrays(int[] first, int[] second) {\n        var values=new TreeSet<Integer>();for(int value:first)values.add(value);for(int value:second)values.add(value);\n        return values.stream().mapToInt(Integer::intValue).toArray();\n    }\n}\n",
+    "incorrectReason": "Computes a set union and drops repeated occurrences that the merge must preserve."
+  },
+  "interviewcake_merging-ranges": {
+    "code": "class Solution {\n    public List<Meeting> MergeRanges(List<Meeting> meetings) {\n        var sorted=new ArrayList<>(meetings);sorted.sort(Comparator.comparingInt(meeting->meeting.StartTime));\n        var result=new ArrayList<Meeting>();\n        for(Meeting meeting:sorted){\n            if(result.isEmpty()||meeting.StartTime>result.get(result.size()-1).EndTime)result.add(new Meeting(meeting.StartTime,meeting.EndTime));\n            else{Meeting last=result.get(result.size()-1);last.EndTime=Math.max(last.EndTime,meeting.EndTime);}\n        }\n        return result;\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    public List<Meeting> MergeRanges(List<Meeting> meetings) {\n        var sorted=new ArrayList<>(meetings);sorted.sort(Comparator.comparingInt(meeting->meeting.StartTime));\n        var result=new ArrayList<Meeting>();\n        for(Meeting meeting:sorted){\n            if(result.isEmpty()||meeting.StartTime>result.get(result.size()-1).EndTime)result.add(meeting);\n            else{Meeting last=result.get(result.size()-1);last.EndTime=Math.max(last.EndTime,meeting.EndTime);}\n        }\n        return result;\n    }\n}\n",
+    "incorrectReason": "Reuses original meeting objects and may overwrite their endpoints, violating the required fresh-result and input-preservation contracts."
+  },
+  "interviewcake_mesh-message": {
+    "code": "class Solution {\n    public String[] BfsGetPath(Map<String, String[]> graph, String start, String end) {\n        var parent=new HashMap<String,String>();var queue=new ArrayDeque<String>();parent.put(start,null);queue.add(start);\n        while(!queue.isEmpty()){\n            String current=queue.remove();if(current.equals(end))break;\n            for(String neighbor:graph.get(current))if(!parent.containsKey(neighbor)){parent.put(neighbor,current);queue.add(neighbor);}\n        }\n        if(!parent.containsKey(end))return null;\n        var route=new ArrayList<String>();for(String current=end;current!=null;current=parent.get(current))route.add(current);\n        Collections.reverse(route);return route.toArray(String[]::new);\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    private boolean Find(Map<String,String[]> graph,String current,String end,Set<String> visited,List<String> route){\n        if(!visited.add(current))return false;route.add(current);if(current.equals(end))return true;\n        for(String next:graph.get(current))if(Find(graph,next,end,visited,route))return true;\n        route.remove(route.size()-1);return false;\n    }\n    public String[] BfsGetPath(Map<String,String[]> graph,String start,String end){\n        var route=new ArrayList<String>();return Find(graph,start,end,new HashSet<>(),route)?route.toArray(String[]::new):null;\n    }\n}\n",
+    "incorrectReason": "Uses depth-first search and returns the first route even when a shorter route exists."
+  },
+  "interviewcake_compress-url-list": {
+    "code": "class Trie {\n    private static class Node {Map<Character,Node> children=new HashMap<>();boolean terminal;}\n    private final Node root=new Node();\n    public boolean AddWord(String word){\n        Node node=root;for(char c:word.toCharArray())node=node.children.computeIfAbsent(c,key->new Node());\n        if(node.terminal)return false;node.terminal=true;return true;\n    }\n}\n",
+    "incorrectCode": "class Trie {\n    private static class Node {Map<Character,Node> children=new HashMap<>();}\n    private final Node root=new Node();\n    public boolean AddWord(String word){\n        Node node=root;boolean created=false;\n        for(char c:word.toCharArray()){if(!node.children.containsKey(c)){node.children.put(c,new Node());created=true;}node=node.children.get(c);}\n        return created;\n    }\n}\n",
+    "incorrectReason": "Confuses creating a new path with inserting a new complete key, so prefixes and the empty key are mishandled."
+  },
+  "interviewcake_matching-parens": {
+    "code": "class Solution {\n    public int GetClosingParen(String sentence, int openingParenIndex) {\n        int depth=0;\n        for(int i=openingParenIndex;i<sentence.length();i++){char c=sentence.charAt(i);if(c=='(')depth++;else if(c==')'&&--depth==0)return i;}\n        throw new IllegalArgumentException(\"No matching closer\");\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    public int GetClosingParen(String sentence, int openingParenIndex) {\n        return sentence.indexOf(')',openingParenIndex+1);\n    }\n}\n",
+    "incorrectReason": "Returns the next closing parenthesis without tracking nested pairs."
+  },
+  "interviewcake_permutation-palindrome": {
+    "code": "class Solution {\n    public boolean HasPalindromePermutation(String text) {\n        var odd=new HashSet<Character>();\n        for(char c:text.toCharArray())if(!odd.remove(c))odd.add(c);\n        return odd.size()<=1;\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    public boolean HasPalindromePermutation(String text) {\n        var odd=new HashSet<Character>();\n        for(char c:text.toCharArray())if(!odd.remove(c))odd.add(c);\n        return odd.size()==0;\n    }\n}\n",
+    "incorrectReason": "Rejects a valid odd-length palindrome permutation with one odd-frequency letter.",
+    "notes": {
+      "spaceComplexity": "O(n) auxiliary space for the character-array copy; the odd-frequency set has at most 26 entries."
+    }
+  },
+  "interviewcake_product-of-other-numbers": {
+    "code": "class Solution {\n    public int[] GetProductsOfAllIntsExceptAtIndex(int[] values) {\n        int[] result=new int[values.length];int product=1;\n        for(int i=0;i<values.length;i++){result[i]=product;product*=values[i];}\n        product=1;\n        for(int i=values.length-1;i>=0;i--){result[i]*=product;product*=values[i];}\n        return result;\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    public int[] GetProductsOfAllIntsExceptAtIndex(int[] values) {\n        int product=1;for(int value:values)product*=value;\n        int[] result=new int[values.length];for(int i=0;i<values.length;i++)result[i]=values[i]==0?0:product/values[i];\n        return result;\n    }\n}\n",
+    "incorrectReason": "Uses division and incorrectly returns zero at the sole zero\u2019s position instead of the product of the other entries."
+  },
+  "interviewcake_rectangular-love": {
+    "code": "class Solution {\n    public Rectangle FindRectangularOverlap(Rectangle first, Rectangle second) {\n        int left=Math.max(first.LeftX,second.LeftX),bottom=Math.max(first.BottomY,second.BottomY);\n        int right=Math.min(first.LeftX+first.Width,second.LeftX+second.Width),top=Math.min(first.BottomY+first.Height,second.BottomY+second.Height);\n        if(left>=right||bottom>=top)return new Rectangle();\n        return new Rectangle(left,bottom,right-left,top-bottom);\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    public Rectangle FindRectangularOverlap(Rectangle first, Rectangle second) {\n        int left=Math.max(first.LeftX,second.LeftX),bottom=Math.max(first.BottomY,second.BottomY);\n        int right=Math.min(first.LeftX+first.Width,second.LeftX+second.Width),top=Math.min(first.BottomY+first.Height,second.BottomY+second.Height);\n        if(left>right||bottom>top)return new Rectangle();\n        return new Rectangle(left,bottom,right-left,top-bottom);\n    }\n}\n",
+    "incorrectReason": "Treats boundary-only contact as an intersection rather than returning the declared empty rectangle."
+  },
+  "interviewcake_recursive-string-permutations": {
+    "code": "class Solution {\n    private void Build(char[] letters,int position,Set<String> result){\n        if(position==letters.length){result.add(new String(letters));return;}\n        Set<Character> chosen=new HashSet<>();\n        for(int i=position;i<letters.length;i++)if(chosen.add(letters[i])){\n            char saved=letters[position];letters[position]=letters[i];letters[i]=saved;\n            Build(letters,position+1,result);\n            saved=letters[position];letters[position]=letters[i];letters[i]=saved;\n        }\n    }\n    public Set<String> GetPermutations(String text){var result=new HashSet<String>();Build(text.toCharArray(),0,result);return result;}\n}\n",
+    "incorrectCode": "class Solution {\n    public Set<String> GetPermutations(String text) {\n        var result=new HashSet<String>();\n        for(int i=0;i<text.length();i++)result.add(text.substring(i)+text.substring(0,i));\n        return result;\n    }\n}\n",
+    "incorrectReason": "Generates only cyclic rotations rather than all recursive character permutations, also omitting the empty string\u2019s one permutation.",
+    "notes": {
+      "explanation": "Fill one position at a time by swapping each distinct remaining character into it. Recurse on the remaining positions, then undo the swap. A per-level set skips equivalent choices caused by repeated characters.",
+      "correctness": "At a fixed position, every distinct remaining character is tried once. For each choice, the recursive call enumerates all distinct arrangements of the suffix. Different choices have different characters at this position, so they cannot duplicate one another. Restoring the swap preserves the remaining choices, and the base case emits exactly one complete string, including the empty string.",
+      "walkthrough": "For ab, first leave a at position zero and emit ab after filling position one. Undo the suffix swap, then swap b into position zero and emit ba. Restore the original array before returning; the result set is {ab,ba}.",
+      "timeComplexity": "O(n * n!) time for n distinct characters, including construction of each length-n result string.",
+      "spaceComplexity": "O(n * n!) result storage, plus O(n\u00b2) worst-case auxiliary space for the character array, recursion and simultaneous per-level choice sets."
+    }
+  },
+  "interviewcake_reverse-linked-list": {
+    "code": "class Solution {\n    public LinkedListNode Reverse(LinkedListNode head) {\n        LinkedListNode previous=null;\n        while(head!=null){LinkedListNode next=head.Next;head.Next=previous;previous=head;head=next;}\n        return previous;\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    public LinkedListNode Reverse(LinkedListNode head) {\n        LinkedListNode result=null;\n        for(var node=head;node!=null;node=node.Next)result=new LinkedListNode(node.Value,result);\n        return result;\n    }\n}\n",
+    "incorrectReason": "Produces reversed values in copied nodes rather than reversing the original node identities."
+  },
+  "interviewcake_reverse-string-in-place": {
+    "code": "class Solution {\n    public void Reverse(char[] characters) {\n        for(int left=0,right=characters.length-1;left<right;left++,right--){char saved=characters[left];characters[left]=characters[right];characters[right]=saved;}\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    public void Reverse(char[] characters) {\n        char[] copy=new char[characters.length];for(int i=0;i<characters.length;i++)copy[i]=characters[characters.length-1-i];characters=copy;\n    }\n}\n",
+    "incorrectReason": "Rebinds a local parameter to a reversed copy and leaves the caller\u2019s mutable array unchanged."
+  },
+  "interviewcake_reverse-words": {
+    "code": "class Solution {\n    private void Reverse(char[] text,int left,int right){while(left<right){char saved=text[left];text[left++]=text[right];text[right--]=saved;}}\n    public void ReverseWords(char[] message){\n        Reverse(message,0,message.length-1);\n        for(int start=0,end=0;end<=message.length;end++)if(end==message.length||message[end]==' '){Reverse(message,start,end-1);start=end+1;}\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    public void ReverseWords(char[] message) {\n        for(int left=0,right=message.length-1;left<right;left++,right--){char saved=message[left];message[left]=message[right];message[right]=saved;}\n    }\n}\n",
+    "incorrectReason": "Reverses every character but fails to restore each individual word\u2019s spelling."
+  },
+  "interviewcake_simulate-5-sided-die": {
+    "code": "class Solution {\n    public int Rand5() {\n        int draw;do{draw=RandomSource.Rand7();}while(draw>5);return draw;\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    public int Rand5() {\n        return (RandomSource.Rand7()-1)%5+1;\n    }\n}\n",
+    "incorrectReason": "Maps seven equally likely outcomes onto five with modulo, giving two outcomes twice the probability of the others."
+  },
+  "interviewcake_simulate-7-sided-die": {
+    "code": "class Solution {\n    public int Rand7() {\n        while(true){int draw=(RandomSource.Rand5()-1)*5+(RandomSource.Rand5()-1);if(draw<21)return draw%7+1;}\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    public int Rand7() {\n        return RandomSource.Rand5()+RandomSource.Rand5()-1;\n    }\n}\n",
+    "incorrectReason": "Adds two die results, creating a triangular distribution and outcomes outside 1..7."
+  },
+  "interviewcake_temperature-tracker": {
+    "code": "class TempTracker {\n    private final int[] frequencies=new int[111];private int count,mode,minimum=111,maximum=-1;private long sum;\n    public void Insert(int temperature){frequencies[temperature]++;count++;sum+=temperature;minimum=Math.min(minimum,temperature);maximum=Math.max(maximum,temperature);if(frequencies[temperature]>frequencies[mode])mode=temperature;}\n    public Integer GetMin(){return count==0?null:minimum;}\n    public Integer GetMax(){return count==0?null:maximum;}\n    public Double GetMean(){return count==0?null:(double)sum/count;}\n    public Integer GetMode(){return count==0?null:mode;}\n}\n",
+    "incorrectCode": "class TempTracker {\n    private final int[] frequencies=new int[111];private int count,mode,minimum=111,maximum=-1;private long sum;\n    public void Insert(int temperature){frequencies[temperature]++;count++;sum+=temperature;minimum=Math.min(minimum,temperature);maximum=Math.max(maximum,temperature);if(frequencies[temperature]>frequencies[mode])mode=temperature;}\n    public Integer GetMin(){return count==0?null:minimum;}\n    public Integer GetMax(){return count==0?null:maximum;}\n    public Double GetMean(){return count==0?null:(double)(sum/count);}\n    public Integer GetMode(){return count==0?null:mode;}\n}\n",
+    "incorrectReason": "Performs integer division before converting the mean to double, truncating fractional means."
+  },
+  "interviewcake_cake-thief": {
+    "code": "class Solution {\n    public long MaxDuffelBagValue(CakeType[] types, int capacity) {\n        for(CakeType type:types)if(type.Weight==0&&type.Value>0)throw new InfinityException();\n        long[] best=new long[capacity+1];\n        for(int weight=1;weight<=capacity;weight++)for(CakeType type:types)if(type.Weight>0&&type.Weight<=weight)best[weight]=Math.max(best[weight],best[weight-type.Weight]+type.Value);\n        return best[capacity];\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    public long MaxDuffelBagValue(CakeType[] types, int capacity) {\n\n        long[] best=new long[capacity+1];\n        for(int weight=1;weight<=capacity;weight++)for(CakeType type:types)if(type.Weight>0&&type.Weight<=weight)best[weight]=Math.max(best[weight],best[weight-type.Weight]+type.Value);\n        return best[capacity];\n    }\n}\n",
+    "incorrectReason": "Skips zero-weight items and misses the required infinite optimum from a positive-value zero-weight type, including at capacity zero."
+  },
+  "interviewcake_find-unique-int-among-duplicates": {
+    "code": "class Solution {\n    public int FindUniqueDeliveryId(int[] deliveryIds) {\n        int unique=0;for(int id:deliveryIds)unique^=id;return unique;\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    public int FindUniqueDeliveryId(int[] deliveryIds) {\n        var distinct=new HashSet<Integer>();for(int id:deliveryIds)distinct.add(id);int result=0;for(int id:distinct)result^=id;return result;\n    }\n}\n",
+    "incorrectReason": "Deduplicates first, preventing the paired values from cancelling through XOR."
+  },
+  "interviewcake_top-scores": {
+    "code": "class Solution {\n    public int[] SortScores(int[] scores, int highestPossibleScore) {\n        int[] counts=new int[highestPossibleScore+1];for(int score:scores)counts[score]++;\n        int[] result=new int[scores.length];int at=0;\n        for(int score=highestPossibleScore;score>=0;score--)for(int count=0;count<counts[score];count++)result[at++]=score;\n        return result;\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    public int[] SortScores(int[] scores, int highestPossibleScore) {\n        int[] counts=new int[highestPossibleScore+1];for(int score:scores)counts[score]++;\n        int[] result=new int[scores.length];int at=0;\n        for(int score=0;score<=highestPossibleScore;score++)for(int count=0;count<counts[score];count++)result[at++]=score;\n        return result;\n    }\n}\n",
+    "incorrectReason": "Outputs scores in ascending order instead of the required nonincreasing order."
+  },
+  "interviewcake_which-appears-twice": {
+    "code": "class Solution {\n    public int FindRepeat(int[] numbers) {\n        long n=numbers.length-1L,total=0;for(int value:numbers)total+=value;\n        return (int)(total-n*(n+1)/2);\n    }\n}\n",
+    "incorrectCode": "class Solution {\n    public int FindRepeat(int[] numbers) {\n        long n=numbers.length-1L,total=0;for(int value:numbers)total+=value;\n        return (int)(total-n*(n-1)/2);\n    }\n}\n",
+    "incorrectReason": "Subtracts the expected sum of 1..n\u22121 rather than the guaranteed range 1..n.",
+    "notes": {
+      "explanation": "Add the entries using a 64-bit accumulator and subtract n(n+1)/2, also computed in 64-bit arithmetic. The guaranteed single extra occurrence is the remaining difference.",
+      "correctness": "The array contains one copy of every integer from 1 through n and one additional copy of the repeated value. Its total is therefore n(n+1)/2 plus that repeated value. Subtraction isolates the answer, and the declared n bound keeps both totals within a signed 64-bit integer.",
+      "walkthrough": "For [3,1,4,2,3], n is 4 and the array total is 13. The required range 1..4 sums to 4*5/2=10. The difference 13-10 is the extra value 3. Both totals are evaluated in 64-bit arithmetic.",
+      "timeComplexity": "O(n) time.",
+      "spaceComplexity": "O(1) auxiliary space."
+    }
+  },
+  "interviewcake_word-cloud": {
+    "code": "class WordCloudData {\n    public final Map<String,Integer> WordsToCounts=new HashMap<>();\n    private static boolean Letter(char value){return value>='A'&&value<='Z'||value>='a'&&value<='z';}\n    public WordCloudData(String text){\n        int index=0;\n        while(index<text.length()){\n            if(!Letter(text.charAt(index))){index++;continue;}\n            int start=index++;\n            while(index<text.length()){\n                char current=text.charAt(index);\n                if(Letter(current)){index++;continue;}\n                if((current=='\\''||current=='-')&&index+1<text.length()&&Letter(text.charAt(index+1))){index+=2;continue;}\n                break;\n            }\n            String word=text.substring(start,index).toLowerCase(Locale.ROOT);\n            WordsToCounts.put(word,WordsToCounts.getOrDefault(word,0)+1);\n        }\n    }\n}\n",
+    "incorrectCode": "class WordCloudData {\n    public final Map<String,Integer> WordsToCounts=new HashMap<>();\n    public WordCloudData(String text){\n        for(String token:text.toLowerCase(Locale.ROOT).split(\"\\\\s+\"))if(!token.isEmpty())WordsToCounts.put(token,WordsToCounts.getOrDefault(token,0)+1);\n    }\n}\n",
+    "incorrectReason": "Splits only on whitespace, leaving punctuation attached and failing the declared ASCII word-boundary policy."
+  }
+}

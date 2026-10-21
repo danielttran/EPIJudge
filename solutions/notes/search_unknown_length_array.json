@@ -1,0 +1,26 @@
+{
+  "explanation": "Double the indexed search range until its right endpoint is out of bounds or reaches the target. Binary-search that range, treating out-of-range reads as values beyond every valid element; the algorithm never queries the array length.",
+  "timeComplexity": "O(log(p + 2)) indexed reads, where p is the target insertion position.",
+  "spaceComplexity": "O(1) auxiliary space.",
+  "attribution": "Original C# implementation and explanation authored for EPI Practice from the displayed problem contract; EPI problem attribution remains in the collection.",
+  "correctness": "Exponential probing maintains that any target not already excluded lies at or after left. A successful read below the target excludes that entire sorted prefix; a larger value or an out-of-range read provides an upper bound. Binary search treats missing positions as beyond every valid element, so each comparison preserves every possible target position. An exhausted interval proves absence without querying Count.",
+  "walkthrough": "Search for 28 in [4, 9, 17, 28, 46]. Probe index 1: value 9 is too small, so set left to 2 and expand the upper probe to index 3. Its value 28 bounds the search. Binary search first checks index 2, then index 3, and returns 3.",
+  "edgeCases": [
+    "An empty array is detected through an out-of-range read and returns -1.",
+    "The target can be at index 0 or at the final valid index.",
+    "An upper probe may overshoot the array; that is a bound, not a fatal error."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        4,
+        9,
+        17,
+        28,
+        46
+      ],
+      28
+    ],
+    "expected": 3
+  }
+}

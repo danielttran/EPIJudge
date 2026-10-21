@@ -1,8 +1,15 @@
 # EPI Practice
 
-A local practice website for the **218 EPI problems** and a separate **Blind 75**
-collection in the exact [Crackr order](https://www.crackr.dev/blind75). Solve problems in **C#, JavaScript, Python, C++17, or Java 21**
+A local practice website with separate collections for **218 EPI problems**,
+**Blind 75** in the exact [Crackr order](https://www.crackr.dev/blind75), and
+**41 Interview Cake coding tasks**. Solve problems in **C#, JavaScript, Python, C++17, or Java 21**
 using the browser editor, Run, and Submit.
+
+Every coding question has a **Solution** tab with complete implementations in C#, JavaScript, Python, C++ and Java,
+with explanations, complexity bounds and attribution. C# explanations also include
+correctness arguments, original walkthroughs and edge cases. Reading a solution
+leaves your editor draft and selected programming language intact. All solution
+content is stored locally; see [coverage and validation](solutions/README.md).
 
 ## Start the website
 
@@ -44,10 +51,11 @@ accepted Submit. Browser recovery copies protect edits during connection issues.
 Open the problem list to export/import answers for another machine.
 
 The problem list has separate **EPI — 218 problems** and **Blind 75 — Crackr order**
-filters. Blind entries have `B01` through `B75` labels and independent IDs, drafts,
+filters, plus **Interview Cake — 41 coding tasks**. Blind entries have `B01` through `B75` labels and independent IDs, drafts,
 and history. Their original statements, examples, corpora, and 35 local SVGs run
 without LeetCode or external image requests. Similar EPI titles retain their
-existing contracts. See [Blind 75 contracts and validation](blind75/README.md).
+existing contracts. See [Blind 75 contracts and validation](blind75/README.md) and
+[solution coverage, provenance and validation](solutions/README.md).
 
 ## Repository layout
 

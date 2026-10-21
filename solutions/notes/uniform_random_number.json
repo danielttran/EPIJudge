@@ -1,0 +1,20 @@
+{
+  "explanation": "Generate enough independent fair bits to cover the range size. Reject bit patterns outside the requested range and retry; conditioning on acceptance leaves every valid offset equally likely. A one-value range needs no random bits.",
+  "timeComplexity": "O(log R) expected time for R possible values; fewer than two attempts on average.",
+  "spaceComplexity": "O(1) auxiliary space for the fixed-width integer range.",
+  "attribution": "Original C# implementation and explanation authored for EPI Practice from the displayed problem contract; EPI problem attribution remains in the collection.",
+  "correctness": "b independent fair bits produce every offset from 0 through 2^b - 1 with equal probability. Rejecting offsets at least R conditions that uniform distribution on exactly 0 through R - 1, so all accepted offsets remain equally likely. Adding lower is a bijection onto the inclusive requested interval. Each attempt uses fresh random bits, and repeated rejection does not bias the eventual accepted value.",
+  "walkthrough": "For inclusive bounds [-3, 2], R = 6 and b = 3. One possible attempt draws bits 110, offset 6, which is rejected. A following attempt draws 011, offset 3, which returns -3 + 3 = 0. Every accepted offset 0 through 5 is equally likely. The walkthrough case checks the full range’s distribution and independence, giving adapter verdict true rather than fixing one random output.",
+  "edgeCases": [
+    "Equal bounds require zero random bits and return the sole value.",
+    "A power-of-two range accepts every generated bit pattern.",
+    "A full signed-int range uses 32 bits and a wider range-size calculation; both endpoints remain possible."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      -3,
+      2
+    ],
+    "expected": true
+  }
+}

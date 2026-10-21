@@ -12,6 +12,7 @@ export default defineConfig({
         'src/legacyMigration.ts',
         'src/workspaceModels.ts',
         'src/studyPlans.ts',
+        'src/collections.ts',
         'src/reading/readingLessons.ts',
         'src/reading/raceSimulation.ts',
         'src/use*.ts',

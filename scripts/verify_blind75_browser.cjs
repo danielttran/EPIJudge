@@ -62,7 +62,7 @@ async function until(predicate,label){const end=Date.now()+20000;while(Date.now(
   await page.reload({waitUntil:'networkidle'});await until(async()=>(await page.locator('.monaco-editor .view-lines').innerText()).replace(/\s+/g,' ').includes('browser recovery survives'),'persisted reload');
   pass('failed-save recovery copy, retry and persistence after reload');
   const catalog=await (await page.request.get(base+'/api/problems')).json();
-  const images=catalog.filter(p=>p.diagram).map(p=>p.diagram);assert.equal(images.length,35);
+  const images=catalog.filter(p=>p.collection==='blind75'&&p.diagram).map(p=>p.diagram);assert.equal(images.length,35);
   await page.evaluate(async paths=>{for(const src of paths){const img=new Image();img.src=src;await img.decode();if(!img.naturalWidth)throw Error('Empty image '+src);}},images);
   await open();await filter.selectOption('collection:blind75');await page.getByRole('button',{name:/Rotate Image/}).click();
   await page.locator('figure img').waitFor();assert.ok(await page.locator('figure img').evaluate(img=>img.complete&&img.naturalWidth>0));

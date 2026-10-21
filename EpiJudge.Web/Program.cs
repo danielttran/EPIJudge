@@ -21,6 +21,7 @@ if (builder.Environment.IsDevelopment())
 var repositoryRoot = ProblemCatalog.FindRepositoryRoot(builder.Environment.ContentRootPath);
 ToolchainConfiguration.ApplyLocalOverrides(repositoryRoot);
 builder.Services.AddSingleton<ProblemCatalog>();
+builder.Services.AddSingleton<SolutionCatalog>();
 builder.Services.AddSingleton(new NativeProblemCatalog(repositoryRoot));
 builder.Services.AddSingleton(new SubmissionRunner(repositoryRoot));
 builder.Services.AddSingleton<PracticeDatabase>();
@@ -91,6 +92,7 @@ app.MapGet("/api/problems", (ProblemCatalog catalog, NativeProblemCatalog native
         problem.Id, problem.Title, problem.Topic, problem.Difficulty, problem.Description,
         problem.Constraints,
         problem.Collection, problem.Position, problem.Diagram, problem.DiagramAlt,
+        problem.SourceUrl, problem.SourceAttribution,
         Signature = nativeStarter?.Signature ?? (isPy ? (problem.PySignature ?? problem.Signature) : isJs ? (problem.JsSignature ?? problem.Signature) : problem.Signature),
         StarterCode = nativeStarter?.StarterCode ?? (isPy ? (problem.PyStarterCode ?? problem.StarterCode) : isJs ? (problem.JsStarterCode ?? problem.StarterCode) : problem.StarterCode),
         problem.JsSignature,
@@ -108,6 +110,13 @@ app.MapGet("/api/problems", (ProblemCatalog catalog, NativeProblemCatalog native
         problem.Examples, problem.TestCount
     };
 }));
+app.MapGet("/api/problems/{problemId}/solution", (string problemId, string? language, SolutionCatalog solutions) =>
+{
+    language ??= "csharp";
+    if(!SolutionCatalog.Languages.Contains(language,StringComparer.Ordinal))
+        return Results.BadRequest(new {message="Choose a supported solution language."});
+    return solutions.Find(problemId,language) is {} solution ? Results.Ok(solution) : Results.NotFound(new {message="No solution is available for this question."});
+});
 app.MapGet("/api/health", () => new { status = "ready", languages = new[] { "C#", "JavaScript", "Python", "C++", "Java" }, execution = "trusted-local-only" });
 app.MapPractice();
 app.MapPost("/api/submissions", async (SubmissionRequest request, HttpContext context,

@@ -1,0 +1,37 @@
+{
+  "explanation": "Group files by size and a fingerprint of at most 64 bytes each at the beginning, middle and end. For each matching pair, orient the paths by modification time.",
+  "correctness": "Equal fingerprints identify exactly the candidate groups defined by the adapter. Traversing every directory visits each file, and grouping retains enough information to emit each pair once without a full-content scan.",
+  "walkthrough": "The controlled directory contains a.txt and nested/b.txt, both with the bytes \"same bytes\". Their sizes and all three bounded samples match. Their modification times are 1000 and 2000, so report their full paths with a.txt first as the earlier-time candidate. This orientation is a heuristic, and equal fingerprints can still be false positives; neither file is changed.",
+  "edgeCases": [
+    "Empty directory",
+    "nested and sibling directories",
+    "zero-byte files",
+    "equal timestamps",
+    "deliberate sample collisions. No file deletion or writes."
+  ],
+  "timeComplexity": "O(f) file visits and bounded sampled bytes per file; path traversal costs also apply.",
+  "spaceComplexity": "O(f) fingerprints and paths.",
+  "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        {
+          "path": "a.txt",
+          "content": "same bytes",
+          "modified": 1000
+        },
+        {
+          "path": "nested/b.txt",
+          "content": "same bytes",
+          "modified": 2000
+        }
+      ]
+    ],
+    "expected": [
+      [
+        "a.txt",
+        "nested/b.txt"
+      ]
+    ]
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "explanation": "Fill one position at a time by swapping each distinct remaining character into it. Recurse on the remaining positions, then undo the swap. A per-level set skips equivalent choices caused by repeated characters.",
+  "correctness": "At a fixed position, every distinct remaining character is tried once. For each choice, the recursive call enumerates all distinct arrangements of the suffix. Different choices have different characters at this position, so they cannot duplicate one another. Restoring the swap preserves the remaining choices, and the base case emits exactly one complete string, including the empty string.",
+  "walkthrough": "For ab, first leave a at position zero and emit ab after filling position one. Undo the suffix swap, then swap b into position zero and emit ba. Restore the original array before returning; the result set is {ab,ba}.",
+  "edgeCases": [
+    "Empty string has one permutation",
+    "singleton",
+    "repeated characters under the bank extension."
+  ],
+  "timeComplexity": "O(n * n!) time for n distinct characters, including construction of each length-n result string.",
+  "spaceComplexity": "O(n * n!) result storage, plus O(n²) worst-case auxiliary space for the character array, recursion and simultaneous per-level choice sets.",
+  "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
+  "walkthroughCase": {
+    "arguments": [
+      "ab"
+    ],
+    "expected": [
+      "ab",
+      "ba"
+    ]
+  }
+}

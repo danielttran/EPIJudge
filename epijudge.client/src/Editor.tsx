@@ -16,14 +16,17 @@ for (const [id, grammar] of Object.entries({ csharp, javascript, python, cpp, ja
   monaco.languages.setMonarchTokensProvider(id, grammar.language);
 }
 monaco.editor.defineTheme('epi-dark', {
-  base: 'vs-dark', inherit: true,
+  base: 'vs-dark',
+  inherit: true,
   rules: [
     { token: 'comment', foreground: '6f7d8e', fontStyle: 'italic' },
     { token: 'keyword', foreground: 'c5a6f7' },
   ],
   colors: {
-    'editor.background': '#262626', 'editorLineNumber.foreground': '#4b5462',
-    'editor.lineHighlightBackground': '#2b2b2b', 'editor.selectionBackground': '#354057',
+    'editor.background': '#262626',
+    'editorLineNumber.foreground': '#4b5462',
+    'editor.lineHighlightBackground': '#2b2b2b',
+    'editor.selectionBackground': '#354057',
     'editorCursor.foreground': '#f6ad55',
   },
 });
@@ -37,7 +40,14 @@ type Props = {
   busy: boolean;
 };
 
-export default function CodeEditor({ code, language = 'csharp', onChange, onRun, onSubmit, busy }: Props) {
+export default function CodeEditor({
+  code,
+  language = 'csharp',
+  onChange,
+  onRun,
+  onSubmit,
+  busy,
+}: Props) {
   const container = useRef<HTMLDivElement>(null);
   const instance = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
   const callbacks = useRef({ onChange, onRun, onSubmit });
@@ -47,20 +57,34 @@ export default function CodeEditor({ code, language = 'csharp', onChange, onRun,
   useLayoutEffect(() => {
     const model = monaco.editor.createModel('', 'csharp');
     const editor = monaco.editor.create(container.current!, {
-      model, theme: 'epi-dark', ariaLabel: 'Editor content',
-      fontSize: 14, fontFamily: "'Cascadia Code', Consolas, monospace",
-      minimap: { enabled: false }, padding: { top: 16, bottom: 16 },
-      scrollBeyondLastLine: false, automaticLayout: true, tabSize: 4,
-      wordWrap: 'on', smoothScrolling: true, renderLineHighlight: 'all',
-      overviewRulerBorder: false, lineNumbersMinChars: 4, fixedOverflowWidgets: true,
+      model,
+      theme: 'epi-dark',
+      ariaLabel: 'Editor content',
+      fontSize: 14,
+      fontFamily: "'Cascadia Code', Consolas, monospace",
+      minimap: { enabled: false },
+      padding: { top: 16, bottom: 16 },
+      scrollBeyondLastLine: false,
+      automaticLayout: true,
+      tabSize: 4,
+      wordWrap: 'on',
+      smoothScrolling: true,
+      renderLineHighlight: 'all',
+      overviewRulerBorder: false,
+      lineNumbersMinChars: 4,
+      fixedOverflowWidgets: true,
     });
     instance.current = editor;
     const subscription = editor.onDidChangeModelContent(() => {
       // Programmatic switches must not overwrite another problem's saved code.
       if (!updating.current) callbacks.current.onChange(editor.getValue());
     });
-    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => callbacks.current.onRun());
-    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.Enter, () => callbacks.current.onSubmit());
+    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () =>
+      callbacks.current.onRun(),
+    );
+    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.Enter, () =>
+      callbacks.current.onSubmit(),
+    );
     return () => {
       subscription.dispose();
       instance.current = null;
@@ -78,8 +102,70 @@ export default function CodeEditor({ code, language = 'csharp', onChange, onRun,
       if (model.getLanguageId() !== language) monaco.editor.setModelLanguage(model, language);
       if (editor.getValue() !== code) editor.setValue(code);
       editor.updateOptions({ readOnly: busy });
-    } finally { updating.current = false; }
+    } finally {
+      updating.current = false;
+    }
   }, [code, language, busy]);
 
   return <div ref={container} style={{ height: '100%', width: '100%' }} />;
+}
+
+// Each reference view owns a separate, read-only model. It has no change,
+// grading, or storage callbacks and never reuses the user's editor model.
+export function ReadOnlyCode({
+  code,
+  language,
+  label,
+}: {
+  code: string;
+  language: string;
+  label: string;
+}) {
+  const container = useRef<HTMLDivElement>(null);
+  const instance = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
+  const height = Math.min(480, Math.max(160, code.split('\n').length * 20 + 28));
+
+  useLayoutEffect(() => {
+    const model = monaco.editor.createModel('', 'csharp');
+    const editor = monaco.editor.create(container.current!, {
+      model,
+      theme: 'epi-dark',
+      readOnly: true,
+      domReadOnly: true,
+      ariaLabel: label,
+      fontSize: 13,
+      fontFamily: "'Cascadia Code', Consolas, monospace",
+      lineNumbers: 'on',
+      lineNumbersMinChars: 3,
+      minimap: { enabled: false },
+      padding: { top: 12, bottom: 12 },
+      scrollBeyondLastLine: false,
+      automaticLayout: true,
+      tabSize: 4,
+      wordWrap: 'on',
+      renderLineHighlight: 'none',
+      overviewRulerBorder: false,
+      fixedOverflowWidgets: true,
+    });
+    instance.current = editor;
+    return () => {
+      instance.current = null;
+      editor.dispose();
+      model.dispose();
+    };
+  }, []);
+
+  useLayoutEffect(() => {
+    const editor = instance.current;
+    const model = editor?.getModel();
+    if (!editor || !model) return;
+    if (model.getLanguageId() !== language) monaco.editor.setModelLanguage(model, language);
+    if (editor.getValue() !== code) {
+      editor.setValue(code);
+      editor.setScrollPosition({ scrollTop: 0, scrollLeft: 0 });
+    }
+    editor.updateOptions({ ariaLabel: label });
+  }, [code, language, label]);
+
+  return <div ref={container} className="solution-code" style={{ height }} />;
 }

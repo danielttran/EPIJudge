@@ -1,0 +1,27 @@
+{
+  "explanation": "Push new entries onto an incoming stack. When the outgoing stack is empty, transfer all entries to it, reversing their order so its top is the oldest queue entry. Initialize clears both stacks.",
+  "timeComplexity": "O(1) amortized per operation; an individual transfer takes O(n).",
+  "spaceComplexity": "O(n).",
+  "attribution": "Original C# implementation and explanation authored for EPI Practice from the displayed problem contract.",
+  "correctness": "Reading outgoing from top to bottom, followed by incoming from bottom to top, gives the queue’s logical FIFO order. Enqueue appends to the latter part. Transferring all incoming entries when outgoing is empty reverses them into exactly the order required for dequeues. Clearing both stacks establishes the empty-queue invariant.",
+  "walkthrough": "Enqueue 14 and 9. The first dequeue transfers them so 14 is removed first. Enqueue 5 while 9 remains in outgoing; dequeues then return 9 and 5. The resulting trace is FIFO even though both underlying containers are LIFO.",
+  "edgeCases": [
+    "Initialize discards all prior state.",
+    "Interleaved enqueue/dequeue calls must not transfer into a nonempty outgoing stack.",
+    "Dequeue on an empty queue is outside the valid operation sequence and throws."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        ["Queue", 0],
+        ["enqueue", 14],
+        ["enqueue", 9],
+        ["dequeue", 14],
+        ["enqueue", 5],
+        ["dequeue", 9],
+        ["dequeue", 5]
+      ]
+    ],
+    "expected": true
+  }
+}

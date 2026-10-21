@@ -1,0 +1,17 @@
+{
+  "explanation": "XOR adds bits without carries. AND followed by a left shift produces the carry bits. Repeat until no carries remain, using the contract's signed 32-bit arithmetic.",
+  "timeComplexity": "O(32), at most a constant number of carry-propagation rounds for 32-bit values.",
+  "spaceComplexity": "O(1) auxiliary space.",
+  "attribution": "Original EPI Practice C# implementation, reusing and refining the repository-authored Blind75 algorithm fixtures. Collection membership follows Crackr; no external solution service is used.",
+  "correctness": "For fixed-width integers, a XOR b contains the sum bits without carries and (a AND b)<<1 contains exactly the pending carry bits. Replacing the operands with these values preserves their sum modulo 2^32. Carries move left until none remain, leaving the signed 32-bit sum.",
+  "walkthrough": "For a=-7 and b=12, the fixed-width XOR/carry loop repeatedly moves carry bits left until the carry operand is zero. The resulting signed 32-bit pattern represents 5, matching -7+12 without an arithmetic addition operator in the algorithm.",
+  "edgeCases": [
+    "Negative operands use two’s-complement 32-bit arithmetic.",
+    "A zero operand needs no carry propagation.",
+    "The displayed input contract guarantees the mathematical sum fits a signed int."
+  ],
+  "walkthroughCase": {
+    "arguments": [-7, 12],
+    "expected": 5
+  }
+}
