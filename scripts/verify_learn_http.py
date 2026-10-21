@@ -72,7 +72,9 @@ def main():
         result["error"] = traceback.format_exc()
         raise
     finally:
-        (folder / "learn-http.json").write_text(json.dumps(result, indent=2) + "\n")
+        (folder / "learn-http.json").write_text(
+            json.dumps(result, indent=2) + "\n", encoding="utf-8"
+        )
         if server:
             server.close()
 

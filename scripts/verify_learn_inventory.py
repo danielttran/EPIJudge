@@ -12,8 +12,8 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def audit(root=ROOT):
     folder = root / "epijudge.client/src/reading"
-    lessons = json.loads((folder / "content/lessons.json").read_text())
-    inventory = json.loads((folder / "learnInventory.json").read_text())
+    lessons = json.loads((folder / "content/lessons.json").read_text(encoding="utf-8"))
+    inventory = json.loads((folder / "learnInventory.json").read_text(encoding="utf-8"))
     articles = inventory["articles"]
     ids = [lesson["id"] for lesson in lessons]
     assert len(ids) == len(set(ids)) == 12, "Original reading inventory changed"
@@ -22,7 +22,7 @@ def audit(root=ROOT):
     )
     assert {path.stem for path in (folder / "content").glob("*.md")} == set(ids)
     catalogs = [
-        json.loads((root / path).read_text())
+        json.loads((root / path).read_text(encoding="utf-8"))
         for path in [
             "EpiJudge.Runner/catalog.json",
             "blind75/catalog.json",
@@ -31,7 +31,9 @@ def audit(root=ROOT):
     ]
     # Three curated EPI entries live in ProblemCatalog.cs rather than its JSON.
     assert [len(items) for items in catalogs] == [215, 75, 41]
-    solutions = json.loads((root / "solutions/catalog.json").read_text())
+    solutions = json.loads(
+        (root / "solutions/catalog.json").read_text(encoding="utf-8")
+    )
     current = [item for item in solutions if item["language"] == "csharp"]
     assert {
         name: sum(item["collection"] == name for item in current)
@@ -88,5 +90,5 @@ if __name__ == "__main__":
     result = audit()
     target = ROOT / ".epi-runs/learn-inventory-audit.json"
     target.parent.mkdir(parents=True, exist_ok=True)
-    target.write_text(json.dumps(result, indent=2) + "\n")
+    target.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(result, indent=2))
