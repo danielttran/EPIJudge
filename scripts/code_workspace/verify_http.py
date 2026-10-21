@@ -194,7 +194,9 @@ public static short countBits(int x) {
 def api(base, path, method="GET", body=None, expected_status=200):
     status, data, headers = request(base, path, method, body)
     if status != expected_status:
-        raise AssertionError(f"{method} {path}: {status}, expected {expected_status}: {data}")
+        raise AssertionError(
+            f"{method} {path}: {status}, expected {expected_status}: {data}"
+        )
     return data, headers
 
 
@@ -241,7 +243,11 @@ def fail_source(language, failure):
             + "\n    }\n}\n"
         )
     if language == "javascript":
-        return "class Solution {\n    GetMaxProfit(prices) {\n        " + body + "\n    }\n}\n"
+        return (
+            "class Solution {\n    GetMaxProfit(prices) {\n        "
+            + body
+            + "\n    }\n}\n"
+        )
     return (
         "class Solution:\n    def GetMaxProfit(self, prices: list[int]) -> int:\n        "
         + body
@@ -284,19 +290,29 @@ def main():
             raise AssertionError(label)
         checks.append(label)
 
-    def submit(base, problem_id, language, code, mode="submit", code_format="callable-v1"):
-        body = {"problemId": problem_id, "language": language, "code": code, "mode": mode}
+    def submit(
+        base, problem_id, language, code, mode="submit", code_format="callable-v1"
+    ):
+        body = {
+            "problemId": problem_id,
+            "language": language,
+            "code": code,
+            "mode": mode,
+        }
         if code_format is not None:
             body["codeFormat"] = code_format
         result, _ = api(base, "/api/submissions", "POST", body)
         return result
 
     try:
-        document = json.loads((ROOT / "workspace-code/catalog.json").read_text(encoding="utf-8"))
+        document = json.loads(
+            (ROOT / "workspace-code/catalog.json").read_text(encoding="utf-8")
+        )
         entries = document["entries"]
         by_scope = {(entry["problemId"], entry["language"]): entry for entry in entries}
         check(
-            document["codeFormat"] == "callable-v1" and len(entries) == len(by_scope) == 1670,
+            document["codeFormat"] == "callable-v1"
+            and len(entries) == len(by_scope) == 1670,
             "catalog enumerates all 1670 callable contracts",
         )
         with ExitStack() as stack:
@@ -423,7 +439,8 @@ def main():
                         p["starterCode"] == by_scope[(p["id"], language)]["starterCode"]
                         for p in language_catalog
                     ),
-                    language + " top-level selected-language starters also use clean source",
+                    language
+                    + " top-level selected-language starters also use clean source",
                 )
 
             valid = {
@@ -437,16 +454,24 @@ def main():
                 body = dict(valid, codeFormat=invalid_format)
                 status, _, _ = request(base, "/api/submissions", "POST", body)
                 check(
-                    status == 400, "invalid submission format is rejected: " + repr(invalid_format)
+                    status == 400,
+                    "invalid submission format is rejected: " + repr(invalid_format),
                 )
             for invalid_format in ["future", "", None]:
                 status, _, _ = request(
                     base,
                     "/api/practice/drafts/count_bits/python",
                     "PUT",
-                    {"code": "# unchanged", "revision": 0, "codeFormat": invalid_format},
+                    {
+                        "code": "# unchanged",
+                        "revision": 0,
+                        "codeFormat": invalid_format,
+                    },
                 )
-                check(status == 400, "invalid draft format is rejected: " + repr(invalid_format))
+                check(
+                    status == 400,
+                    "invalid draft format is rejected: " + repr(invalid_format),
+                )
 
             for category, problem_id in SUBJECTS.items():
                 for language in LANGUAGES:
@@ -460,7 +485,8 @@ def main():
                     )
                     snapshot, _ = api(base, "/api/practice/history/" + result["id"])
                     check(
-                        snapshot["code"] == code and snapshot["codeFormat"] == "callable-v1",
+                        snapshot["code"] == code
+                        and snapshot["codeFormat"] == "callable-v1",
                         f"{category}/{language} history stores the original clean code and format",
                     )
                     report["executions"].append(
@@ -474,7 +500,9 @@ def main():
                         }
                     )
                 print(
-                    "PASS callable HTTP actual " + category + " solutions in five languages",
+                    "PASS callable HTTP actual "
+                    + category
+                    + " solutions in five languages",
                     flush=True,
                 )
 
@@ -483,7 +511,10 @@ def main():
                 ("blind75_two_sum", "javascript"),
             ]:
                 result = submit(
-                    base, problem_id, language, by_scope[(problem_id, language)]["solutionCode"]
+                    base,
+                    problem_id,
+                    language,
+                    by_scope[(problem_id, language)]["solutionCode"],
                 )
                 check(
                     result["status"] == "Accepted",
@@ -499,11 +530,18 @@ def main():
                     "java": "java",
                 }[language]
                 full_code = (
-                    ROOT / "solutions" / language / (SUBJECTS["simple"] + "." + extension)
+                    ROOT
+                    / "solutions"
+                    / language
+                    / (SUBJECTS["simple"] + "." + extension)
                 ).read_text(encoding="utf-8")
                 for code_format in [None, "legacy-v1"]:
                     result = submit(
-                        base, SUBJECTS["simple"], language, full_code, code_format=code_format
+                        base,
+                        SUBJECTS["simple"],
+                        language,
+                        full_code,
+                        code_format=code_format,
                     )
                     check(
                         result["status"] == "Accepted",
@@ -512,7 +550,8 @@ def main():
                     )
                     saved, _ = api(base, "/api/practice/history/" + result["id"])
                     check(
-                        saved["code"] == full_code and saved["codeFormat"] == "legacy-v1",
+                        saved["code"] == full_code
+                        and saved["codeFormat"] == "legacy-v1",
                         language + " legacy submission snapshot is byte-preserved",
                     )
 
@@ -524,9 +563,13 @@ def main():
                 "python": "def broken(:\n",
             }
             for language in LANGUAGES:
-                result = submit(base, SUBJECTS["simple"], language, syntax[language], mode="run")
+                result = submit(
+                    base, SUBJECTS["simple"], language, syntax[language], mode="run"
+                )
                 expected_status = (
-                    "Runtime error" if language in ["javascript", "python"] else "Compilation error"
+                    "Runtime error"
+                    if language in ["javascript", "python"]
+                    else "Compilation error"
                 )
                 check(
                     result["status"] == expected_status,
@@ -542,7 +585,11 @@ def main():
                     language + " syntax diagnostic points to editor line 1",
                 )
                 runtime = submit(
-                    base, SUBJECTS["simple"], language, fail_source(language, "runtime"), mode="run"
+                    base,
+                    SUBJECTS["simple"],
+                    language,
+                    fail_source(language, "runtime"),
+                    mode="run",
                 )
                 check(
                     runtime["status"] == "Runtime error",
@@ -553,14 +600,20 @@ def main():
                 oversized_source = fail_source(language, "runtime").replace(
                     '"callable fixture"', json.dumps(marker)
                 )
-                oversized = submit(base, SUBJECTS["simple"], language, oversized_source, mode="run")
+                oversized = submit(
+                    base, SUBJECTS["simple"], language, oversized_source, mode="run"
+                )
                 report.setdefault("oversizedDiagnostics", []).append(
                     {"language": language, "marker": marker, "result": oversized}
                 )
                 check(
                     oversized["status"] == "Runtime error"
-                    and any(marker in (case.get("error") or "") for case in oversized["cases"]),
-                    language + " oversized diagnostic line is preserved without mapper overflow",
+                    and any(
+                        marker in (case.get("error") or "")
+                        for case in oversized["cases"]
+                    ),
+                    language
+                    + " oversized diagnostic line is preserved without mapper overflow",
                 )
 
             for fixture in import_fixtures(by_scope):
@@ -574,10 +627,13 @@ def main():
                     fixture["label"] + " accepts the complete question corpus",
                 )
                 check(
-                    snapshot["code"] == fixture["code"] and snapshot["codeFormat"] == "callable-v1",
+                    snapshot["code"] == fixture["code"]
+                    and snapshot["codeFormat"] == "callable-v1",
                     fixture["label"] + " preserves the original user source snapshot",
                 )
-                invalid = submit(base, problem_id, language, fixture["invalid"], mode="run")
+                invalid = submit(
+                    base, problem_id, language, fixture["invalid"], mode="run"
+                )
                 filename = by_scope[(problem_id, language)]["filename"]
                 report.setdefault("leadingImports", []).append(
                     {
@@ -600,7 +656,8 @@ def main():
                     and has_editor_line(
                         invalid.get("diagnostics") or "", filename, fixture["errorLine"]
                     ),
-                    fixture["label"] + " reports the original editor line after imports",
+                    fixture["label"]
+                    + " reports the original editor line after imports",
                 )
             print(
                 "PASS callable HTTP leading imports, Unicode and original diagnostic lines",
@@ -625,7 +682,8 @@ def main():
                     active = False
                     for _ in range(150):
                         history, _ = api(
-                            base, "/api/practice/history?problemId=" + SUBJECTS["simple"]
+                            base,
+                            "/api/practice/history?problemId=" + SUBJECTS["simple"],
                         )
                         if any(row["status"] == "Running" for row in history):
                             active = True
@@ -633,11 +691,13 @@ def main():
                         time.sleep(0.1)
                     check(
                         active,
-                        language + " callable timeout source is durably recorded before completion",
+                        language
+                        + " callable timeout source is durably recorded before completion",
                     )
                     status, _, _ = request(base, "/api/submissions", "POST", valid)
                     check(
-                        status == 429, language + " callable timeout preserves runner busy response"
+                        status == 429,
+                        language + " callable timeout preserves runner busy response",
                     )
                     worker.join(145)
                     check(
@@ -650,9 +710,13 @@ def main():
                         {"language": language, "result": responses[0]}
                     )
                     check(
-                        submit(base, SUBJECTS["simple"], "javascript", valid["code"], mode="run")[
-                            "status"
-                        ]
+                        submit(
+                            base,
+                            SUBJECTS["simple"],
+                            "javascript",
+                            valid["code"],
+                            mode="run",
+                        )["status"]
                         == "Accepted",
                         language + " callable runner recovers after timeout",
                     )
@@ -666,7 +730,8 @@ def main():
                 {"code": legacy_text, "revision": 0},
             )
             check(
-                legacy_draft["code"] == legacy_text and legacy_draft["codeFormat"] == "legacy-v1",
+                legacy_draft["code"] == legacy_text
+                and legacy_draft["codeFormat"] == "legacy-v1",
                 "omitted draft format preserves old CRLF/Unicode source as legacy",
             )
             clean = by_scope[("count_bits", "python")]["starterCode"]
@@ -684,7 +749,11 @@ def main():
                 base,
                 "/api/practice/drafts/count_bits/python",
                 "PUT",
-                {"code": clean, "revision": new_draft["revision"], "codeFormat": "legacy-v1"},
+                {
+                    "code": clean,
+                    "revision": new_draft["revision"],
+                    "codeFormat": "legacy-v1",
+                },
             )
             check(
                 changed["revision"] > new_draft["revision"]
@@ -695,15 +764,26 @@ def main():
                 base,
                 "/api/practice/drafts/count_bits/python",
                 "PUT",
-                {"code": clean, "revision": changed["revision"], "codeFormat": "callable-v1"},
+                {
+                    "code": clean,
+                    "revision": changed["revision"],
+                    "codeFormat": "callable-v1",
+                },
             )
             status, _, _ = request(
                 base,
                 "/api/practice/drafts/count_bits/python",
                 "PUT",
-                {"code": clean, "revision": new_draft["revision"], "codeFormat": "legacy-v1"},
+                {
+                    "code": clean,
+                    "revision": new_draft["revision"],
+                    "codeFormat": "legacy-v1",
+                },
             )
-            check(status == 409, "stale format-only draft update conflicts without overwriting")
+            check(
+                status == 409,
+                "stale format-only draft update conflicts without overwriting",
+            )
 
             if args.browser:
                 subprocess.run(
@@ -737,9 +817,12 @@ def main():
                 original_by_scope == restored_by_scope,
                 "mixed-format backup restoration preserves all exact source strings and formats",
             )
-            original_attempts = {a["id"]: (a["code"], a["codeFormat"]) for a in backup["attempts"]}
+            original_attempts = {
+                a["id"]: (a["code"], a["codeFormat"]) for a in backup["attempts"]
+            }
             restored_attempts = {
-                a["id"]: (a["code"], a["codeFormat"]) for a in restored_backup["attempts"]
+                a["id"]: (a["code"], a["codeFormat"])
+                for a in restored_backup["attempts"]
             }
             check(
                 original_attempts == restored_attempts,

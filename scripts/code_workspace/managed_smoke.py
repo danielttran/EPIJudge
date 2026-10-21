@@ -33,7 +33,9 @@ def run(limit: int) -> dict:
             continue
         problem = inventory[entry["problemId"]]
         reference_path = ROOT / "epi_judge_python" / problem["PySourceFile"]
-        reference_spec = importlib.util.spec_from_file_location("ref_problem_mod", reference_path)
+        reference_spec = importlib.util.spec_from_file_location(
+            "ref_problem_mod", reference_path
+        )
         reference = importlib.util.module_from_spec(reference_spec)
         reference_spec.loader.exec_module(reference)
         comparator = None
@@ -52,7 +54,10 @@ def run(limit: int) -> dict:
             expression = (
                 call.args[3]
                 if len(call.args) > 3
-                else next((item.value for item in call.keywords if item.arg == "comparator"), None)
+                else next(
+                    (item.value for item in call.keywords if item.arg == "comparator"),
+                    None,
+                )
             )
             if expression is not None:
                 comparator = eval(
@@ -118,7 +123,9 @@ if __name__ == "__main__":
         parser.error("limit must be positive")
     report = run(args.limit)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8", newline="\n")
+    args.report.write_text(
+        json.dumps(report, indent=2) + "\n", encoding="utf-8", newline="\n"
+    )
     print(json.dumps({key: value for key, value in report.items() if key != "results"}))
     for result in report["results"]:
         if not result["passed"]:

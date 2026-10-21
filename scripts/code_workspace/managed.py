@@ -53,17 +53,24 @@ def csharp_literal(argument, source: str) -> str:
 
 def problems() -> list[dict]:
     """Read all 218 actual managed starters without running catalog generation."""
-    result = json.loads((ROOT / "EpiJudge.Runner/catalog.json").read_text(encoding="utf-8"))
+    result = json.loads(
+        (ROOT / "EpiJudge.Runner/catalog.json").read_text(encoding="utf-8")
+    )
     source = (ROOT / "EpiJudge.Runner/ProblemCatalog.cs").read_text(encoding="utf-8")
     tree = parse(source, "csharp")
     for node in descendants(tree.root_node):
         if node.type != "implicit_object_creation_expression":
             continue
-        arguments = next((c for c in node.named_children if c.type == "argument_list"), None)
+        arguments = next(
+            (c for c in node.named_children if c.type == "argument_list"), None
+        )
         if arguments is None or len(arguments.named_children) < 10:
             continue
         positional = arguments.named_children
-        first = next((c for c in positional[0].named_children if c.type == "string_literal"), None)
+        first = next(
+            (c for c in positional[0].named_children if c.type == "string_literal"),
+            None,
+        )
         if first is None:
             continue
         problem_id = json.loads(text_of(first, source))
@@ -75,7 +82,9 @@ def problems() -> list[dict]:
             "StarterCode": csharp_literal(positional[7], source),
         }
         for argument in positional[10:]:
-            identifier = next((c for c in argument.named_children if c.type == "identifier"), None)
+            identifier = next(
+                (c for c in argument.named_children if c.type == "identifier"), None
+            )
             if identifier is None:
                 continue
             key = text_of(identifier, source)
@@ -139,7 +148,9 @@ def csharp_references(code: str) -> list[dict]:
     needed = identifiers(code, "csharp") & CSHARP_MODELS
     references = []
     for filename in ("Nodes.cs", "JudgeJson.cs"):
-        source = (ROOT / "EpiJudge.TestFramework" / filename).read_text(encoding="utf-8")
+        source = (ROOT / "EpiJudge.TestFramework" / filename).read_text(
+            encoding="utf-8"
+        )
         for node in parse(source, "csharp").root_node.named_children:
             if node.type != "class_declaration":
                 continue
@@ -179,7 +190,9 @@ def csharp_visible(code: str) -> str:
 
 @lru_cache(maxsize=1)
 def javascript_model_sources() -> dict[str, str]:
-    source = (ROOT / "EpiJudge.Runner/EpiJavascriptHarness.js").read_text(encoding="utf-8")
+    source = (ROOT / "EpiJudge.Runner/EpiJavascriptHarness.js").read_text(
+        encoding="utf-8"
+    )
     output = {}
     for node in parse(source, "javascript").root_node.named_children:
         if node.type == "class_declaration":
@@ -193,8 +206,12 @@ def javascript_split(code: str) -> tuple[str, str]:
     source = code.encode("utf-8")
     visible, exports = [], []
     for node in parse(code, "javascript").root_node.named_children:
-        expression = node.named_children[0] if node.type == "expression_statement" else None
-        left = expression.child_by_field_name("left") if expression is not None else None
+        expression = (
+            node.named_children[0] if node.type == "expression_statement" else None
+        )
+        left = (
+            expression.child_by_field_name("left") if expression is not None else None
+        )
         if (
             expression is not None
             and expression.type == "assignment_expression"
@@ -205,7 +222,9 @@ def javascript_split(code: str) -> tuple[str, str]:
         else:
             visible.append(text_of(node, source))
     if len(exports) != 1:
-        raise ValueError("Every owned EPI JavaScript module must have one explicit export binding")
+        raise ValueError(
+            "Every owned EPI JavaScript module must have one explicit export binding"
+        )
     return "\n\n".join(visible) + "\n", "\n" + "\n".join(exports) + "\n"
 
 
@@ -240,7 +259,12 @@ def python_bindings(node) -> set[str]:
         return {a.asname or a.name for a in node.names}
     if isinstance(node, (ast.Assign, ast.AnnAssign)):
         targets = node.targets if isinstance(node, ast.Assign) else [node.target]
-        return {n.id for target in targets for n in ast.walk(target) if isinstance(n, ast.Name)}
+        return {
+            n.id
+            for target in targets
+            for n in ast.walk(target)
+            if isinstance(n, ast.Name)
+        }
     return set()
 
 
@@ -251,7 +275,9 @@ def python_segment(source: str, node) -> str:
 
 
 def referenced_globals(table) -> set[str]:
-    result = {s.get_name() for s in table.get_symbols() if s.is_referenced() and s.is_global()}
+    result = {
+        s.get_name() for s in table.get_symbols() if s.is_referenced() and s.is_global()
+    }
     for child in table.get_children():
         result.update(referenced_globals(child))
     return result
@@ -334,7 +360,9 @@ def python_reference(name: str, node, source: str) -> dict:
             if isinstance(n, ast.ClassDef) and n.name == alias.name
         )
         constructor = next(
-            n for n in model.body if isinstance(n, ast.FunctionDef) and n.name == "__init__"
+            n
+            for n in model.body
+            if isinstance(n, ast.FunctionDef) and n.name == "__init__"
         )
         # Display the callable data API rather than formatting/comparison machinery.
         code = (
@@ -342,7 +370,8 @@ def python_reference(name: str, node, source: str) -> dict:
             + model.name
             + ":\n"
             + "\n".join(
-                "    " + line for line in python_segment(model_source, constructor).splitlines()
+                "    " + line
+                for line in python_segment(model_source, constructor).splitlines()
             )
         )
         if name != alias.name:
@@ -409,7 +438,9 @@ def python_split(problem: dict, solution: str, roots: list[str]) -> dict:
     visible_nodes = {id(all_nodes[name]) for name in visible_names}
     target = problem["PyInvocation"]
     support_roots = {target} & all_nodes.keys()
-    original_support = closure({target} & starter_nodes.keys(), starter_dependencies, set(roots))
+    original_support = closure(
+        {target} & starter_nodes.keys(), starter_dependencies, set(roots)
+    )
     # Some concise owned solutions deliberately supply a helper missing from
     # the original validator (gray-code adjacency is one example). Such helpers
     # are needed by the retained original wrapper even when that wrapper is not
@@ -427,7 +458,9 @@ def python_split(problem: dict, solution: str, roots: list[str]) -> dict:
             n
             for n in solution_tree.body
             if isinstance(n, ast.If)
-            and any(isinstance(x, ast.Name) and x.id == "__name__" for x in ast.walk(n.test))
+            and any(
+                isinstance(x, ast.Name) and x.id == "__name__" for x in ast.walk(n.test)
+            )
         ),
         None,
     )
@@ -435,7 +468,9 @@ def python_split(problem: dict, solution: str, roots: list[str]) -> dict:
         support_roots.update(
             n.id
             for n in ast.walk(original_main)
-            if isinstance(n, ast.Name) and isinstance(n.ctx, ast.Load) and n.id in all_nodes
+            if isinstance(n, ast.Name)
+            and isinstance(n.ctx, ast.Load)
+            and n.id in all_nodes
         )
     support_closure = closure(support_roots | supplied, dependencies, set(roots))
     support_names = support_closure - visible_names
@@ -443,7 +478,9 @@ def python_split(problem: dict, solution: str, roots: list[str]) -> dict:
     # The canonical envelope retains imports needed by its validators/models.
     visible_source = (
         "\n\n".join(
-            python_segment(solution, n) for n in solution_tree.body if id(n) in visible_nodes
+            python_segment(solution, n)
+            for n in solution_tree.body
+            if id(n) in visible_nodes
         )
         + "\n"
     )
@@ -457,12 +494,18 @@ def python_split(problem: dict, solution: str, roots: list[str]) -> dict:
         if isinstance(all_nodes[name], (ast.Import, ast.ImportFrom))
     )
     support_source = (
-        "\n\n".join(python_segment(solution, n) for n in solution_tree.body if id(n) in support_ids)
+        "\n\n".join(
+            python_segment(solution, n)
+            for n in solution_tree.body
+            if id(n) in support_ids
+        )
         + "\n"
     )
     # Future annotations must precede all definitions after envelope composition.
     future_nodes = [
-        n for n in solution_tree.body if isinstance(n, ast.ImportFrom) and n.module == "__future__"
+        n
+        for n in solution_tree.body
+        if isinstance(n, ast.ImportFrom) and n.module == "__future__"
     ]
     future_source = "\n".join(python_segment(solution, n) for n in future_nodes)
     if future_source:
@@ -474,7 +517,9 @@ def python_split(problem: dict, solution: str, roots: list[str]) -> dict:
     ]
     if {n.name for n in starter_roots} != set(roots):
         raise ValueError(problem["Id"] + " missing Python starter roots")
-    starter_source = "\n\n".join(python_segment(starter, n) for n in starter_roots) + "\n"
+    starter_source = (
+        "\n\n".join(python_segment(starter, n) for n in starter_roots) + "\n"
+    )
     # Standard-library imports used by algorithms belong with the editable code.
     # Starter annotations share those imports and supplied model bindings.
     imports = [
@@ -497,7 +542,9 @@ def python_split(problem: dict, solution: str, roots: list[str]) -> dict:
     extra_model_closure = closure(additional_models, starter_dependencies, set(roots))
     extra_model_ids = {id(starter_nodes[name]) for name in extra_model_closure}
     extra_prefix_parts = [
-        python_segment(starter, n) for n in starter_tree.body if id(n) in extra_model_ids
+        python_segment(starter, n)
+        for n in starter_tree.body
+        if id(n) in extra_model_ids
     ]
     # Independently authored solutions sometimes omit annotations that are on
     # the original starter. Retain those starter-only typing imports explicitly.
@@ -527,9 +574,12 @@ def python_split(problem: dict, solution: str, roots: list[str]) -> dict:
         )
         + "\n"
     )
-    references = [python_reference(name, all_nodes[name], solution) for name in sorted(supplied)]
+    references = [
+        python_reference(name, all_nodes[name], solution) for name in sorted(supplied)
+    ]
     references.extend(
-        python_reference(name, starter_nodes[name], starter) for name in sorted(additional_models)
+        python_reference(name, starter_nodes[name], starter)
+        for name in sorted(additional_models)
     )
     # Prefix definitions can reference the user's algorithm at call time. They
     # execute in the same module namespace and preserve framework node identity.
@@ -537,7 +587,11 @@ def python_split(problem: dict, solution: str, roots: list[str]) -> dict:
     if future_source:
         support_source = support_source[len(future_source) :].lstrip()
     prefix = (
-        "\n\n".join(part for part in (future_source, extra_prefix, support_source.rstrip()) if part)
+        "\n\n".join(
+            part
+            for part in (future_source, extra_prefix, support_source.rstrip())
+            if part
+        )
         + "\n\n"
     )
     if not prefix.strip():
@@ -589,14 +643,18 @@ def make_entry(problem: dict, language: str, roots: list[str]) -> dict:
         "javascript": "JsStarterCode",
         "python": "PyStarterCode",
     }[language]
-    signature_key = {"csharp": "Signature", "javascript": "JsSignature", "python": "PySignature"}[
-        language
-    ]
+    signature_key = {
+        "csharp": "Signature",
+        "javascript": "JsSignature",
+        "python": "PySignature",
+    }[language]
     starter = problem[starter_key]
     item = {
         "problemId": problem_id,
         "language": language,
-        "filename": "Solution.cs" if language == "csharp" else "solution." + EXTENSIONS[language],
+        "filename": "Solution.cs"
+        if language == "csharp"
+        else "solution." + EXTENSIONS[language],
         "signature": problem[signature_key],
         "starterCode": starter,
         "solutionCode": solution,
@@ -624,7 +682,9 @@ def make_entry(problem: dict, language: str, roots: list[str]) -> dict:
     elif language == "javascript":
         starter_code, starter_exports = javascript_split(starter)
         solution_code, solution_exports = javascript_split(solution)
-        if identifiers(starter_exports, language) != identifiers(solution_exports, language):
+        if identifiers(starter_exports, language) != identifiers(
+            solution_exports, language
+        ):
             raise ValueError(problem_id + " JavaScript starter/solution exports differ")
         item.update(
             starterCode=starter_code,
@@ -632,10 +692,17 @@ def make_entry(problem: dict, language: str, roots: list[str]) -> dict:
             suffix=solution_exports,
             visibleSymbols=top_symbols(solution_code, language),
         )
-        needed = identifiers(starter_code + "\n" + solution_code, language) & JAVASCRIPT_MODELS
+        needed = (
+            identifiers(starter_code + "\n" + solution_code, language)
+            & JAVASCRIPT_MODELS
+        )
         needed.update(javascript_documented_models(starter_code + "\n" + solution_code))
         item["references"] = [
-            {"title": "Supplied " + name, "code": javascript_model_sources()[name], "names": [name]}
+            {
+                "title": "Supplied " + name,
+                "code": javascript_model_sources()[name],
+                "names": [name],
+            }
             for name in sorted(needed)
         ]
     else:
@@ -657,7 +724,10 @@ def make_entry(problem: dict, language: str, roots: list[str]) -> dict:
             compile(program, "solution.py", "exec")
             if any(
                 isinstance(n, ast.If)
-                and any(isinstance(x, ast.Name) and x.id == "__name__" for x in ast.walk(n.test))
+                and any(
+                    isinstance(x, ast.Name) and x.id == "__name__"
+                    for x in ast.walk(n.test)
+                )
                 for n in ast.parse(item[kind]).body
             ):
                 raise ValueError(problem_id + " exposes a Python judge entrypoint")
@@ -666,10 +736,12 @@ def make_entry(problem: dict, language: str, roots: list[str]) -> dict:
             # The pinned C# grammar incorrectly reserves the contextual keyword
             # `required` in a valid local assignment. The same checked-in source
             # is compiler-validated; formatting may not introduce another error.
-            if language != "csharp" or parser_errors(program, language) != parser_errors(
-                original, language
-            ):
-                raise ValueError(problem_id + " invalid composed " + language + " program")
+            if language != "csharp" or parser_errors(
+                program, language
+            ) != parser_errors(original, language):
+                raise ValueError(
+                    problem_id + " invalid composed " + language + " program"
+                )
     return item
 
 
@@ -698,7 +770,9 @@ if __name__ == "__main__":
     path = ROOT / "workspace-code/parts/epi-managed.json"
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(
-        json.dumps(output, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n"
+        json.dumps(output, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+        newline="\n",
     )
     print(
         f"Recorded {len(output['entries'])} managed callable pairs / {len(output['entries']) * 2} visible artifacts."

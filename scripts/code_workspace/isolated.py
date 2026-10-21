@@ -22,7 +22,13 @@ from pathlib import Path
 from common import ROOT, format_code, parse, text_of
 
 LANGUAGES = ("csharp", "javascript", "python", "cpp", "java")
-EXTENSIONS = {"csharp": "cs", "javascript": "js", "python": "py", "cpp": "cpp", "java": "java"}
+EXTENSIONS = {
+    "csharp": "cs",
+    "javascript": "js",
+    "python": "py",
+    "cpp": "cpp",
+    "java": "java",
+}
 BLIND_MODELS = ("ListNode", "TreeNode", "Node")
 CAKE_MODELS = (
     "LinkedListNode",
@@ -36,8 +42,18 @@ CAKE_MODELS = (
     "RandomSource",
 )
 PY_HELPERS = ("word_exists", "component_count")
-IMPORT_NODES = {"using_directive", "import_declaration", "preproc_include", "using_declaration"}
-IDENTIFIERS = {"identifier", "type_identifier", "namespace_identifier", "property_identifier"}
+IMPORT_NODES = {
+    "using_directive",
+    "import_declaration",
+    "preproc_include",
+    "using_declaration",
+}
+IDENTIFIERS = {
+    "identifier",
+    "type_identifier",
+    "namespace_identifier",
+    "property_identifier",
+}
 
 
 def digest(source: str) -> str:
@@ -127,7 +143,9 @@ def ts_calls(code: str, language: str, *, external: bool) -> set[str]:
             name = node.child_by_field_name("name")
             obj = node.child_by_field_name("object")
             qualifier = text_of(obj, code) if obj is not None else ""
-            if name is not None and (qualifier == "Probe" or (not external and not qualifier)):
+            if name is not None and (
+                qualifier == "Probe" or (not external and not qualifier)
+            ):
                 result.add(text_of(name, code))
         elif language == "java" and node.type == "method_reference":
             named = node.named_children
@@ -143,7 +161,11 @@ def ts_calls(code: str, language: str, *, external: bool) -> set[str]:
         elif language == "cpp" and node.type == "qualified_identifier":
             scope = node.child_by_field_name("scope")
             name = node.child_by_field_name("name")
-            if scope is not None and name is not None and text_of(scope, code) == "Probe":
+            if (
+                scope is not None
+                and name is not None
+                and text_of(scope, code) == "Probe"
+            ):
                 result.add(text_of(name, code))
         elif language == "cpp" and not external and node.type == "call_expression":
             function = node.child_by_field_name("function")
@@ -154,7 +176,9 @@ def ts_calls(code: str, language: str, *, external: bool) -> set[str]:
 
 def probe_members(node, source: str, language: str):
     if language == "javascript":
-        declaration = next(c for c in node.named_children if c.type == "variable_declarator")
+        declaration = next(
+            c for c in node.named_children if c.type == "variable_declarator"
+        )
         body = declaration.child_by_field_name("value")
         assert body is not None and body.type == "object"
         return [c for c in body.named_children if c.type == "method_definition"]
@@ -177,7 +201,8 @@ def prune_probe(node, source: str, language: str, entry_code: str, replacement: 
         name = pending.pop()
         for member in by_name[name]:
             for dependency in (
-                ts_calls(text_of(member, source), language, external=False) & by_name.keys()
+                ts_calls(text_of(member, source), language, external=False)
+                & by_name.keys()
             ):
                 if dependency not in needed:
                     needed.add(dependency)
@@ -193,14 +218,20 @@ def prune_probe(node, source: str, language: str, entry_code: str, replacement: 
     else:
         code = "class Probe {\n" + "\n\n".join(selected) + "\n}\n"
     code = renamed(code, language, "Probe", replacement)
-    return code, [replacement] + [replacement + "." + name for name in sorted(needed)], removed
+    return (
+        code,
+        [replacement] + [replacement + "." + name for name in sorted(needed)],
+        removed,
+    )
 
 
 def python_split(source: str, models: tuple[str, ...], replacement: str):
     tree = ast.parse(source)
     imports = [n for n in tree.body if isinstance(n, (ast.Import, ast.ImportFrom))]
     definitions = [
-        n for n in tree.body if isinstance(n, (ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef))
+        n
+        for n in tree.body
+        if isinstance(n, (ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef))
     ]
     other = [
         n
@@ -228,7 +259,9 @@ def python_split(source: str, models: tuple[str, ...], replacement: str):
     removed = []
     if probe is not None:
         methods = {
-            n.name: n for n in probe.body if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef))
+            n.name: n
+            for n in probe.body
+            if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef))
         }
         needed = {
             n.attr
@@ -257,11 +290,14 @@ def python_split(source: str, models: tuple[str, ...], replacement: str):
             selected.body = [
                 m
                 for m in selected.body
-                if isinstance(m, (ast.FunctionDef, ast.AsyncFunctionDef)) and m.name in needed
+                if isinstance(m, (ast.FunctionDef, ast.AsyncFunctionDef))
+                and m.name in needed
             ]
             selected.name = replacement
             selected_helpers.append(selected)
-            selected_symbols += [replacement] + [replacement + "." + n for n in sorted(needed)]
+            selected_symbols += [replacement] + [
+                replacement + "." + n for n in sorted(needed)
+            ]
     needed_helpers = names & helpers.keys()
     pending = list(needed_helpers)
     while pending:
@@ -308,7 +344,11 @@ def ts_split(source: str, language: str, models: tuple[str, ...], replacement: s
         name = ts_name(node, source)
         if node.type in IMPORT_NODES:
             imports.append(text_of(node, source))
-        elif name in models or node.type in {"comment", "line_comment", "block_comment"}:
+        elif name in models or node.type in {
+            "comment",
+            "line_comment",
+            "block_comment",
+        }:
             continue
         elif name == "Probe":
             probe = node
@@ -351,7 +391,9 @@ def ts_split(source: str, language: str, models: tuple[str, ...], replacement: s
         if helper:
             # C++ class inline method names must resolve at their definitions.
             root_code = (
-                helper + "\n" + root_code if language == "cpp" else root_code + "\n" + helper
+                helper + "\n" + root_code
+                if language == "cpp"
+                else root_code + "\n" + helper
             )
             root_code = renamed(root_code, language, "Probe", replacement)
             symbols += helper_symbols
@@ -373,12 +415,22 @@ def header_parts(header: str, language: str, models: tuple[str, ...]):
         refs = {}
         for node in tree.body:
             if isinstance(node, ast.ClassDef) and node.name in models:
-                refs[node.name] = ast.unparse(ast.Module(body=[node], type_ignores=[])) + "\n"
-        imports = [ast.unparse(n) for n in tree.body if isinstance(n, (ast.Import, ast.ImportFrom))]
+                refs[node.name] = (
+                    ast.unparse(ast.Module(body=[node], type_ignores=[])) + "\n"
+                )
+        imports = [
+            ast.unparse(n)
+            for n in tree.body
+            if isinstance(n, (ast.Import, ast.ImportFrom))
+        ]
         support = (
             ast.unparse(
                 ast.Module(
-                    body=[n for n in tree.body if not isinstance(n, (ast.Import, ast.ImportFrom))],
+                    body=[
+                        n
+                        for n in tree.body
+                        if not isinstance(n, (ast.Import, ast.ImportFrom))
+                    ],
                     type_ignores=[],
                 )
             )
@@ -402,7 +454,9 @@ def header_parts(header: str, language: str, models: tuple[str, ...]):
     return imports, "\n\n".join(support) + "\n", refs
 
 
-def support_envelope(header: str, imports: list[str], language: str, models: tuple[str, ...]):
+def support_envelope(
+    header: str, imports: list[str], language: str, models: tuple[str, ...]
+):
     canonical_imports, support, _ = header_parts(header, language, models)
     unique = {}
     for item in canonical_imports + imports:
@@ -417,11 +471,15 @@ def support_envelope(header: str, imports: list[str], language: str, models: tup
     if language in {"csharp", "java"}:
         # User imports must precede all declarations. These languages resolve
         # later type declarations, so supplied models belong after user code.
-        return formatted(directives, language) + "\n", "\n" + formatted(support, language)
+        return formatted(directives, language) + "\n", "\n" + formatted(
+            support, language
+        )
     return formatted(directives + "\n\n" + support, language) + "\n", ""
 
 
-def support_prefix(header: str, imports: list[str], language: str, models: tuple[str, ...]):
+def support_prefix(
+    header: str, imports: list[str], language: str, models: tuple[str, ...]
+):
     return support_envelope(header, imports, language, models)[0]
 
 
@@ -471,7 +529,8 @@ def random_reference(spec: dict, language: str) -> str:
     contract = (
         "Uniform independent integer, inclusive bounds."
         if spec["mode"] == "shuffle"
-        else "Uniform independent integer in 1.." + ("7." if spec["mode"] == "rand5" else "5.")
+        else "Uniform independent integer in 1.."
+        + ("7." if spec["mode"] == "rand5" else "5.")
     )
     if language == "csharp":
         code = f"// Provided API: {contract}\npublic static class RandomSource {{ public static extern int {method}({params}); }}\n"
@@ -520,11 +579,18 @@ def validate_entry(entry: dict, collection: str, spec: dict):
         if language == "python":
             tree = ast.parse(code)
             top_names = {
-                n.name for n in tree.body if isinstance(n, (ast.ClassDef, ast.FunctionDef))
+                n.name
+                for n in tree.body
+                if isinstance(n, (ast.ClassDef, ast.FunctionDef))
             }
         else:
             tree = parse(code, language)
-            assert not tree.root_node.has_error, (entry["problemId"], language, key, "parse error")
+            assert not tree.root_node.has_error, (
+                entry["problemId"],
+                language,
+                key,
+                "parse error",
+            )
             top_names = {ts_name(n, code) for n in tree.root_node.named_children}
         assert not (top_names & set(models)), (
             entry["problemId"],
@@ -559,14 +625,18 @@ def validate_entry(entry: dict, collection: str, spec: dict):
     # No old helper algorithm may survive unnoticed in the composed program.
     for name in entry["removedUnrelatedSymbols"]:
         if name.startswith("Probe."):
-            assert "Probe" not in entry["prefix"] + entry["solutionCode"] + entry["suffix"]
+            assert (
+                "Probe" not in entry["prefix"] + entry["solutionCode"] + entry["suffix"]
+            )
     assert set(entry["hiddenSymbols"]) == set(models)
 
 
 def build_entries() -> list[dict]:
     headers = {
         "blind75": literal_assignment(ROOT / "scripts/blind75/generate.py", "HEADERS"),
-        "interviewcake": literal_assignment(ROOT / "scripts/interviewcake/banktypes.py", "HEADER"),
+        "interviewcake": literal_assignment(
+            ROOT / "scripts/interviewcake/banktypes.py", "HEADER"
+        ),
     }
     entries = []
     for collection in ("blind75", "interviewcake"):
@@ -576,7 +646,9 @@ def build_entries() -> list[dict]:
             {
                 language: json.loads(
                     (
-                        ROOT / "scripts/interviewcake" / ("algorithms_" + language + ".json")
+                        ROOT
+                        / "scripts/interviewcake"
+                        / ("algorithms_" + language + ".json")
                     ).read_text(encoding="utf-8")
                 )
                 for language in LANGUAGES
@@ -590,15 +662,18 @@ def build_entries() -> list[dict]:
             for language in LANGUAGES:
                 starter = spec["starters"][language]
                 solution_path = (
-                    ROOT / "solutions" / language / (spec["id"] + "." + EXTENSIONS[language])
+                    ROOT
+                    / "solutions"
+                    / language
+                    / (spec["id"] + "." + EXTENSIONS[language])
                 )
                 original_solution = solution_path.read_text(encoding="utf-8")
                 replacement = helper_name(spec, collection)
                 starter_code, starter_imports, starter_symbols, starter_removed = split(
                     starter["starterCode"], language, models, replacement
                 )
-                solution_code, solution_imports, solution_symbols, solution_removed = split(
-                    original_solution, language, models, replacement
+                solution_code, solution_imports, solution_symbols, solution_removed = (
+                    split(original_solution, language, models, replacement)
                 )
                 header = headers[collection][language]
                 prefix, suffix = support_envelope(
@@ -614,7 +689,11 @@ def build_entries() -> list[dict]:
                     }.get(spec["mode"])
                     if entry_symbol is None:
                         entry_symbol = spec["method"][0].lower() + spec["method"][1:]
-                    suffix = "\nmodule.exports = { " + ", ".join([*models, entry_symbol]) + " };\n"
+                    suffix = (
+                        "\nmodule.exports = { "
+                        + ", ".join([*models, entry_symbol])
+                        + " };\n"
+                    )
                 entry = {
                     "problemId": spec["id"],
                     "language": language,
@@ -645,7 +724,8 @@ def build_entries() -> list[dict]:
                 }
                 if collection == "interviewcake":
                     entry["incorrectCode"] = formatted(
-                        incorrect_sources[language][spec["id"]]["incorrectCode"], language
+                        incorrect_sources[language][spec["id"]]["incorrectCode"],
+                        language,
                     )
                     entry["sourcePaths"].append(
                         "scripts/interviewcake/algorithms_" + language + ".json"
@@ -658,13 +738,18 @@ def build_entries() -> list[dict]:
                     file=sys.stderr,
                     flush=True,
                 )
-    assert len(entries) == 580 and len({(e["problemId"], e["language"]) for e in entries}) == 580
+    assert (
+        len(entries) == 580
+        and len({(e["problemId"], e["language"]) for e in entries}) == 580
+    )
     return entries
 
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--output", type=Path, default=ROOT / "workspace-code/parts/isolated.json")
+    parser.add_argument(
+        "--output", type=Path, default=ROOT / "workspace-code/parts/isolated.json"
+    )
     options = parser.parse_args()
     entries = build_entries()
     payload = {"schemaVersion": 1, "codeFormat": "callable-v1", "entries": entries}
@@ -673,7 +758,11 @@ def main():
     temporary_path = None
     try:
         with tempfile.NamedTemporaryFile(
-            mode="w", encoding="utf-8", newline="\n", dir=options.output.parent, delete=False
+            mode="w",
+            encoding="utf-8",
+            newline="\n",
+            dir=options.output.parent,
+            delete=False,
         ) as temporary:
             temporary_path = Path(temporary.name)
             temporary.write(json.dumps(payload, indent=2, ensure_ascii=False) + "\n")

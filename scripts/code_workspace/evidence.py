@@ -446,6 +446,25 @@ def corpus_file(root, live):
     )
 
 
+def generator_evidence(parts: dict, generators: dict):
+    require(
+        generators.keys() == parts.keys(),
+        "Content audit omitted a generator regeneration check",
+    )
+    for name, part in parts.items():
+        row = generators[name]
+        expected = digest_text(
+            json.dumps(part["entries"], sort_keys=True, ensure_ascii=False)
+        )
+        require(
+            row.get("success") is True
+            and row.get("pairs") == len(part["entries"])
+            and same_sha(row.get("savedSha256"), expected)
+            and same_sha(row.get("generatedSha256"), expected),
+            f"Generator regeneration is stale/failing: {name}",
+        )
+
+
 def content_evidence(root: Path, entries: dict, artifacts: dict):
     path = root / ".epi-runs/callable-content-audit.json"
     report = read_json(path)
@@ -508,20 +527,7 @@ def content_evidence(root: Path, entries: dict, artifacts: dict):
         p.stem: read_json(p) for p in (root / "workspace-code/parts").glob("*.json")
     }
     generators = {row["part"]: row for row in report.get("generators", [])}
-    require(
-        generators.keys() == parts.keys(),
-        "Content audit omitted a generator regeneration check",
-    )
-    for name, part in parts.items():
-        row = generators[name]
-        expected = digest_text(json.dumps(part, sort_keys=True, ensure_ascii=False))
-        require(
-            row.get("success") is True
-            and row.get("pairs") == len(part["entries"])
-            and same_sha(row.get("savedSha256"), expected)
-            and same_sha(row.get("generatedSha256"), expected),
-            f"Generator regeneration is stale/failing: {name}",
-        )
+    generator_evidence(parts, generators)
     return {
         "path": path.relative_to(root).as_posix(),
         "sha256": file_sha(path),

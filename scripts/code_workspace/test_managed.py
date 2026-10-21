@@ -21,7 +21,9 @@ class ManagedWorkspaceTests(unittest.TestCase):
         )
         cls.entries = cls.part["entries"]
         cls.roots = json.loads(
-            (ROOT / "scripts/code_workspace/managed-roots.json").read_text(encoding="utf-8")
+            (ROOT / "scripts/code_workspace/managed-roots.json").read_text(
+                encoding="utf-8"
+            )
         )["roots"]
         cls.problems = {p["Id"]: p for p in problems()}
         sys.path.insert(0, str(ROOT / "epi_judge_python"))
@@ -33,7 +35,9 @@ class ManagedWorkspaceTests(unittest.TestCase):
             Counter(e["language"] for e in self.entries),
             {"csharp": 218, "javascript": 218, "python": 218},
         )
-        self.assertEqual(len({(e["problemId"], e["language"]) for e in self.entries}), 654)
+        self.assertEqual(
+            len({(e["problemId"], e["language"]) for e in self.entries}), 654
+        )
         self.assertEqual({e["problemId"] for e in self.entries}, set(self.roots))
 
     def test_annotation_dependencies_do_not_require_symtable_annotation_reporting(self):
@@ -74,14 +78,17 @@ class ManagedWorkspaceTests(unittest.TestCase):
                     ("solution", original_solution.read_text(encoding="utf-8")),
                 ):
                     self.assertEqual(
-                        hashlib.sha256(code.encode("utf-8")).hexdigest(), entry["sourceSha256"][key]
+                        hashlib.sha256(code.encode("utf-8")).hexdigest(),
+                        entry["sourceSha256"][key],
                     )
 
     def test_python_algorithms_and_starters_keep_original_ast(self):
         for entry in self.entries:
             if entry["language"] != "python":
                 continue
-            original_solution = (ROOT / entry["sourcePaths"][1]).read_text(encoding="utf-8")
+            original_solution = (ROOT / entry["sourcePaths"][1]).read_text(
+                encoding="utf-8"
+            )
             roots = self.roots[entry["problemId"]]
             for kind, original in (
                 ("starterCode", self.problems[entry["problemId"]]["PyStarterCode"]),
@@ -122,7 +129,12 @@ class ManagedWorkspaceTests(unittest.TestCase):
         self.assertEqual(count, 436)
 
     def test_python_glue_and_models_are_not_editable(self):
-        forbidden = {"TestFailure", "enable_executor_hook", "generic_test", "run_func_with_retries"}
+        forbidden = {
+            "TestFailure",
+            "enable_executor_hook",
+            "generic_test",
+            "run_func_with_retries",
+        }
         for entry in self.entries:
             if entry["language"] != "python":
                 continue
@@ -133,7 +145,9 @@ class ManagedWorkspaceTests(unittest.TestCase):
                 if isinstance(n, (ast.FunctionDef, ast.ClassDef))
             }
             self.assertFalse(roots & hidden_definitions)
-            model_names = {name for reference in entry["references"] for name in reference["names"]}
+            model_names = {
+                name for reference in entry["references"] for name in reference["names"]
+            }
             for kind in ("starterCode", "solutionCode"):
                 tree = ast.parse(entry[kind])
                 with self.subTest(problem=entry["problemId"], kind=kind):
@@ -145,7 +159,8 @@ class ManagedWorkspaceTests(unittest.TestCase):
                         )
                     )
                     self.assertFalse(
-                        {n.id for n in ast.walk(tree) if isinstance(n, ast.Name)} & forbidden
+                        {n.id for n in ast.walk(tree) if isinstance(n, ast.Name)}
+                        & forbidden
                     )
                     self.assertFalse(
                         any(
@@ -157,7 +172,9 @@ class ManagedWorkspaceTests(unittest.TestCase):
                             for n in tree.body
                         )
                     )
-                    visible_types = {n.name for n in tree.body if isinstance(n, ast.ClassDef)}
+                    visible_types = {
+                        n.name for n in tree.body if isinstance(n, ast.ClassDef)
+                    }
                     self.assertFalse((visible_types - roots) & model_names)
 
     def test_all_872_csharp_javascript_artifacts_parse(self):
@@ -193,7 +210,10 @@ class ManagedWorkspaceTests(unittest.TestCase):
                             if n.type == "class_declaration"
                         ]
                         self.assertEqual(
-                            [text_of(n.child_by_field_name("name"), source) for n in classes],
+                            [
+                                text_of(n.child_by_field_name("name"), source)
+                                for n in classes
+                            ],
                             ["Solution"],
                         )
                     count += 1
@@ -221,7 +241,9 @@ class ManagedWorkspaceTests(unittest.TestCase):
                 continue
             originals = {
                 "starterCode": self.problems[entry["problemId"]]["StarterCode"],
-                "solutionCode": (ROOT / entry["sourcePaths"][1]).read_text(encoding="utf-8"),
+                "solutionCode": (ROOT / entry["sourcePaths"][1]).read_text(
+                    encoding="utf-8"
+                ),
             }
             for kind, original in originals.items():
                 with self.subTest(problem=entry["problemId"], kind=kind):
@@ -230,11 +252,15 @@ class ManagedWorkspaceTests(unittest.TestCase):
     def test_references_only_expose_required_names(self):
         for entry in self.entries:
             source = entry["starterCode"] + entry["solutionCode"]
-            names = [name for reference in entry["references"] for name in reference["names"]]
+            names = [
+                name for reference in entry["references"] for name in reference["names"]
+            ]
             with self.subTest(problem=entry["problemId"], language=entry["language"]):
                 self.assertEqual(len(names), len(set(names)))
                 self.assertTrue(all(name in source for name in names))
-                self.assertTrue(all(reference["code"].strip() for reference in entry["references"]))
+                self.assertTrue(
+                    all(reference["code"].strip() for reference in entry["references"])
+                )
 
     def test_stateful_structural_and_boundary_algorithms(self):
         entries = {e["problemId"]: e for e in self.entries if e["language"] == "python"}
@@ -245,7 +271,9 @@ class ManagedWorkspaceTests(unittest.TestCase):
             # The contract smoke executes trusted generated bank algorithms.
             exec(  # noqa: S102
                 compile(
-                    entry["prefix"] + entry["solutionCode"] + entry["suffix"], "solution.py", "exec"
+                    entry["prefix"] + entry["solutionCode"] + entry["suffix"],
+                    "solution.py",
+                    "exec",
                 ),
                 namespace,
             )
@@ -282,14 +310,18 @@ class ManagedWorkspaceTests(unittest.TestCase):
 
         random = load("uniform_random_number")["uniform_random"]
         self.assertEqual(random(-(2**31), -(2**31)), -(2**31))
-        self.assertTrue(all(-(2**31) <= random(-(2**31), 2**31 - 1) < 2**31 for _ in range(100)))
+        self.assertTrue(
+            all(-(2**31) <= random(-(2**31), 2**31 - 1) < 2**31 for _ in range(100))
+        )
 
         gray = load("gray_code")
         self.assertIn("differ_by_1_bit", entries["gray_code"]["hiddenSymbols"])
         values = gray["gray_code"](5)
         self.assertEqual(len(set(values)), 32)
         self.assertTrue(
-            all(gray["differ_by_1_bit"](left, right) for left, right in pairwise(values))
+            all(
+                gray["differ_by_1_bit"](left, right) for left, right in pairwise(values)
+            )
         )
         self.assertFalse(gray["differ_by_1_bit"](0, 3))
 

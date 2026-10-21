@@ -26,10 +26,16 @@ from isolated import (
 class IsolatedSourceTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.blind = json.loads((ROOT / "blind75/catalog.json").read_text(encoding="utf-8"))
-        cls.cake = json.loads((ROOT / "interviewcake/catalog.json").read_text(encoding="utf-8"))
+        cls.blind = json.loads(
+            (ROOT / "blind75/catalog.json").read_text(encoding="utf-8")
+        )
+        cls.cake = json.loads(
+            (ROOT / "interviewcake/catalog.json").read_text(encoding="utf-8")
+        )
         cls.headers = {
-            "blind75": literal_assignment(ROOT / "scripts/blind75/generate.py", "HEADERS"),
+            "blind75": literal_assignment(
+                ROOT / "scripts/blind75/generate.py", "HEADERS"
+            ),
             "interviewcake": literal_assignment(
                 ROOT / "scripts/interviewcake/banktypes.py", "HEADER"
             ),
@@ -46,9 +52,9 @@ class IsolatedSourceTests(unittest.TestCase):
         spec = next(r for r in self.blind + self.cake if r["id"] == problem)
         collection = "blind75" if problem.startswith("blind75_") else "interviewcake"
         models = BLIND_MODELS if collection == "blind75" else CAKE_MODELS
-        source = (ROOT / "solutions" / language / (problem + "." + extension)).read_text(
-            encoding="utf-8"
-        )
+        source = (
+            ROOT / "solutions" / language / (problem + "." + extension)
+        ).read_text(encoding="utf-8")
         return split(source, language, models, helper_name(spec, collection))
 
     def test_primitive_starters_need_no_supplied_type_reference(self):
@@ -60,14 +66,22 @@ class IsolatedSourceTests(unittest.TestCase):
 
     def test_unknown_initialization_is_rejected_instead_of_dropped(self):
         with self.assertRaises(AssertionError):
-            split("initialize_state()\n\ndef answer():\n    return 1\n", "python", (), "Unused")
+            split(
+                "initialize_state()\n\ndef answer():\n    return 1\n",
+                "python",
+                (),
+                "Unused",
+            )
 
     def test_cs_java_models_follow_user_imports_and_callable_code(self):
         bodies = {
             "csharp": "using System.Numerics;\npublic class Solution { public static int F() { return (int)BigInteger.One; } }\n",
             "java": "import java.math.BigInteger;\nclass Solution { public static int f() { return BigInteger.ONE.intValueExact(); } }\n",
         }
-        for collection, models in (("blind75", BLIND_MODELS), ("interviewcake", CAKE_MODELS)):
+        for collection, models in (
+            ("blind75", BLIND_MODELS),
+            ("interviewcake", CAKE_MODELS),
+        ):
             for language, body in bodies.items():
                 with self.subTest(collection=collection, language=language):
                     prefix, suffix = support_envelope(
@@ -83,7 +97,9 @@ class IsolatedSourceTests(unittest.TestCase):
                     }
                     self.assertFalse(set(models) & prefix_names)
                     self.assertTrue(set(models) <= suffix_names)
-                    self.assertFalse(parse(prefix + body + suffix, language).root_node.has_error)
+                    self.assertFalse(
+                        parse(prefix + body + suffix, language).root_node.has_error
+                    )
 
     def test_two_sum_has_no_hidden_algorithm_library(self):
         for language in ("javascript", "python", "cpp", "java"):
@@ -112,10 +128,14 @@ class IsolatedSourceTests(unittest.TestCase):
                 self.assertNotIn("Probe", code)
 
     def test_cpp_nested_dependencies_and_order(self):
-        code, _, symbols, _ = self.cleaned("blind75_binary_tree_maximum_path_sum", "cpp")
+        code, _, symbols, _ = self.cleaned(
+            "blind75_binary_tree_maximum_path_sum", "cpp"
+        )
         self.assertIn("TreeAlgorithms.gain", symbols)
         self.assertIn("TreeAlgorithms.maxPath", symbols)
-        self.assertLess(code.index("namespace TreeAlgorithms"), code.index("class Solution"))
+        self.assertLess(
+            code.index("namespace TreeAlgorithms"), code.index("class Solution")
+        )
         self.assertFalse(parse(code, "cpp").root_node.has_error)
 
     def test_java_overloaded_algorithm_helpers_are_retained(self):
@@ -127,7 +147,9 @@ class IsolatedSourceTests(unittest.TestCase):
     def test_merge_k_callback_dependency_is_not_pruned(self):
         for language in ("javascript", "python", "cpp", "java"):
             with self.subTest(language=language):
-                code, _, symbols, removed = self.cleaned("blind75_merge_k_sorted_lists", language)
+                code, _, symbols, removed = self.cleaned(
+                    "blind75_merge_k_sorted_lists", language
+                )
                 self.assertIn("ListAlgorithms.nodes", symbols)
                 self.assertIn("ListAlgorithms.link", symbols)
                 self.assertNotIn("Probe.nodes", removed)
@@ -158,12 +180,16 @@ const Probe = {
     def test_native_method_references_are_dependencies(self):
         self.assertEqual(
             ts_calls(
-                "class Example { void f() { stream.map(Probe::nodes); } }", "java", external=True
+                "class Example { void f() { stream.map(Probe::nodes); } }",
+                "java",
+                external=True,
             ),
             {"nodes"},
         )
         self.assertEqual(
-            ts_calls("void f() { auto callback = Probe::nodes; }", "cpp", external=True),
+            ts_calls(
+                "void f() { auto callback = Probe::nodes; }", "cpp", external=True
+            ),
             {"nodes"},
         )
 
@@ -178,12 +204,19 @@ const Probe = {
         )
 
     def test_random_reference_shows_only_permitted_primitive(self):
-        for mode, method in (("shuffle", "GetRandom"), ("rand5", "Rand7"), ("rand7", "Rand5")):
+        for mode, method in (
+            ("shuffle", "GetRandom"),
+            ("rand5", "Rand7"),
+            ("rand7", "Rand5"),
+        ):
             spec = next(r for r in self.cake if r["mode"] == mode)
             for language in ("csharp", "javascript", "python", "cpp", "java"):
                 with self.subTest(mode=mode, language=language):
                     references = references_for(
-                        spec, "interviewcake", language, self.headers["interviewcake"][language]
+                        spec,
+                        "interviewcake",
+                        language,
+                        self.headers["interviewcake"][language],
                     )
                     self.assertEqual(len(references), 1)
                     code = references[0]["code"]

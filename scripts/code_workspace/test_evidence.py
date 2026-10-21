@@ -16,6 +16,42 @@ except ImportError:
     import evidence
 
 
+class GeneratorEvidenceTests(unittest.TestCase):
+    def setUp(self):
+        self.parts = {"isolated": {"schemaVersion": 1, "entries": [{"code": "é"}]}}
+        sha = evidence.digest_text(
+            json.dumps(
+                self.parts["isolated"]["entries"], sort_keys=True, ensure_ascii=False
+            )
+        )
+        self.generators = {
+            "isolated": {
+                "success": True,
+                "pairs": 1,
+                "savedSha256": sha,
+                "generatedSha256": sha,
+            }
+        }
+
+    def test_generator_hashes_bind_entry_list_not_enclosing_part(self):
+        evidence.generator_evidence(self.parts, self.generators)
+
+    def test_changed_entry_is_rejected(self):
+        self.parts["isolated"]["entries"][0]["code"] = "changed"
+        with self.assertRaisesRegex(evidence.EvidenceError, "stale/failing"):
+            evidence.generator_evidence(self.parts, self.generators)
+
+    def test_missing_failed_or_wrong_count_regeneration_is_rejected(self):
+        for update in ({"success": False}, {"pairs": 2}, {"generatedSha256": "0" * 64}):
+            with self.subTest(update=update):
+                rows = copy.deepcopy(self.generators)
+                rows["isolated"].update(update)
+                with self.assertRaisesRegex(evidence.EvidenceError, "stale/failing"):
+                    evidence.generator_evidence(self.parts, rows)
+        with self.assertRaisesRegex(evidence.EvidenceError, "omitted"):
+            evidence.generator_evidence(self.parts, {})
+
+
 class EvidenceSelectionTests(unittest.TestCase):
     def setUp(self):
         self.directory = tempfile.TemporaryDirectory(prefix="callable-evidence-test-")

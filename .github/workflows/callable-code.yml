@@ -20,6 +20,12 @@ jobs:
           cache-dependency-path: epijudge.client/package-lock.json
       - run: npm --prefix epijudge.client ci
       - run: python -m pip install -r scripts/code_workspace/requirements.txt
+      - name: Check generator and regression-script style
+        run: |
+          python -m ruff check scripts/code_workspace scripts/verify_solutions_http.py
+          python -m ruff format --check scripts/code_workspace scripts/verify_solutions_http.py
+          node epijudge.client/node_modules/prettier/bin/prettier.cjs --check --print-width 100 scripts/code_workspace/browser.cjs
+          node epijudge.client/node_modules/prettier/bin/prettier.cjs --check .github/workflows/callable-code.yml scripts/verify_solutions_browser.cjs scripts/verify_blind75_browser.cjs
       - name: Require every visible starter and solution to be clean and reproducible
         run: |
           python scripts/code_workspace/native.py

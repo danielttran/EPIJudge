@@ -53,11 +53,19 @@ def leading_import_solution(row):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--dll", type=Path, required=True)
-    parser.add_argument("--part", type=Path, default=ROOT / "workspace-code/parts/isolated.json")
-    parser.add_argument("--ids", help="Optional explicit comma-separated subset of the smoke IDs")
-    parser.add_argument("--languages", help="Optional explicit comma-separated language subset")
     parser.add_argument(
-        "--report", type=Path, default=ROOT / ".epi-runs/code-workspace-isolated-smoke.json"
+        "--part", type=Path, default=ROOT / "workspace-code/parts/isolated.json"
+    )
+    parser.add_argument(
+        "--ids", help="Optional explicit comma-separated subset of the smoke IDs"
+    )
+    parser.add_argument(
+        "--languages", help="Optional explicit comma-separated language subset"
+    )
+    parser.add_argument(
+        "--report",
+        type=Path,
+        default=ROOT / ".epi-runs/code-workspace-isolated-smoke.json",
     )
     parser.add_argument("--correct-only", action="store_true")
     parser.add_argument(
@@ -80,7 +88,9 @@ def main():
     if options.leading_imports:
         ids = {"interviewcake_stock-price"}
         languages = {"csharp", "java"}
-    selected = [row for row in rows if row["problemId"] in ids and row["language"] in languages]
+    selected = [
+        row for row in rows if row["problemId"] in ids and row["language"] in languages
+    ]
     assert len(selected) == len(ids) * len(languages)
     artifacts = ROOT / ".epi-runs"
     artifacts.mkdir(parents=True, exist_ok=True)
@@ -100,7 +110,11 @@ def main():
                 if options.correct_only or options.leading_imports
                 else ["starterCode", "solutionCode"]
             ):
-                visible = leading_import_solution(row) if options.leading_imports else row[variant]
+                visible = (
+                    leading_import_solution(row)
+                    if options.leading_imports
+                    else row[variant]
+                )
                 code = row["prefix"] + visible + row["suffix"]
                 status, result, _ = request(
                     server.base,
@@ -116,7 +130,8 @@ def main():
                 success = status == 200 and (
                     result.get("status") == "Accepted"
                     if variant == "solutionCode"
-                    else result.get("status") in {"Accepted", "Wrong answer", "Runtime error"}
+                    else result.get("status")
+                    in {"Accepted", "Wrong answer", "Runtime error"}
                 )
                 if not success:
                     report["failures"] += 1
@@ -124,7 +139,9 @@ def main():
                     {
                         "problemId": row["problemId"],
                         "language": row["language"],
-                        "variant": "leadingImportsSolution" if options.leading_imports else variant,
+                        "variant": "leadingImportsSolution"
+                        if options.leading_imports
+                        else variant,
                         "success": success,
                         "codeSha256": sha(code),
                         "visibleSha256": sha(visible),
