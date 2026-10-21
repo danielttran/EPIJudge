@@ -112,3 +112,21 @@ Coverage is headless desktop Chromium with emulated tablet/phone dimensions and
 actual browser zoom. Physical touch devices, Safari, Firefox and screen-reader
 usability were not tested; these checks do not prove the absence of every
 possible visual issue.
+
+The responsive implementation was rechecked from a fresh detached checkout at
+`c2d69a959e9d7d18ca11781433bbbc0a8473809a`, with its own dependency install and
+build outputs. All 214 frontend tests, 207 backend tests (zero skips), the full
+warnings-as-errors build, 120 Learn browser checks and all 1,137 layout checks
+pass there. The client build matches the working checkout. This run used
+Python 3.14.8; the working checkout also passed with Python 3.12.14. Existing
+Solutions and callable browser suites were rerun after the definite editor-height
+fix. All five actual timeout cases passed in the HTTP regression; responsive CSS
+does not alter the runner. The final API-error screenshots additionally scroll
+the error panel into view and were individually inspected at all four sizes.
+
+Two local harness/setup failures are retained with the intermediate evidence:
+the fresh install initially used an unavailable home-directory npm cache (fixed
+by selecting the workspace cache), and a standalone callable-browser invocation
+omitted its documented HTTP legacy-draft setup. The latter was rerun with that
+fixture in a fresh isolated profile. Neither required an application change or
+weaker assertion.
