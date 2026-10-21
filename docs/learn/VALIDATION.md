@@ -19,17 +19,20 @@ Final local checks:
 | Reading inventory | All 12 bodies, hashes, source labels, durations and topic mappings pass; 7 justified links resolve to real coding problems |
 | Frontend | 214 tests pass; existing coverage gates pass; strict TypeScript/Vite build passes |
 | Backend | 207 tests pass, no skips; warnings-as-errors build has zero warnings/errors |
-| Learn browser | 119 checks pass across every article; desktop/mobile, keyboard, search/filter history, deep links, legacy redirects, notes, drafts, backups and API failure |
+| Learn browser | 120 checks pass across every article; desktop/mobile, keyboard, search/filter history, deep links, legacy redirects, notes, drafts, backups and API failure |
 | Existing Solutions regression | 7,077 HTTP checks and its complete browser suite pass |
 | Existing callable workspace regression | 14,186 HTTP checks and all 80 representative browser views pass; all five actual language timeouts run |
 | Style | Scoped Prettier, Ruff check/format, Node syntax, and diff checks pass |
-| Clean checkout | Fresh detached checkout at `7640005`, fresh dependencies and outputs, matching frontend build, all frontend/backend tests and 119 browser checks pass |
+| Clean checkout | Fresh detached checkout at `7640005`, then refreshed to the final functional source, fresh dependencies and outputs, matching frontend build, all frontend/backend tests and 120 browser checks pass |
 
 The clean checkout reused installed toolchains and normal dependency caches,
 while installing its own dependencies and generating its own build outputs.
 It ran the inventory and HTTP/browser checks with Python 3.14.8; the working
-checkout also ran them with Python 3.12.14. Functional source is unchanged after
-that checkout; subsequent changes record evidence and strengthen CI lint.
+checkout also ran them with Python 3.12.14. Reading files are pinned to LF, and
+their hashes also pass in a separate `core.autocrlf=true` checkout. The final
+Learn-only search correction was followed by refreshed builds, unit and browser
+checks in both the working and detached checkouts. Existing Practice regressions
+precede that isolated search correction; no runner or Practice logic changed.
 
 Each of the four screenshots below was inspected as rendered pixels. That review
 found and repaired a mobile fixed-height inheritance bug that caused text to
