@@ -57,13 +57,30 @@ const samples = [
   ).values(),
 ];
 const report = { passed: false, checks: [], errors: [] };
+// Match the full Chromium mode used by the native-zoom layout suite.
 const options = {
   headless: true,
   ...(process.env.CHROMIUM_PATH
     ? { executablePath: process.env.CHROMIUM_PATH }
-    : {}),
+    : { channel: "chromium" }),
   args: ["--no-sandbox", "--disable-dev-shm-usage"],
 };
+async function bounded(promise, milliseconds, label) {
+  let timer;
+  try {
+    return await Promise.race([
+      promise,
+      new Promise((_, reject) => {
+        timer = setTimeout(
+          () => reject(new Error(label + " timed out")),
+          milliseconds,
+        );
+      }),
+    ]);
+  } finally {
+    clearTimeout(timer);
+  }
+}
 async function screenshot(page, filename) {
   const session = await page.context().newCDPSession(page);
   const capture = await session.send("Page.captureScreenshot", {
@@ -88,6 +105,7 @@ async function screenshot(page, filename) {
 }
 (async () => {
   const browser = await chromium.launch(options);
+  let activeContext;
   try {
     for (const profile of [
       { id: "desktop", width: 1440, height: 1000 },
@@ -115,7 +133,10 @@ async function screenshot(page, filename) {
         context = await browser.newContext({
           viewport: { width: profile.width, height: profile.height },
         });
-      const page = await context.newPage();
+      activeContext = context;
+      context.setDefaultTimeout(25000);
+      context.setDefaultNavigationTimeout(25000);
+      const page = await bounded(context.newPage(), 30000, "Creating a page");
       page.on("pageerror", (e) => report.errors.push(String(e)));
       for (const row of samples) {
         await page.goto(base + "/practice?problem=" + row.problemId);
@@ -213,18 +234,34 @@ async function screenshot(page, filename) {
         );
         await cdp.detach();
       }
-      await context.close();
+      await bounded(context.close(), 5000, "Closing profile");
+      activeContext = undefined;
     }
     assert.deepEqual(report.errors, []);
     report.passed = true;
   } catch (e) {
     report.errors.push(String(e.stack || e));
+    console.error(e.stack || e);
     process.exitCode = 1;
   } finally {
-    await browser.close();
+    if (activeContext) {
+      await bounded(
+        activeContext.close(),
+        5000,
+        "Closing failed profile",
+      ).catch((error) => {
+        report.errors.push(String(error));
+        report.passed = false;
+      });
+    }
+    await bounded(browser.close(), 5000, "Closing browser").catch((error) => {
+      report.errors.push(String(error));
+      report.passed = false;
+    });
     fs.writeFileSync(
       path.join(output, "report.json"),
       JSON.stringify(report, null, 2) + "\n",
     );
+    if (!report.passed) process.exit(1);
   }
 })();
