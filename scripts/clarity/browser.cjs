@@ -59,7 +59,9 @@ const samples = [
 const report = { passed: false, checks: [], errors: [] };
 const options = {
   headless: true,
-  executablePath: process.env.CHROMIUM_PATH || "/usr/bin/chromium",
+  ...(process.env.CHROMIUM_PATH
+    ? { executablePath: process.env.CHROMIUM_PATH }
+    : {}),
   args: ["--no-sandbox", "--disable-dev-shm-usage"],
 };
 async function screenshot(page, filename) {

@@ -48,6 +48,9 @@ and walkthrough audits create isolated corpora and retain original test files.
 Reports record outcomes and code, notes, corpus and compiled-harness hashes.
 `validation-results.json` is accepted only when every question/language pair has
 current full-corpus evidence, plus current boundary and five-language walkthrough evidence.
+The checked-in legacy report retains baseline history; current callable acceptance
+is recorded in [workspace-code/validation-results.json](../workspace-code/validation-results.json).
+CI regenerates the legacy report for each commit and publishes it as an artifact.
 The separate Interview Cake audit executes all starters, correct algorithms and
 meaningfully incorrect fixtures. [TESTING.md](../TESTING.md) contains commands
 and the HTTP, offline/browser and clean-checkout validation requirements.
