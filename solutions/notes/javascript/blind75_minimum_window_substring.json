@@ -1,6 +1,21 @@
 {
   "explanation": "Count the characters still needed from t. Expand until all occurrences are covered, then shrink from the left while preserving coverage. Update only for strictly shorter windows to retain the earliest tie.",
-  "timeComplexity": "O(s + t) time for string lengths s and t.",
-  "spaceComplexity": "O(1) counters for the fixed ASCII alphabet, plus the returned substring.",
-  "attribution": "Original repository-authored Blind75 JavaScript algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used."
+  "timeComplexity": "O(s + t) time for string lengths s and t. Counting t is linear; each character of s enters and leaves the window at most once. Copying the final answer costs at most O(s).",
+  "spaceComplexity": "O(1) counters for the fixed ASCII alphabet, plus the returned substring. The need table is bounded by the ASCII alphabet, with constant boundary and length state.",
+  "attribution": "Original repository-authored Blind75 JavaScript algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used.",
+  "correctness": "The need counters track uncovered target occurrences after subtracting the current window’s characters. missing is zero exactly when every required occurrence is covered. For each right endpoint, shrinking until coverage would fail finds its shortest valid window. Comparing these candidates globally gives a minimum, and updating only when strictly shorter preserves the earliest tie. For ties, left boundaries only advance, so a later equal-length candidate cannot have an earlier start.",
+  "walkthrough": "For s=\"xcaabz\" and t=\"aab\", coverage first requires both a characters and b. Removing leading x and c leaves \"aab\", already the target’s full length, so no shorter covering window exists. Return \"aab\".",
+  "edgeCases": [
+    "Target multiplicities matter: two As require two occurrences.",
+    "The target is nonempty in this collection.",
+    "No covering window returns an empty string.",
+    "Equal-length optimal windows choose the earliest start."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      "xcaabz",
+      "aab"
+    ],
+    "expected": "aab"
+  }
 }

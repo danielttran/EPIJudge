@@ -1,6 +1,20 @@
 {
-  "explanation": "Memoize the maximum testable height for a given number of cases and drops. One drop splits the problem into break and survive branches, contributing F(c−1,d−1)+1+F(c,d−1); one case can test only a linear number of floors.",
-  "timeComplexity": "O(CD) time for C cases and D drops.",
-  "spaceComplexity": "O(CD) memo space and O(C+D) recursion-space upper bound.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/max_safe_height.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "Memoize the recurrence F(e,d)=1+F(e−1,d−1)+F(e,d−1): one test floor separates the outcomes where an object breaks and survives. Zero objects or drops covers zero floors; one object covers d floors.",
+  "timeComplexity": "O((e+1)(d+1)) upper bound for memo-table allocation and at most constant work per reachable state; recursion depth is O(d).",
+  "spaceComplexity": "O((e+1)(d+1)) memo entries plus O(d) recursion depth.",
+  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/max_safe_height.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice.",
+  "correctness": "The break branch has e−1 objects and d−1 tests for lower floors; the surviving branch has e objects and d−1 tests for upper floors. Both sides plus the chosen floor are distinguishable, and no strategy can distinguish more because those are the only outcomes of the first test. Memoization preserves the recurrence while avoiding repeated states.",
+  "walkthrough": "With 2 objects and 3 drops, F(2,3)=1+F(1,2)+F(2,2). The base gives F(1,2)=2 and F(2,2)=1+1+1=3. Therefore the result is 1+2+3=6.",
+  "edgeCases": [
+    "Zero objects or zero drops returns zero.",
+    "One object requires testing floors in increasing order and covers exactly d floors.",
+    "C++ and Java use fixed-width int results without saturation; Python computes unbounded integer results."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      2,
+      3
+    ],
+    "expected": 6
+  }
 }

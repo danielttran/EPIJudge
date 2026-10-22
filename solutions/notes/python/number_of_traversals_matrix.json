@@ -1,6 +1,20 @@
 {
-  "explanation": "Memoize paths to each grid coordinate. Every cell receives paths from above and left, with one path at the origin and zero contributions outside the grid.",
-  "timeComplexity": "O(RC)",
-  "spaceComplexity": "O(RC+R+C) memoization and recursion",
-  "attribution": "Unmodified reference from epi_judge_python_solutions/number_of_traversals_matrix.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice."
+  "explanation": "Memoize the number of paths to cell (x,y). The origin contributes one path; every other cell sums the counts from its existing upper and left neighbors.",
+  "timeComplexity": "O(nm): at most nm cell states with two transitions each. Every grid state combines two predecessor counts; iterative code retains only the shorter row.",
+  "spaceComplexity": "O(nm) memo table and O(n+m) recursive depth. Iterative variants keep one short row; recursive variants retain grid-state counts and call frames.",
+  "attribution": "Unmodified reference from epi_judge_python_solutions/number_of_traversals_matrix.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice.",
+  "correctness": "Every route into a nonorigin cell ends with exactly one of a down move or a right move. These disjoint cases are in bijection with paths to the corresponding neighbor. The origin base and induction on x+y therefore produce the exact count.",
+  "walkthrough": "In a 2×4 grid, every path makes one down move and three right moves. The down move can occur in any of four positions, so the result is 4. The walkthroughCase uses the judge’s JSON input format and expected observation.",
+  "edgeCases": [
+    "Dimensions n and m are positive cell counts.",
+    "A one-row or one-column grid has one path.",
+    "Counts must fit the selected callable’s numeric return type."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      2,
+      4
+    ],
+    "expected": 4
+  }
 }

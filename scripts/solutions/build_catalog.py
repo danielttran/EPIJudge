@@ -69,29 +69,28 @@ def build():
             raise ValueError(
                 f"Invalid or unfinished solution source: {problem_id}/{language}"
             )
-        if language == "csharp":
-            if (
-                any(
-                    not isinstance(notes.get(key), str) or not notes[key].strip()
-                    for key in ("correctness", "walkthrough")
-                )
-                or not isinstance(notes.get("edgeCases"), list)
-                or not notes["edgeCases"]
-                or any(
-                    not isinstance(value, str) or not value.strip()
-                    for value in notes["edgeCases"]
-                )
-            ):
-                raise ValueError(f"Missing detailed C# explanation: {problem_id}")
-            example = notes.get("walkthroughCase")
-            if (
-                not isinstance(example, dict)
-                or not isinstance(example.get("arguments"), list)
-                or "expected" not in example
-            ):
-                raise ValueError(
-                    f"Missing executable original walkthrough: {problem_id}"
-                )
+        if (
+            any(
+                not isinstance(notes.get(key), str) or not notes[key].strip()
+                for key in ("correctness", "walkthrough")
+            )
+            or not isinstance(notes.get("edgeCases"), list)
+            or not notes["edgeCases"]
+            or any(
+                not isinstance(value, str) or not value.strip()
+                for value in notes["edgeCases"]
+            )
+        ):
+            raise ValueError(f"Missing detailed explanation: {problem_id}/{language}")
+        example = notes.get("walkthroughCase")
+        if (
+            not isinstance(example, dict)
+            or not isinstance(example.get("arguments"), list)
+            or "expected" not in example
+        ):
+            raise ValueError(
+                f"Missing executable original walkthrough: {problem_id}/{language}"
+            )
         rows.append(
             dict(
                 problemId=problem_id,

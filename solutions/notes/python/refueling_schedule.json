@@ -1,6 +1,29 @@
 {
-  "explanation": "Measure available fuel as miles at 20 mpg, avoiding rounding fractional gallons. If a candidate fails to reach the next city, restart after the failed segment; none of its earlier starts can succeed.",
-  "timeComplexity": "O(n)",
-  "spaceComplexity": "O(1) fixed-width arithmetic state",
-  "attribution": "Original Python implementation authored for EPI Practice from its displayed contract and independently authored C# solution; no upstream reference source adapted."
+  "explanation": "Track fuel as miles of remaining range. If a candidate start cannot reach the next city, no city in that failed segment can be a valid start, so restart after it. When a feasible tour exists, the final candidate is valid.",
+  "timeComplexity": "O(n). One pass examines each city once.",
+  "spaceComplexity": "O(1). Only a candidate index and constant-many fuel balances are retained.",
+  "attribution": "Original Python implementation authored for EPI Practice from its displayed contract and independently authored C# solution; no upstream reference source adapted.",
+  "correctness": "When the accumulated net range from a candidate start becomes negative, no city in that failed segment can be a valid start: a later start omits a nonnegative prefix and cannot repair that deficit. Restart after the failed segment. With the promised feasible total tour, the final candidate can complete the wraparound trip.",
+  "walkthrough": "For gallons [1,0,2] and distances [25,10,25], the net ranges are -5,-10,+15 miles. The first two candidates fail, leaving start city 2. From city 2 the tank ranges are 15, then 10, then 0, so the full circuit succeeds. JSON arguments are [gallons,distances]. The callable returns a start index; expected true means the wrapper successfully simulated the complete trip from that returned index.",
+  "edgeCases": [
+    "Tank capacity is unlimited and starts empty.",
+    "A gallon always supplies 20 miles.",
+    "Several starts may be valid; any valid index is accepted.",
+    "The test contract supplies a nonempty feasible tour."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        1,
+        0,
+        2
+      ],
+      [
+        25,
+        10,
+        25
+      ]
+    ],
+    "expected": true
+  }
 }

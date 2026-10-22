@@ -1,6 +1,24 @@
 {
-  "explanation": "Scan adjacent pairs, swapping whenever the required alternating inequality is reversed. The previous inequality remains satisfied after the swap, so the processed prefix stays valid. Swaps preserve every element.",
-  "timeComplexity": "O(n)",
-  "spaceComplexity": "O(1)",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/alternating_array.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "Scan neighboring pairs from left to right. At odd right indices the left value must be no larger; at even right indices it must be no smaller. Swap a pair only when it violates that required relation.",
+  "timeComplexity": "O(n+1): each adjacent pair receives at most one comparison and swap.",
+  "spaceComplexity": "O(1) auxiliary space: an index and temporary swap values.",
+  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/alternating_array.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice.",
+  "correctness": "Suppose all earlier adjacent inequalities are correct. To establish a peak, swapping an out-of-order pair makes the previous valley smaller, which cannot break its relation with the earlier peak. To establish a valley, the symmetric swap makes the previous peak larger, which cannot break its relation with the earlier valley. Thus repairing the current pair preserves all earlier inequalities. Induction covers the entire array, and swapping or sorting two elements preserves the multiset.",
+  "walkthrough": "For [3,1,2,4], repair the first pair to get [1,3,2,4]. The next pair already has 3≥2, and the last already has 2≤4. Return no value; the resulting array satisfies 1≤3≥2≤4. The walkthrough’s expected true is the wrapper’s property result.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        3,
+        1,
+        2,
+        4
+      ]
+    ],
+    "expected": true
+  },
+  "edgeCases": [
+    "Empty and singleton arrays satisfy the condition without changes.",
+    "Equality is allowed; repeated values need not be separated.",
+    "Many output arrangements are valid; sorted order is not required."
+  ]
 }

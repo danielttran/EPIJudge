@@ -1,6 +1,20 @@
 {
-  "explanation": "Decode the native UTF-8 strings into UTF-16 code units so returned positions match the published C# string-index contract. Build KMP prefix lengths for the pattern, then scan the text while reusing those prefixes after a mismatch. Return the first matching UTF-16 index, 0 for an empty pattern, or -1 when absent. The published RabinKarp method name is retained; the actual algorithm is KMP.",
-  "timeComplexity": "O(n+m) worst-case time for input text and pattern lengths, including Unicode decoding and KMP search.",
-  "spaceComplexity": "O(n+m) auxiliary space for decoded code-unit strings and the pattern prefix table.",
-  "attribution": "Original EPI Practice C++ implementation, independently authored from the public EPI problem contract and the repository-authored C# algorithm. Uses unchanged local EPI Judge serialization and test framework APIs; upstream reference sources are not modified."
+  "explanation": "Despite the historical RabinKarp name, this implementation uses KMP. Build a prefix table giving the longest proper border at every pattern position. On a mismatch, jump to a shorter known border instead of restarting the text scan. Decode input UTF-8 to UTF-16 units before matching, so returned indices match C#/Java/JavaScript code-unit indices.",
+  "timeComplexity": "O(n+m): prefix construction and text scanning advance their main index once; each fallback decreases matched, so total fallback steps are linear. KMP fallback decreases a prefix length previously increased by scans; rolling hashes cost constant time per window plus exact verification when hashes agree.",
+  "spaceComplexity": "O(n+m) auxiliary storage: UTF-16 conversion buffers for text and pattern plus m prefix-table entries. The input strings themselves are UTF-8 byte sequences.",
+  "attribution": "Original EPI Practice C++ implementation, independently authored from the public EPI problem contract and the repository-authored C# algorithm. Uses unchanged local EPI Judge serialization and test framework APIs; upstream reference sources are not modified.",
+  "correctness": "The matched length is the longest pattern prefix equal to a suffix of text already scanned. A mismatch can only preserve a border of that prefix, and prefix-table jumps enumerate those possible shorter borders without skipping a match. Reaching the pattern length proves equality, and scanning text left to right yields the first match.",
+  "walkthrough": "For text cedar-ridge and pattern ridge, prefix-table entries are all zero. The letters through cedar- leave no matched prefix. At index 6, r starts a match; i,d,g,e extend it to five characters by index 10. Return 10-5+1=6.",
+  "edgeCases": [
+    "An empty pattern matches at index 0.",
+    "A pattern longer than the text cannot match.",
+    "Repeated matches return the first index; equal hashes alone never establish equality."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      "cedar-ridge",
+      "ridge"
+    ],
+    "expected": 6
+  }
 }

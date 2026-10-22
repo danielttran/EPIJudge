@@ -6,6 +6,8 @@ from test_framework import generic_test
 
 def rook_attack(A: List[List[int]]) -> None:
 
+    if not A or not A[0]:
+        return
     m, n = len(A), len(A[0])
     has_first_row_zero = 0 in A[0]
     has_first_column_zero = any(not A[i][0] for i in range(m))

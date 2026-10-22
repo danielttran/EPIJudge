@@ -16,7 +16,7 @@ int SearchSmallest(const vector<int>& A) {
     }
   }
   // Loop ends when left == right.
-  return left;
+  return A.empty() ? -1 : left;
 }
 
 int main(int argc, char* argv[]) {

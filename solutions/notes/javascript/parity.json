@@ -1,6 +1,19 @@
 {
-  "explanation": "Clear the lowest set bit and flip parity until no bits remain. Normalize to an unsigned 64-bit BigInt so signed inputs retain their complete bit pattern.",
-  "timeComplexity": "O(b), where b is the number of set bits (at most 64).",
-  "spaceComplexity": "O(1).",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "explanation": "Convert the input to an unsigned 64-bit BigInt pattern. Clear one lowest set bit per iteration and flip parity.",
+  "timeComplexity": "O(b), where b is the number of set bits (at most 64). Each iteration removes one set bit.",
+  "spaceComplexity": "O(1). The word and parity accumulator are fixed-width.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "After each iteration, parity equals the parity of the bits removed so far. The operation remaining & (remaining - 1) removes exactly the lowest set bit and leaves every other bit unchanged. When remaining is zero, every original set bit has contributed one flip, so the result is the original 64-bit parity.",
+  "walkthrough": "For x=13, the unsigned bits are 1101. Clearing the lowest set bit gives 1100, then 1000, then 0. Three flips change parity from 0 to 1, so the result is 1.",
+  "edgeCases": [
+    "Zero returns zero.",
+    "BigInt.asUintN preserves the low 64 two’s-complement bits.",
+    "The runtime must pass wide integers exactly; do not round them through Number."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      13
+    ],
+    "expected": 1
+  }
 }

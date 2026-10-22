@@ -1,14 +1,15 @@
 {
-  "explanation": "Maintain four best balances: after the first buy, first sell, second buy and second sell. Update in reverse transaction order so each state uses earlier-day information. Zero sell balances permit fewer than two transactions.",
-  "timeComplexity": "O(n)",
-  "spaceComplexity": "O(1)",
+  "explanation": "Track the best cash balance after a first purchase, first sale, second purchase and second sale. Keep a state unchanged when skipping a day, or improve it by performing its action at today’s price. Update from the last state backward so a transition reads the previous day’s value.",
+  "timeComplexity": "O(n+1): four constant-time state updates per price.",
+  "spaceComplexity": "O(1): four balances and the current price; no per-day history.",
   "attribution": "Original C# implementation and explanation authored for EPI Practice from the displayed problem contract.",
-  "correctness": "Each of the four balances represents the best legal state after its corresponding buy or sell. Every legal transition is considered at each price. Reverse-order updates preserve prior-day dependencies, while zero sell balances allow only one trade or none.",
-  "walkthrough": "For [5,1,4,2,7], the first trade can earn 3 from 1 to 4. Reusing that earned balance for a second purchase at 2 and sale at 7 adds 5, producing 8.",
+  "correctness": "Each balance is the best achievable balance in its state after the days processed. An optimal strategy either skips today or enters that state from its preceding state at today’s price; taking the maximum considers both possibilities. Reverse update order preserves those prior-day alternatives. Zero initial sell states permit zero or one trade. After the final day, the second sell state is the best completed profit with at most two trades. Although updates separate action days, a same-day sale and repurchase can be removed without changing total profit, so no optimum is lost.",
+  "walkthrough": "For prices [5,1,4,2,7], the (firstBuy,firstSell,secondBuy,secondSell) states after each day are (-5,0,-5,0), (-1,0,-1,0), (-1,3,-1,3), (-1,3,1,3), and (-1,6,1,8). At price 2, firstSell=3 funds the second purchase, leaving balance 1. Selling at 7 makes 8.",
   "edgeCases": [
-    "A losing sequence returns zero.",
-    "The second purchase follows completion of the first trade.",
-    "Fewer than two trades are permitted."
+    "Empty or singleton price arrays return zero.",
+    "Nonincreasing prices make no profitable transaction, so return zero.",
+    "One transaction is allowed; exactly two are not required.",
+    "The two transactions cannot hold shares simultaneously."
   ],
   "walkthroughCase": {
     "arguments": [

@@ -1,6 +1,30 @@
 {
-  "explanation": "Perform a depth-first traversal and append each value in postorder order. Null children contribute no values.",
-  "timeComplexity": "O(n) time.",
-  "spaceComplexity": "O(h) recursion space plus O(n) output space.",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "explanation": "Recursively visit both children before appending the current value.",
+  "timeComplexity": "O(n+1): one recursive visit per node and one append per value.",
+  "spaceComplexity": "O(h+1) auxiliary call stack for tree height h, plus O(n) returned values. Worst-case h=n.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "An empty subtree contributes no values. Assuming each recursive call returns its subtree in the required order, placing the root after both calls produces exactly left subtree, right subtree, root. Each non-null node has one call, so it appears once; induction on subtree size proves the traversal.",
+  "walkthrough": "For the tree with root 8, left child 4 (whose right child is 6), and right child 10, finish 6 before emitting 4, then finish 10, and only then emit 8. Result: [6,4,10,8].",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        8,
+        4,
+        10,
+        null,
+        6
+      ]
+    ],
+    "expected": [
+      6,
+      4,
+      10,
+      8
+    ]
+  },
+  "edgeCases": [
+    "An empty tree returns an empty list.",
+    "Repeated values are emitted once per node; do not deduplicate.",
+    "A skewed tree has height n, so recursive stack depth can be linear."
+  ]
 }

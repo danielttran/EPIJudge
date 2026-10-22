@@ -10,6 +10,7 @@ import java.util.Queue;
 public class MatrixEnclosedRegions {
 
   public static void fillSurroundedRegions(List<List<Character>> board) {
+    if (board.isEmpty() || board.get(0).isEmpty()) return;
 
     // Identifies the regions that are reachable via white path starting from
     // the first or last columns.

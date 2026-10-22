@@ -1,34 +1,30 @@
 {
-  "explanation": "Perform a depth-first traversal and append each value in preorder order. Null children contribute no values.",
-  "timeComplexity": "O(n) time.",
-  "spaceComplexity": "O(h) recursion space plus O(n) output space.",
+  "explanation": "Append the current value, then recursively visit the left and right children.",
+  "timeComplexity": "O(n+1): one recursive visit per node and one append per value.",
+  "spaceComplexity": "O(h+1) auxiliary call stack for tree height h, plus O(n) returned values. Worst-case h=n.",
   "attribution": "Original C# implementation and explanation authored for EPI Practice from the displayed problem contract; EPI problem attribution remains in the collection.",
-  "correctness": "At a nonempty subtree, append its root before entering either child. Recursive induction then supplies the complete left subtree in preorder, followed by the complete right subtree in preorder. This is exactly root-left-right traversal, and each node belongs to only one recursive call.",
-  "walkthrough": "For [16, 7, 25, 2, 11, null, 30], emit root 16, then the left subtree sequence 7, 2, 11, then the right subtree sequence 25, 30. Return [16, 7, 2, 11, 25, 30].",
+  "correctness": "An empty subtree contributes no values. Assuming each recursive call returns its subtree in the required order, placing the root before both calls produces exactly root, left subtree, right subtree. Each non-null node has one call, so it appears once; induction on subtree size proves the traversal.",
+  "walkthrough": "For the tree with root 8, left child 4 (whose right child is 6), and right child 10, emit 8, enter the left subtree and emit 4 then 6, then enter the right subtree and emit 10. Result: [8,4,6,10].",
   "edgeCases": [
-    "An empty tree emits nothing.",
-    "A right-only child is visited after its parent without requiring a left placeholder in the output.",
-    "Repeated values are retained as separate node visits."
+    "An empty tree returns an empty list.",
+    "Repeated values are emitted once per node; do not deduplicate.",
+    "A skewed tree has height n, so recursive stack depth can be linear."
   ],
   "walkthroughCase": {
     "arguments": [
       [
-        16,
-        7,
-        25,
-        2,
-        11,
+        8,
+        4,
+        10,
         null,
-        30
+        6
       ]
     ],
     "expected": [
-      16,
-      7,
-      2,
-      11,
-      25,
-      30
+      8,
+      4,
+      6,
+      10
     ]
   }
 }

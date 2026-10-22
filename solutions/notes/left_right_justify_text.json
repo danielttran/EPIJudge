@@ -1,7 +1,7 @@
 {
   "explanation": "Greedily choose each line before assigning spaces. Nonfinal lines divide their available spaces among gaps, putting remainders on the left; the final line uses single spaces and right padding.",
-  "timeComplexity": "O(total output characters + number of words)",
-  "spaceComplexity": "O(L) working space, excluding output",
+  "timeComplexity": "O(total output characters + number of words) At least every output character must be written. Native Python repeatedly appends spaces to immutable strings; C++ Join repeatedly copies prefixes, so these versions may take O(q·L²) character copying for q lines of width L.",
+  "spaceComplexity": "O(L) working space, excluding output Working line storage is O(L), excluding O(qL) output.",
   "attribution": "Original C# implementation written for EPI Practice from the displayed contract; no upstream reference code copied.",
   "correctness": "The greedy end index is the longest consecutive word prefix fitting with mandatory single spaces. For a nonfinal line, dividing the remaining spaces by the gap count assigns every required space, and distributing the remainder to earlier gaps implements leftmost preference. The final-line branch and right padding give every returned line exactly L characters.",
   "walkthrough": "With words [\"a\",\"bb\",\"c\",\"dddd\"] and width 8, the first three words fit but adding \"dddd\" does not. Their four letters leave four spaces, split as two per gap, yielding \"a  bb  c\". The final word becomes \"dddd    \".",

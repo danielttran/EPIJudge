@@ -1,6 +1,36 @@
 {
-  "explanation": "Relink each BST into an inorder doubly linked list, merge the sorted lists, and consume the merged list in inorder to form a balanced BST. Original nodes supply the result rather than allocating replacement tree nodes.",
-  "timeComplexity": "O(m+n) time.",
-  "spaceComplexity": "O(hA+hB+log(m+n+1)) recursion space, excluding the reused tree nodes.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/bst_merge.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "Convert each tree recursively into a circular sorted doubly linked list, break its circular links, merge the two forward chains, then consume original nodes in inorder to build the prescribed midpoint tree.",
+  "timeComplexity": "O(m+n): conversion, length counting, merging and construction each visit every node only a constant number of times.",
+  "spaceComplexity": "O(hA+hB+log(m+n+1)) upper bound for recursive traversal and rebuilding; original nodes are reused, with no value arrays. A skew input can require O(m+n) stack space.",
+  "attribution": "Original reference source: epi_judge_cpp_solutions/bst_merge.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice. The displayed copy includes local contract or boundary corrections; the upstream reference file is preserved.",
+  "correctness": "Each converted list has the original tree’s inorder multiset. Merging chooses the smallest available head and preserves all occurrences. The builder consumes the first half for the left subtree, the next node as root, and the remaining half for the right subtree; this gives exactly the required midpoint shape and sorted inorder. All output nodes come from the input trees.",
+  "walkthrough": "Trees [4,1,7] and [6,2,9] become chains [1,4,7] and [2,6,9]. Merging gives [1,2,4,6,7,9]. Consume the first three nodes for the left tree, then node 6 as root, then 7 and 9 for the right tree; level order is [6,2,9,1,4,7].",
+  "edgeCases": [
+    "Either input tree may be empty.",
+    "Duplicate values from either input are retained.",
+    "The midpoint convention matters because this corpus compares structure.",
+    "Input tree child links are repurposed as list links during merging; callers must not expect the original trees to remain intact."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        4,
+        1,
+        7
+      ],
+      [
+        6,
+        2,
+        9
+      ]
+    ],
+    "expected": [
+      6,
+      2,
+      9,
+      1,
+      4,
+      7
+    ]
+  }
 }

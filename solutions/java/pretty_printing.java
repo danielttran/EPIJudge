@@ -10,6 +10,8 @@ public class PrettyPrinting {
   @EpiTest(testDataFile = "pretty_printing.tsv")
 
   public static int minimumMessiness(List<String> words, int lineLength) {
+    if (words.isEmpty()) return 0;
+
 
     // minimumMessiness[i] is the minimum messiness when placing
     // words.subList(0, i + 1).

@@ -1,6 +1,38 @@
 {
-  "explanation": "Breadth-first search the reachable graph while mapping every original vertex to its copy. Create copies when first encountered and append copied neighbors to each copied edge list.",
-  "timeComplexity": "O(V+E) expected",
-  "spaceComplexity": "O(V+E), including the cloned graph",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/GraphClone.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "explanation": "Breadth-first traversal creates one new vertex for each reachable original vertex. The identity map preserves cycles and shared neighbors. Append every original edge, including duplicates, to the copied adjacency list without modifying the input graph.",
+  "timeComplexity": "O(V + E) time over the reachable graph. Each reachable vertex is enqueued once and each outgoing edge is copied once.",
+  "spaceComplexity": "O(V) auxiliary space, plus O(V + E) for the returned graph. The identity map and queue store V vertices; returned adjacency stores E edges.",
+  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/GraphClone.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/).",
+  "correctness": "The identity map assigns exactly one fresh vertex to every discovered original. A vertex is enqueued only when first mapped, so every reachable vertex is processed once. Recreating every outgoing edge through the map preserves edge multiplicity, cycles and shared neighbors without using an original node in the returned graph.",
+  "walkthrough": "Use vertices 0,1,2 with edges 0→2 twice, 2→1 and 1→0. Create copy 0, then copy 2 and append it twice to copy 0. Processing 2 creates copy 1; processing 1 links back to the existing copy 0. The structural judge accepts the fresh three-vertex cycle. JSON arguments [vertexCount, directedEdgePairs] construct a graph rooted at vertex 0. The callable returns the copied root; expected true records structural validation, not a boolean return.",
+  "walkthroughCase": {
+    "arguments": [
+      3,
+      [
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          1,
+          0
+        ]
+      ]
+    ],
+    "expected": true
+  },
+  "edgeCases": [
+    "Cycles and self-loops must terminate through the identity map.",
+    "Duplicate edges must remain duplicated.",
+    "Equal labels alone do not prove a deep copy; the judge checks node identity.",
+    "Only vertices reachable from the supplied starting vertex belong in its clone."
+  ]
 }

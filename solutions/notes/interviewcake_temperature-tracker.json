@@ -1,16 +1,17 @@
 {
   "explanation": "Keep a fixed 111-entry frequency table, running sum/count and cached extrema/mode. Each insertion updates these constant-size statistics.",
   "correctness": "The frequency table counts every insertion. Extrema are updated against every new value; sum/count define the mean; updating the mode on a new largest frequency preserves a maximizing value.",
-  "walkthrough": "Insert 4, 10 and 4. The minimum is 4, maximum 10, sum 18 and count 3, so the mean is 6. Frequency 4 is 2 while frequency 10 is 1, so GetMode returns 4. Repeating getters does not consume any reading.",
+  "walkthrough": "Insert 4, 10 and 4. The minimum is 4, maximum 10, sum 18 and count 3, so the mean is 6. Frequency 4 is 2 while frequency 10 is 1, so GetMode returns 4. Repeating getters does not consume any reading. JSON supplies [operationNames,argumentLists] for one fresh TempTracker. Insert displays null; empty getters return null, means allow 1e-9 tolerance and any maximizing mode is valid.",
   "edgeCases": [
     "Empty tracker",
     "tied modes",
     "repeated extrema",
     "0 and 110",
-    "interleaved getters."
+    "interleaved getters.",
+    "Empty getters return null. With readings 3 and 8, either mode is accepted; means use floating-point division and getters do not consume readings."
   ],
-  "timeComplexity": "O(1) time per insertion and getter.",
-  "spaceComplexity": "O(1) auxiliary space for the fixed domain.",
+  "timeComplexity": "O(1) per insertion/getter: insertion changes one frequency bucket and a fixed number of cached statistics; getters read cached values.",
+  "spaceComplexity": "O(1) persistent space: exactly 111 frequency slots plus count, sum, extrema and mode, independent of reading count.",
   "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
   "walkthroughCase": {
     "arguments": [

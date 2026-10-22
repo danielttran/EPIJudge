@@ -9,6 +9,7 @@ struct Subarray {
 };
 
 Subarray FindLongestIncreasingSubarray(const vector<int>& A) {
+  if (A.empty()) return {0, -1};
   int max_length = 1;
   Subarray result;
   int i = 0;

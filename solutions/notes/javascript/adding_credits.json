@@ -1,6 +1,71 @@
 {
-  "explanation": "Store credits relative to a global BigInt offset so addAll changes one value. A Map supports lookup and a randomized search tree orders normalized credits with client IDs as tie-breakers. Insert and remove keep both indexes synchronized; max follows the tree\u2019s right edge.",
-  "timeComplexity": "O(log n) expected insert, remove and max; O(1) expected lookup and addAll for fixed-width credit values.",
-  "spaceComplexity": "O(n) entries and tree nodes; O(log n) expected recursion stack.",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "explanation": "Store normalized BigInt credits in a map and a randomized treap ordered by (credit,id). AddAll changes a common offset. Replacing a client removes its old treap entry before inserting its new normalized value.",
+  "timeComplexity": "Insert/Remove/Max: expected O(log n), O(n) worst case if the randomized treap degenerates. Lookup: expected O(1); AddAll: O(1), treating BigInt arithmetic as constant for bounded credits. The operation bounds reflect the displayed index: ordered set, randomized treap, or a Python scan for Max.",
+  "spaceComplexity": "O(n) storage; recursive treap operations use expected O(log n), worst-case O(n) stack. The client dictionary and any ranking index contain one entry per live client.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "The map and treap contain exactly the same clients and normalized credits. Treap rotations preserve key order, and priorities preserve the heap condition. A common offset preserves all credit comparisons, so the rightmost treap key is a maximum-credit client.",
+  "walkthrough": "Insert client Nora with credit 4, then AddAll(6): Lookup(Nora) is 10. Reinsert Nora with credit 3, which replaces its absolute credit. Max is Nora; after removal Lookup is −1 and Max is empty. JSON arguments are [operations], with each operation [name,stringArg,intArg]. lookup/remove/max records carry expected observations, not extra callable parameters. Observed true means all operations validated.",
+  "edgeCases": [
+    "Reinsertion replaces an absolute credit, even after AddAll.",
+    "Tied maximum credits are broken by client ID here, but the mathematical contract permits any tied client.",
+    "A new instance resets the map, tree, and offset.",
+    "The judge maintains expected credits independently and accepts any existing client with the maximum credit. No universal tie-breaker is required."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          "ClientsCreditsInfo",
+          "",
+          0
+        ],
+        [
+          "insert",
+          "Nora",
+          4
+        ],
+        [
+          "add_all",
+          "",
+          6
+        ],
+        [
+          "lookup",
+          "Nora",
+          10
+        ],
+        [
+          "insert",
+          "Nora",
+          3
+        ],
+        [
+          "lookup",
+          "Nora",
+          3
+        ],
+        [
+          "max",
+          "Nora",
+          0
+        ],
+        [
+          "remove",
+          "Nora",
+          1
+        ],
+        [
+          "lookup",
+          "Nora",
+          -1
+        ],
+        [
+          "max",
+          "",
+          0
+        ]
+      ]
+    ],
+    "expected": true
+  }
 }

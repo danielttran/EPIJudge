@@ -5,6 +5,8 @@ from test_framework import generic_test
 
 
 def find_longest_subarray_less_equal_k(A: List[int], k: int) -> int:
+    if not A:
+        return 0
 
     # Builds the prefix sum according to A.
     prefix_sum = list(itertools.accumulate(A))

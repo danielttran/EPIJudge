@@ -1,6 +1,51 @@
 {
   "explanation": "Sort intervals by left endpoint, putting a closed endpoint first on ties. Merge intersecting intervals and intervals that touch at an endpoint included by either interval. On equal boundaries, keep the boundary closed if either interval includes it. Two open endpoints at the same value leave a gap and stay separate.",
-  "timeComplexity": "O(n log n) time.",
-  "spaceComplexity": "O(n) auxiliary and output space.",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "timeComplexity": "O(n log n) time. Sorting dominates; the merging sweep visits each interval once.",
+  "spaceComplexity": "O(n) auxiliary and output space. Sorted copies, library sorting buffers and up to n output intervals give the stated bound.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "Sorting by left boundary, with closed starts first on ties, ensures the last result is the only prior interval that can join the next one. Merge overlapping ranges, or touching ranges when either touching endpoint is closed. Keep a boundary closed if either contributor includes it, so the resulting intervals represent exactly the original union.",
+  "walkthrough": "For (1,4), (4,6] and [6,9), the first two stay separate because both sides omit 4. The last two merge because 6 is included. Return (1,4) and (4,9), encoded [[1,false,4,false],[4,false,9,false]].",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          1,
+          false,
+          4,
+          false
+        ],
+        [
+          4,
+          false,
+          6,
+          true
+        ],
+        [
+          6,
+          true,
+          9,
+          false
+        ]
+      ]
+    ],
+    "expected": [
+      [
+        1,
+        false,
+        4,
+        false
+      ],
+      [
+        4,
+        false,
+        9,
+        false
+      ]
+    ]
+  },
+  "edgeCases": [
+    "Two open endpoints at the same value leave a gap.",
+    "A closed endpoint on either touching side permits merging.",
+    "Equal outer boundaries retain closedness if any merged interval includes them."
+  ]
 }

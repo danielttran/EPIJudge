@@ -1,14 +1,14 @@
 {
   "explanation": "Find the lowest adjacent pair of unequal bits and swap them. This preserves the set-bit count, and using the least significant such pair gives the smallest possible absolute change without making the result negative.",
-  "timeComplexity": "O(1), at most 62 adjacent-bit checks",
-  "spaceComplexity": "O(1)",
+  "timeComplexity": "O(63) worst-case bit checks, at most 62 adjacent pairs. The width is fixed, so this is O(1) time for this API.",
+  "spaceComplexity": "O(1): one 63-bit value, a loop index and masks; no collection grows with the input value.",
   "attribution": "Original C# implementation and explanation authored for EPI Practice from the displayed problem contract.",
-  "correctness": "Swapping unequal bits preserves population count. Any different equal-weight pattern must move a set bit into an unset position; the smallest possible change is obtained from the lowest adjacent unequal pair. The first pair found therefore minimizes absolute difference while remaining nonnegative.",
-  "walkthrough": "18 is binary 10010. The lowest adjacent bits are 10, so swapping them gives binary 10001, which is 17. Both values have two set bits and their difference is one.",
+  "correctness": "Let the lowest run of equal bits end just below the first differing bit. Swapping the two bits at that boundary preserves the number of 1s. If the low run consists of zeros, this makes the nearest smaller equal-weight word; if it consists of ones, it makes the nearest larger word. A change confined below that boundary cannot preserve weight because those bits are all equal. Using any higher boundary requires a larger absolute change. Thus the first adjacent unequal pair gives the minimum possible distance. Both bits lie within the allowed value width, so the result remains nonnegative and representable.",
+  "walkthrough": "18 is binary 10010. Bits 0 and 1 differ, so swap them: 10010 becomes 10001, or 17. Both words have two 1s, and their distance is 1. No distinct integer can be closer than 1.",
   "edgeCases": [
-    "The result must differ from x.",
-    "Inputs with no other feasible nonnegative equal-weight value are outside the valid search contract.",
-    "The sign bit is excluded when seeking a nonnegative long result."
+    "The callable uses 63 value bits. Zero and 2^63−1 are outside its feasible input domain.",
+    "A single set bit moves to an adjacent empty position.",
+    "The result must differ from the input; returning x does not solve the minimization problem."
   ],
   "walkthroughCase": {
     "arguments": [

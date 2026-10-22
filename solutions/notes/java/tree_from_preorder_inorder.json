@@ -1,6 +1,42 @@
 {
-  "explanation": "Index each inorder value. The next preorder value is the subtree root; its inorder index divides the remaining range into left and right subtrees whose preorder lengths are then known.",
-  "timeComplexity": "O(n) expected",
-  "spaceComplexity": "O(n) index map plus O(h) recursion and O(n) returned nodes",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/TreeFromPreorderInorder.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "explanation": "Index each distinct value’s inorder position. For each pair of traversal ranges, the first preorder entry is the root; its inorder position determines the exact left-subtree size and therefore both recursive preorder ranges.",
+  "timeComplexity": "O(n) expected: create n index-map entries and n nodes, with constant expected work per split. The index map is built once and each node creates two disjoint smaller traversal ranges.",
+  "spaceComplexity": "O(n) index map plus O(h) recursion, excluding O(n) output nodes. The inorder index map holds n entries, the recursion has height h, and the output allocates n nodes.",
+  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/TreeFromPreorderInorder.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/).",
+  "correctness": "Preorder fixes the root, while inorder uniquely partitions its left and right descendants. Their sizes partition the remaining preorder range consistently. Recursing on these smaller valid ranges reconstructs the unique tree, with empty ranges giving missing children.",
+  "walkthrough": "Take preorder [16, 7, 2, 11, 25, 30] and inorder [2, 7, 11, 16, 25, 30]. Root 16 splits inorder into [2, 7, 11] and [25, 30]. The next root 7 gets children 2 and 11; root 25 gets right child 30. Return level order [16, 7, 25, 2, 11, null, 30]. The walkthroughCase uses the judge’s JSON input format and expected observation.",
+  "edgeCases": [
+    "Empty traversals return null.",
+    "Distinct node values are required for the position dictionary.",
+    "Skewed trees still follow the same interval rule, although recursion height can grow to n."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        16,
+        7,
+        2,
+        11,
+        25,
+        30
+      ],
+      [
+        2,
+        7,
+        11,
+        16,
+        25,
+        30
+      ]
+    ],
+    "expected": [
+      16,
+      7,
+      25,
+      2,
+      11,
+      null,
+      30
+    ]
+  }
 }

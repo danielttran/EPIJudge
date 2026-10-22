@@ -4,6 +4,8 @@ from test_framework import generic_test
 
 
 def max_subarray_sum_in_circular(A: List[int]) -> int:
+    if not A:
+        return 0
 
     # Calculates the non-circular solution.
     def find_max_subarray():

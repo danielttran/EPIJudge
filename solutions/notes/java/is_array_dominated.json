@@ -1,6 +1,30 @@
 {
-  "explanation": "Sort both teams by player height. A valid paired placement exists exactly when every sorted player in the first team is strictly shorter than the corresponding player in the second.",
-  "timeComplexity": "O(n log n)",
-  "spaceComplexity": "O(n) sorted player lists",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/IsArrayDominated.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "explanation": "Sort each team by height and compare players at equal ranks. A strict increase at every rank gives a valid front/back placement; a failed rank cannot be repaired by a different matching. The method checks the requested direction only, and the judge calls it for both directions.",
+  "timeComplexity": "O(n log n) time. Sort both n-element teams and perform n rank comparisons.",
+  "spaceComplexity": "O(n) auxiliary space for sorted copies. The two sorted player/height copies each contain n entries.",
+  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/IsArrayDominated.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/).",
+  "correctness": "In sorted order, a valid front team must be strictly shorter at every rank than the back team. If one sorted rank fails, there are too few taller back players for that suffix, so no alternate matching can repair it. If every rank succeeds, pairing equal ranks directly gives a valid placement.",
+  "walkthrough": "Sort [3,8,5] into [3,5,8] and [9,4,7] into [4,7,9]. Each first-team height is strictly smaller, so that direction is true. Reversing the teams fails, which the wrapper also checks.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        3,
+        8,
+        5
+      ],
+      [
+        9,
+        4,
+        7
+      ],
+      true,
+      false
+    ],
+    "expected": true
+  },
+  "edgeCases": [
+    "Equal heights fail the strict inequality.",
+    "Input teams have equal sizes under the contract.",
+    "The wrapper checks both front/back directions independently."
+  ]
 }

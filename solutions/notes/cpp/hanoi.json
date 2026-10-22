@@ -1,6 +1,19 @@
 {
   "explanation": "Recursively move the smaller rings to the spare peg, move the largest ring to the destination and then move the smaller rings onto it. The implementation also maintains three actual peg stacks while recording the moves.",
-  "timeComplexity": "O(2^n) time, producing 2^n−1 moves.",
-  "spaceComplexity": "O(n) peg/recursion space, plus O(2^n) output moves.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/hanoi.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "timeComplexity": "O(2^n) time; exactly 2^n − 1 moves. T(n)=2T(n−1)+1 yields exactly 2^n−1 moves.",
+  "spaceComplexity": "O(n) recursion space, plus O(2^n) output space. Depth-n recursion and, in native versions, n simulated rings are auxiliary; output stores all moves.",
+  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/hanoi.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice.",
+  "correctness": "Induct on the number of rings. The first recursive transfer legally removes the smaller rings from the largest ring, permitting its move to the destination. The second recursive transfer legally places the smaller rings above it. The two recursive towers never place a larger ring over a smaller one.",
+  "walkthrough": "For 4 rings, first transfer the top 3 from peg 0 to peg 2 in 7 moves. Move ring 4 from peg 0 to peg 1. Transfer the 3 smaller rings from peg 2 to peg 1 in 7 more moves. All rings finish on peg 1 after 15 legal moves. The executable case’s true result is the judge adapter verdict; the callable returns the tree/node/list of moves/random sample described above.",
+  "walkthroughCase": {
+    "arguments": [
+      4
+    ],
+    "expected": true
+  },
+  "edgeCases": [
+    "Zero rings requires no moves.",
+    "A move contains source and destination peg indices, not ring labels.",
+    "The judge accepts a legal complete transfer to either nonzero peg."
+  ]
 }

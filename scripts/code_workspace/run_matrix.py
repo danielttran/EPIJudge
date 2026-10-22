@@ -62,7 +62,13 @@ def main():
                 audit + ["boundaries", "--callable", "--language=" + language],
             )
         )
-    jobs.append(("walkthroughs-csharp", audit + ["walkthroughs", "--callable"]))
+    for language in languages:
+        jobs.append(
+            (
+                "walkthroughs-" + language,
+                audit + ["walkthroughs", "--callable", "--language=" + language],
+            )
+        )
     for language in languages:
         jobs.append(("fixtures-" + language, fixture + [language, "all", "--callable"]))
     ledger = {"tag": args.tag, "jobs": [], "completed": False, "passed": False}

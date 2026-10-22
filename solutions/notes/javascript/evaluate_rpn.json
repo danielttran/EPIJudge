@@ -1,6 +1,19 @@
 {
-  "explanation": "Push integer operands onto a stack. Each operator consumes the right operand first, then the left operand, and pushes their result. BigInt division truncates toward zero and exact intermediate arithmetic prevents rounding.",
-  "timeComplexity": "O(n) parsing/stack operations for expression length n, plus BigInt arithmetic costs.",
-  "spaceComplexity": "O(n) stack entries, with space for each intermediate BigInt value.",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "explanation": "Push numeric operands. For an operator, pop the right operand first and then the left operand, evaluate left operator right, and push the result. Integer division truncates toward zero; JavaScript uses BigInt internally before returning Number.",
+  "timeComplexity": "O(n), where n is expression length Each token is parsed once and pushed/popped a constant number of times, under bounded-integer arithmetic.",
+  "spaceComplexity": "O(n) Split tokens and the operand stack can each contain O(n) characters/entries.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "The stack contains results of completed subexpressions in encounter order. An operator consumes the latest two subexpressions with the earlier one on the left, so its result replaces exactly the expression it completes. The final stack value is the full expression’s value.",
+  "walkthrough": "For −9,4,/, push −9 and 4, then compute −9 divided by 4 with truncation toward zero. The result is −2.",
+  "edgeCases": [
+    "Operand order matters for subtraction and division.",
+    "Negative division truncates toward zero.",
+    "A signed integer token must not be mistaken for the subtraction operator."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      "-9,4,/"
+    ],
+    "expected": -2
+  }
 }

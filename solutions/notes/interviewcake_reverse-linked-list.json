@@ -1,15 +1,16 @@
 {
   "explanation": "Maintain the already reversed prefix and detach one node at a time from the remaining suffix, pointing it back to the prefix.",
   "correctness": "The prefix always contains the original first nodes in reverse order, and the suffix is untouched. Moving its first node extends the invariant until no suffix remains.",
-  "walkthrough": "For nodes 3 -> 8 -> 1, first set node 3.Next to null. Next point the original node 8 to node 3, then point the original node 1 to node 8. Return the original node holding 1. The resulting values are [1,8,3], with every payload still attached to its original object.",
+  "walkthrough": "For nodes 3 -> 8 -> 1, first set node 3.Next to null. Next point the original node 8 to node 3, then point the original node 1 to node 8. Return the original node holding 1. The resulting values are [1,8,3], with every payload still attached to its original object. The callable returns the new head of the same node objects. JSON displays the returned head’s value sequence; the adapter also checks original identities, payloads and reversed links.",
   "edgeCases": [
     "Empty list",
     "singleton identity",
     "repeated values",
-    "old head becomes tail."
+    "old head becomes tail.",
+    "Empty input returns null; a singleton returns the same object. The old head becomes the tail with Next=null, even when payload values repeat."
   ],
-  "timeComplexity": "O(n) time.",
-  "spaceComplexity": "O(1) auxiliary space.",
+  "timeComplexity": "O(n) time: each of n nodes has its Next link rewritten once.",
+  "spaceComplexity": "O(1) auxiliary space: current, saved next and previous references; no replacement nodes.",
   "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
   "walkthroughCase": {
     "arguments": [

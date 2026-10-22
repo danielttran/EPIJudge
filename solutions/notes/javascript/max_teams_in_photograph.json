@@ -1,6 +1,37 @@
 {
   "explanation": "Process the DAG in topological order. Every edge can extend the best path ending at its source by one team; retain the longest path length ending at each destination.",
-  "timeComplexity": "O(vertices + edges)",
-  "spaceComplexity": "O(vertices + edges)",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "timeComplexity": "O(vertices + edges) Every edge contributes one path relaxation and each vertex is evaluated once.",
+  "spaceComplexity": "O(vertices + edges) Memoized path lengths require V entries; DFS or the ready queue holds at most V vertices.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "Topological processing removes a vertex only after every incoming edge has been considered. Its stored length is therefore the greatest path length ending there. Relaxing each outgoing edge extends exactly those paths by one vertex, and every DAG path is represented by such extensions.",
+  "walkthrough": "For 5 teams and edges 0→2, 1→2, 2→3 and 3→4, teams 0 and 1 begin at length 1. Team 2 reaches 2, team 3 reaches 3 and team 4 reaches 4. Return 4 teams.",
+  "edgeCases": [
+    "A path counts vertices rather than edges.",
+    "Disconnected components must all be considered.",
+    "The graph is acyclic."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      5,
+      [
+        [
+          0,
+          2
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          4
+        ]
+      ]
+    ],
+    "expected": 4
+  }
 }

@@ -1,6 +1,24 @@
 {
-  "explanation": "For each position, inspect every earlier position with a value no larger than the current one. Extend its best subsequence length and retain the greatest length ending at the current entry.",
-  "timeComplexity": "O(n\u00b2)",
-  "spaceComplexity": "O(n)",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/LongestNondecreasingSubsequence.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "explanation": "Let length[i] be the longest nondecreasing subsequence ending exactly at index i. Test each earlier j with A[j]≤A[i] and extend its best subsequence. The final answer is the maximum over all endings.",
+  "timeComplexity": "O(n²): the nested loops examine all earlier endpoints. Tail-array versions binary-search once per entry; endpoint-DP versions compare all earlier positions.",
+  "spaceComplexity": "O(n) endpoint lengths. The tails list or endpoint-length array has at most n entries.",
+  "attribution": "Original EPIJudge reference source: epi_judge_java_solutions/epi/LongestNondecreasingSubsequence.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/). Local boundary or iterator-safety correction authored for EPI Practice. The displayed copy includes local contract or boundary corrections; the upstream reference file is preserved.",
+  "correctness": "A nontrivial subsequence ending at i has a preceding endpoint j<i with A[j]≤A[i]. The recurrence tries all such j and can attain each extension. The singleton gives length one when no predecessor qualifies. Therefore the computed endpoint optimum, and its global maximum, are exact.",
+  "walkthrough": "For [3,1,1,2], endpoint lengths are [1,1,2,3]: the second 1 extends the first 1, and 2 extends that length-two subsequence. Return 3. The walkthroughCase uses the judge’s JSON input format and expected observation.",
+  "edgeCases": [
+    "Empty input returns 0.",
+    "Equal values may all belong to the subsequence.",
+    "Entries need not be contiguous."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        3,
+        1,
+        1,
+        2
+      ]
+    ],
+    "expected": 3
+  }
 }

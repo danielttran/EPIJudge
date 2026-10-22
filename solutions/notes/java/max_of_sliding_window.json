@@ -1,6 +1,54 @@
 {
-  "explanation": "Maintain candidate reading indices with decreasing volumes. Expire readings strictly before t\u2212width and remove older candidates dominated by the current reading. The front is the maximum for the inclusive time window after every insertion.",
-  "timeComplexity": "O(n) amortized",
-  "spaceComplexity": "O(n), including candidates and output",
-  "attribution": "Original Java implementation and explanation for EPI Practice, based on the displayed public contract and our independently authored C# solution; no upstream reference code adapted."
+  "explanation": "Keep a deque of candidate indices with decreasing volume. Remove expired readings from the front and dominated readings from the back. The front gives the maximum in the inclusive time window after adding the current reading.",
+  "timeComplexity": "O(n) Each candidate is appended once and removed at most once, giving linear amortized work.",
+  "spaceComplexity": "O(n), excluding output Deque implementations retain at most the readings in one active window; JavaScript retains expired array slots, so its auxiliary bound is O(n).",
+  "attribution": "Original Java implementation and explanation for EPI Practice, based on the displayed public contract and our independently authored C# solution; no upstream reference code adapted.",
+  "correctness": "The deque holds unexpired candidates in decreasing volume order. Removing a dominated older candidate is safe because the newer reading has at least its volume and expires no earlier. Removing expired front entries preserves the eligible set, so the remaining front is its maximum.",
+  "walkthrough": "For readings [(1,2.5),(2,8),(4,3),(5,4)] with width 2, report maxima 2.5, 8, 8 and 4. At time 4 the reading at time 2 is still included; at time 5 it expires.",
+  "edgeCases": [
+    "The lower time endpoint t−w is inclusive.",
+    "Duplicate timestamps are processed in arrival order.",
+    "Equal-volume older candidates can be discarded in favor of newer ones."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          1,
+          2.5
+        ],
+        [
+          2,
+          8.0
+        ],
+        [
+          4,
+          3.0
+        ],
+        [
+          5,
+          4.0
+        ]
+      ],
+      2
+    ],
+    "expected": [
+      [
+        1,
+        2.5
+      ],
+      [
+        2,
+        8.0
+      ],
+      [
+        4,
+        8.0
+      ],
+      [
+        5,
+        4.0
+      ]
+    ]
+  }
 }

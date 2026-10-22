@@ -1,6 +1,35 @@
 {
   "explanation": "Merge the two inorder value sequences, retaining duplicates, then build a balanced tree using the required upper-middle index of each half-open range. Empty inputs are handled without special node assumptions.",
-  "timeComplexity": "O(m+n)",
-  "spaceComplexity": "O(m+n) sequences and output nodes; O(log(m+n+1)) build stack",
-  "attribution": "Original Python implementation authored for EPI Practice from its displayed contract and independently authored C# solution; no upstream reference source adapted."
+  "timeComplexity": "O(m+n): inorder traversal, two-pointer merging and midpoint reconstruction each visit the total input size linearly.",
+  "spaceComplexity": "O(m+n) values and newly allocated output nodes; traversal stacks use input heights and balanced rebuilding adds O(log(m+n+1)) frames.",
+  "attribution": "Original Python implementation authored for EPI Practice from its displayed contract and independently authored C# solution; no upstream reference source adapted.",
+  "correctness": "Inorder traversals produce the two sorted multisets. Standard merging preserves every occurrence. Recursive reconstruction chooses exactly the prescribed midpoint of each half-open range, so both the sorted contents and the required canonical structure follow.",
+  "walkthrough": "The BSTs [4,1,7] and [6,2,9] merge to [1,2,4,6,7,9]. Midpoint construction gives root 6, left subtree rooted at 2 and right subtree rooted at 9. Level order is [6,2,9,1,4,7].",
+  "edgeCases": [
+    "Either input tree may be empty.",
+    "Duplicate values from either input are retained.",
+    "The midpoint convention matters because this corpus compares structure."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        4,
+        1,
+        7
+      ],
+      [
+        6,
+        2,
+        9
+      ]
+    ],
+    "expected": [
+      6,
+      2,
+      9,
+      1,
+      4,
+      7
+    ]
+  }
 }

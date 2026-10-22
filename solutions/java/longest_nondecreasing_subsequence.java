@@ -11,6 +11,8 @@ public class LongestNondecreasingSubsequence {
   @EpiTest(testDataFile = "longest_nondecreasing_subsequence.tsv")
 
   public static int longestNondecreasingSubsequenceLength(List<Integer> A) {
+    if (A.isEmpty()) return 0;
+
 
     // maxLength[i] holds the length of the longest nondecreasing subsequence of
     // A.subList(0, i + 1).

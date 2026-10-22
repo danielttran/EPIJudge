@@ -1,6 +1,37 @@
 {
   "explanation": "Include the new interval, sort by start, then extend the last result while closed intervals overlap or touch. Copy result rows rather than changing the supplied intervals.",
-  "timeComplexity": "O(n log n) time for n input intervals.",
-  "spaceComplexity": "O(n) auxiliary and output space.",
-  "attribution": "Original repository-authored Blind75 C++ algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used."
+  "timeComplexity": "O(n log n) time for n input intervals. The implementation sorts n+1 intervals, then merges them in one pass; it does not exploit the already-sorted input for a linear insertion.",
+  "spaceComplexity": "O(n) auxiliary and output space. The combined sorted sequence and copied result rows each require O(n) storage.",
+  "attribution": "Original repository-authored Blind75 C++ algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used.",
+  "correctness": "After sorting by start, the output contains the union of all intervals processed so far. A new interval overlaps the final output interval exactly when its start does not exceed that interval’s end; extending the end preserves the union. Otherwise it starts a separated component. Including the new interval in this sweep yields the complete updated union.",
+  "walkthrough": "Insert [2,7] into [[0,2],[6,8]]. Closed intervals [0,2] and [2,7] touch and merge to [0,7]. That range overlaps [6,8], so the final result is [[0,8]].",
+  "edgeCases": [
+    "Input intervals are sorted, disjoint closed ranges.",
+    "Touching endpoints merge in this collection.",
+    "The new interval may bridge several original intervals."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          0,
+          2
+        ],
+        [
+          6,
+          8
+        ]
+      ],
+      [
+        2,
+        7
+      ]
+    ],
+    "expected": [
+      [
+        0,
+        8
+      ]
+    ]
+  }
 }

@@ -1,17 +1,29 @@
 {
   "explanation": "Use a dummy head and two pointers separated by n nodes. When the leading pointer reaches the final node, bypass the node after the trailing pointer.",
-  "timeComplexity": "O(n) time for n nodes in the list.",
-  "spaceComplexity": "O(1) auxiliary space.",
+  "timeComplexity": "O(n) time for n nodes in the list. The leader and follower each traverse at most the list length.",
+  "spaceComplexity": "O(1) auxiliary space. The dummy node and two moving references are constant space.",
   "attribution": "Original EPI Practice C# implementation, reusing and refining the repository-authored Blind75 algorithm fixtures. Collection membership follows Crackr; no external solution service is used.",
   "correctness": "After the initial advance, the leading pointer is n links ahead of the trailing pointer. Moving both together preserves that gap. When the leader reaches the final node, the trailer is immediately before the nth node from the end, so bypassing its successor removes exactly the required original node.",
-  "walkthrough": "For [3,5,8,1] and n=3, the third node from the end is 5. The separated-pointer scan leaves the trailing pointer at 3; redirect its next link to 8. Return [3,8,1].",
+  "walkthrough": "For [3,5,8,1] and n=3, the third node from the end is 5. The separated-pointer scan leaves the trailing pointer at 3; redirect its next link to 8. Return [3,8,1]. Expected serializes the returned list; the harness separately checks that exactly the requested original node was removed and all other nodes and values remain.",
   "edgeCases": [
     "n is valid from 1 through the list length.",
     "Removing the head changes the returned head, handled through a dummy predecessor.",
     "Removing the tail leaves its predecessor pointing to null."
   ],
   "walkthroughCase": {
-    "arguments": [[3, 5, 8, 1], 3],
-    "expected": [3, 8, 1]
+    "arguments": [
+      [
+        3,
+        5,
+        8,
+        1
+      ],
+      3
+    ],
+    "expected": [
+      3,
+      8,
+      1
+    ]
   }
 }

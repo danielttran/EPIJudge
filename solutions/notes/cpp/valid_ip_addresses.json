@@ -1,6 +1,23 @@
 {
-  "explanation": "Try lengths one through three for the first three segments. Validate all four resulting parts as values 0 through 255 with no multi-digit leading zero, then insert dots into each valid partition.",
-  "timeComplexity": "O(n) safe upper-bound time for input length n with a fixed number of segment-length choices, plus output characters.",
-  "spaceComplexity": "O(n) temporary/output substring space.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/valid_ip_addresses.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "Reject lengths outside 4..12 before attempting conversions. Enumerate lengths 1..3 for the first three parts, leaving the fourth as the suffix. Emit a candidate only when all parts are in 0..255 and none has a forbidden leading zero.",
+  "timeComplexity": "O(1) bounded work: at most 27 cut combinations for at most 12 digits. The first three parts each have at most three choices of length, giving at most 27 cut combinations.",
+  "spaceComplexity": "O(1) bounded auxiliary and output space for IPv4 addresses. For valid-size IPv4 input all parts and emitted addresses have bounded length.",
+  "attribution": "Original reference source: epi_judge_cpp_solutions/valid_ip_addresses.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice. The displayed copy includes local contract or boundary corrections; the upstream reference file is preserved.",
+  "correctness": "Every valid IPv4 address partitions the digit string into four parts of lengths 1 through 3, so its three cuts appear among the enumerated choices. The validator accepts exactly nonempty parts of at most three digits, numeric value at most 255, and no forbidden leading zero. Therefore every emitted address is valid and every valid partition is emitted.",
+  "walkthrough": "For digit string 10117, the valid partitions are 1|0|1|17, 1|0|11|7, and 10|1|1|7. A partition containing part 01 is rejected because it has a leading zero. Return [\"1.0.1.17\", \"1.0.11.7\", \"10.1.1.7\"] in any order.",
+  "edgeCases": [
+    "A part equal to \"0\" is valid; \"00\" and \"01\" are not.",
+    "Parts may reach 255 but never 256.",
+    "Fewer than four or more than twelve digits cannot form an IPv4 address."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      "10117"
+    ],
+    "expected": [
+      "1.0.1.17",
+      "1.0.11.7",
+      "10.1.1.7"
+    ]
+  }
 }

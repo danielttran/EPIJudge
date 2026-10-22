@@ -17,7 +17,7 @@ vector<vector<int>> Permutations(vector<int> A) {
 void DirectedPermutations(int i, vector<int> *A_ptr,
                           vector<vector<int>> *result) {
   vector<int> &A = *A_ptr;
-  if (i == size(A) - 1) {
+  if (i == size(A)) {
     result->emplace_back(A);
     return;
   }

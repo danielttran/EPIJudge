@@ -1,6 +1,20 @@
 {
-  "explanation": "Binary search between x and one when x<1, or one and x otherwise. Compare the squared midpoint with x using the reference\u2019s relative epsilon, and stop once the interval endpoints are relatively equal.",
-  "timeComplexity": "O(log(R/\u03b5)) refinements for initial interval width R and attained absolute precision \u03b5",
-  "spaceComplexity": "O(1)",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/RealSquareRoot.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "explanation": "Binary search the interval from zero to max(1,x). Compare middle with x/middle to avoid overflow from squaring; stop when floating-point rounding prevents further interval refinement.",
+  "timeComplexity": "O(log(R/ε)) refinements for initial width R and attained absolute precision ε, bounded by 1100 iterations for doubles. Every refinement halves the bracket, with at most 1100 iterations in the displayed implementation.",
+  "spaceComplexity": "O(1). Only the bracket endpoints, midpoint and iteration counter are stored.",
+  "attribution": "Original EPIJudge reference source: epi_judge_java_solutions/epi/RealSquareRoot.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/). The displayed copy includes local contract or boundary corrections; the upstream reference file is preserved.",
+  "correctness": "For x>0, the initial interval [0,max(1,x)] contains √x. For a positive midpoint, midpoint≤x/midpoint is equivalent to midpoint²≤x without overflowing a square. Replacing the appropriate endpoint preserves containment. Repeated bisection narrows the bracket until floating-point resolution prevents further progress.",
+  "walkthrough": "For x=6.25, start with [0,6.25]. Midpoint 3.125 exceeds 6.25/3.125=2, so the root lies below it. Repeated comparisons narrow the interval around 2.5, whose square is 6.25; return approximately 2.5.",
+  "edgeCases": [
+    "x=0 returns zero without dividing by a midpoint.",
+    "Values between zero and one still use an upper bound of one.",
+    "Division avoids overflow when x is very large.",
+    "The judge compares floating-point answers with a relative tolerance."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      6.25
+    ],
+    "expected": 2.5
+  }
 }

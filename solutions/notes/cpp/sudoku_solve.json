@@ -1,6 +1,44 @@
 {
-  "explanation": "Walk the grid’s empty cells and backtrack over candidate digits. A candidate must be absent from its row, column and square region. Restore zero when no candidate completes the remaining board; given entries are never changed.",
-  "timeComplexity": "O(q^(e+1)) safe upper-bound time for grid side q and e empty cells, including O(q) validity checks.",
-  "spaceComplexity": "O(q^2) recursion-space upper bound; the board is filled in place.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/sudoku_solve.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "Visit cells down a column, then advance to the next column. Leave clues unchanged. For each zero cell, try digits 1 through n after scanning its row, column and square region for conflicts; recurse and undo a failed assignment.",
+  "timeComplexity": "O(n^(e+2) + n²) conservative worst-case time for e empty cells in an n×n board: up to n^e search nodes, up to n candidate digits and O(n) conflict scanning per node, plus traversal of fixed cells. Each recursive choice fills an empty cell, giving at most n choices at each of e branching levels; the local candidate-check cost multiplies that tree size.",
+  "spaceComplexity": "O(n²) recursion frames in the worst case as all n² cells can remain on the call stack; the board is mutated in place and no candidate tables are allocated. Each live recursive call and retained candidate structure is counted; the board itself belongs to the caller.",
+  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/sudoku_solve.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice.",
+  "correctness": "The board is a valid partial assignment before each recursive call. A candidate absent from its row, column and region preserves that invariant. Every legal digit is tried, so any completion is reachable; failure resets the cell to zero before returning. The wrapper checks the mutated board and preserved clues, not the method’s boolean.",
+  "walkthrough": "For [[1,0,0,4],[0,4,1,0],[0,1,4,0],[4,0,0,1]], the column-first traversal skips clue 1, assigns 2 at (1,0), then 3 at (2,0). Completing and backtracking as needed gives a valid board such as [[1,3,2,4],[2,4,1,3],[3,1,4,2],[4,2,3,1]]. The callable returns true on success, but the executable case’s true is the wrapper verdict after checking every unit and clue.",
+  "edgeCases": [
+    "A fully solved board requires no assignments.",
+    "Subgrid width is the square root of the valid board dimension, including 4 by 4 boards.",
+    "Only zero cells are changed; a dead-end branch must undo its tentative digit before trying another."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          1,
+          0,
+          0,
+          4
+        ],
+        [
+          0,
+          4,
+          1,
+          0
+        ],
+        [
+          0,
+          1,
+          4,
+          0
+        ],
+        [
+          4,
+          0,
+          0,
+          1
+        ]
+      ]
+    ],
+    "expected": true
+  }
 }

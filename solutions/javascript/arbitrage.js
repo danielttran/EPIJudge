@@ -1,4 +1,5 @@
 function isArbitrageExist(graph) {
+  if (graph.length === 0) return false;
   const n = graph.length,
     distances = Array(n).fill(0);
   for (let pass = 0; pass < n; pass++) {

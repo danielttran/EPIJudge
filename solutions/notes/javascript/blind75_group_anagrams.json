@@ -1,6 +1,37 @@
 {
   "explanation": "Use the sorted characters of a word as its grouping key. Return every group, including singleton groups, as required by this Blind75 contract.",
-  "timeComplexity": "O(N + S log(L + 1)) time for N words, total characters S and maximum word length L.",
-  "spaceComplexity": "O(N + S) grouping and key space, plus output references.",
-  "attribution": "Original repository-authored Blind75 JavaScript algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used."
+  "timeComplexity": "O(N + S log(L + 1)) time for N words, total characters S and maximum word length L. Each word is sorted to form its key; summing O(length log(length+1)) over all words gives O(S log(L+1)), plus visiting N words and expected hash lookup costs.",
+  "spaceComplexity": "O(N + S) grouping and key space, plus output references. Keys contain at most S characters and the groups retain N input occurrences.",
+  "attribution": "Original repository-authored Blind75 JavaScript algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used.",
+  "correctness": "A sorted-character key is equal exactly for words with the same character multiset. Appending each original word to its key’s bucket therefore creates all anagram classes, with every input occurrence present once. Returning all buckets retains singleton classes as this contract requires.",
+  "walkthrough": "For [\"arc\",\"rat\",\"car\",\"tar\",\"owl\"], keys acr,art,acr,art,low create groups [\"arc\",\"car\"],[\"rat\",\"tar\"],[\"owl\"]. Return all three groups, including the singleton owl.",
+  "edgeCases": [
+    "Singleton groups are included, unlike the EPI variant.",
+    "Repeated identical words remain repeated entries.",
+    "Group order and word order within a group are unrestricted."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        "arc",
+        "rat",
+        "car",
+        "tar",
+        "owl"
+      ]
+    ],
+    "expected": [
+      [
+        "arc",
+        "car"
+      ],
+      [
+        "rat",
+        "tar"
+      ],
+      [
+        "owl"
+      ]
+    ]
+  }
 }

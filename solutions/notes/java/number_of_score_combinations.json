@@ -1,6 +1,23 @@
 {
-  "explanation": "Build a table over play-score prefixes and target totals. At each entry, add the combinations excluding the current score and those using it at least once; reusing the same row permits repeated plays.",
-  "timeComplexity": "O(p\u00b7T), for p scores and target T",
-  "spaceComplexity": "O(p\u00b7T)",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/NumberOfScoreCombinations.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "explanation": "Use a table indexed by allowed score types and target subtotal. Count combinations without the current type from the previous row, plus combinations using at least one copy from the current row at subtotal−score.",
+  "timeComplexity": "O(sT): s score types and T subtotals, with constant work per table entry. Each score type updates every relevant subtotal; the actual implementation retains one row or all rows.",
+  "spaceComplexity": "O(s(T+1)) table storage. C#/JavaScript store target+1 counts; native versions store one such row per score type.",
+  "attribution": "Original EPIJudge reference source: epi_judge_java_solutions/epi/NumberOfScoreCombinations.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/). Local boundary or iterator-safety correction authored for EPI Practice. The displayed copy includes local contract or boundary corrections; the upstream reference file is preserved.",
+  "correctness": "These two cases partition combinations according to whether the current score type is used. Removing one current score from the second case is a bijection to the smaller subtotal in the same row. Zero has one empty combination. The type dimension prevents counting different play orders separately.",
+  "walkthrough": "For final score 9 and allowed plays [2,3], the two combinations are three 3s, and three 2s plus one 3. Their play order is ignored, so return 2. The walkthroughCase uses the judge’s JSON input format and expected observation.",
+  "edgeCases": [
+    "The target zero has one empty combination.",
+    "A play value may be reused.",
+    "Changing play order must not create a new combination."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      9,
+      [
+        2,
+        3
+      ]
+    ],
+    "expected": 2
+  }
 }

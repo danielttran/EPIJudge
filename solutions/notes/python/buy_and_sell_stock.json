@@ -1,6 +1,25 @@
 {
-  "explanation": "Track the smallest earlier price and the best profit ending at each current price. Starting profit at zero naturally allows making no transaction.",
-  "timeComplexity": "O(n)",
-  "spaceComplexity": "O(1)",
-  "attribution": "Unmodified reference from epi_judge_python_solutions/buy_and_sell_stock.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice."
+  "explanation": "Keep the cheapest earlier price and the best profit so far. Evaluate selling at the current price before updating the minimum, so a purchase used for that sale comes from an earlier day. Start the best profit at zero to allow making no trade.",
+  "timeComplexity": "O(n+1): one pass, with constant work per price.",
+  "spaceComplexity": "O(1): only the running minimum and best profit are stored.",
+  "attribution": "Unmodified reference from epi_judge_python_solutions/buy_and_sell_stock.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice.",
+  "correctness": "For each possible sale day, buying at the smallest earlier price maximizes that day’s profit. The stored minimum contains exactly those earlier prices when the sale is evaluated. Maximizing these best-per-sale profits therefore considers the optimal legal pair implicitly. The zero initial profit wins whenever every possible trade loses money, matching the at-most-one-trade contract.",
+  "walkthrough": "For [5,1,4,2,7], the minimum before a sale on the final day is 1. Earlier best profits progress from 0 to 3 (buy at 1, sell at 4); the final price 7 improves that to 6. Return 6, from the purchase at index 1 and sale at index 4.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        5.0,
+        1.0,
+        4.0,
+        2.0,
+        7.0
+      ]
+    ],
+    "expected": 6.0
+  },
+  "edgeCases": [
+    "Empty and singleton arrays return zero.",
+    "Declining or equal prices return zero because no trade is required.",
+    "A minimum on the final day cannot fund an earlier sale."
+  ]
 }

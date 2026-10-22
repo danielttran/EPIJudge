@@ -1,15 +1,16 @@
 {
-  "explanation": "Scan from the supplied opener, including that character. Increment depth for each opener and decrement it for each closer; return when a closer first brings depth back to zero.",
+  "explanation": "Scan starting at the designated opening parenthesis, including it in the depth count. Increment for each opener and decrement for each closer; the first decrement to zero identifies its matching closer.",
   "correctness": "After consuming the designated opener, depth counts the still-unclosed openers within that outer pair, including the outer opener itself. Nested pairs increase and then decrease this count. The first return to zero therefore closes the designated opener rather than an inner pair.",
   "walkthrough": "In x(ab(cd)e)y, the opener at index 1 starts depth 1. The opener at index 4 increases depth to 2, its closer at index 7 reduces it to 1, and the closer at index 9 reduces it to 0. Return index 9 rather than the first closing parenthesis.",
   "edgeCases": [
     "Immediately adjacent pair",
     "deeply nested pairs",
     "irrelevant characters",
-    "later unrelated pairs."
+    "later unrelated pairs.",
+    "An adjacent () returns the next index; nested pairs must close before the designated pair. The bank guarantees that a matching closer exists."
   ],
-  "timeComplexity": "O(n) time.",
-  "spaceComplexity": "O(1) auxiliary space.",
+  "timeComplexity": "O(n) worst-case time: scan forward from the supplied opener until its match, visiting each intervening character once.",
+  "spaceComplexity": "O(1) auxiliary space: an integer depth replaces a stack because only one bracket type matters.",
   "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
   "walkthroughCase": {
     "arguments": [

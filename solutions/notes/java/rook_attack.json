@@ -1,6 +1,42 @@
 {
-  "explanation": "Use the first row and column as markers for rows and columns containing original zeros. Track whether those marker rows originally contain zeros, clear marked lines, then clear the marker row and column when required.",
-  "timeComplexity": "O(rc)",
-  "spaceComplexity": "O(1)",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/RookAttack.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "explanation": "Use the first row and column as markers for interior zeros. Save separate flags for original zeros in that row and column, then mark, clear the interior using those markers, and finally clear the saved boundary rows/columns.",
+  "timeComplexity": "O(r · c). A constant number of row/column or full-matrix scans visits O(r·c) cells.",
+  "spaceComplexity": "O(1) auxiliary space: two flags and loop indices; markers occupy existing matrix cells. Set variants store r+c markers; first-row/column variants keep only two boolean flags.",
+  "attribution": "Original EPIJudge reference source: epi_judge_java_solutions/epi/RookAttack.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/). Local correctness/empty-input fixes and explanation audit authored for EPI Practice; upstream reference files are unchanged. The displayed copy includes local contract or boundary corrections; the upstream reference file is preserved.",
+  "correctness": "Before mutation, the two flags capture whether the first row and column originally require clearing. Interior zeros mark exactly their affected rows and columns. Later writes consult only these markers, never newly created interior zeros. Applying the saved flags last prevents marker writes from inventing additional attacks.",
+  "walkthrough": "For [[5,0,7],[8,9,2]], save first-row-zero=true and first-column-zero=false. Column 1 is already marked; no interior zero adds a marker. Clear column 1, then the saved first row, obtaining [[0,0,0],[8,0,2]]. The native callable mutates the matrix and returns void/None; expected is the matrix observed by the wrapper.",
+  "edgeCases": [
+    "A matrix with no zeros is unchanged.",
+    "A zero in the first row or column is treated normally.",
+    "Multiple zeros may mark overlapping rows or columns.",
+    "Rows are modified in place rather than replaced."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          5,
+          0,
+          7
+        ],
+        [
+          8,
+          9,
+          2
+        ]
+      ]
+    ],
+    "expected": [
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        8,
+        0,
+        2
+      ]
+    ]
+  }
 }

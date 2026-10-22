@@ -1,6 +1,31 @@
 {
   "explanation": "Fix each next position by swapping every remaining entry into it. Recurse on the suffix, copy complete arrangements, and undo each swap before trying another choice.",
-  "timeComplexity": "O(n\u00b7n!)",
-  "spaceComplexity": "O(n) recursion stack plus O(n\u00b7n!) output",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/Permutations.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "timeComplexity": "O(n · n!). There are n! leaves, each copying n entries; swap/backtrack work is bounded by the same O(n·n!) cost for n>0.",
+  "spaceComplexity": "O(n) recursion stack, plus O(n · n!) output. Depth-n recursion is auxiliary; n! independent output copies dominate total storage.",
+  "attribution": "Original EPIJudge reference source: epi_judge_java_solutions/epi/Permutations.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/). The displayed copy includes local contract or boundary corrections; the upstream reference file is preserved.",
+  "correctness": "Before Visit(first), the prefix before first is fixed and the suffix contains exactly the remaining values. Swapping each suffix value into first covers every possible next choice. Recursion fixes the rest, and undoing the swap restores the invariant for the next branch. A completed arrangement is copied so later swaps cannot change it.",
+  "walkthrough": "For [4,7], fix 4 first to record [4,7]. Undo that choice, swap 7 into the first position, and record [7,4]. The returned permutations are [[4,7],[7,4]], while the original array order is restored.",
+  "edgeCases": [
+    "An empty input has one permutation: the empty arrangement.",
+    "A one-element input has exactly one arrangement.",
+    "Each returned arrangement is an independent list."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        4,
+        7
+      ]
+    ],
+    "expected": [
+      [
+        4,
+        7
+      ],
+      [
+        7,
+        4
+      ]
+    ]
+  }
 }

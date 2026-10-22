@@ -6,8 +6,8 @@ from test_framework import generic_test
 
 def is_arbitrage_exist(graph: List[List[float]]) -> bool:
     def bellman_ford(graph, source):
-        dis_to_source = ([float('inf')] * (source - 1) + [0] + [float('inf')] *
-                         (len(graph) - source))
+        dis_to_source = ([float('inf')] * source + [0] + [float('inf')] *
+                         (len(graph) - source - 1))
 
         for _ in range(1, len(graph)):
             have_update = False

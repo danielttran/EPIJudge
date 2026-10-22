@@ -12,6 +12,7 @@ bool IsValidPart(const string& s);
 
 vector<string> GetValidIpAddress(const string& s) {
   vector<string> result;
+  if (s.size() < 4 || s.size() > 12) return result;
   for (size_t i = 1; i < 4 && i < size(s); ++i) {
     if (const string first = s.substr(0, i); IsValidPart(first)) {
       for (size_t j = 1; i + j < size(s) && j < 4; ++j) {

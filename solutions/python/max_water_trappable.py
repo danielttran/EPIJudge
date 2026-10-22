@@ -4,6 +4,8 @@ from test_framework import generic_test
 
 
 def calculate_trapping_water(heights: List[int]) -> int:
+    if not heights:
+        return 0
 
     # Finds the index with maximum height.
     max_h = heights.index(max(heights))

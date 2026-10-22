@@ -1,6 +1,31 @@
 {
-  "explanation": "Split links into an even-position chain and an odd-position chain while walking the original list. Append each successive node to its matching chain, then join the even tail to the saved odd head. Relative order and original node identities are preserved.",
-  "timeComplexity": "O(n)",
-  "spaceComplexity": "O(1)",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/even_odd_list_merge.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "Maintain separate even-index and odd-index tails behind dummy heads. Append each original node to the appropriate chain, terminate the odd tail, then append the odd chain after the even chain.",
+  "timeComplexity": "O(n) Each node is classified or rewired once.",
+  "spaceComplexity": "O(1) Only the two chain heads/tails and traversal pointers are retained.",
+  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/even_odd_list_merge.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice.",
+  "correctness": "After each processed prefix, the two chains contain exactly its even and odd positions in their original relative orders. Alternating the selected tail assigns every node exactly once. Clearing the odd tail’s old link prevents a cycle when the chains are joined.",
+  "walkthrough": "For [10,20,30,40,50], the even positions contain [10,30,50] and the odd positions [20,40]. Joining those chains returns [10,30,50,20,40].",
+  "edgeCases": [
+    "One or two nodes need little or no rewiring.",
+    "Positions are zero-based.",
+    "The final odd tail must terminate rather than retain a stale link."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        10,
+        20,
+        30,
+        40,
+        50
+      ]
+    ],
+    "expected": [
+      10,
+      30,
+      50,
+      20,
+      40
+    ]
+  }
 }

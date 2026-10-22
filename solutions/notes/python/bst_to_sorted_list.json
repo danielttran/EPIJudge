@@ -1,6 +1,31 @@
 {
-  "explanation": "Recursively obtain each subtree\u2019s list head and tail, then connect those lists through the original root. Original nodes become the doubly linked list and the head\u2019s previous link is null.",
-  "timeComplexity": "O(n)",
-  "spaceComplexity": "O(h) recursion; existing nodes reused",
-  "attribution": "Unmodified reference from epi_judge_python_solutions/bst_to_sorted_list.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice."
+  "explanation": "Recursively obtain each subtree’s list head and tail, then connect those lists through the original root. Original nodes become the doubly linked list and the head’s previous link is null.",
+  "timeComplexity": "O(n): recursive calls visit each original node once and perform constant link work.",
+  "spaceComplexity": "O(h) recursion frames, where h is the original tree height; nodes are reused, so a skew tree may require O(n) auxiliary stack.",
+  "attribution": "Unmodified reference from epi_judge_python_solutions/bst_to_sorted_list.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice.",
+  "correctness": "Inductively each recursive result is a sorted doubly linked list with correct head and tail. Link the left tail to the root and the root to the right head; BST inorder order makes the concatenation sorted. Missing children contribute null endpoints, so the returned head has no predecessor and the tail has no successor.",
+  "walkthrough": "For tree [5,2,8,1,3], recursion converts the left subtree into 1↔2↔3 and the right subtree into the singleton 8. Joining left tail 3 to root 5 and root 5 to right head 8 gives the same original nodes in order [1,2,3,5,8].",
+  "edgeCases": [
+    "An empty tree returns null.",
+    "A singleton becomes a list with both links null.",
+    "Both child conversions finish before root links become list links."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        5,
+        2,
+        8,
+        1,
+        3
+      ]
+    ],
+    "expected": [
+      1,
+      2,
+      3,
+      5,
+      8
+    ]
+  }
 }

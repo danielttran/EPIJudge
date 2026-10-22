@@ -8,6 +8,7 @@ public class Solution
     public bool IsArbitrageExist(List<List<double>> graph)
     {
         int n = graph.Count;
+        if (n == 0) return false;
         var distances = new double[n];
         for (int pass = 0; pass < n; pass++)
         {

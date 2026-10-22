@@ -1,6 +1,19 @@
 {
-  "explanation": "Interpret the integer as a 64-bit pattern. Clearing each lowest set bit toggles the parity once and terminates for negative values too.",
-  "timeComplexity": "O(s), with s\u226464 set bits",
-  "spaceComplexity": "O(1) for the fixed 64-bit input",
-  "attribution": "Original Python implementation authored for EPI Practice from its displayed contract and independently authored C# solution; no upstream reference source adapted."
+  "explanation": "Mask to the low 64 bits, repeatedly clear the lowest set bit with x&(x−1), and flip the parity.",
+  "timeComplexity": "O(b): each iteration clears exactly one of the b set bits in the masked 64-bit pattern; b≤64.",
+  "spaceComplexity": "O(1) for a fixed 64-bit mask, the remaining word and one parity bit.",
+  "attribution": "Original Python implementation authored for EPI Practice from its displayed contract and independently authored C# solution; no upstream reference source adapted.",
+  "correctness": "After each iteration, parity equals the parity of the bits removed so far. The operation remaining & (remaining - 1) removes exactly the lowest set bit and leaves every other bit unchanged. When remaining is zero, every original set bit has contributed one flip, so the result is the original 64-bit parity.",
+  "walkthrough": "For x=13, the unsigned bits are 1101. Clearing the lowest set bit gives 1100, then 1000, then 0. Three flips change parity from 0 to 1, so the result is 1.",
+  "edgeCases": [
+    "Zero returns zero.",
+    "Negative inputs are interpreted using their low 64 two’s-complement bits.",
+    "There are at most 64 set bits."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      13
+    ],
+    "expected": 1
+  }
 }

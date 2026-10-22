@@ -1,6 +1,25 @@
 {
-  "explanation": "Detect a cycle with slow/fast pointers, measure its length, then advance one pointer by that length. Moving both pointers together identifies the original cycle-entry reference.",
-  "timeComplexity": "O(n)",
-  "spaceComplexity": "O(1)",
-  "attribution": "Unmodified reference from epi_judge_python_solutions/is_list_cyclic.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice."
+  "explanation": "Use Floyd’s slow/fast pointers to detect a cycle, count its length, then start two pointers at the head separated by exactly that length. Their first equal node is the cycle entry.",
+  "timeComplexity": "O(n) time over the distinct reachable nodes. Floyd detection and entry-location scans use O(n) link advances over distinct reachable nodes.",
+  "spaceComplexity": "O(1) auxiliary space. A fixed number of pointers and a cycle-length counter suffice.",
+  "attribution": "Unmodified reference from epi_judge_python_solutions/is_list_cyclic.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice.",
+  "correctness": "Inside a cycle, the fast pointer gains one position per step modulo the cycle length and must meet the slow pointer. Counting from that meeting node yields the exact cycle length c. Two head pointers c links apart first become equal when the trailing pointer reaches the cycle entry: before that, the prefix contains distinct nodes; at the entry, their separation is one full cycle.",
+  "walkthrough": "Setup [11,7,4,9] links tail 9 to the node with value 7. Slow and fast meet at 9. Count 9→7→4→9 to obtain length 3. Advance one head pointer three links to 9; then move both once: 11→7 and 9→7 meet at the original entry. The wrapper validates the returned reference and reports true.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        11,
+        7,
+        4,
+        9
+      ],
+      7
+    ],
+    "expected": true
+  },
+  "edgeCases": [
+    "Return the original entry node, not a copy with the same value.",
+    "A self-loop is a cycle.",
+    "An acyclic list returns null and no input link may change."
+  ]
 }

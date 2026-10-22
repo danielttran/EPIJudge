@@ -5,6 +5,8 @@ from test_framework import generic_test
 
 
 def minimum_messiness(words: List[str], line_length: int) -> int:
+    if not words:
+        return 0
 
     num_remaining_blanks = line_length - len(words[0])
     # min_messiness[i] is the minimum messiness when placing words[0:i + 1].

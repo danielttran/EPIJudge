@@ -17,6 +17,7 @@ from pathlib import Path
 
 from generate_web_catalog import CUSTOM, ROOT, source_hash
 from web_problem_examples import balanced_tree, custom_example
+from clarity.content import questions as clarity_questions
 
 
 def rows(id, argument_count):
@@ -67,8 +68,20 @@ def main():
     assert '"Easy"' not in curated and '"Medium"' not in curated
     assert all(p['Examples'] for p in catalog)
     translated = 0
+    reviewed = clarity_questions()
+    authored_examples = 0
+    for problem in catalog:
+        if problem['Id'] in reviewed:
+            expected = [{key.capitalize(): value for key, value in example.items()}
+                        for example in reviewed[problem['Id']]['examples']]
+            assert problem['Examples'] == expected, problem['Id']
+            authored_examples += len(expected)
     for p in canonical:
         if p['id'] not in CUSTOM:
+            continue
+        if p['id'] in reviewed:
+            # Authored teaching cases replace the historical first-two-row
+            # presentation. Their execution is a separate SolutionsAudit gate.
             continue
         count = len(p['argumentTypes'])
         lines = (ROOT/'test_data'/p['testDataFile']).read_text().splitlines()[1:]
@@ -81,7 +94,7 @@ def main():
         if expected_examples:
             assert expected_examples == by_id[p['id']]['Examples'], p['id']
             translated += len(expected_examples)
-    print(f'PASS provenance for all 218 problems; {translated} translated C# examples')
+    print(f'PASS provenance for all 218 problems; {translated} translated C# examples; {authored_examples} authored examples match sources (execution checked separately)')
 
     checked = 0
     def compare(id, arity, function, transform=None):

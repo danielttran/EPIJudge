@@ -1,6 +1,57 @@
 {
-  "explanation": "Keep FIFO values in one deque and possible maxima in nonincreasing order in another. An inserted value removes strictly smaller candidates; dequeuing removes its matching maximum candidate when necessary. Equal maxima are retained separately.",
-  "timeComplexity": "O(1) amortized enqueue, O(1) dequeue and maximum query.",
-  "spaceComplexity": "O(n) stored queue and maximum-candidate entries.",
-  "attribution": "Original C++ implementation and explanation authored for EPI Practice from the displayed problem contract and repository-authored C# algorithms. Uses the existing local native test-framework API. No upstream reference implementation was altered or translated."
+  "explanation": "Keep a normal FIFO queue and a decreasing deque of possible maxima. A newly enqueued value removes smaller candidates behind it; dequeue removes the front candidate only when that same value leaves. Equal maxima are retained separately.",
+  "timeComplexity": "Enqueue/Dequeue are O(1) amortized: each value is inserted and removed at most once from each deque. One enqueue can remove O(n) dominated candidates. Max reads one front entry in O(1). Each candidate can be discarded only once, so repeated removal loops sum linearly across a trace.",
+  "spaceComplexity": "O(p) storage for peak live queue entries, including candidate values and retained backing capacity; linked/deque containers may release removed entries. FIFO values and candidate values are each bounded by live/peak occupancy according to container retention.",
+  "attribution": "Original C++ implementation and explanation authored for EPI Practice from the displayed problem contract and repository-authored C# algorithms. Uses the existing local native test-framework API. No upstream reference implementation was altered or translated.",
+  "correctness": "The candidate deque is nonincreasing and its first value is the queue maximum. An older candidate smaller than a newly enqueued value cannot become maximum before that newer value leaves, so discarding it is safe. Equal candidates are retained separately so removing one equal maximum does not discard the other. Dequeue removes a candidate only when its matching queue value leaves.",
+  "walkthrough": "Enqueue 3,8,8. The first 8 removes 3 from the candidate deque, but both 8s remain. Dequeue returns 3 and then one 8; Max still returns 8 because the second maximum is still queued. The final dequeue returns that last 8.",
+  "edgeCases": [
+    "Duplicate maxima must be retained until each copy leaves.",
+    "Construction/reset clears both the FIFO queue and the candidate deque.",
+    "Negative values require no special sentinel maximum.",
+    "Max and Dequeue require a nonempty queue."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          "QueueWithMax",
+          0
+        ],
+        [
+          "enqueue",
+          3
+        ],
+        [
+          "enqueue",
+          8
+        ],
+        [
+          "enqueue",
+          8
+        ],
+        [
+          "max",
+          8
+        ],
+        [
+          "dequeue",
+          3
+        ],
+        [
+          "dequeue",
+          8
+        ],
+        [
+          "max",
+          8
+        ],
+        [
+          "dequeue",
+          8
+        ]
+      ]
+    ],
+    "expected": true
+  }
 }

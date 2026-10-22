@@ -1,6 +1,20 @@
 {
-  "explanation": "Start at the final Roman symbol and scan backwards. Subtract a symbol when it is smaller than its immediate successor; otherwise add it, following the stated arithmetic conversion rule.",
-  "timeComplexity": "O(n)",
-  "spaceComplexity": "O(1)",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/RomanToInteger.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "explanation": "Initialize the sum with the final symbol, then scan right to left. Subtract a symbol when its immediate successor has greater value; otherwise add it. Return zero for empty text. This computes the specified local rule without validating canonical Roman notation.",
+  "timeComplexity": "O(n). Each symbol contributes once after one comparison with its immediate successor.",
+  "spaceComplexity": "O(1). The seven-symbol table and total have constant size.",
+  "attribution": "Original EPIJudge reference source: epi_judge_java_solutions/epi/RomanToInteger.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/). The displayed copy includes local contract or boundary corrections; the upstream reference file is preserved.",
+  "correctness": "Each position contributes exactly the amount prescribed by the contract: negative when its value is smaller than the immediately following value, positive otherwise. Summing these independent contributions directly implements the rule; no canonical-numeral validation is introduced.",
+  "walkthrough": "For \"MIX\", M contributes 1000. I is smaller than the following X and contributes -1; X contributes 10. The total is 1000-1+10=1009.",
+  "edgeCases": [
+    "The empty string sums to zero.",
+    "The final symbol always contributes positively.",
+    "Noncanonical spellings still follow the immediate-successor subtraction rule.",
+    "Only I,V,X,L,C,D,M are valid symbols."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      "MIX"
+    ],
+    "expected": 1009
+  }
 }

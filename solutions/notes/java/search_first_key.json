@@ -1,6 +1,27 @@
 {
-  "explanation": "Binary search for the target, remembering each match and continuing left. The final remembered position is its first occurrence.",
-  "timeComplexity": "O(log n)",
-  "spaceComplexity": "O(1)",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/SearchFirstKey.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "explanation": "Binary-search an inclusive candidate interval. Save an index whenever the middle equals k, then continue strictly to its left to seek an earlier equal value. Return the saved index or -1.",
+  "timeComplexity": "O(log n). Each iteration halves the candidate interval, hence logarithmically many comparisons.",
+  "spaceComplexity": "O(1). Only two endpoints, a midpoint and possibly one saved index are retained.",
+  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/SearchFirstKey.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/).",
+  "correctness": "The saved result is an occurrence of k, and any earlier occurrence remains in the candidate interval. A value below k excludes its entire left side; a value above k excludes its right side. On equality, keeping only the left side cannot discard an earlier answer. Exhaustion therefore leaves the first occurrence saved.",
+  "walkthrough": "For [-2,1,1,1,5] and k=1, middle 2 matches: save 2 and search [0,1]. Middle 0 is below 1, so move left to 1. Middle 1 matches: save 1 and finish. Return 1.",
+  "edgeCases": [
+    "An empty array returns -1.",
+    "Repeated targets return their first index.",
+    "A lower bound at array length means the target is absent.",
+    "Targets below the minimum still require an equality check."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        -2,
+        1,
+        1,
+        1,
+        5
+      ],
+      1
+    ],
+    "expected": 1
+  }
 }

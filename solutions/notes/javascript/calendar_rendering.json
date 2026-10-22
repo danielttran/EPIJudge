@@ -1,6 +1,32 @@
 {
   "explanation": "Sweep sorted event endpoints, counting active intervals. Process starts before finishes at an equal time because this contract counts touching endpoints as overlapping. The largest active count is the answer.",
-  "timeComplexity": "O(n log n)",
-  "spaceComplexity": "O(n)",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "timeComplexity": "O(n log n) Create and sort 2n endpoints, then update an active counter once per endpoint.",
+  "spaceComplexity": "O(n) The endpoint collection stores two records per event.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "Between consecutive endpoints, the active count changes only at starts and finishes. Sorting equal-time starts before finishes counts all closed intervals that contain that shared endpoint. The largest count seen during the sweep is exactly the maximum overlap.",
+  "walkthrough": "Events [1,2], [2,3] and [2,2] all contain time 2. Processing their starts before the finishes at 2 raises the active count to three.",
+  "edgeCases": [
+    "Touching endpoints count as overlapping.",
+    "A zero-length event still contains its endpoint.",
+    "An empty event list has maximum overlap zero."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          2,
+          2
+        ]
+      ]
+    ],
+    "expected": 3
+  }
 }

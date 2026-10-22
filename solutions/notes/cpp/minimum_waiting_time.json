@@ -1,6 +1,23 @@
 {
-  "explanation": "Serve shorter requests first. After sorting, each request’s service time contributes once to every remaining request’s wait, so add service_time times the number of later requests.",
-  "timeComplexity": "O(n log(n+1)) time.",
-  "spaceComplexity": "O(n) space for the copied service-time array, plus sorting stack.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/minimum_waiting_time.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "Sort durations increasingly. A duration at sorted index i contributes to the wait of exactly n−i−1 later queries, so sum duration×(n−i−1). Swapping an adjacent inverted pair decreases waiting by their duration difference.",
+  "timeComplexity": "O(n log n) Sorting dominates the single linear contribution scan.",
+  "spaceComplexity": "O(n) for sorting C#/JavaScript allocate a sorted copy; Python/Java sorting can use O(n) temporary storage, C++ copies its by-value argument.",
+  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/minimum_waiting_time.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice.",
+  "correctness": "Consider two adjacent tasks of durations a>b. Scheduling a first makes the second wait a, while swapping them makes the second wait only b; later waits are unchanged. Repeatedly removing such inversions proves increasing duration order minimizes total waiting. The accumulated elapsed time is each query’s actual wait.",
+  "walkthrough": "For [6,1,3], sort to [1,3,6]. The contributions are 1×2, 3×1 and 6×0, totaling 5. These equal the waits 0,1,4.",
+  "edgeCases": [
+    "The query’s own processing time is excluded from its wait.",
+    "A single query waits zero.",
+    "Equal durations may be ordered arbitrarily."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        6,
+        1,
+        3
+      ]
+    ],
+    "expected": 5
+  }
 }

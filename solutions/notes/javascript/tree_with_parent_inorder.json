@@ -1,6 +1,34 @@
 {
   "explanation": "Remember only the previous and current nodes. Their relationship tells whether traversal is descending from the parent, returning from the left subtree, or returning from the right subtree; visit the node between its two subtrees.",
-  "timeComplexity": "O(n) time.",
-  "spaceComplexity": "O(1) auxiliary space, excluding the O(n) returned traversal.",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "timeComplexity": "O(n) time. Every tree edge is traversed at most downward and upward; three node cursors replace a stack.",
+  "spaceComplexity": "O(1) auxiliary space, excluding the O(n) returned traversal. Previous/current/next cursors replace a stack; only the returned value list grows.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "The previous/current relationship identifies the traversal phase without a stack. Arriving from the parent means the left subtree remains unvisited; returning from the left means the root should now be emitted; returning from the right means the entire subtree is complete. The selected next edge is exactly the edge a recursive inorder traversal would take. Each edge is traversed only a constant number of times, and each value is emitted once.",
+  "walkthrough": "For [16, 7, 25, 2, 11, null, 30], descend 16 → 7 → 2 and emit 2. Return to 7 and emit 7, then visit and emit 11. Returning through 7 reaches 16, which is emitted before the right subtree 25, 30. Return [2, 7, 11, 16, 25, 30], using only previous/current/next node references beyond the result list. The walkthroughCase uses the judge’s JSON input format and expected observation.",
+  "edgeCases": [
+    "Null input terminates immediately.",
+    "A node without a left child is emitted on its first arrival.",
+    "Returning from a right child must climb without emitting the parent a second time."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        16,
+        7,
+        25,
+        2,
+        11,
+        null,
+        30
+      ]
+    ],
+    "expected": [
+      2,
+      7,
+      11,
+      16,
+      25,
+      30
+    ]
+  }
 }

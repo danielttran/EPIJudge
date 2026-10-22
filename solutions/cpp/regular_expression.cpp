@@ -7,6 +7,7 @@ using std::string;
 bool IsMatchHere(const string &, int, const string &, int);
 
 bool IsMatch(const string &regex, const string &s) {
+  if (regex.empty()) return true;
   // Case (2.): regex starts with '^'.
   if (regex.front() == '^') {
     return IsMatchHere(regex, 1, s, 0);

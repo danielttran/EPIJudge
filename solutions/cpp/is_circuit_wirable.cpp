@@ -2,6 +2,7 @@
 #include <queue>
 #include <stdexcept>
 #include <vector>
+#include <unordered_map>
 
 #include "test_framework/generic_test.h"
 #include "test_framework/serialization_traits.h"
@@ -20,7 +21,18 @@ struct GraphVertex {
 };
 
 bool IsAnyPlacementFeasible(vector<GraphVertex>* graph) {
-  return all_of(begin(*graph), end(*graph),
+  // Each constraint is undirected, even if supplied only once.
+  vector<GraphVertex> undirected(graph->size());
+  std::unordered_map<GraphVertex*, std::size_t> index;
+  for (std::size_t i = 0; i < graph->size(); ++i) index[&(*graph)[i]] = i;
+  for (std::size_t i = 0; i < graph->size(); ++i) {
+    for (auto* neighbor : (*graph)[i].edges) {
+      auto j = index.at(neighbor);
+      undirected[i].edges.push_back(&undirected[j]);
+      undirected[j].edges.push_back(&undirected[i]);
+    }
+  }
+  return all_of(begin(undirected), end(undirected),
                 [](GraphVertex& v) { return v.d != -1 || Bfs(&v); });
 }
 

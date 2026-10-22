@@ -1,6 +1,35 @@
 {
   "explanation": "Backtrack over candidate indices in nondecreasing order. Reusing the current index permits repeated values; never moving backward prevents duplicate combinations.",
-  "timeComplexity": "O(c^(d+1) + output size) upper bound for c candidates and d = target / smallest candidate.",
-  "spaceComplexity": "O(d) recursion and current-path space, excluding output.",
-  "attribution": "Original repository-authored Blind75 C++ algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used."
+  "timeComplexity": "O(c^(d+1) + output size) upper bound for c candidates and d = target / smallest candidate. The recursion depth is at most d=floor(target/min(candidates)); each level tries c candidates. Copying successful paths contributes the total output length.",
+  "spaceComplexity": "O(d) recursion and current-path space, excluding output. The active path and recursion stack each have at most d entries; saved solutions are output space.",
+  "attribution": "Original repository-authored Blind75 C++ algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used.",
+  "correctness": "The path uses candidate indices in nondecreasing order, so every multiset of chosen candidates has one recursion order. Reusing the same index permits repeated copies. Each call subtracts a positive candidate, and reaching remainder zero records exactly a target-sum combination; every valid multiset follows one such branch.",
+  "walkthrough": "For candidates [3,4,7] and target 10, choosing 3,3,4 completes one branch. Choosing 3,7 completes another. No other candidate multiset totals 10, so return [[3,3,4],[3,7]].",
+  "edgeCases": [
+    "Candidates are positive and distinct, so recursive remainders strictly decrease.",
+    "The public target is at least 1; zero remainder is the successful internal base case.",
+    "Candidates larger than the remaining target are skipped.",
+    "A candidate may be reused; changing selection order does not create a new combination."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        3,
+        4,
+        7
+      ],
+      10
+    ],
+    "expected": [
+      [
+        3,
+        3,
+        4
+      ],
+      [
+        3,
+        7
+      ]
+    ]
+  }
 }

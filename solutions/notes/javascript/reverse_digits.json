@@ -1,6 +1,19 @@
 {
   "explanation": "Remove the final decimal digit and append it to the result until the absolute input is exhausted, then restore its sign. Number exactly represents every reversed 32-bit integer.",
-  "timeComplexity": "O(d) for d decimal digits.",
-  "spaceComplexity": "O(1).",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "timeComplexity": "O(d) for d decimal digits. Each iteration removes one decimal digit.",
+  "spaceComplexity": "O(1). Only magnitude/current value and reversal accumulator are retained.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "The accumulator contains the reversal of the decimal digits already removed from the original magnitude. Multiplying it by ten and appending the next remainder digit preserves that invariant. After no digits remain, restoring the original sign gives the requested reversal. The 32-bit input magnitude is exactly representable as a Number.",
+  "walkthrough": "For x=-1203, read digits 3,0,2,1 from the absolute value. The accumulator becomes 3,30,302,3021. Restore the negative sign and return -3021.",
+  "edgeCases": [
+    "Zero returns zero.",
+    "Trailing zeros become leading zeros and vanish numerically.",
+    "The original sign is restored after reversing the magnitude."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      -1203
+    ],
+    "expected": -3021
+  }
 }

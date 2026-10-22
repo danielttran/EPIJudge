@@ -1,6 +1,29 @@
 {
-  "explanation": "Given the node immediately preceding the node to remove, bypass its next link. The supplied wrapper locates that predecessor from the displayed input index.",
-  "timeComplexity": "O(1) deletion; O(n) including wrapper lookup",
-  "spaceComplexity": "O(1)",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/DeleteFromList.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "explanation": "The callable receives the predecessor node directly. Assign its next link to its successor’s next link, bypassing exactly the successor; the wrapper locates this predecessor from the zero-based deletion position.",
+  "timeComplexity": "O(1) callable time: one pointer assignment. The case wrapper spends O(node_idx) locating the predecessor.",
+  "spaceComplexity": "O(1): the predecessor traversal needs one pointer and the bypass allocates no nodes.",
+  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/DeleteFromList.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/).",
+  "correctness": "The predecessor’s next originally points to the node to remove. Replacing only that edge with the removed node’s successor preserves every other retained node and link, including the original list head.",
+  "walkthrough": "The case supplies [7,5,9,2] and zero-based deletion position 2. The wrapper passes node 5; the callable changes 5.next from node 9 to node 2 and returns no value. The wrapper observes [7,5,2].",
+  "edgeCases": [
+    "The supplied position is at least one.",
+    "Deleting the tail simply sets its predecessor’s Next to null.",
+    "This exercise does not select the head."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        7,
+        5,
+        9,
+        2
+      ],
+      2
+    ],
+    "expected": [
+      7,
+      5,
+      2
+    ]
+  }
 }

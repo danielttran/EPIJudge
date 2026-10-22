@@ -5,6 +5,8 @@ from test_framework import generic_test
 
 def matrix_search(A: List[List[int]], x: int) -> bool:
 
+    if not A or not A[0]:
+        return False
     row, col = 0, len(A[0]) - 1  # Start from the top-right corner.
     # Keeps searching while there are unclassified rows and columns.
     while row < len(A) and col >= 0:

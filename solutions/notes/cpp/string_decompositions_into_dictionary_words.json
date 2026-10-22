@@ -1,6 +1,26 @@
 {
-  "explanation": "Count the required multiplicity of each equal-length word. For every possible starting offset, scan exactly the required number of blocks and reject an unknown or overused word. Return offsets whose entire block multiset matches.",
-  "timeComplexity": "O(nkw) expected time for text length n, k words and word length w, including substring copying and hashing.",
-  "spaceComplexity": "O(kw) dictionary and current-block count/key space, plus output.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/string_decompositions_into_dictionary_words.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "Try every possible starting character index. Split the candidate into word-sized chunks and count their frequencies, rejecting an unknown word or a count above the required multiplicity. Exactly m accepted chunks consume the entire requested multiset.",
+  "timeComplexity": "O(mw + n·m·w) expected worst-case time for text length n, m words of width w: each of O(n) starts checks at most m copied/hashed chunks.",
+  "spaceComplexity": "O(mw) auxiliary character storage for required and current chunk counts, plus O(r) output for r matches.",
+  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/string_decompositions_into_dictionary_words.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice.",
+  "correctness": "Every valid concatenation has a starting index in the examined range and consists of m chunks of the common word length. A rejected chunk is absent from the required multiset or exceeds its allowed count, so that candidate cannot match. If all m chunks respect the required counts, their total count equals the multiset size, forcing every multiplicity to match exactly.",
+  "walkthrough": "For xoakashashoakz and [oak,ash], each word has width 3. Candidate 1 splits into oak|ash and matches. Candidate 4 splits into ash|ash and exceeds ash’s count. Candidate 7 splits into ash|oak and matches. Other starts contain an unknown chunk; return [1,7].",
+  "edgeCases": [
+    "Repeated supplied words require their full multiplicities.",
+    "Matches can overlap and can begin in different word alignments.",
+    "All supplied words share one positive length; text shorter than their combined length has no match."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      "xoakashashoakz",
+      [
+        "oak",
+        "ash"
+      ]
+    ],
+    "expected": [
+      1,
+      7
+    ]
+  }
 }

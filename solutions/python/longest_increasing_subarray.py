@@ -8,6 +8,8 @@ Subarray = collections.namedtuple('Subarray', ('start', 'end'))
 
 def find_longest_increasing_subarray(A: List[int]) -> Subarray:
 
+    if not A:
+        return Subarray(0, -1)
     result = Subarray(0, 0)
     i, max_length = 0, 1
     while i < len(A) - max_length:

@@ -1,6 +1,25 @@
 {
-  "explanation": "Scan upward through the sieve. An unmarked number is prime; mark its multiples starting at its square because smaller multiples already have a smaller prime factor.",
-  "timeComplexity": "O(n log log n).",
-  "spaceComplexity": "O(n), including sieve storage.",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "explanation": "Store a composite flag for each integer through n. An unmarked candidate is prime: emit it and mark its multiples beginning at its square. Starting at p² avoids work already done by smaller prime factors.",
+  "timeComplexity": "O(n log log n) for n≥3: initialization and the candidate scan cost O(n), while marking over primes costs O(n Σ(1/p)) = O(n log log n). Smaller inputs take constant time.",
+  "spaceComplexity": "O(n) including n+1 composite flags and the returned primes. Compressing odd candidates improves the constant, not the asymptotic bound.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "Every composite integer has a prime factor no larger than its square root. Before a candidate p is reached, every composite with a smaller prime factor has therefore been marked; an unmarked p is prime. Multiples below p² have a smaller prime factor and need no new marking. Marking from p² excludes every remaining composite divisible by p. Scanning candidates in increasing order returns each prime once and in sorted order.",
+  "walkthrough": "For n=12, emit 2 and mark 4,6,8,10,12. Emit 3 and mark 9. Candidates 5,7 and 11 remain unmarked; each has square above 12. Skip all marked candidates and return [2,3,5,7,11].",
+  "walkthroughCase": {
+    "arguments": [
+      12
+    ],
+    "expected": [
+      2,
+      3,
+      5,
+      7,
+      11
+    ]
+  },
+  "edgeCases": [
+    "n<2 yields no primes.",
+    "The upper bound is inclusive: n=2 returns [2].",
+    "Begin marking at p², not p, or a prime would eliminate itself."
+  ]
 }

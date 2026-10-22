@@ -1,6 +1,29 @@
 {
-  "explanation": "Encode the tree with preorder values and explicit null markers separated by spaces. Decode those tokens recursively, rebuilding each root followed by its left and right subtrees. The wire string contains all required structure and values, independent of encoder state.",
-  "timeComplexity": "O(n²) conservative worst-case serialization bound from recursive string concatenation in a skew tree; O(n) token parsing/decoding for fixed-width values.",
-  "spaceComplexity": "O(n + h) encoded/token storage and recursion for n nodes and height h, plus the decoded output tree.",
-  "attribution": "Original repository-authored Blind75 Java algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used."
+  "explanation": "Write preorder values with explicit null markers and token separators. Decoding consumes one token per recursive position. The string fully specifies structure and values, even in a separate process.",
+  "timeComplexity": "O(n squared) worst-case serialization time with fixed-width values: recursive string concatenation repeatedly copies descendant encodings on a skew tree. Deserialization consumes O(n) tokens in O(n) time.",
+  "spaceComplexity": "O(n+h) live serialization/token buffers and recursion frames, plus O(n) newly decoded nodes. Encodings of completed disjoint subtrees and pending concatenations have linear peak size, although cumulative copying is quadratic.",
+  "attribution": "Original repository-authored Blind75 Java algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used.",
+  "correctness": "Preorder emits each root before its two child encodings, including an explicit null token for every missing child. A decoder consumes exactly one token to distinguish empty from nonempty, then recursively consumes the required children. Structural induction proves this is a unique inverse and needs no encoder process state.",
+  "walkthrough": "For [6,null,9,7], preorder tokens are 6,#,9,7,#,#,#. The first # gives node 6 no left child; the remaining tokens create right child 9 with left child 7. Decoding the string reconstructs the same level-order tree [6,null,9,7]. The example represents Serialize followed by Deserialize independently; expected is the rebuilt tree in level order, with fresh-node identity and input preservation checked separately.",
+  "edgeCases": [
+    "A null tree still needs an explicit null encoding.",
+    "Negative and multidigit values require token separators.",
+    "Encoding and decoding run in separate processes."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        6,
+        null,
+        9,
+        7
+      ]
+    ],
+    "expected": [
+      6,
+      null,
+      9,
+      7
+    ]
+  }
 }

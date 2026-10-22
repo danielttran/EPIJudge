@@ -1,6 +1,28 @@
 {
-  "explanation": "Increment the least significant digit and propagate a carry leftwards through nines. If the leading digit overflows, turn it into one and append a zero.",
-  "timeComplexity": "O(n)",
-  "spaceComplexity": "O(1) auxiliary; the returned list may gain one digit",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/IntAsArrayIncrement.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "explanation": "Add one to the last digit. Whenever a digit becomes ten, reset it to zero and carry one to its predecessor. If the first digit also becomes ten, replace it with one and append a zero, producing the extra place needed.",
+  "timeComplexity": "O(n) worst case for n digits: an all-nine input carries across the entire array. A resize when adding a digit is also at most linear.",
+  "spaceComplexity": "O(1) scalar carry state beyond the input/output digit list. That list stores O(n+1) digits and may resize when an extra leading place is needed.",
+  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/IntAsArrayIncrement.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/).",
+  "correctness": "Adding one affects only the suffix through the first digit below nine. Every carried position represents ten units of its place, which is exactly one unit of the place to its left; replacing ten with zero and carrying therefore preserves the value of the desired sum. When the carry stops, all digits are valid and the result is the original number plus one. If it passes the first position, the original number was all nines, so the result is one followed by n zeros.",
+  "walkthrough": "For [7,9,9], increment the final digit to get [7,9,10]. Carry left to get [7,10,0], then carry again to get [8,0,0]. Return this digit sequence.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        7,
+        9,
+        9
+      ]
+    ],
+    "expected": [
+      8,
+      0,
+      0
+    ]
+  },
+  "edgeCases": [
+    "Input is a nonempty canonical decimal digit sequence; zero is [0].",
+    "[9,9] grows to [1,0,0].",
+    "Without a trailing nine, only the final digit increases.",
+    "This implementation mutates and returns the input list."
+  ]
 }

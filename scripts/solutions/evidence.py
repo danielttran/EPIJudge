@@ -264,22 +264,32 @@ def main():
         accepted,
         compiled["sourceHashes"],
     )
-    walkthrough_paths = sorted((ROOT / "solutions/notes").glob("*.json"))
-    walkthroughs = [
-        dict(
-            problemId=path.stem,
-            **json.loads(path.read_text(encoding="utf-8"))["walkthroughCase"],
+    walkthrough_summary = {
+        "questionLanguageExecutions": 0,
+        "acceptedCaseEvaluations": 0,
+    }
+    for language in manifest["languages"]:
+        notes_dir = ROOT / "solutions/notes"
+        if language != "csharp":
+            notes_dir /= language
+        walkthrough_paths = sorted(notes_dir.glob("*.json"))
+        walkthroughs = [
+            dict(
+                problemId=path.stem,
+                **json.loads(path.read_text(encoding="utf-8"))["walkthroughCase"],
+            )
+            for path in walkthrough_paths
+        ]
+        counts = auxiliary_evidence(
+            "walkthroughs",
+            walkthroughs,
+            walkthrough_paths,
+            [language],
+            accepted,
+            compiled["sourceHashes"],
         )
-        for path in walkthrough_paths
-    ]
-    walkthrough_summary = auxiliary_evidence(
-        "walkthroughs",
-        walkthroughs,
-        walkthrough_paths,
-        ["csharp"],
-        accepted,
-        compiled["sourceHashes"],
-    )
+        for key in walkthrough_summary:
+            walkthrough_summary[key] += counts[key]
     collection_summary = collection_fixture_evidence(manifest, harnesses)
     summary = dict(
         questions=manifest["questionCount"],

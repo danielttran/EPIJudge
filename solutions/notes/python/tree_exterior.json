@@ -1,6 +1,37 @@
 {
-  "explanation": "Append the root, nonleaf left boundary, all leaves left to right, then the reversed nonleaf right boundary. Excluding leaves from each side boundary and traversing leaves below the root prevents duplicates.",
-  "timeComplexity": "O(n) time.",
-  "spaceComplexity": "O(h) auxiliary space plus O(b) boundary output space.",
-  "attribution": "Unmodified reference from epi_judge_python_solutions/tree_exterior.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice."
+  "explanation": "Append root, the nonleaf left boundary before descending, all leaves left-to-right, then the nonleaf right boundary after descending. Postorder on the right boundary supplies its bottom-up order without reversing a separate list.",
+  "timeComplexity": "O(n) time. Side walks cost at most O(h), the leaf scan costs O(n), and the right boundary needs reversal storage or recursive frames.",
+  "spaceComplexity": "O(h) auxiliary space plus O(b) boundary output space. The leaf traversal and right-boundary reversal/recursion need height-sized auxiliary storage beyond the exterior output.",
+  "attribution": "Unmodified reference from epi_judge_python_solutions/tree_exterior.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice.",
+  "correctness": "The exterior separates into four disjoint node groups: the root, nonleaf left boundary, all leaves below the root, and nonleaf right boundary. Following the preferred outward child traces each side boundary. Left-first traversal lists leaves in boundary order, and reversing the right boundary places it bottom-to-top. Excluding leaves from side boundaries and the root from leaf collection prevents repeating nodes, while equal values at different nodes remain valid.",
+  "walkthrough": "For [16, 7, 25, 2, 11, null, 30, null, 4], append root 16, then nonleaf left boundary 7, 2. The leaves are 4, 11, 30. The nonleaf right boundary contributes 25 on returning from its recursive boundary walk. Return [16, 7, 2, 4, 11, 30, 25]. The walkthroughCase uses the judge’s JSON input format and expected observation.",
+  "edgeCases": [
+    "A single root is emitted once.",
+    "One-sided trees still exclude their leaf from the side-boundary pass.",
+    "Deduplication is by which traversal pass owns a node, not by Data value."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        16,
+        7,
+        25,
+        2,
+        11,
+        null,
+        30,
+        null,
+        4
+      ]
+    ],
+    "expected": [
+      16,
+      7,
+      2,
+      4,
+      11,
+      30,
+      25
+    ]
+  }
 }

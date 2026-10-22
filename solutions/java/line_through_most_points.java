@@ -29,22 +29,22 @@ public class LineThroughMostPoints {
 
     int result = 0;
     for (int i = 0; i < points.size(); ++i) {
-      Map<Integer, Map<Integer, Integer>> slopeTable = new HashMap<>();
+      Map<Long, Map<Long, Integer>> slopeTable = new HashMap<>();
       int overlapPoints = 1;
       for (int j = i + 1; j < points.size(); ++j) {
         if (points.get(i).x == points.get(j).x &&
             points.get(i).y == points.get(j).y) {
           ++overlapPoints;
         } else {
-          int xDiff = points.get(i).x - points.get(j).x,
-              yDiff = points.get(i).y - points.get(j).y;
+          long xDiff = (long) points.get(i).x - points.get(j).x,
+             yDiff = (long) points.get(i).y - points.get(j).y;
           if (xDiff == 0) {
             // A vertical line with slope 1/0.
             yDiff = 1;
           } else {
-            int gcd = BigInteger.valueOf(xDiff)
+            long gcd = BigInteger.valueOf(xDiff)
                           .gcd(BigInteger.valueOf(yDiff))
-                          .intValue();
+                          .longValue();
             xDiff /= gcd;
             yDiff /= gcd;
             if (xDiff < 0) {

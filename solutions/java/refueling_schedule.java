@@ -11,9 +11,9 @@ public class RefuelingSchedule {
 
   private static class CityAndRemainingGas {
     public Integer city;
-    public Integer remainingGallons;
+    public Long remainingGallons;
 
-    public CityAndRemainingGas(Integer city, Integer remainingGallons) {
+    public CityAndRemainingGas(Integer city, Long remainingGallons) {
       this.city = city;
       this.remainingGallons = remainingGallons;
     }
@@ -26,11 +26,11 @@ public class RefuelingSchedule {
   public static int findAmpleCity(List<Integer> gallons,
                                   List<Integer> distances) {
 
-    int remainingGallons = 0;
-    CityAndRemainingGas min = new CityAndRemainingGas(0, 0);
+    long remainingGallons = 0;
+    CityAndRemainingGas min = new CityAndRemainingGas(0, 0L);
     final int numCities = gallons.size();
     for (int i = 1; i < numCities; ++i) {
-      remainingGallons += gallons.get(i - 1) - distances.get(i - 1) / MPG;
+      remainingGallons += (long) gallons.get(i - 1) * MPG - distances.get(i - 1);
       if (remainingGallons < min.remainingGallons) {
         min = new CityAndRemainingGas(i, remainingGallons);
       }

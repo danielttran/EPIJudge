@@ -1,10 +1,10 @@
 {
   "explanation": "Keep a max-heap for the lower half and a min-heap for the upper half. Rebalance so the lower half has either the same size or one extra value. The median is then the lower root or the average of both roots.",
-  "timeComplexity": "O(log n) insertion and O(1) median query for n stored values.",
-  "spaceComplexity": "O(n) stored values.",
+  "timeComplexity": "O(log n) insertion and O(1) median query for n stored values. Each insertion moves a constant number of values between heaps; queries only inspect the heap roots.",
+  "spaceComplexity": "O(n) stored values. The two heaps together store every inserted value once.",
   "attribution": "Original EPI Practice C# implementation, reusing and refining the repository-authored Blind75 algorithm fixtures. Collection membership follows Crackr; no external solution service is used.",
   "correctness": "Every lower-heap value is at most every upper-heap value. Rebalancing keeps the lower heap the same size as the upper heap or one larger, so their roots bracket the middle positions of the sorted stream. The middle is therefore the lower root for an odd count, or the average of both roots for an even count.",
-  "walkthrough": "Add 9 and 3. The two middle values are 3 and 9, so the first median is (3+9)/2=6. Add 12; the sorted stream is now [3,9,12], whose middle value is 9. Query outputs are [6,9].",
+  "walkthrough": "Add 9 and 3. The two middle values are 3 and 9, so the first median is (3+9)/2=6. Add 12; the sorted stream is now [3,9,12], whose middle value is 9. Query outputs are [6,9]. The arrays describe calls on one instance in order; expected contains only FindMedian results, and values entries for queries are ignored.",
   "edgeCases": [
     "A median query requires at least one insertion.",
     "Even counts require an average, which may be fractional.",
@@ -12,9 +12,24 @@
   ],
   "walkthroughCase": {
     "arguments": [
-      ["addNum", "addNum", "findMedian", "addNum", "findMedian"],
-      [9, 3, 0, 12, 0]
+      [
+        "addNum",
+        "addNum",
+        "findMedian",
+        "addNum",
+        "findMedian"
+      ],
+      [
+        9,
+        3,
+        0,
+        12,
+        0
+      ]
     ],
-    "expected": [6.0, 9.0]
+    "expected": [
+      6.0,
+      9.0
+    ]
   }
 }

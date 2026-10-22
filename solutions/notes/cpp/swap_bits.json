@@ -1,6 +1,22 @@
 {
   "explanation": "Compare the two requested bits. If they differ, XOR a mask containing both positions to flip them; if they match, the original word already equals the swapped result.",
-  "timeComplexity": "O(1) time.",
-  "spaceComplexity": "O(1) auxiliary space.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/swap_bits.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "timeComplexity": "O(1) time. Two bit extractions and at most one XOR mask are performed.",
+  "spaceComplexity": "O(1) auxiliary space. Only fixed-width words and shift indices are stored.",
+  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/swap_bits.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice.",
+  "correctness": "If the selected bits are equal, swapping them changes nothing. If they differ, XOR with a mask containing exactly those two positions toggles each to the other’s value while leaving every unselected bit unchanged. Reinterpreting the input as ulong makes shifts logical across all 64 positions; converting the final bit pattern back preserves its signed two’s-complement interpretation.",
+  "walkthrough": "82 has set bits at positions 6, 4 and 1. Swap positions 1 and 5: they contain 1 and 0, so XOR with 2 + 32 = 34. The resulting set positions are 6, 5 and 4, representing 64 + 32 + 16 = 112. Return 112.",
+  "edgeCases": [
+    "Equal positions or equal selected bits leave the value unchanged.",
+    "Position 63 is the sign bit and must still participate in the swap.",
+    "Negative inputs are treated as full 64-bit two’s-complement bit patterns.",
+    "The callable may expose an unsigned word; the shared corpus compares the corresponding 64-bit pattern."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      82,
+      1,
+      5
+    ],
+    "expected": 112
+  }
 }

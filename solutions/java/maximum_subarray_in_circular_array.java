@@ -12,6 +12,7 @@ public class MaximumSubarrayInCircularArray {
   @EpiTest(testDataFile = "maximum_subarray_in_circular_array.tsv")
 
   public static int maxSubarraySumInCircular(List<Integer> A) {
+  if (A.isEmpty()) return 0;
 
     return Math.max(findMaxSubarray(A), findCircularMaxSubarray(A));
   }

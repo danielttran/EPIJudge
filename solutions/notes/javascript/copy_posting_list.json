@@ -1,6 +1,28 @@
 {
   "explanation": "Associate every original node with one newly allocated copy, then traverse both Next and Jump links. Wire copied links through that map so sharing and cycles are preserved without linking to any original node. Original values and links remain untouched.",
-  "timeComplexity": "O(n)",
-  "spaceComplexity": "O(n), including the node map and copied nodes",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "timeComplexity": "O(n) Each node’s two outgoing links are processed once, or three linear interleaving passes traverse the chain.",
+  "spaceComplexity": "O(n), including the node map and copied nodes Map variants retain n mappings; interleaving variants keep constant pointers besides n output nodes.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "The dictionary assigns one fresh copy to each original node. Every copied Next or Jump reference is resolved through that same dictionary, preserving sharing and cycles while keeping all copied references disjoint from the original graph. Original fields are never changed.",
+  "walkthrough": "For two nodes with orders 4 and 8, Next links 4→8 and Jump links 4→8 and 8→4, allocate two new nodes. Their copied Next/Jump links connect only those copies, with the same orders and topology. JSON arguments contain one array of [order,jumpTargetOrder] records; next follows array order and −1 denotes a null jump. The callable returns the copied head; expected true records structural validation.",
+  "edgeCases": [
+    "An empty list returns null.",
+    "Jump references can point backward or to the same node.",
+    "Copies must not alias original nodes or mutate original orders."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          4,
+          8
+        ],
+        [
+          8,
+          4
+        ]
+      ]
+    ],
+    "expected": true
+  }
 }

@@ -1,6 +1,23 @@
 {
   "explanation": "Backtrack through the phone digits using the fixed uppercase keypad mapping. Write one letter into a shared current string per digit and copy each complete mnemonic; zero and one map to themselves.",
-  "timeComplexity": "O(n 4^n) upper-bound time for n digits.",
-  "spaceComplexity": "O(n) current string and recursion space, plus output.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/phone_number_mnemonic.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "timeComplexity": "O(n · M), where M is the number of mnemonics (at most 4^n). Every completed mnemonic of length n must be copied; there are M product-of-mapping-sizes leaves.",
+  "spaceComplexity": "O(n) working space, plus O(n · M) output. The mutable word and recursion use O(n); output stores n characters for each of M words.",
+  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/phone_number_mnemonic.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice.",
+  "correctness": "At recursion depth i, the prefix contains one allowed letter for each of the first i digits. Trying every mapped letter at the next position preserves validity and covers all continuations. At the final depth, every valid combination has been generated exactly once.",
+  "walkthrough": "For phone number \"30\", digit 3 offers D, E and F, and digit 0 offers only 0. The three completed branches are D0, E0 and F0, so return [\"D0\",\"E0\",\"F0\"].",
+  "edgeCases": [
+    "Digits 0 and 1 remain their own characters.",
+    "Digits 7 and 9 each offer four letters.",
+    "An empty digit string produces one empty mnemonic."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      "30"
+    ],
+    "expected": [
+      "D0",
+      "E0",
+      "F0"
+    ]
+  }
 }

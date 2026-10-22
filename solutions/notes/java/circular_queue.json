@@ -1,6 +1,60 @@
 {
-  "explanation": "Allocate a circular array with at least one slot, even when the requested initial capacity is zero. Track the logical head and live count; the tail is the head plus the count modulo capacity. When full, copy live values in FIFO order into a doubled array and reset the head to zero. Constructor commands replace the queue and capacity. The complete operation adapter validates dequeue and size results and rejects unknown commands.",
-  "timeComplexity": "Enqueue: O(1) amortized, O(q) for a growth copying q live values. Dequeue/Size: O(1). Construction allocates O(c) initialized slots for clamped capacity c >= 1.",
-  "spaceComplexity": "O(max(c, q)) retained circular-buffer space for initial clamped capacity c and peak occupancy q since the last reset; growth temporarily uses O(q) additional slots.",
-  "attribution": "Original Java circular-buffer implementation and complete reset-aware operation adapter independently authored for EPI Practice from its displayed queue contract. No upstream reference implementation adapted. Public EPIJudge interface and test framework retained under the repository LICENSE."
+  "explanation": "Track a head index and count in a circular array. Enqueue writes at (head+count) modulo capacity. When full, copy logical queue order into a doubled array. Dequeue advances head without shifting elements.",
+  "timeComplexity": "Enqueue: O(1) amortized; Dequeue/Size: O(1); Initialize: O(capacity) Capacity doubles, so total copied entries form a geometric series across enqueues; dequeue only advances the head.",
+  "spaceComplexity": "O(initial capacity + peak queue size since Initialize); the buffer does not shrink after dequeues The buffer retains its capacity after removal and is bounded by initial capacity plus peak occupancy.",
+  "attribution": "Original Java circular-buffer implementation and complete reset-aware operation adapter independently authored for EPI Practice from its displayed queue contract. No upstream reference implementation adapted. Public EPIJudge interface and test framework retained under the repository LICENSE.",
+  "correctness": "The logical ith entry is always buffer[(head+i) mod capacity]. Enqueue writes immediately after the logical tail, and Dequeue advances head. During growth, copying those logical positions in order restores the same invariant with head zero and preserves FIFO order.",
+  "walkthrough": "With capacity 2, enqueue 11 and 22, dequeue 11, then enqueue 33: storage wraps. Enqueue 44 triggers growth while preserving logical order [22,33,44]; dequeuing returns those three values and Size becomes zero.",
+  "edgeCases": [
+    "Growth must preserve order after head wraparound.",
+    "Construction/reset resets the queue.",
+    "Backing capacity is retained after dequeues, so space follows peak size."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          "Queue",
+          2
+        ],
+        [
+          "enqueue",
+          11
+        ],
+        [
+          "enqueue",
+          22
+        ],
+        [
+          "dequeue",
+          11
+        ],
+        [
+          "enqueue",
+          33
+        ],
+        [
+          "enqueue",
+          44
+        ],
+        [
+          "dequeue",
+          22
+        ],
+        [
+          "dequeue",
+          33
+        ],
+        [
+          "dequeue",
+          44
+        ],
+        [
+          "size",
+          0
+        ]
+      ]
+    ],
+    "expected": true
+  }
 }

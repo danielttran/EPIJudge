@@ -1,6 +1,34 @@
 {
   "explanation": "For each pattern prefix, record which cells can end a matching walk. A cell is reachable for the next value when one of its four neighbors ended the previous prefix. Keep only two layers; revisiting cells is allowed by this question.",
-  "timeComplexity": "O(R C L) time for an R-by-C grid and length-L pattern.",
-  "spaceComplexity": "O(R C) auxiliary space.",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "timeComplexity": "O(R C L) time for an R-by-C grid and length-L pattern. There are at most RCL cell/offset states per memo scope; C++/Java recreate that scope for each starting cell.",
+  "spaceComplexity": "O(R C) auxiliary space. Layered DP keeps two Boolean grids; suffix search keeps cell/offset memo entries and recursion.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "The reachable layer for pattern position i contains exactly the cells that can end a walk matching the prefix through i. A next cell is reachable precisely when it has the next required value and an adjacent cell belonged to the previous layer. Induction proves that any final marked cell yields a complete walk, including walks that revisit cells.",
+  "walkthrough": "For [[5,8],[9,2]] and pattern [5,8,5,9], use (0,0)→(0,1)→(0,0)→(1,0). The first cell is legally reused, so return true. The walkthroughCase uses the judge’s JSON input format and expected observation.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          5,
+          8
+        ],
+        [
+          9,
+          2
+        ]
+      ],
+      [
+        5,
+        8,
+        5,
+        9
+      ]
+    ],
+    "expected": true
+  },
+  "edgeCases": [
+    "This EPI variant permits cell reuse, unlike Blind75 Word Search.",
+    "Moves must be horizontal or vertical; staying in place is not a step.",
+    "An empty pattern is matched without consuming a cell."
+  ]
 }

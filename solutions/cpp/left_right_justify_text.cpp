@@ -14,6 +14,7 @@ using std::vector;
 string Join(const vector<string>&, const string&);
 
 vector<string> JustifyText(const vector<string>& words, int L) {
+  if (words.empty()) return {};
   int curr_line_length = 0;
   vector<string> result, curr_line;
   for (const string& word : words) {

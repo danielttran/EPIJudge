@@ -11,7 +11,7 @@ def next_permutation(perm: List[int]) -> List[int]:
     while (inversion_point >= 0
            and perm[inversion_point] >= perm[inversion_point + 1]):
         inversion_point -= 1
-    if inversion_point == -1:
+    if inversion_point < 0:
         return []  # perm is the last permutation.
 
     # Swap the smallest entry after index inversion_point that is greater than

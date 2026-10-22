@@ -1,6 +1,32 @@
 {
-  "explanation": "Keep one entry from each nonempty sorted array in a min-heap and track their maximum. Advancing the array that supplied the minimum is the only way to improve the current range; stop when one array is exhausted.",
-  "timeComplexity": "O(N log(k+1)) for N examined entries and k arrays",
-  "spaceComplexity": "O(k)",
-  "attribution": "Original Python implementation authored for EPI Practice from its displayed contract and independently authored C# solution; no upstream reference source adapted."
+  "explanation": "Keep one current entry per sorted array in a min-heap and track their maximum. Record the range, then advance an array containing the minimum, since advancing any other array cannot reduce the current range. Stop when one array is exhausted.",
+  "timeComplexity": "O(N log k), N total entries and k arrays. There is one maintained head per array and at most one advance per input entry.",
+  "spaceComplexity": "O(k). The heap or ordered collection holds one head per input array.",
+  "attribution": "Original Python implementation authored for EPI Practice from its displayed contract and independently authored C# solution; no upstream reference source adapted.",
+  "correctness": "The current selection contains one entry per array. If its minimum is retained, advancing any other selected entry cannot decrease the range, so an improved range must eventually advance an array attaining that minimum. The algorithm performs that necessary move each time and records every range before an array is exhausted.",
+  "walkthrough": "For [[1,7],[3,6],[4,8]], begin with (1,3,4), range 3. Advancing minima reaches (7,6,4), range 3, then (7,6,8), range 2. No smaller range is found, so return 2. The walkthroughCase uses the judge’s JSON input format and expected observation.",
+  "edgeCases": [
+    "The input may contain more than three sorted arrays.",
+    "Each array is nonempty.",
+    "Equal selected values can give range zero."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          1,
+          7
+        ],
+        [
+          3,
+          6
+        ],
+        [
+          4,
+          8
+        ]
+      ]
+    ],
+    "expected": 2
+  }
 }

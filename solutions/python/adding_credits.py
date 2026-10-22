@@ -27,21 +27,31 @@ class ClientsCreditsInfo:
 
 def client_credits_info_tester(ops):
     clients = ClientsCreditsInfo()
+    # Model absolute credits independently of all submitted methods.
+    expected_credits = {}
     for operation, client, value in ops:
         if operation == 'ClientsCreditsInfo':
             clients = ClientsCreditsInfo()
+            expected_credits.clear()
         elif operation == 'insert':
             clients.insert(client, value)
+            expected_credits[client] = value
         elif operation == 'add_all':
             clients.add_all(value)
+            for name in expected_credits:
+                expected_credits[name] += value
         elif operation == 'remove':
             if clients.remove(client) != (value == 1):
                 raise TestFailure('Removal did not report whether the client existed.')
+            expected_credits.pop(client, None)
         elif operation == 'lookup':
             if clients.lookup(client) != value:
                 raise TestFailure('The client credit differs from the expected credit.')
         elif operation == 'max':
-            if clients.max() != client:
-                raise TestFailure('The maximum-credit client differs from the expected client.')
+            actual = clients.max()
+            valid = (actual in expected_credits and
+                     expected_credits[actual] == max(expected_credits.values())) if expected_credits else actual == ''
+            if not valid:
+                raise TestFailure('Max must return an existing maximal-credit client, or empty when no clients exist.')
         else:
             raise ValueError('Unknown credits operation: ' + operation)

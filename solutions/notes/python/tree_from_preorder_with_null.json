@@ -1,6 +1,35 @@
 {
-  "explanation": "Consume one preorder token for each subtree. A null token ends that subtree; an integer creates its root followed by recursive construction of its left and right children.",
-  "timeComplexity": "O(n) time for n tokens.",
-  "spaceComplexity": "O(h) recursion space plus O(n) output nodes.",
-  "attribution": "Unmodified reference from epi_judge_python_solutions/tree_from_preorder_with_null.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice."
+  "explanation": "Consume a shared cursor or iterator over preorder tokens. Null consumes one token and returns no node. A value consumes one token, then recursively builds its left subtree before its right subtree.",
+  "timeComplexity": "O(t): each of t preorder tokens is consumed once. Each token advances the cursor exactly once, and only the active ancestry is recursive.",
+  "spaceComplexity": "O(h) recursion, excluding the newly allocated tree. The cursor is shared; recursive frames follow tree height and new nodes form the output.",
+  "attribution": "Unmodified reference from epi_judge_python_solutions/tree_from_preorder_with_null.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice.",
+  "correctness": "Each call consumes exactly the token encoding of one subtree and leaves the cursor at the next subtree. A null marker establishes the base case. For a value, ordered recursive consumption constructs both children unambiguously, so the root call reconstructs the encoded tree.",
+  "walkthrough": "Read [\"16\", \"7\", \"null\", \"11\", \"null\", \"null\", \"25\", \"null\", \"null\"]. Create root 16, then left node 7. Its left token is null and its right node is 11 with two null children. The remaining node 25 becomes root 16’s right child. Return [16, 7, 25, null, 11] in compact level order. Native wrappers convert the string tokens into nullable integer tokens before calling the solution. JSON arguments are [stringTokens]. C# consumes strings; native wrappers convert them to nullable integers; JavaScript accepts the supplied strings. Output is compact level-order tree serialization.",
+  "edgeCases": [
+    "A single null token represents an empty tree.",
+    "The input is a complete, valid preorder encoding with explicit null children.",
+    "Native callables consume null/None integer entries, whereas the JSON wrapper uses the string \"null\"."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        "16",
+        "7",
+        "null",
+        "11",
+        "null",
+        "null",
+        "25",
+        "null",
+        "null"
+      ]
+    ],
+    "expected": [
+      16,
+      7,
+      25,
+      null,
+      11
+    ]
+  }
 }

@@ -1,14 +1,15 @@
 {
-  "explanation": "Count each distinct character, then build prefixes recursively. For every character with a positive remaining count, append it, recurse with that count reduced, and restore the count before exploring the next choice. Store complete strings in a set.",
-  "correctness": "At each recursion level, the remaining counts are exactly the unused occurrences of the original input. Every chosen character preserves that invariant, so a completed prefix is a valid permutation. Every valid permutation determines a sequence of available-character choices and is therefore generated. Choosing characters by value rather than occurrence gives one path for each distinct string, including the empty string at the initial base case.",
-  "walkthrough": "For ab, the initial counts are a:1 and b:1. Choosing a leaves only b, so the first branch emits ab. Restoring both counts lets the next branch choose b then a and emit ba. For an empty input, the initial empty prefix is already complete and the result contains the empty string.",
+  "explanation": "Count each distinct character, then recursively extend a prefix with any character whose remaining count is positive. Decrement before recursion and restore after it so sibling choices see the original counts.",
+  "correctness": "Each recursive state has used exactly the prefix multiset and retains exactly the unused occurrences. Choosing a positive-count character preserves this invariant; reaching full length uses every occurrence. Every distinct target string determines one available next-character choice at each level, so all and only distinct permutations are reached.",
+  "walkthrough": "For ab, counts start as {a:1,b:1}. Choose a, leaving only b and emitting ab; restore the counts. Choose b, leaving only a and emitting ba. For aa, there is only one available character choice at either level, so aa is emitted once. Empty input immediately emits the empty string. Return a set of strings; the adapter displays a JSON array and compares membership without imposing output order.",
   "edgeCases": [
     "Empty string has one permutation",
     "singleton",
-    "repeated characters under the bank extension."
+    "repeated characters under the bank extension.",
+    "Empty input returns the singleton set {\"\"}; repeated characters yield distinct strings only, not repeated output entries."
   ],
-  "timeComplexity": "O(n * n!) worst-case time for n distinct characters, including prefix and result-string construction; repeated characters reduce the number of distinct branches.",
-  "spaceComplexity": "O(n * n!) result storage in the worst case. The recursion has depth O(n), and simultaneously retained immutable prefix strings can occupy O(n²) additional characters.",
+  "timeComplexity": "Expected O(n*n!) worst-case time: with distinct characters there are n! output strings, each constructed/hashed in O(n); all smaller recursion levels are dominated by this bound.",
+  "spaceComplexity": "O(n*n!) worst-case output storage. Outside the output, the count map and recursion depth are O(n); immutable prefixes retained along a recursion path can total O(n²) characters.",
   "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
   "walkthroughCase": {
     "arguments": [

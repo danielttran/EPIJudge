@@ -1,6 +1,33 @@
 {
-  "explanation": "Run a depth-first search using white, gray and black vertex colors. Reaching a gray vertex finds a back edge and hence a directed cycle; black vertices are already complete.",
-  "timeComplexity": "O(V+E)",
-  "spaceComplexity": "O(V) recursion; the supplied wrapper builds O(V+E) adjacency storage",
-  "attribution": "Unmodified reference from epi_judge_python_solutions/deadlock_detection.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice."
+  "explanation": "Use DFS colors: white means unvisited, gray means currently on the recursion path, and black means fully explored. A gray neighbor closes a directed cycle; a black neighbor need not be explored again.",
+  "timeComplexity": "O(V+E) Each vertex is processed once and each edge is examined once.",
+  "spaceComplexity": "O(V) auxiliary recursion depth; the supplied graph occupies O(V+E) input storage. Visited state and pending/recursive vertices are bounded by V; constructing adjacency additionally stores E edges.",
+  "attribution": "Unmodified reference from epi_judge_python_solutions/deadlock_detection.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice.",
+  "correctness": "Gray vertices are exactly the active DFS ancestor chain. An edge to gray completes a directed cycle. Conversely, the first DFS entering a directed cycle must encounter a gray vertex before that cycle can finish. Black vertices have already had all reachable edges checked, so skipping them is safe. Starting from each white vertex covers disconnected components.",
+  "walkthrough": "For 0→1→2→0, DFS makes 0, then 1, then 2 gray. The edge 2→0 reaches gray 0, which is still an ancestor, proving a cycle and returning true.",
+  "edgeCases": [
+    "A self-loop is a cycle.",
+    "All disconnected components must be considered.",
+    "Duplicate edges increment and decrement indegrees consistently."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      3,
+      [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          0
+        ]
+      ]
+    ],
+    "expected": true
+  }
 }

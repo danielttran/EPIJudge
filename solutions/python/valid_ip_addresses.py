@@ -4,6 +4,9 @@ from test_framework import generic_test
 
 
 def get_valid_ip_address(s: str) -> List[str]:
+    if len(s) < 4 or len(s) > 12:
+        return []
+
     def is_valid_part(s):
         # '00', '000', '01', etc. are not valid, but '0' is valid.
         return len(s) == 1 or (s[0] != '0' and int(s) <= 255)

@@ -114,7 +114,8 @@ app.MapGet("/api/problems", (ProblemCatalog catalog, string? lang) => catalog.Pr
                 "python" => "Python 3.14", "cpp" => "C++17", _ => "Java 21"
             },
             codeFormat = "callable-v1",
-            references = pair.Value.References
+            references = pair.Value.References,
+            contract = CallableContractCatalog.Find(problem.Id, pair.Key)
         }),
         problem.Examples, problem.TestCount
     };

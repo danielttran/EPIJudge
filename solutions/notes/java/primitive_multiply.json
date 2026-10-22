@@ -1,6 +1,21 @@
 {
   "explanation": "For every set bit of the first operand, add the corresponding shifted second operand. The recursive add helper uses XOR for sum bits and shifted AND for carries.",
-  "timeComplexity": "O(w\u00b2) worst case, with w=64",
-  "spaceComplexity": "O(w) recursive carry stack",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/PrimitiveMultiply.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "timeComplexity": "O(w²) worst case for w-bit words; w = 64 here. For at most w bits of one operand, carry addition can take O(w) propagation steps: O(w²) word operations.",
+  "spaceComplexity": "O(w) recursion depth for carry propagation in Add, with w=64; the multiply loop uses constant additional state.",
+  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/PrimitiveMultiply.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/).",
+  "correctness": "At each outer iteration, the accumulated product plus the unprocessed multiplicand times the shifted multiplier equals the original product. A set low bit contributes the shifted multiplier, after which shifting advances to the next bit. The Add helper preserves a+b because XOR holds carry-free sums and shifted AND holds pending carries; no arithmetic addition or multiplication is needed.",
+  "walkthrough": "For x=13 (binary 1101) and y=6, the set bits select 6,24 and 48. The carry-propagating helper combines those contributions into 78. The shifted contribution 12 is skipped because bit 1 of x is zero.",
+  "edgeCases": [
+    "Either operand zero returns zero.",
+    "The advertised operands are nonnegative.",
+    "Long results are assembled without converting bits to strings.",
+    "Input/result values must satisfy the displayed long contract."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      13,
+      6
+    ],
+    "expected": 78
+  }
 }

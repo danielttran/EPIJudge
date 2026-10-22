@@ -11,6 +11,8 @@ using std::string;
 using std::vector;
 
 int MinimumMessiness(const vector<string>& words, int line_length) {
+  if (words.empty()) return 0;
+
   // minimum_messiness[i] is the minimum messiness when placing words[0, i].
   vector<int> minimum_messiness(size(words), numeric_limits<int>::max());
   int num_remaining_blanks = line_length - size(words[0]);

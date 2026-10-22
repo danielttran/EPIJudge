@@ -1,6 +1,21 @@
 {
   "explanation": "Read the source from its least significant bit, appending each bit to the result. Normalize the input to 64 unsigned bits and return the reversed signed 64-bit pattern as a BigInt.",
-  "timeComplexity": "O(64), or O(w) for w-bit words.",
-  "spaceComplexity": "O(1).",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "timeComplexity": "O(64), or O(w) for w-bit words. Exactly 64 low-bit extractions and shifts are performed.",
+  "spaceComplexity": "O(1). Only two 64-bit words are retained.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "After i iterations, result contains the reversed order of the lowest i original bits, while source contains the unprocessed higher bits. Shifting the result and appending source’s low bit preserves this relation. After exactly 64 steps, every bit is reversed; the final cast changes representation, not the bit pattern.",
+  "walkthrough": "For x=5, bits 0 and 2 are set. Reversal moves them to bits 63 and 61, giving the unsigned pattern 0xA000000000000000. Interpreted as signed long, that same pattern is -6917529027641081856.",
+  "edgeCases": [
+    "All 64 positions are reversed, including leading zeros and the sign bit.",
+    "Zero remains zero.",
+    "The all-ones pattern -1 remains -1.",
+    "Unsigned shifts prevent sign extension while reading bits.",
+    "BigInt is used to preserve all 64 bits; the returned pattern is converted to signed 64-bit form."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      5
+    ],
+    "expected": -6917529027641081856
+  }
 }

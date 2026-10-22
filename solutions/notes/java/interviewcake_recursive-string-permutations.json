@@ -1,14 +1,15 @@
 {
-  "explanation": "Fill one position at a time by swapping each distinct remaining character into it. Recurse on the remaining positions, then undo the swap. A per-level set skips equivalent choices caused by repeated characters.",
-  "correctness": "At a fixed position, every distinct remaining character is tried once. For each choice, the recursive call enumerates all distinct arrangements of the suffix. Different choices have different characters at this position, so they cannot duplicate one another. Restoring the swap preserves the remaining choices, and the base case emits exactly one complete string, including the empty string.",
-  "walkthrough": "For ab, first leave a at position zero and emit ab after filling position one. Undo the suffix swap, then swap b into position zero and emit ba. Restore the original array before returning; the result set is {ab,ba}.",
+  "explanation": "Backtrack over a mutable character array. At each position, try each distinct remaining character once, swap it into that position, recurse, then undo the swap. A per-level chosen set skips duplicate choices.",
+  "correctness": "Positions before the recursion index form a fixed prefix and the suffix holds exactly its remaining multiset. Swapping each distinct suffix character into the next slot covers every possible next character once; undoing the swap restores the state for siblings. At the end every character has been used, and duplicate branches were excluded.",
+  "walkthrough": "For ab at position 0, choose a and recurse on the remaining b to emit ab. Undo the swap, choose b from position 1, swap to ba, and emit ba. Restore ab after returning. For aa the chosen set skips the second identical choice at position 0, giving one result. Return a set of strings; the adapter displays a JSON array and compares membership without imposing output order.",
   "edgeCases": [
     "Empty string has one permutation",
     "singleton",
-    "repeated characters under the bank extension."
+    "repeated characters under the bank extension.",
+    "Empty input returns the singleton set {\"\"}; repeated characters yield distinct strings only, not repeated output entries."
   ],
-  "timeComplexity": "O(n * n!) time for n distinct characters, including construction of each length-n result string.",
-  "spaceComplexity": "O(n * n!) result storage, plus O(n²) worst-case auxiliary space for the character array, recursion and simultaneous per-level choice sets.",
+  "timeComplexity": "Expected O(n*n!) worst-case time: with distinct characters there are n! output strings, each constructed/hashed in O(n); all smaller recursion levels are dominated by this bound.",
+  "spaceComplexity": "O(n*n!) worst-case output strings, plus O(n) character buffer/recursion depth and O(n²) worst-case total chosen-set entries retained along the recursion path.",
   "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
   "walkthroughCase": {
     "arguments": [

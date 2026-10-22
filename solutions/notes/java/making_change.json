@@ -1,6 +1,19 @@
 {
-  "explanation": "Take as many coins as possible at each denomination, processing 100, 50, 25, 10, 5 and 1 in that order. Greedy change is optimal for this fixed denomination system.",
-  "timeComplexity": "O(1), six denominations",
-  "spaceComplexity": "O(1)",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/MakingChange.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "explanation": "Take as many of each denomination as possible, largest first. For this fixed US coin system the greedy choices are optimal; the remainder is then solved with smaller coins.",
+  "timeComplexity": "O(1), six denominations Exactly six quotient/remainder steps are performed, independent of the number of coins returned.",
+  "spaceComplexity": "O(1) Only the fixed denomination list and a remainder/count are retained.",
+  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/MakingChange.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/).",
+  "correctness": "Normalize any coin representation without increasing its count: replace five pennies by a nickel, two nickels by a dime, three dimes by a quarter and nickel, and two dimes plus a nickel by a quarter. After these exchanges, pennies are fewer than five, nickels fewer than two, and the total below a quarter is at most 24. Replace two quarters by a half-dollar and two half-dollars by a dollar. The normalized smaller-coin remainder is then below each larger denomination. Its counts must therefore equal successive greedy quotients and remainders, proving that greedy uses no more coins than any representation.",
+  "walkthrough": "For 76 cents, take one 50-cent coin, then one 25-cent coin, then one penny. This uses 3 coins; the remainders are 26, 1 and 0.",
+  "edgeCases": [
+    "Zero cents needs zero coins.",
+    "The proof depends on these fixed US denominations.",
+    "A large amount is handled by division, not one iteration per coin."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      76
+    ],
+    "expected": 3
+  }
 }

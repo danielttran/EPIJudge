@@ -1,6 +1,29 @@
 {
-  "explanation": "Transform exchange rates to negative logarithmic weights, then apply Bellman\u2013Ford. A further relaxation after the normal passes identifies a profitable exchange cycle.",
-  "timeComplexity": "O(n\u00b3)",
-  "spaceComplexity": "O(n\u00b2) transformed weights and O(n) distances",
-  "attribution": "Unmodified reference from epi_judge_python_solutions/arbitrage.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice."
+  "explanation": "Transform every positive exchange rate r into −log10(r), then run Bellman–Ford from vertex 0. A further relaxation after n−1 passes identifies a negative cycle and therefore a profitable round trip.",
+  "timeComplexity": "O(n³): at most n passes each relax n² exchange edges, with constant work per edge.",
+  "spaceComplexity": "O(n) distances; transformed edge weights are computed as needed rather than stored in another matrix.",
+  "attribution": "Adapted reference from epi_judge_python_solutions/arbitrage.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice.",
+  "correctness": "Summing −log10 rates around a cycle equals −log10 of the rate product, so a profitable product greater than one is exactly a negative cycle in exact arithmetic. The complete rate matrix makes every currency reachable from 0. After n−1 full edge passes every simple path is covered; a further strict improvement therefore indicates a negative cycle, subject to floating-point roundoff.",
+  "walkthrough": "With rates [[1,2],[0.6,1]], the cycle 0→1→0 has product 1.2 and transformed sum −log10(1.2)<0. Relaxing its edges lowers a distance again after the first pass, so the extra scan returns true.",
+  "edgeCases": [
+    "All rates must be finite and strictly positive for logarithms.",
+    "An exactly neutral cycle has product one and is not profitable mathematically.",
+    "This version uses strict floating-point comparisons with no epsilon, so near-neutral products can be affected by roundoff.",
+    "An empty rate matrix returns false."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          1.0,
+          2.0
+        ],
+        [
+          0.6,
+          1.0
+        ]
+      ]
+    ],
+    "expected": true
+  }
 }

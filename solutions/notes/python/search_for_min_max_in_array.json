@@ -1,6 +1,29 @@
 {
-  "explanation": "Compare entries in pairs. Only the smaller needs comparison with the minimum, and only the larger with the maximum. Initialize with one entry for odd lengths or the first pair for even lengths.",
-  "timeComplexity": "O(n), using at most ceil(3n/2) - 2 value comparisons.",
-  "spaceComplexity": "O(1).",
-  "attribution": "Unmodified reference from epi_judge_python_solutions/search_for_min_max_in_array.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice."
+  "explanation": "Initialize from the first pair, then compare each remaining pair internally. Only its smaller member can improve the minimum and only its larger member can improve the maximum. If an odd final element remains, compare it with both extrema.",
+  "timeComplexity": "O(n), using at most ceil(3n/2) - 2 value comparisons. Each pair costs three comparisons, with a constant-size singleton/odd-tail adjustment.",
+  "spaceComplexity": "O(1). Only current pair extrema and global extrema are retained.",
+  "attribution": "Unmodified reference from epi_judge_python_solutions/search_for_min_max_in_array.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice.",
+  "correctness": "After each processed pair, minimum and maximum are the extrema of all processed entries. Comparing the two new entries first determines which alone can lower minimum and which alone can raise maximum. Three comparisons per pair preserve the invariant; one initial entry or pair establishes it.",
+  "walkthrough": "For [7,-3,12,4,0], the initial pair gives (-3,7). The pair (12,4) has extrema (4,12), updating the global pair to (-3,12). Compare final 0 with each bound; neither changes. Return (-3,12).",
+  "edgeCases": [
+    "Input is nonempty.",
+    "A singleton is both extrema.",
+    "An odd final entry receives two comparisons.",
+    "Equal values require no special case."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        7,
+        -3,
+        12,
+        4,
+        0
+      ]
+    ],
+    "expected": [
+      -3,
+      12
+    ]
+  }
 }

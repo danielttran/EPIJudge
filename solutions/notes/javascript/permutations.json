@@ -1,6 +1,31 @@
 {
   "explanation": "Fix the next position by swapping in each remaining value, recurse, and undo the swap. Copy the arrangement only after all positions are fixed.",
-  "timeComplexity": "O(n \u00b7 n!).",
-  "spaceComplexity": "O(n) recursion stack, plus O(n \u00b7 n!) output.",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "timeComplexity": "O(n · n!). There are n! leaves, each copying n entries; swap/backtrack work is bounded by the same O(n·n!) cost for n>0.",
+  "spaceComplexity": "O(n) recursion stack, plus O(n · n!) output. Depth-n recursion is auxiliary; n! independent output copies dominate total storage.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "Before Visit(first), the prefix before first is fixed and the suffix contains exactly the remaining values. Swapping each suffix value into first covers every possible next choice. Recursion fixes the rest, and undoing the swap restores the invariant for the next branch. A completed arrangement is copied so later swaps cannot change it.",
+  "walkthrough": "For [4,7], fix 4 first to record [4,7]. Undo that choice, swap 7 into the first position, and record [7,4]. The returned permutations are [[4,7],[7,4]], while the original array order is restored.",
+  "edgeCases": [
+    "An empty input has one permutation: the empty arrangement.",
+    "A one-element input has exactly one arrangement.",
+    "Each returned arrangement is an independent list."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        4,
+        7
+      ]
+    ],
+    "expected": [
+      [
+        4,
+        7
+      ],
+      [
+        7,
+        4
+      ]
+    ]
+  }
 }

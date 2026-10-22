@@ -1,16 +1,17 @@
 {
   "explanation": "Sort copies by start, then extend the current output interval while the next interval begins no later than its end.",
   "correctness": "Once intervals are sorted, a gap before the next start means no later interval can bridge it. Otherwise joining the ranges preserves exactly their union.",
-  "walkthrough": "Sort [[9,12],[1,4],[4,7],[10,14]] by start to obtain [1,4], [4,7], [9,12], [10,14]. The first two touch and become [1,7]. The last two overlap and become [9,14]. The gap from 7 to 9 remains, giving [[1,7],[9,14]] in newly allocated meeting objects.",
+  "walkthrough": "Sort [[9,12],[1,4],[4,7],[10,14]] by start to obtain [1,4], [4,7], [9,12], [10,14]. The first two touch and become [1,7]. The last two overlap and become [9,14]. The gap from 7 to 9 remains, giving [[1,7],[9,14]] in newly allocated meeting objects. JSON intervals are [StartTime,EndTime] pairs; return newly allocated Meeting objects in increasing start order and preserve the supplied list and objects.",
   "edgeCases": [
     "Touching boundaries",
     "containment",
     "duplicate intervals",
     "a chain of overlaps",
-    "empty extension."
+    "empty extension.",
+    "Touching [1,4] and [4,7] merge to [1,7]. An interval contained in another adds no extent; empty input returns an empty new list."
   ],
-  "timeComplexity": "O(n log n) time.",
-  "spaceComplexity": "O(n) auxiliary and result space.",
+  "timeComplexity": "O(n log n+n) time: sort n meeting references by start, then process each once.",
+  "spaceComplexity": "O(n) auxiliary space for the sorted reference copy and up to n newly allocated result intervals; original intervals are untouched.",
   "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
   "walkthroughCase": {
     "arguments": [

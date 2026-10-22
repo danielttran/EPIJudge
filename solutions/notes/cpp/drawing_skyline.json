@@ -1,6 +1,46 @@
 {
-  "explanation": "Allocate one height for every integer coordinate between the outermost building endpoints. Raise each covered coordinate to the maximum building height, then compress consecutive equal heights into inclusive spans, retaining zero-height gaps.",
-  "timeComplexity": "O(n + U + Σ widths) time for n buildings and total coordinate span U.",
-  "spaceComplexity": "O(U) height-array and output space.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/drawing_skyline.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "Allocate one height for every integer position from the leftmost building to the rightmost building. Raise each covered position to the maximum building height, then compress equal adjacent heights into maximal inclusive spans.",
+  "timeComplexity": "O(n+W+Σwidth): n buildings, W=maxRight−minLeft+1 coordinate positions, and width=right−left+1 for each building. Filling every covered coordinate can cost O(nW).",
+  "spaceComplexity": "O(W) height storage and at most O(W) emitted runs; this implementation depends on coordinate span, not just building count.",
+  "attribution": "Original reference source: epi_judge_cpp_solutions/drawing_skyline.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice. The displayed copy includes local contract or boundary corrections; the upstream reference file is preserved.",
+  "correctness": "After processing a prefix of buildings, each height is the maximum of all processed buildings covering that integer position. Thus after all buildings it is the skyline height. The final scan emits a span exactly when the height changes, yielding every maximal run, including internal zero-height gaps.",
+  "walkthrough": "Buildings [1,1,4] and [3,3,2] produce a coordinate height array [4,0,2] at positions 1,2,3. Both adjacent boundaries change height, so emit [1,1,4], [2,2,0], [3,3,2].",
+  "edgeCases": [
+    "Integer right endpoints are inclusive.",
+    "Uncovered internal gaps are emitted at height zero.",
+    "Repeated equal heights require multiplicity counts, not just a set."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          1,
+          1,
+          4
+        ],
+        [
+          3,
+          3,
+          2
+        ]
+      ]
+    ],
+    "expected": [
+      [
+        1,
+        1,
+        4
+      ],
+      [
+        2,
+        2,
+        0
+      ],
+      [
+        3,
+        3,
+        2
+      ]
+    ]
+  }
 }

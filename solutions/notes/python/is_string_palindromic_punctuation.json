@@ -1,6 +1,20 @@
 {
-  "explanation": "Move inward from both ends, skipping non-alphanumeric characters. Compare the remaining characters after invariant case folding, and reject at the first unequal pair.",
-  "timeComplexity": "O(n) time.",
-  "spaceComplexity": "O(1) auxiliary space.",
-  "attribution": "Unmodified reference from epi_judge_python_solutions/is_string_palindromic_punctuation.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice."
+  "explanation": "Move code-point indices inward, skipping characters rejected by str.isalnum. Compare the remaining characters’ str.lower results. This uses Python Unicode classification and lowercase mappings, not grapheme or normalization equivalence.",
+  "timeComplexity": "O(n) time. Each index moves inward at most n positions, including skipped punctuation.",
+  "spaceComplexity": "O(1) auxiliary space. Only indices and temporary normalized characters are stored.",
+  "attribution": "Unmodified reference from epi_judge_python_solutions/is_string_palindromic_punctuation.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice.",
+  "correctness": "Skipping non-alphanumeric characters preserves precisely the sequence the contract asks to compare. The remaining two-pointer comparisons check mirrored members of that sequence after case normalization, so all and only normalized palindromes are accepted.",
+  "walkthrough": "For \"R2, r!\", ignore the comma, space and exclamation mark and normalize R to r. The remaining sequence is \"r2r\", whose mirrored letters agree, so return true.",
+  "walkthroughCase": {
+    "arguments": [
+      "R2, r!"
+    ],
+    "expected": true
+  },
+  "edgeCases": [
+    "A string containing only ignored characters is a palindrome.",
+    "Digits remain significant.",
+    "Mixed letter case is normalized before comparing.",
+    "Character positions in this implementation are Unicode code points, not user-perceived grapheme clusters."
+  ]
 }

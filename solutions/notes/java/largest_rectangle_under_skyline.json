@@ -1,6 +1,23 @@
 {
-  "explanation": "Keep indices of increasing histogram pillars. A lower pillar ends rectangles supported by taller stacked pillars; popping a pillar exposes its earliest valid left boundary. A final sentinel flushes remaining candidates.",
-  "timeComplexity": "O(n)",
-  "spaceComplexity": "O(n)",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/LargestRectangleUnderSkyline.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "explanation": "Keep indices of increasing heights. When a shorter bar arrives, each removed bar determines a rectangle ending immediately before it; the stack gives its left boundary. A zero-height sentinel finishes the remaining bars.",
+  "timeComplexity": "O(n) Each bar index is pushed once and popped at most once.",
+  "spaceComplexity": "O(n) The increasing stack may hold n indices; Python also copies heights to append its sentinel.",
+  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/LargestRectangleUnderSkyline.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/).",
+  "correctness": "The stack holds increasing heights. When a bar is popped, the current bar is no taller, and the remaining stack top bounds the span on the left. This evaluates every span whose limiting height has just become unavailable. If equal heights cause an early pop, the newer equal-height representative later evaluates the full span. Thus some representative of the limiting height of an optimal rectangle evaluates its full area.",
+  "walkthrough": "For heights [2,1,2], the middle bar removes the first height-2 candidate with area 2. At the final sentinel, the last height-2 bar also gives area 2, then height 1 spans all three bars and gives the answer 3.",
+  "edgeCases": [
+    "An empty histogram has area 0.",
+    "Equal adjacent heights must still permit a rectangle spanning the full run.",
+    "A zero-height bar ends every positive-height rectangle crossing it."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        2,
+        1,
+        2
+      ]
+    ],
+    "expected": 3
+  }
 }

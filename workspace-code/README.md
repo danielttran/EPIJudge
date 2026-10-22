@@ -88,7 +88,7 @@ needed; parsing does not replace execution.
 dotnet run --project scripts/SolutionsAudit -c Release -- --callable --language=csharp
 dotnet run --project scripts/SolutionsAudit -c Release -- --callable --starters --language=csharp
 dotnet run --project scripts/SolutionsAudit -c Release -- boundaries --callable --language=csharp
-dotnet run --project scripts/SolutionsAudit -c Release -- walkthroughs --callable
+dotnet run --project scripts/SolutionsAudit -c Release -- walkthroughs --callable --language=csharp
 dotnet run --project scripts/interviewcake/Audit -c Release -- csharp all --callable
 dotnet run --project scripts/SolutionsAudit -c Release -- describe --callable
 ```
@@ -98,7 +98,7 @@ Repeat the language-specific commands for `javascript`, `python`, `cpp`, and
 must compile and reach the real judge; an intentional starter failure is recorded
 separately from a correct solution. The Interview Cake audit additionally checks
 all 615 starter/correct/incorrect fixtures, including state, identity, filesystem,
-and randomized contracts. Boundary evaluations and all 334 C# walkthroughs remain
+and randomized contracts. Boundary evaluations and all 1,670 language-specific walkthroughs remain
 separate checks.
 
 ```sh

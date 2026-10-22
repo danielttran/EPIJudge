@@ -399,14 +399,21 @@ function invokeCustom(id, a, call, getConstructor) {
     }
     case 'adding_credits': {
       const Type = getConstructor('AddingCredits'); let store = new Type();
+      // Keep an independent oracle, including when submitted Lookup is incorrect.
+      const expectedCredits = new Map();
       for (const [op, text, value] of a[0]) {
-        if (op === 'ClientsCreditsInfo') store = new Type();
-        else if (op === 'insert') store.insert(text, value);
-        else if (op === 'remove') check(store.remove(text) === (value === 1));
+        if (op === 'ClientsCreditsInfo') { store = new Type(); expectedCredits.clear(); }
+        else if (op === 'insert') { store.insert(text, value); expectedCredits.set(text, BigInt(value)); }
+        else if (op === 'remove') { check(store.remove(text) === (value === 1)); expectedCredits.delete(text); }
         else if (op === 'lookup') check(store.lookup(text) === value);
-        else if (op === 'add_all') store.addAll(value);
-        else if (op === 'max') check(store.max() === text);
-        else throw new Error('Unknown credits operation: ' + op);
+        else if (op === 'add_all') {
+          store.addAll(value);
+          for (const [client, credit] of expectedCredits) expectedCredits.set(client, credit + BigInt(value));
+        } else if (op === 'max') {
+          const actual = store.max();
+          check(expectedCredits.size === 0 ? actual === ''
+            : expectedCredits.has(actual) && [...expectedCredits.values()].every(credit => credit <= expectedCredits.get(actual)));
+        } else throw new Error('Unknown credits operation: ' + op);
       }
       return true;
     }

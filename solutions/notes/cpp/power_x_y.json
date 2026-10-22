@@ -1,6 +1,21 @@
 {
   "explanation": "For a negative exponent, invert the base and negate the exponent in a wider type. Repeatedly square the base and multiply it into the result for each set exponent bit.",
-  "timeComplexity": "O(log(|y|+1)) time.",
-  "spaceComplexity": "O(1) auxiliary space.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/power_x_y.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "timeComplexity": "O(log(|y| + 1)). Each iteration halves the exponent, giving O(log(|y|+1)) iterations.",
+  "spaceComplexity": "O(1). Only base, exponent and result are retained.",
+  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/power_x_y.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice.",
+  "correctness": "After a negative exponent is normalized by inverting x, maintain result × x^exponent equal to the requested power. An odd exponent transfers one factor into result. Squaring x and halving the exponent preserves the remaining power. Termination at exponent zero leaves the required result.",
+  "walkthrough": "For x=2 and y=-3, invert the base to 0.5 and use exponent 3. Its low bit contributes 0.5; square the base to 0.25 and halve the exponent to 1. That bit contributes another factor 0.25, giving 0.125.",
+  "edgeCases": [
+    "Exponent zero returns 1.",
+    "Negative exponents invert the base first.",
+    "Widening y before negation handles int.MinValue.",
+    "Floating-point results follow the judge’s relative tolerance."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      2.0,
+      -3
+    ],
+    "expected": 0.125
+  }
 }

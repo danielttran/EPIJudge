@@ -1,14 +1,15 @@
 {
-  "explanation": "Recursively permute the prefix without its last character, then insert that removed character at every position of each smaller permutation. An ordered set removes duplicates.",
-  "correctness": "Deleting one occurrence of the removed last character from any full permutation leaves a permutation of the remaining prefix. Recursion generates that smaller string, and reinserting at every position regenerates the full permutation. Every generated string has exactly the input multiplicities, while the set retains each distinct result once.",
-  "walkthrough": "For input ac, recursively permute the prefix a, obtaining {a}. Inserting c before a yields ca; inserting it after a yields ac. The ordered set returns {ac,ca}.",
+  "explanation": "Remove the last character and recursively permute the preceding substring. Insert that removed character at every position in each smaller permutation, storing results in an ordered std::set.",
+  "correctness": "Deleting one occurrence of the last character from any full permutation leaves a permutation of the shorter input, which recursion produces. Reinserting it at every position therefore reconstructs every result; the ordered set removes duplicates.",
+  "walkthrough": "For ab, recurse on a to obtain {a}. Insert the removed last character b at position 0 to get ba and at position 1 to get ab. The ordered set contains {ab,ba}. For empty input return {\"\"}, allowing the first nonempty recursion level to insert its character. Return a set of strings; the adapter displays a JSON array and compares membership without imposing output order.",
   "edgeCases": [
     "Empty string has one permutation",
     "singleton",
-    "repeated characters under the bank extension."
+    "repeated characters under the bank extension.",
+    "Empty input returns the singleton set {\"\"}; repeated characters yield distinct strings only, not repeated output entries."
   ],
-  "timeComplexity": "O(n * n! * log(n! + 1)) worst-case character work for n distinct characters, including string copies and ordered-set comparisons; repeated characters can reduce the generated set.",
-  "spaceComplexity": "O(n * n!) result and intermediate string storage in the distinct-character worst case, plus O(n) recursion depth.",
+  "timeComplexity": "O(n*n!*log(n!+1)) worst-case time for distinct characters: n! candidate strings cost O(n) to copy/insert characters, and each ordered-set insertion can make O(log(n!+1)) lexicographic comparisons costing O(n). This includes the ordered-set cost, unlike a hash-set bound.",
+  "spaceComplexity": "O(n*n!) worst-case result and intermediate string storage, plus recursion depth O(n); repeated characters can reduce the number of distinct results.",
   "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
   "walkthroughCase": {
     "arguments": [

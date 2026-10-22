@@ -1,6 +1,20 @@
 {
   "explanation": "Use an unsigned rolling polynomial hash for the pattern and each equal-length text window. A matching hash triggers a full character comparison, so hash collisions cannot produce a false match. Return the first verified window.",
-  "timeComplexity": "O(n + m) time when hash matches are rare; O(nm) worst-case time with repeated hash collisions, for text length n and pattern length m.",
-  "spaceComplexity": "O(1) auxiliary space.",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "timeComplexity": "O(n + m) time when hash matches are rare; O(nm) worst-case time with repeated hash collisions, for text length n and pattern length m. KMP fallback decreases a prefix length previously increased by scans; rolling hashes cost constant time per window plus exact verification when hashes agree.",
+  "spaceComplexity": "O(1) auxiliary space. Prefix tables, converted strings and Java verification substrings are accounted for separately from scalar hash state.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "The rolling hash invariant is the polynomial hash of the current text window, using unsigned wraparound arithmetic consistently for pattern and text. Removing the outgoing weighted character, multiplying by the radix and adding the incoming character preserves that invariant. Equal hashes trigger an exact span comparison, so collisions cannot create false matches. Windows are considered from left to right, making the first verified match the required answer.",
+  "walkthrough": "Search text cedar-ridge for pattern ridge. The pattern has length 5. The initial window is cedar; rolling updates examine windows starting at 1 through 5 without a verified match. The window beginning at index 6 is ridge. Its hash agrees and the character comparison succeeds, so return 6.",
+  "edgeCases": [
+    "An empty pattern matches at index 0.",
+    "A pattern longer than the text cannot match.",
+    "Repeated matches return the first index; equal hashes alone never establish equality."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      "cedar-ridge",
+      "ridge"
+    ],
+    "expected": 6
+  }
 }

@@ -1,6 +1,24 @@
 {
-  "explanation": "For every endpoint, inspect earlier values no greater than the current one and extend the longest eligible subsequence. Store the best length ending at each index.",
-  "timeComplexity": "O(n\u00b2)",
-  "spaceComplexity": "O(n)",
-  "attribution": "Unmodified reference from epi_judge_python_solutions/longest_nondecreasing_subsequence.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice."
+  "explanation": "Let length[i] be the longest nondecreasing subsequence ending exactly at index i. Test each earlier j with A[j]≤A[i] and extend its best subsequence. The final answer is the maximum over all endings.",
+  "timeComplexity": "O(n²): the nested loops examine all earlier endpoints. Tail-array versions binary-search once per entry; endpoint-DP versions compare all earlier positions.",
+  "spaceComplexity": "O(n) endpoint lengths. The tails list or endpoint-length array has at most n entries.",
+  "attribution": "Adapted reference from epi_judge_python_solutions/longest_nondecreasing_subsequence.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice. Local boundary or iterator-safety correction authored for EPI Practice.",
+  "correctness": "A nontrivial subsequence ending at i has a preceding endpoint j<i with A[j]≤A[i]. The recurrence tries all such j and can attain each extension. The singleton gives length one when no predecessor qualifies. Therefore the computed endpoint optimum, and its global maximum, are exact.",
+  "walkthrough": "For [3,1,1,2], endpoint lengths are [1,1,2,3]: the second 1 extends the first 1, and 2 extends that length-two subsequence. Return 3. The walkthroughCase uses the judge’s JSON input format and expected observation.",
+  "edgeCases": [
+    "Empty input returns 0.",
+    "Equal values may all belong to the subsequence.",
+    "Entries need not be contiguous."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        3,
+        1,
+        1,
+        2
+      ]
+    ],
+    "expected": 3
+  }
 }

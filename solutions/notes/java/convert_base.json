@@ -1,6 +1,21 @@
 {
-  "explanation": "Accumulate the source digits into an integer, then recursively emit its digits in the destination base. The recursive string concatenations copy growing prefixes.",
-  "timeComplexity": "O(s+t\u00b2), for s source digits and t output digits",
-  "spaceComplexity": "O(s+t) live character storage and O(t) recursion depth",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/ConvertBase.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "explanation": "Parse the magnitude by multiply-add in b1. Recursively divide by b2: output the quotient’s digits before the current remainder, mapping 10..15 to A..F. Preserve the leading minus sign. The native implementation retains a minus sign on negative zero.",
+  "timeComplexity": "O(d+e²) arithmetic/string work for d input and e output digits under bounded-word arithmetic: recursive immutable concatenation can copy prefixes of lengths 1 through e. Python arbitrary-precision arithmetic adds bit-operation costs. Multiply-add consumes source digits; quotient/remainder removes one destination digit per step. Recursive concatenation and big-integer costs are stated separately.",
+  "spaceComplexity": "O(d+e) auxiliary/output character and recursion storage, with fixed-width magnitude in C++/Java and arbitrary precision in Python. The magnitude, digit buffer and any recursion frames are counted; fixed-width and arbitrary-precision variants differ.",
+  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/ConvertBase.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/).",
+  "correctness": "Multiply-add accumulation maintains the exact integer value of the processed source prefix. Repeated quotient/remainder division produces the unique destination digits from least to most significant. Reversing those digits and restoring the sign therefore preserves the original value.",
+  "walkthrough": "The magnitude 212 in base 3 is 2×9+1×3+2=23. In base 16, 23 is 17. Thus converting −212 from base 3 to base 16 returns −17.",
+  "edgeCases": [
+    "Bases are between 2 and 16 and every source digit must be legal for b1.",
+    "C++/Java accumulate into int: the nonnegative magnitude must fit signed int.",
+    "Native code preserves -0 while C#/JavaScript canonicalize it to 0; negative-zero spelling is a documented unresolved cross-language convention."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      "-212",
+      3,
+      16
+    ],
+    "expected": "-17"
+  }
 }

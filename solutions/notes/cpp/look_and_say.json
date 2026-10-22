@@ -1,6 +1,19 @@
 {
-  "explanation": "Start from \"1\" and form each next term by describing consecutive equal-digit runs as count followed by digit. Repeat until the requested term is reached.",
-  "timeComplexity": "O(Σ term lengths) time across generated terms.",
-  "spaceComplexity": "O(L) space for consecutive terms, where L is the largest generated term length.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/look_and_say.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "Generate each term by scanning maximal runs in the previous term and appending the run length followed by its digit. Repeat until reaching the requested term.",
+  "timeComplexity": "O(sum of lengths of generated terms) Each next term scans all runs of the preceding term once; summing these lengths counts the full work.",
+  "spaceComplexity": "O(maximum generated term length) Only the current term and the next term under construction coexist.",
+  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/look_and_say.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice.",
+  "correctness": "Every maximal run in a term contributes exactly its decimal length followed by its digit, which is the definition of the next term. Scanning each run once constructs that next term without merging distinct runs; induction over the requested number of terms proves the result.",
+  "walkthrough": "Start at 1. Successive run descriptions are 11, 21, 1211, 111221 and 312211. Thus term 6 is \"312211\".",
+  "edgeCases": [
+    "Term 1 is the initial string \"1\".",
+    "A run count may contain more than one digit.",
+    "Counts describe consecutive runs, not total digit frequencies."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      6
+    ],
+    "expected": "312211"
+  }
 }

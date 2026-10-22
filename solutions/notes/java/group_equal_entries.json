@@ -1,6 +1,32 @@
 {
-  "explanation": "Count each age, assign its destination block, then swap people into the next vacant slot of their age\u2019s block. Remove a block\u2019s offset when all its entries have been placed.",
-  "timeComplexity": "O(nu) conservative bound including repeated HashMap iterator initialization, for u distinct ages; O(n) swaps",
-  "spaceComplexity": "O(u)",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/GroupEqualEntries.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "explanation": "Count each age and assign a disjoint destination segment of that length. Track the next unfilled slot for each age. Repeatedly swap a person into the next free slot of their own segment and advance or remove that age’s offset.",
+  "timeComplexity": "O(n) expected time using hashing. Counting/bucketing scans n records; each write or slot-filling swap permanently places one record. Hash operations are expected constant time.",
+  "spaceComplexity": "O(u) auxiliary hash entries for u distinct ages; the original people array supplies all storage for records. Bucket variants retain n records; offset/count variants retain one map entry per distinct age.",
+  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/GroupEqualEntries.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/).",
+  "correctness": "Each age’s unfilled segment has exactly as many slots as remaining people of that age. A swap puts one person in a valid final slot, reduces that count by one and preserves every record. Each iteration permanently fills one slot, so termination yields contiguous age groups without losing or duplicating anyone.",
+  "walkthrough": "For [(6,Nyx),(2,Bo),(6,Ana)], suppose age 6 gets slots 0..1 and age 2 gets slot 2. Fill slot 0 with Nyx. The person Bo at slot 1 belongs in slot 2, so swap Bo and Ana and finish age 2. Ana now fills slot 1. The wrapper accepts [(6,Nyx),(6,Ana),(2,Bo)]; hash iteration may choose another valid group order.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          6,
+          "Nyx"
+        ],
+        [
+          2,
+          "Bo"
+        ],
+        [
+          6,
+          "Ana"
+        ]
+      ]
+    ],
+    "expected": true
+  },
+  "edgeCases": [
+    "Repeated names still represent separate people and must be preserved.",
+    "A single age already forms a valid group.",
+    "Group order is unrestricted, so compare structure and membership rather than one fixed sorted order."
+  ]
 }

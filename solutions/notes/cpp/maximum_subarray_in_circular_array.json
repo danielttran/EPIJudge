@@ -1,6 +1,23 @@
 {
-  "explanation": "Compare the best ordinary subarray with a wrapped answer formed by a prefix and nonoverlapping suffix. Precompute maximum running prefix and suffix sums and combine them at each split; zero permits an empty selection.",
-  "timeComplexity": "O(n) time.",
-  "spaceComplexity": "O(n) auxiliary running-maximum arrays.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/maximum_subarray_in_circular_array.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "Use Kadane’s scan for ordinary intervals. For wrapping intervals, compute maximum prefix sums from each end and combine a prefix ending at or before a split with a suffix strictly after that split.",
+  "timeComplexity": "O(n): one ordinary scan, two cumulative-maximum scans and one split scan.",
+  "spaceComplexity": "O(n): the prefix and suffix maximum arrays store one entry per position.",
+  "attribution": "Original reference source: epi_judge_cpp_solutions/maximum_subarray_in_circular_array.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice. The displayed copy includes local contract or boundary corrections; the upstream reference file is preserved.",
+  "correctness": "Every interval either is ordinary or crosses the array boundary. A crossing interval is a disjoint prefix and suffix. At each split, the running maxima select the best prefix and suffix allowed on opposite sides; considering all splits therefore covers the best crossing interval without repeating an element. The ordinary scan starts at zero, preserving the permitted empty answer.",
+  "walkthrough": "For [5,−8,6], ordinary Kadane gives 6. Maximum prefix sums are [5,5,5]; corresponding suffix maxima after each split are [6,6,0]. Combining the first split gives 5+6=11 for wrapped [6,5], which beats 6.",
+  "edgeCases": [
+    "Empty input returns zero.",
+    "All-negative values return zero because an empty interval is allowed.",
+    "Prefix and suffix must lie on opposite sides of the split."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        5,
+        -8,
+        6
+      ]
+    ],
+    "expected": 11
+  }
 }

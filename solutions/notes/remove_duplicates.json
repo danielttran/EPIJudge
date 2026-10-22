@@ -1,7 +1,7 @@
 {
   "explanation": "Insert only the first name of each pair into a set. Set membership removes repeated first names regardless of last names; the contract permits any output order.",
-  "timeComplexity": "O(n) expected set operations, plus hashing the first-name characters.",
-  "spaceComplexity": "O(u) entries for u distinct first names, excluding string contents already in the input.",
+  "timeComplexity": "O(n) expected set operations, plus hashing the first-name characters. Hash variants process each name once; sort variants sort records then compact once. Name hashing/comparison also reads characters.",
+  "spaceComplexity": "O(u) entries for u distinct first names, excluding string contents already in the input. The set holds u first names; native sorting and compaction workspace follow their library/container behavior.",
   "attribution": "Original C# implementation and explanation authored for EPI Practice from the displayed problem contract.",
   "correctness": "After processing a prefix of the pairs, the set contains exactly the first names encountered in that prefix. Inserting another first name preserves that statement, whether it is new or already present. Converting the final set to a list therefore returns precisely the distinct first names, independent of last names.",
   "walkthrough": "For [(\"Mira\",\"Stone\"),(\"Noel\",\"West\"),(\"Mira\",\"Lake\")], insert Mira, then Noel. The final Mira insertion changes nothing because the first name already exists. Return [\"Mira\",\"Noel\"] in any order.",
@@ -14,11 +14,23 @@
   "walkthroughCase": {
     "arguments": [
       [
-        ["Mira", "Stone"],
-        ["Noel", "West"],
-        ["Mira", "Lake"]
+        [
+          "Mira",
+          "Stone"
+        ],
+        [
+          "Noel",
+          "West"
+        ],
+        [
+          "Mira",
+          "Lake"
+        ]
       ]
     ],
-    "expected": ["Mira", "Noel"]
+    "expected": [
+      "Mira",
+      "Noel"
+    ]
   }
 }

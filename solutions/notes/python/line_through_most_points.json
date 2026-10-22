@@ -1,6 +1,40 @@
 {
-  "explanation": "Anchor a line at each point and count other points by normalized slope. Count duplicate coordinates separately and combine them with the most common slope through that anchor.",
-  "timeComplexity": "O(n\u00b2 log C) arithmetic work with coordinate magnitude C; O(n\u00b2) for fixed-width gcd costs",
-  "spaceComplexity": "O(n) slope counts and suffix slices",
-  "attribution": "Unmodified reference from epi_judge_python_solutions/line_through_most_points.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice."
+  "explanation": "Anchor a line at each point and count equal reduced integer direction vectors. Normalize the sign to combine opposite directions. Duplicate coordinates join every line through the anchor and are counted separately.",
+  "timeComplexity": "O(n² log C), where C bounds coordinate differences There are O(n²) anchor/other-point pairs; normalizing each direction uses a gcd taking O(log C) steps for coordinate difference bound C.",
+  "spaceComplexity": "O(n) One anchor’s slope map has at most n entries and is discarded before the next anchor.",
+  "attribution": "Reference-derived implementation from epi_judge_python_solutions/line_through_most_points.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice. Local correctness/empty-input fixes and explanation audit authored for EPI Practice; upstream reference files are unchanged.",
+  "correctness": "For a fixed anchor, two nonduplicate points lie on the same anchored line exactly when their gcd-reduced direction vectors agree after sign normalization. Duplicates lie on every line through that anchor and are added to each direction’s count. Choosing the earliest supplied point on an optimal line ensures its pass counts every entry on that line.",
+  "walkthrough": "For [(0,0),(0,0),(2,2),(4,4),(0,3)], the anchor (0,0) has one duplicate plus two points in direction (1,1). Including the anchor gives 4 entries on the diagonal; the last point is off that line.",
+  "edgeCases": [
+    "Repeated coordinates count as separate entries.",
+    "Vertical lines normalize to a single direction.",
+    "Opposite directions must represent the same anchored line."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          0,
+          3
+        ]
+      ]
+    ],
+    "expected": 4
+  }
 }

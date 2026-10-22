@@ -1,6 +1,31 @@
 {
-  "explanation": "Equal values are adjacent in the sorted input. Append a value only when it differs from the most recently appended value.",
-  "timeComplexity": "O(n) time.",
-  "spaceComplexity": "O(u) output space for u distinct values; O(1) other space.",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "explanation": "Build a result sequence from left to right. Append a value only when the result is empty or its last value differs. Sorting makes all copies of a value consecutive, so only one representative is appended.",
+  "timeComplexity": "O(n+1): each input entry is read once and performs at most one append or prefix write. Java lists provided by the judge support constant-time indexed access.",
+  "spaceComplexity": "O(u+1) for the returned sequence of u distinct entries; O(1) working state besides that output.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "After each input entry, the result contains exactly the distinct values in the processed prefix, in increasing order. Equal values are consecutive in sorted input, so the next value is either the last retained value or a new larger value. Skipping the former and appending the latter preserves this invariant. Exhausting the input therefore yields precisely one copy of every value.",
+  "walkthrough": "For [-2,-2,0,0,0,3], append -2, skip its second copy, append 0, skip its next two copies, and append 3. Return [-2,0,3].",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        -2,
+        -2,
+        0,
+        0,
+        0,
+        3
+      ]
+    ],
+    "expected": [
+      -2,
+      0,
+      3
+    ]
+  },
+  "edgeCases": [
+    "Empty input yields an empty distinct sequence.",
+    "All equal values retain exactly one entry.",
+    "Negative values need no special handling.",
+    "Already distinct input retains every entry."
+  ]
 }

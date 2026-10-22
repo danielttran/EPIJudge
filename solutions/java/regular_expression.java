@@ -7,6 +7,7 @@ public class RegularExpression {
   @EpiTest(testDataFile = "regular_expression.tsv")
 
   public static boolean isMatch(String regex, String s) {
+  if (regex.isEmpty()) return true;
 
     // Case (2.): regex starts with '^'.
     if (regex.charAt(0) == '^') {

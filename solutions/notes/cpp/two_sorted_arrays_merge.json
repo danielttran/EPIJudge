@@ -1,6 +1,40 @@
 {
-  "explanation": "Fill the available end of the first array from right to left, taking the larger remaining value from either input. Copy any remaining second-array prefix; the first-array prefix is already in place.",
-  "timeComplexity": "O(m+n) time.",
-  "spaceComplexity": "O(1) auxiliary space beyond the supplied capacity.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/two_sorted_arrays_merge.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "Merge backward into A’s unused buffer slots. Writing the larger remaining value at the end avoids overwriting any unread entry of A; remaining A entries are already correctly placed.",
+  "timeComplexity": "O(m + n) time. Each write consumes one active input value; at most m+n writes occur.",
+  "spaceComplexity": "O(1) auxiliary space; modifies and returns A. Three indices suffice because A already owns the output slots.",
+  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/two_sorted_arrays_merge.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice.",
+  "correctness": "The output suffix always contains the largest merged values in their final positions. The larger of the two unread tails is the next value for the suffix, so writing it backward preserves this invariant. The output position cannot overwrite an unread A entry while B entries remain, because the buffer provides room for them. When B is exhausted, A’s unread prefix is already correctly placed.",
+  "walkthrough": "Merge A = [-7, 2, 8, 0, 0, 0], m = 3 with B = [-3, 2, 10], n = 3. Fill from the end with 10, then 8, then the B value 2, then the A value 2, then -3. The remaining -7 is already at the front. Return A as [-7, -3, 2, 2, 8, 10].",
+  "edgeCases": [
+    "m = 0 copies B into all buffer positions.",
+    "n = 0 leaves A’s valid prefix in place.",
+    "Equal entries and unused buffer values must not be mistaken for additional input elements."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        -7,
+        2,
+        8,
+        0,
+        0,
+        0
+      ],
+      3,
+      [
+        -3,
+        2,
+        10
+      ],
+      3
+    ],
+    "expected": [
+      -7,
+      -3,
+      2,
+      2,
+      8,
+      10
+    ]
+  }
 }

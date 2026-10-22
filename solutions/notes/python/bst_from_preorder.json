@@ -1,6 +1,32 @@
 {
   "explanation": "Find the first preorder value exceeding the root, split the sequence there, and recursively build both subtrees. This direct version copies its sequence slices.",
-  "timeComplexity": "O(n\u00b2) worst case on a chain",
-  "spaceComplexity": "O(n\u00b2) worst-case live slices on a chain, plus output nodes",
-  "attribution": "Unmodified reference from epi_judge_python_solutions/bst_from_preorder.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice."
+  "timeComplexity": "O(n²) worst case: on a decreasing chain, root-split searches examine n+(n−1)+…+1 entries. Python also copies slices at each recursive level.",
+  "spaceComplexity": "O(n²) worst-case live slice storage on a decreasing chain, plus O(h) recursion and O(n) output nodes. Ancestor calls retain their sequence slices while descendants recurse.",
+  "attribution": "Unmodified reference from epi_judge_python_solutions/bst_from_preorder.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice.",
+  "correctness": "The first key in a nonempty subtree’s preorder is its root. With distinct BST keys, every following left-subtree key is smaller and appears before every right-subtree key, which is larger. The first larger key therefore uniquely splits the remaining traversal. Recursively applying that split constructs the correct left and right subtrees; the empty range gives a null child. Valid preorder and distinct keys make these subproblems well-defined and determine one tree.",
+  "walkthrough": "For [8,4,6,10,9], root 8 splits the remaining sequence into [4,6] and [10,9]. Root 4 has no left keys and right child 6; root 10 has left child 9 and no right keys. These recursive subtrees give level order [8,4,10,null,6,9].",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        8,
+        4,
+        6,
+        10,
+        9
+      ]
+    ],
+    "expected": [
+      8,
+      4,
+      10,
+      null,
+      6,
+      9
+    ]
+  },
+  "edgeCases": [
+    "An empty traversal returns null.",
+    "A monotone traversal yields a chain, not a balanced tree.",
+    "Inputs are valid BST preorder traversals with distinct keys. Duplicate-key placement and invalid traversals are outside this task’s domain."
+  ]
 }

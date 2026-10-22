@@ -1,6 +1,39 @@
 {
-  "explanation": "Split the input into monotone runs and reverse decreasing runs. Merge one candidate from each sorted run with a heap, retaining duplicates.",
-  "timeComplexity": "O(n log(r+1)) for r runs",
-  "spaceComplexity": "O(n+r) copied-run and heap storage, plus output",
-  "attribution": "Original Python implementation authored for EPI Practice from its displayed contract and independently authored C# solution; no upstream reference source adapted."
+  "explanation": "Split the input into monotone runs and reverse each decreasing run. Merge the resulting sorted runs with a min-heap containing the next unused value from each run.",
+  "timeComplexity": "O(n log(r + 1)) time for r monotone runs. Run-based languages scan n values to form runs and make n heap removals among r heads.",
+  "spaceComplexity": "O(n + r) auxiliary space, including copied runs; O(n) output space. Copied runs store n entries; the merge heap stores r heads, in addition to the output.",
+  "attribution": "Original Python implementation authored for EPI Practice from its displayed contract and independently authored C# solution; no upstream reference source adapted.",
+  "correctness": "Each detected monotone run contains its original entries exactly once. Reversing a decreasing run makes it sorted without changing that multiset. During merging, the heap contains the least unused value of every nonempty run; the least remaining value overall must be one of those heads. Removing that minimum and advancing only its run preserves the invariant until every entry has been emitted.",
+  "walkthrough": "The input [2, 8, 13, 10, 7, 4, 9, 15, 12] splits into [2, 8, 13], [10, 7, 4], [9, 15], [12]. Reverse the decreasing run to [4, 7, 10]. Merge the run heads: first 2, then 4, 7, 8, 9, 10, 12, 13, 15. The result is [2, 4, 7, 8, 9, 10, 12, 13, 15].",
+  "edgeCases": [
+    "An entirely increasing or decreasing array forms one sorted run after normalization.",
+    "Equal adjacent values can remain in either monotone direction without losing duplicates.",
+    "Empty and singleton arrays require no heap merging."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        2,
+        8,
+        13,
+        10,
+        7,
+        4,
+        9,
+        15,
+        12
+      ]
+    ],
+    "expected": [
+      2,
+      4,
+      7,
+      8,
+      9,
+      10,
+      12,
+      13,
+      15
+    ]
+  }
 }

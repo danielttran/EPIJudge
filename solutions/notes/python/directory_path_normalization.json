@@ -1,6 +1,19 @@
 {
-  "explanation": "Use path components as a stack, cancelling a preceding name for each parent step. Keep unresolved parents only in relative paths; an absolute path stays rooted at /.",
-  "timeComplexity": "O(n) for path length n",
-  "spaceComplexity": "O(n) component and output storage",
-  "attribution": "Original Python implementation authored for EPI Practice from its displayed contract and independently authored C# solution; no upstream reference source adapted."
+  "explanation": "Treat path components as a stack. Ignore dots and empty components; a parent component cancels a normal preceding component. Preserve unresolved parents only for relative paths. Prepend a slash only for absolute paths.",
+  "timeComplexity": "O(n), where n is path length Every component is classified once, pushed at most once and popped at most once; joining emits the result once.",
+  "spaceComplexity": "O(n) Split components and the surviving component stack together require linear storage.",
+  "attribution": "Original Python implementation authored for EPI Practice from its displayed contract and independently authored C# solution; no upstream reference source adapted.",
+  "correctness": "The component stack always represents the normalized processed prefix. A name appends one level, a dot changes nothing, and a parent removes a normal level if possible. Only unresolved relative parents are retained, so the final joined components describe the same rooted or relative path.",
+  "walkthrough": "For oak/./elm/../ash, ignore the dot, append elm, then cancel elm on the parent step. Append ash and join to obtain oak/ash.",
+  "edgeCases": [
+    "Repeated slashes do not create components.",
+    "A fully cancelled relative path becomes empty.",
+    "Unresolved leading parents are preserved for relative paths."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      "oak/./elm/../ash"
+    ],
+    "expected": "oak/ash"
+  }
 }

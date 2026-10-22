@@ -1,6 +1,60 @@
 {
-  "explanation": "Keep prices in an OrderedDict from least recent to most recent. A successful lookup or insertion of an existing ISBN moves that entry to the recent end; reinsertion keeps its original price. New insertions evict the oldest entry when full. Every LruCache command constructs a fresh empty cache with the new capacity, so resets discard all earlier keys and recency. A nonpositive capacity stores no entries. The command tester checks every lookup and erase result and rejects unknown operations.",
-  "timeComplexity": "O(1) expected amortized time for lookup, insertion and erasure. Resetting drops the prior dictionary, taking O(q) time to release q live entries; over a sequence this cleanup is charged to their earlier insertions.",
-  "spaceComplexity": "O(c + 1) live-entry storage for positive capacity c, with O(1) storage at nonpositive capacity. OrderedDict allocation can retain space proportional to the peak occupancy since the latest reset; a reset replaces that storage entirely.",
-  "attribution": "Original EPI Practice Python implementation and command tester, independently authored from the public C# submission contract and our original C# solution. Uses Python standard-library OrderedDict; no upstream reference code was adapted. Repository license attribution remains in LICENSE."
+  "explanation": "Use OrderedDict in least-to-most recent order. Successful lookups and repeated insertions move a key to the end without replacing its price. Evict the first item for a new insertion when full.",
+  "timeComplexity": "O(1) expected per Lookup, Insert and Erase; O(c) to Initialize an existing cache Hash lookup and linked-order changes take expected constant time per operation.",
+  "spaceComplexity": "O(c), where c is capacity At most capacity keys, prices and order nodes are retained.",
+  "attribution": "Original EPI Practice Python implementation and command tester, independently authored from the public C# submission contract and our original C# solution. Uses Python standard-library OrderedDict; no upstream reference code was adapted. Repository license attribution remains in LICENSE.",
+  "correctness": "OrderedDict membership equals cache membership and its order equals access recency. Moving a hit to the newest end preserves this invariant; removing the oldest item therefore performs precisely LRU eviction. Repeated inserts retain the old price as required.",
+  "walkthrough": "With capacity 2, insert (1,10), insert (2,20), reinsert (1,99), then insert (3,30). Key 1 still costs 10 and is recent, so key 2 is evicted. Lookups return 10, −1 and 30 for keys 1, 2 and 3. JSON arguments contain one command array. LruCache initializes capacity; lookup/erase commands include expected results (erase uses 1/0). The wrapper observes all commands succeeding as true; the class itself has separate lookup, insert and erase results.",
+  "edgeCases": [
+    "Reinserting a key preserves its old price.",
+    "A missing lookup returns −1 and does not add a key.",
+    "Initialize resets all stored entries and recency."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          "LruCache",
+          2,
+          0
+        ],
+        [
+          "insert",
+          1,
+          10
+        ],
+        [
+          "insert",
+          2,
+          20
+        ],
+        [
+          "insert",
+          1,
+          99
+        ],
+        [
+          "insert",
+          3,
+          30
+        ],
+        [
+          "lookup",
+          1,
+          10
+        ],
+        [
+          "lookup",
+          2,
+          -1
+        ],
+        [
+          "lookup",
+          3,
+          30
+        ]
+      ]
+    ],
+    "expected": true
+  }
 }

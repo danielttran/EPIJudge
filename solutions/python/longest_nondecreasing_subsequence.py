@@ -4,6 +4,8 @@ from test_framework import generic_test
 
 
 def longest_nondecreasing_subsequence_length(A: List[int]) -> int:
+    if not A:
+        return 0
 
     # max_length[i] holds the length of the longest nondecreasing subsequence
     # of A[:i + 1].

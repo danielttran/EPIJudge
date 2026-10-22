@@ -1,14 +1,14 @@
 {
-  "explanation": "Keep an even-valued prefix followed by odd values already examined. When the next value is even, swap it into the end of the even prefix. Every value is examined once and all original elements remain in the array.",
-  "timeComplexity": "O(n)",
-  "spaceComplexity": "O(1)",
+  "explanation": "Maintain an even prefix followed by the odd values already scanned. On finding an even value, swap it into the next even-prefix position; then advance the scan.",
+  "timeComplexity": "O(n+1): the scan advances once per element.",
+  "spaceComplexity": "O(1): two indices and temporary swap values; the same array/list is rearranged.",
   "attribution": "Original C# implementation and explanation authored for EPI Practice from the displayed problem contract.",
-  "correctness": "Before each step, the processed prefix consists of evens followed by odds. Swapping a newly found even into the end of the even region extends that region without losing any element. Once every position is examined, all evens precede all odds.",
-  "walkthrough": "For [3,2,\u22125,4], move 2 to the front and later move 4 after it. The implementation produces [2,4,\u22125,3], whose first two values are even and last two odd.",
+  "correctness": "Before each scan, the processed prefix consists of evens followed by odds. An even value swaps with the first processed odd (or itself), extending the even prefix; an odd value extends the odd region. Each swap preserves all input occurrences. At exhaustion, the invariant covers the whole array.",
+  "walkthrough": "For [3,2,−5,4], skip the first odd, then swap 2 with 3 to obtain [2,3,−5,4]. Skip −5, then swap 4 with 3 to obtain [2,4,−5,3]. The judge checks even-before-odd order and preserved occurrences, not one unique permutation; the walkthrough expected value true denotes this property check.",
   "edgeCases": [
-    "Negative odd numbers must remain in the odd group.",
-    "Order within each group is unrestricted.",
-    "An empty or already partitioned array remains valid."
+    "Negative odd integers belong in the odd region.",
+    "Empty, all-even and all-odd arrays already satisfy the property.",
+    "Relative order inside the groups is not required."
   ],
   "walkthroughCase": {
     "arguments": [

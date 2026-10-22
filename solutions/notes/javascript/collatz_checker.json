@@ -1,6 +1,19 @@
 {
-  "explanation": "Check odd starts in increasing order. A trajectory falling below its start reaches a previously verified case; even starts reduce immediately. A repeated value detects a cycle. BigInt prevents wraparound while following trajectories.",
-  "timeComplexity": "O(T) arithmetic/set operations for T examined trajectory steps; BigInt costs depend on trajectory magnitude.",
-  "spaceComplexity": "O(S) stored trajectory values for the longest segment, each using its required BigInt bit length.",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "explanation": "Test odd starting values in increasing order using BigInt arithmetic. Track the current trajectory to detect cycles, and stop after reaching a value smaller than the start because its convergence has already been established.",
+  "timeComplexity": "O(T), where T is the number of trajectory steps examined T counts actual examined trajectory steps; no unsupported logarithmic or polynomial convergence bound is assumed.",
+  "spaceComplexity": "O(S), where S is the longest examined trajectory segment Storage depends on distinct trajectory/cache values rather than just n; big integers also depend on bit length.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "Each examined start stops only after reaching a smaller positive value, whose convergence has already been established directly or through its smaller odd part. A repeated value in the current segment detects a cycle. Induction over starts proves the claimed range when no cycle or arithmetic overflow occurs.",
+  "walkthrough": "For n=5, the nontrivial starts are 3 and 5. Their paths enter smaller values: 3→10→5→16→8→4→2 and 5→16→8→4. Those smaller values converge to 1, so return true.",
+  "edgeCases": [
+    "For n≤2 no nontrivial trajectory is needed.",
+    "Even starts immediately reduce to smaller values.",
+    "BigInt avoids fixed-width wraparound; no general polynomial bound on trajectory length is known."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      5
+    ],
+    "expected": true
+  }
 }

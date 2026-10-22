@@ -1,6 +1,21 @@
 {
-  "explanation": "Simulate the first k steps of a shuffle using a map of virtual position changes. Uniformly choose a remaining position for each sample slot, exchange their virtual values and return the first k positions.",
-  "timeComplexity": "O(k) expected per subset",
-  "spaceComplexity": "O(k)",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/RandomSubset.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "explanation": "Represent the virtual array [0,…,n−1] by a map: absent positions contain their own indices. Read both mapped values before swapping positions i and a uniformly chosen suffix position. Return the first k virtual positions.",
+  "timeComplexity": "O(k) expected: k swaps and k result reads, each using constant expected hash work. Each of k iterations performs a constant number of expected-time hash operations; at most O(k) map entries are introduced.",
+  "spaceComplexity": "O(k) map entries and O(k) returned values. At most a constant number of virtual-map entries are added per selection, plus k output entries.",
+  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/RandomSubset.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/).",
+  "correctness": "After step i the map agrees with a real Fisher–Yates shuffle through position i. Reading absent positions as their indices preserves all untouched entries. Each suffix choice is uniform, so the k-prefix is a uniform ordered sample; forgetting its order makes each subset equally likely.",
+  "walkthrough": "For n=5 and k=2, one possible run chooses virtual position 3, then position 4. It returns [3,4], recording the displaced virtual values only where necessary. Every two-element subset of {0,1,2,3,4} has probability 1/10, regardless of returned order. JSON arguments are [n,k]. Observed true is the property/distribution check, not the callable return.",
+  "edgeCases": [
+    "k=0 returns an empty subset.",
+    "k=n returns every value in some order.",
+    "Valid inputs require 0≤k≤n.",
+    "No selected value can appear twice."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      5,
+      2
+    ],
+    "expected": true
+  }
 }

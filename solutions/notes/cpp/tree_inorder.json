@@ -1,6 +1,34 @@
 {
-  "explanation": "Use a stack of nodes and visitation flags. Schedule right subtree, the flagged root and left subtree so the root value is emitted only after its left subtree has been processed.",
-  "timeComplexity": "O(n) time.",
-  "spaceComplexity": "O(h) auxiliary stack space, plus output.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/tree_inorder.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "Simulate recursion using a stack of (node,emit) entries. On an unexpanded node, push right subtree, an emit entry for the node, then left subtree; LIFO order processes left first.",
+  "timeComplexity": "O(n): each node has a constant number of stack operations. Each node is expanded and emitted a constant number of times, with pending work bounded by height.",
+  "spaceComplexity": "O(h) pending traversal entries, plus O(n) output. The recursion or explicit stack retains pending traversal work; the result stores n values.",
+  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/tree_inorder.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice.",
+  "correctness": "Expanding a subtree places exactly its inorder obligations on the stack in reverse execution order. Thus the stack always describes the unprocessed suffix of the desired traversal. Emit entries occur once per node, after its left subtree and before its right.",
+  "walkthrough": "For tree [16, 7, 25, 2, 11, null, 30], the left subtree contributes 2, 7, 11. Append root 16, then the right subtree contributes 25, 30. Return [2, 7, 11, 16, 25, 30]. The walkthroughCase uses the judge’s JSON input format and expected observation.",
+  "edgeCases": [
+    "Null input returns an empty list.",
+    "A node with only one child still appears between its left and right portions.",
+    "Repeated Data values are visited separately; this is a traversal, not a set."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        16,
+        7,
+        25,
+        2,
+        11,
+        null,
+        30
+      ]
+    ],
+    "expected": [
+      2,
+      7,
+      11,
+      16,
+      25,
+      30
+    ]
+  }
 }

@@ -21,6 +21,7 @@ public class MaxSquareSubmatrix {
   @EpiTest(testDataFile = "max_square_submatrix.tsv")
 
   public static int maxSquareSubmatrix(List<List<Boolean>> A) {
+  if (A.isEmpty()) return 0;
 
     // DP table stores (h, w) for each (i, j).
     List<List<MaxHW>> table = new ArrayList<>(A.size());

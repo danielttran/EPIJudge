@@ -12,6 +12,7 @@ public class LeftRightJustifyText {
 
   public static List<String> justifyText(List<String> words, int L) {
 
+    if (words.isEmpty()) return new ArrayList<>();
     int currLineLength = 0;
     List<String> result = new ArrayList<>();
     List<StringBuilder> currLine = new ArrayList<>();

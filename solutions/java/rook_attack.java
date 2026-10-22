@@ -10,6 +10,7 @@ import java.util.List;
 public class RookAttack {
 
   public static void rookAttack(List<List<Integer>> A) {
+    if (A.isEmpty() || A.get(0).isEmpty()) return;
 
     int m = A.size(), n = A.get(0).size();
     boolean hasFirstRowZero = A.get(0).contains(0);

@@ -1,6 +1,24 @@
 {
-  "explanation": "For every interval, compare taking its left or right coin. The opponent then chooses the continuation that leaves us the smaller future revenue. Fill shorter intervals first.",
-  "timeComplexity": "O(n\u00b2).",
-  "spaceComplexity": "O(n\u00b2).",
-  "attribution": "Unmodified reference from epi_judge_python_solutions/picking_up_coins.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice."
+  "explanation": "Memoize the maximum revenue for each remaining interval. Try either endpoint, then account for an optimal opponent by taking the smaller of the two revenues left after their reply.",
+  "timeComplexity": "O(n²) with cached states: at most n² intervals, each having constant transitions. There are O(n²) intervals and constant choices per interval when memoization recognizes the cached value.",
+  "spaceComplexity": "O(n²) memo storage plus O(n) recursive depth. The interval table has n² entries; recursive variants add at most linear call depth.",
+  "attribution": "Unmodified reference from epi_judge_python_solutions/picking_up_coins.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice.",
+  "correctness": "After our endpoint choice the opponent chooses an endpoint that maximizes their own total, equivalently minimizes ours because the remaining total is fixed. The two replies produce the two smaller intervals in the recurrence. Maximizing over our first choice therefore gives exactly the guaranteed optimal revenue.",
+  "walkthrough": "For coins [4,9,2], taking 4 lets the opponent take 9, leaving 2: the first player gets 6. Taking 2 similarly lets the opponent take 9, leaving 4: again 6. Both endpoint choices guarantee 6, so return 6. The walkthroughCase uses the judge’s JSON input format and expected observation.",
+  "edgeCases": [
+    "An empty row returns 0.",
+    "One coin is taken immediately.",
+    "Odd-length rows still alternate turns correctly.",
+    "The opponent’s choice uses a minimum, not an additional maximum."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        4,
+        9,
+        2
+      ]
+    ],
+    "expected": 6
+  }
 }

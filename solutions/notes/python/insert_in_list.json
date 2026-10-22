@@ -1,6 +1,30 @@
 {
-  "explanation": "The wrapper walks to the selected 1-based position. Link the supplied new node between that node and its original successor.",
-  "timeComplexity": "O(p) wrapper traversal to position p; O(1) insertion",
-  "spaceComplexity": "O(1) auxiliary plus one output node",
-  "attribution": "Unmodified reference from epi_judge_python_solutions/insert_in_list.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice."
+  "explanation": "The callable receives the selected node and a new node. First point the new node to the selected node’s old successor, then point the selected node to the new node.",
+  "timeComplexity": "O(p): advance to one-based position p, then perform two constant-time link changes.",
+  "spaceComplexity": "O(1) auxiliary pointers plus exactly one newly allocated node.",
+  "attribution": "Unmodified reference from epi_judge_python_solutions/insert_in_list.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice.",
+  "correctness": "Saving the successor in new_node.next before changing node.next keeps the suffix reachable. The two rewired links insert exactly the supplied node without replacing any original node or changing their relative order.",
+  "walkthrough": "Case [7,4,9], position 2, new value 6 selects node 4 using one-based indexing. The wrapper allocates node 6. The callable sets 6.next=9, then 4.next=6 and returns no value; the wrapper observes [7,4,6,9].",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        7,
+        4,
+        9
+      ],
+      2,
+      6
+    ],
+    "expected": [
+      7,
+      4,
+      6,
+      9
+    ]
+  },
+  "edgeCases": [
+    "Position 1 means insert after the head, not before it.",
+    "Inserting after the last node appends a new tail.",
+    "Existing nodes and their values are retained."
+  ]
 }

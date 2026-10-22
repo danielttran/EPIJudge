@@ -1,6 +1,20 @@
 {
   "explanation": "With e objects and d drops, one drop covers one floor plus the ranges distinguishable if it breaks and if it survives. Update this recurrence from larger e downwards so both branches use the preceding drop count. Values saturate at the int return limit.",
-  "timeComplexity": "O(d \u00d7 min(e,d))",
-  "spaceComplexity": "O(min(e,d))",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "timeComplexity": "O(d × min(e,d)) Each of d drop rounds updates min(e,d) object counts.",
+  "spaceComplexity": "O(min(e,d)) Only one previous-drop row is retained and updated in descending order.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "With e objects and d drops, one test separates one chosen floor, up to F(e−1,d−1) lower floors if the object breaks, and F(e,d−1) higher floors if it survives. These branches are disjoint and cover every possible outcome, proving F(e,d)=1+F(e−1,d−1)+F(e,d−1). Descending object counts keeps both terms from the previous drop iteration.",
+  "walkthrough": "With 2 objects and 3 drops, successive covered heights are 1, 3 and 6. On the third iteration, one chosen floor combines 2 lower floors handled by one remaining object with 3 upper floors handled by both objects: 1+2+3=6.",
+  "edgeCases": [
+    "Zero objects or zero drops gives zero floors.",
+    "One object permits only a linear scan of one floor per drop.",
+    "The implementation saturates at the int return limit."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      2,
+      3
+    ],
+    "expected": 6
+  }
 }

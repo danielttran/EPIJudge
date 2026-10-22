@@ -1,6 +1,36 @@
 {
   "explanation": "Turn meetings into start and end events and sort them. Process ends before starts at equal times; the maximum active count is the number of rooms needed.",
-  "timeComplexity": "O(n log n) time for n meetings.",
-  "spaceComplexity": "O(n) auxiliary space.",
-  "attribution": "Original repository-authored Blind75 Python algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used."
+  "timeComplexity": "O(n log n) time for n meetings. Two events per meeting are sorted, then each event changes the active count once.",
+  "spaceComplexity": "O(n) auxiliary space. The event array holds 2n entries; the active and maximum counts are constant space.",
+  "attribution": "Original repository-authored Blind75 Python algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used.",
+  "correctness": "The sweep’s active count equals the number of meetings occupying rooms at the current event boundary. Processing ends before starts at the same time releases reusable rooms first. Any schedule needs at least the maximum simultaneous count, and assigning a free room whenever active decreases realizes that bound.",
+  "walkthrough": "For [0,4],[1,3],[3,6],[6,8], two rooms are needed between times 1 and 3. At time 3 one meeting ends before another starts, so occupancy stays at two. At time 6 a room is released before reuse. Return 2.",
+  "edgeCases": [
+    "Touching meetings can reuse a room.",
+    "The largest simultaneous count, not the total meeting count, determines the answer.",
+    "An empty schedule needs zero rooms."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          0,
+          4
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          3,
+          6
+        ],
+        [
+          6,
+          8
+        ]
+      ]
+    ],
+    "expected": 2
+  }
 }

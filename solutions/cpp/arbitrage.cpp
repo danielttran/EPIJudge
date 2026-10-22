@@ -11,6 +11,7 @@ using std::vector;
 bool BellmanFord(const vector<vector<double>>& graph, int source);
 
 bool IsArbitrageExist(vector<vector<double>> graph) {
+  if (graph.empty()) return false;
   // Transforms each edge in graph.
   for_each(begin(graph), end(graph), [](vector<double>& edge_list) {
     for_each(begin(edge_list), end(edge_list),

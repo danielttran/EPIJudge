@@ -1,6 +1,29 @@
 {
-  "explanation": "Pack each line greedily, then distribute its required padding cyclically across the gaps, favoring earlier gaps. Join the final line with single spaces and right-pad it. This reference’s Join repeatedly concatenates prefix strings.",
-  "timeComplexity": "O(S + nL) safe upper bound for total source characters S, n words and line width L, including repeated concatenation.",
-  "spaceComplexity": "O(L) current-line workspace, plus formatted output.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/left_right_justify_text.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "Accumulate the longest line that fits with one mandatory space per gap. For nonfinal lines, cycle through gaps from left to right adding the remaining spaces; extra spaces consequently go to earlier gaps. Join the final line with single spaces and pad its right side.",
+  "timeComplexity": "O(q·L² + n) worst-case character-copying upper bound for q output lines of width L and n words: Python appends spaces one at a time to immutable strings, while C++ Join repeatedly copies growing prefixes. The output itself has qL characters.",
+  "spaceComplexity": "O(L) working space, excluding output Working line storage is O(L), excluding O(qL) output.",
+  "attribution": "Original reference source: epi_judge_cpp_solutions/left_right_justify_text.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice. Local correctness/empty-input fixes and explanation audit authored for EPI Practice; upstream reference files are unchanged. The displayed copy includes local contract or boundary corrections; the upstream reference file is preserved.",
+  "correctness": "A word is deferred exactly when adding it and mandatory gaps would exceed L, so each line is greedily maximal. Cycling over the gaps allocates either floor(S/g) or ceil(S/g) spaces per gap, with the larger counts on the left. A single-word line receives right padding. The final line is joined with single spaces and padded to width L.",
+  "walkthrough": "With words [\"a\",\"bb\",\"c\",\"dddd\"] and width 8, the first three words fit but adding \"dddd\" does not. Their four letters leave four spaces, split as two per gap, yielding \"a  bb  c\". The final word becomes \"dddd    \".",
+  "edgeCases": [
+    "Every word fits within positive width L.",
+    "A single-word line is right-padded.",
+    "The final line uses single inter-word spaces.",
+    "Empty words input returns no lines."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        "a",
+        "bb",
+        "c",
+        "dddd"
+      ],
+      8
+    ],
+    "expected": [
+      "a  bb  c",
+      "dddd    "
+    ]
+  }
 }

@@ -1,6 +1,34 @@
 {
-  "explanation": "Try each grid cell as a starting position. Recursively match the pattern through four-neighbor steps, caching failed cell/offset states separately for each starting cell; revisiting a cell at a later offset is allowed.",
-  "timeComplexity": "O((rc)\u00b2\u00b7m) worst case, for an r\u00d7c grid and pattern length m",
-  "spaceComplexity": "O(rc\u00b7m+m) per-start memoization and recursion",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/IsStringInMatrix.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "explanation": "Search for a matching pattern suffix from each cell, trying its four neighbors after a matching value. Cache failed (row,column,offset) states; Python’s shared memo cache also stores successes. Cells may be reused at different offsets.",
+  "timeComplexity": "O((RC)²L+RC) upper bound: up to RC starts each create a fresh cache of at most RCL failed states. There are at most RCL cell/offset states per memo scope; C++/Java recreate that scope for each starting cell.",
+  "spaceComplexity": "O(RCL+L) upper bound for memo states and recursion. Layered DP keeps two Boolean grids; suffix search keeps cell/offset memo entries and recursion.",
+  "attribution": "Original EPIJudge reference source: epi_judge_java_solutions/epi/IsStringInMatrix.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/). Local boundary or iterator-safety correction authored for EPI Practice. The displayed copy includes local contract or boundary corrections; the upstream reference file is preserved.",
+  "correctness": "A state succeeds exactly when its current value matches and at least one neighbor can match the remaining suffix. The pattern offset strictly increases, so recursion terminates even when cells are revisited. Memoizing a state is valid because future feasibility depends on the cell and offset, not on visited history.",
+  "walkthrough": "For [[5,8],[9,2]] and pattern [5,8,5,9], use (0,0)→(0,1)→(0,0)→(1,0). The first cell is legally reused, so return true. The walkthroughCase uses the judge’s JSON input format and expected observation.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          5,
+          8
+        ],
+        [
+          9,
+          2
+        ]
+      ],
+      [
+        5,
+        8,
+        5,
+        9
+      ]
+    ],
+    "expected": true
+  },
+  "edgeCases": [
+    "Cell reuse is allowed; moves must be orthogonal.",
+    "An empty pattern is true, including on an empty grid.",
+    "An empty grid cannot match a nonempty pattern."
+  ]
 }

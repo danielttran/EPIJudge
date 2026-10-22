@@ -10,13 +10,17 @@ public class AdvanceByOffsets {
   @EpiTest(testDataFile = "advance_by_offsets.tsv")
   public static boolean canReachEnd(List<Integer> maxAdvanceSteps) {
 
-    int furthestReachSoFar = 0, lastIndex = maxAdvanceSteps.size() - 1;
-    for (int i = 0; i <= furthestReachSoFar && furthestReachSoFar < lastIndex;
-         ++i) {
-      furthestReachSoFar =
-          Math.max(furthestReachSoFar, i + maxAdvanceSteps.get(i));
+    if (maxAdvanceSteps.isEmpty()) return true;
+    final int destination = maxAdvanceSteps.size() - 1;
+    int reachable = 0;
+    for (int position = 0; position <= destination; ++position) {
+      if (position > reachable) return false;
+      int jump = maxAdvanceSteps.get(position);
+      // Addition below is safe because it cannot exceed the destination.
+      if (jump >= destination - position) return true;
+      reachable = Math.max(reachable, position + jump);
     }
-    return furthestReachSoFar >= lastIndex;
+    return false;
   }
 
   public static void main(String[] args) {

@@ -1,6 +1,26 @@
 {
   "explanation": "Mark each prefix that can be split into dictionary words, remembering where its last word starts. A reachable final prefix yields a decomposition by following those predecessor positions backward. Return an empty list when the final prefix is unreachable.",
-  "timeComplexity": "O(n^3) worst-case time including substring copying and hashing.",
-  "spaceComplexity": "O(n) auxiliary space, plus O(n) characters in the output.",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "timeComplexity": "O(n^3) worst-case time including substring copying and hashing. There are O(n²) candidate cuts; constructing and hashing candidate substrings costs up to O(n) per cut.",
+  "spaceComplexity": "O(n) auxiliary space, plus O(n) characters in the output. One predecessor or final-word length is stored per character boundary; output and transient substring characters are linear.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "previous[end] is set only when a reachable earlier prefix is followed by a dictionary word. By induction, every marked prefix has a valid decomposition, and every valid decomposition marks its successive word boundaries. Following predecessors from the final boundary reconstructs one complete decomposition.",
+  "walkthrough": "For \"sunleaf\" and {\"sun\",\"leaf\",\"sunl\"}, prefix \"sun\" becomes reachable at 3 and \"sunl\" at 4. Only the split after 3 can finish with dictionary word \"leaf\", so reconstruct [\"sun\",\"leaf\"]. JSON arguments are [domain,dictionary,canDecompose]. The last Boolean belongs only to the validator. The callable takes the first two arguments and returns words; observed true means that output satisfied the feasibility oracle.",
+  "walkthroughCase": {
+    "arguments": [
+      "sunleaf",
+      [
+        "sun",
+        "leaf",
+        "sunl"
+      ],
+      true
+    ],
+    "expected": true
+  },
+  "edgeCases": [
+    "Return an empty list when no decomposition exists.",
+    "A dictionary word may be used repeatedly.",
+    "Any valid word sequence is accepted; do not require a single predetermined split.",
+    "An empty input has the empty decomposition; the wrapper distinguishes feasibility using its separate Boolean oracle."
+  ]
 }

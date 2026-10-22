@@ -1,15 +1,16 @@
 {
   "explanation": "Combine two zero-based source draws into a uniform state in 0..24. Accept states below 21 and map each group of seven uniformly into 1..7.",
   "correctness": "Each pair is one of 25 equally likely states. Accepting 21 states leaves three representatives for each remainder modulo seven, so each result has conditional probability 1/7.",
-  "walkthrough": "For injected draws 5,5,1,1, the first pair creates state (5-1)*5+(5-1)=24, which is rejected. The next pair creates state 0 and returns 1. Among accepted states 0..20, each remainder modulo seven occurs three times, giving probability 1/7 for each output. The displayed true reports the judge properties.",
+  "walkthrough": "For injected draws 5,5,1,1, the first pair creates state (5-1)*5+(5-1)=24, which is rejected. The next pair creates state 0 and returns 1. Among accepted states 0..20, each remainder modulo seven occurs three times, giving probability 1/7 for each output. The displayed true reports the judge properties. Rand7 has no value arguments and returns one integer 1..7. JSON contains a judge-only forced Rand5 draw prefix; expected true denotes random-source/range/distribution checks, not the rolled integer.",
   "edgeCases": [
     "Rejected top four states",
     "repeated attempts",
     "pair endpoints",
-    "no modulo bias from all 25 states."
+    "no modulo bias from all 25 states.",
+    "States 21..24 must be rejected; taking all 25 states modulo seven would favor four outcomes. Repeated rejections must not cache a previous roll."
   ],
-  "timeComplexity": "O(1) expected time (50/21 source draws); unbounded worst-case draws.",
-  "spaceComplexity": "O(1) auxiliary space.",
+  "timeComplexity": "Expected O(1) time: an attempt succeeds with probability 21/25 and uses two source calls, for 50/21 expected calls. Worst-case attempts are unbounded.",
+  "spaceComplexity": "O(1) auxiliary space: two draws and one encoded state, reused on every retry.",
   "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
   "walkthroughCase": {
     "arguments": [

@@ -9,6 +9,8 @@ Rect = collections.namedtuple('Rect', ('left', 'right', 'height'))
 
 
 def compute_skyline(buildings: List[Rect]) -> List[Rect]:
+    if not buildings:
+        return []
 
     min_left = min(buildings, key=lambda b: b.left).left
     max_right = max(buildings, key=lambda b: b.right).right

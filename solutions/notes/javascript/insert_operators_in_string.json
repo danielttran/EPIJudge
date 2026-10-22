@@ -1,6 +1,24 @@
 {
   "explanation": "Try every next digit block, treating its digits as one concatenated number. At each block boundary try addition or multiplication. Track the last multiplicative term so multiplication replaces that term in the running total, preserving operator precedence.",
-  "timeComplexity": "O(3^n) arithmetic operations in the worst case; BigInt costs depend on the intermediate operand lengths.",
-  "spaceComplexity": "O(n) recursion frames, with BigInt values retained along the recursion path.",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "timeComplexity": "O(3^n) search nodes under fixed-width arithmetic: each digit boundary ultimately means concatenate, + or *, and prefix work sums geometrically over the search tree. BigInt arithmetic additionally depends on operand widths.",
+  "spaceComplexity": "O(n) recursive frames with a constant number of numeric accumulators each. For unbounded BigInt values, bit storage also grows with the digit count.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "Every digit partition is reached by choosing the end of each next block, and every allowed operator choice is explored at its boundary. total is the expression value so far and lastTerm is its final multiplicative term. Multiplication replaces lastTerm by lastTerm×value, preserving ordinary precedence. Thus a successful leaf is exactly an allowed expression with the target value.",
+  "walkthrough": "For digits [4,2,3] and target 10, choose the blocks 4,2,3. After 4+2, total=6 and lastTerm=2. Appending ×3 changes the total to 6−2+2×3=10, so return true.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        4,
+        2,
+        3
+      ],
+      10
+    ],
+    "expected": true
+  },
+  "edgeCases": [
+    "Digit concatenation is an allowed choice and is different from addition.",
+    "Only addition and multiplication are inserted; subtraction is not available.",
+    "Zero digits can make products vanish and must not be discarded by an unsafe positive-value pruning rule."
+  ]
 }

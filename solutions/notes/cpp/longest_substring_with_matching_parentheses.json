@@ -1,6 +1,19 @@
 {
-  "explanation": "Store indices of unmatched opening parentheses and the latest unmatched closing position. Each matched closing bracket exposes the boundary before the current valid suffix, giving its length. The file also includes a separate constant-space alternative.",
-  "timeComplexity": "O(n) time.",
-  "spaceComplexity": "O(n) auxiliary stack space for the called implementation.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/longest_substring_with_matching_parentheses.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "Store unmatched opening-parenthesis indices and a separate index end for the latest unmatched closing parenthesis. A matched close pops one opening; the next stack top or end marks the boundary before the longest balanced suffix.",
+  "timeComplexity": "O(n) Each character pushes or pops at most one index.",
+  "spaceComplexity": "O(n) An all-opening string leaves n unmatched indices on the stack.",
+  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/longest_substring_with_matching_parentheses.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice.",
+  "correctness": "Unmatched openings and the latest unmatched close are exactly the barriers a balanced suffix cannot cross. After a matching close, every character since the nearest remaining barrier is balanced. Its length is currentIndex−barrier, and checking every closing position covers every possible optimal substring.",
+  "walkthrough": "For \")()(()\", the leading close sets the invalid-prefix boundary. The following () gives length 2. The trailing (() contains another matched pair of length 2, so the answer remains 2.",
+  "edgeCases": [
+    "An unmatched closing parenthesis resets the base boundary.",
+    "Unmatched openings separate possible balanced suffixes.",
+    "The empty string has length 0."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      ")()(()"
+    ],
+    "expected": 2
+  }
 }

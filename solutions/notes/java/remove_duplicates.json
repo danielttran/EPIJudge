@@ -1,6 +1,36 @@
 {
-  "explanation": "Sort name records by first name and then last name. Compact the sorted list to retain one record for each first name, then remove the unused suffix; the wrapper returns their first names.",
-  "timeComplexity": "O(n log n) string comparisons, plus compared characters",
-  "spaceComplexity": "O(n) worst-case sorting workspace",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/RemoveDuplicates.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "explanation": "Sort names by first name and then last name so equal first names are adjacent. Compact one representative per first-name group and shrink the list. The wrapper extracts/compares first names; the callable mutates records and returns no list.",
+  "timeComplexity": "O(n log n) comparisons, each potentially linear in the compared name lengths; compaction is O(n). Hash variants process each name once; sort variants sort records then compact once. Name hashing/comparison also reads characters.",
+  "spaceComplexity": "C++ uses O(log n) sorting stack; Java/Python sorting may use O(n) temporary references, and Python also slices the suffix during compaction. The set holds u first names; native sorting and compaction workspace follow their library/container behavior.",
+  "attribution": "Original EPIJudge reference source: epi_judge_java_solutions/epi/RemoveDuplicates.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/). The displayed copy includes local contract or boundary corrections; the upstream reference file is preserved.",
+  "correctness": "After sorting, all records with one first name form a single contiguous group. Keeping only the first record of each group preserves exactly the distinct first names. The retained last name is irrelevant to the judged result.",
+  "walkthrough": "Sorting [(Mira,Stone),(Noel,West),(Mira,Lake)] yields [(Mira,Lake),(Mira,Stone),(Noel,West)]. Keep Mira,Lake; skip the second Mira; keep Noel,West. The mutated record list is observed by the wrapper as [Mira,Noel].",
+  "edgeCases": [
+    "Empty input stays empty.",
+    "Distinct last names do not make equal first names distinct.",
+    "First-name comparison is case-sensitive.",
+    "The callable mutates the record list; the wrapper compares only distinct first names."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          "Mira",
+          "Stone"
+        ],
+        [
+          "Noel",
+          "West"
+        ],
+        [
+          "Mira",
+          "Lake"
+        ]
+      ]
+    ],
+    "expected": [
+      "Mira",
+      "Noel"
+    ]
+  }
 }

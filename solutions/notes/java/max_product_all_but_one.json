@@ -1,6 +1,25 @@
 {
-  "explanation": "Precompute products of suffixes. Scan left to right with a running prefix product and multiply the prefix and following suffix to evaluate every possible excluded entry without division.",
-  "timeComplexity": "O(n)",
-  "spaceComplexity": "O(n)",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/MaxProductAllButOne.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "explanation": "Precompute each suffix product. Sweep a running prefix product; excluding entry i leaves exactly the prefix before i times the suffix after i. Take the greatest such product, avoiding division and handling zeros naturally.",
+  "timeComplexity": "O(n) arithmetic operations: one suffix-product pass and one prefix-product pass. Python big-integer multiplication has additional bit complexity. All variants perform O(n) arithmetic operations; arbitrary-precision arithmetic costs depend on operand bits.",
+  "spaceComplexity": "O(n) stored suffix products; Python storage additionally depends on their bit lengths. Prefix/suffix variants retain n products; zero-count/division variants retain a constant number of big integers.",
+  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/MaxProductAllButOne.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/).",
+  "correctness": "At index i, prefix_product is the product of entries strictly before i and the selected suffix product contains exactly entries strictly after i. Their product is therefore precisely the allowed result excluding i. Testing every index is exhaustive, so their maximum is optimal. Empty prefix and suffix products equal one.",
+  "walkthrough": "For [−2,3,−4,2], suffix products are [48,−24,−8,2]. Combining prefix and following suffix gives exclusion products −24,16,−12,24. Return 24, obtained by excluding the final 2.",
+  "edgeCases": [
+    "One entry gives the empty product 1.",
+    "Two zeros force every allowed product to zero.",
+    "One zero is handled without dividing by zero.",
+    "Fixed-width native products must be representable; Python uses arbitrary precision."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        -2,
+        3,
+        -4,
+        2
+      ]
+    ],
+    "expected": 24
+  }
 }

@@ -885,34 +885,51 @@ def accept(root: Path):
     matrix, excluded = matrix_evidence(root, expected, sources)
     paths = sorted((root / "scripts/solutions").glob("boundaries-*.json"))
     cases = [case for path in paths for case in read_json(path)]
+    original_cases = [
+        case
+        for path in paths
+        if not path.name.startswith("boundaries-clarity")
+        for case in read_json(path)
+    ]
     require(
-        len(cases) == 114 and len({row["problemId"] for row in cases}) == 68,
+        len(original_cases) == 114
+        and len({row["problemId"] for row in original_cases}) == 68,
         "Additive boundaries must retain114 cases across68 questions",
     )
     boundaries, boundary_summary = auxiliary_evidence(
         root, "boundaries", cases, paths, LANGUAGES, expected, sources
     )
-    note_paths = [
-        root / live[(pid, "csharp")]["notesPath"]
-        for pid in sorted({key[0] for key in live})
-    ]
-    walkthrough_cases = [
-        {
-            "problemId": path.stem,
-            **read_json(path)["walkthroughCase"],
-            "reason": "Original solution walkthrough",
-        }
-        for path in note_paths
-    ]
-    walkthroughs, walkthrough_summary = auxiliary_evidence(
-        root,
-        "walkthroughs",
-        walkthrough_cases,
-        note_paths,
-        ("csharp",),
-        expected,
-        sources,
-    )
+    walkthroughs = {}
+    walkthrough_summary = {
+        "questionLanguageExecutions": 0,
+        "acceptedCaseEvaluations": 0,
+        "staleReportsExcluded": 0,
+    }
+    for language in LANGUAGES:
+        note_paths = [
+            root / live[(pid, language)]["notesPath"]
+            for pid in sorted({key[0] for key in live})
+        ]
+        walkthrough_cases = [
+            {
+                "problemId": path.stem,
+                **read_json(path)["walkthroughCase"],
+                "reason": "Original solution walkthrough",
+            }
+            for path in note_paths
+        ]
+        rows, counts = auxiliary_evidence(
+            root,
+            "walkthroughs",
+            walkthrough_cases,
+            note_paths,
+            (language,),
+            expected,
+            sources,
+        )
+        walkthroughs.update(rows)
+        for key in walkthrough_summary:
+            walkthrough_summary[key] += counts[key]
     fixtures, fixture_summary = interviewcake_evidence(
         root, live, entries, expected, harnesses
     )
@@ -943,8 +960,8 @@ def accept(root: Path):
         "Full-corpus acceptance count differs from2048335",
     )
     require(
-        boundary_summary["acceptedCaseEvaluations"] == 570
-        and walkthrough_summary["acceptedCaseEvaluations"] == 334,
+        boundary_summary["acceptedCaseEvaluations"] == len(cases) * len(LANGUAGES)
+        and walkthrough_summary["acceptedCaseEvaluations"] == 1670,
         "Boundary/walkthrough acceptance totals are incomplete",
     )
     require(

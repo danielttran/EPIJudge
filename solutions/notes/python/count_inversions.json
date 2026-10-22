@@ -1,6 +1,24 @@
 {
   "explanation": "Merge-sort the input array while counting cross-half inversions. Taking a right-half value first adds the number of left-half values still pending; ties taken from the left add none.",
-  "timeComplexity": "O(n log(n+1))",
-  "spaceComplexity": "O(n) merge buffers and slices; input array is sorted",
-  "attribution": "Unmodified reference from epi_judge_python_solutions/count_inversions.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice."
+  "timeComplexity": "O(n log n) Each merge level scans all n values; there are O(log(n+1)) levels.",
+  "spaceComplexity": "O(n) Temporary merge arrays and the active recursion require O(n) peak storage.",
+  "attribution": "Unmodified reference from epi_judge_python_solutions/count_inversions.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice.",
+  "correctness": "Recursive calls count inversions within each half. During merge, when a right value is smaller than the current left value, it is smaller than every remaining left value, contributing exactly that remaining count. Every inversion belongs to exactly one of these categories.",
+  "walkthrough": "For [3,1,2,1], the first 3 exceeds the three later values, giving three inversions. The 2 exceeds the final 1, giving one more. The total is 4.",
+  "edgeCases": [
+    "Equal values are not inversions.",
+    "Empty or already sorted input returns zero.",
+    "This implementation sorts the supplied mutable list while counting."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        3,
+        1,
+        2,
+        1
+      ]
+    ],
+    "expected": 4
+  }
 }

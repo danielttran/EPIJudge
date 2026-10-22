@@ -1,7 +1,7 @@
 {
   "explanation": "Move inward from both ends, skipping non-alphanumeric characters. Compare the remaining characters after invariant case folding, and reject at the first unequal pair.",
-  "timeComplexity": "O(n) time.",
-  "spaceComplexity": "O(1) auxiliary space.",
+  "timeComplexity": "O(n) time. Each index moves inward at most n positions, including skipped punctuation.",
+  "spaceComplexity": "O(1) auxiliary space. Only indices and temporary normalized characters are stored.",
   "attribution": "Original C# implementation and explanation authored for EPI Practice from the displayed problem contract.",
   "correctness": "Skipping non-alphanumeric characters preserves precisely the sequence the contract asks to compare. The remaining two-pointer comparisons check mirrored members of that sequence after case normalization, so all and only normalized palindromes are accepted.",
   "walkthrough": "For \"R2, r!\", ignore the comma, space and exclamation mark and normalize R to r. The remaining sequence is \"r2r\", whose mirrored letters agree, so return true.",
@@ -14,6 +14,7 @@
   "edgeCases": [
     "A string containing only ignored characters is a palindrome.",
     "Digits remain significant.",
-    "Mixed letter case is normalized before comparing."
+    "Mixed letter case is normalized before comparing.",
+    "Character positions in this implementation are UTF-16 code units, not user-perceived grapheme clusters."
   ]
 }

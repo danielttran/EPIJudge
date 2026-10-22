@@ -1,6 +1,26 @@
 {
-  "explanation": "Breadth-first search dictionary words reachable by one lowercase substitution. Remove each word from a copied unvisited set when queued; its first reached distance is shortest, and the input dictionary stays unchanged.",
-  "timeComplexity": "O(M + 26VL\u00b2) expected for dictionary size M, V visited words and word length L",
-  "spaceComplexity": "O(M+VL) auxiliary references and generated queued strings",
-  "attribution": "Original Python implementation authored for EPI Practice from its displayed contract and independently authored C# solution; no upstream reference source adapted."
+  "explanation": "Breadth-first search the implicit graph of dictionary words differing at one position. Generate each lowercase substitution and remove a word from the unvisited set when enqueuing it, so the first reached target has minimum distance. The dictionary input is not modified.",
+  "timeComplexity": "O(M + 26 V L squared) expected time for M dictionary entries, V visited words and word length L, including candidate creation and hashing. Each visited word tries 26 letters at L positions; creating and hashing a candidate costs O(L).",
+  "spaceComplexity": "O(M + V L) auxiliary space for copied dictionary references and BFS candidate strings. Dictionary membership state and queued candidate strings dominate storage.",
+  "attribution": "Original Python implementation authored for EPI Practice from its displayed contract and independently authored C# solution; no upstream reference source adapted.",
+  "correctness": "Every generated neighbor differs from the current word by exactly one permitted lowercase substitution and belongs to the unvisited dictionary. Breadth-first search processes words in nondecreasing path length. Marking a word visited when enqueued prevents redundant paths without losing a shorter route. Therefore the first target reached has minimum substitution count; exhausting the queue proves no permitted transformation exists.",
+  "walkthrough": "Use dictionary {bike, bile, tile, tide}, source bake and target tide. The BFS reaches bike at distance 1, bile at 2, tile at 3, and tide at 4. Each step changes exactly one character: bake → bike → bile → tile → tide. No earlier layer reaches tide, so return 4.",
+  "edgeCases": [
+    "Identical source and target return 0 even before searching the dictionary.",
+    "Missing dictionary connections return -1.",
+    "The source need not be a dictionary member; generated intermediate and target words must belong to the dictionary."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        "bike",
+        "bile",
+        "tile",
+        "tide"
+      ],
+      "bake",
+      "tide"
+    ],
+    "expected": 4
+  }
 }

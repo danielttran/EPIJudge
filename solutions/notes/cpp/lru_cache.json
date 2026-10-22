@@ -1,6 +1,60 @@
 {
-  "explanation": "Use a hash map from keys to stable nodes in a doubly linked recency list. Lookup and insertion of an existing key move its node to the front; an existing key retains its previous price. A new insertion evicts the least-recent node when full, while a nonpositive capacity stores nothing. Every LruCache constructor command clears the previous contents and adopts the supplied new capacity.",
-  "timeComplexity": "O(1) expected time per lookup, insertion and erase. Initialize discards live entries and clears retained hash storage, taking O(P) worst-case time for the peak entry count P reached during the object's lifetime.",
-  "spaceComplexity": "O(P) allocated space for peak live entry count P during the object's lifetime. At most the current capacity entries are live, but the hash table can retain previously allocated buckets after erases or resets.",
-  "attribution": "Original EPI Practice C++ implementation and reset-aware operation wrapper, independently authored from the public problem contract and repository-authored C# algorithm. Uses the unchanged local EPI Judge serialization and test framework APIs; upstream reference sources are not modified."
+  "explanation": "A dictionary locates each cache node, and a linked list tracks recency. Lookup and reinsertion move a node to the front; reinsertion deliberately preserves its old price. New entries evict the back node when capacity is reached.",
+  "timeComplexity": "O(1) expected per Lookup, Insert and Erase; O(c) to Initialize an existing cache Hash lookup and linked-order changes take expected constant time per operation.",
+  "spaceComplexity": "O(c), where c is capacity At most capacity keys, prices and order nodes are retained.",
+  "attribution": "Original EPI Practice C++ implementation and reset-aware operation wrapper, independently authored from the public problem contract and repository-authored C# algorithm. Uses the unchanged local EPI Judge serialization and test framework APIs; upstream reference sources are not modified.",
+  "correctness": "The dictionary and linked list contain exactly the same keys, and list order is most-recent to least-recent. Lookup and reinsertion move the located node to the front without changing its stored price. Removing the back node before a new insertion therefore evicts exactly the least-recent key; erasure removes both representations together.",
+  "walkthrough": "With capacity 2, insert (1,10), insert (2,20), reinsert (1,99), then insert (3,30). Key 1 still costs 10 and is recent, so key 2 is evicted. Lookups return 10, −1 and 30 for keys 1, 2 and 3. JSON arguments contain one command array. LruCache initializes capacity; lookup/erase commands include expected results (erase uses 1/0). The wrapper observes all commands succeeding as true; the class itself has separate lookup, insert and erase results.",
+  "edgeCases": [
+    "Reinserting a key preserves its old price.",
+    "A missing lookup returns −1 and does not add a key.",
+    "Initialize resets all stored entries and recency."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          "LruCache",
+          2,
+          0
+        ],
+        [
+          "insert",
+          1,
+          10
+        ],
+        [
+          "insert",
+          2,
+          20
+        ],
+        [
+          "insert",
+          1,
+          99
+        ],
+        [
+          "insert",
+          3,
+          30
+        ],
+        [
+          "lookup",
+          1,
+          10
+        ],
+        [
+          "lookup",
+          2,
+          -1
+        ],
+        [
+          "lookup",
+          3,
+          30
+        ]
+      ]
+    ],
+    "expected": true
+  }
 }

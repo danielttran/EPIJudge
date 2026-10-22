@@ -1,14 +1,15 @@
 {
   "explanation": "Recursively permute the suffix, then insert the removed first character at every position of each smaller permutation. A set removes duplicate strings.",
   "correctness": "Every permutation has some position occupied by the removed character; deleting it yields a suffix permutation generated recursively. Reinserting at all positions therefore covers every result, and the set prevents duplicates.",
-  "walkthrough": "For ab, recurse on b to obtain the set {b}. Insert a before b and after b, yielding {ab,ba}. The base case for an empty suffix is the singleton set containing the empty string, which makes the first insertion possible.",
+  "walkthrough": "For ab, recurse on b to obtain the set {b}. Insert a before b and after b, yielding {ab,ba}. The base case for an empty suffix is the singleton set containing the empty string, which makes the first insertion possible. Return a set of strings; the adapter displays a JSON array and compares membership without imposing output order.",
   "edgeCases": [
     "Empty string has one permutation",
     "singleton",
-    "repeated characters under the bank extension."
+    "repeated characters under the bank extension.",
+    "Empty input returns the singleton set {\"\"}; repeated characters yield distinct strings only, not repeated output entries."
   ],
-  "timeComplexity": "O(n * n!) time for n distinct characters, including string construction.",
-  "spaceComplexity": "O(n * n!) result storage and O(n) recursion depth.",
+  "timeComplexity": "Expected O(n*n!) worst-case time: with distinct characters there are n! output strings, each constructed/hashed in O(n); all smaller recursion levels are dominated by this bound.",
+  "spaceComplexity": "O(n*n!) worst-case result and intermediate string storage, plus recursion depth O(n); repeated characters can reduce the number of distinct results.",
   "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
   "walkthroughCase": {
     "arguments": [

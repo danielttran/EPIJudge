@@ -29,6 +29,8 @@ struct HashTuple {
 
 bool IsPatternContainedInGrid(const vector<vector<int>>& grid,
                               const vector<int>& pattern) {
+  if (pattern.empty()) return true;
+
   for (int i = 0; i < size(grid); ++i) {
     for (int j = 0; j < size(grid[i]); ++j) {
       if (IsPatternSuffixContainedStartingAtXY(

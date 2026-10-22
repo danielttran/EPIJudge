@@ -1,6 +1,27 @@
 {
-  "explanation": "Recursively constrain each key to the inclusive bounds inherited from its ancestors. Tighten the upper bound when descending left and the lower bound when descending right.",
-  "timeComplexity": "O(n)",
-  "spaceComplexity": "O(h) recursion stack",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/IsTreeABst.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "explanation": "Recursively carry an inclusive lower and upper bound from all ancestors. Reject a key outside that interval; narrow the upper bound for the left subtree and the lower bound for the right.",
+  "timeComplexity": "O(n): each node is checked once, with constant bound work. Each node contributes one range check and each pending branch lies along a traversal path.",
+  "spaceComplexity": "O(h) call stack for height h. Traversal frames hold a node and two bounds along pending branches.",
+  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/IsTreeABst.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/).",
+  "correctness": "Each call’s interval is the intersection of its ancestor constraints. Passing the parent key as an inclusive endpoint preserves precisely the required constraints for each child, including duplicates. Both recursive results must hold, so a locally plausible but globally misplaced descendant is rejected.",
+  "walkthrough": "For level order [6,6,9,null,null,8,9], the left 6 satisfies the upper bound 6. The right 9 and its children 8 and 9 lie within their inclusive ancestor ranges. Return true. The walkthroughCase uses the judge’s JSON input format and expected observation.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        6,
+        6,
+        9,
+        null,
+        null,
+        8,
+        9
+      ]
+    ],
+    "expected": true
+  },
+  "edgeCases": [
+    "Empty trees are valid.",
+    "Equal keys are permitted on either side.",
+    "The initial bounds include the full key type range; no ±1 adjustment can overflow."
+  ]
 }

@@ -1,6 +1,32 @@
 {
   "explanation": "Sort meetings by start and compare consecutive intervals. A meeting starting before the previous one ends requires a second room.",
-  "timeComplexity": "O(n log n) time for n meetings.",
-  "spaceComplexity": "O(n) auxiliary space.",
-  "attribution": "Original repository-authored Blind75 JavaScript algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used."
+  "timeComplexity": "O(n log n) time for n meetings. Sorting by start dominates the n-1 adjacent comparisons.",
+  "spaceComplexity": "O(n) auxiliary space. A separate sorted sequence holds n interval records or references.",
+  "attribution": "Original repository-authored Blind75 JavaScript algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used.",
+  "correctness": "After sorting by start, any overlap involves an adjacent conflicting pair: if a meeting starts before an earlier meeting ends, then the latest preceding start also witnesses some overlap when all preceding adjacent pairs were compatible. Checking each consecutive end/start boundary therefore detects exactly whether one person can attend all meetings.",
+  "walkthrough": "For meetings [0,2],[2,5],[6,9], the second begins exactly when the first ends, and the third begins after the second ends. No positive-duration overlap exists, so return true.",
+  "edgeCases": [
+    "An end time equal to the next start is allowed.",
+    "The input need not be sorted.",
+    "Empty or singleton schedules are always attendable."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          0,
+          2
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          6,
+          9
+        ]
+      ]
+    ],
+    "expected": true
+  }
 }

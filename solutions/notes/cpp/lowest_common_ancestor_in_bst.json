@@ -1,6 +1,29 @@
 {
-  "explanation": "Given the two selected nodes in value order, descend until the current BST value lies between their values. A smaller value forces both targets right; a larger value forces both left. Return the original split node.",
-  "timeComplexity": "O(h) query time for height h.",
-  "spaceComplexity": "O(1) auxiliary query space.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/lowest_common_ancestor_in_bst.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "If both target values are smaller, descend left; if both are larger, descend right. The first node whose value lies between the targets is their split point or one target itself. The callable returns the original node reference; the wrapper displays its data.",
+  "timeComplexity": "O(h), where h is the tree height. Each comparison moves downward, so at most h nodes are examined using constant cursor storage.",
+  "spaceComplexity": "O(1). Only the current node and target comparisons are needed.",
+  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/lowest_common_ancestor_in_bst.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice.",
+  "correctness": "If both target values lie below a node, their common ancestor must be in its left subtree; the symmetric rule holds above it. The first node between the ordered target values either equals a target or splits their search paths, making it their lowest common ancestor.",
+  "walkthrough": "For BST [10,5,15,2,7,12,20] and targets 2 and 7, both targets are below 10, so descend to 5. Since 2≤5≤7, that node is the split point and the result is 5. JSON arguments are [tree,sData,bData]. Native wrappers resolve both target values to nodes before calling the three-node function.",
+  "edgeCases": [
+    "The ancestor may equal either target.",
+    "The ordered targets are promised to identify existing nodes.",
+    "A skewed BST may require visiting its full height."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        10,
+        5,
+        15,
+        2,
+        7,
+        12,
+        20
+      ],
+      2,
+      7
+    ],
+    "expected": 5
+  }
 }

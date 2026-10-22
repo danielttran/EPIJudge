@@ -1,16 +1,17 @@
 {
   "explanation": "Scan characters once, extending a token through letters and valid internal punctuation. Normalize each completed token to lowercase and increment its dictionary entry.",
   "correctness": "Each maximal sequence satisfying the disclosed token grammar is emitted once. Lowercasing maps permitted case variants to the same dictionary key, and one increment per token gives its occurrence count.",
-  "walkthrough": "For \"Owls fly; OWLS don't crawl. Fly-by owls!\", punctuation ends tokens but internal apostrophes and letter-surrounded hyphens remain. Lowercasing combines Owls, OWLS and owls into count 3. The other keys are fly, don't, crawl and fly-by, each counted once under the disclosed bank policy.",
+  "walkthrough": "For \"Owls fly; OWLS don't crawl. Fly-by owls!\", punctuation ends tokens but internal apostrophes and letter-surrounded hyphens remain. Lowercasing combines Owls, OWLS and owls into count 3. The other keys are fly, don't, crawl and fly-by, each counted once under the disclosed bank policy. Construct WordCloudData from the input string and inspect WordsToCounts; the displayed dictionary is the exposed property, not a constructor return value. Dictionary order is irrelevant.",
   "edgeCases": [
     "Empty text",
     "mixed case",
     "internal apostrophes/hyphens",
     "repeated punctuation",
-    "leading/trailing punctuation."
+    "leading/trailing punctuation.",
+    "Empty text yields an empty dictionary. red--blue splits into red and blue; a letter-surrounded apostrophe or single hyphen remains inside a token."
   ],
-  "timeComplexity": "O(n) time for n text characters.",
-  "spaceComplexity": "O(n) result storage; one growing dictionary plus the current token.",
+  "timeComplexity": "Expected O(n) time: tokenization, lowercase conversion and hashing examine O(n) total characters. The dictionary performs one expected constant-time update per token after hashing.",
+  "spaceComplexity": "O(n) worst-case storage for dictionary keys and current token; an implementation that materializes all matches also stores O(n) matched characters.",
   "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
   "walkthroughCase": {
     "arguments": [

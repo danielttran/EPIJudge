@@ -1,6 +1,20 @@
 {
-  "explanation": "Use Pascal’s identity C(n,k)=C(n−1,k)+C(n−1,k−1), stopping at k=0 or k=n. Memoize the recursive results in a two-dimensional table. The file also includes a separate space-efficient alternative.",
-  "timeComplexity": "O(n(k+1)) time for the called memoized implementation.",
-  "spaceComplexity": "O(n(k+1)) table space and O(n) recursion space.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/binomial_coefficients.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "Use Pascal’s recurrence C(n,k)=C(n−1,k)+C(n−1,k−1), memoizing repeated subproblems. Choosing zero or all items has exactly one outcome.",
+  "timeComplexity": "O((n+1)(k+1)) upper bound for memo states; each state has two transitions. Multiplicative implementations take min(k,n−k) factors; Pascal-recursive implementations instead memoize pairs of parameters.",
+  "spaceComplexity": "O((n+1)(k+1)) memo storage and O(n) recursion. Python’s function-level cache persists across calls. Multiplicative variants store only a running result and loop index; Pascal variants retain memoized parameter pairs.",
+  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/binomial_coefficients.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice.",
+  "correctness": "Partition k-subsets by whether they contain a fixed item. Excluding it yields C(n−1,k), including it yields C(n−1,k−1), and the cases are disjoint and exhaustive. Thus cached sums are exact by induction.",
+  "walkthrough": "For C(5,2), combine C(4,2)=6 and C(4,1)=4 to obtain 10. Shared states such as C(3,1)=3 are computed once and reused. The walkthroughCase uses the judge’s JSON input format and expected observation.",
+  "edgeCases": [
+    "The valid domain is integer 0≤k≤n.",
+    "k=0 or k=n returns one.",
+    "Fixed-width result types require a representable binomial coefficient."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      5,
+      2
+    ],
+    "expected": 10
+  }
 }

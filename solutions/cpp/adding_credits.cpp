@@ -71,16 +71,21 @@ struct SerializationTrait<Operation>
 
 void ClientsCreditsInfoTester(const std::vector<Operation>& ops) {
   ClientsCreditsInfo credits;
+  std::unordered_map<std::string, std::int64_t> expected_credits;
   for (std::size_t index = 0; index < ops.size(); ++index) {
     const Operation& operation = ops[index];
     if (operation.op == "ClientsCreditsInfo") {
       credits = ClientsCreditsInfo{};
+      expected_credits.clear();
     } else if (operation.op == "insert") {
       credits.Insert(operation.s_arg, operation.i_arg);
+      expected_credits[operation.s_arg] = operation.i_arg;
     } else if (operation.op == "add_all") {
       credits.AddAll(operation.i_arg);
+      for (auto& entry : expected_credits) entry.second += operation.i_arg;
     } else if (operation.op == "remove") {
       const int actual = credits.Remove(operation.s_arg) ? 1 : 0;
+      expected_credits.erase(operation.s_arg);
       if (actual != operation.i_arg) {
         throw TestFailure("Removal existence differs from its expected result.")
             .WithProperty(PropertyName::COMMAND, operation)
@@ -95,9 +100,16 @@ void ClientsCreditsInfoTester(const std::vector<Operation>& ops) {
       }
     } else if (operation.op == "max") {
       const std::string actual = credits.Max();
-      if (actual != operation.s_arg) {
+      const auto selected = expected_credits.find(actual);
+      bool valid = expected_credits.empty() ? actual.empty() : selected != expected_credits.end();
+      if (valid && !expected_credits.empty()) {
+        for (const auto& entry : expected_credits) {
+          if (entry.second > selected->second) valid = false;
+        }
+      }
+      if (!valid) {
         throw TestFailure(
-            "The maximum-credit client differs from its expected result.")
+            "Max must return an existing maximal-credit client, or empty when no clients exist.")
             .WithProperty(PropertyName::COMMAND, operation)
             .WithMismatchInfo(index, operation.s_arg, actual);
       }

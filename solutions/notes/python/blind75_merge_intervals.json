@@ -1,6 +1,45 @@
 {
   "explanation": "Sort intervals by start. Merge each interval into the last result when their closed ranges touch or overlap; otherwise start a new result range.",
-  "timeComplexity": "O(n log n) time for n intervals.",
-  "spaceComplexity": "O(n) auxiliary and output space.",
-  "attribution": "Original repository-authored Blind75 Python algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used."
+  "timeComplexity": "O(n log n) time for n intervals. Sorting n intervals dominates the linear merge scan.",
+  "spaceComplexity": "O(n) auxiliary and output space. The sorted sequence and independent result rows each require O(n) storage.",
+  "attribution": "Original repository-authored Blind75 Python algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used.",
+  "correctness": "Sort by the left endpoint so a later interval cannot overlap any completed output range except the last one. Merging overlapping or touching ranges preserves their union; starting a new range when separated preserves disjointness. The final output is therefore exactly the input union.",
+  "walkthrough": "For [[5,9],[1,3],[3,6],[12,14]], sorting starts with [1,3]. Touching [3,6] extends it to [1,6], then [5,9] extends it to [1,9]. The separated [12,14] remains, giving [[1,9],[12,14]].",
+  "edgeCases": [
+    "Intervals may arrive unsorted.",
+    "Nested intervals do not shorten an existing merged range.",
+    "Equal endpoints are included and merge when they touch."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          5,
+          9
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          3,
+          6
+        ],
+        [
+          12,
+          14
+        ]
+      ]
+    ],
+    "expected": [
+      [
+        1,
+        9
+      ],
+      [
+        12,
+        14
+      ]
+    ]
+  }
 }

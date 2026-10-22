@@ -1,15 +1,16 @@
 {
   "explanation": "Move one pointer by one link and another by two. They meet exactly when a reachable cycle exists.",
   "correctness": "Without a cycle the faster pointer reaches null. Within a cycle its relative position advances by one per iteration and eventually equals the slower pointer.",
-  "walkthrough": "For values [2,2,9] with tail link -1, the last node points to null. The repeated payload 2 does not imply a cycle: the two nodes are different objects. The fast pointer reaches the end, so return false.",
+  "walkthrough": "For values [2,2,9] with tail link -1, the last node points to null. The repeated payload 2 does not imply a cycle: the two nodes are different objects. The fast pointer reaches the end, so return false. JSON supplies [listValues,tailLinkIndex]; -1 means a null tail. The callable receives only the constructed entry node and returns a boolean based on node identity.",
   "edgeCases": [
     "Empty entry",
     "self-loop",
     "equal values without a cycle",
-    "noncyclic prefix."
+    "noncyclic prefix.",
+    "An empty entry returns false. A node pointing to itself returns true; distinct nodes with equal values do not constitute a cycle."
   ],
-  "timeComplexity": "O(n) time for n reachable node objects.",
-  "spaceComplexity": "O(1) auxiliary space.",
+  "timeComplexity": "O(n) time: an acyclic fast pointer reaches null after at most n links; after entering a cycle, the relative offset advances by one and meets within at most n more steps.",
+  "spaceComplexity": "O(1) auxiliary space: two node references, with no visited set.",
   "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
   "walkthroughCase": {
     "arguments": [

@@ -10,6 +10,8 @@ CharWithFrequency = collections.namedtuple('CharWithFrequency', ('c', 'freq'))
 
 
 def huffman_encoding(symbols: List[CharWithFrequency]) -> float:
+    if not symbols:
+        return 0.0
     class BinaryTree:
         def __init__(self, aggregate_freq, s, left=None, right=None):
             self.aggregate_freq = aggregate_freq

@@ -223,18 +223,34 @@ public static class JudgeAdapters
                     return true;
                 }
             case "adding_credits":
-                foreach (var (op, text, value) in Arg<List<(string, string, int)>>(a, 0))
-                    switch (op)
-                    {
-                        case "ClientsCreditsInfo": s.Initialize(); break;
-                        case "insert": s.Insert(text, value); break;
-                        case "remove": Check((bool)s.Remove(text) == (value == 1)); break;
-                        case "lookup": Check((int)s.Lookup(text) == value); break;
-                        case "add_all": s.AddAll(value); break;
-                        case "max": Check((string)s.Max() == text); break;
-                        default: throw new InvalidDataException(op);
-                    }
-                return true;
+                {
+                    // Independent oracle: never use the submitted Lookup to validate Max.
+                    var expectedCredits = new Dictionary<string, long>();
+                    foreach (var (op, text, value) in Arg<List<(string, string, int)>>(a, 0))
+                        switch (op)
+                        {
+                            case "ClientsCreditsInfo": s.Initialize(); expectedCredits.Clear(); break;
+                            case "insert": s.Insert(text, value); expectedCredits[text] = value; break;
+                            case "remove":
+                                Check((bool)s.Remove(text) == (value == 1));
+                                expectedCredits.Remove(text);
+                                break;
+                            case "lookup": Check((int)s.Lookup(text) == value); break;
+                            case "add_all":
+                                s.AddAll(value);
+                                foreach (var client in expectedCredits.Keys.ToArray()) expectedCredits[client] += value;
+                                break;
+                            case "max":
+                                string actual = s.Max();
+                                Check(expectedCredits.Count == 0
+                                    ? actual == ""
+                                    : actual is not null && expectedCredits.TryGetValue(actual, out long credit)
+                                        && credit == expectedCredits.Values.Max());
+                                break;
+                            default: throw new InvalidDataException(op);
+                        }
+                    return true;
+                }
             case "lru_cache":
                 foreach (var (op, key, value) in Arg<List<(string, int, int)>>(a, 0))
                     switch (op)

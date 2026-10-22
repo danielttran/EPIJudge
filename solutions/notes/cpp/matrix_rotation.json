@@ -1,6 +1,37 @@
 {
-  "explanation": "Process concentric square layers. For each position on a layer’s top edge, rotate the corresponding four positions around that layer clockwise, using only temporary scalar values.",
-  "timeComplexity": "O(n^2) time for an n-by-n square.",
-  "spaceComplexity": "O(1) auxiliary space.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/matrix_rotation.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "Rotate each concentric layer through four-way exchanges. Save the four corresponding cells, then move bottom-left to top-left, bottom-right to bottom-left, top-right to bottom-right, and top-left to top-right.",
+  "timeComplexity": "O(n²): Θ(n²) cells take part in constant-sized exchanges. Every cell moves a constant number of times and no second matrix is allocated.",
+  "spaceComplexity": "O(1): only indices and four saved values are needed. All exchanges occur within existing rows, using only a constant number of temporary values.",
+  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/matrix_rotation.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice.",
+  "correctness": "Each exchange maps every participating original position (r,c) to (c,n−1−r). The layer loops cover each noncentral cell in exactly one four-cycle, so the whole matrix rotates clockwise without overwriting an unsaved value.",
+  "walkthrough": "For [[1,3],[5,7]], the one four-cycle moves 1 to top-right, 3 to bottom-right, 7 to bottom-left, and 5 to top-left. The matrix becomes [[5,1],[7,3]]. JSON arguments are [matrix]. The observed output is the mutated matrix, including for native callables whose return type is void/None.",
+  "edgeCases": [
+    "The matrix is square.",
+    "A one-cell matrix is unchanged.",
+    "No replacement rows or second matrix are needed."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          1,
+          3
+        ],
+        [
+          5,
+          7
+        ]
+      ]
+    ],
+    "expected": [
+      [
+        5,
+        1
+      ],
+      [
+        7,
+        3
+      ]
+    ]
+  }
 }

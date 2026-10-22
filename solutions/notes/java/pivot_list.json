@@ -1,6 +1,27 @@
 {
-  "explanation": "Build less-than, equal-to and greater-than chains using the original nodes. Terminate the greater-than chain, then concatenate the three chains in order.",
-  "timeComplexity": "O(n)",
-  "spaceComplexity": "O(1) beyond three sentinels",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/PivotList.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "explanation": "Append each original node to one of three chains based on its comparison to the pivot. After processing all nodes, terminate the greater chain and concatenate less, equal and greater chains.",
+  "timeComplexity": "O(n). Classify each original node once and join three chains.",
+  "spaceComplexity": "O(1); only three sentinel nodes are allocated. Three chains require only fixed head/tail pointers or sentinel nodes.",
+  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/PivotList.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/).",
+  "correctness": "Each processed node is appended once to its unique comparison group, preserving relative order within that group. Original next links allow traversal to continue until all nodes are classified. Finally terminating the greater tail and connecting the three tails overwrites stale cross-group links, leaving every original node exactly once in partition order.",
+  "walkthrough": "For nodes [6,2,5,2,8] with x=5, append 2 and 2 to the less chain, 5 to equal, and 6 then 8 to greater. Joining them gives [2,2,5,6,8]. The judge validates the returned node chain rather than asking the algorithm to return a boolean. The executable case’s true result is the judge adapter verdict; the callable returns the tree/node/list of moves/random sample described above.",
+  "edgeCases": [
+    "An empty list returns null.",
+    "Empty less/equal/greater groups are joined through their sentinels.",
+    "All-equal nodes remain in one acyclic chain.",
+    "Every original node is reused; sentinels are excluded from the result."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        6,
+        2,
+        5,
+        2,
+        8
+      ],
+      5
+    ],
+    "expected": true
+  }
 }

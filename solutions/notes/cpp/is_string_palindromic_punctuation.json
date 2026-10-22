@@ -1,6 +1,20 @@
 {
-  "explanation": "Move inward from both ends, skipping non-alphanumeric characters. Compare the remaining characters after the native lowercase conversion, rejecting the first unequal pair.",
-  "timeComplexity": "O(n) time.",
-  "spaceComplexity": "O(1) auxiliary space.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/is_string_palindromic_punctuation.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "Move byte indices inward, skipping characters rejected by the current C locale’s isalnum. Convert byte arguments to unsigned char before cctype calls, then compare tolower results. This is byte/locale processing, not Unicode decoding.",
+  "timeComplexity": "O(n) time. Each index moves inward at most n positions, including skipped punctuation.",
+  "spaceComplexity": "O(1) auxiliary space. Only indices and temporary normalized characters are stored.",
+  "attribution": "Original reference source: epi_judge_cpp_solutions/is_string_palindromic_punctuation.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice. The displayed copy includes local contract or boundary corrections; the upstream reference file is preserved.",
+  "correctness": "Skipping non-alphanumeric characters preserves precisely the sequence the contract asks to compare. The remaining two-pointer comparisons check mirrored members of that sequence after case normalization, so all and only normalized palindromes are accepted.",
+  "walkthrough": "For \"R2, r!\", ignore the comma, space and exclamation mark and normalize R to r. The remaining sequence is \"r2r\", whose mirrored letters agree, so return true.",
+  "walkthroughCase": {
+    "arguments": [
+      "R2, r!"
+    ],
+    "expected": true
+  },
+  "edgeCases": [
+    "A string containing only ignored characters is a palindrome.",
+    "Digits remain significant.",
+    "Mixed letter case is normalized before comparing.",
+    "Character positions in this implementation are UTF-8 bytes, not user-perceived grapheme clusters."
+  ]
 }

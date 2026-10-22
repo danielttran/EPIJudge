@@ -12,6 +12,7 @@ public class Arbitrage {
 
   public static boolean isArbitrageExist(List<List<Double>> graph) {
 
+    if (graph.isEmpty()) return false;
     // Transforms each edge in graph.
     for (List<Double> edgeList : graph) {
       for (int i = 0; i < edgeList.size(); i++) {

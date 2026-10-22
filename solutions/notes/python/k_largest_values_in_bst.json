@@ -1,6 +1,32 @@
 {
-  "explanation": "Traverse the BST in reverse inorder: right subtree, node, left subtree. This visits keys in nonincreasing order, so stop as soon as k values have been collected.",
-  "timeComplexity": "O(h + k) time for height h.",
-  "spaceComplexity": "O(h) auxiliary space, plus O(k) output space.",
-  "attribution": "Unmodified reference from epi_judge_python_solutions/k_largest_values_in_bst.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice."
+  "explanation": "Traverse the BST in reverse inorder: right subtree, node, left subtree. This visits keys in nonincreasing order, so stop as soon as k values have been collected. Recursive calls carry the shared result list and stop once its size reaches k.",
+  "timeComplexity": "O(h + k) time for height h. The initial descent is at most h edges, followed by at most k emitted nodes and their traversal work.",
+  "spaceComplexity": "O(h) auxiliary space, plus O(k) output space. The traversal keeps at most height-sized pending nodes and a k-element result.",
+  "attribution": "Unmodified reference from epi_judge_python_solutions/k_largest_values_in_bst.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice.",
+  "correctness": "Reverse inorder visits every right-subtree key before its root and then its left-subtree keys, so BST values appear in nonincreasing order. Stopping after k visits therefore returns exactly the k largest keys.",
+  "walkthrough": "For [7,3,11,1,5,9,13], reverse inorder begins 13,11,9,7. With k=3, stop after [13,11,9]. The walkthroughCase uses the judge’s JSON input format and expected observation.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        7,
+        3,
+        11,
+        1,
+        5,
+        9,
+        13
+      ],
+      3
+    ],
+    "expected": [
+      13,
+      11,
+      9
+    ]
+  },
+  "edgeCases": [
+    "Stop before traversing unnecessary smaller subtrees.",
+    "k=0 returns an empty result when supplied.",
+    "Preserve repeated keys if the EPI BST input permits them."
+  ]
 }

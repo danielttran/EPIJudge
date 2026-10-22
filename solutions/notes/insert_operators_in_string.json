@@ -1,7 +1,7 @@
 {
   "explanation": "Try every next digit block, treating its digits as one concatenated number. At each block boundary try addition or multiplication. Track the last multiplicative term so multiplication replaces that term in the running total, preserving operator precedence.",
-  "timeComplexity": "O(3^n) time in the worst case for n digits.",
-  "spaceComplexity": "O(n) recursion space.",
+  "timeComplexity": "O(3^n) search nodes under fixed-width arithmetic: each digit boundary ultimately means concatenate, + or *, and prefix work sums geometrically over the search tree. BigInt arithmetic additionally depends on operand widths.",
+  "spaceComplexity": "O(n) recursive frames with a constant number of numeric accumulators each. For unbounded BigInt values, bit storage also grows with the digit count.",
   "attribution": "Original C# implementation and explanation authored for EPI Practice from the displayed problem contract.",
   "correctness": "Every digit partition is reached by choosing the end of each next block, and every allowed operator choice is explored at its boundary. total is the expression value so far and lastTerm is its final multiplicative term. Multiplication replaces lastTerm by lastTerm×value, preserving ordinary precedence. Thus a successful leaf is exactly an allowed expression with the target value.",
   "walkthrough": "For digits [4,2,3] and target 10, choose the blocks 4,2,3. After 4+2, total=6 and lastTerm=2. Appending ×3 changes the total to 6−2+2×3=10, so return true.",

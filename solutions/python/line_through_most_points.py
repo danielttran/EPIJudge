@@ -25,7 +25,7 @@ def find_line_with_most_points(points: List[Point]) -> int:
             else:
                 x_diff, y_diff = p1.x - p2.x, p1.y - p2.y
                 gcd = math.gcd(x_diff, y_diff)
-                x_diff, y_diff = x_diff / gcd, y_diff / gcd
+                x_diff, y_diff = x_diff // gcd, y_diff // gcd
                 if x_diff < 0:
                     x_diff, y_diff = -x_diff, -y_diff
                 slope_table[(x_diff, y_diff)] += 1

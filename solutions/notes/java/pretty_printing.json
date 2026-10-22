@@ -1,6 +1,25 @@
 {
-  "explanation": "For each word ending a prefix, consider every final line that fits. Add its squared unused spaces to the best preceding prefix cost; the final line is charged like every other line.",
-  "timeComplexity": "O(n\u00b2) worst case",
-  "spaceComplexity": "O(n)",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/PrettyPrinting.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "explanation": "Store the best messiness for each nonempty prefix. For each final word, try placing it alone or extending its final line backward while words and separating spaces fit. Add that line’s squared unused width to the best preceding prefix; charge the last line too.",
+  "timeComplexity": "O(n²) in the worst case. There are at most n final-line endpoints and n starting words to consider for each; the DP stores one cost per prefix.",
+  "spaceComplexity": "O(n). One optimal cost is retained per word-prefix; line lengths are scanned using scalar counters.",
+  "attribution": "Original EPIJudge reference source: epi_judge_java_solutions/epi/PrettyPrinting.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/). Local boundary or iterator-safety correction authored for EPI Practice. The displayed copy includes local contract or boundary corrections; the upstream reference file is preserved.",
+  "correctness": "Every wrapping of a prefix has a final line beginning at some word. The backward loop considers exactly all fitting final-line starts. Combining its cost with the optimal previous prefix is both feasible and no more expensive than any wrapping with that start. Minimizing these alternatives proves the prefix optimum by induction; empty input costs zero.",
+  "walkthrough": "For words [\"we\",\"build\",\"small\"] and width 8, \"we build\" uses all 8 columns and costs 0. The final line \"small\" leaves 3 spaces and costs 9. Separating \"we\" and \"build\" would already cost 36+9, so the minimum total is 9. The walkthroughCase uses the judge’s JSON input format and expected observation.",
+  "edgeCases": [
+    "No words need no lines and cost 0.",
+    "A line containing multiple words includes one space per gap.",
+    "The last line contributes messiness too.",
+    "The problem requires each individual word to fit the line width."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        "we",
+        "build",
+        "small"
+      ],
+      8
+    ],
+    "expected": 9
+  }
 }

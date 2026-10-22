@@ -1,7 +1,7 @@
 {
   "explanation": "For each neighboring word pair, add the first differing character's ordering edge; reject a longer word before its own prefix. Topologically sort all seen characters and reject cycles.",
-  "timeComplexity": "O(W + S + E + V log(V + 1)) expected time for W words, S input characters, V distinct characters and E distinct precedence edges.",
-  "spaceComplexity": "O(S + V + E) auxiliary space, including concatenated input characters.",
+  "timeComplexity": "O(W + S + E + V log(V + 1)) expected time for W words, S input characters, V distinct characters and E distinct precedence edges. Reading words and comparing adjacent pairs costs O(W+S); each distinct edge is processed once and each character enters and leaves the ordered ready set once.",
+  "spaceComplexity": "O(S + V + E) auxiliary space, including concatenated input characters. The graph stores V vertices and E distinct edges; this implementation also concatenates input characters.",
   "attribution": "Original EPI Practice C# implementation, reusing and refining the repository-authored Blind75 algorithm fixtures. Collection membership follows Crackr; no external solution service is used.",
   "correctness": "The first differing characters in adjacent sorted words give a necessary alphabet precedence edge; later characters cannot affect that comparison. A longer word before its own prefix is impossible. Any topological ordering of all seen characters satisfies every extracted comparison, while a cycle proves no alphabet can satisfy them all.",
   "walkthrough": "Words [\"ca\",\"cb\",\"da\",\"db\"] require a before b and c before d. One valid character order is \"abcd\"; using it keeps all four words sorted. The algorithm’s smallest-ready-character rule returns that order.",
@@ -12,7 +12,14 @@
     "Several different alphabet orders may be valid."
   ],
   "walkthroughCase": {
-    "arguments": [["ca", "cb", "da", "db"]],
+    "arguments": [
+      [
+        "ca",
+        "cb",
+        "da",
+        "db"
+      ]
+    ],
     "expected": "abcd"
   }
 }

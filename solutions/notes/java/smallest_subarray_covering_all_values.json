@@ -1,6 +1,32 @@
 {
-  "explanation": "Map each keyword to its required sequence position. Track the latest occurrence and shortest sequentially covering interval ending at each keyword, extending only an interval for the preceding keyword.",
-  "timeComplexity": "O(n+k) expected dictionary operations, plus string hashing",
-  "spaceComplexity": "O(k)",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/SmallestSubarrayCoveringAllValues.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "explanation": "For each keyword position retain its latest occurrence and the shortest covering-prefix length ending there. A match at position j extends the previous keyword state by the gap between occurrences. Check the result whenever the final keyword matches.",
+  "timeComplexity": "O(n + k) expected time for n paragraph entries and k distinct keywords. Each paragraph word updates at most one state after O(k) keyword indexing. The entry-count bound treats word hashing/comparison as constant; include examined character lengths when words are unbounded.",
+  "spaceComplexity": "O(k) auxiliary space. There are O(k) keyword indices and prefix states.",
+  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/SmallestSubarrayCoveringAllValues.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/).",
+  "correctness": "For each keyword prefix, the saved state represents the latest possible start of a valid occurrence sequence ending at its latest occurrence. Extending the preceding state adds exactly the index gap, preserving that start. A later valid start never hurts any future extension, so discarding older starts is safe. Checking each completion of the final keyword therefore finds a shortest interval.",
+  "walkthrough": "For [elm,oak,cedar,elm,oak,ash,pine] and [elm,oak,ash], elm at 3 resets its prefix length to 1. Oak at 4 gets length 1+(4−3)=2. Ash at 5 gets length 2+(5−4)=3, so return inclusive interval (3,5). The wrapper observes length 3. The callable returns inclusive zero-based endpoints. The executable walkthrough expected value is their length after the wrapper checks the required keyword sequence.",
+  "edgeCases": [
+    "Keywords are distinct and the supplied corpus guarantees a covering interval.",
+    "Repeated paragraph matches must allow a newer, shorter prefix to replace an older one.",
+    "A single keyword gives a one-entry interval; ties may use any shortest valid interval."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        "elm",
+        "oak",
+        "cedar",
+        "elm",
+        "oak",
+        "ash",
+        "pine"
+      ],
+      [
+        "elm",
+        "oak",
+        "ash"
+      ]
+    ],
+    "expected": 3
+  }
 }

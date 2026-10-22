@@ -1,6 +1,24 @@
 {
-  "explanation": "Use two indices around the unclassified portion. Advance over an even value at the left; otherwise swap that odd value with the rightmost unclassified value and shrink the right boundary.",
-  "timeComplexity": "O(n) time.",
-  "spaceComplexity": "O(1) auxiliary space.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/even_odd_array.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "Use two boundaries around the unclassified region. Advance the left boundary past evens; move an odd at the left boundary to the right end and shrink the right boundary. Reinspect any value swapped in from the right.",
+  "timeComplexity": "O(n+1): each step advances the left boundary or retreats the right boundary.",
+  "spaceComplexity": "O(1): two indices and temporary swap values; the same array/list is rearranged.",
+  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/even_odd_array.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice.",
+  "correctness": "Every value before the left boundary is even and every value after the right boundary is odd. An even at the left boundary extends the even region. An odd can be swapped into the right boundary because it belongs in the odd region; the incoming value stays unclassified. Each step shrinks the unknown interval. When at most one value remains, either parity fits between the two regions, proving the partition.",
+  "walkthrough": "For [3,2,−5,4], swap the left odd 3 with the right value 4, obtaining [4,2,−5,3]. Advance past even 4 and even 2. The remaining −5 already belongs before the final odd 3. The judge checks even-before-odd order and preserved occurrences, not one unique permutation; the walkthrough expected value true denotes this property check.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        3,
+        2,
+        -5,
+        4
+      ]
+    ],
+    "expected": true
+  },
+  "edgeCases": [
+    "Negative odd integers belong in the odd region.",
+    "Empty, all-even and all-odd arrays already satisfy the property.",
+    "Relative order inside the groups is not required."
+  ]
 }

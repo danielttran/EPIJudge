@@ -1,6 +1,27 @@
 {
-  "explanation": "Save the next node before pointing the current node back to the reversed prefix. After the scan, the previous node is the new head. All nodes are reused.",
-  "timeComplexity": "O(n).",
-  "spaceComplexity": "O(1).",
-  "attribution": "Unmodified reference from epi_judge_python_solutions/reverse_list.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice."
+  "explanation": "Use a sentinel whose next link is the reversed prefix. Remove the current head of the remaining input and prepend it to that prefix. Python evaluates all right-hand expressions before assigning, so the original next link is saved by the simultaneous assignment.",
+  "timeComplexity": "O(n+1): each of n nodes is visited once and performs a constant number of link updates.",
+  "spaceComplexity": "O(1) auxiliary space: one sentinel node and a fixed number of references.",
+  "attribution": "Unmodified reference from epi_judge_python_solutions/reverse_list.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice.",
+  "correctness": "Before each step the prefix contains exactly the already visited nodes in reverse order, and the suffix contains the remaining nodes in original order. Saving the suffix successor prevents losing it when changing the current link. Prepending the current node preserves the invariant and shortens the suffix by one. When the suffix is empty, the prefix contains every original node in reverse order; its last link is null.",
+  "walkthrough": "For original nodes 3 → 8 → −2, first redirect 3 to null, then 8 to 3, then −2 to 8. The reversed prefix grows [3], [8,3], [−2,8,3]. Return the original node containing −2, which is now the head.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        3,
+        8,
+        -2
+      ]
+    ],
+    "expected": [
+      -2,
+      8,
+      3
+    ]
+  },
+  "edgeCases": [
+    "An empty list returns null.",
+    "One node is its own reversed head, with next=null.",
+    "Save the original successor before overwriting a link; otherwise the remaining list becomes unreachable."
+  ]
 }

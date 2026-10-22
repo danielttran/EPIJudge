@@ -1,14 +1,15 @@
 {
-  "explanation": "XOR all array entries with every integer in 1..n. All required single occurrences cancel, leaving the extra occurrence.",
-  "correctness": "Every required integer appears once in each XOR group and cancels. The duplicated integer has one unmatched extra occurrence.",
-  "walkthrough": "XOR [3,1,4,2,3] with the required range [1,2,3,4]. One occurrence of every required key cancels, leaving the extra 3. No overflowing arithmetic sum is formed.",
+  "explanation": "XOR every array entry, then XOR every integer in the promised range 1..n. Each required occurrence cancels its matching range occurrence, leaving the extra value.",
+  "correctness": "Associativity and commutativity let matching values cancel because x XOR x=0. The input is exactly the range multiset plus one extra occurrence, so cancellation leaves that occurrence. No large sum or multiplication is formed.",
+  "walkthrough": "For [3,1,4,2,3], XOR the input values, then XOR 1,2,3,4 because n=4. One copy of every required value cancels its range partner; the extra 3 remains, so return 3. The algorithm uses XOR rather than a sum formula.",
   "edgeCases": [
     "Minimum valid array",
     "duplicate at endpoints of range",
-    "large n without sum overflow."
+    "large n without sum overflow.",
+    "[1,1] returns 1. The promise includes every value 1..n and exactly one extra occurrence; the more general pigeonhole problem has a different contract."
   ],
-  "timeComplexity": "O(n) time.",
-  "spaceComplexity": "O(1) auxiliary space.",
+  "timeComplexity": "O(n) time: process the n+1 input entries; the range sum is constant-time arithmetic, or an additional n XOR operations in the XOR variants.",
+  "spaceComplexity": "O(1) auxiliary space: scalar accumulator and range/loop variables, with no input mutation.",
   "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
   "walkthroughCase": {
     "arguments": [

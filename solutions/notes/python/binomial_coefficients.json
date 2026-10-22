@@ -1,6 +1,20 @@
 {
-  "explanation": "Use Pascal\u2019s recurrence C(n,k)=C(n\u22121,k)+C(n\u22121,k\u22121), with boundary value one. The function-level memoization cache reuses computed pairs, including across calls.",
-  "timeComplexity": "O(S) new memoized states; at most O(nk) for a fresh query",
-  "spaceComplexity": "O(S_total) retained cache over the function lifetime, plus O(n) recursion",
-  "attribution": "Unmodified reference from epi_judge_python_solutions/binomial_coefficients.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice."
+  "explanation": "Use Pascal’s recurrence C(n,k)=C(n−1,k)+C(n−1,k−1), memoizing repeated subproblems. Choosing zero or all items has exactly one outcome.",
+  "timeComplexity": "O((n+1)(k+1)) upper bound for memo states; each state has two transitions. Multiplicative implementations take min(k,n−k) factors; Pascal-recursive implementations instead memoize pairs of parameters.",
+  "spaceComplexity": "O((n+1)(k+1)) memo storage and O(n) recursion. Python’s function-level cache persists across calls. Multiplicative variants store only a running result and loop index; Pascal variants retain memoized parameter pairs.",
+  "attribution": "Unmodified reference from epi_judge_python_solutions/binomial_coefficients.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice.",
+  "correctness": "Partition k-subsets by whether they contain a fixed item. Excluding it yields C(n−1,k), including it yields C(n−1,k−1), and the cases are disjoint and exhaustive. Thus cached sums are exact by induction.",
+  "walkthrough": "For C(5,2), combine C(4,2)=6 and C(4,1)=4 to obtain 10. Shared states such as C(3,1)=3 are computed once and reused. The walkthroughCase uses the judge’s JSON input format and expected observation.",
+  "edgeCases": [
+    "The valid domain is integer 0≤k≤n.",
+    "k=0 or k=n returns one.",
+    "Fixed-width result types require a representable binomial coefficient."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      5,
+      2
+    ],
+    "expected": 10
+  }
 }

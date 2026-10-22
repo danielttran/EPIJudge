@@ -1,6 +1,32 @@
 {
-  "explanation": "Sort intervals by right endpoint. Whenever the most recent visit misses an interval, place a new visit at that interval\u2019s right endpoint, covering it and as many later intervals as possible.",
-  "timeComplexity": "O(n log n)",
-  "spaceComplexity": "O(n) worst-case sorting workspace",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/MinimumPointsCoveringIntervals.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "explanation": "Sort closed intervals by their right endpoints. When the most recent chosen point does not cover the next interval, choose that interval’s right endpoint; this also reaches as far right as possible for later intervals.",
+  "timeComplexity": "O(n log n) Sorting by right endpoint dominates the single greedy scan.",
+  "spaceComplexity": "O(n) for sorting C#/JavaScript and C++ hold a sorted copy; Python/Java sorting can require O(n) temporary storage.",
+  "attribution": "Original EPIJudge reference source: epi_judge_java_solutions/epi/MinimumPointsCoveringIntervals.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/). Local correctness/empty-input fixes and explanation audit authored for EPI Practice; upstream reference files are unchanged. The displayed copy includes local contract or boundary corrections; the upstream reference file is preserved.",
+  "correctness": "For the unhit interval with earliest right endpoint, every feasible cover must choose some point inside it. Moving that point to its right endpoint cannot uncover any later-ending interval it previously hit. Thus selecting that endpoint is safe, and repeating on remaining unhit intervals yields a minimum cover.",
+  "walkthrough": "For closed intervals [1,2], [2,5] and [6,9], choose point 2 for the first interval; it also hits the second at its endpoint. Point 9 hits the third, giving 2 visits.",
+  "edgeCases": [
+    "Closed intervals include both endpoints.",
+    "Nested intervals may all share one chosen point.",
+    "No intervals requires zero visits."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          6,
+          9
+        ]
+      ]
+    ],
+    "expected": 2
+  }
 }

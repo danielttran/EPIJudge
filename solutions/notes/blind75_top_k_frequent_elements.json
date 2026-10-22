@@ -1,7 +1,7 @@
 {
   "explanation": "Group equal values, sort the groups by descending frequency, and return the first k keys. The contract guarantees a unique top-k set.",
-  "timeComplexity": "O(n + u log u) time for n values and u distinct values.",
-  "spaceComplexity": "O(n + u) auxiliary space for grouping and sorting, plus O(k) output.",
+  "timeComplexity": "O(n + u log u) time for n values and u distinct values. Counting consumes n values; ordering u frequency records costs O(u log(u+1)); taking k keys costs O(k).",
+  "spaceComplexity": "O(n + u) auxiliary space for grouping and sorting, plus O(k) output. Grouping retains occurrences and sorting retains group references; the returned array stores k keys.",
   "attribution": "Original EPI Practice C# implementation, reusing and refining the repository-authored Blind75 algorithm fixtures. Collection membership follows Crackr; no external solution service is used.",
   "correctness": "Grouping counts every occurrence of each distinct value. Sorting groups by descending count places all more frequent values first. Selecting the first k groups therefore returns exactly the top-k set; the promised strict boundary removes ambiguity about membership.",
   "walkthrough": "For [4,4,4,7,7,9] and k=2, frequencies are 4→3,7→2,9→1. Descending frequency order is 4,7,9, so the top two values are [4,7], in either accepted order.",
@@ -11,7 +11,20 @@
     "The kth frequency must exceed the next frequency when another value exists."
   ],
   "walkthroughCase": {
-    "arguments": [[4, 4, 4, 7, 7, 9], 2],
-    "expected": [4, 7]
+    "arguments": [
+      [
+        4,
+        4,
+        4,
+        7,
+        7,
+        9
+      ],
+      2
+    ],
+    "expected": [
+      4,
+      7
+    ]
   }
 }

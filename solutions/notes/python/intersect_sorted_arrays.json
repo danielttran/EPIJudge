@@ -1,6 +1,34 @@
 {
-  "explanation": "Visit each distinct value in the first sorted array and test membership in the second array. This direct implementation uses linear list membership checks.",
-  "timeComplexity": "O(mn) worst case",
-  "spaceComplexity": "O(min(m,n)) output; O(1) other storage",
-  "attribution": "Unmodified reference from epi_judge_python_solutions/intersect_sorted_arrays.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice."
+  "explanation": "Visit A in sorted order, considering only the first occurrence of each value. For each such value, linearly search B and append it exactly when present.",
+  "timeComplexity": "O(m+u·n), where m=len(A), n=len(B), and u is the number of distinct A values; each membership test scans B. Worst case O(mn). Two-pointer variants advance each pointer at most its input length; membership variants separately count one B scan per distinct A value.",
+  "spaceComplexity": "O(1) auxiliary space, plus O(min(m,n)) output space. Apart from the returned distinct intersection, only loop indices and current values are needed.",
+  "attribution": "Unmodified reference from epi_judge_python_solutions/intersect_sorted_arrays.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice.",
+  "correctness": "Sorted A places duplicates consecutively, so comparing with the previous entry considers each distinct value once. Membership in B is precisely the remaining condition for intersection. Appending in A order produces an increasing, duplicate-free result.",
+  "walkthrough": "For A=[1,1,4,8] and B=[0,1,4,4,9], test the first 1 and emit it; skip the second 1. Membership finds 4, so emit it once. B does not contain 8. Return [1,4].",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        1,
+        1,
+        4,
+        8
+      ],
+      [
+        0,
+        1,
+        4,
+        4,
+        9
+      ]
+    ],
+    "expected": [
+      1,
+      4
+    ]
+  },
+  "edgeCases": [
+    "Either input may be empty.",
+    "Repeated values appear only once in the result.",
+    "Output order is increasing, not arbitrary."
+  ]
 }

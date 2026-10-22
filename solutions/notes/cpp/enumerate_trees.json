@@ -1,6 +1,34 @@
 {
-  "explanation": "Choose every possible left-subtree size, recursively generate the left and right shapes, and clone each pair into a new root. Independent cloned nodes ensure that different returned trees do not share mutable nodes. The wrapper serializes shapes for comparison.",
-  "timeComplexity": "O(n Cn) construction time for the nth Catalan number Cn; wrapper serialization/sorting adds comparison overhead.",
-  "spaceComplexity": "O(n Cn) space including returned trees and temporary subtree collections.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/enumerate_trees.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "For every possible left-subtree size, recursively generate all left and right shapes and combine every pair under a new root. Zero nodes contributes one null tree. The method returns roots; the wrapper serializes each root into full breadth-first 1/0 shape markers. C++ clones both children for each pair to preserve unique ownership; returned trees do not share nodes.",
+  "timeComplexity": "O(n·Cₙ) safe upper bound, including enumeration and wrapper serialization of Cₙ shapes with n nodes each; subproblems are recomputed rather than memoized. There are Cₙ ordered shapes and each observed encoding has 2n+1 markers.",
+  "spaceComplexity": "O(n·Cₙ) upper bound including all returned trees and temporary subtree families; recursion depth is O(n). Returned shapes/encodings dominate storage; recursion depth is bounded by n.",
+  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/enumerate_trees.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice.",
+  "correctness": "Every nonempty ordered binary tree has one left-subtree size and one ordered pair of subtree shapes. Trying every size and pair generates it exactly once by induction; the null tree is the base case. Wrapper serialization preserves null-child positions, distinguishing left-only from right-only trees.",
+  "walkthrough": "With two nodes, left size 0 combines null with a leaf, and left size 1 combines a leaf with null. Return these two roots. The wrapper observes [1,0,1,0,0] and [1,1,0,0,0], respectively; these marker arrays are not the method return type.",
+  "edgeCases": [
+    "Zero nodes returns a list containing a null root; the wrapper encodes it as [0].",
+    "Left and right subtrees are ordered: mirror-image shapes are different.",
+    "Do not return marker arrays from the native tree-returning callable."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      2
+    ],
+    "expected": [
+      [
+        1,
+        0,
+        1,
+        0,
+        0
+      ],
+      [
+        1,
+        1,
+        0,
+        0,
+        0
+      ]
+    ]
+  }
 }

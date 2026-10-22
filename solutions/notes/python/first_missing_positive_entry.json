@@ -1,6 +1,25 @@
 {
-  "explanation": "Place each value v in the range 1 through n at index v\u22121. Ignore values outside that range and stop on duplicates. The first index whose value is misplaced gives the smallest missing positive. This rearranges the supplied array.",
-  "timeComplexity": "O(n) time: each swap places a value in its final slot.",
-  "spaceComplexity": "O(1) auxiliary space.",
-  "attribution": "Unmodified reference from epi_judge_python_solutions/first_missing_positive_entry.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice."
+  "explanation": "Place each value v in the range 1 through n at index v−1. Ignore values outside that range and stop on duplicates. The first index whose value is misplaced gives the smallest missing positive. This rearranges the supplied array.",
+  "timeComplexity": "O(n) time: each swap places a value in its final slot. Each successful swap fixes a previously unfilled destination; there are at most n such destinations.",
+  "spaceComplexity": "O(1) auxiliary space. The placement loop uses constant workspace; C++ additionally receives a by-value O(n) array copy.",
+  "attribution": "Unmodified reference from epi_judge_python_solutions/first_missing_positive_entry.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice.",
+  "correctness": "A swap places a valid value v into its unique destination v−1, and already correct destinations are never displaced by a different value. After all swaps, every present value in 1..n occupies its destination. The first mismatching destination is therefore the smallest missing positive.",
+  "walkthrough": "For [4,1,0,2,2], placing 4 and then 2 changes the array to [1,2,0,4,2]. Index 2 does not contain 3, so return 3.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        4,
+        1,
+        0,
+        2,
+        2
+      ]
+    ],
+    "expected": 3
+  },
+  "edgeCases": [
+    "Duplicates must stop a swap loop instead of swapping forever.",
+    "Ignore zero, negatives and values greater than n.",
+    "If every value 1..n appears, the answer is n+1."
+  ]
 }

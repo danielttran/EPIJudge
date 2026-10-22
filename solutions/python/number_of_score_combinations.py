@@ -5,6 +5,8 @@ from test_framework import generic_test
 
 def num_combinations_for_final_score(final_score: int,
                                      individual_play_scores: List[int]) -> int:
+    if not individual_play_scores:
+        return int(final_score == 0)
 
     # One way to reach 0.
     num_combinations_for_score = [[1] + [0] * final_score

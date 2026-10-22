@@ -1,6 +1,41 @@
 {
-  "explanation": "Copy the original matrix. For every destination cell, scan its original row and original column; clear it if either contains zero. Reading only the copy prevents newly written zeros from propagating, and writing individual cells preserves row objects.",
-  "timeComplexity": "O(R C (R+C)) worst-case time for R rows and C columns.",
-  "spaceComplexity": "O(R C) auxiliary space for the copied matrix.",
-  "attribution": "Original repository-authored Blind75 Java algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used."
+  "explanation": "Copy the original matrix. For every destination cell, inspect its entire original row and column; write zero if either contained a zero. The snapshot prevents newly written zeros from triggering additional clearing.",
+  "timeComplexity": "O(RC(R+C)) worst-case time: each of RC cells searches up to C entries of its snapshot row and R entries of its column, in addition to an O(RC) copy.",
+  "spaceComplexity": "O(RC) auxiliary space for the deep row snapshot. This implementation does not meet the optional constant-space optimization goal.",
+  "attribution": "Original repository-authored Blind75 Java algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used.",
+  "correctness": "The contract clears cell (r,c) exactly when some original cell in row r or column c is zero. The snapshot preserves those original values, and the two searches test exactly that condition. Writes affect only existing cells, preserving the outer matrix and row identities.",
+  "walkthrough": "For [[1,5,0],[6,7,8]], every cell in row 0 sees the original zero. Cell (1,2) sees it in column 2, while (1,0) and (1,1) see no original zero in their row or column. The final matrix is [[0,0,0],[6,7,0]]. The method returns no value; the wrapper displays the mutated input. The callable returns no value; expected records the original matrix after mutation, and the harness additionally checks row identity.",
+  "edgeCases": [
+    "A matrix with no zeros is unchanged.",
+    "Multiple zeros may mark the same row or column.",
+    "Cells change in place while original row identities remain intact."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          1,
+          5,
+          0
+        ],
+        [
+          6,
+          7,
+          8
+        ]
+      ]
+    ],
+    "expected": [
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        6,
+        7,
+        0
+      ]
+    ]
+  }
 }

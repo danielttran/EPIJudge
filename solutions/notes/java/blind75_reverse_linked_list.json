@@ -1,6 +1,27 @@
 {
-  "explanation": "Gather references to the original nodes, reverse their reference order, and relink them consecutively. The returned chain therefore reuses exactly the original nodes with their values unchanged.",
-  "timeComplexity": "O(n) time for n nodes.",
-  "spaceComplexity": "O(n) auxiliary node-reference storage.",
-  "attribution": "Original repository-authored Blind75 Java algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used."
+  "explanation": "Collect references to the original nodes in an array, reverse that array, then relink consecutive entries and terminate the last node with null. The array changes order; node values and identities remain intact.",
+  "timeComplexity": "O(n): collecting n references, reversing them, and writing n next links are linear passes.",
+  "spaceComplexity": "O(n) auxiliary space for the array of original-node references; no replacement output nodes are created.",
+  "attribution": "Original repository-authored Blind75 Java algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used.",
+  "correctness": "The collected array contains every original node exactly once in list order. Reversing it gives precisely the desired reverse order. Linking each entry to its successor and the last to null yields an acyclic list using exactly those nodes, with the original tail as head.",
+  "walkthrough": "For original nodes [4,9,1], collect their references as [node4,node9,node1], reverse to [node1,node9,node4], then set next links 1→9→4→null. Return the original node1, serialized as [1,9,4]. Expected serializes the returned list; the harness separately checks that every output node is an original node with its original value.",
+  "edgeCases": [
+    "An empty list returns null.",
+    "One node remains linked to null.",
+    "All returned nodes must be the original nodes with unchanged values."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        4,
+        9,
+        1
+      ]
+    ],
+    "expected": [
+      1,
+      9,
+      4
+    ]
+  }
 }

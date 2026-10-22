@@ -1,6 +1,23 @@
 {
   "explanation": "Record the stream values in a hash set, then scan nonnegative integers from zero. The first absent candidate satisfies the contract; negative stream values do not affect the scan.",
-  "timeComplexity": "O(n) expected",
-  "spaceComplexity": "O(n)",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "timeComplexity": "O(n) expected Set scanning checks at most n+1 candidates; bucket variants perform two full passes and fixed-size scans.",
+  "spaceComplexity": "O(n) Set entries, bucket arrays and Python tee buffering are explicitly accounted for above.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "The set contains every input value. Scanning from zero stops only at an absent nonnegative integer, so the returned value satisfies the required range and absence condition. With n supplied values, some candidate among 0 through n must be absent.",
+  "walkthrough": "For [0,1,3], candidates 0 and 1 are present and 2 is absent. Return 2; the structural adapter independently verifies that it is nonnegative and not in the input.",
+  "edgeCases": [
+    "Repeated input values do not block additional candidates.",
+    "An empty stream can return zero.",
+    "Negative values do not change which nonnegative candidates are absent."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        0,
+        1,
+        3
+      ]
+    ],
+    "expected": true
+  }
 }

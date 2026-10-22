@@ -1,6 +1,26 @@
 {
-  "explanation": "Choose a random pivot and partition larger values before it. Continue only on the side containing rank k\u22121; duplicates count separately. The array is rearranged.",
-  "timeComplexity": "O(n) expected; O(n\u00b2) worst case",
-  "spaceComplexity": "O(1) auxiliary",
-  "attribution": "Unmodified reference from epi_judge_python_solutions/kth_largest_in_array.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice."
+  "explanation": "Choose a pivot from the current interval, swap it to the end, move all strictly larger entries to the front, and put the pivot at its descending rank. Continue only on the side containing rank k-1. The array is rearranged.",
+  "timeComplexity": "Expected O(n) for random pivot partitions on distinct keys; O(n²) worst case, including all-equal inputs because the partition moves only strictly larger values. Java uses a fixed random seed, so no per-input randomness guarantee is implied. Each partition scans its active interval once; balanced reductions sum geometrically while repeatedly removing one element sums quadratically.",
+  "spaceComplexity": "O(1) auxiliary space. Partitioning swaps within the supplied array and keeps only indices/pivot values.",
+  "attribution": "Unmodified reference from epi_judge_python_solutions/kth_largest_in_array.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice.",
+  "correctness": "Partitioning leaves all strictly larger values before the pivot and all other values after it. Thus the pivot’s index is one valid position in descending order, counting equal entries separately. Comparing that index with k-1 safely discards the opposite side until the requested rank is found.",
+  "walkthrough": "For k=3 and [4,10,7,10,2], consider a pivot selection of 7. Partitioning places two 10s before 7 and values 4,2 after it, so its new index is 2=k-1 and the result is 7. Other random pivots change the intermediate trace but not the answer.",
+  "walkthroughCase": {
+    "arguments": [
+      3,
+      [
+        4,
+        10,
+        7,
+        10,
+        2
+      ]
+    ],
+    "expected": 7
+  },
+  "edgeCases": [
+    "Count equal values separately in the ranking.",
+    "The method rearranges the supplied array.",
+    "k=1 and k=n request the maximum and minimum respectively."
+  ]
 }

@@ -1,17 +1,40 @@
 {
   "explanation": "Put the head of each nonempty list into a min-priority queue. Repeatedly remove the smallest node, enqueue its successor, and link that original node into the result.",
-  "timeComplexity": "O(k + N log(k + 1)) time for k lists and N total nodes, including scanning empty list heads.",
-  "spaceComplexity": "O(k) auxiliary space.",
+  "timeComplexity": "O(k + N log(k + 1)) time for k lists and N total nodes, including scanning empty list heads. Scanning k heads costs O(k); each of N nodes is inserted and removed from a heap of at most k heads.",
+  "spaceComplexity": "O(k) auxiliary space. At most one pending node per input list is stored in the heap; output nodes are reused.",
   "attribution": "Original EPI Practice C# implementation, reusing and refining the repository-authored Blind75 algorithm fixtures. Collection membership follows Crackr; no external solution service is used.",
   "correctness": "The priority queue contains the smallest remaining node of every nonempty source list. Its minimum is therefore the smallest node remaining overall. Removing it and adding its successor preserves that invariant. Linking each removed original node once yields the complete sorted chain without identity substitution.",
-  "walkthrough": "For lists [1,7],[2,5],[],[3,9], initial candidates are 1,2,3. Remove 1 and expose 7; then remove 2 and expose 5. Continuing with the smallest candidates produces [1,2,3,5,7,9].",
+  "walkthrough": "For lists [1,7],[2,5],[],[3,9], initial candidates are 1,2,3. Remove 1 and expose 7; then remove 2 and expose 5. Continuing with the smallest candidates produces [1,2,3,5,7,9]. Expected serializes the returned list; the harness separately checks that every output node is an original node with its original value.",
   "edgeCases": [
     "The collection of lists may be empty or contain empty lists.",
     "Duplicate values are retained as separate original nodes.",
     "Only the next node from each source needs to be in the priority queue."
   ],
   "walkthroughCase": {
-    "arguments": [[[1, 7], [2, 5], [], [3, 9]]],
-    "expected": [1, 2, 3, 5, 7, 9]
+    "arguments": [
+      [
+        [
+          1,
+          7
+        ],
+        [
+          2,
+          5
+        ],
+        [],
+        [
+          3,
+          9
+        ]
+      ]
+    ],
+    "expected": [
+      1,
+      2,
+      3,
+      5,
+      7,
+      9
+    ]
   }
 }

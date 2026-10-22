@@ -1,6 +1,25 @@
 {
-  "explanation": "Scan positions still reachable and extend the furthest reachable index using each position\u2019s maximum advance. Stop when the destination is reached or the reachable prefix ends.",
-  "timeComplexity": "O(n)",
-  "spaceComplexity": "O(1)",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/AdvanceByOffsets.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "explanation": "Track the farthest reachable position while scanning only reachable indices. A jump length is a maximum, so any intermediate position is also reachable. Check whether the current jump covers the remaining distance before adding it to the index; this both detects success and avoids overflowing the index sum.",
+  "timeComplexity": "O(n+1): each index is examined at most once, and the boundary update uses constant work.",
+  "spaceComplexity": "O(1) auxiliary space: an index and a reach boundary, without modifying the input.",
+  "attribution": "Original Java greedy implementation independently authored for EPI Practice from the displayed reachability contract. The remaining-distance check avoids index-addition overflow. Original upstream reference files remain unchanged under the repository LICENSE.",
+  "correctness": "After processing reachable positions, the stored boundary is the greatest position reachable using those positions. Every index up to the boundary is reachable because a jump may choose any smaller distance up to its maximum. Processing the next reachable index extends this interval to the maximum of its old end and the new reach. If the next index lies beyond the boundary, no later position can be reached to extend it, proving failure. Reaching or passing the final index proves success, since a shorter allowed jump can land exactly on it. Comparing the jump with destination−position is equivalent to comparing their sum with destination. When that check fails, the sum is strictly below destination and cannot overflow.",
+  "walkthrough": "For [2,0,1,0], index 0 reaches every position through index 2. Index 1 has jump 0 and does not extend the boundary. Index 2 is reachable and has jump 1, so it reaches index 3. Return true. In contrast, [1,0,1] stops at index 1; the jump at unreachable index 2 cannot help.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        2,
+        0,
+        1,
+        0
+      ]
+    ],
+    "expected": true
+  },
+  "edgeCases": [
+    "An empty array returns true by the bank convention; a singleton is already at its final position.",
+    "A zero jump blocks progress only if no earlier reachable position can jump past it.",
+    "[1,2147483647,0] is reachable: index 1 can jump to the final index without overflowing an intermediate sum.",
+    "The jump length is a maximum, not a required exact distance."
+  ]
 }

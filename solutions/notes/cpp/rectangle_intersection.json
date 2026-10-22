@@ -1,6 +1,36 @@
 {
   "explanation": "Intersect the horizontal and vertical coordinate intervals separately. Compute both upper edges in signed 64-bit arithmetic before choosing the smaller upper edge; use the larger lower coordinate. Touching edges count as intersections in this EPI contract, so zero dimensions are retained. A disjoint pair returns (0,0,-1,-1).",
-  "timeComplexity": "O(1) time.",
-  "spaceComplexity": "O(1) auxiliary space.",
-  "attribution": "Original EPI Practice C++ implementation, independently authored from the public EPI problem contract and the repository-authored C# algorithm. Uses the unchanged local EPI Judge serialization and test framework APIs; upstream reference sources are not modified."
+  "timeComplexity": "O(1). Four endpoint comparisons and constant arithmetic determine the intersection.",
+  "spaceComplexity": "O(1). Only four endpoints and the returned rectangle are stored.",
+  "attribution": "Original EPI Practice C++ implementation, independently authored from the public EPI problem contract and the repository-authored C# algorithm. Uses the unchanged local EPI Judge serialization and test framework APIs; upstream reference sources are not modified.",
+  "correctness": "A point is inside both rectangles exactly when its x coordinate lies in both horizontal intervals and its y coordinate lies in both vertical intervals. Taking the maximum lower endpoints and minimum upper endpoints computes those intersections. A strictly negative resulting extent means disjointness; zero extent is retained because touching is allowed.",
+  "walkthrough": "Intersect (-2,1,7,4) and (1,-1,6,4). The common x interval is [1,5] and common y interval is [1,3]. Therefore the result is (1,1,4,2): lower-left (1,1), width 4 and height 2.",
+  "edgeCases": [
+    "Touching edges produce zero width or height.",
+    "Disjoint rectangles return exactly (0,0,-1,-1).",
+    "Long endpoint arithmetic prevents overflow near int limits.",
+    "One rectangle may wholly contain the other."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        -2,
+        1,
+        7,
+        4
+      ],
+      [
+        1,
+        -1,
+        6,
+        4
+      ]
+    ],
+    "expected": [
+      1,
+      1,
+      4,
+      2
+    ]
+  }
 }

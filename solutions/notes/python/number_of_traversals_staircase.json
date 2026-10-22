@@ -1,6 +1,20 @@
 {
-  "explanation": "Memoize the number of ways to each remaining height. Sum the ways after taking every allowed first step, with one way to finish at height zero.",
-  "timeComplexity": "O(t\u00b7min(t,k)) for height t and maximum step k",
-  "spaceComplexity": "O(t) cache and recursion",
-  "attribution": "Unmodified reference from epi_judge_python_solutions/number_of_traversals_staircase.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice."
+  "explanation": "Memoize the number of ordered climbs to height h. Sum the counts for h−1 through h−maximum_step, stopping at zero. Heights zero and one each have one climb when positive step sizes are allowed.",
+  "timeComplexity": "O(top·min(top,maximum_step)): each height is computed once and tries the allowed final steps. The sliding window changes in O(1) per height; recursive versions explicitly sum up to maximum_step predecessor states.",
+  "spaceComplexity": "O(top) memo storage and O(top) recursion. Counts are stored for heights 0 through top; recursive variants also retain at most top frames.",
+  "attribution": "Unmodified reference from epi_judge_python_solutions/number_of_traversals_staircase.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice.",
+  "correctness": "Partition climbs by their last step i. Removing it produces a unique climb to h−i, and every such smaller climb can be extended by i. Summing these disjoint possibilities yields the exact count, with the empty climb giving one at zero.",
+  "walkthrough": "For top 5 and maximum step 2, the counts at stairs 0 through 5 are 1,1,2,3,5,8. Each new count adds the two previous ones, giving 8 ordered climbs. The walkthroughCase uses the judge’s JSON input format and expected observation.",
+  "edgeCases": [
+    "top is nonnegative and maximum_step is positive.",
+    "The empty climb at zero counts once.",
+    "Step order matters: 1 then 2 differs from 2 then 1."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      5,
+      2
+    ],
+    "expected": 8
+  }
 }

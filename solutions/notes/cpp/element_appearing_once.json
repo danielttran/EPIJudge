@@ -1,6 +1,27 @@
 {
-  "explanation": "Count set bits at each of 32 positions across all values and reduce each count modulo three. Triplicated values contribute zero modulo three, leaving the signed bit pattern of the unique value. The file also includes a two-mask alternative.",
-  "timeComplexity": "O(32n), or O(n) for fixed-width integers.",
-  "spaceComplexity": "O(32), constant auxiliary space.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/element_appearing_once.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "Count set bits separately in all 32 positions, then take each count modulo three. Triplicated numbers contribute multiples of three in every position, leaving exactly the singleton’s signed 32-bit representation.",
+  "timeComplexity": "O(32n)=O(n) time: inspect every bit of each input, then reconstruct 32 result bits. Bitmask variants update two words per input; bit-count variants inspect a fixed 32 bits.",
+  "spaceComplexity": "O(32)=O(1) auxiliary counters for the fixed 32-bit input domain. Either two masks or 32 counters are fixed-size state.",
+  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/element_appearing_once.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice.",
+  "correctness": "For each bit position, all triplicated inputs contribute a multiple of three. Its count modulo three is therefore precisely the singleton’s bit at that position. Reassembling all 32 bits recovers the unique value; Python explicitly subtracts 2^32 when the sign bit is set.",
+  "walkthrough": "In [−4,6,6,6,9,9,9], each set bit contributed by 6 or 9 occurs three times and cancels. The remaining signed bit pattern is −4.",
+  "edgeCases": [
+    "The unique integer may be negative.",
+    "Zero may be the unique integer.",
+    "The contract gives every other integer exactly three occurrences."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        -4,
+        6,
+        6,
+        6,
+        9,
+        9,
+        9
+      ]
+    ],
+    "expected": -4
+  }
 }

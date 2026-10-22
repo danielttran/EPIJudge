@@ -8,6 +8,7 @@ using std::min;
 using std::vector;
 
 int FindLongestSubarrayLessEqualK(const vector<int>& A, int k) {
+  if (A.empty()) return 0;
   // Builds the prefix sum according to A.
   vector<int> prefix_sum;
   partial_sum(cbegin(A), cend(A), back_inserter(prefix_sum));

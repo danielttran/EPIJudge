@@ -1,6 +1,33 @@
 {
-  "explanation": "Recursively concatenate the left and right subtrees\u2019 leaf-node lists. The supplied wrapper extracts their values in left-to-right order. Concatenation copies lists at ancestors.",
-  "timeComplexity": "O(nh) conservative bound for n nodes and height h",
-  "spaceComplexity": "O(n+h) pending leaf-list/recursion storage, including output",
-  "attribution": "Unmodified reference from epi_judge_python_solutions/tree_connect_leaves.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice."
+  "explanation": "Return an empty list for a missing subtree, a one-node list for a leaf, or concatenate the left subtree’s leaf list with the right subtree’s leaf list. Return references to the original leaves.",
+  "timeComplexity": "O(nh) upper bound, O(n²) worst case: list concatenation copies every subtree’s leaves; a comb-shaped tree repeats many copies. A balanced tree takes O(n log n). Append-based versions visit each node once; Python’s returned-list concatenation adds repeated copying of descendant leaf lists.",
+  "spaceComplexity": "O(n+h) peak auxiliary/output list and recursion storage; concatenations create temporary lists. Append variants use height-sized recursion plus one output per leaf; Python also creates temporary concatenated lists.",
+  "attribution": "Unmodified reference from epi_judge_python_solutions/tree_connect_leaves.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice.",
+  "correctness": "The base cases contain exactly the appropriate leaves. At an internal node, all left-subtree leaves precede all right-subtree leaves; concatenating the two correct lists therefore produces the complete left-to-right list.",
+  "walkthrough": "For [16, 7, 25, 2, 11, null, 30, null, 4], the leftmost leaf is 4 beneath node 2. Next comes leaf 11, then leaf 30 in the right subtree. Internal nodes 16, 7, 2 and 25 are not appended. Return [4, 11, 30]. The callable returns nodes and the wrapper extracts their data. The walkthroughCase uses the judge’s JSON input format and expected observation.",
+  "edgeCases": [
+    "A null tree has no leaves.",
+    "A one-node tree contributes its root as a leaf.",
+    "Different leaves with equal Data values are both retained."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        16,
+        7,
+        25,
+        2,
+        11,
+        null,
+        30,
+        null,
+        4
+      ]
+    ],
+    "expected": [
+      4,
+      11,
+      30
+    ]
+  }
 }

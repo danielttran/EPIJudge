@@ -77,20 +77,25 @@ public class AddingCredits {
   @EpiTest(testDataFile = "adding_credits.tsv")
   public static void ClientsCreditsInfoTester(List<Operation> ops) throws TestFailure {
     ClientsCreditsInfo credits = new ClientsCreditsInfo();
+    Map<String, Long> expectedCredits = new HashMap<>();
     for (int index = 0; index < ops.size(); index++) {
       Operation operation = ops.get(index);
       switch (operation.op) {
         case "ClientsCreditsInfo":
           credits = new ClientsCreditsInfo();
+          expectedCredits.clear();
           break;
         case "insert":
           credits.insert(operation.sArg, operation.iArg);
+          expectedCredits.put(operation.sArg, (long) operation.iArg);
           break;
         case "add_all":
           credits.addAll(operation.iArg);
+          expectedCredits.replaceAll((client, credit) -> credit + operation.iArg);
           break;
         case "remove": {
           int actual = credits.remove(operation.sArg) ? 1 : 0;
+          expectedCredits.remove(operation.sArg);
           if (actual != operation.iArg) {
             throw new TestFailure("Removal existence differs from its expected result.")
                 .withProperty(TestFailure.PropertyName.COMMAND, operation)
@@ -109,8 +114,15 @@ public class AddingCredits {
         }
         case "max": {
           String actual = credits.max();
-          if (!actual.equals(operation.sArg)) {
-            throw new TestFailure("The maximum-credit client differs from its expected result.")
+          Long selected = expectedCredits.get(actual);
+          boolean valid = expectedCredits.isEmpty() ? "".equals(actual) : selected != null;
+          if (valid && !expectedCredits.isEmpty()) {
+            for (long credit : expectedCredits.values()) {
+              if (credit > selected) valid = false;
+            }
+          }
+          if (!valid) {
+            throw new TestFailure("Max must return an existing maximal-credit client, or empty when no clients exist.")
                 .withProperty(TestFailure.PropertyName.COMMAND, operation)
                 .withMismatchInfo(index, operation.sArg, actual);
           }

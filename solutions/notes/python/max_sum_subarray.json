@@ -1,6 +1,25 @@
 {
-  "explanation": "Maintain the best nonnegative sum ending at the current entry. A negative suffix is discarded because it cannot improve any future subarray. Starting the answer at zero permits the empty subarray.",
-  "timeComplexity": "O(n)",
-  "spaceComplexity": "O(1)",
-  "attribution": "Unmodified reference from epi_judge_python_solutions/max_sum_subarray.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice."
+  "explanation": "Track the greatest nonempty sum ending at the current entry: either start at this entry or extend the previous suffix. Keep the overall answer at least zero to allow the empty subarray.",
+  "timeComplexity": "O(n): constant work for each entry. The scan performs two maximum comparisons per input value and stores no per-index array.",
+  "spaceComplexity": "O(1): only two running maxima are stored. Only the current suffix optimum and global optimum are stored.",
+  "attribution": "Unmodified reference from epi_judge_python_solutions/max_sum_subarray.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice.",
+  "correctness": "Every nonempty subarray ending here either is the single current value or extends a subarray ending immediately before it. Taking the larger option gives the best such suffix. Maximizing over all endings and zero gives the optimum including the empty subarray.",
+  "walkthrough": "For [−4,5,−2,3,−7], nonempty suffix maxima are −4,5,3,6,−1; the overall maxima are 0,5,5,6,6. Return 6. The walkthroughCase uses the judge’s JSON input format and expected observation.",
+  "edgeCases": [
+    "All-negative input returns zero because the empty subarray is allowed.",
+    "Empty input also returns zero.",
+    "A negative prefix must not burden a later positive run."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        -4,
+        5,
+        -2,
+        3,
+        -7
+      ]
+    ],
+    "expected": 6
+  }
 }

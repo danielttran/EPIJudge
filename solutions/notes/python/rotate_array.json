@@ -1,6 +1,32 @@
 {
-  "explanation": "An empty array needs no work. Normalize a signed right shift into 0 through n-1, reverse the entire array, then reverse the leading shifted block and the remaining block to restore the order within each block.",
-  "timeComplexity": "O(n) time.",
-  "spaceComplexity": "O(1) auxiliary space inside the rotation algorithm; the published judge wrapper makes its required O(n) array copy.",
-  "attribution": "Original Python implementation and judge wrapper independently authored for EPI Practice from the displayed rotation contract. No upstream reference implementation adapted. Public EPIJudge interface and test framework retained under the repository LICENSE."
+  "explanation": "Normalize the shift, reverse the entire array, then reverse the two pieces. This moves the final amount entries to the front while restoring order within both pieces.",
+  "timeComplexity": "O(n). Three reversals each visit at most n entries.",
+  "spaceComplexity": "O(1) additional space. Reversal uses two indices and a temporary value; any wrapper copy is outside the callable workspace.",
+  "attribution": "Original Python implementation and judge wrapper independently authored for EPI Practice from the displayed rotation contract. No upstream reference implementation adapted. Public EPIJudge interface and test framework retained under the repository LICENSE.",
+  "correctness": "Write the array as prefix P followed by the final amount entries Q. Reversing the whole array gives reverse(Q) followed by reverse(P); reversing those pieces separately produces Q followed by P. Normalizing the shift modulo length preserves the intended cyclic rotation.",
+  "walkthrough": "For [4,8,1,7,3] shifted right by 7, normalize to 2. Reverse everything to [3,7,1,8,4], reverse the first two entries to [7,3,1,8,4], then reverse the suffix to obtain [7,3,4,8,1]. Native callable order is (rotate_amount, A), while walkthrough JSON uses the judge order [A, rotate_amount].",
+  "edgeCases": [
+    "Empty input returns before taking a remainder.",
+    "Negative shifts normalize modulo length; a multiple of the length is a no-op.",
+    "The callable mutates its array and returns void/None; the judge returns the resulting array."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        4,
+        8,
+        1,
+        7,
+        3
+      ],
+      7
+    ],
+    "expected": [
+      7,
+      3,
+      4,
+      8,
+      1
+    ]
+  }
 }

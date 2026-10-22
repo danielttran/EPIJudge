@@ -1,10 +1,10 @@
 {
   "explanation": "Fill a reservoir with the first k entries. For the entry at zero-based index i, choose a random position among i+1 possibilities and replace a reservoir slot only when that position is below k. This preserves equal probability for every k-element subset.",
-  "timeComplexity": "O(n)",
-  "spaceComplexity": "O(k)",
+  "timeComplexity": "O(n). Every stream entry is inspected once and only k sample entries are retained.",
+  "spaceComplexity": "O(k). The reservoir holds k values plus counters; stream input storage is not counted as auxiliary.",
   "attribution": "Original C# implementation written for EPI Practice from the displayed contract; no upstream reference code copied.",
-  "correctness": "Initially every k-subset of the first k entries is represented. When entry i+1 arrives, it is retained with probability k/(i+1); each prior retained entry survives with probability 1\u22121/(i+1). These probabilities preserve equal likelihood for every k-subset by induction, without storing the entire stream.",
-  "walkthrough": "For stream [4,7,9] and k=2, begin with [4,7]. On seeing 9, a uniform draw among 0,1,2 replaces slot 0, replaces slot 1 or leaves the reservoir unchanged. The three resulting subsets are equally likely.",
+  "correctness": "After t entries, every k-subset has probability 1/C(t,k). Initially t=k and there is only one subset. At the next entry, an old subset survives when no slot is replaced, with probability (t+1−k)/(t+1). A desired subset containing the new entry has t+1−k possible predecessor subsets; each selects the slot of its one extra old entry with probability 1/(t+1). Both cases therefore have probability 1/C(t+1,k), proving uniformity of complete subsets, not merely equal individual inclusion probabilities.",
+  "walkthrough": "For stream [4,7,9] and k=2, begin with [4,7]. On seeing 9, a uniform draw among 0,1,2 replaces slot 0, replaces slot 1 or leaves the reservoir unchanged. The three resulting subsets are equally likely. JSON arguments are [stream,k]. C++ receives begin/end iterators; Java/Python receive one iterator; C#/JavaScript receive a list. Observed true is distribution validation, not a returned sample.",
   "edgeCases": [
     "A zero-capacity reservoir stays empty.",
     "Sampling the full stream retains every entry.",

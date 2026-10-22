@@ -9,6 +9,7 @@ using std::vector;
 
 void RookAttack(vector<vector<int>>* A_ptr) {
   vector<vector<int>>& A = *A_ptr;
+  if (A.empty() || A.front().empty()) return;
   int m = size(A), n = size(A[0]);
   bool has_first_row_zero = find(begin(A[0]), end(A[0]), 0) != end(A[0]);
   bool has_first_column_zero = any_of(

@@ -8,6 +8,8 @@ using std::max_element;
 using std::vector;
 
 int LongestNondecreasingSubsequenceLength(const vector<int>& A) {
+  if (A.empty()) return 0;
+
   // max_length[i] holds the length of the longest nondecreasing subsequence
   // of A[0, i].
   vector<int> max_length(size(A), 1);

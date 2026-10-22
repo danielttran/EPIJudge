@@ -1,6 +1,40 @@
 {
   "explanation": "Anchor a line at each point and count equal reduced integer direction vectors. Normalize the sign to combine opposite directions. Duplicate coordinates join every line through the anchor and are counted separately.",
-  "timeComplexity": "O(n\u00b2 log C), where C bounds coordinate differences",
-  "spaceComplexity": "O(n)",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "timeComplexity": "O(n² log C), where C bounds coordinate differences There are O(n²) anchor/other-point pairs; normalizing each direction uses a gcd taking O(log C) steps for coordinate difference bound C.",
+  "spaceComplexity": "O(n) One anchor’s slope map has at most n entries and is discarded before the next anchor.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "For a fixed anchor, two nonduplicate points lie on the same anchored line exactly when their gcd-reduced direction vectors agree after sign normalization. Duplicates lie on every line through that anchor and are added to each direction’s count. Choosing the earliest supplied point on an optimal line ensures its pass counts every entry on that line.",
+  "walkthrough": "For [(0,0),(0,0),(2,2),(4,4),(0,3)], the anchor (0,0) has one duplicate plus two points in direction (1,1). Including the anchor gives 4 entries on the diagonal; the last point is off that line.",
+  "edgeCases": [
+    "Repeated coordinates count as separate entries.",
+    "Vertical lines normalize to a single direction.",
+    "Opposite directions must represent the same anchored line."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          4,
+          4
+        ],
+        [
+          0,
+          3
+        ]
+      ]
+    ],
+    "expected": 4
+  }
 }

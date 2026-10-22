@@ -1,6 +1,19 @@
 {
-  "explanation": "Binary search the largest integer whose square is at most the input. Compute squared midpoints in long arithmetic so int-range inputs do not overflow the comparison.",
-  "timeComplexity": "O(log(k+1))",
-  "spaceComplexity": "O(1)",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/IntSquareRoot.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "explanation": "Binary-search the largest integer whose square does not exceed k. Use 64-bit multiplication so squaring a 32-bit candidate cannot overflow.",
+  "timeComplexity": "O(log(k + 1)) time. The initial integer interval has k+1 candidates and each comparison halves it.",
+  "spaceComplexity": "O(1) auxiliary space. A constant number of integer accumulators is retained.",
+  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/IntSquareRoot.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/).",
+  "correctness": "The inclusive search interval contains the boundary between integers whose squares are at most k and those whose squares exceed k. A feasible middle discards itself and all smaller candidates by moving left past it; an infeasible middle moves right before it. At termination left is the first infeasible integer, so left-1 is the floor root.",
+  "walkthrough": "For k=80, binary search eventually tests 8 and 9. Since 8²=64≤80 but 9²=81>80, return 8.",
+  "walkthroughCase": {
+    "arguments": [
+      80
+    ],
+    "expected": 8
+  },
+  "edgeCases": [
+    "Zero returns zero.",
+    "Perfect squares return their exact root.",
+    "Square candidates in long arithmetic to avoid overflow near int.MaxValue."
+  ]
 }

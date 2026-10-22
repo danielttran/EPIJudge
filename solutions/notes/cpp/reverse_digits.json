@@ -1,6 +1,19 @@
 {
-  "explanation": "Repeatedly take the signed remainder modulo ten and append it to a wider result while dividing the input by ten. C++ truncation toward zero preserves the sign of negative values.",
-  "timeComplexity": "O(log(|x|+1)) time.",
-  "spaceComplexity": "O(1) auxiliary space.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/reverse_digits.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "Repeatedly append x%10 to the reversed accumulator and divide x by ten. In these languages, division truncates toward zero and the remainder retains x’s sign, so negative digits build a negative result directly.",
+  "timeComplexity": "O(d) for d decimal digits. Each iteration removes one decimal digit.",
+  "spaceComplexity": "O(1). Only magnitude/current value and reversal accumulator are retained.",
+  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/reverse_digits.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice.",
+  "correctness": "The accumulator is the signed reversal of the digits already removed. Multiplying it by ten shifts those digits left and appending the signed remainder extends the reversal by one place. Truncating division removes that place from x, terminating at zero without taking an absolute value.",
+  "walkthrough": "For −1203, signed remainder digits are −3,0,−2,−1. The accumulator becomes −3,−30,−302,−3021 while truncating division removes each digit. Return −3021.",
+  "edgeCases": [
+    "Zero returns zero.",
+    "Trailing zeros disappear in the numeric reversal.",
+    "A long accumulator accommodates reversal of a 32-bit int, including its minimum value."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      -1203
+    ],
+    "expected": -3021
+  }
 }

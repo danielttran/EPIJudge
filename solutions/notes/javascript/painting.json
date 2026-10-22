@@ -1,6 +1,53 @@
 {
-  "explanation": "Breadth-first search the starting cell\u2019s same-color component. Flip a cell when it is enqueued so it cannot be enqueued twice, and explore only horizontal and vertical neighbors of its original color.",
-  "timeComplexity": "O(rows \u00d7 columns)",
-  "spaceComplexity": "O(rows \u00d7 columns)",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "explanation": "Breadth-first search the starting cell’s same-color component. Flip a cell when it is enqueued so it cannot be enqueued twice, and explore only horizontal and vertical neighbors of its original color.",
+  "timeComplexity": "O(rows × columns). Each component cell is flipped before enqueueing and considers four neighbors, preventing duplicate enqueues.",
+  "spaceComplexity": "O(rows × columns). The queue contains cells from the component; JavaScript retains its consumed queue entries until the call ends.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "Only cells matching the starting original color are enqueued, and each is flipped before enqueuing. That flip marks it visited, so no cell is processed twice. Four-neighbor expansion reaches exactly the starting component and changes no differently colored or disconnected cell.",
+  "walkthrough": "For start (0,0) in [[1,1,0],[0,1,0],[1,0,0]], the connected 1 cells are (0,0),(0,1),(1,1). Flipping them gives [[0,0,0],[0,0,0],[1,0,0]]; the isolated 1 at (2,0) remains. JSON arguments are [row,column,image], not [image,row,column]. The observed output is the mutated image; native Boolean image types are converted by their wrappers.",
+  "edgeCases": [
+    "Diagonal contact alone does not connect cells.",
+    "An isolated starting pixel is still flipped.",
+    "The starting value determines the component before any recoloring."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      0,
+      0,
+      [
+        [
+          1,
+          1,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          1,
+          0,
+          0
+        ]
+      ]
+    ],
+    "expected": [
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        0,
+        0
+      ]
+    ]
+  }
 }

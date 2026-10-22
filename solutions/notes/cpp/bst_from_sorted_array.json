@@ -1,6 +1,24 @@
 {
-  "explanation": "Choose the midpoint of a half-open sorted range as the root and recursively build the two halves. Their sizes differ by at most one, producing minimum tree height.",
-  "timeComplexity": "O(n) time.",
-  "spaceComplexity": "O(log(n+1)) recursion space, plus O(n) output nodes.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/bst_from_sorted_array.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "Choose a middle element as root and recursively build the two sorted halves. The subtree sizes differ by at most one, giving minimum height while preserving the sorted inorder sequence.",
+  "timeComplexity": "O(n). Each input entry creates exactly one node; balanced range splitting gives logarithmic recursive depth.",
+  "spaceComplexity": "O(log n) auxiliary stack, plus O(n) output nodes. Balanced recursive calls retain logarithmic depth; n new nodes form the returned tree.",
+  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/bst_from_sorted_array.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice.",
+  "correctness": "Every chosen midpoint separates smaller and larger sorted values into the left and right ranges, preserving the BST inorder contents. Splitting each range into near-equal sizes yields the smallest possible height for that number of nodes.",
+  "walkthrough": "For [2,4,6,8], choose 6 as root, build 4 with left child 2, and place 8 on the right. The inorder values are unchanged and the height is three, which the adapter returns. JSON arguments are [sortedValues]. The wrapper checks inorder equality then observes the returned tree’s node-counting height, not its root value.",
+  "edgeCases": [
+    "An empty array builds an empty tree of height zero.",
+    "Even-sized ranges use the upper middle.",
+    "The judge accepts the minimum-height structure after checking its contents."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        2,
+        4,
+        6,
+        8
+      ]
+    ],
+    "expected": 3
+  }
 }

@@ -2,6 +2,8 @@ from test_framework import generic_test
 
 
 def is_match(regex: str, s: str) -> bool:
+    if not regex:
+        return True
     def is_match_here(regex, s):
         if not regex:
             # Case (1.): Empty regex matches all strings.

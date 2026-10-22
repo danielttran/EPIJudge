@@ -1,14 +1,15 @@
 {
-  "explanation": "Interpret index-to-value links as a functional graph. Use a slow/fast meeting followed by equal-speed pointers to locate a cycle entry that is a repeated value.",
-  "correctness": "Starting at the extra index creates a path into a cycle. The entry has an incoming edge from both its cycle predecessor and the entering path, so its value appears at least twice. Floyd's second phase identifies that entry.",
-  "walkthrough": "Treat index i as pointing to numbers[i]. In [4,1,3,4,2], the path from index 0 is 0 -> 4 -> 2 -> 3 -> 4, with cycle entry 4. Slow and fast pointers meet in that cycle; moving one pointer back to 0 and advancing both identifies entry 4, a repeated array value.",
+  "explanation": "View each array entry as the next-index pointer. Run Floyd’s slow/fast search starting at numbers[0], then reset slow to that same start and advance both one step to the cycle entry.",
+  "correctness": "The path from index 0 enters a cycle because all links are in 1..n, excluding 0. Its entry has two distinct incoming source indices: the path predecessor and the cycle predecessor. Starting Floyd at numbers[0] removes the first path edge but preserves this entry (or starts directly on it). At a meeting, the faster walker has gained whole cycle lengths; resetting one walker to the chosen start makes equal-speed walkers meet at the entry.",
+  "walkthrough": "For [4,1,3,4,2], start both walkers at numbers[0]=4. After successive moves (slow,fast) is (2,3), (3,2), then (4,4). Reset slow to 4; the walkers already agree, so return 4. In the full path 0 -> 4 -> 2 -> 3 -> 4, indices 0 and 3 both point to 4, proving it is repeated.",
   "edgeCases": [
     "Cycle near the start",
     "several valid duplicate answers",
-    "values repeated more than twice."
+    "values repeated more than twice.",
+    "[1,1] returns 1; other valid inputs may contain several duplicate values, so no particular duplicate is mandated."
   ],
-  "timeComplexity": "O(n) time.",
-  "spaceComplexity": "O(1) auxiliary space.",
+  "timeComplexity": "O(n) time: Floyd’s meeting phase traverses a prefix and cycle of at most n+1 indices; the entry phase takes at most the prefix length.",
+  "spaceComplexity": "O(1) auxiliary space: a fixed number of index walkers, with no copied array or visited set.",
   "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
   "walkthroughCase": {
     "arguments": [

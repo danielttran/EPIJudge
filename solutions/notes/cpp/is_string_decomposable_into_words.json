@@ -1,6 +1,26 @@
 {
-  "explanation": "For each prefix, remember the length of its final dictionary word if a decomposition exists. Test dictionary substrings following earlier reachable prefixes. Reconstruct a valid decomposition backward from the final prefix and reverse its word list.",
-  "timeComplexity": "O(n^3) expected worst-case time including substring construction and hashing.",
-  "spaceComplexity": "O(n) prefix table, plus reconstructed output strings.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/is_string_decomposable_into_words.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "For each nonempty prefix, record the length of a dictionary word that can finish a decomposition. First test the whole prefix, then try reachable earlier word boundaries. Reconstruct backward using those lengths and reverse the words.",
+  "timeComplexity": "O(n³) worst case including substring copying and hashing: O(n²) candidate cuts can each inspect O(n) characters. There are O(n²) candidate cuts; constructing and hashing candidate substrings costs up to O(n) per cut.",
+  "spaceComplexity": "O(n) boundary lengths, transient substring characters and output characters. One predecessor or final-word length is stored per character boundary; output and transient substring characters are linear.",
+  "attribution": "Original reference source: epi_judge_cpp_solutions/is_string_decomposable_into_words.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice. Local boundary or iterator-safety correction authored for EPI Practice. The displayed copy includes local contract or boundary corrections; the upstream reference file is preserved.",
+  "correctness": "A recorded last length proves the earlier prefix is decomposable and the suffix is a dictionary word. Conversely every valid decomposition supplies such an earlier boundary. These implications prove reachability, and stepping backward by positive recorded lengths reconstructs a complete sequence.",
+  "walkthrough": "For \"sunleaf\" and {\"sun\",\"leaf\",\"sunl\"}, prefix \"sun\" becomes reachable at 3 and \"sunl\" at 4. Only the split after 3 can finish with dictionary word \"leaf\", so reconstruct [\"sun\",\"leaf\"]. JSON arguments are [domain,dictionary,canDecompose]. The last Boolean belongs only to the validator. The callable takes the first two arguments and returns words; observed true means that output satisfied the feasibility oracle.",
+  "walkthroughCase": {
+    "arguments": [
+      "sunleaf",
+      [
+        "sun",
+        "leaf",
+        "sunl"
+      ],
+      true
+    ],
+    "expected": true
+  },
+  "edgeCases": [
+    "Return an empty list when no decomposition exists.",
+    "A dictionary word may be used repeatedly.",
+    "Any valid word sequence is accepted; do not require a single predetermined split.",
+    "An empty input has the empty decomposition; the wrapper distinguishes feasibility using its separate Boolean oracle."
+  ]
 }

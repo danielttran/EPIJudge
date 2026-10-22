@@ -10,6 +10,7 @@ import re
 from pathlib import Path
 from web_problem_examples import custom_example
 import web_catalog_types as stubs
+from clarity.content import apply_question, questions as clarity_questions
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -17,22 +18,22 @@ NOTES = """
 a_b_sqrt2|Return the first k distinct numbers of the form a + b√2 in increasing order, where a and b are nonnegative integers. Include zero.
 absent_value_array|Find a nonnegative integer that does not occur in the input stream. This C# API returns int, so choose a value between 0 and int.MaxValue. Any missing value in that range is accepted.
 adding_credits|Implement a client credit database: insert replaces a client's credit, remove reports whether a client existed, lookup returns -1 for a missing client, AddAll adjusts every credit, and Max returns the ID with greatest credit (empty string if empty). Initialize resets the database.
-advance_by_offsets|Each entry is the maximum distance you can advance from that position. Determine whether the last position is reachable from the first.
+advance_by_offsets|Each nonnegative entry is the maximum forward distance you may advance from that index; you may choose any shorter forward jump. Return whether the last index is reachable from index 0. A singleton is already at its destination. By this bank's convention, empty input returns true.
 alternating_array|Rearrange the array in place so A[0] ≤ A[1] ≥ A[2] ≤ A[3] and so on. Preserve all elements.
-apply_permutation|Apply the permutation to the input values: the element originally at index i moves to index perm[i]. Return the permuted values.
+apply_permutation|Apply a permutation to an equally sized value array: the element originally at zero-based index i moves to index perm[i]. perm contains each index exactly once. Examples show the resulting sequence; the selected callable contract states whether to return it or mutate the input and return no value.
 arbitrage|Given a matrix of currency exchange rates, determine whether a cycle of exchanges can produce a profit.
 binomial_coefficients|Compute the binomial coefficient n choose k.
 bonus|Assign positive integer bonuses to employees in a line. An employee with higher productivity than an adjacent employee must receive a larger bonus. Return the minimum total bonus.
-bst_from_preorder|Reconstruct a binary search tree from its preorder traversal.
+bst_from_preorder|Reconstruct a binary search tree from the preorder traversal of a valid BST with distinct keys. Return the root; an empty traversal represents an empty tree. Preorder visits a root, then its left subtree, then its right subtree.
 bst_from_sorted_array|Build a binary search tree of minimum height from the sorted input. Return the root. The judge checks its inorder contents and height (height counts nodes).
 bst_merge|Merge the two BSTs' sorted inorder sequences, preserving duplicates, and build a balanced BST from the merged sequence. The corpus compares tree structure: for each half-open range [start, end), choose index start + (end - start) / 2 as its root and recurse on the two remaining ranges. Return the root.
 bst_to_sorted_list|Convert the BST into a sorted doubly linked list in place. Use Left as the previous link and Right as the next link. Return the head; its Left must be null.
 buy_and_sell_stock|Return the greatest profit from at most one buy followed by one sell. Return zero if no profitable transaction exists.
 buy_and_sell_stock_k_times|Return the greatest profit from at most k buy/sell transactions. You may hold at most one share at a time.
-buy_and_sell_stock_twice|Return the greatest profit from at most two buy/sell transactions, holding at most one share at a time.
+buy_and_sell_stock_twice|Given chronological nonnegative prices, return the greatest total profit from at most two completed buy/sell transactions, holding at most one share at a time. Making no transaction earns zero; empty and singleton arrays return zero. A first sale and second purchase may share a day.
 calendar_rendering|Each tuple is an event (start, finish). Return the maximum number of simultaneous events. Events touching at an endpoint overlap.
 circular_queue|Implement an integer queue using a resizable circular buffer. Initialize(capacity) resets it, Enqueue appends, Dequeue removes the oldest value, and Size reports its count. Grow the buffer when full.
-closest_int_same_weight|Return a different nonnegative integer with the same number of set bits as x, minimizing the absolute difference from x.
+closest_int_same_weight|Return a different nonnegative integer with the same number of set bits as x, minimizing the absolute difference from x. The input must have both a zero bit and a one bit within the selected callable's value-bit width; all-zero and all-one words have no distinct answer. The language-specific contract below states the width and valid range.
 collatz_checker|Check the Collatz conjecture for every integer from 1 through n: repeatedly halve even values and replace odd values by 3x+1, eventually reaching 1.
 combinations|Return every k-element subset of integers 1 through n. Order of subsets does not matter.
 convert_base|Convert the integer string from base b1 to base b2, where both bases are between 2 and 16. Preserve a leading minus sign when the number is negative. Output digits above 9 use uppercase A through F.
@@ -69,7 +70,7 @@ hanoi|Return a legal sequence of moves transferring all rings from peg 0 to peg 
 huffman_coding|Given (character, frequency) pairs, build an optimal binary Huffman code and return sum(frequency × codewordLength) / 100. This is the corpus's exact weighting convention: divide by 100, not by the sum of the supplied frequencies, even when that sum is near 1. A single symbol may have an empty codeword of length 0.
 insert_in_list|Insert a node containing the new value after the node selected by the repository's 1-based node position (position 1 is the head). Return the resulting head.
 insert_operators_in_string|Determine whether inserting multiplication and addition operators between digits, with optional digit concatenation, can produce the target. Multiplication has its usual precedence.
-int_as_array_increment|Increment a nonnegative integer represented by a most-significant-digit-first array of decimal digits.
+int_as_array_increment|Return the decimal digit sequence representing the input number plus one. Input is a nonempty, most-significant-digit-first sequence of digits 0 through 9, without leading zeros except [0]. For example, [9,9] becomes [1,0,0].
 int_as_array_multiply|Multiply two integers represented by most-significant-digit-first decimal arrays. A negative first digit encodes the sign. Return the product in the same format.
 int_as_list_add|Add two nonnegative integers represented by singly linked lists of decimal digits, least significant digit first. Return the sum in that format.
 int_square_root|Return the floor of the square root of a nonnegative integer.
@@ -145,7 +146,7 @@ online_median|Return the median after each successive stream entry. For an even 
 online_sampling|Return a uniformly random k-element sample of the stream without replacement. Every k-element subset must be equally likely.
 painting|The image contains 0 and 1 cells. Starting at row x, column y, find the component of cells with the same original value connected by horizontal or vertical steps. Flip those cells (0 to 1 and 1 to 0) and return the updated image.
 parity|Return 1 if the 64-bit integer has an odd number of set bits, otherwise 0.
-pascal_triangle|Return the first n rows of Pascal's triangle, starting with [1]. Return an empty list when n is 0.
+pascal_triangle|Return the first n rows of Pascal's triangle, starting with [1]. Each row has 1 at both ends and each interior value is the sum of its two parents in the previous row. The supported range is 0 ≤ n ≤ 34 so coefficients fit a signed 32-bit integer. Return an empty list when n is 0.
 path_sum|Determine whether a root-to-leaf path has the requested sum of node values.
 permutations|Return every permutation of the input values. Preserve each permutation's order; the order of permutations does not matter.
 phone_number_mnemonic|Return all mnemonics using uppercase telephone letters: 2→ABC, 3→DEF, 4→GHI, 5→JKL, 6→MNO, 7→PQRS, 8→TUV, 9→WXYZ. Digits 0 and 1 map to themselves. Choose one mapped character for every input digit. Output order does not matter.
@@ -171,8 +172,8 @@ remove_duplicates_from_sorted_list|Remove repeated values from a sorted singly l
 replace_and_remove|Process only the first size characters: delete each 'b' and replace each 'a' with two 'd' characters. Return the transformed characters, excluding unused buffer capacity.
 reverse_bits|Reverse all 64 bits of the integer and return the resulting bit pattern.
 reverse_digits|Reverse the decimal digits of the integer, preserving its sign.
-reverse_list|Reverse a singly linked list and return its new head.
-reverse_sublist|Reverse the list segment from start through finish, using inclusive 1-based positions. Return the head.
+reverse_list|Reverse the links of a finite acyclic singly linked list and return its new head, reusing the existing data nodes. Empty input returns null. Examples show the values reached from the returned head, not an array that your callable should return.
+reverse_sublist|Reverse the links from position start through finish and return the head, reusing the existing nodes. Positions are inclusive and 1-based, with 1 ≤ start ≤ finish ≤ list length. As an explicit empty/singleton no-op convention, the corpus also supplies start=finish=0; return those lists unchanged.
 reverse_words|Reverse the order of words separated by literal spaces, preserving each word's characters. Do not collapse repeated spaces or trim the string: reverse the order of the intervening space runs as well, exchanging leading and trailing spaces.
 road_network|Existing undirected highways H and candidate proposals P are (city0, city1, distance). Choose one proposal whose addition most reduces the sum of all-pairs shortest path distances among n cities. Return that proposal tuple; when savings tie, choose the first proposal in P. If P is empty, return (-1, -1, 0).
 roman_to_integer|Convert a string of Roman symbols I, V, X, L, C, D, and M to an integer. Subtract a symbol's value when it is smaller than the immediately following symbol; otherwise add it. Apply this arithmetic rule without validating canonical Roman-numeral spelling.
@@ -197,7 +198,7 @@ snake_string|Arrange the characters on three alternating rows in a sinusoidal pa
 sort_almost_sorted_array|Sort an array in which every entry is at most k positions from its final sorted location.
 sort_increasing_decreasing_array|Sort an array composed of alternating increasing and decreasing runs.
 sort_list|Stably sort a singly linked list in nondecreasing order and return its head. Equal-valued nodes should keep their original relative order.
-sorted_array_remove_dups|Return the distinct entries of the sorted array in increasing order.
+sorted_array_remove_dups|Remove duplicate occurrences from an array sorted in nondecreasing order, retaining one copy of each distinct value in increasing order. Examples show the resulting distinct sequence. The selected callable's contract specifies whether to return that sequence or compact the input in place and return its valid prefix length.
 sorted_arrays_merge|Merge all sorted arrays into one sorted array, preserving duplicates.
 sorted_list_to_bst|Convert a sorted doubly linked list into a BST. BinaryTreeNode.Left is the previous link and Right is the next link on input; those fields become tree children on output. Return a tree with the original inorder contents.
 sorted_lists_merge|Merge two sorted singly linked lists into one sorted list, preserving duplicates.
@@ -231,6 +232,26 @@ valid_ip_addresses|Insert three dots into the digit string to produce all valid 
 zip_list|Reorder a list L0,L1,…,Ln into L0,Ln,L1,Ln-1,… and return its head.
 """
 notes = dict(line.split('|', 1) for line in NOTES.strip().splitlines())
+TEACHING_EXAMPLES = {
+    'reverse_sublist': [
+        ('L = [10,20,30,40,50], start = 2, finish = 4', '[10,40,30,20,50]',
+         'Positions 2 through 4 contain 20,30,40. Reversing only those links gives 40,30,20; the first and last nodes stay in place.'),
+        ('L = [], start = 0, finish = 0', '[]',
+         'The empty-list 0,0 convention is a no-op. It does not make ordinary segment positions zero-based.'),
+    ],
+    'buy_and_sell_stock_twice': [
+        ('prices = [5,1,4,2,7]', '8',
+         'Buy at 1 and sell at 4 for profit 3, then buy at 2 and sell at 7 for profit 5. Total profit is 8, with no overlapping holdings.'),
+        ('prices = [7,4,1]', '0',
+         'Every later sale is at a lower price. Choosing no transactions earns zero, which is better than a loss.'),
+    ],
+    'sorted_array_remove_dups': [
+        ('A = [-2,-2,0,0,0,3]', '[-2,0,3]',
+         'Retain one occurrence of each value. C# and JavaScript return this sequence; Python, C++ and Java place it in the first three input entries and return 3.'),
+        ('A = []', '[]',
+         'There are no distinct values. Sequence-returning callables return an empty sequence; prefix-length callables return zero.'),
+    ],
+}
 COMPACT_EXAMPLES = {
  'absent_value_array': ('stream = [0, 1, 3]', '2', 'Verified illustrative example: 2 is absent. Any missing nonnegative int is accepted.'),
  'minimum_distance_3_sorted_arrays': ('sorted_arrays = [[1, 4], [2, 5], [3, 6]]', '2', 'Verified illustrative example: choosing 1, 2, and 3 gives the minimum range of 2.'),
@@ -462,7 +483,7 @@ def main():
             title += ' — ' + disambiguate[id]
         topic = re.sub(r'^(?:Chapter\s+)?\d+[.:]?\s*','',topic).capitalize()
         if topic == 'C# Additional Problems': topic = 'Additional problems'
-        constraints = ['Use the public C# signatures shown below. Run checks three visible corpus cases; Submit checks the complete corpus.']
+        constraints = ['Implement the callable shown for the selected language. Run checks three visible corpus cases; Submit checks the complete corpus.']
         if any('binary_tree' in t or 'linked_list' in t for t in p['argumentTypes']) or any('Node' in m[0]+m[2] for m in methods):
             constraints += ['Shared types: ListNode<T> has Data and Next. BinaryTreeNode<T> has Data, Left, Right, Parent, Next, and Size. Constructors take the data value. Tree inputs use compact level-order JSON with null children; linked lists use JSON arrays.']
         if id == 'copy_posting_list': constraints += ['PostingListNode has Order, Next, and Jump; its constructor takes Order.']
@@ -481,11 +502,16 @@ def main():
         if not examples and id in COMPACT_EXAMPLES:
             value, output, explanation = COMPACT_EXAMPLES[id]
             examples.append(dict(Input=value, Output=output, Explanation=explanation))
+        if id in TEACHING_EXAMPLES:
+            examples = [dict(Input=value, Output=output, Explanation=explanation)
+                        for value, output, explanation in TEACHING_EXAMPLES[id]]
         comparison = 'ordered'
         if id in {'combinations','power_set'}: comparison='nested'
         elif id in {'enumerate_balanced_parentheses','enumerate_palindromic_decompositions','enumerate_trees','k_closest_stars','k_largest_in_heap','k_largest_values_in_bst','n_queens','permutations','phone_number_mnemonic','remove_duplicates','search_frequent_items','valid_ip_addresses'}: comparison='unordered'
         result.append(dict(Id=id,Title=title,Topic=topic,Difficulty='Unrated',Description=notes[id],Constraints=constraints,Signature='\n'.join(f'{t} {n}({a})' for t,n,a in methods),StarterCode=code,Examples=examples,Invocation=invocation,ArgumentCount=len(p['argumentTypes']),TestCount=len(lines),Comparison=comparison,ResultType=p['resultType'],JsSignature=js_sig,JsStarterCode=js_code,JsInvocation=js_inv,ArgumentTypes=p['argumentTypes'],PySignature=py_sig,PyStarterCode=py_starter,PyInvocation=py_target,PySourceFile=str(source.name)))
     result.sort(key=lambda p: (p['Topic'],p['Title'],p['Id']))
+    reviewed = clarity_questions()
+    result = [apply_question(problem, reviewed) for problem in result]
     (ROOT/'EpiJudge.Runner/catalog.json').write_text(json.dumps(result,indent=2,ensure_ascii=False)+'\n',encoding='utf-8')
     (ROOT/'docs/problem-wording-sources.json').write_text(json.dumps(dict(basis='Repository reference implementations and TSV corpus; statements are C# paraphrases, not book quotations.',hashConvention='SHA-256 of UTF-8 text with LF line endings.',
         statementFiles={p:source_hash(ROOT/p) for p in ['EpiJudge.Runner/ProblemCatalog.cs','EpiJudge.Runner/catalog.json']}, problems=provenance),indent=2)+'\n',encoding='utf-8')

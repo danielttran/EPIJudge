@@ -1,6 +1,33 @@
 {
-  "explanation": "Traverse the tree left before right. Append a node only when both children are absent, producing original leaf references in left-to-right order.",
-  "timeComplexity": "O(n)",
-  "spaceComplexity": "O(h) recursion stack plus returned leaves",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/TreeConnectLeaves.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "explanation": "Traverse left before right and append only nodes with neither child. This produces the leaf values in their left-to-right order. The callable returns references to the original nodes; the wrapper extracts their data for comparison.",
+  "timeComplexity": "O(n) time. Append-based versions visit each node once; Python’s returned-list concatenation adds repeated copying of descendant leaf lists.",
+  "spaceComplexity": "O(h) recursion space plus O(l) output for l leaves. Append variants use height-sized recursion plus one output per leaf; Python also creates temporary concatenated lists.",
+  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/TreeConnectLeaves.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/).",
+  "correctness": "The recursive traversal visits every node once and appends a value exactly when that node has no children. All leaves of a left subtree appear before every leaf of its right subtree, and the recursion respects that order at every node. Thus the result contains every leaf exactly once, in left-to-right order, without including internal nodes.",
+  "walkthrough": "For [16, 7, 25, 2, 11, null, 30, null, 4], the leftmost leaf is 4 beneath node 2. Next comes leaf 11, then leaf 30 in the right subtree. Internal nodes 16, 7, 2 and 25 are not appended. Return [4, 11, 30]. The walkthroughCase uses the judge’s JSON input format and expected observation.",
+  "edgeCases": [
+    "A null tree has no leaves.",
+    "A one-node tree contributes its root as a leaf.",
+    "Different leaves with equal Data values are both retained."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        16,
+        7,
+        25,
+        2,
+        11,
+        null,
+        30,
+        null,
+        4
+      ]
+    ],
+    "expected": [
+      4,
+      11,
+      30
+    ]
+  }
 }

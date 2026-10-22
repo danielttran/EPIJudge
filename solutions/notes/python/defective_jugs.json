@@ -1,6 +1,26 @@
 {
-  "explanation": "Subtract a chosen jug\u2019s low/high bounds from the remaining target interval. Memoize remainder intervals and accept when a jug interval fits entirely inside the remaining requirement.",
-  "timeComplexity": "O(mS) for m jugs and S memoized remainder states",
-  "spaceComplexity": "O(S+D), with D the maximum recursion depth",
-  "attribution": "Unmodified reference from epi_judge_python_solutions/defective_jugs.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice."
+  "explanation": "Subtract a chosen jug’s low/high bounds from the remaining target interval. Memoize remainder intervals and accept when a jug interval fits entirely inside the remaining requirement.",
+  "timeComplexity": "O(m·S), where m is jug count and S is the number of distinct remainder intervals explored Each distinct residual state tries up to m jugs once before it is memoized.",
+  "spaceComplexity": "O(S+H/a), where H is the target high bound and a is the smallest positive jug low bound Memoized residual states and the longest sequence of positive-volume pours dominate memory.",
+  "attribution": "Adapted reference from epi_judge_python_solutions/defective_jugs.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice.",
+  "correctness": "A sequence with residual uncertainty [a,b] can follow jug [low,high] exactly when its entire interval fits [L−low,H−high]. The recursion explores every reusable next jug and caches failed residual intervals; positive jug volumes make the remaining upper bound decrease. A target containing zero is satisfied by taking no more jugs.",
+  "walkthrough": "Using a jug guaranteed to supply between 2 and 3 twice guarantees a total between 4 and 6. That entire interval lies within target [4,6], so the algorithm returns true.",
+  "edgeCases": [
+    "Zero uses satisfy a target containing zero.",
+    "Require 0<low≤high for each physical jug, so recursive subtraction makes progress.",
+    "Intervals must be wholly contained in the target, not merely overlap it."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          2,
+          3
+        ]
+      ],
+      4,
+      6
+    ],
+    "expected": true
+  }
 }

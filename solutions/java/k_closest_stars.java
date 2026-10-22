@@ -43,7 +43,7 @@ public class KClosestStars {
 
     // maxHeap to store the closest k stars seen so far.
     PriorityQueue<Star> maxHeap =
-        new PriorityQueue<>(k, Collections.reverseOrder());
+        new PriorityQueue<>(Math.max(1, k), Collections.reverseOrder());
     while (stars.hasNext()) {
       // Add each star to the max-heap. If the max-heap size exceeds k, remove
       // the maximum element from the max-heap.

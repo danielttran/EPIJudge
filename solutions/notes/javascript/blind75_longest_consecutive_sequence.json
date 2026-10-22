@@ -1,6 +1,26 @@
 {
   "explanation": "Store distinct values in a set. Start a walk only when the preceding integer is absent; each consecutive run is therefore scanned once.",
-  "timeComplexity": "O(n) expected time for n values.",
-  "spaceComplexity": "O(n) auxiliary space.",
-  "attribution": "Original repository-authored Blind75 JavaScript algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used."
+  "timeComplexity": "O(n) expected time for n values. The outer scan tests each distinct value; inner walks collectively visit each value once because only run starts launch a walk. Hash lookups are expected constant time.",
+  "spaceComplexity": "O(n) auxiliary space. The distinct-value set has at most n entries; the run counters are constant space.",
+  "attribution": "Original repository-authored Blind75 JavaScript algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used.",
+  "correctness": "Every maximal consecutive run has exactly one value with no predecessor in the set. Starting walks only at those values visits every run once. Each distinct value is charged to its own run, and the maximum recorded run length is therefore correct.",
+  "walkthrough": "For [14,10,13,11,12,11], duplicates collapse in the set. Only 10 has no predecessor among this run’s members. Walking 10,11,12,13,14 finds five consecutive values, so return 5.",
+  "edgeCases": [
+    "Duplicates do not lengthen a consecutive run.",
+    "Input order is irrelevant.",
+    "An empty input returns zero."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        14,
+        10,
+        13,
+        11,
+        12,
+        11
+      ]
+    ],
+    "expected": 5
+  }
 }

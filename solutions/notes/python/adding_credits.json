@@ -1,6 +1,71 @@
 {
-  "explanation": "Store client credits relative to a common offset. AddAll changes only that offset; insertion replaces a normalized value. Scan the current clients to answer Max without an external tree package. The reset-aware operation adapter constructs a fresh ClientsCreditsInfo for each constructor operation, clearing both stored clients and the offset.",
-  "timeComplexity": "Insert/Remove/Lookup: O(1) expected; AddAll: O(1); Max: O(n)",
-  "spaceComplexity": "O(p) retained dictionary storage for peak clients during this instance",
-  "attribution": "Original Python implementation and reset-aware operation adapter independently authored for EPI Practice from its displayed contract and independently authored C# solution; no upstream reference source adapted."
+  "explanation": "Store each client’s credit minus a global offset. Updating all credits changes only the offset; lookup adds it back. Max scans the dictionary for the greatest normalized credit.",
+  "timeComplexity": "Insert, Remove and Lookup: expected O(1); AddAll: O(1); Max: O(n), because this implementation scans all clients. The operation bounds reflect the displayed index: ordered set, randomized treap, or a Python scan for Max.",
+  "spaceComplexity": "O(n) dictionary entries. The client dictionary and any ranking index contain one entry per live client.",
+  "attribution": "Original Python implementation and reset-aware operation adapter independently authored for EPI Practice from its displayed contract and independently authored C# solution; no upstream reference source adapted.",
+  "correctness": "For every client, stored+offset equals its current credit. Inserting replaces that stored value, removal deletes it, and AddAll changes every observable credit by the same amount. Since a common offset preserves comparisons, maximizing stored credit selects a valid maximum.",
+  "walkthrough": "Insert client Nora with credit 4, then AddAll(6): Lookup(Nora) is 10. Reinsert Nora with credit 3, which replaces its absolute credit. Max is Nora; after removal Lookup is −1 and Max is empty. JSON arguments are [operations], with each operation [name,stringArg,intArg]. lookup/remove/max records carry expected observations, not extra callable parameters. Observed true means all operations validated.",
+  "edgeCases": [
+    "The mathematical Max contract permits any maximum-credit client when credits tie; Python selects the first in dictionary iteration order.",
+    "Missing lookup returns −1 and missing removal returns false.",
+    "A new instance starts empty.",
+    "The judge maintains expected credits independently and accepts any existing client with the maximum credit. No universal tie-breaker is required."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          "ClientsCreditsInfo",
+          "",
+          0
+        ],
+        [
+          "insert",
+          "Nora",
+          4
+        ],
+        [
+          "add_all",
+          "",
+          6
+        ],
+        [
+          "lookup",
+          "Nora",
+          10
+        ],
+        [
+          "insert",
+          "Nora",
+          3
+        ],
+        [
+          "lookup",
+          "Nora",
+          3
+        ],
+        [
+          "max",
+          "Nora",
+          0
+        ],
+        [
+          "remove",
+          "Nora",
+          1
+        ],
+        [
+          "lookup",
+          "Nora",
+          -1
+        ],
+        [
+          "max",
+          "",
+          0
+        ]
+      ]
+    ],
+    "expected": true
+  }
 }

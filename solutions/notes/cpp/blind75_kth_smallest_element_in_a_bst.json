@@ -1,6 +1,28 @@
 {
-  "explanation": "Materialize the complete inorder sequence recursively, then return its zero-based entry k-1. A strict BST visits keys in increasing inorder order, making this the kth smallest value.",
-  "timeComplexity": "O(n²) worst-case time for recursive inorder list concatenation/copying, followed by O(1) indexed selection.",
-  "spaceComplexity": "O(n + h) materialized values and recursion for n nodes and height h.",
-  "attribution": "Original repository-authored Blind75 C++ algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used."
+  "explanation": "Materialize the entire inorder traversal recursively, then return entry k-1. A strict BST produces increasing inorder values, making that entry the kth smallest; this implementation does not stop traversal early.",
+  "timeComplexity": "O(n squared) worst-case time: recursive inorder concatenation copies subtree values repeatedly along a skew tree; the final comparison or indexed lookup adds at most O(n).",
+  "spaceComplexity": "O(n+h) live auxiliary values and recursion frames for n nodes and height h. Completed sibling results and partial inorder arrays together hold O(n) values; cumulative allocation/copying can be quadratic.",
+  "attribution": "Original repository-authored Blind75 C++ algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used.",
+  "correctness": "Recursive inorder concatenation places all left descendants before the root and all right descendants after it. Under the strict BST promise this is a sorted list of every key exactly once. Since k is 1-based and valid, entry k-1 is precisely the requested value.",
+  "walkthrough": "For [10,4,16,2,7,13,19], build the complete inorder array [2,4,7,10,13,16,19]. With k=4, access index 3 and return 10; nodes after 10 were also traversed.",
+  "edgeCases": [
+    "k is 1-based and within the node count.",
+    "A singleton BST with k=1 returns its only value.",
+    "Even k=1 builds the full inorder array in this implementation."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        10,
+        4,
+        16,
+        2,
+        7,
+        13,
+        19
+      ],
+      4
+    ],
+    "expected": 10
+  }
 }

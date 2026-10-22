@@ -1,6 +1,28 @@
 {
-  "explanation": "XOR all indices and values to obtain missing XOR duplicate. Partition both ranges by one differing bit to isolate one of the two values. Check whether that value occurs in the input to distinguish duplicate from missing.",
-  "timeComplexity": "O(n) time.",
-  "spaceComplexity": "O(1) auxiliary space.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/search_for_missing_element.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "XOR the input with 0..n-1 to obtain missing XOR duplicate. Select a set bit to separate those two values, XOR just that bit’s partition to recover one, then use input membership to decide which is duplicated.",
+  "timeComplexity": "O(n) time. Only a constant number of full input/range scans is needed.",
+  "spaceComplexity": "O(1) auxiliary space: a few XOR accumulators and loop indices; no presence array. Presence-array variants allocate n flags; XOR variants retain only a few accumulators.",
+  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/search_for_missing_element.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice.",
+  "correctness": "Every ordinary value cancels in the full XOR, leaving only the missing and duplicate values. A set bit of their XOR differs between them, so restricting both input and expected range to that bit leaves exactly one unmatched value. Membership distinguishes duplicate from missing and XOR with the full residual recovers the other.",
+  "walkthrough": "For [0,4,2,4,1], the full XOR is 4 XOR 3=7. Its low set bit is 1. XORing odd input values and odd expected values leaves 3. Since 3 is absent, it is missing; 3 XOR 7=4 is duplicated. Return (4,3).",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        0,
+        4,
+        2,
+        4,
+        1
+      ]
+    ],
+    "expected": [
+      4,
+      3
+    ]
+  },
+  "edgeCases": [
+    "The duplicate can appear before the missing value’s expected position.",
+    "Zero may be either the duplicated or missing value.",
+    "The input contract requires exactly one duplicate and one missing member of 0..n−1."
+  ]
 }

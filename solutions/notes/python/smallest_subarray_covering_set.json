@@ -1,6 +1,31 @@
 {
-  "explanation": "Expand a sliding window while counting its required words. Once every keyword is present, advance the left edge as far as possible, recording shorter covering windows before removing each left entry.",
-  "timeComplexity": "O(n + k) expected time.",
-  "spaceComplexity": "O(k) auxiliary space for keyword counts.",
-  "attribution": "Unmodified reference from epi_judge_python_solutions/smallest_subarray_covering_set.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice."
+  "explanation": "Track a deficit for each keyword: one minus its count in the active window. Adding a word reduces the number of missing keywords only when its deficit crosses zero. Once every deficit is nonpositive, shrink from the left while recording better intervals.",
+  "timeComplexity": "O(n + k) expected time. Each window endpoint advances at most n times after O(k) initialization. The entry-count bound treats word hashing/comparison as constant; include examined character lengths when words are unbounded.",
+  "spaceComplexity": "O(k) auxiliary space for keyword counts. At most k keyword counts are stored.",
+  "attribution": "Unmodified reference from epi_judge_python_solutions/smallest_subarray_covering_set.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice.",
+  "correctness": "Each deficit equals required count minus current window count, and remaining counts unsatisfied requirements. When remaining is zero, the window covers all keywords. Advancing left explores every shorter suffix until a required word becomes absent. At the right endpoint of an optimal interval this process considers an interval no longer than it, proving minimality.",
+  "walkthrough": "For [oak, cedar, ash, oak, elm, ash] and keywords {oak, ash, elm}, the window first covers everything at indices [0, 4]. Removing oak at 0 preserves another oak at 3; removing cedar at 1 loses no keyword. This reaches [2, 4], containing ash, oak, elm in three entries. Return (2, 4); the protocol checks length 3. The callable returns inclusive zero-based endpoints. The executable walkthrough expected value is their length after the wrapper validates keyword coverage.",
+  "edgeCases": [
+    "Duplicate occurrences in the paragraph must not count as distinct keywords.",
+    "Irrelevant words at either edge can be removed.",
+    "The input set determines keyword membership; a covering interval is guaranteed by this exercise."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        "oak",
+        "cedar",
+        "ash",
+        "oak",
+        "elm",
+        "ash"
+      ],
+      [
+        "oak",
+        "ash",
+        "elm"
+      ]
+    ],
+    "expected": 3
+  }
 }

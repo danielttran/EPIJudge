@@ -1,6 +1,47 @@
 {
-  "explanation": "Compute existing all-pairs shortest paths with Floyd\u2013Warshall. For each candidate edge, test both directions of using it once for every city pair and sum the savings. Replace the best only for a strict improvement, preserving the first proposal on ties.",
-  "timeComplexity": "O(n\u00b3 + p \u00b7 n\u00b2 + h), for n cities, p proposals and h highways.",
-  "spaceComplexity": "O(n\u00b2).",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "explanation": "Compute existing all-pairs shortest paths with Floyd–Warshall. For each candidate edge, test both directions of using it once for every city pair and sum the savings. Replace the best only for a strict improvement, preserving the first proposal on ties.",
+  "timeComplexity": "O(h+n³+p·n²): initialize h roads, run three nested Floyd–Warshall loops, then score each of p proposals on O(n²) city pairs.",
+  "spaceComplexity": "O(n²) for the all-pairs distance matrix; proposal scoring keeps only running savings and the best proposal.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "Floyd–Warshall establishes the shortest existing distance between every pair. Any shortest path improved by one new nonnegative undirected edge can use that edge at most once, in either direction; testing those two possibilities therefore finds its new distance. Summing pair savings compares proposals correctly, and updating only on a strict improvement preserves the first proposal on ties.",
+  "walkthrough": "With highways (0,1,8),(1,2,8), existing pair distances sum to 8+8+16=32. Adding (0,2,3) reduces the sum to 8+8+3=19, saving 13. Adding (0,1,4) gives 4+8+12=24, saving 8. Choose proposal (0,2,3).",
+  "edgeCases": [
+    "An empty proposal list returns (-1,-1,0).",
+    "A proposal may duplicate an existing road with a smaller distance.",
+    "Equal total savings choose the earliest proposal."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          0,
+          1,
+          8
+        ],
+        [
+          1,
+          2,
+          8
+        ]
+      ],
+      [
+        [
+          0,
+          2,
+          3
+        ],
+        [
+          0,
+          1,
+          4
+        ]
+      ],
+      3
+    ],
+    "expected": [
+      0,
+      2,
+      3
+    ]
+  }
 }

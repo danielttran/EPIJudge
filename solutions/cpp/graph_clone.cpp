@@ -33,7 +33,8 @@ GraphVertex* CloneGraph(GraphVertex* graph) {
     q.pop();
     for (GraphVertex* e : v->edges) {
       // Try to copy vertex e.
-      if (vertex_map.emplace(e, new GraphVertex({e->label})).second) {
+      if (vertex_map.find(e) == vertex_map.end()) {
+        vertex_map.emplace(e, new GraphVertex({e->label}));
         q.emplace(e);
       }
       // Copy edge.

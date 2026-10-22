@@ -1,6 +1,29 @@
 {
   "explanation": "When the current key exceeds k, remember it and search left for a smaller qualifying key. Otherwise all keys in its left subtree are too small, so move right.",
-  "timeComplexity": "O(h) for tree height h.",
-  "spaceComplexity": "O(1).",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "timeComplexity": "O(h) for tree height h. The loop descends one edge per comparison and keeps only a current node and candidate.",
+  "spaceComplexity": "O(1). Only the current node and the best candidate are retained.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "candidate is the smallest qualifying key seen on the search path. When a node exceeds k, only its left subtree can improve that candidate; when it does not, neither it nor its left subtree can qualify, so move right. The BST property rules out every skipped key, leaving the smallest greater key or -1.",
+  "walkthrough": "For tree [9,4,15,2,6,12,19] and k=11, move right from 9. Record 15 and search left; record 12 and find no smaller qualifying left child. Return 12. The walkthroughCase uses the judge’s JSON input format and expected observation.",
+  "edgeCases": [
+    "An empty tree returns -1.",
+    "Keys equal to k do not qualify.",
+    "If k exceeds all keys, return -1.",
+    "The answer may be the root itself."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        9,
+        4,
+        15,
+        2,
+        6,
+        12,
+        19
+      ],
+      11
+    ],
+    "expected": 12
+  }
 }

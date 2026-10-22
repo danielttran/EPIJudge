@@ -1,6 +1,27 @@
 {
   "explanation": "For every i, use the count for i shifted right by one and add its low bit. This reuses the previously computed count for half of i.",
-  "timeComplexity": "O(n) time for results from 0 through n.",
-  "spaceComplexity": "O(1) auxiliary space excluding the O(n) output.",
-  "attribution": "Original repository-authored Blind75 Java algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used."
+  "timeComplexity": "O(n) time for results from 0 through n. Each result after zero takes one previously computed count and one low-bit addition.",
+  "spaceComplexity": "O(1) auxiliary space excluding the O(n) output. The output array is the dynamic-programming table; loop indices need constant additional space.",
+  "attribution": "Original repository-authored Blind75 Java algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used.",
+  "correctness": "The bits of i consist of the bits of i shifted right once, followed by its low bit. Therefore popcount(i)=popcount(i>>1)+(i&1). The shifted value is smaller, so its count is already available while filling the table in increasing order.",
+  "walkthrough": "For n=6, begin with count[0]=0. Values 1..6 give 1,1,2,1,2,2 by reusing the count for their halves and adding their low bit. Return [0,1,1,2,1,2,2].",
+  "edgeCases": [
+    "The output includes every value from zero through n.",
+    "n=0 returns [0].",
+    "The recurrence needs no binary-string conversion."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      6
+    ],
+    "expected": [
+      0,
+      1,
+      1,
+      2,
+      1,
+      2,
+      2
+    ]
+  }
 }

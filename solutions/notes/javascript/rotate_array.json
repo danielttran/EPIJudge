@@ -1,6 +1,33 @@
 {
   "explanation": "Normalize the shift, reverse the entire array, then reverse the two pieces. This moves the final amount entries to the front while restoring order within both pieces.",
-  "timeComplexity": "O(n).",
-  "spaceComplexity": "O(1) additional space.",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "timeComplexity": "O(n). Three reversals each visit at most n entries.",
+  "spaceComplexity": "O(1) additional space. Reversal uses two indices and a temporary value; any wrapper copy is outside the callable workspace.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "Write the array as prefix P followed by the final amount entries Q. Reversing the whole array gives reverse(Q) followed by reverse(P); reversing those pieces separately produces Q followed by P. Normalizing the shift modulo length preserves the intended cyclic rotation.",
+  "walkthrough": "For [4,8,1,7,3] shifted right by 7, normalize to 2. Reverse everything to [3,7,1,8,4], reverse the first two entries to [7,3,1,8,4], then reverse the suffix to obtain [7,3,4,8,1].",
+  "edgeCases": [
+    "An empty array returns before modulo arithmetic.",
+    "A multiple of the length leaves the array unchanged.",
+    "Negative amounts are normalized to the equivalent right rotation.",
+    "The same list is modified and returned."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        4,
+        8,
+        1,
+        7,
+        3
+      ],
+      7
+    ],
+    "expected": [
+      7,
+      3,
+      4,
+      8,
+      1
+    ]
+  }
 }

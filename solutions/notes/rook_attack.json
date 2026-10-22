@@ -1,7 +1,7 @@
 {
   "explanation": "First record rows and columns containing original zeros. Then clear their cells in a second pass, so newly written zeros do not create additional attacks.",
-  "timeComplexity": "O(r · c).",
-  "spaceComplexity": "O(r + c) for the row and column sets.",
+  "timeComplexity": "O(r · c). A constant number of row/column or full-matrix scans visits O(r·c) cells.",
+  "spaceComplexity": "O(r + c) for the row and column sets. Set variants store r+c markers; first-row/column variants keep only two boolean flags.",
   "attribution": "Original C# implementation and explanation authored for EPI Practice from the displayed problem contract.",
   "correctness": "The first pass records exactly the row and column indices containing an original zero. The second pass changes a cell if and only if one of those recorded indices applies. Since the marker sets are not changed during this pass, newly created zeros cannot trigger additional clearing.",
   "walkthrough": "For [[5,0,7],[8,9,2]], the original zero records row 0 and column 1. Clear that full row and that column, giving [[0,0,0],[8,0,2]]. The new zeros do not clear row 1.",
@@ -14,13 +14,29 @@
   "walkthroughCase": {
     "arguments": [
       [
-        [5, 0, 7],
-        [8, 9, 2]
+        [
+          5,
+          0,
+          7
+        ],
+        [
+          8,
+          9,
+          2
+        ]
       ]
     ],
     "expected": [
-      [0, 0, 0],
-      [8, 0, 2]
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        8,
+        0,
+        2
+      ]
     ]
   }
 }

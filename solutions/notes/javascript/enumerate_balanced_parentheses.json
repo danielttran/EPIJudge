@@ -1,6 +1,22 @@
 {
   "explanation": "Backtrack while tracking opened and closed parentheses. Add an opening parenthesis while pairs remain, and close only when an unmatched opening exists. Every generated prefix is valid, and every complete balanced string is reached once.",
-  "timeComplexity": "O(n\u00b7C\u2099), where C\u2099 is the nth Catalan number",
-  "spaceComplexity": "O(n) auxiliary, plus O(n\u00b7C\u2099) output",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "timeComplexity": "O(n·Cₙ), where Cₙ is the nth Catalan number Each of Cₙ leaves materializes 2n characters, and valid-prefix traversal contributes the same output-sensitive bound.",
+  "spaceComplexity": "O(n) auxiliary, plus O(n·Cₙ) output The shared buffer and recursive depth are linear; immutable-prefix variants retain the separately stated prefix storage.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "Every generated prefix has at least as many opens as closes and never uses more than n opens. Completed prefixes are therefore balanced. Conversely, every balanced string follows exactly one sequence of these allowed opening/closing choices, so none are omitted or duplicated.",
+  "walkthrough": "With two pairs, opening twice first gives (()); closing after the first open gives ()(). These are the two possible balanced strings.",
+  "edgeCases": [
+    "Zero pairs produces one empty string.",
+    "A closing parenthesis cannot precede its matching opening.",
+    "Output ordering is not part of the contract."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      2
+    ],
+    "expected": [
+      "(())",
+      "()()"
+    ]
+  }
 }

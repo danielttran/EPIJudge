@@ -1,6 +1,19 @@
 {
-  "explanation": "Binary-search the largest integer whose square does not exceed k. Compare the candidate against floor(k/candidate), avoiding an unnecessarily large intermediate square.",
-  "timeComplexity": "O(log(k + 1)) time.",
-  "spaceComplexity": "O(1) auxiliary space.",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "explanation": "Binary-search the largest feasible integer. Compare middle with floor(k/middle), treating zero separately, to avoid inaccurate large products in Number arithmetic.",
+  "timeComplexity": "O(log(k + 1)) time. The initial integer interval has k+1 candidates and each comparison halves it.",
+  "spaceComplexity": "O(1) auxiliary space. A constant number of integer accumulators is retained.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "Binary search maintains that every candidate below low has been proven feasible or superseded, and every candidate above high is too large. A feasible midpoint raises the best known answer; an infeasible one removes all larger candidates. On termination the saved result is the greatest integer with square≤k.",
+  "walkthrough": "For k=80, binary search eventually tests 8 and 9. Since 8²=64≤80 but 9²=81>80, return 8.",
+  "walkthroughCase": {
+    "arguments": [
+      80
+    ],
+    "expected": 8
+  },
+  "edgeCases": [
+    "Zero returns zero.",
+    "Perfect squares return their exact integer root.",
+    "Inputs are nonnegative signed-32-bit integers; division avoids a potentially inexact squared candidate."
+  ]
 }

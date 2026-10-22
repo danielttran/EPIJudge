@@ -1,6 +1,24 @@
 {
-  "explanation": "Compare the ordinary maximum subarray with a wrapping interval formed from a prefix and suffix. Compute running prefix maxima, reverse the input to obtain suffix maxima, and combine nonoverlapping choices.",
-  "timeComplexity": "O(n)",
-  "spaceComplexity": "O(n); the input list is reversed",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/MaximumSubarrayInCircularArray.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "explanation": "Use Kadane’s scan for ordinary intervals. For wrapping intervals, compute maximum prefix sums from each end and combine a prefix ending at or before a split with a suffix strictly after that split.",
+  "timeComplexity": "O(n): one ordinary scan, two cumulative-maximum scans and one split scan.",
+  "spaceComplexity": "O(n): the prefix and suffix maximum arrays store one entry per position.",
+  "attribution": "Original EPIJudge reference source: epi_judge_java_solutions/epi/MaximumSubarrayInCircularArray.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/). The displayed copy includes local contract or boundary corrections; the upstream reference file is preserved.",
+  "correctness": "Every interval either is ordinary or crosses the array boundary. A crossing interval is a disjoint prefix and suffix. At each split, the running maxima select the best prefix and suffix allowed on opposite sides; considering all splits therefore covers the best crossing interval without repeating an element. The ordinary scan starts at zero, preserving the permitted empty answer.",
+  "walkthrough": "For [5,−8,6], ordinary Kadane gives 6. Maximum prefix sums are [5,5,5]; corresponding suffix maxima after each split are [6,6,0]. Combining the first split gives 5+6=11 for wrapped [6,5], which beats 6.",
+  "edgeCases": [
+    "Empty input returns zero.",
+    "All-negative values return zero because an empty interval is allowed.",
+    "Prefix and suffix must lie on opposite sides of the split.",
+    "Collections.reverse(A) mutates the caller’s input list and is not undone."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        5,
+        -8,
+        6
+      ]
+    ],
+    "expected": 11
+  }
 }

@@ -1,6 +1,33 @@
 {
   "explanation": "Split after the middle node, reverse the second half, then weave the two halves alternately. All links are rearranged on the original nodes, including the odd-length middle node.",
-  "timeComplexity": "O(n) time.",
-  "spaceComplexity": "O(1) auxiliary space; original nodes are reused.",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "timeComplexity": "O(n) time. Finding the split, reversing the suffix and weaving each traverse O(n) links.",
+  "spaceComplexity": "O(1) auxiliary space; original nodes are reused. Only a constant number of node references are retained; existing nodes are reused.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "Splitting leaves the first half in original order and the second half with the remaining suffix. Reversing that suffix exposes the original last node first, then the second-last, and so on. Alternately linking one node from each half therefore yields exactly L0, Ln, L1, Ln-1, ... . The halves are disjoint and terminated before weaving, so each original node appears once without a cycle.",
+  "walkthrough": "For [4, 8, 15, 23, 42, 57], split into [4, 8, 15] and [23, 42, 57]. Reverse the second half to [57, 42, 23]. Weave the halves as 4, 57, 8, 42, 15, 23. Return [4, 57, 8, 42, 15, 23]. JSON arrays describe list node values. The callable returns a node head; expected is the sequence reached by following its next links.",
+  "edgeCases": [
+    "Null and one-node lists are already zipped.",
+    "An odd-length list keeps its unpaired middle node exactly once.",
+    "The original node objects and values are reused; the first half is terminated before reversing and weaving."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        4,
+        8,
+        15,
+        23,
+        42,
+        57
+      ]
+    ],
+    "expected": [
+      4,
+      57,
+      8,
+      42,
+      15,
+      23
+    ]
+  }
 }

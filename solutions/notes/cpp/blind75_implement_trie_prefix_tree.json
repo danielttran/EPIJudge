@@ -1,6 +1,39 @@
 {
-  "explanation": "Store complete words in a set. Exact search checks membership; prefix search scans stored words and succeeds when any starts with the supplied prefix. An empty set has no matching prefix, even for the empty string.",
-  "timeComplexity": "O((L+1) log(U+1)) insertion/exact-search upper bound with an ordered set; O(U(P+1)) prefix-scan upper bound for U words and prefix length P.",
-  "spaceComplexity": "O(S+U) stored words/set entries; O(1) additional prefix-search workspace.",
-  "attribution": "Original repository-authored Blind75 C++ algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used."
+  "explanation": "Store inserted words in a set. Exact search tests set membership; prefix search scans stored words until one begins with the requested prefix. This implements the callable behavior without building character-trie nodes.",
+  "timeComplexity": "O(L log(W+1)) insertion/exact search in std::set, since ordered comparisons inspect up to L characters. Prefix search scans up to W words and compares up to P prefix characters: O(W(P+1)).",
+  "spaceComplexity": "O(S+W) stored content/references for W distinct words of total length S; prefix scanning itself needs constant extra state.",
+  "attribution": "Original repository-authored Blind75 C++ algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used.",
+  "correctness": "The set contains exactly the distinct inserted words, so membership answers complete-word search. A prefix query succeeds exactly when at least one stored word starts with that prefix, which the scan tests directly. An empty set therefore rejects even an empty prefix; once any word is stored its empty prefix matches.",
+  "walkthrough": "The empty set makes startsWith(\"\") false. Insert \"mint\", creating {mint}; startsWith(\"mi\") finds that word, while search(\"mi\") is false. Insert \"mi\" and exact search becomes true. Query outputs are [false,true,false,true]. The arrays describe calls on one instance in order; expected contains only Search/StartsWith boolean results, omitting Insert returns.",
+  "edgeCases": [
+    "Prefix search and exact search are different operations.",
+    "Reinserting the same word does not duplicate it.",
+    "The empty prefix is false before any insertion."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        "startsWith",
+        "insert",
+        "startsWith",
+        "search",
+        "insert",
+        "search"
+      ],
+      [
+        "",
+        "mint",
+        "mi",
+        "mi",
+        "mi",
+        "mi"
+      ]
+    ],
+    "expected": [
+      false,
+      true,
+      false,
+      true
+    ]
+  }
 }

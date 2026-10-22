@@ -1,6 +1,20 @@
 {
   "explanation": "Let R be the number of integers in the inclusive interval. Draw b=ceil(log2 R) independent fair bits to form an offset in 0..2^b-1; reject offsets at least R and repeat. Every accepted offset has the same probability, and adding the lower bound gives the required result. A singleton interval needs zero bits. The accompanying tester keeps the original 100000 samples per attempt, unchanged marginal/pair/triple checks and 0.01 tolerance, the same five-attempt helper, and the exact birthday-spacing predicate. It computes that predicate with a sliding frequency table instead of rebuilding every overlapping window, and additionally rejects samples outside the interval.",
-  "timeComplexity": "Sampler: O(1 + log R) expected time and fair-bit calls, with fewer than two attempts on average; unbounded worst-case retries. Integer arithmetic is bounded by the signed-32-bit interval contract. Tester: O(S(1 + log R)) expected sampling work plus O(S) expected validation work per attempt, for the unchanged S=100000 and at most five attempts.",
-  "spaceComplexity": "Sampler: O(1) auxiliary space for the fixed-width interval. Tester: O(S) auxiliary storage for samples, offsets and the original frequency/pair/triple checks; the sliding birthday table retains at most one window of entries.",
-  "attribution": "Original EPI Practice Python fair-bit rejection sampler and statistical wrapper, independently authored from the mathematical sampling contract. Original framework frequency, pair, triple and five-retry functions are invoked unchanged. The independently authored sliding-window birthday check preserves their original predicate exactly; upstream reference and framework files are unmodified. Repository source attribution remains in LICENSE."
+  "timeComplexity": "O(log R) expected time for R possible values; fewer than two attempts on average. b=ceil(log2 R) fair bits form each attempt; acceptance probability R/2^b exceeds 1/2, so expected attempts are below two. For R=1 use O(1).",
+  "spaceComplexity": "O(1) auxiliary space for the fixed-width integer range. A fixed-width candidate and range counters suffice; no samples are stored by the callable.",
+  "attribution": "Original EPI Practice Python fair-bit rejection sampler and statistical wrapper, independently authored from the mathematical sampling contract. Original framework frequency, pair, triple and five-retry functions are invoked unchanged. The independently authored sliding-window birthday check preserves their original predicate exactly; upstream reference and framework files are unmodified. Repository source attribution remains in LICENSE.",
+  "correctness": "b independent fair bits produce every offset from 0 through 2^b - 1 with equal probability. Rejecting offsets at least R conditions that uniform distribution on exactly 0 through R - 1, so all accepted offsets remain equally likely. Adding lower is a bijection onto the inclusive requested interval. Each attempt uses fresh random bits, and repeated rejection does not bias the eventual accepted value.",
+  "walkthrough": "For inclusive bounds [-3, 2], R = 6 and b = 3. One possible attempt draws bits 110, offset 6, which is rejected. A following attempt draws 011, offset 3, which returns -3 + 3 = 0. Every accepted offset 0 through 5 is equally likely. The walkthrough case checks the full range’s distribution and independence, giving adapter verdict true rather than fixing one random output.",
+  "edgeCases": [
+    "Equal bounds require zero random bits and return the sole value.",
+    "A power-of-two range accepts every generated bit pattern.",
+    "A full signed-int range uses 32 bits and a wider range-size calculation; both endpoints remain possible."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      -3,
+      2
+    ],
+    "expected": true
+  }
 }

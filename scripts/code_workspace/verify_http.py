@@ -787,6 +787,26 @@ def main():
 
             if args.browser:
                 subprocess.run(
+                    ["node", str(ROOT / "scripts/clarity/browser.cjs"), base],
+                    check=True,
+                    cwd=ROOT,
+                )
+                clarity = json.loads(
+                    (artifact_root / "clarity-layout/report.json").read_text()
+                )
+                check(
+                    clarity["passed"]
+                    and len(clarity["checks"]) >= 15
+                    and len(
+                        {
+                            (check["profile"], check["language"])
+                            for check in clarity["checks"]
+                        }
+                    )
+                    == 15,
+                    "all language explanations fit desktop, mobile and native 200% zoom",
+                )
+                subprocess.run(
                     ["node", str(ROOT / "scripts/code_workspace/browser.cjs"), base],
                     cwd=ROOT,
                     check=True,

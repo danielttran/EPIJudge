@@ -55,6 +55,8 @@ public class IsStringInMatrix {
   @EpiTest(testDataFile = "is_string_in_matrix.tsv")
   public static boolean isPatternContainedInGrid(List<List<Integer>> grid,
                                                  List<Integer> pattern) {
+    if (pattern.isEmpty()) return true;
+
 
     for (int i = 0; i < grid.size(); ++i) {
       for (int j = 0; j < grid.get(i).size(); ++j) {

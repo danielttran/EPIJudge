@@ -16,7 +16,8 @@ python scripts/solutions/build_catalog.py
 python -m unittest discover -s scripts/solutions -p test_random_checker.py -v
 dotnet run --project scripts/SolutionsAudit -- --report=all
 dotnet run --no-build --project scripts/SolutionsAudit -- boundaries
-dotnet run --no-build --project scripts/SolutionsAudit -- walkthroughs
+dotnet run --no-build --project scripts/SolutionsAudit -- walkthroughs --language=csharp
+# Repeat walkthroughs with javascript, python, cpp and java.
 dotnet run --project scripts/interviewcake/Audit -- csharp all
 # Repeat the preceding Interview Cake command for javascript, python, cpp and java.
 dotnet run --no-build --project scripts/SolutionsAudit -- describe
@@ -33,7 +34,8 @@ supported language) partitions the matrix. `--ids=a,b` selects targeted reruns;
 `--files` is an author diagnostic and cannot satisfy final displayed-code
 acceptance. The evidence tool checks every explicit pair against current source,
 metadata, corpus and compiled-harness fingerprints. Boundary audits exercise all
-five languages; walkthrough audits execute the detailed original C# examples.
+five languages; walkthrough audits execute the selected language’s own notes.
+Run all five language partitions to cover all 1,670 walkthroughs.
 Both use isolated temporary corpora, leaving original test data unchanged.
 
 The Interview Cake audit separately executes each of its 41 starters, actual
@@ -210,3 +212,66 @@ Build Release and the frontend first. `CHROMIUM_PATH` may select an installed
 Chromium executable. `--no-timeouts` is a diagnostic shortcut and is explicitly
 reported as skipped; it is not final acceptance. The existing Windows workflow
 remains, while `Blind 75 checks` adds Linux/Python 3.14 execution and browser checks.
+
+## Question and explanation clarity
+
+`/scripts/clarity/parts/` contains disjoint authoring/review shards covering all
+334 questions and 1,670 implementations. Each question supplies its description,
+constraints, teaching examples, executable example cases, five callable contracts,
+and written review decisions. The EPI, Blind75 and Interview Cake generators apply
+these authored statements; Interview Cake explanation overrides also live in its
+`algorithms_<language>.json` authoring sources. Edit sources, then regenerate.
+
+```sh
+python scripts/clarity/build.py
+python scripts/generate_web_catalog.py
+python scripts/blind75/generate.py
+python scripts/interviewcake/generate.py
+python scripts/solutions/build_catalog.py
+python scripts/code_workspace/native.py
+python scripts/code_workspace/managed.py
+python scripts/code_workspace/isolated.py
+python scripts/code_workspace/build.py
+python scripts/clarity/build.py --check
+python scripts/clarity/audit.py check
+```
+
+Review each question against its actual callables, adapters and original corpus:
+
+1. State the input domain, representation, indexing, output, tie rules, mutation,
+   identity requirements and empty/boundary behavior. Distinguish a callable’s
+   return value from the wrapper-observed result. Record language differences
+   before the learner opens Solution; do not silently invent a shared domain.
+2. Read each language implementation. Explain the invariant or recurrence and
+   why it proves the result; derive a small trace and justify time and live
+   auxiliary storage from that code. A shared algorithm may share reasoning;
+   a different loop, data structure, copying strategy or numeric model needs its
+   own analysis. Record limitations rather than presenting them as proven facts.
+3. Write decisions and evidence paths in the owning shard and semantic ledger.
+   `audit.py inventory` only adds pending entries. After actual rereview, update
+   the reviewed statement/code/notes/callable fingerprints in `review.json`.
+   Never mark a record reviewed merely because required fields are populated.
+4. Execute every authored example, each language’s walkthrough and added boundary
+   fixtures, plus the complete original corpus. Original test data remains
+   unchanged. The generated `boundaries-clarity-*.json` files are additive.
+5. Rebuild the app and inspect the longest explanations and unbroken source paths in all five languages
+   on desktop, a 320px mobile viewport and native browser 200% zoom:
+   `node scripts/clarity/browser.cjs http://127.0.0.1:PORT`.
+   The existing `scripts/verify_learn_layout.cjs` suite separately covers controls,
+   focus and shared layouts. Review screenshots as well as geometry assertions.
+
+`code_workspace/run_matrix.py` runs the full callable solution/starter matrix,
+all-language boundaries, all 1,670 walkthroughs and Interview Cake fixtures with
+bounded process concurrency. Its durable job ledger and logs are under
+`.epi-runs/callable-matrix-<tag>*`. `scripts/code_workspace/evidence.py` requires
+current source, corpus, code and fixture fingerprints; stale or failed executions
+cannot satisfy acceptance. Semantic review, structural coverage, executable
+correctness and rendered usability remain separate gates.
+
+Maximum-client-credit regression checks exercise all five independent oracles
+with valid alternative ties, missing/lower-credit clients, negative increments,
+replacement, removal and reinitialization. Run
+`python scripts/clarity/credits_oracle_tests.py` and
+`dotnet run --project scripts/clarity/CreditsAudit -c Release`. The latter uses
+the actual callable composition and judge path, including deliberately false
+Lookup implementations that must never validate their own Max result.

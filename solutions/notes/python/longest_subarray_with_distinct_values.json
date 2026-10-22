@@ -1,6 +1,25 @@
 {
-  "explanation": "Use a sliding window and remember each value\u2019s last index. A repeated value moves the left boundary past its prior occurrence, without ever moving that boundary backwards.",
-  "timeComplexity": "O(n) expected",
-  "spaceComplexity": "O(n)",
-  "attribution": "Unmodified reference from epi_judge_python_solutions/longest_subarray_with_distinct_values.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice."
+  "explanation": "Keep each value’s most recent index and the left edge of the current duplicate-free suffix. When a duplicate lies inside that suffix, record the run length before moving left past it. Compare the final suffix after scanning.",
+  "timeComplexity": "O(n) expected Each entry updates its last occurrence once; the left index never retreats.",
+  "spaceComplexity": "O(n) The map holds one index per distinct input value.",
+  "attribution": "Unmodified reference from epi_judge_python_solutions/longest_subarray_with_distinct_values.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice.",
+  "correctness": "The current window has no duplicates. If the next value last appeared inside it, every valid new window must begin after that occurrence; moving left to exactly that point retains the longest possible valid suffix. The maximum of these suffix lengths is the global optimum.",
+  "walkthrough": "For [4,1,4,2,3], the second 4 records the previous length 2 and moves left from 0 to 1. No later conflict occurs. The final suffix [1,4,2,3] has length 4, which wins.",
+  "edgeCases": [
+    "A duplicate before the active window must not move its left boundary backwards.",
+    "All-equal nonempty input has answer 1.",
+    "Empty input returns 0."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        4,
+        1,
+        4,
+        2,
+        3
+      ]
+    ],
+    "expected": 4
+  }
 }

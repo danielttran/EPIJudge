@@ -46,9 +46,8 @@ jobs:
         run: dotnet run --no-build --project scripts/SolutionsAudit -- boundaries --language=${{ matrix.language }}
       - name: Execute every Interview Cake scaffold and positive/negative fixture
         run: dotnet run --project scripts/interviewcake/Audit -- ${{ matrix.language }} all
-      - name: Validate every original detailed CSharp walkthrough
-        if: matrix.language == 'csharp'
-        run: dotnet run --no-build --project scripts/SolutionsAudit -- walkthroughs
+      - name: Validate every language-specific walkthrough
+        run: dotnet run --no-build --project scripts/SolutionsAudit -- walkthroughs --language=${{ matrix.language }}
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -58,7 +57,7 @@ jobs:
           path: |
             .epi-runs/solutions-audit-*.json
             .epi-runs/solutions-boundaries-*.json
-            .epi-runs/solutions-walkthroughs.json
+            .epi-runs/solutions-walkthroughs*.json
             .epi-runs/interviewcake-audit-*.json
             .epi-runs/interviewcake-executions/
 

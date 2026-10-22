@@ -1,6 +1,30 @@
 {
-  "explanation": "Binary-search how many of the first k merged elements come from the first array. A valid partition has both left boundary values no greater than the opposite right boundaries. Return the larger left boundary, which is the kth smallest value.",
-  "timeComplexity": "O(log(min(m,k)+1)) time for the searched partition range.",
-  "spaceComplexity": "O(1) auxiliary space.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/kth_largest_element_in_two_sorted_arrays.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "Binary-search how many of the first k merged values come from A. The other k−x come from B. Adjust the partition until each chosen left side is no greater than the other array’s next unchosen value; the larger left boundary is the kth smallest.",
+  "timeComplexity": "O(log(min(|A|,k)+1)) indexed comparisons: the feasible partition-count interval is halved each step. Partition search halves a count interval; elimination discards about half the requested rank unless an array is exhausted.",
+  "spaceComplexity": "O(1) auxiliary space for partition indices and boundary values. Both algorithms retain only a constant number of indices and boundary values.",
+  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/kth_largest_element_in_two_sorted_arrays.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice.",
+  "correctness": "A valid partition selects exactly k values and has every selected value no greater than every unselected one. Its maximum selected value is therefore the kth smallest, counting duplicates. If A’s next value is below B’s last selected value, more A values are needed; if A’s last selected value exceeds B’s next value, fewer are needed. These monotone tests preserve a feasible partition until it is found.",
+  "walkthrough": "For A=[1,6,8], B=[2,6,10], k=4, choose x=2 from A and k−x=2 from B. Left boundaries are 6 and 6, while right boundaries are 8 and 10. The partition is valid, so max(6,6)=6 is the fourth smallest.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        1,
+        6,
+        8
+      ],
+      [
+        2,
+        6,
+        10
+      ],
+      4
+    ],
+    "expected": 6
+  },
+  "edgeCases": [
+    "This contract asks for kth smallest despite the filename.",
+    "Duplicates count toward the rank.",
+    "One input may be empty.",
+    "k starts at 1 and cannot exceed the combined length."
+  ]
 }

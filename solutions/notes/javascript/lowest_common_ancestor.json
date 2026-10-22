@@ -1,6 +1,33 @@
 {
-  "explanation": "Find the two target nodes while recording parent links iteratively. Mark the first node\u2019s ancestor chain, then walk the second chain upwards; its first marked node is their lowest common ancestor.",
-  "timeComplexity": "O(n)",
-  "spaceComplexity": "O(n)",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "explanation": "Find the two target nodes while recording parent links iteratively. Mark the first node’s ancestor chain, then walk the second chain upwards; its first marked node is their lowest common ancestor.",
+  "timeComplexity": "O(n). C#/JavaScript may discover every node and store its parent; native callables already have parent links and only follow height-sized paths.",
+  "spaceComplexity": "O(n). C#/JavaScript store parent entries for discovered nodes and an ancestor set; native code uses only two cursors and depths.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "The iterative search records each discovered node’s true parent without changing the tree. The first target’s marked parent chain contains exactly its ancestors. Walking the second chain upward encounters its deepest shared ancestor first, which is the lowest common ancestor.",
+  "walkthrough": "In tree [6,2,9,1,4,8,12,null,null,3,5], target 1 has ancestors 1→2→6 and target 5 has ancestors 5→4→2→6. The second chain first reaches a marked node at 2, so return 2. JSON arguments are [tree,node0Data,node1Data]. C#/JavaScript receive those three arguments; native callables receive only the two resolved node references.",
+  "edgeCases": [
+    "A target may itself be the other target’s ancestor.",
+    "Equal target identifiers return that node’s data.",
+    "The iterative traversal avoids a recursive search stack on skewed trees."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        6,
+        2,
+        9,
+        1,
+        4,
+        8,
+        12,
+        null,
+        null,
+        3,
+        5
+      ],
+      1,
+      5
+    ],
+    "expected": 2
+  }
 }

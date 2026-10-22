@@ -1,6 +1,33 @@
 {
-  "explanation": "Use Parent links to measure both depths. Raise the deeper node until depths agree, then move both parents together until their references match. The wrapper locates the two target Data values.",
-  "timeComplexity": "O(h) ancestor computation; O(n) with wrapper lookup",
-  "spaceComplexity": "O(1) ancestor state; O(h) wrapper lookup recursion",
-  "attribution": "Unmodified reference from epi_judge_python_solutions/lowest_common_ancestor_with_parent.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice."
+  "explanation": "Count the two nodes’ depths using parent links. Lift the deeper node until depths agree, then lift both together until their references coincide.",
+  "timeComplexity": "O(h): two depth scans, alignment and ascent each follow parent paths. C#/JavaScript may discover every node and store its parent; native callables already have parent links and only follow height-sized paths.",
+  "spaceComplexity": "O(1): only depths and node cursors are kept. C#/JavaScript store parent entries for discovered nodes and an ancestor set; native code uses only two cursors and depths.",
+  "attribution": "Unmodified reference from epi_judge_python_solutions/lowest_common_ancestor_with_parent.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice.",
+  "correctness": "After depth alignment, both cursors are equally far below their common ancestors. Simultaneous parent steps preserve that equality, and the first shared reference is the lowest shared ancestor. Equal data alone is not used to identify a match.",
+  "walkthrough": "In tree [6,2,9,1,4,8,12,null,null,3,5], node 5 is one level deeper than node 1. Lift 5 to 4, then lift 1 and 4 together to their common parent 2. Return node 2. JSON arguments are [tree,node0Data,node1Data]. C#/JavaScript receive those three arguments; native callables receive only the two resolved node references.",
+  "edgeCases": [
+    "Inputs are existing nonnull nodes in the same tree with correct parent links.",
+    "A node is its own ancestor, so equal inputs return that node.",
+    "The wrapper resolves keys in a serialized tree and observes the returned node’s data."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        6,
+        2,
+        9,
+        1,
+        4,
+        8,
+        12,
+        null,
+        null,
+        3,
+        5
+      ],
+      1,
+      5
+    ],
+    "expected": 2
+  }
 }

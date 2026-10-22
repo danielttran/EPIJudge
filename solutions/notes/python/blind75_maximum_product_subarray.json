@@ -1,6 +1,25 @@
 {
   "explanation": "Retain both the largest and smallest products ending at the previous value. Multiplication by a negative number can swap their roles; compare both extensions with starting a new subarray.",
-  "timeComplexity": "O(n) time for n values.",
-  "spaceComplexity": "O(n) auxiliary space for the sliced suffix; the recurrence itself uses O(1) state.",
-  "attribution": "Original repository-authored Blind75 Python algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used."
+  "timeComplexity": "O(n) time for n values. Every value updates the minimum and maximum ending products in constant time.",
+  "spaceComplexity": "O(n) auxiliary space: the loop iterates over an explicit slice containing n-1 input values. The recurrence itself uses only a constant number of scalars.",
+  "attribution": "Original repository-authored Blind75 Python algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used.",
+  "correctness": "Every subarray ending at the current position either starts there or extends one ending immediately before it. A negative multiplier can turn the previous minimum into the new maximum, so retaining both extrema covers all candidates. The greatest ending maximum across positions is the optimum over all nonempty subarrays.",
+  "walkthrough": "For [-2,3,-4,0,2], products ending at 3 include -6 and 3. Multiplying the previous minimum -6 by -4 yields 24, from subarray [-2,3,-4]. Zero resets later products and the final 2 is smaller, so return 24.",
+  "edgeCases": [
+    "The subarray is nonempty.",
+    "Zero can separate otherwise unrelated product ranges.",
+    "Both maximum and minimum ending products are needed for negative values."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        -2,
+        3,
+        -4,
+        0,
+        2
+      ]
+    ],
+    "expected": 24
+  }
 }

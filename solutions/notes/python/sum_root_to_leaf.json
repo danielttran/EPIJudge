@@ -1,6 +1,27 @@
 {
   "explanation": "Carry the binary value of the root-to-current path. Append each node bit by shifting left and adding it; a leaf contributes that completed value, while an internal node contributes the sum from its children.",
-  "timeComplexity": "O(n) time.",
-  "spaceComplexity": "O(h) recursion space for tree height h.",
-  "attribution": "Unmodified reference from epi_judge_python_solutions/sum_root_to_leaf.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice."
+  "timeComplexity": "O(n) time. Each node adds its bit to one prefix; only the active root-to-node recursion path is retained.",
+  "spaceComplexity": "O(h) recursion space for tree height h. Each active recursive frame holds one path prefix; paths are not materialized.",
+  "attribution": "Unmodified reference from epi_judge_python_solutions/sum_root_to_leaf.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice.",
+  "correctness": "On entry to a node, prefix is the binary number represented by its ancestors. Shifting left and adding the node’s bit therefore gives the value of the path ending there. A leaf contributes exactly one completed root-to-leaf number. Internal nodes partition all remaining paths into their left and right subtrees, so summing those recursive contributions counts every path once.",
+  "walkthrough": "For tree [1, 0, 1, 1, null, 0, 1], the three root-to-leaf bit paths are 101, 110 and 111. Their decimal values are 5, 6 and 7. The left subtree contributes 5 and the right subtree contributes 13, giving total 18. The walkthroughCase uses the judge’s JSON input format and expected observation.",
+  "edgeCases": [
+    "A null tree contributes 0.",
+    "Leading zero bits still consume a path position but do not increase its numeric value.",
+    "Each leaf contributes separately, even when two different paths encode the same number."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        1,
+        0,
+        1,
+        1,
+        null,
+        0,
+        1
+      ]
+    ],
+    "expected": 18
+  }
 }

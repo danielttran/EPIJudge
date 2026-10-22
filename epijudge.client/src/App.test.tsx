@@ -48,6 +48,7 @@ const problem = (id: string, title: string): Problem => ({
         starterCode: language + ' starter',
         filename: 'solution',
         runtime: language,
+        contract: [language + ' callable instructions'],
       },
     ]),
   ),
@@ -431,6 +432,18 @@ it.each([
     expect(saved.codeFormat).toBe(targetFormat);
   },
 );
+it('shows the selected callable contract before a solution is opened', async () => {
+  await loaded();
+  expect(screen.getByText('csharp callable instructions')).toBeTruthy();
+  expect(screen.queryByText('python callable instructions')).toBeNull();
+  fireEvent.change(screen.getByRole('combobox', { name: 'Select programming language' }), {
+    target: { value: 'python' },
+  });
+  expect(screen.getByText('python callable instructions')).toBeTruthy();
+  expect(screen.queryByText('csharp callable instructions')).toBeNull();
+  expect(fetchMock.mock.calls.some(([url]) => url.includes('/solution?language='))).toBe(false);
+});
+
 it('loads the workspace, switches problem/language, and restores a per-language draft', async () => {
   const editor = await loaded();
   expect((editor as HTMLTextAreaElement).value).toBe('csharp starter');

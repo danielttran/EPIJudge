@@ -1,6 +1,24 @@
 {
-  "explanation": "Sort citation counts increasingly. The first position i with citations[i]\u2265n\u2212i establishes that at least n\u2212i papers have at least that many citations.",
-  "timeComplexity": "O(n log n)",
-  "spaceComplexity": "O(n) worst-case sorting workspace",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/HIndex.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "explanation": "Sort citation counts ascending. At index i, there are n-i papers at least as cited as citations[i]. Return the first n-i for which citations[i] is at least n-i, or zero.",
+  "timeComplexity": "O(n log n) for sorting followed by at most n comparisons. Histogram variants fill and scan n+1 buckets; sort variants pay sorting cost then scan once.",
+  "spaceComplexity": "O(n) worst-case sorting workspace; the supplied citation list is sorted in place. The subsequent suffix scan keeps only constant-sized indices.",
+  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/HIndex.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/).",
+  "correctness": "When sorted citation c[i] is at least n-i, the whole suffix of n-i papers meets that threshold. Earlier indices would offer larger h but have failed; any still larger threshold cannot have enough qualifying papers. Thus the first feasible suffix gives the maximum h.",
+  "walkthrough": "Sorted [0,2,4,7] has suffix sizes 4,3,2,1. At 0, 0<4; at 1, 2<3; at 2, 4≥2, so the answer is 2.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        0,
+        2,
+        4,
+        7
+      ]
+    ],
+    "expected": 2
+  },
+  "edgeCases": [
+    "An empty list or all-zero citations gives zero.",
+    "Citation counts above the number of papers may be capped at n.",
+    "The number of qualifying papers can exceed h; equality is not required."
+  ]
 }

@@ -7,13 +7,17 @@ using std::max;
 using std::vector;
 
 bool CanReachEnd(const vector<int>& max_advance_steps) {
-  int furthest_reach_so_far = 0, last_index = size(max_advance_steps) - 1;
-  for (int i = 0;
-       i <= furthest_reach_so_far && furthest_reach_so_far < last_index; ++i) {
-    furthest_reach_so_far =
-        max(furthest_reach_so_far, max_advance_steps[i] + i);
+  if (max_advance_steps.empty()) return true;
+  const std::size_t destination = max_advance_steps.size() - 1;
+  std::size_t reachable = 0;
+  for (std::size_t position = 0; position <= destination; ++position) {
+    if (position > reachable) return false;
+    const auto jump = static_cast<std::size_t>(max_advance_steps[position]);
+    // Test against the remaining distance before adding the offset.
+    if (jump >= destination - position) return true;
+    reachable = std::max(reachable, position + jump);
   }
-  return furthest_reach_so_far >= last_index;
+  return false;
 }
 
 int main(int argc, char* argv[]) {

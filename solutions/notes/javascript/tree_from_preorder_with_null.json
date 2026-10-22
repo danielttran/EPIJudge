@@ -1,6 +1,35 @@
 {
   "explanation": "Consume one preorder token for each subtree. A null token ends that subtree; an integer creates its root followed by recursive construction of its left and right children.",
-  "timeComplexity": "O(n) time for n tokens.",
-  "spaceComplexity": "O(h) recursion space plus O(n) output nodes.",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "timeComplexity": "O(n) time for n tokens. Each token advances the cursor exactly once, and only the active ancestry is recursive.",
+  "spaceComplexity": "O(h) recursion space plus O(n) output nodes. The cursor is shared; recursive frames follow tree height and new nodes form the output.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "Every recursive call consumes the next token describing one subtree. A null token describes the empty tree and needs no descendants. An integer token describes a root whose next two complete subtree descriptions belong to its left and right children. This grammar determines every child boundary without searching; induction over that recursive encoding proves the rebuilt tree has exactly the supplied preorder structure.",
+  "walkthrough": "Read [\"16\", \"7\", \"null\", \"11\", \"null\", \"null\", \"25\", \"null\", \"null\"]. Create root 16, then left node 7. Its left token is null and its right node is 11 with two null children. The remaining node 25 becomes root 16’s right child. Return [16, 7, 25, null, 11] in compact level order. JSON arguments are [stringTokens]. C# consumes strings; native wrappers convert them to nullable integers; JavaScript accepts the supplied strings. Output is compact level-order tree serialization.",
+  "edgeCases": [
+    "A lone null token represents an empty tree.",
+    "Negative integer tokens are parsed as values, not structural markers.",
+    "Explicit null markers distinguish a left-only subtree from a right-only subtree."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        "16",
+        "7",
+        "null",
+        "11",
+        "null",
+        "null",
+        "25",
+        "null",
+        "null"
+      ]
+    ],
+    "expected": [
+      16,
+      7,
+      25,
+      null,
+      11
+    ]
+  }
 }

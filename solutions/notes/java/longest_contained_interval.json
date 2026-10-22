@@ -1,6 +1,26 @@
 {
-  "explanation": "Deduplicate the values in a set and expand each still-unprocessed entry through its consecutive neighbors. Remove every consumed value once. Widen neighbor arithmetic so int endpoints do not wrap into a false consecutive range.",
-  "timeComplexity": "O(n) expected",
-  "spaceComplexity": "O(n)",
-  "attribution": "Original Java implementation and explanation for EPI Practice, based on the displayed public contract and our independently authored C# solution; no upstream reference code adapted."
+  "explanation": "Deduplicate values in a set. Remove one value and consume every consecutive neighbor on both sides. Each distinct value is removed once, so all runs together take linear expected time.",
+  "timeComplexity": "O(n) expected Each distinct integer is removed once; failed neighbor probes are constant per connected run.",
+  "spaceComplexity": "O(n) The deduplicated set has at most n entries.",
+  "attribution": "Original Java implementation and explanation for EPI Practice, based on the displayed public contract and our independently authored C# solution; no upstream reference code adapted.",
+  "correctness": "The set contains exactly the values not yet assigned to a processed consecutive component. Expanding downward and upward consumes the entire component containing the chosen value. Components are disjoint, so their sizes cover every candidate interval and the greatest size is optimal.",
+  "walkthrough": "For [8,3,5,4,20,5], duplicates disappear in the set. Expanding from 3 consumes 4 and 5, giving a run of length 3. The isolated values 8 and 20 cannot improve it.",
+  "edgeCases": [
+    "Duplicate input values do not increase interval length.",
+    "Empty input has length 0.",
+    "Neighbor arithmetic is widened to avoid wrapping int.MinValue to int.MaxValue."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        8,
+        3,
+        5,
+        4,
+        20,
+        5
+      ]
+    ],
+    "expected": 3
+  }
 }

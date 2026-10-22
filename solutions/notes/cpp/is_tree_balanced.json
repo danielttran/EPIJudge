@@ -1,6 +1,27 @@
 {
-  "explanation": "Compute each subtree’s height together with a balanced flag. Propagate an unbalanced child immediately; otherwise require the child heights to differ by at most one and return one plus their larger height.",
-  "timeComplexity": "O(n) time.",
-  "spaceComplexity": "O(h) recursion space.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/is_tree_balanced.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "Return both a subtree’s balance status and its height from a postorder traversal. An empty subtree has height −1. Stop propagating heights as soon as a child is unbalanced; otherwise compare the two child heights.",
+  "timeComplexity": "O(n): at most one postorder visit per node. Postorder computes each visited node’s height once instead of recomputing subtree heights.",
+  "spaceComplexity": "O(h) recursion stack. Only postorder frames along the active root-to-node path are needed.",
+  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/is_tree_balanced.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice.",
+  "correctness": "Assuming each child result is correct, the subtree is balanced exactly when both children are balanced and their heights differ by at most one. Its height is one plus the larger child height. This induction begins with the empty subtree.",
+  "walkthrough": "For [4,2,7,1,null,null,9], leaves 1 and 9 have height 0; nodes 2 and 7 have height 1. The root’s child heights match, so its balance status is true. The walkthroughCase uses the judge’s JSON input format and expected observation.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        4,
+        2,
+        7,
+        1,
+        null,
+        null,
+        9
+      ]
+    ],
+    "expected": true
+  },
+  "edgeCases": [
+    "The empty tree is balanced.",
+    "A subtree imbalance must be detected even if the root’s own child heights are similar.",
+    "A long one-sided chain is unbalanced once a height difference exceeds one."
+  ]
 }

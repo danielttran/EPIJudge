@@ -1,6 +1,29 @@
 {
-  "explanation": "Transform each exchange rate to its negative base-10 logarithm. Bellman\u2013Ford relaxation then detects a reachable negative-weight cycle, which corresponds to a product of rates greater than one.",
-  "timeComplexity": "O(n\u00b3) for the dense n\u00d7n rate matrix",
-  "spaceComplexity": "O(n) auxiliary; the input matrix is transformed",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/Arbitrage.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "explanation": "Transform every positive exchange rate r into −log10(r), then run Bellman–Ford from vertex 0. A further relaxation after n−1 passes identifies a negative cycle and therefore a profitable round trip.",
+  "timeComplexity": "O(n³): at most n passes each relax n² exchange edges, with constant work per edge.",
+  "spaceComplexity": "O(n) distances; transformed edge weights are computed as needed rather than stored in another matrix.",
+  "attribution": "Original EPIJudge reference source: epi_judge_java_solutions/epi/Arbitrage.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/). The displayed copy includes local contract or boundary corrections; the upstream reference file is preserved.",
+  "correctness": "Summing −log10 rates around a cycle equals −log10 of the rate product, so a profitable product greater than one is exactly a negative cycle in exact arithmetic. The complete rate matrix makes every currency reachable from 0. After n−1 full edge passes every simple path is covered; a further strict improvement therefore indicates a negative cycle, subject to floating-point roundoff.",
+  "walkthrough": "With rates [[1,2],[0.6,1]], the cycle 0→1→0 has product 1.2 and transformed sum −log10(1.2)<0. Relaxing its edges lowers a distance again after the first pass, so the extra scan returns true.",
+  "edgeCases": [
+    "All rates must be finite and strictly positive for logarithms.",
+    "An exactly neutral cycle has product one and is not profitable mathematically.",
+    "This version uses strict floating-point comparisons with no epsilon, so near-neutral products can be affected by roundoff.",
+    "An empty rate matrix returns false."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          1.0,
+          2.0
+        ],
+        [
+          0.6,
+          1.0
+        ]
+      ]
+    ],
+    "expected": true
+  }
 }

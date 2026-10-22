@@ -1,6 +1,29 @@
 {
-  "explanation": "Insert one copied node after each original, use that interleaving to translate Jump links, then separate the chains. The final separation restores the original list links.",
-  "timeComplexity": "O(n)",
-  "spaceComplexity": "O(1) auxiliary, plus O(n) copied output nodes",
-  "attribution": "Unmodified reference from epi_judge_python_solutions/copy_posting_list.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice."
+  "explanation": "Interleave a fresh copy immediately after each original node. This makes original.next a temporary identity mapping. Assign copy.jump through original.jump.next, then separate the alternating chains, restoring original next links and connecting copied next links.",
+  "timeComplexity": "O(n) Each node’s two outgoing links are processed once, or three linear interleaving passes traverse the chain.",
+  "spaceComplexity": "O(1) auxiliary pointers, excluding O(n) newly allocated output nodes. Map variants retain n mappings; interleaving variants keep constant pointers besides n output nodes.",
+  "attribution": "Unmodified reference from epi_judge_python_solutions/copy_posting_list.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice.",
+  "correctness": "After interleaving, each original node has exactly one adjacent copy with the same order. For any original jump target t, t.next is its unique copy, so assigning jump through it preserves sharing and cycles among jump links. Unweaving restores the originals and connects only copied nodes; no copied link references an original.",
+  "walkthrough": "For orders 4→8 and jumps 4→8,8→4, interleave 4→4′→8→8′. Set 4′.jump=8′ and 8′.jump=4′ through each target’s next link. Unweave into original 4→8 and copy 4′→8′. The callable returns 4′; true in the walkthrough is the structural judge result. JSON arguments contain one array of [order,jumpTargetOrder] records; next follows array order and −1 denotes a null jump. The callable returns the copied head; expected true records structural validation.",
+  "edgeCases": [
+    "Null input returns null.",
+    "The next chain is finite and acyclic; jumps are null or target nodes in that chain.",
+    "Self-jumps and backward jumps are preserved.",
+    "Original next links are temporarily changed and restored before returning."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          4,
+          8
+        ],
+        [
+          8,
+          4
+        ]
+      ]
+    ],
+    "expected": true
+  }
 }

@@ -1,6 +1,25 @@
 {
-  "explanation": "For a strictly increasing integer array, A[i]\u2212i is nondecreasing. Binary search for a zero difference and return any matching index, or \u22121 when none exists.",
-  "timeComplexity": "O(log n)",
-  "spaceComplexity": "O(1)",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/SearchEntryEqualToIndex.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "explanation": "For strictly increasing integers, A[i]-i is nondecreasing. Binary-search that difference for zero and return any matching index. The distinct signed-int domain itself ensures A[i]≥INT_MIN+i, so this subtraction cannot underflow.",
+  "timeComplexity": "O(log n). A sign comparison discards at least half the candidate indices each iteration.",
+  "spaceComplexity": "O(1). Only endpoints and a difference accumulator are needed.",
+  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/SearchEntryEqualToIndex.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/).",
+  "correctness": "Because the input integers are strictly increasing, values[i]-i is nondecreasing. A negative difference at middle excludes all positions to its left; a positive difference excludes all positions to its right. Binary search therefore retains every possible zero, returning an index exactly when one exists.",
+  "walkthrough": "For [-3,-1,2,6], midpoint 1 has difference -1-1=-2, so search to its right. At index 2 the difference is 2-2=0, so return 2. The judge accepts this original index as a witness.",
+  "edgeCases": [
+    "An empty array returns -1.",
+    "A match at index 0 is valid.",
+    "Several matching indices may exist; any one is accepted.",
+    "Strictly increasing distinct values are required for the monotone difference."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        -3,
+        -1,
+        2,
+        6
+      ]
+    ],
+    "expected": true
+  }
 }

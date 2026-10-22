@@ -1,14 +1,15 @@
 {
-  "explanation": "Allocate a destination array and place the original value at i directly into destination perm[i]. Reading from the unchanged input avoids overwriting values still needed later.",
-  "timeComplexity": "O(n)",
-  "spaceComplexity": "O(n), including the output",
+  "explanation": "Allocate a result sequence and place original A[i] directly at result[perm[i]]. A separate result prevents writes from destroying values still needed.",
+  "timeComplexity": "O(n+1): allocate n slots and perform one indexed assignment per entry.",
+  "spaceComplexity": "O(n+1) returned storage and O(1) other state.",
   "attribution": "Original C# implementation and explanation authored for EPI Practice from the displayed problem contract.",
-  "correctness": "For each original index i, the assignment writes exactly A[i] to result[perm[i]]. A permutation supplies every destination exactly once, so the result contains every input value at its required destination and no write can destroy an unread input.",
-  "walkthrough": "With perm=[2,0,1] and values=[10,20,30], place 10 at index 2, 20 at index 0 and 30 at index 1. The result is [20,30,10].",
+  "correctness": "Each original index i writes its value to the required destination perm[i]. Because perm is a bijection of 0..n−1, every destination is written exactly once. Reading only the unchanged input ensures each write uses the original value, proving the specified movement.",
+  "walkthrough": "For perm=[2,0,1] and A=[10,20,30], write 10 to result[2], 20 to result[0] and 30 to result[1]. Return [20,30,10].",
   "edgeCases": [
-    "A permutation need not be its own inverse.",
-    "An identity permutation leaves the order unchanged.",
-    "Equal input values are still moved by their positions."
+    "perm contains each index 0..n−1 exactly once and has the same length as A.",
+    "Empty inputs and fixed points need no moves.",
+    "The direction is original i → perm[i], not new A[i]=old A[perm[i]].",
+    "Equal values still move according to their original positions."
   ],
   "walkthroughCase": {
     "arguments": [

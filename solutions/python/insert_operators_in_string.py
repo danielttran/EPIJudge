@@ -5,6 +5,8 @@ from test_framework import generic_test
 
 
 def expression_synthesis(digits: List[int], target: int) -> bool:
+    if not digits:
+        return False
     def directed_expression_synthesis(digits, current_term):
         def evaluate():
             intermediate_operands = []

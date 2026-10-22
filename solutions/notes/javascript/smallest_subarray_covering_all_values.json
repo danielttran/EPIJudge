@@ -1,6 +1,32 @@
 {
   "explanation": "For each distinct keyword, track the latest possible starting index of a prefix of the required sequence. A matching later keyword extends the preceding prefix. Whenever the final keyword matches, compare the resulting interval with the best seen.",
-  "timeComplexity": "O(n + k) expected time for n paragraph entries and k distinct keywords.",
-  "spaceComplexity": "O(k) auxiliary space.",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "timeComplexity": "O(n + k) expected time for n paragraph entries and k distinct keywords. Each paragraph word updates at most one state after O(k) keyword indexing. The entry-count bound treats word hashing/comparison as constant; include examined character lengths when words are unbounded.",
+  "spaceComplexity": "O(k) auxiliary space. There are O(k) keyword indices and prefix states.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "For each keyword position j, start[j] stores the latest starting position of a valid sequence of keywords 0 through j in the processed paragraph. The first keyword starts a new prefix; a later keyword can extend only a previously completed preceding prefix. Keeping the latest start minimizes the length for any fixed ending position. Checking every occurrence of the final keyword therefore finds a globally shortest covering interval.",
+  "walkthrough": "Use paragraph [elm, oak, cedar, elm, oak, ash, pine] and ordered keywords [elm, oak, ash]. The first elm/oak prefix starts at 0. The elm at index 3 replaces its start, and oak at 4 extends that newer prefix. Ash at 5 completes indices [3, 5], a three-word interval. The method returns (3, 5); the existing judge reports its length, 3. The callable returns inclusive zero-based endpoints. The executable walkthrough expected value is their length after the wrapper checks the required keyword sequence.",
+  "edgeCases": [
+    "Keywords are distinct and the supplied corpus guarantees a covering interval.",
+    "Repeated paragraph matches must allow a newer, shorter prefix to replace an older one.",
+    "A single keyword gives a one-entry interval; ties may use any shortest valid interval."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        "elm",
+        "oak",
+        "cedar",
+        "elm",
+        "oak",
+        "ash",
+        "pine"
+      ],
+      [
+        "elm",
+        "oak",
+        "ash"
+      ]
+    ],
+    "expected": 3
+  }
 }

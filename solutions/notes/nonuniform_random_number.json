@@ -1,10 +1,10 @@
 {
   "explanation": "Partition the unit interval into consecutive segments whose lengths are the probabilities. Draw uniformly in that interval and return the value whose segment contains the draw. The last value absorbs floating-point rounding at the endpoint.",
-  "timeComplexity": "O(n) per draw",
-  "spaceComplexity": "O(1)",
+  "timeComplexity": "O(n) per draw. The bound includes all probability processing performed anew on each draw, rather than assuming precomputed endpoints.",
+  "spaceComplexity": "O(1). The linear scan keeps only a draw and running threshold; binary-search variants retain n prefix endpoints.",
   "attribution": "Original C# implementation written for EPI Practice from the displayed contract; no upstream reference code copied.",
-  "correctness": "The cumulative intervals partition [0,1) into lengths equal to the supplied probabilities. A uniform draw falls into interval i with that interval\u2019s length, so returning its value realizes the requested distribution. The final value handles only the remaining tail after all preceding thresholds.",
-  "walkthrough": "For values [4,9] with probabilities [0.25,0.75], draws below 0.25 return 4 and draws from 0.25 onward return 9. A draw of 0.6 therefore returns 9; repeated draws select 9 three times as often on average.",
+  "correctness": "The cumulative intervals partition [0,1) into lengths equal to the supplied probabilities. A uniform draw falls into interval i with that interval’s length, so returning its value realizes the requested distribution. The final value handles only the remaining tail after all preceding thresholds.",
+  "walkthrough": "For values [4,9] with probabilities [0.25,0.75], draws below 0.25 return 4 and draws from 0.25 onward return 9. A draw of 0.6 therefore returns 9; repeated draws select 9 three times as often on average. JSON arguments are [values,probabilities]. Observed true validates repeated samples; the callable returns one value. Finite samples do not prove exact randomness.",
   "edgeCases": [
     "Zero-probability entries receive no interval.",
     "One value is always selected when its probability is one.",

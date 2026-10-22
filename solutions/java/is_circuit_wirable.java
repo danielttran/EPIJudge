@@ -8,6 +8,8 @@ import epi.test_framework.TimedExecutor;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.IdentityHashMap;
+import java.util.Map;
 import java.util.Queue;
 
 public class IsCircuitWirable {
@@ -19,7 +21,15 @@ public class IsCircuitWirable {
 
   public static boolean isAnyPlacementFeasible(List<GraphVertex> graph) {
 
-    return graph.stream().allMatch(v -> v.d != -1 || bfs(v));
+    Map<GraphVertex, GraphVertex> copies = new IdentityHashMap<>();
+    for (GraphVertex vertex : graph) copies.put(vertex, new GraphVertex());
+    for (GraphVertex vertex : graph) {
+      for (GraphVertex neighbor : vertex.edges) {
+        copies.get(vertex).edges.add(copies.get(neighbor));
+        copies.get(neighbor).edges.add(copies.get(vertex));
+      }
+    }
+    return copies.values().stream().allMatch(v -> v.d != -1 || bfs(v));
   }
 
   private static boolean bfs(GraphVertex s) {

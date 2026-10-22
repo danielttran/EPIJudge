@@ -6,8 +6,9 @@ A local practice website with separate collections for **218 EPI problems**,
 using the browser editor, Run, and Submit.
 
 Every coding question has a **Solution** tab with complete implementations in C#, JavaScript, Python, C++ and Java,
-with explanations, complexity bounds and attribution. C# explanations also include
-correctness arguments, original walkthroughs and edge cases. Reading a solution
+with language-specific explanations, justified complexity bounds, attribution,
+correctness arguments, worked walkthroughs and edge cases. The Problem tab shows
+the selected language’s input, return-value and mutation contract before the solution. Reading a solution
 leaves your editor draft and selected programming language intact. All solution
 content is stored locally; see [coverage and validation](solutions/README.md).
 

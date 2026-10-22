@@ -1,6 +1,19 @@
 {
   "explanation": "Inspect the low bit, add it to the count, and shift right without sign extension. Continue until the remaining 32-bit pattern is zero.",
-  "timeComplexity": "O(w), with w=32",
-  "spaceComplexity": "O(1)",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/CountBits.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "timeComplexity": "O(b+1) operations, where b is the highest occupied bit position plus one (b=0 for zero). One shift removes each examined position; b ≤ 32, so worst-case time is constant.",
+  "spaceComplexity": "O(1) auxiliary space: only a fixed-width remaining value and a counter are retained.",
+  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/CountBits.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/).",
+  "correctness": "After k shifts, the count equals the number of 1s in the k original low positions, and the remaining word contains exactly the unexamined high positions. Adding the low bit and shifting preserves this invariant. A logical right shift introduces zeros, so at most 32 steps exhaust every input, including a negative signed bit pattern.",
+  "walkthrough": "For x=44 (binary 101100), the remaining words are 44,22,11,5,2,1,0. Their inspected low bits are 0,0,1,1,0,1; adding these gives 3. This implementation examines six positions, even though only three are set.",
+  "walkthroughCase": {
+    "arguments": [
+      44
+    ],
+    "expected": 3
+  },
+  "edgeCases": [
+    "Zero performs no iterations and returns 0.",
+    "The signed input -1 denotes 32 set bits; the result is 32.",
+    "The highest bit alone has count 1. The >>> operator, rather than >>, fills with zeros."
+  ]
 }

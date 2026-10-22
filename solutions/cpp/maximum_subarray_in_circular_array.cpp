@@ -10,6 +10,7 @@ int FindMaxSubarray(const vector<int>& A);
 int FindCircularMaxSubarray(const vector<int>& A);
 
 int MaxSubarraySumInCircular(const vector<int>& A) {
+  if (A.empty()) return 0;
   return max(FindMaxSubarray(A), FindCircularMaxSubarray(A));
 }
 

@@ -1,6 +1,22 @@
 {
-  "explanation": "Build a valid prefix recursively. Add an opening parenthesis while any remain and add a closing parenthesis only when an unmatched opening is available. Immutable strings are extended at each step.",
-  "timeComplexity": "O(n\u00b2\u00b7Cn) upper bound including string copying, for n pairs and Catalan number Cn outputs",
-  "spaceComplexity": "O(n\u00b2) active prefix strings plus O(n\u00b7Cn) output",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/EnumerateBalancedParentheses.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "explanation": "Recursively extend a valid prefix. Add an opening parenthesis while opens remain, and a closing parenthesis only when more closes than opens remain. Each branch owns its extended prefix string.",
+  "timeComplexity": "O(n·Cₙ), where Cₙ is the nth Catalan number Each of Cₙ leaves materializes 2n characters, and valid-prefix traversal contributes the same output-sensitive bound.",
+  "spaceComplexity": "O(n²) auxiliary characters across up to 2n live prefix strings, plus O(n·Cₙ) output; Cₙ is the nth Catalan number. Prefix copying, unlike a shared buffer, retains strings of several lengths. The shared buffer and recursive depth are linear; immutable-prefix variants retain the separately stated prefix storage.",
+  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/EnumerateBalancedParentheses.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/).",
+  "correctness": "Every generated prefix has at least as many opens as closes and never uses more than n opens. Completed prefixes are therefore balanced. Conversely, every balanced string follows exactly one sequence of these allowed opening/closing choices, so none are omitted or duplicated.",
+  "walkthrough": "With two pairs, opening twice first gives (()); closing after the first open gives ()(). These are the two possible balanced strings.",
+  "edgeCases": [
+    "Zero pairs produces one empty string.",
+    "A closing parenthesis cannot precede its matching opening.",
+    "Output ordering is not part of the contract."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      2
+    ],
+    "expected": [
+      "(())",
+      "()()"
+    ]
+  }
 }

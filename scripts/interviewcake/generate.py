@@ -12,6 +12,9 @@ from corpus import cases
 from interfaces import EXT, full_source, interfaces
 from specs import LANGUAGES, ROOT, S
 
+sys.path.insert(0, str(ROOT / "scripts"))
+from clarity.content import apply_question, questions as clarity_questions
+
 ATTRIBUTION = "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied."
 WALK = {
     "second-largest-item-in-bst": "In the first example, follow 12 -> 20 -> 25. The largest key 25 has no left child, so its parent 20 is the predecessor and the answer.",
@@ -297,6 +300,8 @@ def generate(check=False):
             d["diagram"] = "/interviewcake/diagrams/" + diagrams[s["sourceId"]][0]
             d["diagramAlt"] = diagrams[s["sourceId"]][1]
         definitions.append(d)
+    reviewed = clarity_questions()
+    definitions = [apply_question(problem, reviewed) for problem in definitions]
     emit(
         ROOT / "interviewcake/catalog.json",
         json.dumps(definitions, indent=2, ensure_ascii=False) + "\n",

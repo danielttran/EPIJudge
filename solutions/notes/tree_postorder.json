@@ -1,34 +1,30 @@
 {
-  "explanation": "Perform a depth-first traversal and append each value in postorder order. Null children contribute no values.",
-  "timeComplexity": "O(n) time.",
-  "spaceComplexity": "O(h) recursion space plus O(n) output space.",
+  "explanation": "Recursively visit both children before appending the current value.",
+  "timeComplexity": "O(n+1): one recursive visit per node and one append per value.",
+  "spaceComplexity": "O(h+1) auxiliary call stack for tree height h, plus O(n) returned values. Worst-case h=n.",
   "attribution": "Original C# implementation and explanation authored for EPI Practice from the displayed problem contract; EPI problem attribution remains in the collection.",
-  "correctness": "Inductively, each recursive child call emits exactly that child subtree in postorder. Concatenating the left result, the right result and finally the root value is the definition of postorder. Null calls contribute nothing, so every existing node is appended once after all of its descendants.",
-  "walkthrough": "For [16, 7, 25, 2, 11, null, 30], node 7 contributes [2, 11, 7]. Node 25 contributes [30, 25]. Append root 16 after both subtrees. Return [2, 11, 7, 30, 25, 16].",
+  "correctness": "An empty subtree contributes no values. Assuming each recursive call returns its subtree in the required order, placing the root after both calls produces exactly left subtree, right subtree, root. Each non-null node has one call, so it appears once; induction on subtree size proves the traversal.",
+  "walkthrough": "For the tree with root 8, left child 4 (whose right child is 6), and right child 10, finish 6 before emitting 4, then finish 10, and only then emit 8. Result: [6,4,10,8].",
   "edgeCases": [
     "An empty tree returns an empty list.",
-    "A leaf contributes its own value immediately.",
-    "Left descendants precede right descendants even when their Data values are equal."
+    "Repeated values are emitted once per node; do not deduplicate.",
+    "A skewed tree has height n, so recursive stack depth can be linear."
   ],
   "walkthroughCase": {
     "arguments": [
       [
-        16,
-        7,
-        25,
-        2,
-        11,
+        8,
+        4,
+        10,
         null,
-        30
+        6
       ]
     ],
     "expected": [
-      2,
-      11,
-      7,
-      30,
-      25,
-      16
+      6,
+      4,
+      10,
+      8
     ]
   }
 }

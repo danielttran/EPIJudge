@@ -21,7 +21,7 @@ int FindMinimumVisits(vector<Interval> intervals) {
        [](const Interval& a, const Interval& b) { return a.right < b.right; });
   int last_visit_time = numeric_limits<int>::min(), num_visits = 0;
   for (const Interval& interval : intervals) {
-    if (interval.left > last_visit_time) {
+    if (num_visits == 0 || interval.left > last_visit_time) {
       // The current right endpoint, last_visit_time, will not cover any more
       // intervals.
       last_visit_time = interval.right;

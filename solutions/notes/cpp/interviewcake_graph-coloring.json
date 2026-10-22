@@ -1,15 +1,16 @@
 {
   "explanation": "For each node, collect colors already used by its neighbors and choose a palette color outside that set.",
   "correctness": "At most degree(node) colors are forbidden by its neighbors. A prefix of degree(node)+1 distinct colors therefore contains an available color. A later neighbor avoids this assigned color, so every edge remains valid.",
-  "walkthrough": "For the triangle with adjacency [[1,2],[0,2],[0,1]] and palette [red,blue,green], assign red to v0, blue to v1 because v0 is red, and green to v2 because its neighbors use both red and blue. Every edge has different endpoint colors. Any other valid assignment also passes; the displayed true reports successful properties.",
+  "walkthrough": "For the triangle with adjacency [[1,2],[0,2],[0,1]] and palette [red,blue,green], assign red to v0, blue to v1 because v0 is red, and green to v2 because its neighbors use both red and blue. Every edge has different endpoint colors. Any other valid assignment also passes; the displayed true reports successful properties. JSON supplies [adjacency,palette]; the callable receives graph nodes and colors and returns void/None/undefined. Expected true is the checker verdict for legal Color mutations and preserved graph identity/links.",
   "edgeCases": [
     "Disconnected components",
     "isolated nodes",
     "complete graph",
-    "empty graph."
+    "empty graph.",
+    "An empty graph needs no assignments. Isolated nodes can all use the first color. A clique of D+1 nodes uses D+1 distinct colors."
   ],
-  "timeComplexity": "O(V+E) expected hash-table operations. At a vertex of degree d, at most d colors are forbidden, so at most d+1 palette entries are examined; color-string hashing costs also apply.",
-  "spaceComplexity": "O(D) stored color entries for maximum degree D, excluding graph and palette inputs.",
+  "timeComplexity": "Expected O(V+E) time: neighbor scans total 2E in an undirected graph, and the first degree(v)+1 distinct palette entries must include an available color. Hash membership is expected O(1), treating color names as bounded-size keys.",
+  "spaceComplexity": "O(D+1) auxiliary space: the current node’s forbidden-color set contains at most D neighbor colors, and is discarded before the next node.",
   "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
   "walkthroughCase": {
     "arguments": [

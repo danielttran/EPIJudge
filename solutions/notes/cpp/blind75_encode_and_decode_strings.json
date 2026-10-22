@@ -1,6 +1,27 @@
 {
   "explanation": "Prefix each string with its decimal character length and a colon. Decoding reads that length and consumes exactly that many characters, so delimiters and empty strings are unambiguous. No object or process state carries the data.",
-  "timeComplexity": "O(S + k log(L+2)) time for k strings, total characters S and maximum string length L.",
-  "spaceComplexity": "O(S + k log(L+2)) encoded/output storage, including length prefixes for empty items.",
-  "attribution": "Original repository-authored Blind75 C++ algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used."
+  "timeComplexity": "O(S + k log(L + 2)) time for k strings, total characters S and maximum string length L. Each payload character and decimal length-prefix character is written and read a constant number of times.",
+  "spaceComplexity": "O(S + k log(L + 2)) encoded/output space, including length prefixes for empty strings. The encoded string and decoded items include all S payload characters and k length prefixes.",
+  "attribution": "Original repository-authored Blind75 C++ algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used.",
+  "correctness": "Each encoded item begins with a decimal length followed by a delimiter, so the decoder knows exactly how many subsequent characters belong to that item. Delimiters inside content are never interpreted as boundaries. Repeating this step uniquely reconstructs the complete list, including empty items, from the string alone.",
+  "walkthrough": "For [\"\",\"x:y\",\"4#\\n\"], item lengths are 0,3 and 3. Their encoded pieces are \"0:\",\"3:x:y\" and a piece beginning \"3:4#\" followed by a newline. Decoding consumes those exact lengths and recovers the original three strings, including the empty one and newline. The example represents Encode followed by Decode on a fresh instance; expected is the recovered list, not the encoded wire string.",
+  "edgeCases": [
+    "An empty list differs from a list containing an empty string.",
+    "Colons and digits inside content are ordinary characters.",
+    "The decoder runs independently and cannot rely on cached input objects."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        "",
+        "x:y",
+        "4#\n"
+      ]
+    ],
+    "expected": [
+      "",
+      "x:y",
+      "4#\n"
+    ]
+  }
 }

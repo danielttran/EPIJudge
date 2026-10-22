@@ -1,6 +1,26 @@
 {
   "explanation": "Use two pointers on the already sorted array. Increase the left pointer when the sum is too small and decrease the right pointer when it is too large. Allow the pointers to coincide because this EPI contract permits reusing one element.",
-  "timeComplexity": "O(n) time.",
-  "spaceComplexity": "O(1) auxiliary space.",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "timeComplexity": "O(n+1) worst-case time for n entries: each unsuccessful comparison discards one endpoint, giving at most n iterations.",
+  "spaceComplexity": "O(1) auxiliary space: two indices and one sum; the input is not copied or changed.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "At each step all pairs not yet excluded have both indices within the active sorted interval. If the endpoint sum is below target, pairing its left value with any remaining value is also too small; excluding that left endpoint is safe. If it is above target, every remaining pair using the right endpoint is too large. Equality proves a valid pair. Each unsuccessful step shrinks the interval, so exhaustion proves no pair exists. A single remaining index must still be tested because reuse is allowed.",
+  "walkthrough": "For sorted [-8, 1, 6, 13] and target 12, begin with -8 + 13 = 5 and advance left. Next 1 + 13 = 14, so move right to 6. Then 1 + 6 = 7, so move left to that same 6. Now 6 + 6 = 12; reusing the element is allowed, so return true.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        -8,
+        1,
+        6,
+        13
+      ],
+      12
+    ],
+    "expected": true
+  },
+  "edgeCases": [
+    "Empty input returns false.",
+    "[3] and target 6 return true by reusing its only index.",
+    "Repeated values and negative values obey the same sorted-order argument.",
+    "A sum of two signed 32-bit integers is exactly representable as a JavaScript Number."
+  ]
 }

@@ -1,6 +1,44 @@
 {
-  "explanation": "Depth-first search white neighbors, marking visited cells black. Maintain the active path, removing a coordinate when its search branch cannot reach the destination. The maze is used as visited storage.",
-  "timeComplexity": "O(RC)",
-  "spaceComplexity": "O(RC) recursion and path in the worst case",
-  "attribution": "Unmodified reference from epi_judge_python_solutions/search_maze.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice."
+  "explanation": "Depth-first search keeps a current path. Enter only white in-bounds cells, mark each visited cell black, and recursively try four neighbors. Pop a cell from the path when all continuations fail; retain the path on success.",
+  "timeComplexity": "O(RC): each cell is marked at most once and considers four neighbors. Every reached cell has at most four neighbors and is recorded or marked once; the worst-case frontier/path visits the whole maze.",
+  "spaceComplexity": "O(RC) worst-case recursive stack and path; C++ additionally copies the input maze. Predecessors/frontier or visited markings/path can involve every maze cell; C++ also stores a maze copy.",
+  "attribution": "Unmodified reference from epi_judge_python_solutions/search_maze.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice.",
+  "correctness": "The path is always a sequence of orthogonally adjacent original white cells from the start. Marking on entry prevents cycles and repeated exploration. Failed branches cannot reach the destination, so discarding them is safe; a successful branch leaves an endpoint-inclusive valid path. Exhausting reachable cells proves no path exists.",
+  "walkthrough": "In [[0,0,1],[1,0,0],[0,0,0]], the path must start (0,0)→(0,1)→(1,1). C++/Java then try (1,2)→(2,2); Python tries (2,1)→(2,0), backtracks, then reaches (2,2). Both are valid; no shortest-path guarantee is required. JSON arguments are [maze,[startRow,startColumn],[endRow,endColumn]]. Observed true means a valid path was accepted; observed false for distinct unreachable endpoints corresponds to an empty returned path. The wrapper also observes true for any empty result when start=end, a weaker check than the callable’s path contract.",
+  "edgeCases": [
+    "White is 0 and black is 1.",
+    "Any valid path is accepted; DFS need not return a shortest one.",
+    "Java/Python mutate the supplied maze; C++ searches a by-value copy.",
+    "An unreachable destination returns an empty path."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          0,
+          0,
+          1
+        ],
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      [
+        0,
+        0
+      ],
+      [
+        2,
+        2
+      ]
+    ],
+    "expected": true
+  }
 }

@@ -1,6 +1,23 @@
 {
-  "explanation": "Count values by their high 16-bit bucket, then mark low-bit values within an underfull bucket and return its first unmarked entry. itertools.tee retains the stream for the required second pass.",
-  "timeComplexity": "O(n + 2^16)",
-  "spaceComplexity": "O(n + 2^16), including the tee buffer",
-  "attribution": "Unmodified reference from epi_judge_python_solutions/absent_value_array.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice."
+  "explanation": "Count values by their high 16 bits, choose a bucket with fewer than 65,536 entries, then rescan and mark its low 16-bit values. An unmarked low value combined with that bucket gives a missing integer.",
+  "timeComplexity": "O(n+2^16): two stream passes, a scan of the 2^16 counters and a scan of 2^16 low-value flags. Set scanning checks at most n+1 candidates; bucket variants perform two full passes and fixed-size scans.",
+  "spaceComplexity": "O(n+2^16) auxiliary space: itertools.tee must buffer the entire first traversal until the second iterator catches up, in addition to counters and candidate flags. Set entries, bucket arrays and Python tee buffering are explicitly accounted for above.",
+  "attribution": "Unmodified reference from epi_judge_python_solutions/absent_value_array.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice.",
+  "correctness": "A bucket containing fewer entries than its 65,536 possible low values must have a hole, even with duplicate entries. The second pass marks every present low value in that bucket; an unmarked bit therefore reconstructs an absent value. This argument requires the stream to have fewer than 2^31 entries for the bank’s nonnegative signed-int output range so some bucket is underfull.",
+  "walkthrough": "For [0,1,3], bucket zero has three entries and is underfull. Mark low values 0,1,3; the first unmarked position is 2. Return 2. The wrapper validates absence; true in the executable example is its verdict.",
+  "edgeCases": [
+    "Duplicates may raise a bucket count but cannot falsely mark an absent low value.",
+    "An empty stream selects bucket zero and returns zero.",
+    "The underfull-bucket proof needs fewer than 2^31 stream entries for a guaranteed nonnegative signed-int answer; Python tee has an additional storage cost."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        0,
+        1,
+        3
+      ]
+    ],
+    "expected": true
+  }
 }

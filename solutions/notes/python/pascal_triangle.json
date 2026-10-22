@@ -1,6 +1,38 @@
 {
-  "explanation": "Start every row with ones at its endpoints. Each interior entry is the sum of its two parents in the previous row.",
-  "timeComplexity": "O(n\u00b2).",
-  "spaceComplexity": "O(n\u00b2) for the returned triangle; O(1) beyond the output.",
-  "attribution": "Unmodified reference from epi_judge_python_solutions/pascal_triangle.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice."
+  "explanation": "Allocate all requested rows filled with ones, then replace each interior value by the sum of the two values above it.",
+  "timeComplexity": "O(n²+1): the output has 1+2+…+n=n(n+1)/2 entries, each initialized and computed a constant number of times.",
+  "spaceComplexity": "O(n²+1) returned triangle storage. Rows being filled become part of the output; loop indices use O(1) extra state.",
+  "attribution": "Unmodified reference from epi_judge_python_solutions/pascal_triangle.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice.",
+  "correctness": "Row zero is [1]. Assuming the previous row is correct, each endpoint of the next row is one and each interior position equals the sum of its two parents, exactly Pascal’s recurrence. Induction on row number proves every generated row correct. Returning all n rows includes each requested coefficient once.",
+  "walkthrough": "For n=4, begin [1] and [1,1]. The next row has middle value 1+1=2, giving [1,2,1]. Its two parent sums are 1+2=3 and 2+1=3, giving [1,3,3,1]. Return [[1],[1,1],[1,2,1],[1,3,3,1]].",
+  "walkthroughCase": {
+    "arguments": [
+      4
+    ],
+    "expected": [
+      [
+        1
+      ],
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        2,
+        1
+      ],
+      [
+        1,
+        3,
+        3,
+        1
+      ]
+    ]
+  },
+  "edgeCases": [
+    "n=0 returns an empty list.",
+    "n=1 returns [[1]].",
+    "The bank uses 0≤n≤34, so all coefficients fit signed 32-bit integers."
+  ]
 }

@@ -1,6 +1,36 @@
 {
   "explanation": "Read only the active prefix. Skip b, append two d characters for a, and copy any other character. Returning a new list excludes unused buffer capacity.",
-  "timeComplexity": "O(size).",
-  "spaceComplexity": "O(size) for the returned list; O(1) beyond output.",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "timeComplexity": "O(size). Each active character is read a constant number of times and emits at most two characters.",
+  "spaceComplexity": "O(size) for the returned list; O(1) beyond output. New-list variants store output explicitly; in-place variants use existing capacity and constant index state.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "After each consumed input character, result equals the required transformation of the consumed active prefix. Appending dd for a, nothing for b, and the original value otherwise preserves this invariant. Stopping at size ensures unused buffer capacity cannot leak into the result.",
+  "walkthrough": "For size=5 and buffer [\"a\",\"c\",\"b\",\"a\",\"e\",\"\", \"\"], read only a,c,b,a,e. Their contributions are dd,c,nothing,dd,e. Return [\"d\",\"d\",\"c\",\"d\",\"d\",\"e\"], ignoring both unused buffer cells.",
+  "edgeCases": [
+    "size=0 returns an empty result.",
+    "Unused buffer entries are never processed.",
+    "Every a expands to exactly two d characters.",
+    "Removing b can shrink the output even when expansion capacity exists."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      5,
+      [
+        "a",
+        "c",
+        "b",
+        "a",
+        "e",
+        "",
+        ""
+      ]
+    ],
+    "expected": [
+      "d",
+      "d",
+      "c",
+      "d",
+      "d",
+      "e"
+    ]
+  }
 }

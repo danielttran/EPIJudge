@@ -7,28 +7,15 @@ public class RealSquareRoot {
   @EpiTest(testDataFile = "real_square_root.tsv")
 
   public static double squareRoot(double x) {
-
-    // Decides the search range according to x's value relative to 1.0.
-    double left, right;
-    if (x < 1.0) {
-      left = x;
-      right = 1.0;
-    } else { // x >= 1.0.
-      left = 1.0;
-      right = x;
+    if (x == 0) return 0;
+    double low = 0, high = Math.max(1.0, x);
+    for (int step = 0; step < 1100; ++step) {
+      double middle = low + (high - low) / 2;
+      if (middle == low || middle == high) break;
+      if (middle <= x / middle) low = middle;
+      else high = middle;
     }
-
-    // Keeps searching as long as left != right, within tolerance.
-    while (compare(left, right) != Ordering.EQUAL) {
-      double mid = left + 0.5 * (right - left);
-      double midSquared = mid * mid;
-      if (compare(midSquared, x) == Ordering.LARGER) {
-        right = mid;
-      } else {
-        left = mid;
-      }
-    }
-    return left;
+    return low + (high - low) / 2;
   }
 
   private enum Ordering { SMALLER, EQUAL, LARGER }

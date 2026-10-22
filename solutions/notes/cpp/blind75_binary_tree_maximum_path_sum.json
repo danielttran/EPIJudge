@@ -1,6 +1,27 @@
 {
   "explanation": "Compute each subtree's best downward gain, discarding negative gains. At each node also consider joining the best left and right gains through that node, while returning only one branch to its parent.",
-  "timeComplexity": "O(n) time for n nodes.",
-  "spaceComplexity": "O(h) recursion space for tree height h.",
-  "attribution": "Original repository-authored Blind75 C++ algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used."
+  "timeComplexity": "O(n) time for n nodes. Each node combines two child gains and updates best once.",
+  "spaceComplexity": "O(h) recursion space for tree height h. The active recursive path has at most h frames; no paths are copied.",
+  "attribution": "Original repository-authored Blind75 C++ algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used.",
+  "correctness": "A downward path returned to a parent can include at most one child branch, so the recursive gain keeps the better nonnegative child gain. A complete path whose highest node is the current node may use both child gains. Considering that complete path at every node covers every possible nonempty simple tree path.",
+  "walkthrough": "For [-5,4,7,2,3,null,6], the left gain into root -5 is 4+3=7 and the right gain is 7+6=13. Joining them through the root yields 7-5+13=15, realized by 3→4→-5→7→6. Return 15.",
+  "edgeCases": [
+    "A path may start and end anywhere, but cannot revisit a node.",
+    "The path is nonempty, so an all-negative tree returns its largest node value.",
+    "Negative child gains are excluded instead of reducing a path."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        -5,
+        4,
+        7,
+        2,
+        3,
+        null,
+        6
+      ]
+    ],
+    "expected": 15
+  }
 }

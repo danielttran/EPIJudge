@@ -15,8 +15,10 @@ int FindMissingElement(vector<int>::const_iterator stream_begin,
   vector<size_t> counter(kNumBucket, 0);
   vector<int>::const_iterator stream_begin_copy = stream_begin;
   while (stream_begin != stream_end) {
-    int upper_part_x = *stream_begin >> 16;
-    ++counter[upper_part_x];
+    if (*stream_begin >= 0) {
+      int upper_part_x = *stream_begin >> 16;
+      ++counter[upper_part_x];
+    }
     ++stream_begin;
   }
 

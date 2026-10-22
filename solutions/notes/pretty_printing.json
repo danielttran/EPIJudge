@@ -1,10 +1,10 @@
 {
   "explanation": "Let best[end] be the minimum cost for the first end words. Try every final line that fits, adding its squared unused spaces to the best preceding prefix. The last line is charged too.",
-  "timeComplexity": "O(n²) in the worst case.",
-  "spaceComplexity": "O(n).",
+  "timeComplexity": "O(n²) in the worst case. There are at most n final-line endpoints and n starting words to consider for each; the DP stores one cost per prefix.",
+  "spaceComplexity": "O(n). One optimal cost is retained per word-prefix; line lengths are scanned using scalar counters.",
   "attribution": "Original C# implementation and explanation authored for EPI Practice from the displayed problem contract.",
   "correctness": "For a fixed prefix ending at end, every valid wrapping has some final line start. The algorithm tries every such start that fits and adds that line’s squared unused spaces to the optimal earlier prefix. Choosing the minimum therefore finds an optimal wrapping by induction, including the last line’s cost.",
-  "walkthrough": "For words [\"we\",\"build\",\"small\"] and width 8, \"we build\" uses all 8 columns and costs 0. The final line \"small\" leaves 3 spaces and costs 9. Separating \"we\" and \"build\" would already cost 36+9, so the minimum total is 9.",
+  "walkthrough": "For words [\"we\",\"build\",\"small\"] and width 8, \"we build\" uses all 8 columns and costs 0. The final line \"small\" leaves 3 spaces and costs 9. Separating \"we\" and \"build\" would already cost 36+9, so the minimum total is 9. The walkthroughCase uses the judge’s JSON input format and expected observation.",
   "edgeCases": [
     "No words need no lines and cost 0.",
     "A line containing multiple words includes one space per gap.",
@@ -12,7 +12,14 @@
     "The problem requires each individual word to fit the line width."
   ],
   "walkthroughCase": {
-    "arguments": [["we", "build", "small"], 8],
+    "arguments": [
+      [
+        "we",
+        "build",
+        "small"
+      ],
+      8
+    ],
     "expected": 9
   }
 }

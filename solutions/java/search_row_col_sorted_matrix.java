@@ -10,6 +10,7 @@ public class SearchRowColSortedMatrix {
 
   public static boolean matrixSearch(List<List<Integer>> A, int x) {
 
+    if (A.isEmpty() || A.get(0).isEmpty()) return false;
     int row = 0, col = A.get(0).size() - 1; // Start from the top-right corner.
     // Keeps searching while there are unclassified rows and columns.
     while (row < A.size() && col >= 0) {

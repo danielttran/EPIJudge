@@ -1,6 +1,37 @@
 {
-  "explanation": "Copy the original matrix, then assign destination (r,c) from original (n-1-c,r). Write into existing rows so the matrix and row objects retain their identities.",
-  "timeComplexity": "O(n²) time for an n-by-n matrix.",
-  "spaceComplexity": "O(n²) auxiliary space for the original-value copy.",
-  "attribution": "Original repository-authored Blind75 Java algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used."
+  "explanation": "Copy every original row, then write each destination cell (r,c) from original cell (n-1-c,r). Reading from the snapshot prevents earlier writes from corrupting later source values, while cell assignment preserves the supplied matrix and its row objects.",
+  "timeComplexity": "O(n squared): copying the n-by-n matrix and assigning all n squared destination cells each take one full pass.",
+  "spaceComplexity": "O(n squared) auxiliary space for the independent row snapshot; loop indices use constant space.",
+  "attribution": "Original repository-authored Blind75 Java algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used.",
+  "correctness": "A clockwise rotation sends an original cell (a,b) to (b,n-1-a). Solving for the source of destination (r,c) gives (n-1-c,r), exactly the copied value assigned by the loops. Every destination is written once from the unchanged snapshot, so no original value is lost.",
+  "walkthrough": "For [[2,5],[7,9]], the snapshot remains unchanged while destination row 0 reads original (1,0)=7 and (0,0)=2. Destination row 1 reads original (1,1)=9 and (0,1)=5. The supplied matrix becomes [[7,2],[9,5]]. The method returns no value; the wrapper displays that mutated matrix. The callable returns no value; expected records the original matrix after mutation, and the harness additionally checks row identity.",
+  "edgeCases": [
+    "The input matrix must be square.",
+    "A one-cell matrix is unchanged.",
+    "The original row objects must be preserved."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          2,
+          5
+        ],
+        [
+          7,
+          9
+        ]
+      ]
+    ],
+    "expected": [
+      [
+        7,
+        2
+      ],
+      [
+        9,
+        5
+      ]
+    ]
+  }
 }

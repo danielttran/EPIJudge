@@ -15,7 +15,7 @@ def search_smallest(A: List[int]) -> int:
             # Minimum cannot be in A[mid + 1:right + 1] so it must be in A[left:mid + 1].
             right = mid
     # Loop ends when left == right.
-    return left
+    return left if A else -1
 
 
 if __name__ == '__main__':

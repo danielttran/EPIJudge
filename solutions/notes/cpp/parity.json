@@ -1,6 +1,19 @@
 {
-  "explanation": "Scan the unsigned word from low bit to high bit, XORing each bit into a parity accumulator. The accumulator is one exactly when the number of set bits is odd.",
-  "timeComplexity": "O(64), constant time for the fixed-width input.",
-  "spaceComplexity": "O(1) auxiliary space.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/parity.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "Scan the 64-bit word from low bit to high bit, XORing each extracted bit into a one-bit accumulator. Unsigned right shifts eventually reach zero even when the signed Java input is negative.",
+  "timeComplexity": "O(w) for w significant bit positions, at most 64; unlike clearing set bits, zero positions are also scanned.",
+  "spaceComplexity": "O(1): retain only the fixed 64-bit remaining word and one parity bit.",
+  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/parity.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice.",
+  "correctness": "After each shift, result is the XOR of all bits removed so far. XORing the next low bit preserves this invariant; after the remaining word is zero, result is the parity of every original set bit.",
+  "walkthrough": "For 13 (1101₂), read low bits 1,0,1,1. The accumulator changes 0→1→1→0→1, so return 1.",
+  "edgeCases": [
+    "Zero has no set bits and returns 0.",
+    "Negative values retain their two’s-complement sign bit through the ulong cast.",
+    "The minimum signed long has exactly one set bit and returns 1."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      13
+    ],
+    "expected": 1
+  }
 }

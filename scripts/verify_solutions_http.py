@@ -144,6 +144,9 @@ def main():
                 not before["drafts"] and not before["attempts"],
                 "isolated profile starts without drafts or attempts",
             )
+            contracts = json.loads(
+                (ROOT / "scripts/clarity/contracts.json").read_text()
+            )
             displayed = []
             for problem in problems:
                 problem_id = problem["id"]
@@ -156,6 +159,7 @@ def main():
                         "runtime": RUNTIMES[language],
                         "codeFormat": "callable-v1",
                         "references": public_references(source),
+                        "contract": contracts[problem_id][language],
                     }
                     check(
                         problem["starters"][language] == expected_starter,
@@ -194,15 +198,14 @@ def main():
                         headers.get("Content-Type", "").startswith("application/json"),
                         label + " has JSON media type",
                     )
-                    if language == "csharp":
-                        check(
-                            all(
-                                actual.get(key)
-                                for key in ["correctness", "walkthrough", "edgeCases"]
-                            ),
-                            label
-                            + " has detailed proof, original walkthrough and edge cases",
-                        )
+                    check(
+                        all(
+                            actual.get(key)
+                            for key in ["correctness", "walkthrough", "edgeCases"]
+                        ),
+                        label
+                        + " has detailed proof, original walkthrough and edge cases",
+                    )
                     displayed.append(
                         {
                             "problemId": problem_id,

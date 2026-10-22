@@ -1,6 +1,35 @@
 {
   "explanation": "For each true cell, the largest square ending there has side one plus the minimum side ending above, left and diagonally above-left. Track the greatest side and return its area.",
-  "timeComplexity": "O(rows \u00d7 columns)",
-  "spaceComplexity": "O(columns)",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "timeComplexity": "O(rows × columns) Each cell makes a constant number of DP comparisons.",
+  "spaceComplexity": "O(columns) Only current and preceding DP rows are retained.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "A true cell can end a square of side s exactly when its top, left and diagonal predecessor squares all support side at least s−1. Taking one plus their minimum gives the largest feasible square at that cell; a false cell supports none. Every square has a lower-right corner, so the largest computed side gives the answer.",
+  "walkthrough": "For [[true,true,false],[true,true,true],[false,true,true]], a 2×2 all-true square appears at the upper left and another at the lower right. No 3×3 square exists because two corner cells are false. Return area 4.",
+  "edgeCases": [
+    "False cells reset the local square side to zero.",
+    "All-false input has area zero.",
+    "The returned quantity is area, not side length."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          true,
+          true,
+          false
+        ],
+        [
+          true,
+          true,
+          true
+        ],
+        [
+          false,
+          true,
+          true
+        ]
+      ]
+    ],
+    "expected": 4
+  }
 }

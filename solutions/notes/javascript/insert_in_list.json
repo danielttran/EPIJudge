@@ -1,6 +1,30 @@
 {
   "explanation": "Walk to the selected 1-based node position. Link the new node to its successor, then link the selected node to the new node. The existing head and all existing nodes are retained.",
-  "timeComplexity": "O(p) time to reach position p.",
-  "spaceComplexity": "O(1) auxiliary space and one new node.",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "timeComplexity": "O(p): advance to one-based position p, then perform two constant-time link changes.",
+  "spaceComplexity": "O(1) auxiliary pointers plus exactly one newly allocated node.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "Before insertion, selected points to the requested 1-based node. Saving its successor in newNode.Next and then setting selected.Next=newNode adds exactly one node between them while leaving the remainder reachable and preserving the original head.",
+  "walkthrough": "For [7,4,9], position 2 selects value 4. Give the new node 6 a successor of 9, then change 4.next to that new node. Return the same head, now traversing [7,4,6,9].",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        7,
+        4,
+        9
+      ],
+      2,
+      6
+    ],
+    "expected": [
+      7,
+      4,
+      6,
+      9
+    ]
+  },
+  "edgeCases": [
+    "Position 1 means insert after the head, not before it.",
+    "Inserting after the last node appends a new tail.",
+    "Existing nodes and their values are retained."
+  ]
 }

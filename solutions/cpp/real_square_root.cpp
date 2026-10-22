@@ -13,26 +13,16 @@ enum class Ordering { kSmaller, kEqual, kLarger };
 Ordering Compare(double a, double b);
 
 double SquareRoot(double x) {
-  // Decides the search range according to x's value relative to 1.0.
-  double left, right;
-  if (x < 1.0) {
-    left = x, right = 1.0;
-  } else {  // x >= 1.0.
-    left = 1.0, right = x;
-  }
-
-  // Keeps searching as long as left != right, within tolerance.
-  while (Compare(left, right) != Ordering::kEqual) {
-    double mid = left + 0.5 * (right - left);
-    if (double mid_squared = mid * mid;
-        Compare(mid_squared, x) == Ordering::kLarger) {
-      right = mid;
-    } else {
-      left = mid;
+    if (x == 0) return 0;
+    double low = 0, high = std::max(1.0, x);
+    for (int step = 0; step < 1100; ++step) {
+      double middle = low + (high - low) / 2;
+      if (middle == low || middle == high) break;
+      if (middle <= x / middle) low = middle;
+      else high = middle;
     }
+    return low + (high - low) / 2;
   }
-  return left;
-}
 
 Ordering Compare(double a, double b) {
   // Uses normalization for precision problem.

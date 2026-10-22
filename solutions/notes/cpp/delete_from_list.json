@@ -1,6 +1,29 @@
 {
-  "explanation": "Walk to the node immediately before the selected non-head position, then bypass the selected node. All retained nodes preserve their values and identities.",
-  "timeComplexity": "O(node_idx)",
-  "spaceComplexity": "O(1)",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/delete_from_list.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "The callable receives the predecessor node directly. Assign its next link to its successor’s next link, bypassing exactly the successor; the wrapper locates this predecessor from the zero-based deletion position.",
+  "timeComplexity": "O(1) callable time: one pointer assignment. The case wrapper spends O(node_idx) locating the predecessor.",
+  "spaceComplexity": "O(1): the predecessor traversal needs one pointer and the bypass allocates no nodes.",
+  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/delete_from_list.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice.",
+  "correctness": "The predecessor’s next originally points to the node to remove. Replacing only that edge with the removed node’s successor preserves every other retained node and link, including the original list head.",
+  "walkthrough": "The case supplies [7,5,9,2] and zero-based deletion position 2. The wrapper passes node 5; the callable changes 5.next from node 9 to node 2 and returns no value. The wrapper observes [7,5,2].",
+  "edgeCases": [
+    "The supplied position is at least one.",
+    "Deleting the tail simply sets its predecessor’s Next to null.",
+    "This exercise does not select the head."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        7,
+        5,
+        9,
+        2
+      ],
+      2
+    ],
+    "expected": [
+      7,
+      5,
+      2
+    ]
+  }
 }

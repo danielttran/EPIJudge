@@ -14,6 +14,8 @@ bool PairIncludesAncestorAndDescendantOfM(
     const unique_ptr<BstNode<int>>& possible_anc_or_desc_0,
     const unique_ptr<BstNode<int>>& possible_anc_or_desc_1,
     const unique_ptr<BstNode<int>>& middle) {
+  if (possible_anc_or_desc_0.get() == middle.get() || possible_anc_or_desc_1.get() == middle.get() || possible_anc_or_desc_0.get() == possible_anc_or_desc_1.get()) return false;
+
   auto* search_0 = possible_anc_or_desc_0.get();
   auto* search_1 = possible_anc_or_desc_1.get();
 

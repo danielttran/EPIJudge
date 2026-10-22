@@ -1,6 +1,36 @@
 {
   "explanation": "Sort by finishing time and greedily retain each interval whose start is at least the last retained end. The earliest finish leaves the most room for future intervals.",
-  "timeComplexity": "O(n log n) time for n intervals.",
-  "spaceComplexity": "O(n) auxiliary space for sorting.",
-  "attribution": "Original repository-authored Blind75 Python algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used."
+  "timeComplexity": "O(n log n) time for n intervals. Sorting by finish time costs O(n log(n+1)); the greedy scan then inspects each interval once.",
+  "spaceComplexity": "O(n) auxiliary space for sorting. The sorted copy contains n interval records or references, with constant scan state.",
+  "attribution": "Original repository-authored Blind75 Python algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used.",
+  "correctness": "Among intervals available next, retaining one with the earliest finish leaves at least as much room for every later choice as retaining any other interval. Exchanging an optimal solution’s first choice with that earliest-finishing choice cannot reduce its size. Repeating this argument proves the greedy maximum retained set; removing the rest is minimal.",
+  "walkthrough": "For [[0,3],[2,4],[4,6],[5,7]], retain [0,3], reject overlapping [2,4], retain [4,6], then reject overlapping [5,7]. Two intervals can remain, so remove 4-2=2.",
+  "edgeCases": [
+    "Touching intervals are compatible because positive overlap is required.",
+    "Identical positive-length intervals cannot both be retained.",
+    "An empty input needs no removals."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          0,
+          3
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          4,
+          6
+        ],
+        [
+          5,
+          7
+        ]
+      ]
+    ],
+    "expected": 2
+  }
 }

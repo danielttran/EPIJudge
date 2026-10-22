@@ -1,6 +1,26 @@
 {
   "explanation": "A chosen jug adds its entire uncertainty interval, so subtract its low/high endpoints from the required interval and solve the remaining requirement. Reaching an interval containing zero means the accumulated guarantees fit. Memoize impossible remainder intervals to avoid repeating subproblems.",
-  "timeComplexity": "O(m\u00b7S), where m is jug count and S is the number of distinct remainder intervals explored",
-  "spaceComplexity": "O(S+H/a), where H is the target high bound and a is the smallest positive jug low bound",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "timeComplexity": "O(m·S), where m is jug count and S is the number of distinct remainder intervals explored Each distinct residual state tries up to m jugs once before it is memoized.",
+  "spaceComplexity": "O(S+H/a), where H is the target high bound and a is the smallest positive jug low bound Memoized residual states and the longest sequence of positive-volume pours dominate memory.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "For a chosen jug [a,b], a remaining sequence must guarantee its total in [L−a,H−b]. This subtraction is equivalent to requiring the combined uncertainty interval to lie wholly inside [L,H]. The search considers every reusable next jug and memoizes only states proved impossible.",
+  "walkthrough": "Using a jug guaranteed to supply between 2 and 3 twice guarantees a total between 4 and 6. That entire interval lies within target [4,6], so the algorithm returns true.",
+  "edgeCases": [
+    "An interval that merely overlaps the target is insufficient.",
+    "A jug can be reused.",
+    "Both target endpoints are inclusive."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          2,
+          3
+        ]
+      ],
+      4,
+      6
+    ],
+    "expected": true
+  }
 }

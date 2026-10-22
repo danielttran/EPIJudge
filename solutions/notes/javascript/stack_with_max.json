@@ -1,6 +1,68 @@
 {
-  "explanation": "Store each entry with the maximum over its stack prefix. Popping immediately exposes the previous maximum. A newly constructed instance starts empty.",
-  "timeComplexity": "O(1) amortized push and pop; O(1) empty, max and constructor.",
-  "spaceComplexity": "O(n) for n entries, excluding allocator capacity slack.",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "explanation": "Store every pushed value with the maximum of the stack prefix ending there. The top pair therefore answers Max immediately; popping exposes the previous prefix maximum. A constructor or wrapper reset starts an empty stack.",
+  "timeComplexity": "Push is O(1) amortized for a growable backing container; Pop, Max and Empty are O(1). Creating/resetting a stack can release O(p) existing entries; do not assume C# value-array Clear costs apply to every language. Push computes one maximum; all queries inspect only the top pair. Backing-container growth accounts for amortization.",
+  "spaceComplexity": "O(p) storage for peak live stack entries, allowing container capacity retention. Every entry stores one value and one cached maximum. Every stored entry holds two integers; container retention may follow peak size.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "Every stored pair holds its pushed value and the maximum of the prefix ending at that entry. Push computes that prefix maximum from the old top and the new value. Pop removes exactly the last prefix, exposing the correct maximum for the remaining stack. Construction/reset clears every pair, and Empty checks whether any prefix remains. Duplicate maxima remain represented independently.",
+  "walkthrough": "Construct/reset, push -4, push 7, and push another 7. The stored prefix maxima are -4, 7, 7. Pop one 7: Max still returns 7. Pop the second 7: Max returns -4. Pop -4: Empty becomes true. The supplied operation trace checks these results, so the stateful adapter returns true.",
+  "edgeCases": [
+    "Duplicate maximum values must survive until their last copy is popped.",
+    "All-negative stacks must not use zero as their maximum baseline.",
+    "Pop and Max require a nonempty stack; Construction/reset discards prior state."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          "Stack",
+          0
+        ],
+        [
+          "push",
+          -4
+        ],
+        [
+          "push",
+          7
+        ],
+        [
+          "push",
+          7
+        ],
+        [
+          "max",
+          7
+        ],
+        [
+          "pop",
+          7
+        ],
+        [
+          "max",
+          7
+        ],
+        [
+          "pop",
+          7
+        ],
+        [
+          "max",
+          -4
+        ],
+        [
+          "empty",
+          0
+        ],
+        [
+          "pop",
+          -4
+        ],
+        [
+          "empty",
+          1
+        ]
+      ]
+    ],
+    "expected": true
+  }
 }

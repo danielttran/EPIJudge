@@ -1,6 +1,31 @@
 {
-  "explanation": "Use grade-school multiplication on the absolute decimal digits. Accumulate each digit product in its positional slot and carry to the preceding slot. Remove leading zeros and put the combined sign on the first digit only.",
-  "timeComplexity": "O(mn) time for m and n digits.",
-  "spaceComplexity": "O(m + n) space for the product digits.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/int_as_array_multiply.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "Multiply absolute decimal digits using their place values, keeping an m+n digit accumulator. Normalize each processed slot by carrying its quotient by ten to the previous slot and leaving its remainder. Strip leading zeros and apply the sign only to the first remaining digit.",
+  "timeComplexity": "O(mn) for positive operand lengths m,n: each pair of digits is multiplied once, and trimming/copying costs O(m+n), which is within this bound for nonempty operands.",
+  "spaceComplexity": "O(m+n) for accumulated and returned digits and by-value input copies.",
+  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/int_as_array_multiply.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice.",
+  "correctness": "A digit pair at positions i and j contributes its product to position i+j+1 in the m+n digit result. Carrying q units to the preceding position and leaving remainder r preserves value because the original slot value equals 10q+r. Processing digit pairs from right to left includes every term of the distributive expansion exactly once and normalizes the affected lower slots before completion. Trimming zero prefixes does not change value; the product is negative exactly when one operand is negative.",
+  "walkthrough": "For [-1,3] × [2,4], use magnitudes 13 and 24 with opposite signs. Start [0,0,0,0]. The pairs 3×4, 3×2, 1×4 and 1×2 successively give [0,0,1,2], [0,0,7,2], [0,1,1,2] and [0,3,1,2]. Trim the leading zero and apply the negative sign to obtain [-3,1,2], representing −312.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        -1,
+        3
+      ],
+      [
+        2,
+        4
+      ]
+    ],
+    "expected": [
+      -3,
+      1,
+      2
+    ]
+  },
+  "edgeCases": [
+    "Each input is nonempty; only its first digit may be negative.",
+    "Zero is returned as [0], never as a negative or empty sequence.",
+    "Digit arrays need not fit a machine integer; do not parse the entire number into one.",
+    "The caller’s digit arrays are not modified by this implementation."
+  ]
 }

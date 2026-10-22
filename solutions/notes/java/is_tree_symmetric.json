@@ -1,6 +1,27 @@
 {
-  "explanation": "Compare mirror-position node pairs breadth first. Both nodes must be absent or have equal integer values; pair left with right and right with left. Value equality works even outside Java\u2019s boxed-integer cache.",
-  "timeComplexity": "O(n)",
-  "spaceComplexity": "O(w), for maximum tree width w",
-  "attribution": "Original Java implementation and explanation for EPI Practice, based on the displayed public contract and our independently authored C# solution; no upstream reference code adapted."
+  "explanation": "Use a queue of node pairs that should mirror each other. A pair of missing nodes is valid; exactly one missing node or unequal data rejects. Enqueue the outer children together and then the inner children.",
+  "timeComplexity": "O(n): each mirrored pair is processed once. Each mirror obligation is processed once; DFS retains height-sized frames, whereas Java BFS retains width-sized pairs.",
+  "spaceComplexity": "O(w), where w is maximum tree width; the implementation uses a queue, not recursive height storage. Recursive versions retain mirror pairs along a path; Java’s queue retains a frontier.",
+  "attribution": "Original Java implementation and explanation for EPI Practice, based on the displayed public contract and our independently authored C# solution; no upstream reference code adapted.",
+  "correctness": "The queue represents all unresolved mirror obligations. Replacing a matching pair by its outer and inner child pairs is exactly the recursive definition of symmetry. If every obligation is discharged, both structure and values mirror across the root.",
+  "walkthrough": "For [6,3,3,1,5,5,1], compare the 3s, then outer leaves (1,1) and inner leaves (5,5). All pairs match and all leaf children are jointly null, so return true. The walkthroughCase uses the judge’s JSON input format and expected observation.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        6,
+        3,
+        3,
+        1,
+        5,
+        5,
+        1
+      ]
+    ],
+    "expected": true
+  },
+  "edgeCases": [
+    "An empty tree is symmetric.",
+    "Matching inorder values alone do not prove mirror shape.",
+    "One missing child must be matched by a missing child at the mirrored position."
+  ]
 }

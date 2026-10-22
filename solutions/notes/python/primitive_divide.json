@@ -1,6 +1,20 @@
 {
-  "explanation": "Try shifted divisors from the highest possible quotient bit downward. Subtract a shifted divisor when it fits and set the corresponding result bit, without using division or multiplication.",
-  "timeComplexity": "O(B) bounded-width arithmetic steps for B input bits",
-  "spaceComplexity": "O(1) fixed-width registers; O(B) bits for arbitrary-size Python integers",
-  "attribution": "Original Python implementation authored for EPI Practice from its displayed contract and independently authored C# solution; no upstream reference source adapted."
+  "explanation": "Start at the difference of operand bit lengths and test divisor shifted by each descending bit. Subtract a shifted divisor when it fits and set that quotient bit.",
+  "timeComplexity": "O(w) shift/compare/subtract iterations, where w is the dividend bit length; Python big-integer operations additionally depend on their bit widths.",
+  "spaceComplexity": "O(w) bits for a constant number of Python integers, where w bounds the dividend/divisor bit widths; no table or recursion grows with the number of quotient bits.",
+  "attribution": "Original Python implementation authored for EPI Practice from its displayed contract and independently authored C# solution; no upstream reference source adapted.",
+  "correctness": "The invariant is x = quotient × y + remaining, with remaining nonnegative. Subtracting y shifted by bit and setting that quotient bit preserves the invariant. Processing bits from high to low leaves remaining < y after the final bit, so quotient is the integer quotient.",
+  "walkthrough": "For 91 divided by 6, 6 shifted three places is 48, which fits: remainder 43 and quotient 8. Then 24,12 and 6 also fit, leaving remainders 19,7 and 1. The selected quotient bits add to 15, so return 15.",
+  "edgeCases": [
+    "The dividend is nonnegative and the divisor positive.",
+    "Dividend smaller than divisor returns zero.",
+    "An exact multiple finishes with remainder zero."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      91,
+      6
+    ],
+    "expected": 15
+  }
 }

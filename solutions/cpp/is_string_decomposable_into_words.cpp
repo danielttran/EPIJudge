@@ -14,6 +14,8 @@ using std::vector;
 
 vector<string> DecomposeIntoDictionaryWords(
     const string& domain, const unordered_set<string>& dictionary) {
+  if (domain.empty()) return {};
+
   // When the algorithm finishes, last_length[i] != -1 indicates
   // domain.substr(0, i + 1) has a valid decomposition, and the length of the
   // last string in the decomposition is last_length[i].

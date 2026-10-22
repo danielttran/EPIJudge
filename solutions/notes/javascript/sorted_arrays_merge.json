@@ -1,6 +1,42 @@
 {
   "explanation": "Maintain the next unused element of each nonempty array in a min-heap. Removing the minimum and advancing only its source array produces the globally sorted sequence, preserving duplicates.",
-  "timeComplexity": "O(k + N log(k + 1)) time for k arrays and N total entries, including the initial scan of empty arrays.",
-  "spaceComplexity": "O(k) auxiliary heap space, plus O(N) output space.",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "timeComplexity": "O(k + N log(k + 1)) time for k arrays and N total entries, including the initial scan of empty arrays. Scan k sources; each of N values is inserted/removed from a heap of at most k heads.",
+  "spaceComplexity": "O(k) auxiliary heap space, plus O(N) output space. Keep at most k current heads/iterators and N output entries.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "The smallest unconsumed element of a sorted source array is its head. Thus the smallest remaining element across all sources is among their current heads in the min-heap. Emitting the heap minimum and replacing it with the next entry from the same source preserves this property. Every entry advances its source once, preserving all duplicates and producing globally sorted output.",
+  "walkthrough": "Merge [[-5, 4, 14], [], [-2, 4], [0, 9]]. The initial nonempty heads are -5, -2, 0, which are emitted in that order. The next two heads are both 4, followed by 9 and 14. Return [-5, -2, 0, 4, 4, 9, 14]; the empty array contributes nothing.",
+  "edgeCases": [
+    "Empty component arrays do not enter the heap.",
+    "No component arrays, or all-empty arrays, produce empty output.",
+    "Equal values from different sources must all be emitted."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          -5,
+          4,
+          14
+        ],
+        [],
+        [
+          -2,
+          4
+        ],
+        [
+          0,
+          9
+        ]
+      ]
+    ],
+    "expected": [
+      -5,
+      -2,
+      0,
+      4,
+      4,
+      9,
+      14
+    ]
+  }
 }

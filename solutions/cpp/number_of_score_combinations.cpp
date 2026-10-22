@@ -6,6 +6,8 @@ using std::vector;
 
 int NumCombinationsForFinalScore(int final_score,
                                  const vector<int>& individual_play_scores) {
+  if (individual_play_scores.empty()) return final_score == 0 ? 1 : 0;
+
   vector<vector<int>> num_combinations_for_score(
       size(individual_play_scores), vector<int>(final_score + 1, 0));
   for (int i = 0; i < size(individual_play_scores); ++i) {

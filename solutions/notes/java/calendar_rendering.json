@@ -1,6 +1,32 @@
 {
-  "explanation": "Sort event endpoints, placing starts before finishes at equal times. Sweep the endpoints while maintaining the active-event count and its maximum.",
-  "timeComplexity": "O(n log n)",
-  "spaceComplexity": "O(n)",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/CalendarRendering.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "explanation": "Sweep sorted event endpoints, counting active intervals. Process starts before finishes at an equal time because this contract counts touching endpoints as overlapping. The largest active count is the answer.",
+  "timeComplexity": "O(n log n) Create and sort 2n endpoints, then update an active counter once per endpoint.",
+  "spaceComplexity": "O(n) The endpoint collection stores two records per event.",
+  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/CalendarRendering.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/).",
+  "correctness": "Between consecutive endpoints, the active count changes only at starts and finishes. Sorting equal-time starts before finishes counts all closed intervals that contain that shared endpoint. The largest count seen during the sweep is exactly the maximum overlap.",
+  "walkthrough": "Events [1,2], [2,3] and [2,2] all contain time 2. Processing their starts before the finishes at 2 raises the active count to three.",
+  "edgeCases": [
+    "Touching endpoints count as overlapping.",
+    "A zero-length event still contains its endpoint.",
+    "An empty event list has maximum overlap zero."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          2,
+          2
+        ]
+      ]
+    ],
+    "expected": 3
+  }
 }

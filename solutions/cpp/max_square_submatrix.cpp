@@ -10,6 +10,7 @@ using std::min;
 using std::vector;
 
 int MaxSquareSubmatrix(const vector<deque<bool>>& A) {
+  if (A.empty()) return 0;
   struct MaxHW {
     int h, w;
   };

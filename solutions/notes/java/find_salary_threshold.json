@@ -1,6 +1,24 @@
 {
-  "explanation": "Sort salaries and accumulate the unchanged salaries below the candidate cap. When capping all remaining salaries reaches the target, divide the remaining payroll equally among those employees.",
-  "timeComplexity": "O(n log n)",
-  "spaceComplexity": "O(n) worst-case sorting workspace",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/FindSalaryThreshold.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "explanation": "Sort the salaries. Treat the smaller salaries as fully paid, and divide the remaining target equally among the remaining employees. The first candidate cap no greater than the next salary is the answer. A target above the original payroll is impossible.",
+  "timeComplexity": "O(n log n) time. Sorting dominates a single pass through salaries and a constant-time cap calculation per position.",
+  "spaceComplexity": "O(n) auxiliary space for the sorted copy. Only a prefix total and candidate cap are needed beyond sorted storage.",
+  "attribution": "Original EPIJudge reference source: epi_judge_java_solutions/epi/FindSalaryThreshold.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/). The displayed copy includes local contract or boundary corrections; the upstream reference file is preserved.",
+  "correctness": "After fixing the i smallest salaries, paid is their unchanged total. Any cap at least those salaries contributes paid plus cap times the remaining employee count. The first candidate at most the next salary satisfies this equation in the correct piecewise-linear segment; no smaller cap reaches the target.",
+  "walkthrough": "For salaries [5,10,20] and target 29, a cap below 5 cannot suffice. Pay 5 unchanged, then 10 unchanged; the remaining employee must receive 29−15=14. Cap 14 gives 5+10+14=29.",
+  "walkthroughCase": {
+    "arguments": [
+      29,
+      [
+        5,
+        10,
+        20
+      ]
+    ],
+    "expected": 14.0
+  },
+  "edgeCases": [
+    "A target above the original payroll returns −1.",
+    "A target equal to the original total returns the largest salary.",
+    "A zero target gives cap zero for a nonempty nonnegative salary list."
+  ]
 }

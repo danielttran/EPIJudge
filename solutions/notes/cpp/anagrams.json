@@ -1,6 +1,33 @@
 {
   "explanation": "Sort a copy of each entry to obtain its character-multiset key. Group the intact original strings under that key and return only groups with at least two entries.",
-  "timeComplexity": "O(n + Σ L log(L+1)) expected time for n entries of lengths L.",
-  "spaceComplexity": "O(n + Σ L) space for copied keys, grouped strings and output.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/anagrams.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "timeComplexity": "Expected O(n + Σ L log(L+1)) for n entries of lengths L. Sorting each key costs O(L log(L+1)); constructing and hashing keys costs O(L), and visiting/filtering buckets costs O(n). This assumes expected hash-table lookup behavior.",
+  "spaceComplexity": "O(n + Σ L) auxiliary storage including keys and grouped entries. The returned groups add O(n) references (and copied string contents in C++); the bound includes these outputs.",
+  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/anagrams.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice.",
+  "correctness": "Sorting characters gives equal keys exactly when their character multiplicities match. Placing each original entry in its key’s bucket therefore creates precisely the anagram groups. Filtering buckets by count implements this EPI exercise’s omission of singleton groups without losing duplicates.",
+  "walkthrough": "For [\"arc\",\"car\",\"pear\",\"rac\",\"dog\"], arc, car and rac all have key acr. Pear and dog each have unique keys and are omitted. Return one group containing arc, car and rac.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        "arc",
+        "car",
+        "pear",
+        "rac",
+        "dog"
+      ]
+    ],
+    "expected": [
+      [
+        "arc",
+        "car",
+        "rac"
+      ]
+    ]
+  },
+  "edgeCases": [
+    "Spaces and character case remain significant.",
+    "Duplicate dictionary entries count as separate entries.",
+    "Singleton groups are omitted even when other groups exist.",
+    "An empty dictionary produces no groups. Two empty strings form a group because their keys agree.",
+    "An empty dictionary produces no groups. Two empty strings form a group because their keys agree."
+  ]
 }

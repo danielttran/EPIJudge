@@ -1,6 +1,20 @@
 {
-  "explanation": "Split the path into components and maintain a stack of unresolved names. Ignore empty components and dots, cancel a preceding name for dot-dot, and preserve the absolute-root marker.",
-  "timeComplexity": "O(n) characters",
-  "spaceComplexity": "O(n)",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/DirectoryPathNormalization.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "explanation": "Use a component stack with a root sentinel for absolute paths. Ignore dots and empty components; pop a normal name on .., retain unresolved relative parents, and reject attempts to pop the absolute root. Join the remaining stack with slashes.",
+  "timeComplexity": "O(n), where n is path length Every component is classified once, pushed at most once and popped at most once; joining emits the result once.",
+  "spaceComplexity": "O(n) Split components and the surviving component stack together require linear storage.",
+  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/DirectoryPathNormalization.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/).",
+  "correctness": "The component stack always represents the normalized processed prefix. A name appends one level, a dot changes nothing, and a parent removes a normal level if possible. Only unresolved relative parents are retained, so the final joined components describe the same rooted or relative path.",
+  "walkthrough": "For oak/./elm/../ash, ignore the dot, append elm, then cancel elm on the parent step. Append ash and join to obtain oak/ash.",
+  "edgeCases": [
+    "Repeated slashes do not create components.",
+    "A fully cancelled relative path becomes empty.",
+    "Unresolved leading parents are preserved for relative paths.",
+    "This native callable throws on empty input and on attempts to climb above absolute root; other displayed languages permit these inputs."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      "oak/./elm/../ash"
+    ],
+    "expected": "oak/ash"
+  }
 }

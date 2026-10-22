@@ -15,6 +15,7 @@ bool DirectedExpressionSynthesis(const vector<int>&, int, int, int,
 int Evaluate(const vector<int>&, const vector<char>&);
 
 bool ExpressionSynthesis(const vector<int>& digits, int target) {
+  if (digits.empty()) return false;
   return DirectedExpressionSynthesis(digits, target, 0, 0,
                                      make_unique<vector<int>>().get(),
                                      make_unique<vector<char>>().get());

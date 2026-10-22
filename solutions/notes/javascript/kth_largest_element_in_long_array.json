@@ -1,6 +1,26 @@
 {
   "explanation": "Keep the largest k values seen so far in a min heap. Discard the minimum whenever adding a value exceeds k entries. At the end the minimum retained value is the kth largest, including duplicates.",
-  "timeComplexity": "O(n log(k + 1)) time.",
-  "spaceComplexity": "O(k) auxiliary space.",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "timeComplexity": "O(n log(k + 1)) time. Heap variants do n O(log(k+1)) updates; C++ instead amortizes average-linear partitioning across O(k) batches.",
+  "spaceComplexity": "O(k) auxiliary space. Heap or buffer retains O(k) candidates, independent of the total stream length.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "After each value, the heap contains the greatest k values seen, counting duplicates, or every value if fewer than k have appeared. Removing its minimum after an overflow preserves that invariant. At the end, the smallest retained value is precisely the kth largest.",
+  "walkthrough": "For [7,1,9,9,4] and k=3, retain [7,1,9] initially. Inserting the next 9 evicts 1, leaving the two 9s and 7. Inserting 4 immediately evicts 4. Return 7.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        7,
+        1,
+        9,
+        9,
+        4
+      ],
+      3
+    ],
+    "expected": 7
+  },
+  "edgeCases": [
+    "Duplicate values occupy separate ranks.",
+    "k=1 computes the maximum.",
+    "The stream must contain at least k values."
+  ]
 }

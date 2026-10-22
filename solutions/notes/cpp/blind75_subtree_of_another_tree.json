@@ -1,6 +1,32 @@
 {
   "explanation": "Try each root position and compare the full candidate tree there. An empty target is a subtree; a nonempty target cannot match an empty root.",
-  "timeComplexity": "O(n times m) worst-case time for n root-tree nodes and m target nodes.",
-  "spaceComplexity": "O(h + t) recursion space for the two tree heights.",
-  "attribution": "Original repository-authored Blind75 C++ algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used."
+  "timeComplexity": "O(1+n(m+1)) safe worst-case bound for n root-tree nodes and m target nodes: each candidate may compare m nodes, and candidate traversal costs O(n). An empty target returns immediately.",
+  "spaceComplexity": "O(h + t) recursion space for the two tree heights. Candidate-root recursion and equality recursion share at most the sum of their tree heights in active frames.",
+  "attribution": "Original repository-authored Blind75 C++ algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used.",
+  "correctness": "A nonempty target is a subtree exactly when it equals the whole tree rooted at some node. Trying each candidate root and applying structural equality covers every such position. The explicit empty-target rule supplies the base case, and no node values or links need modification.",
+  "walkthrough": "In tree [8,4,10,2,6,9,12], inspect the subtree rooted at 4. Its children are exactly 2 and 6, matching target [4,2,6] in both values and structure. Return true.",
+  "edgeCases": [
+    "An empty target is a subtree of any tree.",
+    "A nonempty target cannot occur in an empty root tree.",
+    "Matching values with extra or missing children is insufficient."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        8,
+        4,
+        10,
+        2,
+        6,
+        9,
+        12
+      ],
+      [
+        4,
+        2,
+        6
+      ]
+    ],
+    "expected": true
+  }
 }

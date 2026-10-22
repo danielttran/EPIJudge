@@ -1,6 +1,33 @@
 {
-  "explanation": "Copy the permutation and follow its cycles with swaps. Each swap places a value at its final destination and fixes a permutation entry; the value array is rearranged in place.",
-  "timeComplexity": "O(n) time.",
-  "spaceComplexity": "O(n) space for the copied permutation; O(1) further auxiliary space.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/apply_permutation.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "Resolve each permutation cycle by swaps. While the current position is not fixed, send its value to the destination in perm and swap the corresponding permutation entries so the displaced value retains its destination. Continue until the current position is fixed.",
+  "timeComplexity": "O(n+1): each swap fixes one position in a cycle, so all nested-loop iterations together perform at most n swaps.",
+  "spaceComplexity": "O(n+1) for the by-value copy of perm; O(1) additional swap state. A is modified through its pointer.",
+  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/apply_permutation.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice.",
+  "correctness": "Maintain the invariant that perm[i] is the final destination of the value currently at i. Swapping values at i and destination d=perm[i], then swapping their destination labels, places the moved value permanently at d because its new label equals d. The displaced value at i still carries its own destination. Each swap fixes a position in a cycle; when every position is fixed, each original value has reached its required destination.",
+  "walkthrough": "For perm=[2,0,1] and A=[10,20,30], swap positions 0 and 2: A becomes [30,20,10] and perm becomes [1,0,2]. Swap positions 0 and 1: A becomes [20,30,10] and perm becomes [0,1,2]. Every position is now fixed. Return no value; the wrapper observes A.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        2,
+        0,
+        1
+      ],
+      [
+        10,
+        20,
+        30
+      ]
+    ],
+    "expected": [
+      20,
+      30,
+      10
+    ]
+  },
+  "edgeCases": [
+    "perm contains each index 0..n−1 exactly once and has the same length as A.",
+    "Empty inputs and fixed points need no moves.",
+    "The direction is original i → perm[i], not new A[i]=old A[perm[i]].",
+    "Equal values still move according to their original positions."
+  ]
 }

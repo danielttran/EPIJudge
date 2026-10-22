@@ -23,7 +23,7 @@ public class SearchShiftedSortedArray {
       }
     }
     // Loop ends when left == right.
-    return left;
+    return A.isEmpty() ? -1 : left;
   }
 
   public static void main(String[] args) {

@@ -1,6 +1,24 @@
 {
   "explanation": "For every interval, compare taking its left or right coin. The opponent then chooses the continuation that leaves us the smaller future revenue. Fill shorter intervals first.",
-  "timeComplexity": "O(n\u00b2).",
-  "spaceComplexity": "O(n\u00b2).",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "timeComplexity": "O(n²). There are O(n²) intervals and constant choices per interval when memoization recognizes the cached value.",
+  "spaceComplexity": "O(n²). The interval table has n² entries; recursive variants add at most linear call depth.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "Let best[l,r] be the maximum remaining revenue for the player whose turn begins on that interval. Taking an endpoint leaves the opponent a choice of two replies; under optimal play, the opponent leaves the smaller of our two resulting revenues. Maximizing over our initial endpoint choice gives the recurrence. Shorter intervals are filled before they are needed.",
+  "walkthrough": "For coins [4,9,2], taking 4 lets the opponent take 9, leaving 2: the first player gets 6. Taking 2 similarly lets the opponent take 9, leaving 4: again 6. Both endpoint choices guarantee 6, so return 6. The walkthroughCase uses the judge’s JSON input format and expected observation.",
+  "edgeCases": [
+    "An empty row returns 0.",
+    "One coin is taken immediately.",
+    "Odd-length rows still alternate turns correctly.",
+    "The opponent’s choice uses a minimum, not an additional maximum."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        4,
+        9,
+        2
+      ]
+    ],
+    "expected": 6
+  }
 }

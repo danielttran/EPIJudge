@@ -1,6 +1,19 @@
 {
   "explanation": "Find the lowest adjacent unequal bits and toggle both. Their swap preserves population count and gives the smallest absolute change under the valid-input contract.",
-  "timeComplexity": "O(1), at most 63 adjacent-bit checks",
-  "spaceComplexity": "O(1) for fixed 64-bit inputs",
-  "attribution": "Unmodified reference from epi_judge_python_solutions/closest_int_same_weight.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice."
+  "timeComplexity": "O(64) worst-case bit checks, at most 63 adjacent pairs. The width is fixed, so this is O(1) time for this API.",
+  "spaceComplexity": "O(1): one 64-bit value, a loop index and masks; no collection grows with the input value.",
+  "attribution": "Unmodified reference from epi_judge_python_solutions/closest_int_same_weight.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice.",
+  "correctness": "Let the lowest run of equal bits end just below the first differing bit. Swapping the two bits at that boundary preserves the number of 1s. If the low run consists of zeros, this makes the nearest smaller equal-weight word; if it consists of ones, it makes the nearest larger word. A change confined below that boundary cannot preserve weight because those bits are all equal. Using any higher boundary requires a larger absolute change. Thus the first adjacent unequal pair gives the minimum possible distance. Both bits lie within the allowed value width, so the result remains nonnegative and representable.",
+  "walkthrough": "18 is binary 10010. Bits 0 and 1 differ, so swap them: 10010 becomes 10001, or 17. Both words have two 1s, and their distance is 1. No distinct integer can be closer than 1.",
+  "walkthroughCase": {
+    "arguments": [
+      18
+    ],
+    "expected": 17
+  },
+  "edgeCases": [
+    "The callable uses 64 value bits. Zero and 2^64−1 are outside its feasible input domain.",
+    "A single set bit moves to an adjacent empty position.",
+    "The result must differ from the input; returning x does not solve the minimization problem."
+  ]
 }

@@ -91,10 +91,13 @@ var walkthroughs=args.Contains("walkthroughs");
 if(args.Contains("boundaries")||walkthroughs)
 {
     if(files)throw new ArgumentException("Boundary acceptance must use displayed embedded code.");
-    var paths=walkthroughs?catalog.Problems.Select(p=>Path.Combine(root,"solutions","notes",p.Id+".json")).ToArray():Directory.GetFiles(Path.Combine(root,"scripts","solutions"),"boundaries-*.json").Order().ToArray();
-    var cases=walkthroughs?catalog.Problems.Select(p=>
+    string WalkthroughPath(Problem p) => Path.Combine(root,"solutions","notes",
+        selectedLanguage is null or "csharp" ? "" : selectedLanguage,p.Id+".json");
+    var walkthroughProblems=catalog.Problems.Where(p=>chosen is null||chosen.Contains(p.Id)).ToArray();
+    var paths=walkthroughs?walkthroughProblems.Select(WalkthroughPath).ToArray():Directory.GetFiles(Path.Combine(root,"scripts","solutions"),"boundaries-*.json").Order().ToArray();
+    var cases=walkthroughs?walkthroughProblems.Select(p=>
     {
-        using var notes=JsonDocument.Parse(File.ReadAllText(Path.Combine(root,"solutions","notes",p.Id+".json")));
+        using var notes=JsonDocument.Parse(File.ReadAllText(WalkthroughPath(p)));
         var example=notes.RootElement.GetProperty("walkthroughCase");
         return new Boundary(p.Id,example.GetProperty("arguments").EnumerateArray().Select(a=>a.Clone()).ToArray(),example.GetProperty("expected").Clone(),"Original solution walkthrough");
     }).ToArray():paths.SelectMany(path=>JsonSerializer.Deserialize<Boundary[]>(File.ReadAllText(path),json)!).ToArray();

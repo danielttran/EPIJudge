@@ -10,6 +10,7 @@ public class LongestSubarrayWithSumConstraint {
   @EpiTest(testDataFile = "longest_subarray_with_sum_constraint.tsv")
 
   public static int findLongestSubarrayLessEqualK(List<Integer> A, int k) {
+  if (A.isEmpty()) return 0;
 
     // Build the prefix sum according to A.
     List<Integer> prefixSum = new ArrayList<>();

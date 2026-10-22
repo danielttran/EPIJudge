@@ -1,6 +1,20 @@
 {
-  "explanation": "Maintain a rolling base-26 hash for the text window and the pattern. On equal hashes, compare the actual substring to reject collisions; update the window hash by removing its leading character and adding the next.",
-  "timeComplexity": "O(n+m) expected; O(nm) worst case with repeated hash collisions",
-  "spaceComplexity": "O(m) temporary substring storage when verifying a hash match",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/SubstringMatch.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "explanation": "Hash pattern and text windows with a base-26 polynomial using Java int wraparound. Roll the window hash by removing the outgoing weighted character and adding the incoming one. Verify actual substring equality whenever hashes agree, returning the first verified index.",
+  "timeComplexity": "O(n + m) time when hash matches are rare; O(nm) worst-case time with repeated hash collisions, for text length n and pattern length m. KMP fallback decreases a prefix length previously increased by scans; rolling hashes cost constant time per window plus exact verification when hashes agree.",
+  "spaceComplexity": "O(m) temporary substring storage on a hash match in modern Java; hash state itself is O(1). Prefix tables, converted strings and Java verification substrings are accounted for separately from scalar hash state.",
+  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/SubstringMatch.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/).",
+  "correctness": "Consistent int wraparound preserves the rolling polynomial invariant. Equal hashes are only candidates; exact String equality prevents collisions from producing false matches. Windows are checked from left to right, so the first verified match has the smallest UTF-16 index.",
+  "walkthrough": "Search text cedar-ridge for pattern ridge. The pattern has length 5. The initial window is cedar; rolling updates examine windows starting at 1 through 5 without a verified match. The window beginning at index 6 is ridge. Its hash agrees and the character comparison succeeds, so return 6.",
+  "edgeCases": [
+    "An empty pattern matches at index 0.",
+    "A pattern longer than the text cannot match.",
+    "Repeated matches return the first index; equal hashes alone never establish equality."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      "cedar-ridge",
+      "ridge"
+    ],
+    "expected": 6
+  }
 }

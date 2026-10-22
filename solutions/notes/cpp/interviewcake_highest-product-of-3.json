@@ -1,15 +1,16 @@
 {
-  "explanation": "Maintain the three largest values and the two smallest values at distinct scanned positions. Compare the product of the three largest with the product of the largest and two smallest.",
-  "correctness": "A positive triple product uses either three positive values or two negative values and one positive value. The three largest maximize the first option; the two smallest together with the largest maximize the second. If no positive product exists, any zero gives the optimum zero. Without either possibility, all values are negative or the input has exactly three elements: the three largest maximize the all-negative product, and for exactly three elements both formulas use the only available triple. The tracked extrema preserve repeated values from distinct positions.",
-  "walkthrough": "For [-8,-5,2,4], the first two negatives have product 40. Combining that pair with 2 gives 80, and later with 4 gives 160. Selecting the three numerically largest values would miss this result; tracking both low and high pair products preserves the winning candidate.",
+  "explanation": "Keep the three largest entries and the two smallest entries during one pass. Compare the product of the largest three with the product of the largest entry and the two smallest entries.",
+  "correctness": "The extrema track occurrences, not distinct values, so equal entries can fill multiple slots. With a positive factor, the best remaining pair is either the two largest positives or the two most negative values. If every value is nonpositive, the three largest values give the least-negative product (or zero). Thus one of the two candidate products is optimal, including all-negative and zero cases.",
+  "walkthrough": "For [-8,-5,2,4], the final three largest entries are 4,2,-5 and the two smallest are -8,-5. The candidate products are 4*2*(-5)=-40 and 4*(-8)*(-5)=160. Return 160; keeping only the three largest entries would lose the winning negative pair.",
   "edgeCases": [
     "All negative",
     "two large-magnitude negatives",
     "zeros",
-    "repeated extrema."
+    "repeated extrema.",
+    "For [-6,-3,-2,-1], return -6, even though it is negative. Equal values at different positions remain distinct eligible factors."
   ],
-  "timeComplexity": "O(n) time.",
-  "spaceComplexity": "O(1) auxiliary space.",
+  "timeComplexity": "O(n) time: one pass maintains a fixed set of extrema with constant work per value.",
+  "spaceComplexity": "O(1) auxiliary space: the extrema and candidate product are scalars; the input is never sorted or copied.",
   "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
   "walkthroughCase": {
     "arguments": [

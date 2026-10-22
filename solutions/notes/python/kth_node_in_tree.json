@@ -1,6 +1,28 @@
 {
-  "explanation": "Compare k with the left subtree\u2019s stored size. Descend left, return the current node, or subtract the left subtree and root before descending right. The wrapper initializes sizes first.",
-  "timeComplexity": "O(h) rank search; O(n) including wrapper size initialization",
-  "spaceComplexity": "O(1) rank-search state; O(h) wrapper recursion",
-  "attribution": "Unmodified reference from epi_judge_python_solutions/kth_node_in_tree.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice."
+  "explanation": "Use stored subtree sizes to compare rank k with left_size+1. Descend left for a smaller rank, return this node for equality, or descend right after subtracting the skipped left subtree and root.",
+  "timeComplexity": "O(h): one child is selected at each level; subtree sizes are supplied by the judge. Counting traversal visits k nodes plus an initial path; size-guided native searches take one path without visiting skipped subtrees.",
+  "spaceComplexity": "O(1) auxiliary space. C#/JavaScript retain an inorder stack; native size-guided code keeps a cursor and local rank.",
+  "attribution": "Unmodified reference from epi_judge_python_solutions/kth_node_in_tree.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice.",
+  "correctness": "At each step k is the one-based inorder rank within the current subtree. The left subtree occupies ranks 1 through left_size and the root occupies left_size+1. Adjusting k when moving right preserves that local-rank invariant, so the returned node is exactly the requested rank.",
+  "walkthrough": "In [8,4,12,2,6,10,14], root 8 has left_size=3. For k=5, skip four nodes and search rank 1 under 12. Its left_size=1 sends the search to leaf 10, which is returned. JSON arguments are [tree,k]. Native wrappers populate subtree sizes and observe the returned node’s data; C#/JavaScript count inorder visits directly.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        8,
+        4,
+        12,
+        2,
+        6,
+        10,
+        14
+      ],
+      5
+    ],
+    "expected": 10
+  },
+  "edgeCases": [
+    "Valid rank is 1 through the number of nodes.",
+    "Every stored size must be correct.",
+    "The callable returns the original node; the wrapper returns its data and rejects missing results."
+  ]
 }

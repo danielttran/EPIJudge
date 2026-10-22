@@ -1,7 +1,7 @@
 {
   "explanation": "Backtrack from every board cell. A visited matrix prevents using a cell twice in one path; restore the mark when returning so other paths can use it.",
-  "timeComplexity": "O(R times C times 4^L) upper bound for R rows, C columns, and word length L.",
-  "spaceComplexity": "O(R times C + L) auxiliary space.",
+  "timeComplexity": "O(R times C times 4^L) upper bound for R rows, C columns, and word length L. Every board cell can start a path with at most four choices per character; no branch exceeds the word length or available cell count.",
+  "spaceComplexity": "O(R times C + L) auxiliary space. The visited matrix stores RC booleans and recursion retains at most min(L,RC) path frames.",
   "attribution": "Original EPI Practice C# implementation, reusing and refining the repository-authored Blind75 algorithm fixtures. Collection membership follows Crackr; no external solution service is used.",
   "correctness": "The current recursion path spells the matched word prefix and marks exactly its used cells. A next step is allowed only to an unmarked orthogonal matching cell, preserving the no-reuse rule. Trying every neighbor and every starting cell explores all valid paths; removing marks on return makes the search exhaustive without changing the board.",
   "walkthrough": "On board [\"ab\",\"cd\"], start at a in the top-left, move right to b, then down to d. These three different orthogonally adjacent cells spell \"abd\", so return true.",
@@ -11,7 +11,13 @@
     "The board is restored after backtracking, even after a failed branch."
   ],
   "walkthroughCase": {
-    "arguments": [["ab", "cd"], "abd"],
+    "arguments": [
+      [
+        "ab",
+        "cd"
+      ],
+      "abd"
+    ],
     "expected": true
   }
 }

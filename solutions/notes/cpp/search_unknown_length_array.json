@@ -1,6 +1,26 @@
 {
-  "explanation": "Probe indices 0,1,3,7,… until reaching a value at least the target or an out-of-range access. Binary-search the resulting bracket, treating out-of-range positions as larger than the target. Explicit lower/upper indices avoid negative shift counts when the first probe already stops.",
-  "timeComplexity": "O(log(n+1)) probes in the worst case.",
-  "spaceComplexity": "O(1) auxiliary space.",
-  "attribution": "Original C++ implementation and explanation authored for EPI Practice from its public native contract and repository-authored C# algorithm. Existing upstream reference files remain unchanged."
+  "explanation": "Double the indexed search range until its right endpoint is out of bounds or reaches the target. Binary-search that range, treating out-of-range reads as values beyond every valid element; the algorithm never queries the array length.",
+  "timeComplexity": "O(log(p + 2)) indexed reads, where p is the target insertion position. Doubling brackets insertion position p in O(log(p+2)) probes and binary search needs the same order.",
+  "spaceComplexity": "O(1) auxiliary space. Only probe indices and current values are retained.",
+  "attribution": "Original C++ implementation and explanation authored for EPI Practice from its public native contract and repository-authored C# algorithm. Existing upstream reference files remain unchanged.",
+  "correctness": "Exponential probing maintains that any target not already excluded lies at or after left. A successful read below the target excludes that entire sorted prefix; a larger value or an out-of-range read provides an upper bound. Binary search treats missing positions as beyond every valid element, so each comparison preserves every possible target position. An exhausted interval proves absence without querying Count.",
+  "walkthrough": "For target 28 in [4,9,17,28,46], exponential probes at indices 0,1,3 see 4,9,28. Python/Java return index 3 immediately; C++ uses index 3 as the upper bound, then binary search also returns 3. Missing indices act as an upper bound, not a fatal error.",
+  "edgeCases": [
+    "An empty array is detected through an out-of-range read and returns -1.",
+    "The target can be at index 0 or at the final valid index.",
+    "An upper probe may overshoot the array; that is a bound, not a fatal error."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        4,
+        9,
+        17,
+        28,
+        46
+      ],
+      28
+    ],
+    "expected": 3
+  }
 }

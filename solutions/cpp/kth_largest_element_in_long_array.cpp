@@ -13,7 +13,7 @@ int FindKthLargestUnknownLength(vector<int>::const_iterator stream_begin,
   vector<int> candidates;
   while (stream_begin != stream_end) {
     candidates.emplace_back(*stream_begin++);
-    if (size(candidates) == 2 * k - 1) {
+    if (size(candidates) == 2 * static_cast<std::size_t>(k)) {
       // Reorders elements about k-th largest element with larger elements
       // appearing before it.
       nth_element(begin(candidates), begin(candidates) + k - 1, end(candidates),

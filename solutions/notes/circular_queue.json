@@ -1,7 +1,7 @@
 {
   "explanation": "Track a head index and count in a circular array. Enqueue writes at (head+count) modulo capacity. When full, copy logical queue order into a doubled array. Dequeue advances head without shifting elements.",
-  "timeComplexity": "Enqueue: O(1) amortized; Dequeue/Size: O(1); Initialize: O(capacity)",
-  "spaceComplexity": "O(initial capacity + peak queue size since Initialize); the buffer does not shrink after dequeues",
+  "timeComplexity": "Enqueue: O(1) amortized; Dequeue/Size: O(1); Initialize: O(capacity) Capacity doubles, so total copied entries form a geometric series across enqueues; dequeue only advances the head.",
+  "spaceComplexity": "O(initial capacity + peak queue size since Initialize); the buffer does not shrink after dequeues The buffer retains its capacity after removal and is bounded by initial capacity plus peak occupancy.",
   "attribution": "Original C# implementation and explanation authored for EPI Practice from the displayed problem contract.",
   "correctness": "The logical ith entry is always buffer[(head+i) mod capacity]. Enqueue writes immediately after the logical tail, and Dequeue advances head. During growth, copying those logical positions in order restores the same invariant with head zero and preserves FIFO order.",
   "walkthrough": "With capacity 2, enqueue 11 and 22, dequeue 11, then enqueue 33: storage wraps. Enqueue 44 triggers growth while preserving logical order [22,33,44]; dequeuing returns those three values and Size becomes zero.",

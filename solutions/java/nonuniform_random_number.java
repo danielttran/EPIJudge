@@ -30,29 +30,17 @@ public class NonuniformRandomNumber {
     Random r = new Random();
     // Get a random number in [0.0,1.0).
     final double uniform01 = r.nextDouble();
-    // Find the index of the interval that uniform01 lies in.
-    int it = Collections.binarySearch(prefixSumOfProbabilities, uniform01);
-    if (it < 0) {
-      // We want the index of the first element in the array which is
-      // greater than the key.
-      //
-      // When a key is not present in the array, Collections.binarySearch()
-      // returns the negative of 1 plus the smallest index whose entry
-      // is greater than the key.
-      //
-      // Therefore, if the return value is negative, by taking its absolute
-      // value minus 1, we get the desired index.
-      final int intervalIdx = Math.abs(it) - 1;
-      return values.get(intervalIdx);
-    } else {
-      // We have it >= 0, i.e., uniform01 equals an entry
-      // in prefixSumOfProbabilities.
-      //
-      // Because we uniform01 is a random double, the probability of it
-      // equalling an endpoint in prefixSumOfProbabilities is exceedingly low.
-      // However, it is not 0, so to be robust we must consider this case.
-      return values.get(it);
+    // Find the first endpoint strictly greater than the draw. Equal
+    // endpoints belong to the following interval, including zero-width ones.
+    int low = 0, high = prefixSumOfProbabilities.size();
+    while (low < high) {
+      int middle = low + (high - low) / 2;
+      if (prefixSumOfProbabilities.get(middle) <= uniform01)
+        low = middle + 1;
+      else
+        high = middle;
     }
+    return values.get(Math.min(low, values.size() - 1));
   }
 
   private static boolean nonuniformRandomNumberGenerationRunner(

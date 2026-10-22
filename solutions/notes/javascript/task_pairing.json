@@ -1,6 +1,39 @@
 {
   "explanation": "Sort durations and pair opposite ends. Pairing the largest duration with the smallest available one minimizes the possible maximum pair sum by the exchange argument, and yields the required canonical order.",
-  "timeComplexity": "O(n log n) time.",
-  "spaceComplexity": "O(n) space for the sorted copy and returned pairs.",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "timeComplexity": "O(n log n) time. Sorting dominates the n/2 constant-time pair constructions.",
+  "spaceComplexity": "O(n) space for the sorted copy and returned pairs. The output contains n/2 pairs; C#/JavaScript and C++ also hold an O(n) sorted copy.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "Let the smallest remaining duration be s and the largest be M. If an assignment pairs M with x and s with y, replacing those pairs with (M, s) and (x, y) cannot increase the previous maximum pair sum: M + s ≤ M + x and x + y ≤ x + M. Thus an optimum exists containing the extreme pair. Repeating the argument proves the sorted opposite-end pairing is optimal and gives the required canonical order.",
+  "walkthrough": "Sort durations [12, 3, 8, 5, 17, 9] into [3, 5, 8, 9, 12, 17]. Pair opposite ends: (3, 17), (5, 12), (8, 9). Their sums are 20, 17 and 17. Return [[3, 17], [5, 12], [8, 9]], whose maximum pair sum is 20.",
+  "edgeCases": [
+    "The number of durations is even.",
+    "Equal durations remain separate tasks and may create identical pairs.",
+    "Two tasks make one pair; zero tasks make an empty result."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        12,
+        3,
+        8,
+        5,
+        17,
+        9
+      ]
+    ],
+    "expected": [
+      [
+        3,
+        17
+      ],
+      [
+        5,
+        12
+      ],
+      [
+        8,
+        9
+      ]
+    ]
+  }
 }

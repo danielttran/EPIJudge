@@ -15,6 +15,7 @@ public class ValidIpAddresses {
   public static List<String> getValidIpAddress(String s) {
 
     List<String> result = new ArrayList<>();
+    if (s.length() < 4 || s.length() > 12) return result;
     for (int i = 1; i < 4 && i < s.length(); ++i) {
       final String first = s.substring(0, i);
       if (isValidPart(first)) {

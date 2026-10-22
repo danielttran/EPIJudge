@@ -1,6 +1,33 @@
 {
-  "explanation": "Depth-first search colors vertices unvisited, active or finished. An edge reaching an active vertex closes a directed cycle; finished vertices need not be searched again.",
-  "timeComplexity": "O(V+E)",
-  "spaceComplexity": "O(V) traversal state and recursion stack",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/DeadlockDetection.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "explanation": "Use DFS colors: white means unvisited, gray means currently on the recursion path, and black means fully explored. A gray neighbor closes a directed cycle; a black neighbor need not be explored again.",
+  "timeComplexity": "O(V+E) Each vertex is processed once and each edge is examined once.",
+  "spaceComplexity": "O(V) auxiliary recursion depth; the supplied graph occupies O(V+E) input storage. Visited state and pending/recursive vertices are bounded by V; constructing adjacency additionally stores E edges.",
+  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/DeadlockDetection.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/).",
+  "correctness": "Gray vertices are exactly the active DFS ancestor chain. An edge to gray completes a directed cycle. Conversely, the first DFS entering a directed cycle must encounter a gray vertex before that cycle can finish. Black vertices have already had all reachable edges checked, so skipping them is safe. Starting from each white vertex covers disconnected components.",
+  "walkthrough": "For 0→1→2→0, DFS makes 0, then 1, then 2 gray. The edge 2→0 reaches gray 0, which is still an ancestor, proving a cycle and returning true.",
+  "edgeCases": [
+    "A self-loop is a cycle.",
+    "All disconnected components must be considered.",
+    "Duplicate edges increment and decrement indegrees consistently."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      3,
+      [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          0
+        ]
+      ]
+    ],
+    "expected": true
+  }
 }

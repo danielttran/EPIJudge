@@ -1,6 +1,40 @@
 {
-  "explanation": "Process a queue containing one complete tree depth at a time. Emit that level’s values and collect nonnull left and right children into the queue for the next depth.",
-  "timeComplexity": "O(n) time.",
-  "spaceComplexity": "O(w) auxiliary queue space for maximum level width w, plus output.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/tree_level_order.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "Maintain the current level’s nodes in left-to-right order. Emit their values, then gather each nonnull left child followed by right child into the next level. Repeat until the level is empty.",
+  "timeComplexity": "O(n) time. Every node is visited once and each edge is followed once.",
+  "spaceComplexity": "O(w) auxiliary queue space for maximum tree width w, plus O(n) output. The frontier holds at most two adjacent levels, O(w), while all returned values occupy O(n).",
+  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/tree_level_order.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice.",
+  "correctness": "The initial level contains only the root. If one level is in left-to-right order, visiting its nodes in that order and each left child before its right child produces exactly the next level in order. Induction proves every node is emitted once at its correct depth.",
+  "walkthrough": "For [16, 7, 25, 2, 11, null, 30], the queue first holds only 16, producing [16]. Its children produce [7, 25]. Their nonnull children, enqueued left to right, produce [2, 11, 30]. Return [[16], [7, 25], [2, 11, 30]].",
+  "edgeCases": [
+    "A null tree yields no levels.",
+    "Absent children are skipped without creating placeholder values.",
+    "Separate current/next collections prevent children from entering their parent’s output level."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        16,
+        7,
+        25,
+        2,
+        11,
+        null,
+        30
+      ]
+    ],
+    "expected": [
+      [
+        16
+      ],
+      [
+        7,
+        25
+      ],
+      [
+        2,
+        11,
+        30
+      ]
+    ]
+  }
 }

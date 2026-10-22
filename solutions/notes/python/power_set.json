@@ -1,6 +1,34 @@
 {
-  "explanation": "At each input position recurse once without it and once with it appended to a copied selection. Each completed selection is one subset.",
-  "timeComplexity": "O(n\u00b72^n) including selection copies/output",
-  "spaceComplexity": "O(n\u00b2) active copied selections, plus O(n\u00b72^n) output",
-  "attribution": "Unmodified reference from epi_judge_python_solutions/power_set.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice."
+  "explanation": "Recursively decide whether to include each input element. Record the selected values once all input positions have been considered; inclusion and exclusion cover the full power set.",
+  "timeComplexity": "O(n·2^n) for n>0: the 2^n subset leaves contain n·2^(n−1) total elements to construct/copy; empty input takes O(1).",
+  "spaceComplexity": "O(n²) conservative working-space bound for copied partial lists retained along a depth-n path, plus O(n·2^n) output element storage.",
+  "attribution": "Unmodified reference from epi_judge_python_solutions/power_set.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice.",
+  "correctness": "A subset corresponds uniquely to one include/exclude decision for every input value. Each recursion branch makes one such decision and leaves earlier decisions intact. Therefore all 2^n subsets, including the empty subset, are produced exactly once for distinct input values.",
+  "walkthrough": "For [6,9], the four include/exclude paths produce [6,9], [6], [9], and []. Python explores exclusion first, while C++/Java explore inclusion first; the judge ignores subset and element order.",
+  "edgeCases": [
+    "An empty set returns a list containing the empty subset.",
+    "The input is a set; distinct values avoid duplicate subset identities.",
+    "Copies keep previously generated subsets unchanged."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        6,
+        9
+      ]
+    ],
+    "expected": [
+      [],
+      [
+        6
+      ],
+      [
+        9
+      ],
+      [
+        6,
+        9
+      ]
+    ]
+  }
 }

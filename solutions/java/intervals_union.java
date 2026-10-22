@@ -31,7 +31,7 @@ public class IntervalsUnion {
     // Sort intervals according to left endpoints of intervals.
     intervals.sort((a, b) -> {
       if (Integer.compare(a.left.val, b.left.val) != 0) {
-        return a.left.val - b.left.val;
+        return Integer.compare(a.left.val, b.left.val);
       }
       // Left endpoints are equal, so now see if one is closed and the
       // other open - closed intervals should appear first.

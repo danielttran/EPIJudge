@@ -1,6 +1,44 @@
 {
-  "explanation": "Check every row, column and square region separately for repeated nonzero values. Reuse a fresh presence array for each group; zero represents an unfilled cell and is ignored as a conflict.",
-  "timeComplexity": "O(n^2) time for an n-by-n grid.",
-  "spaceComplexity": "O(n) auxiliary presence space.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/is_valid_sudoku.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "Check every row, column and square region separately for repeated nonzero digits. Zero denotes a blank and never causes a conflict. This checks consistency of filled entries, not whether a completion exists.",
+  "timeComplexity": "O(n²): each of n² cells participates in three group checks. The bound counts all cells and the actual seen structures, rather than treating Sudoku as fixed 9×9 input.",
+  "spaceComplexity": "O(n) temporary space for one group’s presence array or set. C#/JavaScript retain sets for every row, column and block; native implementations reuse storage for one group.",
+  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/is_valid_sudoku.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice.",
+  "correctness": "A valid partial Sudoku is exactly one with no repeated nonzero digit in any required group. The helper recognizes a duplicate within one group, and the outer loops cover every row, column and region. Therefore rejection and acceptance match precisely those constraints.",
+  "walkthrough": "For [[1,0,0,4],[0,4,1,0],[2,0,4,0],[0,3,0,1]], zeros are ignored. Each nonzero entry is unique in its row, column and 2×2 block, so the partial grid is valid. The walkthroughCase uses the judge’s JSON input format and expected observation.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          1,
+          0,
+          0,
+          4
+        ],
+        [
+          0,
+          4,
+          1,
+          0
+        ],
+        [
+          2,
+          0,
+          4,
+          0
+        ],
+        [
+          0,
+          3,
+          0,
+          1
+        ]
+      ]
+    ],
+    "expected": true
+  },
+  "edgeCases": [
+    "Input is a square n×n grid, n is a perfect square, and values are integers from 0 through n.",
+    "Zeros may repeat; nonzero duplicates in a region invalidate even conflict-free rows and columns.",
+    "An empty grid has no conflicts."
+  ]
 }

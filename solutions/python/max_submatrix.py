@@ -5,6 +5,8 @@ from test_framework import generic_test
 
 
 def max_rectangle_submatrix(A: List[List[bool]]) -> int:
+    if not A:
+        return 0
 
     MaxHW = collections.namedtuple('MaxHW', ('h', 'w'))
     # DP table stores (h, w) for each (i, j).

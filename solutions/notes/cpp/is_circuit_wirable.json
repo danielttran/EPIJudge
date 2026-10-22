@@ -1,6 +1,37 @@
 {
-  "explanation": "Breadth-first search each unvisited connected component while assigning distance layers. An edge joining vertices at the same BFS distance reveals an odd cycle; otherwise the layer parity gives the two placements.",
-  "timeComplexity": "O(V+E) time.",
-  "spaceComplexity": "O(V) queue space, excluding the supplied graph.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/is_circuit_wirable.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "Build a symmetric copy of the supplied edge constraints, then BFS each component using distances from its root. Adjacent BFS levels differ by at most one; an edge within one level makes the parity coloring impossible.",
+  "timeComplexity": "O(V + E) time. Symmetrizing creates at most two adjacency entries per constraint, then BFS visits each vertex and entry once.",
+  "spaceComplexity": "O(V + E) auxiliary space. The symmetric graph, coloring state and queue occupy O(V+E).",
+  "attribution": "Original reference source: epi_judge_cpp_solutions/is_circuit_wirable.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice. Local correctness/empty-input fixes and explanation audit authored for EPI Practice; upstream reference files are unchanged. The displayed copy includes local contract or boundary corrections; the upstream reference file is preserved.",
+  "correctness": "In an undirected graph BFS assigns minimum distances, so an edge joins equal or adjacent levels. Equal levels create an odd cycle through the BFS tree; otherwise distance parity gives opposite colors on every edge. Symmetrizing constraints makes this argument hold even when an input edge is listed only once. Every component is searched.",
+  "walkthrough": "For 0−1−2−3−0 and isolated 4, BFS levels from 0 are 0:{0}, 1:{1,3}, 2:{2}. Every edge joins adjacent levels; vertex 4 forms a separate level-zero component, so return true.",
+  "walkthroughCase": {
+    "arguments": [
+      5,
+      [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          0
+        ]
+      ]
+    ],
+    "expected": true
+  },
+  "edgeCases": [
+    "Disconnected and isolated vertices must all be processed.",
+    "A self-loop cannot connect opposite groups.",
+    "An odd cycle fails; an even cycle does not."
+  ]
 }

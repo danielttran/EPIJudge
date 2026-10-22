@@ -1,6 +1,29 @@
 {
-  "explanation": "Transform a rate r into edge weight \u2212log(r). A profitable product around a cycle becomes a negative cycle. Bellman\u2013Ford starts all distances at zero so every component is covered; improvement on the nth pass detects a negative cycle. A small tolerance avoids roundoff-only improvements.",
-  "timeComplexity": "O(n\u00b3) for an n\u00d7n rate matrix",
-  "spaceComplexity": "O(n)",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "explanation": "Transform a rate r into edge weight −log(r). A profitable product around a cycle becomes a negative cycle. Bellman–Ford starts all distances at zero so every component is covered; improvement on the nth pass detects a negative cycle. A small tolerance avoids roundoff-only improvements.",
+  "timeComplexity": "O(n³): at most n passes each relax n² exchange edges, with constant work per edge.",
+  "spaceComplexity": "O(n) distances; transformed edge weights are computed as needed rather than stored in another matrix.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "A cycle’s transformed weight is the negative logarithm of its exchange-rate product. It is negative exactly when that product exceeds one. Bellman–Ford relaxations from zero-valued distances cover every vertex; continuing improvement on the nth pass identifies a negative cycle, subject to the stated floating-point tolerance.",
+  "walkthrough": "Rates 0→1=2 and 1→0=0.6 produce a round-trip multiplier of 1.2. Its negative-log weight is below zero, so the algorithm detects improvement around the cycle and returns true.",
+  "edgeCases": [
+    "A rate product of exactly one is not profitable.",
+    "All components are covered by zero-initialized distances.",
+    "The small relaxation tolerance suppresses roundoff-only changes.",
+    "An empty rate matrix returns false."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          1.0,
+          2.0
+        ],
+        [
+          0.6,
+          1.0
+        ]
+      ]
+    ],
+    "expected": true
+  }
 }

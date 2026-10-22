@@ -1,10 +1,10 @@
 {
   "explanation": "Record which rows and columns contain an original zero before changing any cells. Then clear cells whose row or column was marked, preserving row identities.",
-  "timeComplexity": "O(rows times columns) time.",
-  "spaceComplexity": "O(rows + columns) auxiliary space.",
+  "timeComplexity": "O(rows times columns) time. One pass finds original zeros and another applies the row/column marks.",
+  "spaceComplexity": "O(rows + columns) auxiliary space. There is one boolean marker for each row and column.",
   "attribution": "Original EPI Practice C# implementation, reusing and refining the repository-authored Blind75 algorithm fixtures. Collection membership follows Crackr; no external solution service is used.",
   "correctness": "The first pass records exactly the rows and columns containing an original zero. The second pass clears precisely cells whose row or column was recorded. Keeping those markers separate from the modified matrix prevents newly written zeros from incorrectly propagating further.",
-  "walkthrough": "For [[1,5,0],[6,7,8]], the only original zero marks row 0 and column 2. Clearing those positions produces [[0,0,0],[6,7,0]]. Row 1 is not cleared merely because its final cell becomes zero.",
+  "walkthrough": "For [[1,5,0],[6,7,8]], the only original zero marks row 0 and column 2. Clearing those positions produces [[0,0,0],[6,7,0]]. Row 1 is not cleared merely because its final cell becomes zero. The callable returns no value; expected records the original matrix after mutation, and the harness additionally checks row identity.",
   "edgeCases": [
     "A matrix with no zeros is unchanged.",
     "Multiple zeros may mark the same row or column.",
@@ -13,13 +13,29 @@
   "walkthroughCase": {
     "arguments": [
       [
-        [1, 5, 0],
-        [6, 7, 8]
+        [
+          1,
+          5,
+          0
+        ],
+        [
+          6,
+          7,
+          8
+        ]
       ]
     ],
     "expected": [
-      [0, 0, 0],
-      [6, 7, 0]
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        6,
+        7,
+        0
+      ]
     ]
   }
 }

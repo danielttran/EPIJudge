@@ -1,18 +1,27 @@
 {
-  "explanation": "Save the next node before pointing the current node back to the reversed prefix. After the scan, the previous node is the new head. All nodes are reused.",
-  "timeComplexity": "O(n).",
-  "spaceComplexity": "O(1).",
+  "explanation": "Keep the reversed prefix and the unprocessed suffix separately. Save the current node’s next link before redirecting it toward the prefix, then advance to the saved successor. Return the reversed prefix head.",
+  "timeComplexity": "O(n+1): each of n nodes is visited once and performs a constant number of link updates.",
+  "spaceComplexity": "O(1) auxiliary space: a fixed number of node references; no replacement data nodes.",
   "attribution": "Original C# implementation and explanation authored for EPI Practice from the displayed problem contract.",
-  "correctness": "previous is always the correctly reversed processed prefix, and head begins the untouched suffix. Saving the next node before changing head.Next keeps the suffix reachable. Linking the current node to previous extends the reversed prefix by one node. When head becomes null, previous is the complete reversed list.",
-  "walkthrough": "For [3,8,-2], redirect 3 to null, then 8 to 3, then -2 to 8. The final previous pointer is the original -2 node, producing [-2,8,3].",
+  "correctness": "Before each step the prefix contains exactly the already visited nodes in reverse order, and the suffix contains the remaining nodes in original order. Saving the suffix successor prevents losing it when changing the current link. Prepending the current node preserves the invariant and shortens the suffix by one. When the suffix is empty, the prefix contains every original node in reverse order; its last link is null.",
+  "walkthrough": "For original nodes 3 → 8 → −2, first redirect 3 to null, then 8 to 3, then −2 to 8. The reversed prefix grows [3], [8,3], [−2,8,3]. Return the original node containing −2, which is now the head.",
   "edgeCases": [
     "An empty list returns null.",
-    "One node points to null both before and after reversal.",
-    "No replacement data nodes are allocated.",
-    "The original tail becomes the new head."
+    "One node is its own reversed head, with next=null.",
+    "Save the original successor before overwriting a link; otherwise the remaining list becomes unreachable."
   ],
   "walkthroughCase": {
-    "arguments": [[3, 8, -2]],
-    "expected": [-2, 8, 3]
+    "arguments": [
+      [
+        3,
+        8,
+        -2
+      ]
+    ],
+    "expected": [
+      -2,
+      8,
+      3
+    ]
   }
 }

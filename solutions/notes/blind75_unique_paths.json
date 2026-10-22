@@ -1,7 +1,7 @@
 {
   "explanation": "Use a one-row dynamic program. Each cell's path count is its previous-row count plus its left neighbor's current-row count; the first row and column each have one path.",
-  "timeComplexity": "O(m times n) time for an m by n grid.",
-  "spaceComplexity": "O(n) auxiliary space.",
+  "timeComplexity": "O(m times n) time for an m by n grid. Initializing n entries and processing (m-1)(n-1) interior cells is O(mn).",
+  "spaceComplexity": "O(n) auxiliary space. The array stores n column counts and reuses them for successive rows.",
   "attribution": "Original EPI Practice C# implementation, reusing and refining the repository-authored Blind75 algorithm fixtures. Collection membership follows Crackr; no external solution service is used.",
   "correctness": "Every path to an interior cell arrives either from above or from the left, and these possibilities are disjoint. Summing those predecessor counts therefore counts every allowed path once. The one-row table retains the previous-row count until it is combined with the already updated left neighbor.",
   "walkthrough": "In a 2-by-5 grid, a complete route contains four right moves and one down move. The down move can occupy any of the five move positions, giving 5 unique paths. The dynamic program returns the same count.",
@@ -11,7 +11,10 @@
     "Dimensions are positive and the returned count fits the advertised int contract."
   ],
   "walkthroughCase": {
-    "arguments": [2, 5],
+    "arguments": [
+      2,
+      5
+    ],
     "expected": 5
   }
 }

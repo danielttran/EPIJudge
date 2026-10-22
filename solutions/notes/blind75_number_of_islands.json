@@ -1,7 +1,7 @@
 {
   "explanation": "Scan for unvisited land. Each such cell starts a breadth-first flood of its four-neighbor component and increments the island count, without changing the input grid.",
-  "timeComplexity": "O(rows times columns) time.",
-  "spaceComplexity": "O(rows times columns) auxiliary space.",
+  "timeComplexity": "O(rows times columns) time. Every cell is scanned and each land cell is enqueued once; every dequeue checks four neighbors.",
+  "spaceComplexity": "O(rows times columns) auxiliary space. Visited marks and the flood queue are bounded by the number of grid cells.",
   "attribution": "Original EPI Practice C# implementation, reusing and refining the repository-authored Blind75 algorithm fixtures. Collection membership follows Crackr; no external solution service is used.",
   "correctness": "Whenever an unvisited land cell starts a flood, it belongs to a component not counted earlier. The flood visits exactly all land reachable by orthogonal steps in that component. Marking those cells prevents another start within the same island, so each island contributes exactly one increment.",
   "walkthrough": "For [\"1100\",\"1001\",\"0011\"], cells in the upper-left form one connected island. The rightmost land in row 1 joins the two adjacent bottom-row land cells, forming a second island. The water between the two groups prevents a connection, so return 2.",
@@ -11,7 +11,13 @@
     "The input grid is left unchanged while a separate visited structure records floods."
   ],
   "walkthroughCase": {
-    "arguments": [["1100", "1001", "0011"]],
+    "arguments": [
+      [
+        "1100",
+        "1001",
+        "0011"
+      ]
+    ],
     "expected": 2
   }
 }

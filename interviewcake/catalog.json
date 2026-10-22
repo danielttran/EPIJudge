@@ -21,23 +21,24 @@
     "bankConventions": "Keys are distinct. Valid trees have 2..2000 nodes; integer keys fit signed 32 bits.",
     "constraints": [
       "Keys are distinct. Valid trees have 2..2000 nodes; integer keys fit signed 32 bits.",
-      "Example trees use compact breadth-first order; null marks a missing child, and missing children have no child slots. [] is an empty tree."
+      "Trees use compact breadth-first encoding: null marks a missing child, and absent children have no subsequent child slots. [] represents an empty tree.",
+      "Arguments follow the displayed callable signature; the returned value is serialized directly. Preserve supplied arrays and object structure as stated in the problem."
     ],
     "examples": [
       {
         "input": "[[12, 5, 20, 2, 9, 17, 25]]",
         "output": "20",
-        "explanation": "In the first example, follow 12 -> 20 -> 25. The largest key 25 has no left child, so its parent 20 is the predecessor and the answer."
+        "explanation": "In the tree [12,5,20,2,9,17,25], the rightward search visits 12, 20 and 25. Node 25 has no left subtree, so its parent, 20, is the second-largest key. The tree remains unchanged."
       },
       {
         "input": "[[8, 3, null, 1, 6]]",
         "output": "6",
-        "explanation": "Walk toward the largest key. If that node has a left subtree, its predecessor is the rightmost key in that subtree; otherwise its parent is the predecessor."
+        "explanation": "The maximum is 8 and its left subtree’s rightmost key is 6."
       },
       {
         "input": "[[4, null, 10, 7]]",
         "output": "7",
-        "explanation": "Walk toward the largest key. If that node has a left subtree, its predecessor is the rightmost key in that subtree; otherwise its parent is the predecessor."
+        "explanation": "The maximum 10 has a left child 7, which is its predecessor."
       }
     ],
     "testCount": 23,
@@ -103,23 +104,24 @@
     "description": "Choose two indices i < j in a chronological price array. Return the maximum value of prices[j] - prices[i]. Exactly one purchase and one later sale are required, even when every possible profit is negative.",
     "bankConventions": "There are 2..10000 prices, each in 0..1000000.",
     "constraints": [
-      "There are 2..10000 prices, each in 0..1000000."
+      "There are 2..10000 prices, each in 0..1000000.",
+      "Arguments follow the displayed callable signature; the returned value is serialized directly. Preserve supplied arrays and object structure as stated in the problem."
     ],
     "examples": [
       {
         "input": "[[11, 7, 13, 4, 10]]",
         "output": "6",
-        "explanation": "For [11,7,13,4,10], the sale at 13 follows the earlier minimum 7 and gives 6. After the minimum becomes 4, selling at 10 also gives 6. Thus the best required transaction returns 6."
+        "explanation": "For prices [11,7,13,4,10], the first feasible profit is 7-11=-4. Price 7 becomes the cheapest earlier purchase; selling at 13 improves the profit to 6. The later low price 4 followed by 10 also gives 6. Updating the minimum only after considering a sale prevents buying and selling at the same position."
       },
       {
         "input": "[[19, 14, 8, 3]]",
         "output": "-5",
-        "explanation": "Keep the lowest earlier price and the best profit seen. Evaluate a sale before allowing its own price to become the next minimum."
+        "explanation": "Every legal profit is negative; the best is -5 from 19 to 14 or 8 to 3."
       },
       {
         "input": "[[6, 6]]",
         "output": "0",
-        "explanation": "Keep the lowest earlier price and the best profit seen. Evaluate a sale before allowing its own price to become the next minimum."
+        "explanation": "Buying at the first 6 and selling at the second yields 0."
       }
     ],
     "testCount": 21,
@@ -186,23 +188,24 @@
     "bankConventions": "Empty trees return true. Valid input is a finite tree with at most 2000 nodes.",
     "constraints": [
       "Empty trees return true. Valid input is a finite tree with at most 2000 nodes.",
-      "Example trees use compact breadth-first order; null marks a missing child, and missing children have no child slots. [] is an empty tree."
+      "Trees use compact breadth-first encoding: null marks a missing child, and absent children have no subsequent child slots. [] represents an empty tree.",
+      "Arguments follow the displayed callable signature; the returned value is serialized directly. Preserve supplied arrays and object structure as stated in the problem."
     ],
     "examples": [
       {
         "input": "[[4, 2, 7, 1, 3, null, 9]]",
         "output": "true",
-        "explanation": "The first example has leaves 1, 3 and 9, all at depth 2, giving spread 0. The second example has only one leaf at depth 3, so its deepest and shallowest leaves are the same leaf and it also passes."
+        "explanation": "For [4,2,7,1,3,null,9], the leaves are 1, 3 and 9. Each is two edges below the root, so the shallowest and deepest depths are both 2 and their difference is 0. Return true. A long chain would also return true because it has only one leaf."
       },
       {
         "input": "[[4, 2, null, 1, null, 0]]",
         "output": "true",
-        "explanation": "Traverse nodes with their depths, tracking the smallest and largest depths encountered at leaves. Reject once their difference exceeds one."
+        "explanation": "The chain has one leaf, so both extreme leaf depths are equal."
       },
       {
         "input": "[[4, 2, 7, 1, null, null, null, 0]]",
         "output": "false",
-        "explanation": "Traverse nodes with their depths, tracking the smallest and largest depths encountered at leaves. Reject once their difference exceeds one."
+        "explanation": "Leaves at depths 1 and 3 differ by 2, so the global condition fails."
       }
     ],
     "testCount": 24,
@@ -271,23 +274,24 @@
     "bankConventions": "Empty trees are valid. Duplicates are rejected. Full signed 32-bit keys, including endpoints, are supported; bounds must not accidentally exclude endpoints.",
     "constraints": [
       "Empty trees are valid. Duplicates are rejected. Full signed 32-bit keys, including endpoints, are supported; bounds must not accidentally exclude endpoints.",
-      "Example trees use compact breadth-first order; null marks a missing child, and missing children have no child slots. [] is an empty tree."
+      "Trees use compact breadth-first encoding: null marks a missing child, and absent children have no subsequent child slots. [] represents an empty tree.",
+      "Arguments follow the displayed callable signature; the returned value is serialized directly. Preserve supplied arrays and object structure as stated in the problem."
     ],
     "examples": [
       {
         "input": "[[10, 4, 16, 1, 7, 12, 19]]",
         "output": "true",
-        "explanation": "In the second example, key 8 lies inside the right subtree of root 10. Although 8 is smaller than its immediate parent 16, it violates the inherited lower bound 10, so the answer is false."
+        "explanation": "For [10,4,16,1,7,12,19], node 4 inherits an upper bound of 10; its right child 7 must lie strictly between 4 and 10. Node 16 inherits a lower bound of 10, and its left child 12 must lie between 10 and 16. Every inherited interval is respected, so the answer is true."
       },
       {
         "input": "[[10, 4, 16, null, null, 8]]",
         "output": "false",
-        "explanation": "Pass an open lower and upper bound down each branch. Every node must lie inside the bounds inherited from all of its ancestors."
+        "explanation": "The key 8 is in the root 10’s right subtree and violates the inherited lower bound."
       },
       {
         "input": "[[2, 2, 3]]",
         "output": "false",
-        "explanation": "Pass an open lower and upper bound down each branch. Every node must lie inside the bounds inherited from all of its ancestors."
+        "explanation": "The duplicate 2 violates strict ordering."
       }
     ],
     "testCount": 25,
@@ -353,23 +357,24 @@
     "description": "Check the raw characters of a string for properly nested pairs (), [] and {}. Ignore other characters. Every closing delimiter must match the most recent unmatched opener, and no opener may remain.",
     "bankConventions": "ASCII strings of length at most 10000. Quotes and comments have no special syntax; their delimiter characters are scanned too.",
     "constraints": [
-      "ASCII strings of length at most 10000. Quotes and comments have no special syntax; their delimiter characters are scanned too."
+      "ASCII strings of length at most 10000. Quotes and comments have no special syntax; their delimiter characters are scanned too.",
+      "Arguments follow the displayed callable signature; the returned value is serialized directly. Preserve supplied arrays and object structure as stated in the problem."
     ],
     "examples": [
       {
         "input": "[\"a{b[c](d)}\"]",
         "output": "true",
-        "explanation": "In a{b[c](d)}, the stack changes through {, {[, {, {(, {, and empty as the paired delimiters close. Letters have no effect, and the final empty stack gives true."
+        "explanation": "Scanning a{b[c](d)}, ignore letters and push {, then [. The ] removes [, the ( is pushed and removed by ), and the final } removes {. No closer crosses another pair and the stack finishes empty, so return true."
       },
       {
         "input": "[\"([)]\"]",
         "output": "false",
-        "explanation": "Push openers onto a stack and compare each closer with the top. Reject a mismatch or an empty stack at a closer."
+        "explanation": "The closer ) meets [ at the top, so nesting fails."
       },
       {
         "input": "[\"plain text\"]",
         "output": "true",
-        "explanation": "Push openers onto a stack and compare each closer with the top. Reject a mismatch or an empty stack at a closer."
+        "explanation": "There are no delimiters and therefore no unmatched pairs."
       }
     ],
     "testCount": 21,
@@ -443,23 +448,24 @@
     "description": "Two arrays contain globally distinct order IDs in their original order. Determine whether a third array is an exact interleaving of both arrays that preserves each source's order. Preserve all inputs.",
     "bankConventions": "Source IDs are globally unique signed 32-bit integers. Each array has at most 10000 entries.",
     "constraints": [
-      "Source IDs are globally unique signed 32-bit integers. Each array has at most 10000 entries."
+      "Source IDs are globally unique signed 32-bit integers. Each array has at most 10000 entries.",
+      "Arguments follow the displayed callable signature; the returned value is serialized directly. Preserve supplied arrays and object structure as stated in the problem."
     ],
     "examples": [
       {
         "input": "[[8, 3], [5, 9], [5, 8, 3, 9]]",
         "output": "true",
-        "explanation": "Serving [5,8,3,9] consumes dine-in 5, then take-out 8 and 3, then dine-in 9. Each source advances in its own order and both are exhausted, so the interleaving is valid."
+        "explanation": "For takeOut=[8,3], dineIn=[5,9], served=[5,8,3,9], consume 5 from the dine-in head, then 8 and 3 from takeout, then 9 from dine-in. Both source positions reach their ends exactly, so return true."
       },
       {
         "input": "[[8, 3], [5, 9], [8, 9, 3, 5]]",
         "output": "false",
-        "explanation": "Maintain the next unread index in each source. Each served ID must consume the next ID from exactly one source."
+        "explanation": "Order 9 is served before 5, reversing the dine-in sequence."
       },
       {
         "input": "[[], [], []]",
         "output": "true",
-        "explanation": "Maintain the next unread index in each source. Each served ID must consume the next ID from exactly one source."
+        "explanation": "Both source sequences and the served sequence are empty."
       }
     ],
     "testCount": 28,
@@ -525,23 +531,24 @@
     "description": "Return F(n), where F(0)=0, F(1)=1, and each later value is the sum of the preceding two.",
     "bankConventions": "The judge uses 0 <= n <= 46 so the result fits a signed 32-bit integer.",
     "constraints": [
-      "The judge uses 0 <= n <= 46 so the result fits a signed 32-bit integer."
+      "The judge uses 0 <= n <= 46 so the result fits a signed 32-bit integer.",
+      "Arguments follow the displayed callable signature; the returned value is serialized directly. Preserve supplied arrays and object structure as stated in the problem."
     ],
     "examples": [
       {
         "input": "[0]",
         "output": "0",
-        "explanation": "Starting with 0 and 1 yields the sequence 0,1,1,2,3,5,8,13. Index 7 therefore returns 13, with only the last two values needed at each step."
+        "explanation": "F(0) is the base value 0; no recurrence step is needed."
       },
       {
         "input": "[7]",
         "output": "13",
-        "explanation": "Advance a pair holding consecutive Fibonacci numbers until the requested index is reached."
+        "explanation": "The recurrence yields F(7)=13."
       },
       {
         "input": "[12]",
         "output": "144",
-        "explanation": "Advance a pair holding consecutive Fibonacci numbers until the requested index is reached."
+        "explanation": "The recurrence yields F(12)=144."
       }
     ],
     "testCount": 23,
@@ -608,23 +615,23 @@
     "bankConventions": "Cases encode the complete finite list plus a zero-based target index. The submitted API receives only that node. At least two nodes; target is not the tail. Aliases to both target and successor are checked.",
     "constraints": [
       "Cases encode the complete finite list plus a zero-based target index. The submitted API receives only that node. At least two nodes; target is not the tail. Aliases to both target and successor are checked.",
-      "Example linked lists encode node values in head-to-tail order; identity-sensitive adapter outputs and extra indices are described above."
+      "The callable receives only the target node and returns void/None/undefined. JSON supplies [listValues,targetIndex]; expected is the reachable value sequence after mutation, with identity checked separately."
     ],
     "examples": [
       {
         "input": "[[9, 4, 7, 2], 1]",
         "output": "[9, 7, 2]",
-        "explanation": "The target object contains 4 in [9,4,7,2]. Copy 7 into that object and point it to the node containing 2. The reachable sequence becomes [9,7,2], while an alias to the bypassed successor still refers to its separate original object."
+        "explanation": "The list is 9 -> 4 -> 7 -> 2 and the supplied target is the node currently holding 4. Copy 7 into that same target object and point it to the node holding 2. The head-to-tail values become [9,7,2]. An alias to the target now observes 7, while an alias to the bypassed successor still refers to its separate, unchanged object."
       },
       {
         "input": "[[3, 6], 0]",
         "output": "[6]",
-        "explanation": "Copy the successor's payload into the target and link the target directly to the successor's successor. The output shows the observed mutated sequence."
+        "explanation": "The head object takes value 6 and a null next link; the adapter displays [6]."
       },
       {
         "input": "[[8, 8, 1], 1]",
         "output": "[8, 1]",
-        "explanation": "Copy the successor's payload into the target and link the target directly to the successor's successor. The output shows the observed mutated sequence."
+        "explanation": "The target 8 takes its successor’s value 1 and bypasses that successor; repeated values do not change identity rules."
       }
     ],
     "testCount": 21,
@@ -693,23 +700,23 @@
     "bankConventions": "Cases contain values and a zero-based tail-link target, or -1 for null. At most 2000 reachable nodes.",
     "constraints": [
       "Cases contain values and a zero-based tail-link target, or -1 for null. At most 2000 reachable nodes.",
-      "Example linked lists encode node values in head-to-tail order; identity-sensitive adapter outputs and extra indices are described above."
+      "JSON supplies [listValues,tailLinkIndex]; -1 means a null tail. The callable receives only the constructed entry node and returns a boolean based on node identity."
     ],
     "examples": [
       {
         "input": "[[2, 2, 9], -1]",
         "output": "false",
-        "explanation": "The second example links the tail of [2,5,9,1] back to the original node containing 5. Pointer identities eventually coincide within that cycle. Equal payloads in the first example alone do not create any cycle."
+        "explanation": "For values [2,2,9] with tail link -1, the last node points to null. The repeated payload 2 does not imply a cycle: the two nodes are different objects. The fast pointer reaches the end, so return false."
       },
       {
         "input": "[[2, 5, 9, 1], 1]",
         "output": "true",
-        "explanation": "Move one pointer by one link and another by two. They meet exactly when a reachable cycle exists."
+        "explanation": "The tail points back to original node index 1, creating a reachable cycle."
       },
       {
         "input": "[[7], 0]",
         "output": "true",
-        "explanation": "Move one pointer by one link and another by two. They meet exactly when a reachable cycle exists."
+        "explanation": "The only node links to itself, so identity repeats."
       }
     ],
     "testCount": 21,
@@ -776,23 +783,23 @@
     "bankConventions": "Controlled ordinary files and directories only, no links or I/O failures. The adapter defines deterministic sampling: size plus up to 64 bytes at offsets 0, floor(max(0,size-64)/2), and max(0,size-64). Candidate groups contain at most two files. All matching groups must be reported once; output ordering is free. Equal-time orientation is free. Examples display paths relative to the controlled directory; the submitted function returns full paths. Sample collisions are accepted as suspected duplicates. This disclosed fingerprint convention makes the source's approximate task executable.",
     "constraints": [
       "Controlled ordinary files and directories only, no links or I/O failures. The adapter defines deterministic sampling: size plus up to 64 bytes at offsets 0, floor(max(0,size-64)/2), and max(0,size-64). Candidate groups contain at most two files. All matching groups must be reported once; output ordering is free. Equal-time orientation is free. Examples display paths relative to the controlled directory; the submitted function returns full paths. Sample collisions are accepted as suspected duplicates. This disclosed fingerprint convention makes the source's approximate task executable.",
-      "Example input describes ordinary files created in a controlled temporary directory. The submitted method receives that directory's full path, not the descriptor records."
+      "JSON supplies controlled file descriptors. The callable receives the temporary directory’s full path and returns FilePaths pairs containing full paths; displayed expected paths are relative to that directory."
     ],
     "examples": [
       {
         "input": "[[{\"path\": \"a.txt\", \"content\": \"same bytes\", \"modified\": 1000}, {\"path\": \"nested/b.txt\", \"content\": \"same bytes\", \"modified\": 2000}]]",
         "output": "[[\"a.txt\", \"nested/b.txt\"]]",
-        "explanation": "The first directory contains a.txt and nested/b.txt with equal sizes and sampled bytes. Their modification times are 1000 and 2000, so the result labels a.txt as the suspected original and nested/b.txt as the suspected copy. The files are never changed."
+        "explanation": "The controlled directory contains a.txt and nested/b.txt, both with the bytes \"same bytes\". Their sizes and all three bounded samples match. Their modification times are 1000 and 2000, so report their full paths with a.txt first as the earlier-time candidate. This orientation is a heuristic, and equal fingerprints can still be false positives; neither file is changed."
       },
       {
         "input": "[[]]",
         "output": "[]",
-        "explanation": "Group files by size and a fingerprint of at most 64 bytes each at the beginning, middle and end. For each matching pair, orient the paths by modification time."
+        "explanation": "An empty directory contains no candidate pairs."
       },
       {
         "input": "[[{\"path\": \"a\", \"content\": \"north\", \"modified\": 10}, {\"path\": \"b\", \"content\": \"south\", \"modified\": 20}]]",
         "output": "[]",
-        "explanation": "Group files by size and a fingerprint of at most 64 bytes each at the beginning, middle and end. For each matching pair, orient the paths by modification time."
+        "explanation": "Equal lengths alone are insufficient: sampled bytes north and south differ."
       }
     ],
     "testCount": 7,
@@ -858,23 +865,24 @@
     "description": "An array has n+1 entries, all in 1..n. Return any value appearing at least twice without changing the array. More than one value may repeat, and a value may appear more than twice. Use constant auxiliary space and O(n log n) time.",
     "bankConventions": "2..10000 entries; valid pigeonhole domain only. Any duplicated value is accepted, not one fixed reference choice.",
     "constraints": [
-      "2..10000 entries; valid pigeonhole domain only. Any duplicated value is accepted, not one fixed reference choice."
+      "2..10000 entries; valid pigeonhole domain only. Any duplicated value is accepted, not one fixed reference choice.",
+      "Arguments follow the displayed callable signature; the returned value is serialized directly. Preserve supplied arrays and object structure as stated in the problem."
     ],
     "examples": [
       {
         "input": "[[1, 3, 4, 2, 3]]",
         "output": "3",
-        "explanation": "For [1,3,4,2,3], the lower value half 1..2 contains two entries, fitting its capacity. The repeated value therefore remains in 3..4; another count isolates 3."
+        "explanation": "For [1,3,4,2,3], candidate values are 1..4. The lower half 1..2 contains two entries, fitting its two slots, so continue in 3..4. Value 3 alone appears twice but has only one available slot; narrowing finishes at 3. Every pass reads the same unchanged input."
       },
       {
         "input": "[[2, 2, 2, 1]]",
         "output": "2",
-        "explanation": "Bisect the value range. Count values in the lower half; if its population exceeds its capacity, a duplicate lies there, otherwise one lies in the upper half."
+        "explanation": "2 occurs three times, so returning it satisfies the any-duplicate contract."
       },
       {
         "input": "[[1, 1]]",
         "output": "1",
-        "explanation": "Bisect the value range. Count values in the lower half; if its population exceeds its capacity, a duplicate lies there, otherwise one lies in the upper half."
+        "explanation": "Both entries are 1, the only possible duplicate."
       }
     ],
     "testCount": 21,
@@ -940,23 +948,24 @@
     "description": "An array has n+1 entries in 1..n. Return any repeated value in O(n) time and constant extra space, preserving all entries. Multiple duplicated values and higher multiplicities are allowed.",
     "bankConventions": "2..10000 entries in the stated domain. Any actual repeated value is valid.",
     "constraints": [
-      "2..10000 entries in the stated domain. Any actual repeated value is valid."
+      "2..10000 entries in the stated domain. Any actual repeated value is valid.",
+      "Arguments follow the displayed callable signature; the returned value is serialized directly. Preserve supplied arrays and object structure as stated in the problem."
     ],
     "examples": [
       {
         "input": "[[4, 1, 3, 4, 2]]",
         "output": "4",
-        "explanation": "For [4,1,3,4,2], follow the index/value links until the slow and fast walkers meet. Restarting one walker at the initial index and advancing both locates the cycle entry 4, which is repeated. Other valid inputs can have several acceptable repeated values."
+        "explanation": "Treat index i as pointing to numbers[i]. In [4,1,3,4,2], the path from index 0 is 0 -> 4 -> 2 -> 3 -> 4, with cycle entry 4. Slow and fast pointers meet in that cycle; moving one pointer back to 0 and advancing both identifies entry 4, a repeated array value."
       },
       {
         "input": "[[2, 3, 1, 2, 3]]",
         "output": "2",
-        "explanation": "Interpret index-to-value links as a functional graph. Use a slow/fast meeting followed by equal-speed pointers to locate a cycle entry that is a repeated value."
+        "explanation": "Both 2 and 3 repeat; the displayed 2 is one accepted answer, and 3 is also valid."
       },
       {
         "input": "[[1, 1]]",
         "output": "1",
-        "explanation": "Interpret index-to-value links as a functional graph. Use a slow/fast meeting followed by equal-speed pointers to locate a cycle entry that is a repeated value."
+        "explanation": "Both entries point to 1, so 1 repeats."
       }
     ],
     "testCount": 21,
@@ -1022,23 +1031,24 @@
     "description": "A nonempty array is formed by rotating a strictly increasing list of lowercase ASCII words. Return the index of its smallest word, using ordinal comparisons. Preserve the array.",
     "bankConventions": "1..10000 distinct lowercase ASCII words. The bank explicitly extends the wrapped-list scenario to an unrotated array, whose answer is 0; no old incidental last-index behavior is required.",
     "constraints": [
-      "1..10000 distinct lowercase ASCII words. The bank explicitly extends the wrapped-list scenario to an unrotated array, whose answer is 0; no old incidental last-index behavior is required."
+      "1..10000 distinct lowercase ASCII words. The bank explicitly extends the wrapped-list scenario to an unrotated array, whose answer is 0; no old incidental last-index behavior is required.",
+      "Arguments follow the displayed callable signature; the returned value is serialized directly. Preserve supplied arrays and object structure as stated in the problem."
     ],
     "examples": [
       {
         "input": "[[\"mint\", \"oak\", \"ant\", \"birch\", \"cedar\"]]",
         "output": "2",
-        "explanation": "For [mint,oak,ant,birch,cedar], the wrap separates oak from ant. The smallest word is ant at index 2; binary comparisons discard portions that cannot contain that minimum."
+        "explanation": "For [mint,oak,ant,birch,cedar], middle index 2 contains ant, which is less than cedar at upper index 4, so set upper=2. Next middle index 1 contains oak, greater than ant, so set lower=2. The bounds meet at index 2, the minimum ant; return 2 without changing the array."
       },
       {
         "input": "[[\"elm\"]]",
         "output": "0",
-        "explanation": "Compare the middle word with the right boundary. The smallest word remains in the half containing the ordering break, or at the middle boundary."
+        "explanation": "The only word has minimum index 0."
       },
       {
         "input": "[[\"b\", \"c\", \"a\"]]",
         "output": "2",
-        "explanation": "Compare the middle word with the right boundary. The smallest word remains in the half containing the ordering break, or at the middle boundary."
+        "explanation": "The ordering wraps between c and a; a has index 2."
       }
     ],
     "testCount": 22,
@@ -1108,23 +1118,24 @@
     "description": "Assign a supplied color to every node of an undirected graph so adjacent nodes have different colors. At least D+1 distinct colors are supplied, where D is the maximum degree. Any valid assignment is accepted. Change only Color fields; preserve labels, nodes and neighbor links.",
     "bankConventions": "Cases encode a zero-based adjacency list; labels are v0, v1, ... . Simple undirected graphs of at most 200 nodes, initially uncolored. Palette has at least D+1 distinct nonempty ASCII names. Self-loops are outside the valid domain.",
     "constraints": [
-      "Cases encode a zero-based adjacency list; labels are v0, v1, ... . Simple undirected graphs of at most 200 nodes, initially uncolored. Palette has at least D+1 distinct nonempty ASCII names. Self-loops are outside the valid domain."
+      "Cases encode a zero-based adjacency list; labels are v0, v1, ... . Simple undirected graphs of at most 200 nodes, initially uncolored. Palette has at least D+1 distinct nonempty ASCII names. Self-loops are outside the valid domain.",
+      "JSON supplies [adjacency,palette]; the callable receives graph nodes and colors and returns void/None/undefined. Expected true is the checker verdict for legal Color mutations and preserved graph identity/links."
     ],
     "examples": [
       {
         "input": "[[[1, 2], [0, 2], [0, 1]], [\"red\", \"blue\", \"green\"]]",
         "output": "true",
-        "explanation": "The first graph is a triangle. A valid result gives its three nodes red, blue and green, making every edge join different colors. The example output true denotes validated color fields and preserved graph structure, rather than a return value from the void method."
+        "explanation": "For the triangle with adjacency [[1,2],[0,2],[0,1]] and palette [red,blue,green], assign red to v0, blue to v1 because v0 is red, and green to v2 because its neighbors use both red and blue. Every edge has different endpoint colors. Any other valid assignment also passes; the displayed true reports successful properties."
       },
       {
         "input": "[[], [\"cyan\"]]",
         "output": "true",
-        "explanation": "For each node, collect colors already used by its neighbors and choose a palette color outside that set. true denotes successful contract/property validation; it is not the submitted method return value."
+        "explanation": "There are no nodes to color; true is the property-check verdict."
       },
       {
         "input": "[[[], []], [\"gold\"]]",
         "output": "true",
-        "explanation": "For each node, collect colors already used by its neighbors and choose a palette color outside that set. true denotes successful contract/property validation; it is not the submitted method return value."
+        "explanation": "The two isolated nodes may both receive gold; true validates the mutations."
       }
     ],
     "testCount": 22,
@@ -1190,23 +1201,24 @@
     "description": "Return the largest product of exactly three different array positions. Values can be negative, zero or repeated. Preserve the array.",
     "bankConventions": "3..10000 entries in -1000..1000, so three-value products fit signed 32 bits.",
     "constraints": [
-      "3..10000 entries in -1000..1000, so three-value products fit signed 32 bits."
+      "3..10000 entries in -1000..1000, so three-value products fit signed 32 bits.",
+      "Arguments follow the displayed callable signature; the returned value is serialized directly. Preserve supplied arrays and object structure as stated in the problem."
     ],
     "examples": [
       {
         "input": "[[-8, -5, 2, 4]]",
         "output": "160",
-        "explanation": "In [-8,-5,2,4], the two negative values produce 40; multiplying by 4 gives 160. Considering only the three numerically largest values would miss this optimum."
+        "explanation": "For [-8,-5,2,4], the first two negatives have product 40. Combining that pair with 2 gives 80, and later with 4 gives 160. Selecting the three numerically largest values would miss this result; tracking both low and high pair products preserves the winning candidate."
       },
       {
         "input": "[[-6, -3, -2, -1]]",
         "output": "-6",
-        "explanation": "Track the largest and smallest one-value and two-value products while scanning. Each new value can extend either extreme two-value product to a three-value candidate."
+        "explanation": "The three largest values -3,-2,-1 multiply to -6, the greatest feasible product."
       },
       {
         "input": "[[0, 4, 4, 3]]",
         "output": "48",
-        "explanation": "Track the largest and smallest one-value and two-value products while scanning. Each new value can extend either extreme two-value product to a three-value candidate."
+        "explanation": "The two 4 occurrences are distinct positions; 4*4*3=48."
       }
     ],
     "testCount": 21,
@@ -1267,23 +1279,24 @@
     "description": "Implement a FIFO queue using two stacks. Enqueue appends an integer; Dequeue removes and returns the oldest remaining occurrence. A dequeue on an empty queue must signal an empty-state error.",
     "bankConventions": "The case adapter constructs one fresh instance and applies each operation in order. Empty-state exceptions are normalized to {\"error\":\"empty\"}; exception text is not graded.",
     "constraints": [
-      "The case adapter constructs one fresh instance and applies each operation in order. Empty-state exceptions are normalized to {\"error\":\"empty\"}; exception text is not graded."
+      "The case adapter constructs one fresh instance and applies each operation in order. Empty-state exceptions are normalized to {\"error\":\"empty\"}; exception text is not graded.",
+      "JSON supplies [operationNames,argumentLists] for one fresh QueueTwoStacks. Void operations display null; Dequeue displays the returned item or {\"error\":\"empty\"}."
     ],
     "examples": [
       {
         "input": "[[\"Enqueue\", \"Enqueue\", \"Dequeue\", \"Enqueue\", \"Dequeue\", \"Dequeue\"], [[4], [9], [], [2], [], []]]",
         "output": "[null, null, 4, null, 9, 2]",
-        "explanation": "After enqueueing 4 then 9, transfer the input stack when the first dequeue occurs, yielding 4. Enqueueing 2 does not disturb 9 waiting in the output stack, so later removals return 9 then 2."
+        "explanation": "Enqueue 4 and 9 into the incoming stack. The first Dequeue moves them to the outgoing stack and removes 4. Enqueue 2 without moving the still-pending 9. The next Dequeue removes 9; only then does transferring the incoming stack expose 2. The returned values are 4, 9 and 2 in FIFO order."
       },
       {
         "input": "[[\"Dequeue\"], [[]]]",
         "output": "[{\"error\": \"empty\"}]",
-        "explanation": "Push new items to an input stack. When the output stack is empty, transfer all input items into it; this reverses their order once."
+        "explanation": "The fresh queue is empty, so Dequeue signals the normalized empty error."
       },
       {
         "input": "[[\"Enqueue\", \"Dequeue\", \"Dequeue\"], [[7], [], []]]",
         "output": "[null, 7, {\"error\": \"empty\"}]",
-        "explanation": "Push new items to an input stack. When the output stack is empty, transfer all input items into it; this reverses their order once."
+        "explanation": "Enqueue records null, the first dequeue returns 7, and the drained dequeue signals empty."
       }
     ],
     "testCount": 21,
@@ -1349,23 +1362,24 @@
     "description": "Rearrange an integer array in place into an unbiased random permutation of its element occurrences. Use only the supplied RandomSource.GetRandom(lower, upper), whose bounds are inclusive. Preserve the array object and every occurrence.",
     "bankConventions": "The bank injects the random primitive. Small distinct arrays are checked under every sequence of legal choices, so all n! permutations must occur equally often. Additional deterministic seeded trials check input identity, multiplicity, bounds and use of the supplied source. Displayed output true means all properties passed, not a required exact permutation.",
     "constraints": [
-      "The bank injects the random primitive. Small distinct arrays are checked under every sequence of legal choices, so all n! permutations must occur equally often. Additional deterministic seeded trials check input identity, multiplicity, bounds and use of the supplied source. Displayed output true means all properties passed, not a required exact permutation."
+      "The bank injects the random primitive. Small distinct arrays are checked under every sequence of legal choices, so all n! permutations must occur equally often. Additional deterministic seeded trials check input identity, multiplicity, bounds and use of the supplied source. Displayed output true means all properties passed, not a required exact permutation.",
+      "The callable mutates the supplied array and returns void/None/undefined. Expected true is the checker verdict for occurrence preservation, identity, legal source use and unbiased permutations; it is not a particular array result."
     ],
     "examples": [
       {
         "input": "[[4, 8, 1]]",
         "output": "true",
-        "explanation": "For [4,8,1], position zero has three choices and position one has two. Each of the six permutations therefore has probability 1/6. The example output true means the mutation and randomness properties passed; no exact permutation is prescribed."
+        "explanation": "Starting with [4,8,1], position 0 chooses uniformly among all three occurrences. If it selects index 2, the array becomes [1,8,4]. Position 1 then chooses index 1 or 2 equally, producing [1,8,4] or [1,4,8]. Each full three-element permutation has probability 1/(3*2)=1/6. The judge returns true when these distribution and in-place properties hold."
       },
       {
         "input": "[[]]",
         "output": "true",
-        "explanation": "For each position i, choose uniformly among positions i through n-1 and exchange the chosen value into position i. true denotes successful contract/property validation; it is not the submitted method return value."
+        "explanation": "An empty array is already its only permutation; true validates the unchanged object."
       },
       {
         "input": "[[7, 7, 2]]",
         "output": "true",
-        "explanation": "For each position i, choose uniformly among positions i through n-1 and exchange the chosen value into position i. true denotes successful contract/property validation; it is not the submitted method return value."
+        "explanation": "Both 7 occurrences must be preserved; true validates occurrence-level randomness rather than prescribing one ordering."
       }
     ],
     "testCount": 24,
@@ -1435,23 +1449,24 @@
     "description": "Return whether two different movie entries have durations summing exactly to a target. Two equal durations are allowed if they occur at different positions. Preserve the input.",
     "bankConventions": "Durations and target are integers in 0..1000000. At most 10000 movie entries.",
     "constraints": [
-      "Durations and target are integers in 0..1000000. At most 10000 movie entries."
+      "Durations and target are integers in 0..1000000. At most 10000 movie entries.",
+      "Arguments follow the displayed callable signature; the returned value is serialized directly. Preserve supplied arrays and object structure as stated in the problem."
     ],
     "examples": [
       {
         "input": "[[35, 60, 45, 20], 80]",
         "output": "true",
-        "explanation": "For durations [35,60,45,20] and target 80, duration 20 finds the earlier complement 60. A single duration 40 would not fill target 80 by itself, but two separate 40 entries would."
+        "explanation": "For movieLengths=[35,60,45,20] and flightLength=80, remember 35, then 60. At duration 45, the needed complement is 35, which is already from a different position, so return true. A single duration 40 would not be enough by itself."
       },
       {
         "input": "[[40], 80]",
         "output": "false",
-        "explanation": "Before inserting a duration into a set, check whether its complement has appeared earlier."
+        "explanation": "One 40 entry cannot be used twice."
       },
       {
         "input": "[[40, 40], 80]",
         "output": "true",
-        "explanation": "Before inserting a duration into a set, check whether its complement has appeared earlier."
+        "explanation": "Two different 40 entries sum to 80."
       }
     ],
     "testCount": 21,
@@ -1522,23 +1537,23 @@
     "bankConventions": "1 <= k <= list length <= 2000. The adapter reports the returned original node's zero-based index, allowing identity rather than value-only judging.",
     "constraints": [
       "1 <= k <= list length <= 2000. The adapter reports the returned original node's zero-based index, allowing identity rather than value-only judging.",
-      "Example linked lists encode node values in head-to-tail order; identity-sensitive adapter outputs and extra indices are described above."
+      "JSON supplies [k,listValues]. The callable returns the original node object; the adapter displays its zero-based index in the original list, not its value and not k."
     ],
     "examples": [
       {
         "input": "[2, [5, 8, 1, 6]]",
         "output": "2",
-        "explanation": "For k=2 and [5,8,1,6], the selected original node contains 1. It has zero-based position 2, which is the adapter output; the submitted method returns that existing node object."
+        "explanation": "For k=2 and list 5 -> 8 -> 1 -> 6, advance the leading pointer two nodes to 1. Move both pointers together until the leading pointer passes the tail; the following pointer then refers to the original node holding 1. Its zero-based identity index is 2, which is the adapter output; the method returns that node object."
       },
       {
         "input": "[1, [9]]",
         "output": "0",
-        "explanation": "Move a leading pointer k steps, then advance a second pointer with it until the leading pointer reaches null. The adapter displays the zero-based index of the returned original node."
+        "explanation": "The single node is the tail; the adapter reports its original index 0."
       },
       {
         "input": "[3, [4, 7, 2]]",
         "output": "0",
-        "explanation": "Move a leading pointer k steps, then advance a second pointer with it until the leading pointer reaches null. The adapter displays the zero-based index of the returned original node."
+        "explanation": "The third-to-last of three nodes is the original head at index 0."
       }
     ],
     "testCount": 21,
@@ -1599,23 +1614,24 @@
     "description": "Implement an integer stack with Push, Pop and GetMax. Pop removes the latest remaining occurrence. GetMax returns the greatest current value without consuming it. Empty Pop and GetMax signal an empty-state error. Use a built-in stack.",
     "bankConventions": "A fresh object is constructed for each operation sequence. Empty-state exceptions use the same normalized wire category as the queue.",
     "constraints": [
-      "A fresh object is constructed for each operation sequence. Empty-state exceptions use the same normalized wire category as the queue."
+      "A fresh object is constructed for each operation sequence. Empty-state exceptions use the same normalized wire category as the queue.",
+      "JSON supplies [operationNames,argumentLists] for one fresh MaxStack. Push displays null; Pop/GetMax display integer results or {\"error\":\"empty\"}."
     ],
     "examples": [
       {
         "input": "[[\"Push\", \"Push\", \"GetMax\", \"Pop\", \"GetMax\"], [[5], [9], [], [], []]]",
         "output": "[null, null, 9, 9, 5]",
-        "explanation": "Push 5 then 9: the running maximum becomes 9. Pop returns 9 and restores the earlier maximum 5. Two equal maxima each retain a record, so popping one does not discard the other."
+        "explanation": "Push 5, then 9. The auxiliary maximum stack records both increases, so GetMax returns 9. Pop removes 9 from both stacks. The remaining maximum is 5, and the next GetMax reads it without removing it. Equal maxima would each need a retained occurrence as well."
       },
       {
         "input": "[[\"Push\", \"Push\", \"Pop\", \"GetMax\"], [[8], [8], [], []]]",
         "output": "[null, null, 8, 8]",
-        "explanation": "Maintain the item stack and a second stack of running maxima, retaining repeated maximum occurrences."
+        "explanation": "Popping one 8 leaves another 8, so the maximum remains 8."
       },
       {
         "input": "[[\"GetMax\", \"Pop\"], [[], []]]",
         "output": "[{\"error\": \"empty\"}, {\"error\": \"empty\"}]",
-        "explanation": "Maintain the item stack and a second stack of running maxima, retaining repeated maximum occurrences."
+        "explanation": "Both operations inspect an empty stack and signal normalized empty errors."
       }
     ],
     "testCount": 21,
@@ -1685,23 +1701,24 @@
     "description": "Count unordered combinations of available coin denominations totaling an amount. Any denomination can be used repeatedly; different orderings of the same coin counts are one combination. Preserve the denomination array.",
     "bankConventions": "0 <= amount <= 100. Denominations are distinct positive integers <= 100. All corpus counts fit signed 32 bits.",
     "constraints": [
-      "0 <= amount <= 100. Denominations are distinct positive integers <= 100. All corpus counts fit signed 32 bits."
+      "0 <= amount <= 100. Denominations are distinct positive integers <= 100. All corpus counts fit signed 32 bits.",
+      "Arguments follow the displayed callable signature; the returned value is serialized directly. Preserve supplied arrays and object structure as stated in the problem."
     ],
     "examples": [
       {
         "input": "[8, [2, 3, 5]]",
         "output": "3",
-        "explanation": "Amount 8 with denominations 2,3,5 has three combinations: four 2s; one 2 and two 3s; or one 3 and one 5. Reordering those coins does not create additional combinations."
+        "explanation": "For amount 8 and denominations [2,3,5], the three unordered combinations are 2+2+2+2, 2+3+3, and 3+5. Processing each denomination in the outer loop adds each combination once; 5+3 is the same combination as 3+5, not a fourth answer."
       },
       {
         "input": "[0, []]",
         "output": "1",
-        "explanation": "Set ways[0]=1. Process denominations one at a time, adding ways[a-coin] into ways[a] for increasing amounts."
+        "explanation": "There is exactly one empty combination that makes zero."
       },
       {
         "input": "[7, [4, 6]]",
         "output": "0",
-        "explanation": "Set ways[0]=1. Process denominations one at a time, adding ways[a-coin] into ways[a] for increasing amounts."
+        "explanation": "Neither 4 nor 6, nor any nonnegative combination of them, makes odd amount 7."
       }
     ],
     "testCount": 23,
@@ -1771,23 +1788,24 @@
     "description": "Merge two nondecreasing integer arrays into a new nondecreasing array containing every occurrence. Preserve both inputs.",
     "bankConventions": "Each input has at most 10000 entries; signed 32-bit keys.",
     "constraints": [
-      "Each input has at most 10000 entries; signed 32-bit keys."
+      "Each input has at most 10000 entries; signed 32-bit keys.",
+      "Arguments follow the displayed callable signature; the returned value is serialized directly. Preserve supplied arrays and object structure as stated in the problem."
     ],
     "examples": [
       {
         "input": "[[1, 4, 4], [2, 4, 9]]",
         "output": "[1, 2, 4, 4, 4, 9]",
-        "explanation": "For [1,4,4] and [2,4,9], take 1 then 2, preserve all three occurrences of 4, and finish with 9. The new result is [1,2,4,4,4,9]."
+        "explanation": "Merge [1,4,4] and [2,4,9] by repeatedly taking the smaller head: 1, then 2, then the three occurrences of 4, then 9. The new output is [1,2,4,4,4,9]; neither input is sorted again or modified."
       },
       {
         "input": "[[], [3]]",
         "output": "[3]",
-        "explanation": "Read the smallest unconsumed head from either input until both are exhausted."
+        "explanation": "Copy 3 into a new result because the first array is empty."
       },
       {
         "input": "[[], []]",
         "output": "[]",
-        "explanation": "Read the smallest unconsumed head from either input until both are exhausted."
+        "explanation": "Return a new empty array."
       }
     ],
     "testCount": 21,
@@ -1854,23 +1872,23 @@
     "bankConventions": "Bank intervals have StartTime < EndTime and coordinates in -1000000..1000000. An empty input returns an empty new list as an explicit bank extension.",
     "constraints": [
       "Bank intervals have StartTime < EndTime and coordinates in -1000000..1000000. An empty input returns an empty new list as an explicit bank extension.",
-      "Example intervals are [StartTime,EndTime] pairs."
+      "JSON intervals are [StartTime,EndTime] pairs; return newly allocated Meeting objects in increasing start order and preserve the supplied list and objects."
     ],
     "examples": [
       {
         "input": "[[[9, 12], [1, 4], [4, 7], [10, 14]]]",
         "output": "[[1, 7], [9, 14]]",
-        "explanation": "Sort [9,12],[1,4],[4,7],[10,14] by start. The touching first pair merges to [1,7], while the overlapping later pair merges to [9,14]. A gap remains between 7 and 9."
+        "explanation": "Sort [[9,12],[1,4],[4,7],[10,14]] by start to obtain [1,4], [4,7], [9,12], [10,14]. The first two touch and become [1,7]. The last two overlap and become [9,14]. The gap from 7 to 9 remains, giving [[1,7],[9,14]] in newly allocated meeting objects."
       },
       {
         "input": "[[[2, 8], [3, 5]]]",
         "output": "[[2, 8]]",
-        "explanation": "Sort copies by start, then extend the current output interval while the next interval begins no later than its end."
+        "explanation": "The interval [3,5] lies inside [2,8], leaving union [2,8]."
       },
       {
         "input": "[[[4, 6]]]",
         "output": "[[4, 6]]",
-        "explanation": "Sort copies by start, then extend the current output interval while the next interval begins no later than its end."
+        "explanation": "Even a singleton is copied into a new Meeting object."
       }
     ],
     "testCount": 23,
@@ -1944,23 +1962,24 @@
     "description": "In an unweighted network given by an adjacency map, return any route with the fewest edges from start to end, including both endpoints. Return null if there is no route. Preserve the map and neighbor arrays.",
     "bankConventions": "Every neighbor has a key. Start/end keys exist. The bank uses undirected networks with at most 200 vertices. Any equally short route is accepted.",
     "constraints": [
-      "Every neighbor has a key. Start/end keys exist. The bank uses undirected networks with at most 200 vertices. Any equally short route is accepted."
+      "Every neighbor has a key. Start/end keys exist. The bank uses undirected networks with at most 200 vertices. Any equally short route is accepted.",
+      "JSON supplies an adjacency map and two endpoint labels. Return any shortest route including endpoints; the adapter accepts tied routes and a no-route result."
     ],
     "examples": [
       {
         "input": "[{\"a\": [\"b\", \"c\"], \"b\": [\"a\", \"d\"], \"c\": [\"a\", \"d\"], \"d\": [\"b\", \"c\"]}, \"a\", \"d\"]",
         "output": "[\"a\", \"b\", \"d\"]",
-        "explanation": "In the first network, a reaches b and c in one edge, then d in two. Both [a,b,d] and [a,c,d] are valid shortest routes; the example chooses the first without requiring that tie-breaking order."
+        "explanation": "In the network a:{b,c}, b:{a,d}, c:{a,d}, d:{b,c}, breadth-first search visits b and c at distance 1 and discovers d at distance 2. Reconstructing via b gives [a,b,d]. The equally short route [a,c,d] is also valid; both contain two edges."
       },
       {
         "input": "[{\"a\": [], \"b\": []}, \"a\", \"b\"]",
         "output": "null",
-        "explanation": "Breadth-first search records the predecessor of each first-discovered vertex. Reconstruct the route backward from the destination."
+        "explanation": "No edge connects a to b, so there is no route."
       },
       {
         "input": "[{\"x\": []}, \"x\", \"x\"]",
         "output": "[\"x\"]",
-        "explanation": "Breadth-first search records the predecessor of each first-discovered vertex. Reconstruct the route backward from the destination."
+        "explanation": "The zero-edge route from x to itself is [x]."
       }
     ],
     "testCount": 21,
@@ -2026,23 +2045,24 @@
     "description": "Build a prefix-sharing membership collection for exact string keys. AddWord returns true the first time a complete key is inserted and false on later identical insertions. Inserting a prefix and inserting a longer extension are separate events.",
     "bankConventions": "This is a runnable AddWord adapter to a storage-design task, not a claim that the source mandates this only API. Keys are ASCII strings without NUL, length <= 1000; no URL normalization or network access. Empty key is supported explicitly.",
     "constraints": [
-      "This is a runnable AddWord adapter to a storage-design task, not a claim that the source mandates this only API. Keys are ASCII strings without NUL, length <= 1000; no URL normalization or network access. Empty key is supported explicitly."
+      "This is a runnable AddWord adapter to a storage-design task, not a claim that the source mandates this only API. Keys are ASCII strings without NUL, length <= 1000; no URL normalization or network access. Empty key is supported explicitly.",
+      "JSON supplies [operationNames,argumentLists] for one fresh Trie. Each AddWord receives one exact string and returns whether that complete key was newly inserted."
     ],
     "examples": [
       {
         "input": "[[\"AddWord\", \"AddWord\", \"AddWord\", \"AddWord\"], [[\"https://a/b\"], [\"https://a\"], [\"https://a/b\"], [\"https://a/b/c\"]]]",
         "output": "[true, true, false, true]",
-        "explanation": "Insert https://a/b, then its shorter prefix https://a: both are new complete keys. Reinserting https://a/b returns false. Extending it to https://a/b/c again returns true because terminal membership is separate from prefix existence."
+        "explanation": "Insert https://a/b: create missing character links and mark its final node, returning true. Insert https://a next: its character path exists, but its final node was not a complete key, so return true. Repeating https://a/b returns false. Extending it to https://a/b/c marks a different complete key and returns true."
       },
       {
         "input": "[[\"AddWord\", \"AddWord\"], [[\"\"], [\"\"]]]",
         "output": "[true, false]",
-        "explanation": "Store a trie edge per next character and an explicit terminal flag at complete keys."
+        "explanation": "The empty key marks the root once; its second insertion is already present."
       },
       {
         "input": "[[\"AddWord\", \"AddWord\"], [[\"abc\"], [\"ab\"]]]",
         "output": "[true, true]",
-        "explanation": "Store a trie edge per next character and an explicit terminal flag at complete keys."
+        "explanation": "The existing abc path does not imply complete-key membership of ab."
       }
     ],
     "testCount": 21,
@@ -2112,23 +2132,24 @@
     "description": "Given the index of an opening parenthesis, return the index of its matching closing parenthesis in the raw string. Nested pairs must be respected; other characters do not matter.",
     "bankConventions": "ASCII strings length <= 10000. The supplied index points to an opener with a matching closer. Indexing is zero-based.",
     "constraints": [
-      "ASCII strings length <= 10000. The supplied index points to an opener with a matching closer. Indexing is zero-based."
+      "ASCII strings length <= 10000. The supplied index points to an opener with a matching closer. Indexing is zero-based.",
+      "Arguments follow the displayed callable signature; the returned value is serialized directly. Preserve supplied arrays and object structure as stated in the problem."
     ],
     "examples": [
       {
         "input": "[\"x(ab(cd)e)y\", 1]",
         "output": "9",
-        "explanation": "In x(ab(cd)e)y, the opener at index 1 contains another pair at indices 4 and 7. Closing the inner pair leaves the outer depth active, so the matching outer closer is index 9."
+        "explanation": "In x(ab(cd)e)y, the opener at index 1 starts depth 1. The opener at index 4 increases depth to 2, its closer at index 7 reduces it to 1, and the closer at index 9 reduces it to 0. Return index 9 rather than the first closing parenthesis."
       },
       {
         "input": "[\"(())()\", 1]",
         "output": "2",
-        "explanation": "Starting after the designated opener, count nested openers. A closer at nesting depth zero is its matching closer."
+        "explanation": "The opener at index 1 closes at index 2, inside the outer pair."
       },
       {
         "input": "[\"a(b)c(d)\", 5]",
         "output": "7",
-        "explanation": "Starting after the designated opener, count nested openers. A closer at nesting depth zero is its matching closer."
+        "explanation": "Start from the supplied second opener at index 5, whose closer is 7."
       }
     ],
     "testCount": 21,
@@ -2194,23 +2215,24 @@
     "description": "Determine whether the lowercase letters of a string can be reordered into a palindrome, using every occurrence exactly once.",
     "bankConventions": "ASCII lowercase a..z only; length <= 10000. No punctuation removal or case conversion.",
     "constraints": [
-      "ASCII lowercase a..z only; length <= 10000. No punctuation removal or case conversion."
+      "ASCII lowercase a..z only; length <= 10000. No punctuation removal or case conversion.",
+      "Arguments follow the displayed callable signature; the returned value is serialized directly. Preserve supplied arrays and object structure as stated in the problem."
     ],
     "examples": [
       {
         "input": "[\"aabbc\"]",
         "output": "true",
-        "explanation": "For aabbc, a and b each occur twice and c once. Put c at the center and mirror the pairs to form abcba. Two odd frequencies, as in aabc, cannot both occupy the single center."
+        "explanation": "For aabbc, toggling odd-frequency membership removes a after its second occurrence and removes b after its second. Only c remains odd. It can occupy the middle of a palindrome such as abcba, so return true without enumerating reorderings."
       },
       {
         "input": "[\"aabc\"]",
         "output": "false",
-        "explanation": "Toggle each letter in a set of odd-frequency letters. A palindrome permits at most one odd frequency."
+        "explanation": "Both b and c have odd counts, exceeding one possible center."
       },
       {
         "input": "[\"\"]",
         "output": "true",
-        "explanation": "Toggle each letter in a set of odd-frequency letters. A palindrome permits at most one odd frequency."
+        "explanation": "The empty string is already a palindrome."
       }
     ],
     "testCount": 21,
@@ -2276,23 +2298,24 @@
     "description": "Return a new array whose entry i is the product of every input entry except i. Do not divide, and preserve the input. Use only the output array plus constant extra storage.",
     "bankConventions": "2..20 integers in -5..5; corpus inputs keep every intermediate/result within signed 32 bits.",
     "constraints": [
-      "2..20 integers in -5..5; corpus inputs keep every intermediate/result within signed 32 bits."
+      "2..20 integers in -5..5; corpus inputs keep every intermediate/result within signed 32 bits.",
+      "Arguments follow the displayed callable signature; the returned value is serialized directly. Preserve supplied arrays and object structure as stated in the problem."
     ],
     "examples": [
       {
         "input": "[[2, 0, -3, 4]]",
         "output": "[0, -24, 0, 0]",
-        "explanation": "For [2,0,-3,4], every result except position 1 includes the zero factor. Excluding that zero yields 2*(-3)*4=-24, so the result is [0,-24,0,0]. No division is needed."
+        "explanation": "For [2,0,-3,4], the left-product pass writes [1,2,0,0]. Multiplying right products into those entries gives [0,-24,0,0]. At the zero position, the other values multiply to 2*(-3)*4=-24; every other position includes the zero. Division is unnecessary."
       },
       {
         "input": "[[0, 5, 0]]",
         "output": "[0, 0, 0]",
-        "explanation": "Write left-prefix products into the output, then multiply them by a running right-suffix product while scanning backward."
+        "explanation": "Each product includes at least one of the two zeros."
       },
       {
         "input": "[[-2, 3, 4]]",
         "output": "[12, -8, -6]",
-        "explanation": "Write left-prefix products into the output, then multiply them by a running right-suffix product while scanning backward."
+        "explanation": "Exclude each index in turn: 3*4=12, -2*4=-8 and -2*3=-6."
       }
     ],
     "testCount": 21,
@@ -2363,23 +2386,23 @@
     "bankConventions": "Coordinates are in -1000000..1000000, widths/heights in 1..1000000. The bank represents no positive-area overlap by a new Rectangle(0,0,0,0).",
     "constraints": [
       "Coordinates are in -1000000..1000000, widths/heights in 1..1000000. The bank represents no positive-area overlap by a new Rectangle(0,0,0,0).",
-      "Example rectangles are [LeftX,BottomY,Width,Height]."
+      "JSON rectangles are [LeftX,BottomY,Width,Height]; return a new Rectangle, including [0,0,0,0] when overlap has no positive area."
     ],
     "examples": [
       {
         "input": "[[1, 2, 6, 4], [4, 0, 5, 4]]",
         "output": "[4, 2, 3, 2]",
-        "explanation": "The first rectangles span x=1..7 and x=4..9, so the shared x interval is 4..7. Their y intervals share 2..4. The intersection is therefore (LeftX=4, BottomY=2, Width=3, Height=2)."
+        "explanation": "Rectangle [1,2,6,4] spans x=1..7 and y=2..6; [4,0,5,4] spans x=4..9 and y=0..4. The common x interval is 4..7 and the common y interval is 2..4, so return a new rectangle [4,2,3,2]. Both dimensions are positive."
       },
       {
         "input": "[[0, 0, 2, 2], [2, 0, 3, 2]]",
         "output": "[0, 0, 0, 0]",
-        "explanation": "Intersect the x intervals and y intervals separately. Both resulting lengths must be positive."
+        "explanation": "The rectangles only touch at x=2, so return the zero rectangle."
       },
       {
         "input": "[[-4, -3, 8, 7], [-1, 0, 2, 2]]",
         "output": "[-1, 0, 2, 2]",
-        "explanation": "Intersect the x intervals and y intervals separately. Both resulting lengths must be positive."
+        "explanation": "The second rectangle lies entirely inside the first; return its geometry in a fresh rectangle."
       }
     ],
     "testCount": 21,
@@ -2447,23 +2470,24 @@
     "description": "Return a set containing every distinct permutation of a string's characters. Use recursion. Output order does not matter.",
     "bankConventions": "ASCII strings of at most 7 characters. Repeated-character inputs are an explicit bank extension and use distinct-result set semantics.",
     "constraints": [
-      "ASCII strings of at most 7 characters. Repeated-character inputs are an explicit bank extension and use distinct-result set semantics."
+      "ASCII strings of at most 7 characters. Repeated-character inputs are an explicit bank extension and use distinct-result set semantics.",
+      "Return a set of strings; the adapter displays a JSON array and compares membership without imposing output order."
     ],
     "examples": [
       {
         "input": "[\"ab\"]",
         "output": "[\"ab\", \"ba\"]",
-        "explanation": "For ab, recursively permuting b gives {b}. Insert a before and after b to obtain {ab,ba}. For empty input there is one permutation, the empty string, rather than no results."
+        "explanation": "For ab, recurse on b to obtain the set {b}. Insert a before b and after b, yielding {ab,ba}. The base case for an empty suffix is the singleton set containing the empty string, which makes the first insertion possible."
       },
       {
         "input": "[\"\"]",
         "output": "[\"\"]",
-        "explanation": "Recursively permute the suffix, then insert the removed first character at every position of each smaller permutation. A set removes duplicate strings."
+        "explanation": "The empty string has exactly one permutation, itself."
       },
       {
         "input": "[\"cab\"]",
         "output": "[\"abc\", \"acb\", \"bac\", \"bca\", \"cab\", \"cba\"]",
-        "explanation": "Recursively permute the suffix, then insert the removed first character at every position of each smaller permutation. A set removes duplicate strings."
+        "explanation": "Three distinct letters give 3!=6 distinct strings; displayed ordering is not required."
       }
     ],
     "testCount": 23,
@@ -2530,23 +2554,23 @@
     "bankConventions": "0..2000 nodes. Identity and link direction are checked independently of values.",
     "constraints": [
       "0..2000 nodes. Identity and link direction are checked independently of values.",
-      "Example linked lists encode node values in head-to-tail order; identity-sensitive adapter outputs and extra indices are described above."
+      "The callable returns the new head of the same node objects. JSON displays the returned head’s value sequence; the adapter also checks original identities, payloads and reversed links."
     ],
     "examples": [
       {
         "input": "[[3, 8, 1]]",
         "output": "[1, 8, 3]",
-        "explanation": "For the original nodes 3 -> 8 -> 1, redirect 3 to null, then 8 to 3, then 1 to 8. Return the original node containing 1. The observed values become [1,8,3], and every node retains its own original value."
+        "explanation": "For nodes 3 -> 8 -> 1, first set node 3.Next to null. Next point the original node 8 to node 3, then point the original node 1 to node 8. Return the original node holding 1. The resulting values are [1,8,3], with every payload still attached to its original object."
       },
       {
         "input": "[[]]",
         "output": "[]",
-        "explanation": "Maintain the already reversed prefix and detach one node at a time from the remaining suffix, pointing it back to the prefix. The output shows the observed mutated sequence."
+        "explanation": "The new head is null; the serialized value sequence is empty."
       },
       {
         "input": "[[6]]",
         "output": "[6]",
-        "explanation": "Maintain the already reversed prefix and detach one node at a time from the remaining suffix, pointing it back to the prefix. The output shows the observed mutated sequence."
+        "explanation": "The singleton returns the same original node, with Next still null."
       }
     ],
     "testCount": 21,
@@ -2612,23 +2636,24 @@
     "description": "Reverse a mutable character array in place. Preserve the array object and its length.",
     "bankConventions": "Cases encode ASCII character arrays as strings; the submitted method receives a mutable char array (a one-character string list in Python/JavaScript).",
     "constraints": [
-      "Cases encode ASCII character arrays as strings; the submitted method receives a mutable char array (a one-character string list in Python/JavaScript)."
+      "Cases encode ASCII character arrays as strings; the submitted method receives a mutable char array (a one-character string list in Python/JavaScript).",
+      "JSON encodes the mutable character array as one string. The callable returns void/None/undefined; expected is the same array’s content after mutation."
     ],
     "examples": [
       {
         "input": "[\"cloud\"]",
         "output": "\"duolc\"",
-        "explanation": "For cloud, swap c with d and l with u; the middle o remains in place. The same character array now contains duolc, which is the observed example output."
+        "explanation": "For the mutable characters of cloud, exchange c with d, then l with u; the middle o stays in place. The same array now contains duolc. No replacement array is returned."
       },
       {
         "input": "[\"\"]",
         "output": "\"\"",
-        "explanation": "Swap the leftmost and rightmost unprocessed characters, moving both boundaries inward. The output shows the observed mutated sequence."
+        "explanation": "The empty character array remains the same empty object."
       },
       {
         "input": "[\"x\"]",
         "output": "\"x\"",
-        "explanation": "Swap the leftmost and rightmost unprocessed characters, moving both boundaries inward. The output shows the observed mutated sequence."
+        "explanation": "The one character remains in the same array."
       }
     ],
     "testCount": 21,
@@ -2694,23 +2719,24 @@
     "description": "Reverse the order of words in a mutable character array while preserving each word's internal spelling. Change the supplied array in place.",
     "bankConventions": "ASCII letters with exactly one space between adjacent words, no leading/trailing spaces. Empty message is supported. Cases encode the mutable array as a string.",
     "constraints": [
-      "ASCII letters with exactly one space between adjacent words, no leading/trailing spaces. Empty message is supported. Cases encode the mutable array as a string."
+      "ASCII letters with exactly one space between adjacent words, no leading/trailing spaces. Empty message is supported. Cases encode the mutable array as a string.",
+      "JSON encodes the mutable character array as one string. The callable returns void/None/undefined; expected is the same array’s word-reversed content."
     ],
     "examples": [
       {
         "input": "[\"foxes run fast\"]",
         "output": "\"fast run foxes\"",
-        "explanation": "Reverse foxes run fast to tsaf nur sexof, then reverse each word individually. The same array now reads fast run foxes; no word has its spelling changed in the final result."
+        "explanation": "For foxes run fast, reversing all characters gives tsaf nur sexof. Reverse each space-delimited segment in that same array to restore the internal spelling, producing fast run foxes. Spaces remain separators and the array length is unchanged."
       },
       {
         "input": "[\"elm\"]",
         "output": "\"elm\"",
-        "explanation": "Reverse the entire character array, then reverse the characters of each resulting word. The output shows the observed mutated sequence."
+        "explanation": "A single word retains its spelling and occupies the same array."
       },
       {
         "input": "[\"\"]",
         "output": "\"\"",
-        "explanation": "Reverse the entire character array, then reverse the characters of each resulting word. The output shows the observed mutated sequence."
+        "explanation": "The empty mutable message remains empty."
       }
     ],
     "testCount": 21,
@@ -2772,23 +2798,23 @@
     "bankConventions": "The adapter injects source draws and verifies all accepted outcomes, rejection paths, source use and deterministic seeded distribution trials. true denotes passed properties. No fixed random output is required.",
     "constraints": [
       "The adapter injects source draws and verifies all accepted outcomes, rejection paths, source use and deterministic seeded distribution trials. true denotes passed properties. No fixed random output is required.",
-      "The example input is a judge-only source-draw prefix, not a submitted-method argument. The method has no value arguments; after the forced prefix, an injected deterministic stream supplies further valid draws."
+      "Rand5 has no value arguments and returns one integer 1..5. JSON contains a judge-only forced Rand7 draw prefix; expected true denotes random-source/range/distribution checks, not the rolled integer."
     ],
     "examples": [
       {
         "input": "[[]]",
         "output": "true",
-        "explanation": "If the supplied sequence begins 6,7,5, reject the first two source values and accept 5. Conditioning on any accepted source outcome makes each value 1..5 equally likely. The example output true summarizes properties, not a fixed die return."
+        "explanation": "No forced prefix is supplied; the adapter supplies its seeded stream and checks uniform outcomes, valid rejection and use of Rand7."
       },
       {
         "input": "[[6, 7, 5]]",
         "output": "true",
-        "explanation": "Reject source outcomes 6 and 7; return every remaining outcome unchanged. true denotes successful contract/property validation; it is not the submitted method return value."
+        "explanation": "Reject forced draws 6 and 7, then return 5; true is the full property verdict."
       },
       {
         "input": "[[7, 7, 1]]",
         "output": "true",
-        "explanation": "Reject source outcomes 6 and 7; return every remaining outcome unchanged. true denotes successful contract/property validation; it is not the submitted method return value."
+        "explanation": "Reject both forced 7s, then return 1; true is the full property verdict."
       }
     ],
     "testCount": 21,
@@ -2850,23 +2876,23 @@
     "bankConventions": "The injected-source adapter enumerates the 25 equally likely draw pairs with fallback streams, tests rejection and verifies seeded output balance/source use. true denotes passed properties, not a fixed rolled value.",
     "constraints": [
       "The injected-source adapter enumerates the 25 equally likely draw pairs with fallback streams, tests rejection and verifies seeded output balance/source use. true denotes passed properties, not a fixed rolled value.",
-      "The example input is a judge-only source-draw prefix, not a submitted-method argument. The method has no value arguments; after the forced prefix, an injected deterministic stream supplies further valid draws."
+      "Rand7 has no value arguments and returns one integer 1..7. JSON contains a judge-only forced Rand5 draw prefix; expected true denotes random-source/range/distribution checks, not the rolled integer."
     ],
     "examples": [
       {
         "input": "[[]]",
         "output": "true",
-        "explanation": "Two source draws give 25 equally likely states. Keep states 0..20, which contain three copies of each remainder 0..6; reject 21..24 and retry. The example output true summarizes the injected-source and distribution checks."
+        "explanation": "No forced prefix is supplied; the adapter checks the 25 pair states, rejection paths and seeded outcome distribution."
       },
       {
         "input": "[[5, 5, 1, 1]]",
         "output": "true",
-        "explanation": "Combine two zero-based source draws into a uniform state in 0..24. Accept states below 21 and map each group of seven uniformly into 1..7. true denotes successful contract/property validation; it is not the submitted method return value."
+        "explanation": "The pair (5,5) encodes 24 and is rejected; (1,1) encodes 0 and returns 1. true reports the checks."
       },
       {
         "input": "[[5, 4, 3, 2]]",
         "output": "true",
-        "explanation": "Combine two zero-based source draws into a uniform state in 0..24. Accept states below 21 and map each group of seven uniformly into 1..7. true denotes successful contract/property validation; it is not the submitted method return value."
+        "explanation": "The pair (5,4) encodes 23 and is rejected; (3,2) encodes 11 and returns 5. true reports the checks."
       }
     ],
     "testCount": 21,
@@ -2927,23 +2953,24 @@
     "description": "Maintain inserted integer temperatures in 0..110. Provide minimum, maximum, arithmetic mean and a most frequent temperature at any time. Getters must not consume readings; any tied mode is valid. Empty-state getters return null.",
     "bankConventions": "At most 10000 operations; temperatures 0..110. Empty getters return null. Means use relative/absolute tolerance 1e-9; any frequency-maximizing mode is accepted.",
     "constraints": [
-      "At most 10000 operations; temperatures 0..110. Empty getters return null. Means use relative/absolute tolerance 1e-9; any frequency-maximizing mode is accepted."
+      "At most 10000 operations; temperatures 0..110. Empty getters return null. Means use relative/absolute tolerance 1e-9; any frequency-maximizing mode is accepted.",
+      "JSON supplies [operationNames,argumentLists] for one fresh TempTracker. Insert displays null; empty getters return null, means allow 1e-9 tolerance and any maximizing mode is valid."
     ],
     "examples": [
       {
         "input": "[[\"Insert\", \"Insert\", \"Insert\", \"GetMin\", \"GetMax\", \"GetMean\", \"GetMode\"], [[4], [10], [4], [], [], [], []]]",
         "output": "[null, null, null, 4, 10, 6, 4]",
-        "explanation": "Insert 4,10,4. The minimum is 4, maximum 10, sum 18 and count 3, so the mean is 6 and mode 4. With only 3 and 8 inserted, either mode is acceptable; the displayed example chooses scalar 3."
+        "explanation": "Insert 4, 10 and 4. The minimum is 4, maximum 10, sum 18 and count 3, so the mean is 6. Frequency 4 is 2 while frequency 10 is 1, so GetMode returns 4. Repeating getters does not consume any reading."
       },
       {
         "input": "[[\"GetMin\", \"GetMax\", \"GetMean\", \"GetMode\"], [[], [], [], []]]",
         "output": "[null, null, null, null]",
-        "explanation": "Keep a fixed 111-entry frequency table, running sum/count and cached extrema/mode. Each insertion updates these constant-size statistics."
+        "explanation": "Before any insertion all four getters return null."
       },
       {
         "input": "[[\"Insert\", \"Insert\", \"GetMode\"], [[3], [8], []]]",
         "output": "[null, null, 3]",
-        "explanation": "After inserting 3 and 8, both frequencies equal one. GetMode may return either scalar 3 or scalar 8; this example shows 3."
+        "explanation": "The readings 3 and 8 tie in frequency; either mode is valid, and 3 is one exemplar."
       }
     ],
     "testCount": 22,
@@ -3014,23 +3041,24 @@
     "bankConventions": "0 <= capacity <= 200; at most 30 types. Weight <= 200 and Value <= 10000000000, with long results fitting signed 64 bits. Infinite optimum is signaled by InfinityException (or corresponding language exception), normalized to {\"error\":\"infinite\"}.",
     "constraints": [
       "0 <= capacity <= 200; at most 30 types. Weight <= 200 and Value <= 10000000000, with long results fitting signed 64 bits. Infinite optimum is signaled by InfinityException (or corresponding language exception), normalized to {\"error\":\"infinite\"}.",
-      "Example item types are [Weight,Value] pairs."
+      "Cake types are encoded as [Weight,Value] pairs.",
+      "Arguments follow the displayed callable signature; the returned value is serialized directly. Preserve supplied arrays and object structure as stated in the problem."
     ],
     "examples": [
       {
         "input": "[[[3, 7], [5, 13]], 11]",
         "output": "27",
-        "explanation": "At capacity 11, one weight-5/value-13 item and two weight-3/value-7 items use all 11 weight and total 27 value. A zero-weight positive-value type instead yields an unbounded optimum, represented by the normalized infinite error."
+        "explanation": "For types [weight=3,value=7] and [weight=5,value=13] with capacity 11, choose one weight-5 item and two weight-3 items. Total weight is 11 and value is 13+7+7=27. Two weight-5 items yield only 26; three weight-3 items yield 21. The unbounded dynamic program reuses earlier capacity optima to find 27."
       },
       {
         "input": "[[], 9]",
         "output": "0",
-        "explanation": "First detect an unbounded zero-weight type. Otherwise compute the best value for each capacity by considering the last positive-weight item selected."
+        "explanation": "With no types, selecting nothing is optimal and has value zero."
       },
       {
         "input": "[[[0, 2]], 0]",
         "output": "{\"error\": \"infinite\"}",
-        "explanation": "First detect an unbounded zero-weight type. Otherwise compute the best value for each capacity by considering the last positive-weight item selected."
+        "explanation": "Unlimited zero-weight positive-value items make the optimum infinite even at capacity zero."
       }
     ],
     "testCount": 24,
@@ -3096,23 +3124,24 @@
     "description": "An unordered array of positive integers contains one value once and every other value exactly twice. Return the value with one occurrence without changing the array.",
     "bankConventions": "1..10001 entries in 1..2147483647, satisfying the exact multiplicity rule.",
     "constraints": [
-      "1..10001 entries in 1..2147483647, satisfying the exact multiplicity rule."
+      "1..10001 entries in 1..2147483647, satisfying the exact multiplicity rule.",
+      "Arguments follow the displayed callable signature; the returned value is serialized directly. Preserve supplied arrays and object structure as stated in the problem."
     ],
     "examples": [
       {
         "input": "[[14, 3, 14, 8, 3]]",
         "output": "8",
-        "explanation": "For [14,3,14,8,3], the two 14s cancel and the two 3s cancel under XOR, leaving 8. Array order does not affect the result."
+        "explanation": "For [14,3,14,8,3], XOR combines equal pairs to zero: 14^14=0 and 3^3=0. Since XOR is associative and commutative, the final accumulator equals 8, the only identifier without a cancelling partner."
       },
       {
         "input": "[[9]]",
         "output": "9",
-        "explanation": "XOR all values. Each duplicated value cancels itself, leaving the unmatched one."
+        "explanation": "The only entry occurs once, so return 9."
       },
       {
         "input": "[[6, 2, 5, 5, 6]]",
         "output": "2",
-        "explanation": "XOR all values. Each duplicated value cancels itself, leaving the unmatched one."
+        "explanation": "The two 6s and two 5s cancel, leaving the unpaired 2."
       }
     ],
     "testCount": 21,
@@ -3182,23 +3211,24 @@
     "description": "Return a new array of the given integer scores in nonincreasing order, preserving all occurrences. Every score is between zero and a supplied maximum K. Preserve the input.",
     "bankConventions": "0 <= K <= 1000; at most 10000 scores, each in 0..K.",
     "constraints": [
-      "0 <= K <= 1000; at most 10000 scores, each in 0..K."
+      "0 <= K <= 1000; at most 10000 scores, each in 0..K.",
+      "Arguments follow the displayed callable signature; the returned value is serialized directly. Preserve supplied arrays and object structure as stated in the problem."
     ],
     "examples": [
       {
         "input": "[[3, 8, 3, 0, 5], 8]",
         "output": "[8, 5, 3, 3, 0]",
-        "explanation": "For [3,8,3,0,5] and maximum 8, the buckets contain one 8, one 5, two 3s and one 0. Emit them in that order to get [8,5,3,3,0]."
+        "explanation": "For scores [3,8,3,0,5] and K=8, the count table records one 8, one 5, two 3s and one 0. Reading counts from score 8 down to 0 emits [8,5,3,3,0] in a new array. Both occurrences of 3 are retained."
       },
       {
         "input": "[[], 0]",
         "output": "[]",
-        "explanation": "Count occurrences in K+1 buckets, then emit each bucket from K down to zero."
+        "explanation": "There are no occurrences to emit."
       },
       {
         "input": "[[0, 0], 0]",
         "output": "[0, 0]",
-        "explanation": "Count occurrences in K+1 buckets, then emit each bucket from K down to zero."
+        "explanation": "Both zero occurrences remain in the new result."
       }
     ],
     "testCount": 21,
@@ -3264,23 +3294,24 @@
     "description": "An array of length n+1 contains every integer in 1..n exactly once, except one value that occurs twice. Return that duplicated value without changing the array.",
     "bankConventions": "1 <= n <= 100000. The exact range and multiplicities are guaranteed. The algorithm must avoid overflowing sum formulas.",
     "constraints": [
-      "1 <= n <= 100000. The exact range and multiplicities are guaranteed. The algorithm must avoid overflowing sum formulas."
+      "1 <= n <= 100000. The exact range and multiplicities are guaranteed. The algorithm must avoid overflowing sum formulas.",
+      "Arguments follow the displayed callable signature; the returned value is serialized directly. Preserve supplied arrays and object structure as stated in the problem."
     ],
     "examples": [
       {
         "input": "[[3, 1, 4, 2, 3]]",
         "output": "3",
-        "explanation": "XOR [3,1,4,2,3] with the required range [1,2,3,4]. One occurrence of every required key cancels, leaving the extra 3. No overflowing arithmetic sum is formed."
+        "explanation": "For [3,1,4,2,3], n is length-1=4. The expected sum 1+2+3+4 is 10, while the actual sum is 13. Their difference is 3, the duplicated value. Use widened arithmetic for the sum and formula before subtracting."
       },
       {
         "input": "[[1, 1]]",
         "output": "1",
-        "explanation": "XOR all array entries with every integer in 1..n. All required single occurrences cancel, leaving the extra occurrence."
+        "explanation": "The range is just 1 and its extra occurrence is also 1."
       },
       {
         "input": "[[2, 1, 4, 3, 4]]",
         "output": "4",
-        "explanation": "XOR all array entries with every integer in 1..n. All required single occurrences cancel, leaving the extra occurrence."
+        "explanation": "The range 1..4 appears once plus an extra 4."
       }
     ],
     "testCount": 21,
@@ -3338,26 +3369,27 @@
     "result": "map",
     "mode": "wordcloud",
     "className": "WordCloudData",
-    "description": "Count words in a text using the following bank policy: words consist of ASCII letters and may contain an apostrophe or hyphen only when surrounded by letters. Convert every recognized word to lowercase and count all occurrences. Return a dictionary; ordering is irrelevant.",
+    "description": "Count words in a text using the following bank policy: words consist of ASCII letters and may contain an apostrophe or hyphen only when surrounded by letters. Convert every recognized word to lowercase and count all occurrences. Construct WordCloudData with the text and expose the counts through its WordsToCounts dictionary property; ordering is irrelevant.",
     "bankConventions": "The source permits several reasonable lexical/capitalization policies. This deterministic ASCII/lowercase policy is an explicit bank convention, not a uniquely mandated source grammar. Input length <= 10000.",
     "constraints": [
-      "The source permits several reasonable lexical/capitalization policies. This deterministic ASCII/lowercase policy is an explicit bank convention, not a uniquely mandated source grammar. Input length <= 10000."
+      "The source permits several reasonable lexical/capitalization policies. This deterministic ASCII/lowercase policy is an explicit bank convention, not a uniquely mandated source grammar. Input length <= 10000.",
+      "Construct WordCloudData from the input string and inspect WordsToCounts; the displayed dictionary is the exposed property, not a constructor return value. Dictionary order is irrelevant."
     ],
     "examples": [
       {
         "input": "[\"Owls fly; OWLS don't crawl. Fly-by owls!\"]",
         "output": "{\"owls\": 3, \"fly\": 1, \"don't\": 1, \"crawl\": 1, \"fly-by\": 1}",
-        "explanation": "In Owls fly; OWLS don't crawl. Fly-by owls!, the case variants become the same key owls, counted three times. Internal punctuation keeps don't and fly-by as complete tokens under the disclosed bank grammar."
+        "explanation": "For \"Owls fly; OWLS don't crawl. Fly-by owls!\", punctuation ends tokens but internal apostrophes and letter-surrounded hyphens remain. Lowercasing combines Owls, OWLS and owls into count 3. The other keys are fly, don't, crawl and fly-by, each counted once under the disclosed bank policy."
       },
       {
         "input": "[\"red--blue 'red'\"]",
         "output": "{\"red\": 2, \"blue\": 1}",
-        "explanation": "Scan characters once, extending a token through letters and valid internal punctuation. Normalize each completed token to lowercase and increment its dictionary entry."
+        "explanation": "The doubled hyphen splits red and blue, and outer apostrophes are separators; red occurs twice."
       },
       {
         "input": "[\"\"]",
         "output": "{}",
-        "explanation": "Scan characters once, extending a token through letters and valid internal punctuation. Normalize each completed token to lowercase and increment its dictionary entry."
+        "explanation": "No tokens exist, so the exposed count dictionary is empty."
       }
     ],
     "testCount": 24,

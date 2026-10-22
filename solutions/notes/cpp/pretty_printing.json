@@ -1,6 +1,25 @@
 {
-  "explanation": "For every ending word, try every preceding break whose line still fits. Add the squared unused width of that final line to the best earlier prefix messiness, retaining the smallest total.",
-  "timeComplexity": "O(n^2) worst-case time for n words.",
-  "spaceComplexity": "O(n) auxiliary DP space.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/pretty_printing.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "Store the best messiness for each nonempty prefix. For each final word, try placing it alone or extending its final line backward while words and separating spaces fit. Add that line’s squared unused width to the best preceding prefix; charge the last line too.",
+  "timeComplexity": "O(n²) in the worst case. There are at most n final-line endpoints and n starting words to consider for each; the DP stores one cost per prefix.",
+  "spaceComplexity": "O(n). One optimal cost is retained per word-prefix; line lengths are scanned using scalar counters.",
+  "attribution": "Original reference source: epi_judge_cpp_solutions/pretty_printing.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice. Local boundary or iterator-safety correction authored for EPI Practice. The displayed copy includes local contract or boundary corrections; the upstream reference file is preserved.",
+  "correctness": "Every wrapping of a prefix has a final line beginning at some word. The backward loop considers exactly all fitting final-line starts. Combining its cost with the optimal previous prefix is both feasible and no more expensive than any wrapping with that start. Minimizing these alternatives proves the prefix optimum by induction; empty input costs zero.",
+  "walkthrough": "For words [\"we\",\"build\",\"small\"] and width 8, \"we build\" uses all 8 columns and costs 0. The final line \"small\" leaves 3 spaces and costs 9. Separating \"we\" and \"build\" would already cost 36+9, so the minimum total is 9. The walkthroughCase uses the judge’s JSON input format and expected observation.",
+  "edgeCases": [
+    "No words need no lines and cost 0.",
+    "A line containing multiple words includes one space per gap.",
+    "The last line contributes messiness too.",
+    "The problem requires each individual word to fit the line width."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        "we",
+        "build",
+        "small"
+      ],
+      8
+    ],
+    "expected": 9
+  }
 }

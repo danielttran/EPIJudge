@@ -18,6 +18,7 @@ void MarkBoundaryRegion(int, int, vector<vector<char>>*);
 
 void FillSurroundedRegions(vector<vector<char>>* board_ptr) {
   vector<vector<char>>& board = *board_ptr;
+  if (board.empty() || board.front().empty()) return;
   // Identifies the regions that are reachable via white path starting from
   // the first or last columns.
   for (int i = 0; i < size(board); ++i) {
@@ -42,6 +43,7 @@ void FillSurroundedRegions(vector<vector<char>>* board_ptr) {
 void MarkBoundaryRegion(int i, int j, vector<vector<char>>* board_ptr) {
   queue<pair<int, int>> q(deque<pair<int, int>>(1, {i, j}));
   vector<vector<char>>& board = *board_ptr;
+  if (board.empty() || board.front().empty()) return;
   // Uses BFS to traverse this region.
   while (!empty(q)) {
     const auto [x, y] = q.front();

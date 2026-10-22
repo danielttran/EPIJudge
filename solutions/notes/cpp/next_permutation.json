@@ -1,6 +1,27 @@
 {
-  "explanation": "Find the rightmost ascent, swap its pivot with the least greater value in the descending suffix and reverse that suffix. If the whole sequence is descending, no larger permutation exists and the result is empty.",
-  "timeComplexity": "O(n) time.",
-  "spaceComplexity": "O(n) space for the copied permutation; O(1) further auxiliary space.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/next_permutation.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "Find the longest nonincreasing suffix and the pivot immediately before it. Increase that pivot by swapping with the smallest strictly larger suffix entry, then reverse the suffix to its minimum order. If no pivot exists, return an empty list. The C++ implementation uses reverse iterators and upper_bound to find the successor in the reversed, sorted suffix.",
+  "timeComplexity": "O(n): scanning for a pivot and reversing its suffix are linear. Binary searching the successor takes O(log n), within the linear total.",
+  "spaceComplexity": "O(n) for the by-value copy returned by C++; O(1) iterator work space.",
+  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/next_permutation.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice.",
+  "correctness": "The nonincreasing suffix is already its largest possible arrangement, so no greater permutation can leave the pivot and all earlier entries unchanged. Changing the rightmost possible pivot preserves the longest prefix; choosing its smallest larger suffix value gives the smallest possible increase there. The remaining suffix stays nonincreasing after that swap, so reversing it makes the suffix minimal. Together these choices give the immediate lexicographic successor, including repeated values.",
+  "walkthrough": "For [1,3,2], the suffix [3,2] is nonincreasing and pivot 1 is its predecessor. The smallest larger suffix value is 2. Swap to obtain [2,3,1], then reverse the suffix to obtain [2,1,3]. A smaller change cannot produce a greater permutation.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        1,
+        3,
+        2
+      ]
+    ],
+    "expected": [
+      2,
+      1,
+      3
+    ]
+  },
+  "edgeCases": [
+    "Empty and singleton inputs have no greater permutation and return an empty list.",
+    "A fully nonincreasing input has no successor.",
+    "Duplicates are allowed; the pivot successor must be strictly larger."
+  ]
 }

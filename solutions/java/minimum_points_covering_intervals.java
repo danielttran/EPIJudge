@@ -27,7 +27,7 @@ public class MinimumPointsCoveringIntervals {
     Integer lastVisitTime = Integer.MIN_VALUE;
     Integer numVisits = 0;
     for (Interval interval : intervals) {
-      if (interval.left > lastVisitTime) {
+      if (numVisits == 0 || interval.left > lastVisitTime) {
         // The current right endpoint, lastVisitTime, will not cover any more
         // intervals.
         lastVisitTime = interval.right;

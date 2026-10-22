@@ -1,6 +1,19 @@
 {
-  "explanation": "Determine the decimal digit count, then compare the leading and trailing digits. Strip both after a match and repeat; negative integers are rejected and zero is accepted.",
-  "timeComplexity": "O(log(x+1)) time for nonnegative x.",
-  "spaceComplexity": "O(1) auxiliary space.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/is_number_palindromic.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "Find the decimal place of the most significant digit, compare it with the least significant digit, and strip both ends. Reject negative numbers; zero is a palindrome.",
+  "timeComplexity": "O(log(x + 1)) time for nonnegative x. Each iteration removes or compares a pair of decimal digits.",
+  "spaceComplexity": "O(1) auxiliary space. Only a few integer values or masks are retained.",
+  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/is_number_palindromic.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice.",
+  "correctness": "A decimal string is a palindrome exactly when its outer digits agree and its interior is a palindrome. Division by the leading power of ten and remainder by ten read those outer digits. Removing them preserves exactly the interior digits, including positional zeros because the mask decreases by 100 each time.",
+  "walkthrough": "For 4554, the initial mask is 1000 and outer digits are 4554//1000=4 and 4554%10=4. Strip them to get 55 and mask 10; compare 5 and 5, then finish. Return true.",
+  "walkthroughCase": {
+    "arguments": [
+      4554
+    ],
+    "expected": true
+  },
+  "edgeCases": [
+    "Zero and one-digit nonnegative numbers are palindromes.",
+    "Negative numbers return false.",
+    "A nonzero trailing zero fails comparison with its leading digit."
+  ]
 }

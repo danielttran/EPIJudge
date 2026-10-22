@@ -1,6 +1,20 @@
 {
-  "explanation": "Use binary GCD: remove factors of two and replace an odd pair by a subtraction, keeping the smaller argument first. Return the remaining argument when one reaches zero.",
-  "timeComplexity": "O(B) bounded-width arithmetic steps for B input bits",
-  "spaceComplexity": "O(B) recursion frames",
-  "attribution": "Unmodified reference from epi_judge_python_solutions/gcd.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice."
+  "explanation": "Use binary GCD. Order the arguments; remove common powers of two, discard a factor of two from just the even argument when the other is odd, and subtract the smaller odd argument from the larger. Stop when the smaller argument becomes zero.",
+  "timeComplexity": "O(B) bounded-width arithmetic steps for B input bits: after at most a constant number of swaps/subtractions, an operand is halved. Big-integer bit costs are additional. Operand bit length decreases through Euclidean remainders or binary-GCD halving; big-integer arithmetic costs are separate.",
+  "spaceComplexity": "O(B) recursive frames; no tail-call elimination is assumed. Iterative variants keep a constant number of integer values; recursive binary variants keep O(B) frames.",
+  "attribution": "Unmodified reference from epi_judge_python_solutions/gcd.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice.",
+  "correctness": "For even x,y, gcd(x,y)=2·gcd(x/2,y/2). If only one is even, halving that argument does not remove any common odd divisor. For two odd arguments, gcd(x,y)=gcd(x,y−x), after which the difference is even. These identities preserve the answer while shrinking the arguments, until gcd(0,y)=y.",
+  "walkthrough": "For (84,30), halve both and remember a factor 2: solve (42,15). Reorder to (15,42), halve the even argument to (15,21), subtract to (15,6), reorder to (6,15), halve to (3,15), and subtract/halve until (0,3). Restore the saved factor 2, returning 6.",
+  "walkthroughCase": {
+    "arguments": [
+      84,
+      30
+    ],
+    "expected": 6
+  },
+  "edgeCases": [
+    "Either operand may be zero.",
+    "The existing corpus defines Gcd(0,0)=0.",
+    "Use long arithmetic for the nonnegative input range."
+  ]
 }

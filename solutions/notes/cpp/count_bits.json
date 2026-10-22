@@ -1,6 +1,19 @@
 {
   "explanation": "Inspect the low bit of the unsigned word, add it to the count and shift right until no bits remain. Negative signed inputs are represented by their unsigned 32-bit bit pattern in this native contract.",
-  "timeComplexity": "O(32), constant time for a 32-bit word.",
-  "spaceComplexity": "O(1) auxiliary space.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/count_bits.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "timeComplexity": "O(b+1) operations, where b is the highest occupied bit position plus one (b=0 for zero). One shift removes each examined position; b ≤ 32, so worst-case time is constant.",
+  "spaceComplexity": "O(1) auxiliary space: only a fixed-width remaining value and a counter are retained.",
+  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/count_bits.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice.",
+  "correctness": "After k shifts, the count equals the number of 1s in the k original low positions, and the remaining word contains exactly the unexamined high positions. Adding the low bit and shifting preserves this invariant. A logical right shift introduces zeros, so at most 32 steps exhaust every input, including a negative signed bit pattern.",
+  "walkthrough": "For x=44 (binary 101100), the remaining words are 44,22,11,5,2,1,0. Their inspected low bits are 0,0,1,1,0,1; adding these gives 3. This implementation examines six positions, even though only three are set.",
+  "walkthroughCase": {
+    "arguments": [
+      44
+    ],
+    "expected": 3
+  },
+  "edgeCases": [
+    "Zero performs no iterations and returns 0.",
+    "The signed input -1 denotes 32 set bits; the result is 32.",
+    "The highest bit alone has count 1. The unsigned parameter makes right shifts fill with zeros."
+  ]
 }

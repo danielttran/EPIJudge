@@ -1,6 +1,60 @@
 {
-  "explanation": "Use an access-ordered LinkedHashMap to keep least-recent entries first. Lookup and reinsertion touch an existing entry; reinsertion preserves its old price. A new insertion beyond capacity removes the eldest entry. Capacity zero retains nothing. The operation adapter creates a fresh cache on every LruCache constructor command, allowing capacity changes, and validates every lookup and erase result.",
-  "timeComplexity": "O(1) expected time per lookup, insert and erase.",
-  "spaceComplexity": "O(c) retained entries for nonnegative capacity c.",
-  "attribution": "Original Java implementation and complete reset-aware operation adapter independently authored for EPI Practice from its displayed stateful contract and independently authored C# solution. No upstream reference implementation adapted. Public EPIJudge interface and test framework retained under the repository LICENSE."
+  "explanation": "Use an access-ordered LinkedHashMap: get automatically refreshes a present key. Reinsertions call get to refresh without replacing the price. New insertion beyond capacity removes the first iterator entry, the least recently accessed key.",
+  "timeComplexity": "O(1) expected per Lookup, Insert and Erase; O(c) to Initialize an existing cache Hash lookup and linked-order changes take expected constant time per operation.",
+  "spaceComplexity": "O(c), where c is capacity At most capacity keys, prices and order nodes are retained.",
+  "attribution": "Original Java implementation and complete reset-aware operation adapter independently authored for EPI Practice from its displayed stateful contract and independently authored C# solution. No upstream reference implementation adapted. Public EPIJudge interface and test framework retained under the repository LICENSE.",
+  "correctness": "Access order in LinkedHashMap tracks successful get and put operations. Calling get on an existing insertion preserves its stored price while refreshing recency. The first entry is thus the least recent, and removing it restores the capacity bound without affecting more recent entries.",
+  "walkthrough": "With capacity 2, insert (1,10), insert (2,20), reinsert (1,99), then insert (3,30). Key 1 still costs 10 and is recent, so key 2 is evicted. Lookups return 10, −1 and 30 for keys 1, 2 and 3. JSON arguments contain one command array. LruCache initializes capacity; lookup/erase commands include expected results (erase uses 1/0). The wrapper observes all commands succeeding as true; the class itself has separate lookup, insert and erase results.",
+  "edgeCases": [
+    "Reinserting a key preserves its old price.",
+    "A missing lookup returns −1 and does not add a key.",
+    "Initialize resets all stored entries and recency."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          "LruCache",
+          2,
+          0
+        ],
+        [
+          "insert",
+          1,
+          10
+        ],
+        [
+          "insert",
+          2,
+          20
+        ],
+        [
+          "insert",
+          1,
+          99
+        ],
+        [
+          "insert",
+          3,
+          30
+        ],
+        [
+          "lookup",
+          1,
+          10
+        ],
+        [
+          "lookup",
+          2,
+          -1
+        ],
+        [
+          "lookup",
+          3,
+          30
+        ]
+      ]
+    ],
+    "expected": true
+  }
 }

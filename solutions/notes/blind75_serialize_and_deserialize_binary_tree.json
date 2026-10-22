@@ -1,17 +1,29 @@
 {
   "explanation": "Write preorder values with explicit null markers and token separators. Decoding consumes one token per recursive position. The string fully specifies structure and values, even in a separate process.",
-  "timeComplexity": "O(n) time for n nodes under fixed-width integer values.",
-  "spaceComplexity": "O(n + h) serialization/token space and recursion, plus the decoded tree.",
+  "timeComplexity": "O(n) time for n nodes under fixed-width integer values. Preorder writes n value tokens and n+1 null markers once; decoding consumes each token once.",
+  "spaceComplexity": "O(n + h) serialization/token space and recursion, plus the decoded tree. Serialization buffers, decoded tokens, and the new tree are linear in n; recursion uses h frames.",
   "attribution": "Original EPI Practice C# implementation, reusing and refining the repository-authored Blind75 algorithm fixtures. Collection membership follows Crackr; no external solution service is used.",
   "correctness": "Preorder emits each root before its two child encodings, including an explicit null token for every missing child. A decoder consumes exactly one token to distinguish empty from nonempty, then recursively consumes the required children. Structural induction proves this is a unique inverse and needs no encoder process state.",
-  "walkthrough": "For [6,null,9,7], preorder tokens are 6,#,9,7,#,#,#. The first # gives node 6 no left child; the remaining tokens create right child 9 with left child 7. Decoding the string reconstructs the same level-order tree [6,null,9,7].",
+  "walkthrough": "For [6,null,9,7], preorder tokens are 6,#,9,7,#,#,#. The first # gives node 6 no left child; the remaining tokens create right child 9 with left child 7. Decoding the string reconstructs the same level-order tree [6,null,9,7]. The example represents Serialize followed by Deserialize independently; expected is the rebuilt tree in level order, with fresh-node identity and input preservation checked separately.",
   "edgeCases": [
     "A null tree still needs an explicit null encoding.",
     "Negative and multidigit values require token separators.",
     "Encoding and decoding run in separate processes."
   ],
   "walkthroughCase": {
-    "arguments": [[6, null, 9, 7]],
-    "expected": [6, null, 9, 7]
+    "arguments": [
+      [
+        6,
+        null,
+        9,
+        7
+      ]
+    ],
+    "expected": [
+      6,
+      null,
+      9,
+      7
+    ]
   }
 }

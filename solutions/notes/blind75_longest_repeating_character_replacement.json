@@ -1,9 +1,9 @@
 {
   "explanation": "Track a sliding window and its largest observed character frequency. Shrink when the window length minus that frequency exceeds k. The historical maximum safely bounds the longest achievable window.",
-  "timeComplexity": "O(n) time for n uppercase letters.",
-  "spaceComplexity": "O(1) auxiliary space for 26 counters.",
+  "timeComplexity": "O(n) time for n uppercase letters. The right boundary advances n times and the left boundary at most n times.",
+  "spaceComplexity": "O(1) auxiliary space for 26 counters. Counts cover only the fixed 26-letter alphabet; the window indices and historical maximum are scalars.",
   "attribution": "Original EPI Practice C# implementation, reusing and refining the repository-authored Blind75 algorithm fixtures. Collection membership follows Crackr; no external solution service is used.",
-  "correctness": "A window can be made uniform using windowLength minus its most frequent character count replacements. The running historical maximum allows the window to grow only when an equally large feasible window has been witnessed. Shrinking on an excess requirement prevents the recorded maximum length from exceeding an achievable length; scanning every right endpoint finds an optimum.",
+  "correctness": "With an exact frequency f, a length-w window needs w-f replacements. most never decreases: when it increases to f, the current character really occurs f times in the window. The loop retains width at most most+k, and width cannot grow while most is stale after shrinking: the previous width was already most+k. Consequently each newly recorded larger width is witnessed while the count supplying most is present, and is feasible. Stale counts may retain an infeasible window of an already-achieved width, but cannot inflate best. Finally, shrinking on w-most>k is safe because the true maximum frequency is at most most; such a window really is infeasible. Thus no optimal width is discarded.",
   "walkthrough": "For \"AAABBC\" with k=1, the window \"AAAB\" contains three As and one B, so one replacement creates four As. Extending it to \"AAABB\" would require two replacements. No later window is longer and feasible, so return 4.",
   "edgeCases": [
     "k=0 reduces to the longest equal-character run.",
@@ -11,7 +11,10 @@
     "At most k replacements are allowed; unused replacements are permitted."
   ],
   "walkthroughCase": {
-    "arguments": ["AAABBC", 1],
+    "arguments": [
+      "AAABBC",
+      1
+    ],
     "expected": 4
   }
 }

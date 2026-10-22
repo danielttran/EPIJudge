@@ -1,6 +1,19 @@
 {
-  "explanation": "Repeatedly take the final decimal digit using remainder, append it to a long accumulator, and divide the input by ten. Java\u2019s signed quotient and remainder preserve the original sign.",
-  "timeComplexity": "O(d), for d decimal digits",
-  "spaceComplexity": "O(1)",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/ReverseDigits.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "explanation": "Repeatedly append x%10 to the reversed accumulator and divide x by ten. In these languages, division truncates toward zero and the remainder retains x’s sign, so negative digits build a negative result directly.",
+  "timeComplexity": "O(d) for d decimal digits. Each iteration removes one decimal digit.",
+  "spaceComplexity": "O(1). Only magnitude/current value and reversal accumulator are retained.",
+  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/ReverseDigits.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/).",
+  "correctness": "The accumulator is the signed reversal of the digits already removed. Multiplying it by ten shifts those digits left and appending the signed remainder extends the reversal by one place. Truncating division removes that place from x, terminating at zero without taking an absolute value.",
+  "walkthrough": "For −1203, signed remainder digits are −3,0,−2,−1. The accumulator becomes −3,−30,−302,−3021 while truncating division removes each digit. Return −3021.",
+  "edgeCases": [
+    "Zero returns zero.",
+    "Trailing zeros disappear in the numeric reversal.",
+    "A long accumulator accommodates reversal of a 32-bit int, including its minimum value."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      -1203
+    ],
+    "expected": -3021
+  }
 }

@@ -1,6 +1,23 @@
 {
-  "explanation": "Keep candidate coefficient pairs in an ordered set keyed by a+b√2. Repeatedly emit the smallest candidate and insert the pairs reached by adding 1 and √2. Set uniqueness suppresses pairs reached twice.",
-  "timeComplexity": "O(k log(k+1)) time.",
-  "spaceComplexity": "O(k) candidate and output space.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/a_b_sqrt2.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "Maintain an ordered set of candidate coefficient pairs, starting with (0,0). Remove the least candidate, emit its value, and insert its two successors (a+1,b) and (a,b+1). The set merges candidates reached by both routes.",
+  "timeComplexity": "O(k log(k+1)) upper bound: k ordered-set removals and at most 2k insertions. Two-pointer versions advance each pointer at most k times; ordered-set versions pay for set operations.",
+  "spaceComplexity": "O(k) upper bound for candidates plus O(k) output. The coefficient history or candidate set has at most linear size in k, as does the output.",
+  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/a_b_sqrt2.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice.",
+  "correctness": "Every nonzero pair has a smaller predecessor obtained by subtracting one from a positive coefficient. Before its turn, that predecessor generates it. Consequently the smallest unseen value is always in the candidate set. Removing the least and deduplicating candidate values emits the increasing distinct sequence.",
+  "walkthrough": "For k=3, begin with 0. The stream heads are 1 and √2, so emit 1; the new integer head is 2, so √2 follows. The answer is [0,1,√2]. The walkthroughCase uses the judge’s JSON input format and expected observation.",
+  "edgeCases": [
+    "k=0 emits nothing.",
+    "Zero is the first value for positive k.",
+    "Ordering uses floating point; distinct mathematical values must remain distinguishable at the input scale."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      3
+    ],
+    "expected": [
+      0.0,
+      1.0,
+      1.4142135623730951
+    ]
+  }
 }

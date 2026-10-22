@@ -1,15 +1,16 @@
 {
-  "explanation": "Pass an open lower and upper bound down each branch. Every node must lie inside the bounds inherited from all of its ancestors.",
+  "explanation": "Recursively check each node within an open interval inherited from its ancestors. Recurse left with this key as the upper bound and right with it as the lower bound. Use 64-bit bounds so every signed 32-bit key fits inside the initial interval.",
   "correctness": "Each bound summarizes every relevant ancestor restriction. Passing the current key as the new bound enforces all descendant restrictions inductively.",
   "walkthrough": "For [10,4,16,1,7,12,19], node 4 inherits an upper bound of 10; its right child 7 must lie strictly between 4 and 10. Node 16 inherits a lower bound of 10, and its left child 12 must lie between 10 and 16. Every inherited interval is respected, so the answer is true.",
   "edgeCases": [
     "Ancestor violation several levels down",
     "duplicates",
     "integer endpoints",
-    "empty tree."
+    "empty tree.",
+    "A left descendant exceeding the root fails even if its immediate parent comparison succeeds; duplicate keys also fail. Signed 32-bit endpoints are valid keys."
   ],
-  "timeComplexity": "O(n) time.",
-  "spaceComplexity": "O(h) auxiliary space.",
+  "timeComplexity": "O(n) time: each node is checked once against two inherited bounds.",
+  "spaceComplexity": "O(h) auxiliary space for pending branches or recursive frames along tree height h; O(n) on a skewed tree.",
   "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
   "walkthroughCase": {
     "arguments": [

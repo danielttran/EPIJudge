@@ -1,6 +1,31 @@
 {
-  "explanation": "Gather original node references. Build the reference order first,last,second,next-to-last until reaching the middle, then relink those references into one terminated chain without changing any values.",
-  "timeComplexity": "O(n) time for n nodes.",
-  "spaceComplexity": "O(n) auxiliary reference arrays/lists.",
-  "attribution": "Original repository-authored Blind75 C++ algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used."
+  "explanation": "Collect the original nodes into an array, then build a reference order by alternating the leftmost and rightmost remaining entries. Relink that order and terminate the last node. No node value is moved or replaced.",
+  "timeComplexity": "O(n): collect n nodes, select each node once into the alternating order, then rewrite n links.",
+  "spaceComplexity": "O(n) auxiliary space for the collected references and reordered reference array; original data nodes are reused.",
+  "attribution": "Original repository-authored Blind75 C++ algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used.",
+  "correctness": "After i iterations the order contains the first i and last i original nodes in the required alternating order. The two indices enclose exactly the unused nodes; adding the middle only once handles odd lengths. Relinking this permutation preserves every node and places L0 first.",
+  "walkthrough": "Collect [8,2,7,1,6]. Choose array endpoints 8,6, then 2,1, then middle 7 once. Relink as 8→6→2→1→7→null. The method returns no value; the wrapper follows the original head and displays [8,6,2,1,7]. The callable returns no value; expected follows next links from the original head, and the harness additionally checks original-node identities and values.",
+  "edgeCases": [
+    "Empty and singleton lists need no relinking.",
+    "Odd lengths retain one final middle node.",
+    "The head object and all original node values remain unchanged."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        8,
+        2,
+        7,
+        1,
+        6
+      ]
+    ],
+    "expected": [
+      8,
+      6,
+      2,
+      1,
+      7
+    ]
+  }
 }

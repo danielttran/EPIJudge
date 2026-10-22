@@ -1,6 +1,27 @@
 {
   "explanation": "Compare corresponding nodes across the mirror: left with right, then right with left. Both missing nodes match; one missing node or unequal values break symmetry.",
-  "timeComplexity": "O(n) time.",
-  "spaceComplexity": "O(h) recursion space for height h.",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "timeComplexity": "O(n) time. Each mirror obligation is processed once; DFS retains height-sized frames, whereas Java BFS retains width-sized pairs.",
+  "spaceComplexity": "O(h) recursion space for height h. Recursive versions retain mirror pairs along a path; Java’s queue retains a frontier.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "Two subtrees are mirrors exactly when both are empty, or their roots match and each left subtree mirrors the other right subtree. The recursion checks this definition at every paired position, proving both value and shape symmetry.",
+  "walkthrough": "For [6,3,3,1,5,5,1], the two 3 roots agree. The outer leaves match 1 with 1 and the inner leaves match 5 with 5, so the complete tree is symmetric. The walkthroughCase uses the judge’s JSON input format and expected observation.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        6,
+        3,
+        3,
+        1,
+        5,
+        5,
+        1
+      ]
+    ],
+    "expected": true
+  },
+  "edgeCases": [
+    "An empty tree is symmetric.",
+    "Matching inorder values alone do not prove mirror shape.",
+    "One missing child must be matched by a missing child at the mirrored position."
+  ]
 }

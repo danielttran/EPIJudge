@@ -1,6 +1,29 @@
 {
-  "explanation": "Greedily collect a line\u2019s words, then cycle through its gaps to distribute padding spaces from left to right. Left-justify and right-pad the final line.",
-  "timeComplexity": "O(total input and output characters)",
-  "spaceComplexity": "O(L) active line storage plus output",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/LeftRightJustifyText.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "explanation": "Accumulate the longest line that fits with one mandatory space per gap. For nonfinal lines, cycle through gaps from left to right adding the remaining spaces; extra spaces consequently go to earlier gaps. Join the final line with single spaces and pad its right side.",
+  "timeComplexity": "O(total output characters + number of words) At least every output character must be written. Native Python repeatedly appends spaces to immutable strings; C++ Join repeatedly copies prefixes, so these versions may take O(q·L²) character copying for q lines of width L.",
+  "spaceComplexity": "O(L) working space, excluding output Working line storage is O(L), excluding O(qL) output.",
+  "attribution": "Original EPIJudge reference source: epi_judge_java_solutions/epi/LeftRightJustifyText.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/). Local correctness/empty-input fixes and explanation audit authored for EPI Practice; upstream reference files are unchanged. The displayed copy includes local contract or boundary corrections; the upstream reference file is preserved.",
+  "correctness": "A word is deferred exactly when adding it and mandatory gaps would exceed L, so each line is greedily maximal. Cycling over the gaps allocates either floor(S/g) or ceil(S/g) spaces per gap, with the larger counts on the left. A single-word line receives right padding. The final line is joined with single spaces and padded to width L.",
+  "walkthrough": "With words [\"a\",\"bb\",\"c\",\"dddd\"] and width 8, the first three words fit but adding \"dddd\" does not. Their four letters leave four spaces, split as two per gap, yielding \"a  bb  c\". The final word becomes \"dddd    \".",
+  "edgeCases": [
+    "Every word fits within positive width L.",
+    "A single-word line is right-padded.",
+    "The final line uses single inter-word spaces.",
+    "Empty words input returns no lines."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        "a",
+        "bb",
+        "c",
+        "dddd"
+      ],
+      8
+    ],
+    "expected": [
+      "a  bb  c",
+      "dddd    "
+    ]
+  }
 }

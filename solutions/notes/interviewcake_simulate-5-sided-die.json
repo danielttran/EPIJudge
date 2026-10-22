@@ -1,14 +1,15 @@
 {
   "explanation": "Reject source outcomes 6 and 7; return every remaining outcome unchanged.",
   "correctness": "Each accepted source value has the same probability 1/7. Conditioning on acceptance gives probability 1/5 for each result; repeated independent attempts preserve that distribution.",
-  "walkthrough": "With injected draws 6, 7, 3, reject 6 and 7 and return 3. In general each accepted source value 1..5 has the same source probability, so conditioning on acceptance gives probability 1/5. The judge output true denotes passed range, source-use and probability properties, not a fixed rolled value.",
+  "walkthrough": "With injected draws 6, 7, 3, reject 6 and 7 and return 3. In general each accepted source value 1..5 has the same source probability, so conditioning on acceptance gives probability 1/5. The judge output true denotes passed range, source-use and probability properties, not a fixed rolled value. Rand5 has no value arguments and returns one integer 1..5. JSON contains a judge-only forced Rand7 draw prefix; expected true denotes random-source/range/distribution checks, not the rolled integer.",
   "edgeCases": [
     "Repeated rejections",
     "every accepted value",
-    "do not map rejected outcomes modulo five."
+    "do not map rejected outcomes modulo five.",
+    "Any number of 6/7 draws must be rejected; returning draw modulo five would bias outcomes. Every call uses fresh supplied randomness."
   ],
-  "timeComplexity": "O(1) expected time (7/5 source draws); unbounded worst-case draws.",
-  "spaceComplexity": "O(1) auxiliary space.",
+  "timeComplexity": "Expected O(1) time: each attempt succeeds with probability 5/7, so the expected number of source calls is 7/5. There is no finite worst-case call bound.",
+  "spaceComplexity": "O(1) auxiliary space: retain only the current draw, regardless of the number of rejected attempts.",
   "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
   "walkthroughCase": {
     "arguments": [

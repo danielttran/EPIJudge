@@ -1,6 +1,23 @@
 {
   "explanation": "For each digit, try every mapped character and recursively extend the mnemonic. Digits 0 and 1 each contribute their own character.",
-  "timeComplexity": "O(n \u00b7 M), where M is the number of mnemonics (at most 4^n).",
-  "spaceComplexity": "O(n) working space, plus O(n \u00b7 M) output.",
-  "attribution": "Unmodified reference from epi_judge_python_solutions/phone_number_mnemonic.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice."
+  "timeComplexity": "O(n · M), where M is the number of mnemonics (at most 4^n). Every completed mnemonic of length n must be copied; there are M product-of-mapping-sizes leaves.",
+  "spaceComplexity": "O(n) working space, plus O(n · M) output. The mutable word and recursion use O(n); output stores n characters for each of M words.",
+  "attribution": "Unmodified reference from epi_judge_python_solutions/phone_number_mnemonic.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice.",
+  "correctness": "At recursion depth i, the prefix contains one allowed letter for each of the first i digits. Trying every mapped letter at the next position preserves validity and covers all continuations. At the final depth, every valid combination has been generated exactly once.",
+  "walkthrough": "For phone number \"30\", digit 3 offers D, E and F, and digit 0 offers only 0. The three completed branches are D0, E0 and F0, so return [\"D0\",\"E0\",\"F0\"].",
+  "edgeCases": [
+    "Digits 0 and 1 remain their own characters.",
+    "Digits 7 and 9 each offer four letters.",
+    "An empty digit string produces one empty mnemonic."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      "30"
+    ],
+    "expected": [
+      "D0",
+      "E0",
+      "F0"
+    ]
+  }
 }

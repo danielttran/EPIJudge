@@ -1,6 +1,28 @@
 {
-  "explanation": "Carry the allowed inclusive value range down the tree. A left child inherits an upper bound at its parent\u2019s value; a right child inherits a lower bound there. Inclusive bounds preserve this corpus\u2019s rule that duplicate keys may occur on either side.",
-  "timeComplexity": "O(n) time.",
-  "spaceComplexity": "O(h) auxiliary stack space for height h.",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "explanation": "Carry the allowed inclusive value range down the tree. A left child inherits an upper bound at its parent’s value; a right child inherits a lower bound there. Inclusive bounds preserve this corpus’s rule that duplicate keys may occur on either side.",
+  "timeComplexity": "O(n) time. Each node contributes one range check and each pending branch lies along a traversal path.",
+  "spaceComplexity": "O(h) auxiliary stack space for height h. Traversal frames hold a node and two bounds along pending branches.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "Each stack entry records exactly the inclusive range imposed by that node’s ancestors. Checking the value and propagating tighter bounds to its children enforces every ancestor constraint, not merely parent-child comparisons. Inclusive endpoints implement the EPI rule allowing equal keys on either side.",
+  "walkthrough": "For level order [6,6,9,null,null,8,9], the left 6 satisfies the upper bound 6. The right 9 and its children 8 and 9 lie within their inclusive ancestor ranges. Return true. The walkthroughCase uses the judge’s JSON input format and expected observation.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        6,
+        6,
+        9,
+        null,
+        null,
+        8,
+        9
+      ]
+    ],
+    "expected": true
+  },
+  "edgeCases": [
+    "An empty tree is valid.",
+    "Duplicate values are permitted by this EPI contract.",
+    "A descendant can violate a distant ancestor even if it is correctly ordered relative to its parent.",
+    "Long bounds include int.MinValue and int.MaxValue safely."
+  ]
 }

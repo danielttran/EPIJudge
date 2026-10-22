@@ -1,6 +1,29 @@
 {
-  "explanation": "Split the list into halves, recursively sort them, and merge original nodes. Choose the left node on equal values to preserve the relative order of ties.",
-  "timeComplexity": "O(n log(n+1))",
-  "spaceComplexity": "O(log(n+1)) recursion; existing nodes reused",
-  "attribution": "Original Python implementation authored for EPI Practice from its displayed contract and independently authored C# solution; no upstream reference source adapted."
+  "explanation": "Split the list with slow/fast pointers, sort both halves recursively, then merge their original nodes. Choosing the left node on equal values preserves the relative order of ties.",
+  "timeComplexity": "O(n log n) time. Each recursion level splits/merges O(n) nodes and balanced halves give O(log n) levels.",
+  "spaceComplexity": "O(log n) recursion space; nodes are reused. Recursion depth is logarithmic; merging relinks existing nodes and uses only a constant-size sentinel per active merge.",
+  "attribution": "Original Python implementation authored for EPI Practice from its displayed contract and independently authored C# solution; no upstream reference source adapted.",
+  "correctness": "Splitting decreases the list size, so induction gives two sorted halves. The merge repeatedly selects the least head, preserving sorted order and every original node. On equal values it selects from the left half first. Since all left-half nodes originally preceded right-half nodes, and recursive calls preserve their internal tie order, the complete merge sort is stable.",
+  "walkthrough": "Label the two 7-valued nodes in [7, 3, 7, 1] as 7a and 7b. The halves sort to [3, 7a] and [1, 7b]. Merging emits 1, then 3; at the tie it takes 7a before 7b. Return values [1, 3, 7, 7], with the original equal-valued nodes still in their original order.",
+  "edgeCases": [
+    "Null and one-node lists are already sorted.",
+    "Repeated values must preserve node order, not merely sorted values.",
+    "The list is split before recursion and original nodes are relinked rather than copied."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        7,
+        3,
+        7,
+        1
+      ]
+    ],
+    "expected": [
+      1,
+      3,
+      7,
+      7
+    ]
+  }
 }

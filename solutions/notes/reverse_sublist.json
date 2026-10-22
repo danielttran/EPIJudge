@@ -1,18 +1,34 @@
 {
-  "explanation": "Find the node before the 1-based segment. Repeatedly remove the node after the segment tail and move it to the segment front. An empty or unchanged segment is returned directly.",
-  "timeComplexity": "O(finish), bounded by O(n).",
-  "spaceComplexity": "O(1).",
+  "explanation": "Use a sentinel immediately before the list so a segment starting at the head needs no special pointer rewiring. Find the predecessor of start, then repeatedly move the node after the segment’s original first node to the segment front.",
+  "timeComplexity": "O(finish+1), bounded by O(n+1): locate the predecessor in start−1 steps, then move finish−start nodes.",
+  "spaceComplexity": "O(1): a sentinel and a fixed number of node references. Existing data nodes are relinked, not copied.",
   "attribution": "Original C# implementation and explanation authored for EPI Practice from the displayed problem contract.",
   "correctness": "before stays immediately before the segment, while first remains its original first node and becomes its eventual tail. Each iteration removes the node after first and inserts it at the segment front, extending the reversed prefix by one. Nodes outside the segment keep their order, and the sentinel handles a segment beginning at the head.",
-  "walkthrough": "For [2,5,9,1,7], start=2 and finish=4, move 9 before 5 to get [2,9,5,1,7]. Then move 1 before 9, giving [2,1,9,5,7]. Positions outside 2..4 are unchanged.",
+  "walkthrough": "For [10,20,30,40,50], start=2 and finish=4, the predecessor is 10 and the original segment first node is 20. Move 30 before 20 to obtain [10,30,20,40,50]. Move 40 before 30 to obtain [10,40,30,20,50]. The segment is reversed; 10 and 50 retain their positions.",
   "edgeCases": [
-    "Positions are inclusive and 1-based for a nontrivial reversal.",
-    "start=finish leaves the list unchanged.",
-    "The corpus’s empty/unchanged 0,0 convention is handled as a no-op.",
-    "A segment beginning at the head changes the returned head pointer."
+    "For a nontrivial segment, positions are inclusive and 1-based: 1 ≤ start ≤ finish ≤ list length.",
+    "The corpus also supplies start=finish=0 for an empty or singleton list. It is a no-op, not a zero-based reversal.",
+    "A segment starting at position 1 changes the returned head.",
+    "start=finish leaves all links unchanged."
   ],
   "walkthroughCase": {
-    "arguments": [[2, 5, 9, 1, 7], 2, 4],
-    "expected": [2, 1, 9, 5, 7]
+    "arguments": [
+      [
+        10,
+        20,
+        30,
+        40,
+        50
+      ],
+      2,
+      4
+    ],
+    "expected": [
+      10,
+      40,
+      30,
+      20,
+      50
+    ]
   }
 }

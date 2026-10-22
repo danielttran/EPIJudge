@@ -1,6 +1,57 @@
 {
-  "explanation": "Flood-fill boundary-connected white cells with a temporary marker. Then restore marked cells to white and turn every other cell black, filling precisely the enclosed white regions.",
-  "timeComplexity": "O(rc), for r rows and c columns",
-  "spaceComplexity": "O(rc) queue storage",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/MatrixEnclosedRegions.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "explanation": "Flood-fill from every boundary white cell, marking reached cells T so they are visited once. A white cell is enclosed exactly when no such path reaches it. Restore T to W and turn all other cells black.",
+  "timeComplexity": "O(rows × columns) Every cell is marked once and generates at most four neighbor attempts.",
+  "spaceComplexity": "O(rows × columns) The queue and, in C#/JavaScript, visited bitmap can hold O(rows×columns) entries.",
+  "attribution": "Original EPIJudge reference source: epi_judge_java_solutions/epi/MatrixEnclosedRegions.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/). Local correctness/empty-input fixes and explanation audit authored for EPI Practice; upstream reference files are unchanged. The displayed copy includes local contract or boundary corrections; the upstream reference file is preserved.",
+  "correctness": "The BFS marks exactly the white cells connected by white steps to a boundary: boundary white cells initialize it and each expansion follows an allowed adjacency. Thus unmarked white cells, and only those cells, are enclosed. Recoloring that complement preserves every boundary-connected region.",
+  "walkthrough": "On [\"BBBW\",\"BWBW\",\"BBBW\"], the rightmost white column touches the boundary and remains white. The lone interior white cell is surrounded by black and becomes black, giving [\"BBBW\",\"BBBW\",\"BBBW\"]. The native callable mutates the matrix and returns void/None; expected is the matrix observed by the wrapper.",
+  "edgeCases": [
+    "Only horizontal and vertical adjacency counts.",
+    "Boundary-connected whites remain white.",
+    "Empty dimensions are unchanged; T is an internal marker and is not an input color."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          "B",
+          "B",
+          "B",
+          "W"
+        ],
+        [
+          "B",
+          "W",
+          "B",
+          "W"
+        ],
+        [
+          "B",
+          "B",
+          "B",
+          "W"
+        ]
+      ]
+    ],
+    "expected": [
+      [
+        "B",
+        "B",
+        "B",
+        "W"
+      ],
+      [
+        "B",
+        "B",
+        "B",
+        "W"
+      ],
+      [
+        "B",
+        "B",
+        "B",
+        "W"
+      ]
+    ]
+  }
 }

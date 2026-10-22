@@ -30,8 +30,8 @@ public sealed class SolutionCatalog
             if(problem is null || entry.Collection!=problem.Collection || !Languages.Contains(entry.Language,StringComparer.Ordinal) ||
                 entry.Code.Length>40_000 ||
                 new[]{entry.Code,entry.Explanation,entry.TimeComplexity,entry.SpaceComplexity,entry.Attribution}.Any(string.IsNullOrWhiteSpace) ||
-                (entry.Language=="csharp" && (string.IsNullOrWhiteSpace(entry.Correctness) || string.IsNullOrWhiteSpace(entry.Walkthrough) ||
-                    entry.EdgeCases is not {Length:>0} || entry.EdgeCases.Any(string.IsNullOrWhiteSpace))))
+                (string.IsNullOrWhiteSpace(entry.Correctness) || string.IsNullOrWhiteSpace(entry.Walkthrough) ||
+                    entry.EdgeCases is not {Length:>0} || entry.EdgeCases.Any(string.IsNullOrWhiteSpace)))
                 throw new InvalidOperationException("Incomplete solution metadata: "+entry.ProblemId);
         }
         return entries.ToDictionary(e=>(e.ProblemId,e.Language));

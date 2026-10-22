@@ -13,6 +13,7 @@ template <typename Iter>
 int TrappingWaterTillEnd(Iter, Iter);
 
 int CalculateTrappingWater(const vector<int>& heights) {
+  if (heights.empty()) return 0;
   // Finds the index with maximum height.
   int max_h =
       distance(begin(heights), max_element(begin(heights), end(heights)));

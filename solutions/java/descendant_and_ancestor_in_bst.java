@@ -11,6 +11,8 @@ public class DescendantAndAncestorInBst {
   pairIncludesAncestorAndDescendantOfM(BstNode<Integer> possibleAncOrDesc0,
                                        BstNode<Integer> possibleAncOrDesc1,
                                        BstNode<Integer> middle) {
+    if (possibleAncOrDesc0 == middle || possibleAncOrDesc1 == middle || possibleAncOrDesc0 == possibleAncOrDesc1) return false;
+
 
     BstNode<Integer> search0 = possibleAncOrDesc0, search1 = possibleAncOrDesc1;
 

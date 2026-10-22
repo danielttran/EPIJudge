@@ -5,6 +5,8 @@ from test_framework import generic_test
 
 def justify_text(words: List[str], L: int) -> List[str]:
 
+    if not words:
+        return []
     curr_line_length, result = 0, []
     curr_line: List[str] = []
     for word in words:

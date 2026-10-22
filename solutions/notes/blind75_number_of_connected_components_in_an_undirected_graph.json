@@ -1,7 +1,7 @@
 {
   "explanation": "Start with one disjoint set per vertex. For each edge, join different root sets and decrease the component count. Path halving shortens future root searches.",
-  "timeComplexity": "O((V + E) log(V + 1)) amortized upper bound with path compression alone for V vertices and E edges.",
-  "spaceComplexity": "O(V) auxiliary space.",
+  "timeComplexity": "O((V + E) log(V + 1)) amortized upper bound with path compression alone for V vertices and E edges. There are V initializations, two root searches per edge, and at most V-1 links. Path halving is present but union by rank is not, so the rank-plus-compression inverse-Ackermann claim is not used.",
+  "spaceComplexity": "O(V) auxiliary space. The parent array has one entry per vertex; find is iterative.",
   "attribution": "Original EPI Practice C# implementation, reusing and refining the repository-authored Blind75 algorithm fixtures. Collection membership follows Crackr; no external solution service is used.",
   "correctness": "Initially each vertex forms its own connected component. An edge between different root sets merges exactly those two components and decreases the count once. An edge already inside one set changes no connectivity. After all edges, the disjoint sets coincide with graph components, including isolated vertices.",
   "walkthrough": "For n=6 and edges [0,1],[1,2],[3,4], merge 0,1,2 into one set and 3,4 into another. Vertex 5 stays isolated. The three sets {0,1,2},{3,4},{5} give result 3.",
@@ -14,9 +14,18 @@
     "arguments": [
       6,
       [
-        [0, 1],
-        [1, 2],
-        [3, 4]
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          3,
+          4
+        ]
       ]
     ],
     "expected": 3

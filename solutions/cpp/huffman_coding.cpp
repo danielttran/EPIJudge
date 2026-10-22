@@ -44,6 +44,7 @@ struct FrequencyComparator {
 };
 
 double HuffmanEncoding(vector<CharWithFrequency>* symbols) {
+  if (symbols->empty()) return 0.0;
   // Initially assigns each symbol into candidates.
   priority_queue<shared_ptr<BinaryTree>, vector<shared_ptr<BinaryTree>>,
                  FrequencyComparator>

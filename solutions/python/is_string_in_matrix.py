@@ -6,6 +6,8 @@ from test_framework import generic_test
 
 def is_pattern_contained_in_grid(grid: List[List[int]],
                                  pattern: List[int]) -> bool:
+    if not pattern:
+        return True
     @functools.lru_cache(None)
     def is_pattern_suffix_contained_starting_at_xy(x, y, offset):
         if len(pattern) == offset:

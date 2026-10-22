@@ -1,6 +1,26 @@
 {
-  "explanation": "Accumulate at most roughly 2k candidates. Use nth_element to retain the largest k whenever the buffer fills, then select rank k once more after reading the stream. Duplicate values retain their multiplicity.",
-  "timeComplexity": "O(n) average selection time over the stream.",
-  "spaceComplexity": "O(k) auxiliary candidate space.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/kth_largest_element_in_long_array.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "Buffer up to 2k values. Whenever the buffer reaches 2k, use nth_element to partition by descending order and retain only its largest k values. Perform one final selection and return the element of rank k−1.",
+  "timeComplexity": "O(n) average time using linear-average nth_element on O(k)-sized batches every k new entries, plus one final O(k) selection; no worst-case-linear guarantee is claimed. Heap variants do n O(log(k+1)) updates; C++ instead amortizes average-linear partitioning across O(k) batches.",
+  "spaceComplexity": "O(k) auxiliary buffer, including k=1: the buffer is pruned whenever it reaches 2k. Heap or buffer retains O(k) candidates, independent of the total stream length.",
+  "attribution": "Original reference source: epi_judge_cpp_solutions/kth_largest_element_in_long_array.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice. Local correctness/empty-input fixes and explanation audit authored for EPI Practice; upstream reference files are unchanged. The displayed copy includes local contract or boundary corrections; the upstream reference file is preserved.",
+  "correctness": "A value discarded below the largest k of an observed prefix can never enter the largest k after more values arrive. Thus pruning preserves all candidates for the final kth largest, including duplicate occurrences. The final nth_element puts the kth largest remaining value at index k−1, which is also the kth largest of the whole stream.",
+  "walkthrough": "With [7,1,9,9,4] and k=3, all five values fit below the 2k threshold. Final descending selection puts the retained top values 9,9,7 before the lower values, and returns index 2, value 7. For a longer stream, every six buffered values are pruned back to three.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        7,
+        1,
+        9,
+        9,
+        4
+      ],
+      3
+    ],
+    "expected": 7
+  },
+  "edgeCases": [
+    "Duplicate values occupy separate ranks.",
+    "k=1 computes the maximum.",
+    "The stream must contain at least k values."
+  ]
 }

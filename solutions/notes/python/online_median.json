@@ -1,6 +1,29 @@
 {
-  "explanation": "Maintain a max-heap for the lower half and a min-heap for the upper half. Balance their sizes so the lower half has at most one extra entry. The median is its maximum, or the average of both heap roots.",
-  "timeComplexity": "O(n log n)",
-  "spaceComplexity": "O(n), excluding output",
-  "attribution": "Unmodified reference from epi_judge_python_solutions/online_median.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice."
+  "explanation": "Keep the upper half in a min heap and the lower half as negated values in a min heap. Move roots until the upper half has the same size or one extra value. The upper root is the odd-prefix median; average both roots for even prefixes.",
+  "timeComplexity": "O(n log n) Each of n inputs makes a constant number of heap operations on at most n entries.",
+  "spaceComplexity": "O(n), excluding output Both heaps together hold all n observed values; output has n medians.",
+  "attribution": "Unmodified reference from epi_judge_python_solutions/online_median.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice.",
+  "correctness": "Every value in the lower heap is no greater than every value in the upper heap. Root transfers preserve this ordering and enforce equal sizes or one extra upper value. Thus the upper root is the central value for odd prefixes, and both roots are the two central values for even prefixes.",
+  "walkthrough": "For stream [9,1,5,3], prefix medians are 9, (1+9)/2=5, 5 and (3+5)/2=4. Return [9,5,5,4].",
+  "edgeCases": [
+    "The first entry is its own median.",
+    "An even prefix averages two middle entries.",
+    "Python integers avoid overflow before converting the average to floating point."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        9,
+        1,
+        5,
+        3
+      ]
+    ],
+    "expected": [
+      9.0,
+      5.0,
+      5.0,
+      4.0
+    ]
+  }
 }

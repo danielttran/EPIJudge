@@ -1,6 +1,21 @@
 {
   "explanation": "Compare the selected bits. If they differ, XOR masks at both positions to exchange them; if equal, the number is already unchanged by the swap.",
-  "timeComplexity": "O(1)",
-  "spaceComplexity": "O(1)",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/SwapBits.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "timeComplexity": "O(1) time. Two bit extractions and at most one XOR mask are performed.",
+  "spaceComplexity": "O(1) auxiliary space. Only fixed-width words and shift indices are stored.",
+  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/SwapBits.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/).",
+  "correctness": "If the selected bits are equal, swapping them changes nothing. If they differ, XOR with a mask containing exactly those two positions toggles each to the other’s value while leaving every unselected bit unchanged. Reinterpreting the input as ulong makes shifts logical across all 64 positions; converting the final bit pattern back preserves its signed two’s-complement interpretation.",
+  "walkthrough": "82 has set bits at positions 6, 4 and 1. Swap positions 1 and 5: they contain 1 and 0, so XOR with 2 + 32 = 34. The resulting set positions are 6, 5 and 4, representing 64 + 32 + 16 = 112. Return 112.",
+  "edgeCases": [
+    "Equal positions or equal selected bits leave the value unchanged.",
+    "Position 63 is the sign bit and must still participate in the swap.",
+    "Negative inputs are treated as full 64-bit two’s-complement bit patterns."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      82,
+      1,
+      5
+    ],
+    "expected": 112
+  }
 }

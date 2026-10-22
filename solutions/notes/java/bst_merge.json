@@ -1,6 +1,36 @@
 {
-  "explanation": "Convert both BSTs to sorted doubly linked lists, merge the lists, and consume the merged sequence in balanced inorder recursion to construct the returned tree.",
-  "timeComplexity": "O(n+m)",
-  "spaceComplexity": "O(h1+h2+log(n+m)) stack space plus O(n+m) returned nodes",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/BstMerge.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "explanation": "Convert the input BSTs in place to circular sorted doubly linked lists, break their circular endpoints, merge their forward chains, and construct a new midpoint BST from the merged list cursor.",
+  "timeComplexity": "O(m+n): each conversion, merge and reconstruction visits nodes linearly.",
+  "spaceComplexity": "O(m+n) including newly allocated output nodes; recursive conversion additionally needs up to O(hA+hB) stack, and balanced rebuilding O(log(m+n+1)).",
+  "attribution": "Original EPIJudge reference source: epi_judge_java_solutions/epi/BstMerge.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/). The displayed copy includes local contract or boundary corrections; the upstream reference file is preserved.",
+  "correctness": "Recursive list conversion preserves inorder; merging preserves every occurrence in sorted order. Building a left half, reading the next value for a fresh root, and building the remaining half produces exactly the specified midpoint structure. Conversion mutates original nodes, but reconstruction allocates new result nodes.",
+  "walkthrough": "Trees [4,1,7] and [6,2,9] become sorted chains, merged as [1,2,4,6,7,9]. Three values build the left subtree; the next value 6 creates the new root; the last two values build its right subtree. The new tree serializes as [6,2,9,1,4,7].",
+  "edgeCases": [
+    "Either input tree may be empty.",
+    "Duplicate values from either input are retained.",
+    "The midpoint convention matters because this corpus compares structure.",
+    "Input tree child links are repurposed as list links during merging; callers must not expect the original trees to remain intact."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        4,
+        1,
+        7
+      ],
+      [
+        6,
+        2,
+        9
+      ]
+    ],
+    "expected": [
+      6,
+      2,
+      9,
+      1,
+      4,
+      7
+    ]
+  }
 }

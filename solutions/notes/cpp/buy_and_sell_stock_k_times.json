@@ -1,6 +1,26 @@
 {
-  "explanation": "For each transaction count, keep the best cash balance while holding a share and after selling. Update counts downward so each transition uses the previous day’s lower-count state. When k cannot bind, sum all positive adjacent gains.",
-  "timeComplexity": "O(n·min(k,n)); O(n) when k≥n/2",
-  "spaceComplexity": "O(k), or O(1) in the unlimited-transactions case",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/buy_and_sell_stock_k_times.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "For each transaction count, keep the least effective buying price after accounting for previous profits, and the greatest completed profit. Update counts downward: sell at the current price or lower the effective buy price. If k cannot bind, sum positive adjacent gains.",
+  "timeComplexity": "O(n·min(k,n)); O(n) when k≥n/2 The limited case visits n prices and k transaction states; the unlimited case makes one pass.",
+  "spaceComplexity": "O(k), or O(1) in the unlimited-transactions case The limited case keeps two arrays of k states; the unlimited branch uses constant state, except Python’s O(n) price slices.",
+  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/buy_and_sell_stock_k_times.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice.",
+  "correctness": "min_prices[i] is the least cost of holding a share for transaction i+1 after earlier profits, and max_profits[i] is the best profit after at most i+1 sales. Selling gains price−min_prices[i]; buying costs price−max_profits[i−1]. Descending updates preserve the prior-day dependency. When 2k≥n, every rising segment can be traded, and the sum of positive adjacent gains is optimal.",
+  "walkthrough": "For prices [5,1,4,2,7] and k=2, buy at 1 and sell at 4 for 3, then buy at 2 and sell at 7 for 5. The combined best profit is 8.",
+  "edgeCases": [
+    "k=0 returns zero.",
+    "A large k reduces to taking every positive adjacent gain.",
+    "At most one share may be held at any time."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        5.0,
+        1.0,
+        4.0,
+        2.0,
+        7.0
+      ],
+      2
+    ],
+    "expected": 8.0
+  }
 }

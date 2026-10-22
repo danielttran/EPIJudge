@@ -225,7 +225,7 @@
       "signature": "class ClientsCreditsInfo",
       "starterCode": "class ClientsCreditsInfo:\n    def insert(self, client_id: str, c: int) -> None:\n        # TODO - you fill in here.\n        return\n\n    def remove(self, client_id: str) -> bool:\n        # TODO - you fill in here.\n        return True\n\n    def lookup(self, client_id: str) -> int:\n        # TODO - you fill in here.\n        return 0\n\n    def add_all(self, C: int) -> None:\n        # TODO - you fill in here.\n        return\n\n    def max(self) -> str:\n        # TODO - you fill in here.\n        return \"\"\n",
       "solutionCode": "class ClientsCreditsInfo:\n    def __init__(self):\n        self.offset = 0\n        self.credits = {}\n\n    def insert(self, client_id, credit):\n        self.credits[client_id] = credit - self.offset\n\n    def remove(self, client_id):\n        if client_id not in self.credits:\n            return False\n        del self.credits[client_id]\n        return True\n\n    def lookup(self, client_id):\n        return self.credits[client_id] + self.offset if client_id in self.credits else -1\n\n    def add_all(self, amount):\n        self.offset += amount\n\n    def max(self):\n        return max(self.credits, key=self.credits.get) if self.credits else \"\"\n",
-      "prefix": "from test_framework.test_failure import TestFailure\n\ndef client_credits_info_tester(ops):\n    clients = ClientsCreditsInfo()\n    for operation, client, value in ops:\n        if operation == 'ClientsCreditsInfo':\n            clients = ClientsCreditsInfo()\n        elif operation == 'insert':\n            clients.insert(client, value)\n        elif operation == 'add_all':\n            clients.add_all(value)\n        elif operation == 'remove':\n            if clients.remove(client) != (value == 1):\n                raise TestFailure('Removal did not report whether the client existed.')\n        elif operation == 'lookup':\n            if clients.lookup(client) != value:\n                raise TestFailure('The client credit differs from the expected credit.')\n        elif operation == 'max':\n            if clients.max() != client:\n                raise TestFailure('The maximum-credit client differs from the expected client.')\n        else:\n            raise ValueError('Unknown credits operation: ' + operation)\n\n",
+      "prefix": "from test_framework.test_failure import TestFailure\n\ndef client_credits_info_tester(ops):\n    clients = ClientsCreditsInfo()\n    # Model absolute credits independently of all submitted methods.\n    expected_credits = {}\n    for operation, client, value in ops:\n        if operation == 'ClientsCreditsInfo':\n            clients = ClientsCreditsInfo()\n            expected_credits.clear()\n        elif operation == 'insert':\n            clients.insert(client, value)\n            expected_credits[client] = value\n        elif operation == 'add_all':\n            clients.add_all(value)\n            for name in expected_credits:\n                expected_credits[name] += value\n        elif operation == 'remove':\n            if clients.remove(client) != (value == 1):\n                raise TestFailure('Removal did not report whether the client existed.')\n            expected_credits.pop(client, None)\n        elif operation == 'lookup':\n            if clients.lookup(client) != value:\n                raise TestFailure('The client credit differs from the expected credit.')\n        elif operation == 'max':\n            actual = clients.max()\n            valid = (actual in expected_credits and\n                     expected_credits[actual] == max(expected_credits.values())) if expected_credits else actual == ''\n            if not valid:\n                raise TestFailure('Max must return an existing maximal-credit client, or empty when no clients exist.')\n        else:\n            raise ValueError('Unknown credits operation: ' + operation)\n\n",
       "suffix": "",
       "references": [],
       "visibleSymbols": [
@@ -243,7 +243,7 @@
       ],
       "sourceSha256": {
         "starter": "a3624e23216b72d436cc4ae914ab254af0604fd33b242d3342e7dbb70487bd0e",
-        "solution": "0d29b5825df842e11ef2a855b55466a1ceda31b9fff0b6736351402d2737bee5"
+        "solution": "490711d76fa4fbe9250405190fbd33d4c821ebebaad0f5cce7eada1ad8666ed3"
       }
     },
     {
@@ -556,7 +556,7 @@
       "filename": "Solution.cs",
       "signature": "bool IsArbitrageExist(List<List<double>> graph)",
       "starterCode": "\n\npublic class Solution\n{\n    public bool IsArbitrageExist(List<List<double>> graph)\n    {\n        // Write your solution here.\n        throw new NotImplementedException();\n    }\n}\n",
-      "solutionCode": "using System;\nusing System.Collections.Generic;\nusing System.Linq;\n\npublic class Solution\n{\n    public bool IsArbitrageExist(List<List<double>> graph)\n    {\n        int n = graph.Count;\n        var distances = new double[n];\n        for (int pass = 0; pass < n; pass++)\n        {\n            bool changed = false;\n            for (int from = 0; from < n; from++)\n                for (int to = 0; to < n; to++)\n                {\n                    double candidate = distances[from] - Math.Log(graph[from][to]);\n                    if (candidate < distances[to] - 1e-12)\n                    {\n                        distances[to] = candidate;\n                        changed = true;\n                    }\n                }\n            if (!changed)\n                return false;\n        }\n        return true;\n    }\n}\n",
+      "solutionCode": "using System;\nusing System.Collections.Generic;\nusing System.Linq;\n\npublic class Solution\n{\n    public bool IsArbitrageExist(List<List<double>> graph)\n    {\n        int n = graph.Count;\n        if (n == 0)\n            return false;\n        var distances = new double[n];\n        for (int pass = 0; pass < n; pass++)\n        {\n            bool changed = false;\n            for (int from = 0; from < n; from++)\n                for (int to = 0; to < n; to++)\n                {\n                    double candidate = distances[from] - Math.Log(graph[from][to]);\n                    if (candidate < distances[to] - 1e-12)\n                    {\n                        distances[to] = candidate;\n                        changed = true;\n                    }\n                }\n            if (!changed)\n                return false;\n        }\n        return true;\n    }\n}\n",
       "prefix": "",
       "suffix": "",
       "references": [],
@@ -572,7 +572,7 @@
       ],
       "sourceSha256": {
         "starter": "513a3ee8401cbc3cba126a3d7faa35f53335d0f7038f2f458f5c05998bf3baee",
-        "solution": "1f3b99a5a3ff6775517ba582322e2c8873cfe6f79b7104d5af84a5a34212c550"
+        "solution": "68744ccc9ab332bd7ea8a47300d4e0e873913c1973c7f04396aa783d36d2901a"
       }
     },
     {
@@ -581,7 +581,7 @@
       "filename": "solution.js",
       "signature": "function isArbitrageExist(graph)",
       "starterCode": "/**\n * @param {number[][]} graph\n * @return {boolean}\n */\n\nfunction isArbitrageExist(graph) {\n  // Write your solution here.\n  return false;\n}\n",
-      "solutionCode": "function isArbitrageExist(graph) {\n  const n = graph.length,\n    distances = Array(n).fill(0);\n  for (let pass = 0; pass < n; pass++) {\n    let changed = false;\n    for (let from = 0; from < n; from++)\n      for (let to = 0; to < n; to++) {\n        const candidate = distances[from] - Math.log(graph[from][to]);\n        if (candidate < distances[to] - 1e-12) {\n          distances[to] = candidate;\n          changed = true;\n        }\n      }\n    if (!changed) return false;\n  }\n  return true;\n}\n",
+      "solutionCode": "function isArbitrageExist(graph) {\n  if (graph.length === 0) return false;\n  const n = graph.length,\n    distances = Array(n).fill(0);\n  for (let pass = 0; pass < n; pass++) {\n    let changed = false;\n    for (let from = 0; from < n; from++)\n      for (let to = 0; to < n; to++) {\n        const candidate = distances[from] - Math.log(graph[from][to]);\n        if (candidate < distances[to] - 1e-12) {\n          distances[to] = candidate;\n          changed = true;\n        }\n      }\n    if (!changed) return false;\n  }\n  return true;\n}\n",
       "prefix": "",
       "suffix": "\nmodule.exports = { isArbitrageExist };\n",
       "references": [],
@@ -596,7 +596,7 @@
       ],
       "sourceSha256": {
         "starter": "ae76a7a35824ec2f2149ddc098dc754d9c40c05af406de13caaaf9733f1ff311",
-        "solution": "f47cea86fc0d978987be76c50eff77b456357843ccd0905f66bedaf4caaa3426"
+        "solution": "00892475e3c5a55473a520ab4105134af285cce730746058c965a27c54f93807"
       }
     },
     {
@@ -605,7 +605,7 @@
       "filename": "solution.py",
       "signature": "def is_arbitrage_exist(graph: List[List[float]]) -> bool",
       "starterCode": "import math\nfrom typing import List\n\n\ndef is_arbitrage_exist(graph: List[List[float]]) -> bool:\n    # TODO - you fill in here.\n    return True\n",
-      "solutionCode": "import math\n\nfrom typing import List\n\n\ndef is_arbitrage_exist(graph: List[List[float]]) -> bool:\n    def bellman_ford(graph, source):\n        dis_to_source = [float(\"inf\")] * (source - 1) + [0] + [float(\"inf\")] * (len(graph) - source)\n\n        for _ in range(1, len(graph)):\n            have_update = False\n            for i, row in enumerate(graph):\n                for j, g in enumerate(row):\n                    if dis_to_source[i] != float(\"inf\") and dis_to_source[j] > dis_to_source[i] + g:\n                        have_update = True\n                        dis_to_source[j] = dis_to_source[i] + g\n\n            # No update in this iteration means no negative cycle.\n            if not have_update:\n                return False\n\n        # Detects cycle if there is any further update.\n        return any(\n            dis_to_source[i] != float(\"inf\") and dis_to_source[j] > dis_to_source[i] + g\n            for i, row in enumerate(graph)\n            for j, g in enumerate(row)\n        )\n\n    # Uses Bellman-ford to find negative weight cycle.\n    return bellman_ford([[-math.log10(edge) for edge in edge_list] for edge_list in graph], 0)\n",
+      "solutionCode": "import math\n\nfrom typing import List\n\n\ndef is_arbitrage_exist(graph: List[List[float]]) -> bool:\n    def bellman_ford(graph, source):\n        dis_to_source = [float(\"inf\")] * source + [0] + [float(\"inf\")] * (len(graph) - source - 1)\n\n        for _ in range(1, len(graph)):\n            have_update = False\n            for i, row in enumerate(graph):\n                for j, g in enumerate(row):\n                    if dis_to_source[i] != float(\"inf\") and dis_to_source[j] > dis_to_source[i] + g:\n                        have_update = True\n                        dis_to_source[j] = dis_to_source[i] + g\n\n            # No update in this iteration means no negative cycle.\n            if not have_update:\n                return False\n\n        # Detects cycle if there is any further update.\n        return any(\n            dis_to_source[i] != float(\"inf\") and dis_to_source[j] > dis_to_source[i] + g\n            for i, row in enumerate(graph)\n            for j, g in enumerate(row)\n        )\n\n    # Uses Bellman-ford to find negative weight cycle.\n    return bellman_ford([[-math.log10(edge) for edge in edge_list] for edge_list in graph], 0)\n",
       "prefix": "from test_framework import generic_test\n\n",
       "suffix": "",
       "references": [],
@@ -622,7 +622,7 @@
       ],
       "sourceSha256": {
         "starter": "8cc207c297c19fcbac08d537f50e5a5a6d4f4a7dfd2cd150f32c04d23b3e02b3",
-        "solution": "612e46c212d8dc96dfdcef423f49848e4facd831291f55f92a8da5e4d763f5bb"
+        "solution": "29e3afef831ee9123434ce69d5298253f91cd15775de70aa03d9053e62f3baef"
       }
     },
     {
@@ -2273,7 +2273,7 @@
       "filename": "solution.py",
       "signature": "def check_feasible(jugs: List[Jug], L: int, H: int) -> bool",
       "starterCode": "import collections\nimport functools\nfrom typing import List\n\n\ndef check_feasible(jugs: List[Jug], L: int, H: int) -> bool:\n    # TODO - you fill in here.\n    return True\n",
-      "solutionCode": "import collections\n\nimport functools\n\nfrom typing import List\n\n\ndef check_feasible(jugs: List[Jug], L: int, H: int) -> bool:\n    @functools.lru_cache(None)\n    def check_feasible_helper(L, H):\n        if L > H or (L < 0 and H < 0):\n            return False\n\n        # Checks the volume for each jug to see if it is possible.\n        return any(\n            (L <= j.low and j.high <= H) or check_feasible_helper(L - j.low, H - j.high)\n            for j in jugs\n        )\n\n    return check_feasible_helper(L, H)\n",
+      "solutionCode": "import collections\n\nimport functools\n\nfrom typing import List\n\n\ndef check_feasible(jugs: List[Jug], L: int, H: int) -> bool:\n    @functools.lru_cache(None)\n    def check_feasible_helper(L, H):\n        if L <= 0 <= H:\n            return True\n        if L > H or (L < 0 and H < 0):\n            return False\n\n        # Checks the volume for each jug to see if it is possible.\n        return any(\n            (L <= j.low and j.high <= H) or check_feasible_helper(L - j.low, H - j.high)\n            for j in jugs\n        )\n\n    return check_feasible_helper(L, H)\n",
       "prefix": "import collections\n\nimport functools\n\nfrom test_framework import generic_test\n\nfrom test_framework.test_utils import enable_executor_hook\n\nJug = collections.namedtuple('Jug', ('low', 'high'))\n\n@enable_executor_hook\ndef check_feasible_wrapper(executor, jugs, l, h):\n    jugs = [Jug(*x) for x in jugs]\n    return executor.run(functools.partial(check_feasible, jugs, l, h))\n\n",
       "suffix": "",
       "references": [
@@ -2300,7 +2300,7 @@
       ],
       "sourceSha256": {
         "starter": "c23d05165705ef6bdc2fe21201c2e0750f00fef9469121b40084d4a85bf80126",
-        "solution": "e8d6ff69610afaadaa5fbc89c3085fb7dcbaaa2584c3673a3f3212e111ba7445"
+        "solution": "75e340fd554121a44134b60491bb01807868c8a845e0658c72c35957cbcb4252"
       }
     },
     {
@@ -2676,7 +2676,7 @@
       "filename": "solution.py",
       "signature": "def pair_includes_ancestor_and_descendant_of_m(possible_anc_or_desc_0: BstNode, possible_anc_or_desc_1: BstNode, middle: BstNode) -> bool",
       "starterCode": "def pair_includes_ancestor_and_descendant_of_m(\n    possible_anc_or_desc_0: BstNode, possible_anc_or_desc_1: BstNode, middle: BstNode\n) -> bool:\n    # TODO - you fill in here.\n    return True\n",
-      "solutionCode": "def pair_includes_ancestor_and_descendant_of_m(\n    possible_anc_or_desc_0: BstNode, possible_anc_or_desc_1: BstNode, middle: BstNode\n) -> bool:\n\n    search_0, search_1 = possible_anc_or_desc_0, possible_anc_or_desc_1\n\n    # Perform interleaved searching from possible_anc_or_desc_0 and\n    # possible_anc_or_desc_1 for middle.\n    while (\n        search_0 is not possible_anc_or_desc_1\n        and search_0 is not middle\n        and search_1 is not possible_anc_or_desc_0\n        and search_1 is not middle\n        and (search_0 or search_1)\n    ):\n        if search_0:\n            search_0 = search_0.left if search_0.data > middle.data else search_0.right\n        if search_1:\n            search_1 = search_1.left if search_1.data > middle.data else search_1.right\n\n    # If both searches were unsuccessful, or we got from\n    # possible_anc_or_desc_0 to possible_anc_or_desc_1 without seeing middle,\n    # or from possible_anc_or_desc_1 to possible_anc_or_desc_0 without seeing\n    # middle, middle cannot lie between possible_anc_or_desc_0 and\n    # possible_anc_or_desc_1.\n    if (\n        (search_0 is not middle and search_1 is not middle)\n        or search_0 is possible_anc_or_desc_1\n        or search_1 is possible_anc_or_desc_0\n    ):\n        return False\n\n    def search_target(source, target):\n        while source and source is not target:\n            source = source.left if source.data > target.data else source.right\n        return source is target\n\n    # If we get here, we already know one of possible_anc_or_desc_0 or\n    # possible_anc_or_desc_1 has a path to middle. Check if middle has a path\n    # to possible_anc_or_desc_1 or to possible_anc_or_desc_0.\n    return search_target(\n        middle, possible_anc_or_desc_1 if search_0 is middle else possible_anc_or_desc_0\n    )\n",
+      "solutionCode": "def pair_includes_ancestor_and_descendant_of_m(\n    possible_anc_or_desc_0: BstNode, possible_anc_or_desc_1: BstNode, middle: BstNode\n) -> bool:\n    if (\n        possible_anc_or_desc_0 is middle\n        or possible_anc_or_desc_1 is middle\n        or possible_anc_or_desc_0 is possible_anc_or_desc_1\n    ):\n        return False\n\n    search_0, search_1 = possible_anc_or_desc_0, possible_anc_or_desc_1\n\n    # Perform interleaved searching from possible_anc_or_desc_0 and\n    # possible_anc_or_desc_1 for middle.\n    while (\n        search_0 is not possible_anc_or_desc_1\n        and search_0 is not middle\n        and search_1 is not possible_anc_or_desc_0\n        and search_1 is not middle\n        and (search_0 or search_1)\n    ):\n        if search_0:\n            search_0 = search_0.left if search_0.data > middle.data else search_0.right\n        if search_1:\n            search_1 = search_1.left if search_1.data > middle.data else search_1.right\n\n    # If both searches were unsuccessful, or we got from\n    # possible_anc_or_desc_0 to possible_anc_or_desc_1 without seeing middle,\n    # or from possible_anc_or_desc_1 to possible_anc_or_desc_0 without seeing\n    # middle, middle cannot lie between possible_anc_or_desc_0 and\n    # possible_anc_or_desc_1.\n    if (\n        (search_0 is not middle and search_1 is not middle)\n        or search_0 is possible_anc_or_desc_1\n        or search_1 is possible_anc_or_desc_0\n    ):\n        return False\n\n    def search_target(source, target):\n        while source and source is not target:\n            source = source.left if source.data > target.data else source.right\n        return source is target\n\n    # If we get here, we already know one of possible_anc_or_desc_0 or\n    # possible_anc_or_desc_1 has a path to middle. Check if middle has a path\n    # to possible_anc_or_desc_1 or to possible_anc_or_desc_0.\n    return search_target(\n        middle, possible_anc_or_desc_1 if search_0 is middle else possible_anc_or_desc_0\n    )\n",
       "prefix": "import functools\n\nfrom bst_node import BstNode\n\nfrom test_framework import generic_test\n\nfrom test_framework.binary_tree_utils import must_find_node\n\nfrom test_framework.test_utils import enable_executor_hook\n\n@enable_executor_hook\ndef pair_includes_ancestor_and_descendant_of_m_wrapper(executor, tree,\n                                                       possible_anc_or_desc_0,\n                                                       possible_anc_or_desc_1,\n                                                       middle_idx):\n    candidate0 = must_find_node(tree, possible_anc_or_desc_0)\n    candidate1 = must_find_node(tree, possible_anc_or_desc_1)\n    middle_node = must_find_node(tree, middle_idx)\n\n    return executor.run(\n        functools.partial(pair_includes_ancestor_and_descendant_of_m,\n                          candidate0, candidate1, middle_node))\n\n",
       "suffix": "",
       "references": [
@@ -2703,7 +2703,7 @@
       ],
       "sourceSha256": {
         "starter": "ecf5b07abcb98dd4364bfa5386ff3d073d1fb8918b9023b6592c46661cc14867",
-        "solution": "b01c5f3753c045e0034e4175386f2d8247aad73b91492f7706a9f3aaf6106705"
+        "solution": "8d41a5bcee4d85035aa5547584e420b73da3be0674d44b9dee75667cb6be21f4"
       }
     },
     {
@@ -3044,7 +3044,7 @@
       "filename": "solution.py",
       "signature": "def compute_skyline(buildings: List[Rect]) -> List[Rect]",
       "starterCode": "import collections\nfrom typing import List\n\n\ndef compute_skyline(buildings: List[Rect]) -> List[Rect]:\n    # TODO - you fill in here.\n    return []\n",
-      "solutionCode": "import collections\n\nfrom typing import List\n\n\ndef compute_skyline(buildings: List[Rect]) -> List[Rect]:\n\n    min_left = min(buildings, key=lambda b: b.left).left\n    max_right = max(buildings, key=lambda b: b.right).right\n\n    heights = [0] * (max_right - min_left + 1)\n    for building in buildings:\n        for i in range(building.left, building.right + 1):\n            heights[i - min_left] = max(heights[i - min_left], building.height)\n\n    result = []\n    left = 0\n    for i in range(1, len(heights)):\n        if heights[i] != heights[i - 1]:\n            result.append(Rect(left + min_left, i - 1 + min_left, heights[i - 1]))\n            left = i\n    return result + [Rect(left + min_left, max_right, heights[-1])]\n",
+      "solutionCode": "import collections\n\nfrom typing import List\n\n\ndef compute_skyline(buildings: List[Rect]) -> List[Rect]:\n    if not buildings:\n        return []\n\n    min_left = min(buildings, key=lambda b: b.left).left\n    max_right = max(buildings, key=lambda b: b.right).right\n\n    heights = [0] * (max_right - min_left + 1)\n    for building in buildings:\n        for i in range(building.left, building.right + 1):\n            heights[i - min_left] = max(heights[i - min_left], building.height)\n\n    result = []\n    left = 0\n    for i in range(1, len(heights)):\n        if heights[i] != heights[i - 1]:\n            result.append(Rect(left + min_left, i - 1 + min_left, heights[i - 1]))\n            left = i\n    return result + [Rect(left + min_left, max_right, heights[-1])]\n",
       "prefix": "import collections\n\nimport functools\n\nfrom test_framework import generic_test\n\nfrom test_framework.test_utils import enable_executor_hook\n\nRect = collections.namedtuple('Rect', ('left', 'right', 'height'))\n\n@enable_executor_hook\ndef compute_skyline_wrapper(executor, buildings):\n    buildings = [Rect(*x) for x in buildings]\n\n    result = executor.run(functools.partial(compute_skyline, buildings))\n\n    return [(x.left, x.right, x.height) for x in result]\n\n",
       "suffix": "",
       "references": [
@@ -3071,7 +3071,7 @@
       ],
       "sourceSha256": {
         "starter": "d2333047782f80bf15b6f2597b6bda231d23bafdd237bf7202e3bf393ac4efe8",
-        "solution": "4b30dd69edac07ff6373e0eb2832aebbe57cebeae62f32bc77e02d58a352bc7a"
+        "solution": "1bf58ef2ef4af6936b4a9fb2c750937ee183976c35cf1c3d4aa1093f8544c605"
       }
     },
     {
@@ -4591,7 +4591,7 @@
       "filename": "solution.py",
       "signature": "def huffman_encoding(symbols: List[CharWithFrequency]) -> float",
       "starterCode": "import collections\nimport heapq\nfrom typing import Dict, List\nfrom typing import List\n\n\ndef huffman_encoding(symbols: List[CharWithFrequency]) -> float:\n    # TODO - you fill in here.\n    return 0.0\n",
-      "solutionCode": "import collections\n\nimport heapq\n\nfrom typing import Dict, List\n\n\ndef huffman_encoding(symbols: List[CharWithFrequency]) -> float:\n    class BinaryTree:\n        def __init__(self, aggregate_freq, s, left=None, right=None):\n            self.aggregate_freq = aggregate_freq\n            self.s = s\n            self.left, self.right = left, right\n\n        def __lt__(self, other):\n            return self.aggregate_freq <= other.aggregate_freq\n\n        def symbols(self):\n            return self.left.symbols() + self.right.symbols() if self.s is None else self.s.c\n\n        def __repr__(self):\n            return \"%s <- %r(%g) -> %s\" % (\n                self.left and self.left.symbols(),\n                self.symbols(),\n                self.aggregate_freq,\n                self.right and self.right.symbols(),\n            )\n\n    # Initially assigns each symbol into candidates.\n    candidates = [BinaryTree(s.freq, s) for s in symbols]\n    heapq.heapify(candidates)\n\n    # Keeps combining two nodes until there is one node left.\n    while len(candidates) > 1:\n        left, right = heapq.heappop(candidates), heapq.heappop(candidates)\n        heapq.heappush(\n            candidates, BinaryTree(left.aggregate_freq + right.aggregate_freq, None, left, right)\n        )\n\n    def assign_huffman_code(tree, code):\n        if tree:\n            if tree.s:\n                # This node is a leaf.\n                char_to_encoding[tree.s.c] = \"\".join(code)\n            else:  # Non-leaf node.\n                code.append(\"0\")\n                assign_huffman_code(tree.left, code)\n                code[-1] = \"1\"\n                assign_huffman_code(tree.right, code)\n                del code[-1]\n\n    char_to_encoding: Dict[str, str] = {}\n    # Traverses the binary tree, assigning codes to nodes.\n    assign_huffman_code(candidates[0], [])\n    return sum(len(char_to_encoding[s.c]) * s.freq / 100 for s in symbols)\n",
+      "solutionCode": "import collections\n\nimport heapq\n\nfrom typing import Dict, List\n\n\ndef huffman_encoding(symbols: List[CharWithFrequency]) -> float:\n    if not symbols:\n        return 0.0\n\n    class BinaryTree:\n        def __init__(self, aggregate_freq, s, left=None, right=None):\n            self.aggregate_freq = aggregate_freq\n            self.s = s\n            self.left, self.right = left, right\n\n        def __lt__(self, other):\n            return self.aggregate_freq <= other.aggregate_freq\n\n        def symbols(self):\n            return self.left.symbols() + self.right.symbols() if self.s is None else self.s.c\n\n        def __repr__(self):\n            return \"%s <- %r(%g) -> %s\" % (\n                self.left and self.left.symbols(),\n                self.symbols(),\n                self.aggregate_freq,\n                self.right and self.right.symbols(),\n            )\n\n    # Initially assigns each symbol into candidates.\n    candidates = [BinaryTree(s.freq, s) for s in symbols]\n    heapq.heapify(candidates)\n\n    # Keeps combining two nodes until there is one node left.\n    while len(candidates) > 1:\n        left, right = heapq.heappop(candidates), heapq.heappop(candidates)\n        heapq.heappush(\n            candidates, BinaryTree(left.aggregate_freq + right.aggregate_freq, None, left, right)\n        )\n\n    def assign_huffman_code(tree, code):\n        if tree:\n            if tree.s:\n                # This node is a leaf.\n                char_to_encoding[tree.s.c] = \"\".join(code)\n            else:  # Non-leaf node.\n                code.append(\"0\")\n                assign_huffman_code(tree.left, code)\n                code[-1] = \"1\"\n                assign_huffman_code(tree.right, code)\n                del code[-1]\n\n    char_to_encoding: Dict[str, str] = {}\n    # Traverses the binary tree, assigning codes to nodes.\n    assign_huffman_code(candidates[0], [])\n    return sum(len(char_to_encoding[s.c]) * s.freq / 100 for s in symbols)\n",
       "prefix": "import collections\n\nimport functools\n\nfrom test_framework import generic_test\n\nfrom test_framework.test_utils import enable_executor_hook\n\nCharWithFrequency = collections.namedtuple('CharWithFrequency', ('c', 'freq'))\n\n@enable_executor_hook\ndef huffman_encoding_wrapper(executor, symbols):\n    if any(len(x[0]) != 1 for x in symbols):\n        raise RuntimeError('CharWithFrequency parser: string length is not 1')\n\n    symbols = [CharWithFrequency(c[0], freq) for (c, freq) in symbols]\n    return executor.run(functools.partial(huffman_encoding, symbols))\n\n",
       "suffix": "",
       "references": [
@@ -4618,7 +4618,7 @@
       ],
       "sourceSha256": {
         "starter": "6c1c1495ccb56cfadc04061223acf5f880e9ba2ffbb52bfe7bd14e7b6bc7a454",
-        "solution": "4a8a321510d6545020eeb5638d65ce69d54c1bc87af967ba3e1c4abaab636b48"
+        "solution": "d81563544ea67af1a580e52735c12537d3ad8bac9d4b728762832dc7fac3d43b"
       }
     },
     {
@@ -4778,7 +4778,7 @@
       "filename": "solution.py",
       "signature": "def expression_synthesis(digits: List[int], target: int) -> bool",
       "starterCode": "import functools\nfrom typing import List\n\n\ndef expression_synthesis(digits: List[int], target: int) -> bool:\n    # TODO - you fill in here.\n    return True\n",
-      "solutionCode": "import functools\n\nfrom typing import List\n\n\ndef expression_synthesis(digits: List[int], target: int) -> bool:\n    def directed_expression_synthesis(digits, current_term):\n        def evaluate():\n            intermediate_operands = []\n            operand_it = iter(operands)\n            intermediate_operands.append(next(operand_it))\n            # Evaluates '*' first.\n            for oper in operators:\n                if oper == \"*\":\n                    product = intermediate_operands[-1] * next(operand_it)\n                    intermediate_operands[-1] = product\n                else:  # oper == '+'.\n                    intermediate_operands.append(next(operand_it))\n            # Evaluates '+' second.\n            return sum(intermediate_operands)\n\n        current_term = current_term * 10 + digits[0]\n        if len(digits) == 1:\n            operands.append(current_term)\n            if evaluate() == target:  # Found a match.\n                return True\n            del operands[-1]\n            return False\n\n        # No operator.\n        if directed_expression_synthesis(digits[1:], current_term):\n            return True\n        # Tries multiplication operator '*'.\n        operands.append(current_term)\n        operators.append(\"*\")\n        if directed_expression_synthesis(digits[1:], current_term=0):\n            return True\n        del operands[-1]\n        del operators[-1]\n        # Tries addition operator '+'.\n        operands.append(current_term)\n        # First check feasibility of plus operator.\n        if target - evaluate() <= functools.reduce(lambda val, d: val * 10 + d, digits[1:], 0):\n            operators.append(\"+\")\n            if directed_expression_synthesis(digits[1:], current_term=0):\n                return True\n            del operators[-1]\n        del operands[-1]\n        return False\n\n    operands: List[int] = []\n    operators: List[str] = []\n    return directed_expression_synthesis(digits, current_term=0)\n",
+      "solutionCode": "import functools\n\nfrom typing import List\n\n\ndef expression_synthesis(digits: List[int], target: int) -> bool:\n    if not digits:\n        return False\n\n    def directed_expression_synthesis(digits, current_term):\n        def evaluate():\n            intermediate_operands = []\n            operand_it = iter(operands)\n            intermediate_operands.append(next(operand_it))\n            # Evaluates '*' first.\n            for oper in operators:\n                if oper == \"*\":\n                    product = intermediate_operands[-1] * next(operand_it)\n                    intermediate_operands[-1] = product\n                else:  # oper == '+'.\n                    intermediate_operands.append(next(operand_it))\n            # Evaluates '+' second.\n            return sum(intermediate_operands)\n\n        current_term = current_term * 10 + digits[0]\n        if len(digits) == 1:\n            operands.append(current_term)\n            if evaluate() == target:  # Found a match.\n                return True\n            del operands[-1]\n            return False\n\n        # No operator.\n        if directed_expression_synthesis(digits[1:], current_term):\n            return True\n        # Tries multiplication operator '*'.\n        operands.append(current_term)\n        operators.append(\"*\")\n        if directed_expression_synthesis(digits[1:], current_term=0):\n            return True\n        del operands[-1]\n        del operators[-1]\n        # Tries addition operator '+'.\n        operands.append(current_term)\n        # First check feasibility of plus operator.\n        if target - evaluate() <= functools.reduce(lambda val, d: val * 10 + d, digits[1:], 0):\n            operators.append(\"+\")\n            if directed_expression_synthesis(digits[1:], current_term=0):\n                return True\n            del operators[-1]\n        del operands[-1]\n        return False\n\n    operands: List[int] = []\n    operators: List[str] = []\n    return directed_expression_synthesis(digits, current_term=0)\n",
       "prefix": "from test_framework import generic_test\n\n",
       "suffix": "",
       "references": [],
@@ -4795,7 +4795,7 @@
       ],
       "sourceSha256": {
         "starter": "e170af81f93e62b66bf5e39b6d2e20f3f153870403ef61f33a34a8aafbb8bf8e",
-        "solution": "4f9cd50bafae660237b2cf3868bafd7d5825d9786d3a613d8dfbf5e5214d5796"
+        "solution": "15ac7734971be3f83bc68fc460fe30b8923e2a3344aa1dc62c7eea822d323fde"
       }
     },
     {
@@ -6011,7 +6011,7 @@
       "filename": "solution.py",
       "signature": "def is_pattern_contained_in_grid(grid: List[List[int]], pattern: List[int]) -> bool",
       "starterCode": "import functools\nfrom typing import List\n\n\ndef is_pattern_contained_in_grid(grid: List[List[int]], pattern: List[int]) -> bool:\n    # TODO - you fill in here.\n    return True\n",
-      "solutionCode": "import functools\n\nfrom typing import List\n\n\ndef is_pattern_contained_in_grid(grid: List[List[int]], pattern: List[int]) -> bool:\n    @functools.lru_cache(None)\n    def is_pattern_suffix_contained_starting_at_xy(x, y, offset):\n        if len(pattern) == offset:\n            # Nothing left to complete.\n            return True\n\n        # Early return if (x, y) lies outside the grid or the character\n        # does not match or we have already tried this combination.\n        if not (0 <= x < len(grid) and 0 <= y < len(grid[x])) or grid[x][y] != pattern[offset]:\n            return False\n\n        return any(\n            is_pattern_suffix_contained_starting_at_xy(*next_xy, offset + 1)\n            for next_xy in ((x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1))\n        )\n\n    return any(\n        is_pattern_suffix_contained_starting_at_xy(i, j, offset=0)\n        for i in range(len(grid))\n        for j in range(len(grid[i]))\n    )\n",
+      "solutionCode": "import functools\n\nfrom typing import List\n\n\ndef is_pattern_contained_in_grid(grid: List[List[int]], pattern: List[int]) -> bool:\n    if not pattern:\n        return True\n\n    @functools.lru_cache(None)\n    def is_pattern_suffix_contained_starting_at_xy(x, y, offset):\n        if len(pattern) == offset:\n            # Nothing left to complete.\n            return True\n\n        # Early return if (x, y) lies outside the grid or the character\n        # does not match or we have already tried this combination.\n        if not (0 <= x < len(grid) and 0 <= y < len(grid[x])) or grid[x][y] != pattern[offset]:\n            return False\n\n        return any(\n            is_pattern_suffix_contained_starting_at_xy(*next_xy, offset + 1)\n            for next_xy in ((x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1))\n        )\n\n    return any(\n        is_pattern_suffix_contained_starting_at_xy(i, j, offset=0)\n        for i in range(len(grid))\n        for j in range(len(grid[i]))\n    )\n",
       "prefix": "from test_framework import generic_test\n\n",
       "suffix": "",
       "references": [],
@@ -6028,7 +6028,7 @@
       ],
       "sourceSha256": {
         "starter": "10c508f58201301133552de355e0b5ef022620cd7bccb1c5827447f9a3ee718b",
-        "solution": "4782f80c1d3c6cef303e48d329d88113db1be68a71164d97bfb3f460f42dae8a"
+        "solution": "6eb25279ef851b76d344299ffa0eb6d7f98dbdc69db86c5de3aa925123617012"
       }
     },
     {
@@ -7534,7 +7534,7 @@
       "filename": "solution.py",
       "signature": "def justify_text(words: List[str], L: int) -> List[str]",
       "starterCode": "from typing import List\n\n\ndef justify_text(words: List[str], L: int) -> List[str]:\n    # TODO - you fill in here.\n    return []\n",
-      "solutionCode": "from typing import List\n\n\ndef justify_text(words: List[str], L: int) -> List[str]:\n\n    curr_line_length, result = 0, []\n    curr_line: List[str] = []\n    for word in words:\n        if curr_line_length + len(word) + len(curr_line) > L:\n            # Distribute equally between words in curr_line.\n            for i in range(L - curr_line_length):\n                curr_line[i % max(len(curr_line) - 1, 1)] += \" \"\n            result.append(\"\".join(curr_line))\n            curr_line, curr_line_length = [], 0\n        curr_line.append(word)\n        curr_line_length += len(word)\n    # Use ljust(L) to pad the last line with the appropriate number of blanks.\n    return result + [\" \".join(curr_line).ljust(L)]\n",
+      "solutionCode": "from typing import List\n\n\ndef justify_text(words: List[str], L: int) -> List[str]:\n\n    if not words:\n        return []\n    curr_line_length, result = 0, []\n    curr_line: List[str] = []\n    for word in words:\n        if curr_line_length + len(word) + len(curr_line) > L:\n            # Distribute equally between words in curr_line.\n            for i in range(L - curr_line_length):\n                curr_line[i % max(len(curr_line) - 1, 1)] += \" \"\n            result.append(\"\".join(curr_line))\n            curr_line, curr_line_length = [], 0\n        curr_line.append(word)\n        curr_line_length += len(word)\n    # Use ljust(L) to pad the last line with the appropriate number of blanks.\n    return result + [\" \".join(curr_line).ljust(L)]\n",
       "prefix": "from test_framework import generic_test\n\n",
       "suffix": "",
       "references": [],
@@ -7551,7 +7551,7 @@
       ],
       "sourceSha256": {
         "starter": "5afdbabe4c946a66376d8903cf25db774c593f99b5feeac53839d15c8f1b9d50",
-        "solution": "378187ba1edf9cc6e333128104b81c0efe979532c952547fc566e662acbf7e7f"
+        "solution": "a5a520ebfefe9dde78faf036d14fd968e24246f303fb476f44957e3105bfa79b"
       }
     },
     {
@@ -7685,7 +7685,7 @@
       "filename": "solution.py",
       "signature": "def find_line_with_most_points(points: List[Point]) -> int",
       "starterCode": "import collections\nimport math\nfrom typing import DefaultDict, List, Tuple\nfrom typing import List\n\n\ndef find_line_with_most_points(points: List[Point]) -> int:\n    # TODO - you fill in here.\n    return 0\n",
-      "solutionCode": "import collections\n\nimport math\n\nfrom typing import DefaultDict, List, Tuple\n\n\ndef find_line_with_most_points(points: List[Point]) -> int:\n\n    result = 0\n    for i, p1 in enumerate(points):\n        slope_table: DefaultDict[Tuple[int, int], int] = collections.defaultdict(int)\n        overlap_points = 1\n        for p2 in points[i + 1 :]:\n            if p1 == p2:\n                overlap_points += 1\n            elif p1.x == p2.x:\n                # A vertical line with slope 1/0.\n                slope_table[(0, 1)] += 1\n            else:\n                x_diff, y_diff = p1.x - p2.x, p1.y - p2.y\n                gcd = math.gcd(x_diff, y_diff)\n                x_diff, y_diff = x_diff / gcd, y_diff / gcd\n                if x_diff < 0:\n                    x_diff, y_diff = -x_diff, -y_diff\n                slope_table[(x_diff, y_diff)] += 1\n        result = max(result, overlap_points + max(slope_table.values(), default=0))\n    return result\n",
+      "solutionCode": "import collections\n\nimport math\n\nfrom typing import DefaultDict, List, Tuple\n\n\ndef find_line_with_most_points(points: List[Point]) -> int:\n\n    result = 0\n    for i, p1 in enumerate(points):\n        slope_table: DefaultDict[Tuple[int, int], int] = collections.defaultdict(int)\n        overlap_points = 1\n        for p2 in points[i + 1 :]:\n            if p1 == p2:\n                overlap_points += 1\n            elif p1.x == p2.x:\n                # A vertical line with slope 1/0.\n                slope_table[(0, 1)] += 1\n            else:\n                x_diff, y_diff = p1.x - p2.x, p1.y - p2.y\n                gcd = math.gcd(x_diff, y_diff)\n                x_diff, y_diff = x_diff // gcd, y_diff // gcd\n                if x_diff < 0:\n                    x_diff, y_diff = -x_diff, -y_diff\n                slope_table[(x_diff, y_diff)] += 1\n        result = max(result, overlap_points + max(slope_table.values(), default=0))\n    return result\n",
       "prefix": "import collections\n\nimport functools\n\nfrom test_framework import generic_test\n\nfrom test_framework.test_utils import enable_executor_hook\n\nPoint = collections.namedtuple('Point', ('x', 'y'))\n\n@enable_executor_hook\ndef find_line_with_most_points_wrapper(executor, points):\n    points = [Point(*x) for x in points]\n    return executor.run(functools.partial(find_line_with_most_points, points))\n\n",
       "suffix": "",
       "references": [
@@ -7712,7 +7712,7 @@
       ],
       "sourceSha256": {
         "starter": "63baf516b5a81478b747430db317182c4aa1b629881dd50054e945e98dd2ac5f",
-        "solution": "e90438673a80e3b1b377fa2f19ad1f3d68dea2601cbd2650be710417389f9718"
+        "solution": "dc67128aaab5301d9020762cfce0bb28b15790a0095a907e22ba97231242bb22"
       }
     },
     {
@@ -7944,7 +7944,7 @@
       "filename": "solution.py",
       "signature": "def find_longest_increasing_subarray(A: List[int]) -> Subarray",
       "starterCode": "import collections\nfrom typing import List\n\n\ndef find_longest_increasing_subarray(A: List[int]) -> Subarray:\n    # TODO - you fill in here.\n    return Subarray(0, 0)\n",
-      "solutionCode": "import collections\n\nfrom typing import List\n\n\ndef find_longest_increasing_subarray(A: List[int]) -> Subarray:\n\n    result = Subarray(0, 0)\n    i, max_length = 0, 1\n    while i < len(A) - max_length:\n        # Backward check and skip if A[j] >= A[j + 1].\n        for j in range(i + max_length, i, -1):\n            if A[j - 1] >= A[j]:\n                i = j\n                break\n        else:  # Forward check if it is not skippable (the loop ended normally)\n            i += max_length\n            while i < len(A) and A[i - 1] < A[i]:\n                i, max_length = i + 1, max_length + 1\n            result = Subarray(i - max_length, i - 1)\n    return result\n",
+      "solutionCode": "import collections\n\nfrom typing import List\n\n\ndef find_longest_increasing_subarray(A: List[int]) -> Subarray:\n\n    if not A:\n        return Subarray(0, -1)\n    result = Subarray(0, 0)\n    i, max_length = 0, 1\n    while i < len(A) - max_length:\n        # Backward check and skip if A[j] >= A[j + 1].\n        for j in range(i + max_length, i, -1):\n            if A[j - 1] >= A[j]:\n                i = j\n                break\n        else:  # Forward check if it is not skippable (the loop ended normally)\n            i += max_length\n            while i < len(A) and A[i - 1] < A[i]:\n                i, max_length = i + 1, max_length + 1\n            result = Subarray(i - max_length, i - 1)\n    return result\n",
       "prefix": "import collections\n\nfrom test_framework import generic_test\n\nSubarray = collections.namedtuple('Subarray', ('start', 'end'))\n\ndef find_longest_increasing_subarray_wrapper(A):\n    result = find_longest_increasing_subarray(A)\n    return result.end - result.start + 1\n\n",
       "suffix": "",
       "references": [
@@ -7971,7 +7971,7 @@
       ],
       "sourceSha256": {
         "starter": "eaef0951ebfd16eca26a0a9730897b72dc3351e14c8aff6a74f19c0f848a6486",
-        "solution": "f07ece098ffffbf424c1a0ea80a848eec210ff861fe16938758cbfe69ccd2fb7"
+        "solution": "bf306fa134f71c478e64c0cf2728585abe16aa62dacee77bba04b46d43fe1344"
       }
     },
     {
@@ -8029,7 +8029,7 @@
       "filename": "solution.py",
       "signature": "def longest_nondecreasing_subsequence_length(A: List[int]) -> int",
       "starterCode": "from typing import List\n\n\ndef longest_nondecreasing_subsequence_length(A: List[int]) -> int:\n    # TODO - you fill in here.\n    return 0\n",
-      "solutionCode": "from typing import List\n\n\ndef longest_nondecreasing_subsequence_length(A: List[int]) -> int:\n\n    # max_length[i] holds the length of the longest nondecreasing subsequence\n    # of A[:i + 1].\n    max_length = [1] * len(A)\n    for i in range(1, len(A)):\n        max_length[i] = 1 + max((max_length[j] for j in range(i) if A[i] >= A[j]), default=0)\n    return max(max_length)\n",
+      "solutionCode": "from typing import List\n\n\ndef longest_nondecreasing_subsequence_length(A: List[int]) -> int:\n    if not A:\n        return 0\n\n    # max_length[i] holds the length of the longest nondecreasing subsequence\n    # of A[:i + 1].\n    max_length = [1] * len(A)\n    for i in range(1, len(A)):\n        max_length[i] = 1 + max((max_length[j] for j in range(i) if A[i] >= A[j]), default=0)\n    return max(max_length)\n",
       "prefix": "from test_framework import generic_test\n\n",
       "suffix": "",
       "references": [],
@@ -8046,7 +8046,7 @@
       ],
       "sourceSha256": {
         "starter": "b86874a4892d6a5b579936313a4be2e9ffa0b6aba8fc7304b4e82a299a3960a3",
-        "solution": "dd6bc7300c3324961d4f6b5f6861ec3d8bba07bc6f6f6d74a445a612fc19f968"
+        "solution": "98ebaf32f5de1afb0f8c6cf0e415d0bb4051b10b4ed5c12afdbb0b7bd7d91a3e"
       }
     },
     {
@@ -8179,7 +8179,7 @@
       "filename": "solution.py",
       "signature": "def find_longest_subarray_less_equal_k(A: List[int], k: int) -> int",
       "starterCode": "import itertools\nfrom typing import List\n\n\ndef find_longest_subarray_less_equal_k(A: List[int], k: int) -> int:\n    # TODO - you fill in here.\n    return 0\n",
-      "solutionCode": "import itertools\n\nfrom typing import List\n\n\ndef find_longest_subarray_less_equal_k(A: List[int], k: int) -> int:\n\n    # Builds the prefix sum according to A.\n    prefix_sum = list(itertools.accumulate(A))\n\n    # Early returns if the sum of A is smaller than or equal to k.\n    if prefix_sum[-1] <= k:\n        return len(A)\n\n    # Builds min_prefix_sum.\n    min_prefix_sum = prefix_sum.copy()\n    for i in reversed(range(len(min_prefix_sum) - 1)):\n        min_prefix_sum[i] = min(min_prefix_sum[i], min_prefix_sum[i + 1])\n\n    a = b = max_length = 0\n    while a < len(A) and b < len(A):\n        min_curr_sum = min_prefix_sum[b] - prefix_sum[a - 1] if a > 0 else min_prefix_sum[b]\n        if min_curr_sum <= k:\n            curr_length = b - a + 1\n            if curr_length > max_length:\n                max_length = curr_length\n            b += 1\n        else:  # min_curr_sum > k.\n            a += 1\n    return max_length\n",
+      "solutionCode": "import itertools\n\nfrom typing import List\n\n\ndef find_longest_subarray_less_equal_k(A: List[int], k: int) -> int:\n    if not A:\n        return 0\n\n    # Builds the prefix sum according to A.\n    prefix_sum = list(itertools.accumulate(A))\n\n    # Early returns if the sum of A is smaller than or equal to k.\n    if prefix_sum[-1] <= k:\n        return len(A)\n\n    # Builds min_prefix_sum.\n    min_prefix_sum = prefix_sum.copy()\n    for i in reversed(range(len(min_prefix_sum) - 1)):\n        min_prefix_sum[i] = min(min_prefix_sum[i], min_prefix_sum[i + 1])\n\n    a = b = max_length = 0\n    while a < len(A) and b < len(A):\n        min_curr_sum = min_prefix_sum[b] - prefix_sum[a - 1] if a > 0 else min_prefix_sum[b]\n        if min_curr_sum <= k:\n            curr_length = b - a + 1\n            if curr_length > max_length:\n                max_length = curr_length\n            b += 1\n        else:  # min_curr_sum > k.\n            a += 1\n    return max_length\n",
       "prefix": "from test_framework import generic_test\n\n",
       "suffix": "",
       "references": [],
@@ -8196,7 +8196,7 @@
       ],
       "sourceSha256": {
         "starter": "76d541d6fdfddcc629fe046bf8e197e053081f496db2d2b08a2823e173d0bfe9",
-        "solution": "1bd08e7dd4f0f330f029170e95c572ecd48ffb694327355da842312a5e09b80f"
+        "solution": "8969a60c3ef55824916d77e6be2496f1e12671cfebe18b3eb380b695c64b91ec"
       }
     },
     {
@@ -8847,7 +8847,7 @@
       "filename": "solution.py",
       "signature": "def fill_surrounded_regions(board: List[List[str]]) -> None",
       "starterCode": "import collections\nfrom typing import List\n\n\ndef fill_surrounded_regions(board: List[List[str]]) -> None:\n    # TODO - you fill in here.\n    return\n",
-      "solutionCode": "import collections\n\nfrom typing import List\n\n\ndef fill_surrounded_regions(board: List[List[str]]) -> None:\n\n    n, m = len(board), len(board[0])\n    q = collections.deque(\n        [(i, j) for k in range(n) for i, j in ((k, 0), (k, m - 1))]\n        + [(i, j) for k in range(m) for i, j in ((0, k), (n - 1, k))]\n    )\n    while q:\n        x, y = q.popleft()\n        if 0 <= x < n and 0 <= y < m and board[x][y] == \"W\":\n            board[x][y] = \"T\"\n            q.extend([(x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)])\n    board[:] = [[\"B\" if c != \"T\" else \"W\" for c in row] for row in board]\n",
+      "solutionCode": "import collections\n\nfrom typing import List\n\n\ndef fill_surrounded_regions(board: List[List[str]]) -> None:\n\n    if not board or not board[0]:\n        return\n    n, m = len(board), len(board[0])\n    q = collections.deque(\n        [(i, j) for k in range(n) for i, j in ((k, 0), (k, m - 1))]\n        + [(i, j) for k in range(m) for i, j in ((0, k), (n - 1, k))]\n    )\n    while q:\n        x, y = q.popleft()\n        if 0 <= x < n and 0 <= y < m and board[x][y] == \"W\":\n            board[x][y] = \"T\"\n            q.extend([(x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)])\n    board[:] = [[\"B\" if c != \"T\" else \"W\" for c in row] for row in board]\n",
       "prefix": "from test_framework import generic_test\n\ndef fill_surrounded_regions_wrapper(board):\n    fill_surrounded_regions(board)\n    return board\n\n",
       "suffix": "",
       "references": [],
@@ -8866,7 +8866,7 @@
       ],
       "sourceSha256": {
         "starter": "5296b09bb513ea03b2366b1937d5038041b71b94f65151be7b75c9ab57d0696e",
-        "solution": "dbebf93d1ca21575e601b22449a5c2aff178577a0a39ac234b612ad849381267"
+        "solution": "5e1bff7a20d11adb9747955e439b3f18279b5724bd8809e4210541d0427afd8a"
       }
     },
     {
@@ -9234,7 +9234,7 @@
       "filename": "solution.py",
       "signature": "def max_square_submatrix(A: List[List[bool]]) -> int",
       "starterCode": "import collections\nfrom typing import List\n\n\ndef max_square_submatrix(A: List[List[bool]]) -> int:\n    # TODO - you fill in here.\n    return 0\n",
-      "solutionCode": "import collections\n\nfrom typing import List\n\n\ndef max_square_submatrix(A: List[List[bool]]) -> int:\n\n    MaxHW = collections.namedtuple(\"MaxHW\", (\"h\", \"w\"))\n    # DP table stores (h, w) for each (i, j).\n    table = [[MaxHW(0, 0)] * len(A[0]) for _ in A]\n    for i, row in reversed(list(enumerate(A))):\n        for j, v in reversed(list(enumerate(row))):\n            # Finds the largest h such that (i, j) to (i + h - 1, j) are feasible.\n            # Finds the largest w such that (i, j) to (i, j + w - 1) are feasible.\n            table[i][j] = (\n                MaxHW(\n                    table[i + 1][j].h + 1 if i + 1 < len(A) else 1,\n                    table[i][j + 1].w + 1 if j + 1 < len(row) else 1,\n                )\n                if v\n                else MaxHW(0, 0)\n            )\n\n    # A table stores the length of the largest square for each (i, j).\n    s = [[0] * len(A[0]) for _ in A]\n    max_square_area = 0\n    for i, row in reversed(list(enumerate(A))):\n        for j, v in reversed(list(enumerate(row))):\n            if v:\n                side = min(table[i][j].h, table[i][j].w)\n                # Gets the length of largest square with bottom-left corner (i,\n                # j).\n                if i + 1 < len(A) and j + 1 < len(A[i + 1]):\n                    side = min(s[i + 1][j + 1] + 1, side)\n                s[i][j] = side\n                max_square_area = max(max_square_area, side**2)\n    return max_square_area\n",
+      "solutionCode": "import collections\n\nfrom typing import List\n\n\ndef max_square_submatrix(A: List[List[bool]]) -> int:\n    if not A:\n        return 0\n\n    MaxHW = collections.namedtuple(\"MaxHW\", (\"h\", \"w\"))\n    # DP table stores (h, w) for each (i, j).\n    table = [[MaxHW(0, 0)] * len(A[0]) for _ in A]\n    for i, row in reversed(list(enumerate(A))):\n        for j, v in reversed(list(enumerate(row))):\n            # Finds the largest h such that (i, j) to (i + h - 1, j) are feasible.\n            # Finds the largest w such that (i, j) to (i, j + w - 1) are feasible.\n            table[i][j] = (\n                MaxHW(\n                    table[i + 1][j].h + 1 if i + 1 < len(A) else 1,\n                    table[i][j + 1].w + 1 if j + 1 < len(row) else 1,\n                )\n                if v\n                else MaxHW(0, 0)\n            )\n\n    # A table stores the length of the largest square for each (i, j).\n    s = [[0] * len(A[0]) for _ in A]\n    max_square_area = 0\n    for i, row in reversed(list(enumerate(A))):\n        for j, v in reversed(list(enumerate(row))):\n            if v:\n                side = min(table[i][j].h, table[i][j].w)\n                # Gets the length of largest square with bottom-left corner (i,\n                # j).\n                if i + 1 < len(A) and j + 1 < len(A[i + 1]):\n                    side = min(s[i + 1][j + 1] + 1, side)\n                s[i][j] = side\n                max_square_area = max(max_square_area, side**2)\n    return max_square_area\n",
       "prefix": "from test_framework import generic_test\n\n",
       "suffix": "",
       "references": [],
@@ -9253,7 +9253,7 @@
       ],
       "sourceSha256": {
         "starter": "4afb8557217ab604b9777dbfd49e8976ff26074eaee4524f658a378acc9af888",
-        "solution": "cdf0f3c0d50ca1b232ca837eab6b2f0e36d71751caf4119a77818542a3652638"
+        "solution": "80844d5b95d5d93f3d87c5a4874171b50cde99533af825d7c6418d97a21e533c"
       }
     },
     {
@@ -9311,7 +9311,7 @@
       "filename": "solution.py",
       "signature": "def max_rectangle_submatrix(A: List[List[bool]]) -> int",
       "starterCode": "import collections\nfrom typing import List, cast\nfrom typing import List\n\n\ndef max_rectangle_submatrix(A: List[List[bool]]) -> int:\n    # TODO - you fill in here.\n    return 0\n",
-      "solutionCode": "import collections\n\nfrom typing import List, cast\n\n\ndef max_rectangle_submatrix(A: List[List[bool]]) -> int:\n\n    MaxHW = collections.namedtuple(\"MaxHW\", (\"h\", \"w\"))\n    # DP table stores (h, w) for each (i, j).\n    table = [[MaxHW(0, 0)] * len(A[0]) for _ in A]\n\n    for i, row in reversed(list(enumerate(A))):\n        for j, v in reversed(list(enumerate(row))):\n            # Find the largest h such that (i, j) to (i + h - 1, j) are feasible.\n            # Find the largest w such that (i, j) to (i, j + w - 1) are feasible.\n            table[i][j] = (\n                MaxHW(\n                    table[i + 1][j].h + 1 if i + 1 < len(A) else 1,\n                    table[i][j + 1].w + 1 if j + 1 < len(row) else 1,\n                )\n                if v\n                else MaxHW(0, 0)\n            )\n\n    max_rectangle_area = 0\n    for i, row in enumerate(A):\n        for j, v in enumerate(row):\n            # Process (i, j) if it is feasible and is possible to update\n            # max_rectangle_area.\n            if v and table[i][j].w * table[i][j].h > max_rectangle_area:\n                min_width = float(\"inf\")\n                for a in range(table[i][j].h):\n                    min_width = cast(int, min(min_width, table[i + a][j].w))\n                    max_rectangle_area = max(max_rectangle_area, min_width * (a + 1))\n    return max_rectangle_area\n",
+      "solutionCode": "import collections\n\nfrom typing import List, cast\n\n\ndef max_rectangle_submatrix(A: List[List[bool]]) -> int:\n    if not A:\n        return 0\n\n    MaxHW = collections.namedtuple(\"MaxHW\", (\"h\", \"w\"))\n    # DP table stores (h, w) for each (i, j).\n    table = [[MaxHW(0, 0)] * len(A[0]) for _ in A]\n\n    for i, row in reversed(list(enumerate(A))):\n        for j, v in reversed(list(enumerate(row))):\n            # Find the largest h such that (i, j) to (i + h - 1, j) are feasible.\n            # Find the largest w such that (i, j) to (i, j + w - 1) are feasible.\n            table[i][j] = (\n                MaxHW(\n                    table[i + 1][j].h + 1 if i + 1 < len(A) else 1,\n                    table[i][j + 1].w + 1 if j + 1 < len(row) else 1,\n                )\n                if v\n                else MaxHW(0, 0)\n            )\n\n    max_rectangle_area = 0\n    for i, row in enumerate(A):\n        for j, v in enumerate(row):\n            # Process (i, j) if it is feasible and is possible to update\n            # max_rectangle_area.\n            if v and table[i][j].w * table[i][j].h > max_rectangle_area:\n                min_width = float(\"inf\")\n                for a in range(table[i][j].h):\n                    min_width = cast(int, min(min_width, table[i + a][j].w))\n                    max_rectangle_area = max(max_rectangle_area, min_width * (a + 1))\n    return max_rectangle_area\n",
       "prefix": "from test_framework import generic_test\n\n",
       "suffix": "",
       "references": [],
@@ -9328,7 +9328,7 @@
       ],
       "sourceSha256": {
         "starter": "5159bd804d474227f8e5730975ca14b9754417d5617c8bb042e31143bde6de20",
-        "solution": "47487e03eb9cb2f4cdb0463b6c374ba1cd1a8824870774f0701db224a7fbf5ff"
+        "solution": "2145b5feb37abcc47774a1a460099ee72d1b95d05de3778f51b7a0fc8c88114d"
       }
     },
     {
@@ -9622,7 +9622,7 @@
       "filename": "solution.py",
       "signature": "def calculate_trapping_water(heights: List[int]) -> int",
       "starterCode": "from typing import List\n\n\ndef calculate_trapping_water(heights: List[int]) -> int:\n    # TODO - you fill in here.\n    return 0\n",
-      "solutionCode": "from typing import List\n\n\ndef calculate_trapping_water(heights: List[int]) -> int:\n\n    # Finds the index with maximum height.\n    max_h = heights.index(max(heights))\n\n    # Assume heights[-1] is maximum height.\n    def trapping_water_till_end(heights):\n        partial_sum, highest_level_seen = 0, float(\"-inf\")\n        for h in heights:\n            if h >= highest_level_seen:\n                highest_level_seen = h\n            else:\n                partial_sum += highest_level_seen - h\n        return partial_sum\n\n    return trapping_water_till_end(heights[:max_h]) + trapping_water_till_end(\n        reversed(heights[max_h + 1 :])\n    )\n",
+      "solutionCode": "from typing import List\n\n\ndef calculate_trapping_water(heights: List[int]) -> int:\n    if not heights:\n        return 0\n\n    # Finds the index with maximum height.\n    max_h = heights.index(max(heights))\n\n    # Assume heights[-1] is maximum height.\n    def trapping_water_till_end(heights):\n        partial_sum, highest_level_seen = 0, float(\"-inf\")\n        for h in heights:\n            if h >= highest_level_seen:\n                highest_level_seen = h\n            else:\n                partial_sum += highest_level_seen - h\n        return partial_sum\n\n    return trapping_water_till_end(heights[:max_h]) + trapping_water_till_end(\n        reversed(heights[max_h + 1 :])\n    )\n",
       "prefix": "from test_framework import generic_test\n\n",
       "suffix": "",
       "references": [],
@@ -9639,7 +9639,7 @@
       ],
       "sourceSha256": {
         "starter": "461ec9b3ba7ec481b461fc4c3bf5e463900c63989dcbf7c3003cc56e2d495c4f",
-        "solution": "5f45065b70904b17a2f54116f4e2c82626347d7008e3b4c495a746edbdf98fc1"
+        "solution": "46ac1241f515ec1d73ec2e1f0a76d636ab649fed34afd85ddb7b6d335766d99a"
       }
     },
     {
@@ -9697,7 +9697,7 @@
       "filename": "solution.py",
       "signature": "def max_subarray_sum_in_circular(A: List[int]) -> int",
       "starterCode": "from typing import List\n\n\ndef max_subarray_sum_in_circular(A: List[int]) -> int:\n    # TODO - you fill in here.\n    return 0\n",
-      "solutionCode": "from typing import List\n\n\ndef max_subarray_sum_in_circular(A: List[int]) -> int:\n\n    # Calculates the non-circular solution.\n    def find_max_subarray():\n        maximum_till = maximum = 0\n        for a in A:\n            maximum_till = max(a, a + maximum_till)\n            maximum = max(maximum, maximum_till)\n        return maximum\n\n    # Calculates the solution which is circular.\n    def find_circular_max_subarray():\n        def compute_running_maximum(A):\n            partial_sum = A[0]\n            running_maximum = [partial_sum]\n            for a in A[1:]:\n                partial_sum += a\n                running_maximum.append(max(running_maximum[-1], partial_sum))\n            return running_maximum\n\n        # Maximum subarray sum starts at index 0 and ends at or before index i.\n        maximum_begin = compute_running_maximum(A)\n        # Maximum subarray sum starts at index i + 1 and ends at the last\n        # element.\n        maximum_end = compute_running_maximum(A[::-1])[::-1][1:] + [0]\n\n        # Calculates the maximum subarray which is circular.\n        return max(begin + end for begin, end in zip(maximum_begin, maximum_end))\n\n    return max(find_max_subarray(), find_circular_max_subarray())\n",
+      "solutionCode": "from typing import List\n\n\ndef max_subarray_sum_in_circular(A: List[int]) -> int:\n    if not A:\n        return 0\n\n    # Calculates the non-circular solution.\n    def find_max_subarray():\n        maximum_till = maximum = 0\n        for a in A:\n            maximum_till = max(a, a + maximum_till)\n            maximum = max(maximum, maximum_till)\n        return maximum\n\n    # Calculates the solution which is circular.\n    def find_circular_max_subarray():\n        def compute_running_maximum(A):\n            partial_sum = A[0]\n            running_maximum = [partial_sum]\n            for a in A[1:]:\n                partial_sum += a\n                running_maximum.append(max(running_maximum[-1], partial_sum))\n            return running_maximum\n\n        # Maximum subarray sum starts at index 0 and ends at or before index i.\n        maximum_begin = compute_running_maximum(A)\n        # Maximum subarray sum starts at index i + 1 and ends at the last\n        # element.\n        maximum_end = compute_running_maximum(A[::-1])[::-1][1:] + [0]\n\n        # Calculates the maximum subarray which is circular.\n        return max(begin + end for begin, end in zip(maximum_begin, maximum_end))\n\n    return max(find_max_subarray(), find_circular_max_subarray())\n",
       "prefix": "from test_framework import generic_test\n\n",
       "suffix": "",
       "references": [],
@@ -9714,7 +9714,7 @@
       ],
       "sourceSha256": {
         "starter": "85d4df0a4527e812fc6dfe9c9685fb4f135e5bbd92c85e77d1c20bece5d2bb67",
-        "solution": "bbb69b48730d9a570ac71b51956fd675da4b602196eaf69929cfa36e0c1be5b0"
+        "solution": "6aeb6ae1b2f5d0f95ae64b7a65be888f05bda36300934c5adbc8ed8ea77aa10e"
       }
     },
     {
@@ -10245,7 +10245,7 @@
       "filename": "solution.py",
       "signature": "def next_permutation(perm: List[int]) -> List[int]",
       "starterCode": "from typing import List\n\n\ndef next_permutation(perm: List[int]) -> List[int]:\n    # TODO - you fill in here.\n    return []\n",
-      "solutionCode": "from typing import List\n\n\ndef next_permutation(perm: List[int]) -> List[int]:\n\n    # Find the first entry from the right that is smaller than the entry\n    # immediately after it.\n    inversion_point = len(perm) - 2\n    while inversion_point >= 0 and perm[inversion_point] >= perm[inversion_point + 1]:\n        inversion_point -= 1\n    if inversion_point == -1:\n        return []  # perm is the last permutation.\n\n    # Swap the smallest entry after index inversion_point that is greater than\n    # perm[inversion_point]. Since entries in perm are decreasing after\n    # inversion_point, if we search in reverse order, the first entry that is\n    # greater than perm[inversion_point] is the entry to swap with.\n    for i in reversed(range(inversion_point + 1, len(perm))):\n        if perm[i] > perm[inversion_point]:\n            perm[inversion_point], perm[i] = perm[i], perm[inversion_point]\n            break\n\n    # Entries in perm must appear in decreasing order after inversion_point,\n    # so we simply reverse these entries to get the smallest dictionary order.\n    perm[inversion_point + 1 :] = reversed(perm[inversion_point + 1 :])\n    return perm\n",
+      "solutionCode": "from typing import List\n\n\ndef next_permutation(perm: List[int]) -> List[int]:\n\n    # Find the first entry from the right that is smaller than the entry\n    # immediately after it.\n    inversion_point = len(perm) - 2\n    while inversion_point >= 0 and perm[inversion_point] >= perm[inversion_point + 1]:\n        inversion_point -= 1\n    if inversion_point < 0:\n        return []  # perm is the last permutation.\n\n    # Swap the smallest entry after index inversion_point that is greater than\n    # perm[inversion_point]. Since entries in perm are decreasing after\n    # inversion_point, if we search in reverse order, the first entry that is\n    # greater than perm[inversion_point] is the entry to swap with.\n    for i in reversed(range(inversion_point + 1, len(perm))):\n        if perm[i] > perm[inversion_point]:\n            perm[inversion_point], perm[i] = perm[i], perm[inversion_point]\n            break\n\n    # Entries in perm must appear in decreasing order after inversion_point,\n    # so we simply reverse these entries to get the smallest dictionary order.\n    perm[inversion_point + 1 :] = reversed(perm[inversion_point + 1 :])\n    return perm\n",
       "prefix": "from test_framework import generic_test\n\n",
       "suffix": "",
       "references": [],
@@ -10262,7 +10262,7 @@
       ],
       "sourceSha256": {
         "starter": "ce0ef38f8d677bda329f8f7b29ce23bc6c792cc9b0a027de674f3a293a3eac53",
-        "solution": "8b515bfe342653687630c2b6afb4703ee9a00e2a0ba8bcaf81eff319aacce566"
+        "solution": "d20e6a6471ecee0534ed97d9fecc33fa3b0fb3e93946d598c89edc77b9debc74"
       }
     },
     {
@@ -10397,7 +10397,7 @@
       "filename": "solution.py",
       "signature": "def num_combinations_for_final_score(final_score: int, individual_play_scores: List[int]) -> int",
       "starterCode": "from typing import List\n\n\ndef num_combinations_for_final_score(final_score: int, individual_play_scores: List[int]) -> int:\n    # TODO - you fill in here.\n    return 0\n",
-      "solutionCode": "from typing import List\n\n\ndef num_combinations_for_final_score(final_score: int, individual_play_scores: List[int]) -> int:\n\n    # One way to reach 0.\n    num_combinations_for_score = [[1] + [0] * final_score for _ in individual_play_scores]\n    for i in range(len(individual_play_scores)):\n        for j in range(1, final_score + 1):\n            without_this_play = num_combinations_for_score[i - 1][j] if i >= 1 else 0\n            with_this_play = (\n                num_combinations_for_score[i][j - individual_play_scores[i]]\n                if j >= individual_play_scores[i]\n                else 0\n            )\n            num_combinations_for_score[i][j] = without_this_play + with_this_play\n    return num_combinations_for_score[-1][-1]\n",
+      "solutionCode": "from typing import List\n\n\ndef num_combinations_for_final_score(final_score: int, individual_play_scores: List[int]) -> int:\n    if not individual_play_scores:\n        return int(final_score == 0)\n\n    # One way to reach 0.\n    num_combinations_for_score = [[1] + [0] * final_score for _ in individual_play_scores]\n    for i in range(len(individual_play_scores)):\n        for j in range(1, final_score + 1):\n            without_this_play = num_combinations_for_score[i - 1][j] if i >= 1 else 0\n            with_this_play = (\n                num_combinations_for_score[i][j - individual_play_scores[i]]\n                if j >= individual_play_scores[i]\n                else 0\n            )\n            num_combinations_for_score[i][j] = without_this_play + with_this_play\n    return num_combinations_for_score[-1][-1]\n",
       "prefix": "from test_framework import generic_test\n\n",
       "suffix": "",
       "references": [],
@@ -10414,7 +10414,7 @@
       ],
       "sourceSha256": {
         "starter": "c52d2be0894ec611604d4a99b1498f14e9a5010a08fad8dcf123b209dc707b16",
-        "solution": "94307542992dc14a42d61010388c553d29cbd3678e116358d44d2b1ddd72caec"
+        "solution": "0b2844df012d208336f0695455e8f630621d69cb60962b0c903f97c264356938"
       }
     },
     {
@@ -11678,7 +11678,7 @@
       "filename": "solution.py",
       "signature": "def minimum_messiness(words: List[str], line_length: int) -> int",
       "starterCode": "import typing\nfrom typing import List\n\n\ndef minimum_messiness(words: List[str], line_length: int) -> int:\n    # TODO - you fill in here.\n    return 0\n",
-      "solutionCode": "import typing\n\nfrom typing import List\n\n\ndef minimum_messiness(words: List[str], line_length: int) -> int:\n\n    num_remaining_blanks = line_length - len(words[0])\n    # min_messiness[i] is the minimum messiness when placing words[0:i + 1].\n    min_messiness = [num_remaining_blanks**2] + [typing.cast(int, float(\"inf\"))] * (len(words) - 1)\n    for i in range(1, len(words)):\n        num_remaining_blanks = line_length - len(words[i])\n        min_messiness[i] = min_messiness[i - 1] + num_remaining_blanks**2\n        # Try adding words[i - 1], words[i - 2], ...\n        for j in reversed(range(i)):\n            num_remaining_blanks -= len(words[j]) + 1\n            if num_remaining_blanks < 0:\n                # Not enough space to add more words.\n                break\n            first_j_messiness = 0 if j - 1 < 0 else min_messiness[j - 1]\n            current_line_messiness = num_remaining_blanks**2\n            min_messiness[i] = min(min_messiness[i], first_j_messiness + current_line_messiness)\n    return min_messiness[-1]\n",
+      "solutionCode": "import typing\n\nfrom typing import List\n\n\ndef minimum_messiness(words: List[str], line_length: int) -> int:\n    if not words:\n        return 0\n\n    num_remaining_blanks = line_length - len(words[0])\n    # min_messiness[i] is the minimum messiness when placing words[0:i + 1].\n    min_messiness = [num_remaining_blanks**2] + [typing.cast(int, float(\"inf\"))] * (len(words) - 1)\n    for i in range(1, len(words)):\n        num_remaining_blanks = line_length - len(words[i])\n        min_messiness[i] = min_messiness[i - 1] + num_remaining_blanks**2\n        # Try adding words[i - 1], words[i - 2], ...\n        for j in reversed(range(i)):\n            num_remaining_blanks -= len(words[j]) + 1\n            if num_remaining_blanks < 0:\n                # Not enough space to add more words.\n                break\n            first_j_messiness = 0 if j - 1 < 0 else min_messiness[j - 1]\n            current_line_messiness = num_remaining_blanks**2\n            min_messiness[i] = min(min_messiness[i], first_j_messiness + current_line_messiness)\n    return min_messiness[-1]\n",
       "prefix": "from test_framework import generic_test\n\n",
       "suffix": "",
       "references": [],
@@ -11695,7 +11695,7 @@
       ],
       "sourceSha256": {
         "starter": "2cb8d3fd5d911796e993fafb5a2c9f357147b53485645ed16d17feee8b182100",
-        "solution": "ce38f5bdd832493aa98bf49ecb62574711e02616950e4ef2588020f8b52d77c8"
+        "solution": "20605f1aeaeec6a700b62feb4a4f8e1c8f849ed4ceb2b39fa35e6a88c4b55664"
       }
     },
     {
@@ -12406,9 +12406,9 @@
       "language": "python",
       "filename": "solution.py",
       "signature": "def square_root(x: float) -> float",
-      "starterCode": "import math\n\n\ndef square_root(x: float) -> float:\n    # TODO - you fill in here.\n    return 0.0\n",
-      "solutionCode": "import math\n\n\ndef square_root(x: float) -> float:\n\n    # Decides the search range according to x's value relative to 1.0.\n    left, right = (x, 1.0) if x < 1.0 else (1.0, x)\n\n    # Keeps searching as long as left != right.\n    while not math.isclose(left, right):\n        mid = 0.5 * (left + right)\n        mid_squared = mid * mid\n        if mid_squared > x:\n            right = mid\n        else:\n            left = mid\n    return left\n",
-      "prefix": "from test_framework import generic_test\n\n",
+      "starterCode": "def square_root(x: float) -> float:\n    # TODO - you fill in here.\n    return 0.0\n",
+      "solutionCode": "def square_root(x: float) -> float:\n    if x == 0:\n        return 0.0\n    low, high = 0.0, max(1.0, x)\n    for _ in range(1100):\n        middle = low + (high - low) / 2\n        if middle == low or middle == high:\n            break\n        if middle <= x / middle:\n            low = middle\n        else:\n            high = middle\n    return low + (high - low) / 2\n",
+      "prefix": "",
       "suffix": "",
       "references": [],
       "visibleSymbols": [
@@ -12424,7 +12424,7 @@
       ],
       "sourceSha256": {
         "starter": "718db6da8cf3f3a4f794276c5df38d1e71fc54c61eaf26e35062bab3170f80b8",
-        "solution": "90689cb4bc5f671308e69b7bf66aed79fa19c73eec5fba73b356ea285a56c760"
+        "solution": "aad9df233e136cccef1b50f0cd2a97cab485ff7f873dd12ebd1d4759f2bd6745"
       }
     },
     {
@@ -12644,7 +12644,7 @@
       "filename": "solution.py",
       "signature": "def is_match(regex: str, s: str) -> bool",
       "starterCode": "def is_match(regex: str, s: str) -> bool:\n    # TODO - you fill in here.\n    return True\n",
-      "solutionCode": "def is_match(regex: str, s: str) -> bool:\n    def is_match_here(regex, s):\n        if not regex:\n            # Case (1.): Empty regex matches all strings.\n            return True\n\n        if regex == \"$\":\n            # Case (2.): Reach the end of regex, and last char is '$'.\n            return not s\n\n        if len(regex) >= 2 and regex[1] == \"*\":\n            # Case (3.): A '*' match.\n            # Iterate through s, checking '*' condition, if '*' condition holds,\n            # performs the remaining checks.\n            i = 1\n            while i <= len(s) and regex[0] in (\".\", s[i - 1]):\n                if is_match_here(regex[2:], s[i:]):\n                    return True\n                i += 1\n            # See '*' matches zero character in s[:len(s)].\n            return is_match_here(regex[2:], s)\n\n        # Case (4.): regex begins with single character match.\n        return bool(s and regex[0] in (\".\", s[0]) and is_match_here(regex[1:], s[1:]))\n\n    # Case (2.): regex starts with '^'.\n    if regex[0] == \"^\":\n        return is_match_here(regex[1:], s)\n    return any(is_match_here(regex, s[i:]) for i in range(len(s) + 1))\n",
+      "solutionCode": "def is_match(regex: str, s: str) -> bool:\n    if not regex:\n        return True\n\n    def is_match_here(regex, s):\n        if not regex:\n            # Case (1.): Empty regex matches all strings.\n            return True\n\n        if regex == \"$\":\n            # Case (2.): Reach the end of regex, and last char is '$'.\n            return not s\n\n        if len(regex) >= 2 and regex[1] == \"*\":\n            # Case (3.): A '*' match.\n            # Iterate through s, checking '*' condition, if '*' condition holds,\n            # performs the remaining checks.\n            i = 1\n            while i <= len(s) and regex[0] in (\".\", s[i - 1]):\n                if is_match_here(regex[2:], s[i:]):\n                    return True\n                i += 1\n            # See '*' matches zero character in s[:len(s)].\n            return is_match_here(regex[2:], s)\n\n        # Case (4.): regex begins with single character match.\n        return bool(s and regex[0] in (\".\", s[0]) and is_match_here(regex[1:], s[1:]))\n\n    # Case (2.): regex starts with '^'.\n    if regex[0] == \"^\":\n        return is_match_here(regex[1:], s)\n    return any(is_match_here(regex, s[i:]) for i in range(len(s) + 1))\n",
       "prefix": "from test_framework import generic_test\n\n",
       "suffix": "",
       "references": [],
@@ -12661,7 +12661,7 @@
       ],
       "sourceSha256": {
         "starter": "401ee7a9798229338e92322feef0bcd240dab77797be969c17a14eac15d72927",
-        "solution": "565c93532ba9fe8d3549aa8f2d89b9e4cfb6b48dd731ab6c9e432c4fd32c55dd"
+        "solution": "eba4fcfc91d0a67195c01ac4febd870406fd51edd3cd673a0cbcdca59121d497"
       }
     },
     {
@@ -13497,7 +13497,7 @@
       "filename": "solution.py",
       "signature": "def roman_to_integer(s: str) -> int",
       "starterCode": "import functools\n\n\ndef roman_to_integer(s: str) -> int:\n    # TODO - you fill in here.\n    return 0\n",
-      "solutionCode": "import functools\n\n\ndef roman_to_integer(s: str) -> int:\n\n    T = {\"I\": 1, \"V\": 5, \"X\": 10, \"L\": 50, \"C\": 100, \"D\": 500, \"M\": 1000}\n\n    return functools.reduce(\n        lambda val, i: val + (-T[s[i]] if T[s[i]] < T[s[i + 1]] else T[s[i]]),\n        reversed(range(len(s) - 1)),\n        T[s[-1]],\n    )\n",
+      "solutionCode": "import functools\n\n\ndef roman_to_integer(s: str) -> int:\n\n    T = {\"I\": 1, \"V\": 5, \"X\": 10, \"L\": 50, \"C\": 100, \"D\": 500, \"M\": 1000}\n\n    if not s:\n        return 0\n\n    return functools.reduce(\n        lambda val, i: val + (-T[s[i]] if T[s[i]] < T[s[i + 1]] else T[s[i]]),\n        reversed(range(len(s) - 1)),\n        T[s[-1]],\n    )\n",
       "prefix": "from test_framework import generic_test\n\n",
       "suffix": "",
       "references": [],
@@ -13514,7 +13514,7 @@
       ],
       "sourceSha256": {
         "starter": "caa05430ff6f849dc1f824a0cfba8a44d685e8cb4625f87034193605585ba80e",
-        "solution": "577f67b60fa2ad5ffdd4cb91e6d4dd3ab2eab936ad7361755121bb1f1c7d3244"
+        "solution": "25d050e9767e1367c5d5d7e9b5eb3f577c6762ffa8bc9fb553fff3002a3154df"
       }
     },
     {
@@ -13572,7 +13572,7 @@
       "filename": "solution.py",
       "signature": "def rook_attack(A: List[List[int]]) -> None",
       "starterCode": "from typing import List\n\n\ndef rook_attack(A: List[List[int]]) -> None:\n    # TODO - you fill in here.\n    return\n",
-      "solutionCode": "from typing import List\n\n\ndef rook_attack(A: List[List[int]]) -> None:\n\n    m, n = len(A), len(A[0])\n    has_first_row_zero = 0 in A[0]\n    has_first_column_zero = any(not A[i][0] for i in range(m))\n\n    for i in range(1, m):\n        for j in range(1, n):\n            if not A[i][j]:\n                A[i][0] = A[0][j] = 0\n\n    for i in range(1, m):\n        if not A[i][0]:\n            for j in range(1, n):\n                A[i][j] = 0\n\n    for j in range(1, n):\n        if not A[0][j]:\n            for i in range(1, m):\n                A[i][j] = 0\n\n    if has_first_row_zero:\n        for j in range(n):\n            A[0][j] = 0\n\n    if has_first_column_zero:\n        for i in range(m):\n            A[i][0] = 0\n",
+      "solutionCode": "from typing import List\n\n\ndef rook_attack(A: List[List[int]]) -> None:\n\n    if not A or not A[0]:\n        return\n    m, n = len(A), len(A[0])\n    has_first_row_zero = 0 in A[0]\n    has_first_column_zero = any(not A[i][0] for i in range(m))\n\n    for i in range(1, m):\n        for j in range(1, n):\n            if not A[i][j]:\n                A[i][0] = A[0][j] = 0\n\n    for i in range(1, m):\n        if not A[i][0]:\n            for j in range(1, n):\n                A[i][j] = 0\n\n    for j in range(1, n):\n        if not A[0][j]:\n            for i in range(1, m):\n                A[i][j] = 0\n\n    if has_first_row_zero:\n        for j in range(n):\n            A[0][j] = 0\n\n    if has_first_column_zero:\n        for i in range(m):\n            A[i][0] = 0\n",
       "prefix": "import copy\n\nfrom test_framework import generic_test\n\ndef rook_attack_wrapper(A):\n    a_copy = copy.deepcopy(A)\n    rook_attack(a_copy)\n    return a_copy\n\n",
       "suffix": "",
       "references": [],
@@ -13591,7 +13591,7 @@
       ],
       "sourceSha256": {
         "starter": "353b5e15922332076d1c6f952998691faf7180f09320ea69b29e635def3a1e77",
-        "solution": "60426551883152aa29a987d83574891ca0862e97575ab7e91b33745213ff372f"
+        "solution": "d1da2332697fd98fa422c2ea3cf5b0b7251fe141cf98aebcc90b79a7962a52b2"
       }
     },
     {
@@ -14514,7 +14514,7 @@
       "filename": "solution.py",
       "signature": "def matrix_search(A: List[List[int]], x: int) -> bool",
       "starterCode": "from typing import List\n\n\ndef matrix_search(A: List[List[int]], x: int) -> bool:\n    # TODO - you fill in here.\n    return True\n",
-      "solutionCode": "from typing import List\n\n\ndef matrix_search(A: List[List[int]], x: int) -> bool:\n\n    row, col = 0, len(A[0]) - 1  # Start from the top-right corner.\n    # Keeps searching while there are unclassified rows and columns.\n    while row < len(A) and col >= 0:\n        if A[row][col] == x:\n            return True\n        elif A[row][col] < x:\n            row += 1  # Eliminate this row.\n        else:  # A[row][col] > x.\n            col -= 1  # Eliminate this column.\n    return False\n",
+      "solutionCode": "from typing import List\n\n\ndef matrix_search(A: List[List[int]], x: int) -> bool:\n\n    if not A or not A[0]:\n        return False\n    row, col = 0, len(A[0]) - 1  # Start from the top-right corner.\n    # Keeps searching while there are unclassified rows and columns.\n    while row < len(A) and col >= 0:\n        if A[row][col] == x:\n            return True\n        elif A[row][col] < x:\n            row += 1  # Eliminate this row.\n        else:  # A[row][col] > x.\n            col -= 1  # Eliminate this column.\n    return False\n",
       "prefix": "from test_framework import generic_test\n\n",
       "suffix": "",
       "references": [],
@@ -14531,7 +14531,7 @@
       ],
       "sourceSha256": {
         "starter": "c44af94d4799196be5bba20acc5962e6097b0327cf7de9a53273ada207e30da9",
-        "solution": "3fceaa7ad1020ed42d66eeb41f1f2b7dee2eea8f5e2aa757fc5f12464595a9bd"
+        "solution": "ee5d601b952aa0ead3e62f97bd339df1feb65c43aee6a843d5863af5b6db0763"
       }
     },
     {
@@ -14589,7 +14589,7 @@
       "filename": "solution.py",
       "signature": "def search_smallest(A: List[int]) -> int",
       "starterCode": "from typing import List\n\n\ndef search_smallest(A: List[int]) -> int:\n    # TODO - you fill in here.\n    return 0\n",
-      "solutionCode": "from typing import List\n\n\ndef search_smallest(A: List[int]) -> int:\n\n    left, right = 0, len(A) - 1\n    while left < right:\n        mid = (left + right) // 2\n        if A[mid] > A[right]:\n            # Minimum must be in A[mid + 1:right + 1].\n            left = mid + 1\n        else:  # A[mid] < A[right].\n            # Minimum cannot be in A[mid + 1:right + 1] so it must be in A[left:mid + 1].\n            right = mid\n    # Loop ends when left == right.\n    return left\n",
+      "solutionCode": "from typing import List\n\n\ndef search_smallest(A: List[int]) -> int:\n\n    left, right = 0, len(A) - 1\n    while left < right:\n        mid = (left + right) // 2\n        if A[mid] > A[right]:\n            # Minimum must be in A[mid + 1:right + 1].\n            left = mid + 1\n        else:  # A[mid] < A[right].\n            # Minimum cannot be in A[mid + 1:right + 1] so it must be in A[left:mid + 1].\n            right = mid\n    # Loop ends when left == right.\n    return left if A else -1\n",
       "prefix": "from test_framework import generic_test\n\n",
       "suffix": "",
       "references": [],
@@ -14606,7 +14606,7 @@
       ],
       "sourceSha256": {
         "starter": "79536c352f8f371ef26ca21bc98c230c106b97f77d670ea3ef7fe8ea246cfa66",
-        "solution": "0cf088abb6c24529dc2aed13a3855527b7d291d2e80ef8c68c4f139e2166661b"
+        "solution": "9e4d25357669ff7f8f45175732dd94c895d042c47a13686f69c2c7174245a63b"
       }
     },
     {
@@ -18073,7 +18073,7 @@
       "filename": "solution.py",
       "signature": "def get_valid_ip_address(s: str) -> List[str]",
       "starterCode": "from typing import List\n\n\ndef get_valid_ip_address(s: str) -> List[str]:\n    # TODO - you fill in here.\n    return []\n",
-      "solutionCode": "from typing import List\n\n\ndef get_valid_ip_address(s: str) -> List[str]:\n    def is_valid_part(s):\n        # '00', '000', '01', etc. are not valid, but '0' is valid.\n        return len(s) == 1 or (s[0] != \"0\" and int(s) <= 255)\n\n    result, parts = [], [\"\"] * 4\n    for i in range(1, min(4, len(s))):\n        parts[0] = s[:i]\n        if is_valid_part(parts[0]):\n            for j in range(1, min(len(s) - i, 4)):\n                parts[1] = s[i : i + j]\n                if is_valid_part(parts[1]):\n                    for k in range(1, min(len(s) - i - j, 4)):\n                        parts[2], parts[3] = s[i + j : i + j + k], s[i + j + k :]\n                        if is_valid_part(parts[2]) and is_valid_part(parts[3]):\n                            result.append(\".\".join(parts))\n    return result\n",
+      "solutionCode": "from typing import List\n\n\ndef get_valid_ip_address(s: str) -> List[str]:\n    if len(s) < 4 or len(s) > 12:\n        return []\n\n    def is_valid_part(s):\n        # '00', '000', '01', etc. are not valid, but '0' is valid.\n        return len(s) == 1 or (s[0] != \"0\" and int(s) <= 255)\n\n    result, parts = [], [\"\"] * 4\n    for i in range(1, min(4, len(s))):\n        parts[0] = s[:i]\n        if is_valid_part(parts[0]):\n            for j in range(1, min(len(s) - i, 4)):\n                parts[1] = s[i : i + j]\n                if is_valid_part(parts[1]):\n                    for k in range(1, min(len(s) - i - j, 4)):\n                        parts[2], parts[3] = s[i + j : i + j + k], s[i + j + k :]\n                        if is_valid_part(parts[2]) and is_valid_part(parts[3]):\n                            result.append(\".\".join(parts))\n    return result\n",
       "prefix": "from test_framework import generic_test\n\ndef comp(a, b):\n    return sorted(a) == sorted(b)\n\n",
       "suffix": "",
       "references": [],
@@ -18092,7 +18092,7 @@
       ],
       "sourceSha256": {
         "starter": "23cd22a5414091ec57cf06649a92f01242d3dcb3ee0c14764b446839f41d101f",
-        "solution": "f0fee3382ec3edfa70197516e2f42d66d941d799412f1a8e544f3fe91f31514b"
+        "solution": "ed5248533c223a2f3db6c55f435562c4013841818b4df1c6a433540814161089"
       }
     },
     {

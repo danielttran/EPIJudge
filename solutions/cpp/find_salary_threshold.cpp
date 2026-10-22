@@ -10,7 +10,7 @@ double FindSalaryCap(int target_payroll, vector<int> current_salaries) {
   double unadjusted_salary_sum = 0.0;
   for (int i = 0; i < size(current_salaries); ++i) {
     const int adjusted_people = size(current_salaries) - i;
-    const double adjusted_salary_sum = current_salaries[i] * adjusted_people;
+    const double adjusted_salary_sum = static_cast<double>(current_salaries[i]) * adjusted_people;
     if (unadjusted_salary_sum + adjusted_salary_sum >= target_payroll) {
       return (target_payroll - unadjusted_salary_sum) / adjusted_people;
     }

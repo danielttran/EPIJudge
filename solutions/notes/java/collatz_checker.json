@@ -1,6 +1,19 @@
 {
-  "explanation": "Check odd starting values, following each Collatz trajectory until it falls below the start or reaches a previously verified odd value. A per-trajectory set detects cycles; arithmetic overflow is rejected.",
-  "timeComplexity": "O(n+T) expected, where T is the total number of visited trajectory steps",
-  "spaceComplexity": "O(U+M), for U cached odd values and M values in the largest trajectory",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/CollatzChecker.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "explanation": "Process starting values increasingly, tracking values in the current trajectory and caching previously verified odd values across trajectories. Stop on a value below the start or a cached odd value; a repeated current-trajectory value proves a cycle.",
+  "timeComplexity": "O(T), where T is the number of trajectory steps examined T counts actual examined trajectory steps; no unsupported logarithmic or polynomial convergence bound is assumed.",
+  "spaceComplexity": "O(U+S) stored integer values: U distinct cached odd values and at most S current-trajectory values. Arbitrary-precision Python values additionally require their bit lengths. Storage depends on distinct trajectory/cache values rather than just n; big integers also depend on bit length.",
+  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/CollatzChecker.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/).",
+  "correctness": "Inductively, all smaller starts already converge, and cached odd values belong to trajectories that have been proved to reach smaller starts. Reaching either allows safe termination. Before consulting the cache, the current-trajectory set detects revisiting a value, so a cycle is not mistaken for a previous proof. A true result certifies only the finite checked range, not the general conjecture.",
+  "walkthrough": "For n=5, the path from 3 is 3→10→5→16→8→4→2 and falls below 3. Odd values 3 and 5 are cached. A later start 5 stops at its cache entry; Python also checks 4, which immediately halves to 2. Return true.",
+  "edgeCases": [
+    "n=1 has no nontrivial trajectory to examine.",
+    "Even starts immediately reduce to smaller starts.",
+    "Checked arithmetic prevents a wrapped trajectory from masquerading as convergence."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      5
+    ],
+    "expected": true
+  }
 }

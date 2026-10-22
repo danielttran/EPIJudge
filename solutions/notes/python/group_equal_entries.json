@@ -1,6 +1,32 @@
 {
-  "explanation": "Count each age and assign it a target segment. Cycle misplaced entries into the next unfilled position for their age until every segment is complete.",
-  "timeComplexity": "O(n) expected",
-  "spaceComplexity": "O(u) age counts and offsets for u distinct ages",
-  "attribution": "Unmodified reference from epi_judge_python_solutions/group_equal_entries.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice."
+  "explanation": "Count each age and assign a disjoint destination segment of that length. Track the next unfilled slot for each age. Repeatedly swap a person into the next free slot of their own segment and advance or remove that age’s offset.",
+  "timeComplexity": "O(n) expected time using hashing. Counting/bucketing scans n records; each write or slot-filling swap permanently places one record. Hash operations are expected constant time.",
+  "spaceComplexity": "O(u) auxiliary hash entries for u distinct ages; the original people array supplies all storage for records. Bucket variants retain n records; offset/count variants retain one map entry per distinct age.",
+  "attribution": "Unmodified reference from epi_judge_python_solutions/group_equal_entries.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice.",
+  "correctness": "Each age’s unfilled segment has exactly as many slots as remaining people of that age. A swap puts one person in a valid final slot, reduces that count by one and preserves every record. Each iteration permanently fills one slot, so termination yields contiguous age groups without losing or duplicating anyone.",
+  "walkthrough": "For [(6,Nyx),(2,Bo),(6,Ana)], suppose age 6 gets slots 0..1 and age 2 gets slot 2. Fill slot 0 with Nyx. The person Bo at slot 1 belongs in slot 2, so swap Bo and Ana and finish age 2. Ana now fills slot 1. The wrapper accepts [(6,Nyx),(6,Ana),(2,Bo)]; hash iteration may choose another valid group order.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          6,
+          "Nyx"
+        ],
+        [
+          2,
+          "Bo"
+        ],
+        [
+          6,
+          "Ana"
+        ]
+      ]
+    ],
+    "expected": true
+  },
+  "edgeCases": [
+    "Repeated names still represent separate people and must be preserved.",
+    "A single age already forms a valid group.",
+    "Group order is unrestricted, so compare structure and membership rather than one fixed sorted order."
+  ]
 }

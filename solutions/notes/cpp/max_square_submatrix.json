@@ -1,6 +1,35 @@
 {
-  "explanation": "Precompute all-true run heights and widths from each cell. Process bottom-right to top-left and bound each square side by these runs and one plus the diagonal square’s side. The maximum side squared gives the area.",
-  "timeComplexity": "O(RC) time.",
-  "spaceComplexity": "O(RC) auxiliary table space for the called implementation.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/max_square_submatrix.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "Precompute downward heights and rightward widths. Scan from bottom-right: a true cell starts a square whose side is the minimum of its two runs and one plus the square starting diagonally below-right.",
+  "timeComplexity": "O(rc): two complete cell scans with constant work per cell.",
+  "spaceComplexity": "O(rc): height/width runs and square sides are stored for every cell.",
+  "attribution": "Original reference source: epi_judge_cpp_solutions/max_square_submatrix.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice. The displayed copy includes local contract or boundary corrections; the upstream reference file is preserved.",
+  "correctness": "A square starting at a cell consists of its top row, left column, and the square beginning one step diagonally inward. The two runs bound the first two parts; one plus the diagonal square side bounds the interior. Their minimum is therefore both feasible and maximal. Reverse traversal ensures these dependencies are known.",
+  "walkthrough": "For [[true,true,false],[true,true,true],[false,true,true]], the diagonal square at (1,1) has side 2. At (0,0), the downward and rightward runs both have length 2, so min(2,2,1+2)=2. The largest area is 2²=4; false corners prevent side 3.",
+  "edgeCases": [
+    "Empty input returns zero.",
+    "False cells have side zero.",
+    "Return side squared, not the side length."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          true,
+          true,
+          false
+        ],
+        [
+          true,
+          true,
+          true
+        ],
+        [
+          false,
+          true,
+          true
+        ]
+      ]
+    ],
+    "expected": 4
+  }
 }

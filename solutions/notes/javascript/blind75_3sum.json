@@ -1,6 +1,42 @@
 {
   "explanation": "Sort the values, fix one position, and move two pointers through the remaining suffix. Skip repeated fixed values and pointer values after each match so every triple appears once.",
-  "timeComplexity": "O(n squared) time for n values.",
-  "spaceComplexity": "O(n) sorting/copy workspace excluding output; up to O(n²) output.",
-  "attribution": "Original repository-authored Blind75 JavaScript algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used."
+  "timeComplexity": "O(n squared) time for n values. Sorting costs O(n log(n+1)); for each fixed index the two pointers cross its suffix once, for O(n squared) total work.",
+  "spaceComplexity": "O(n) conservative sorting workspace for the Node runtime, plus O(z) output for z triples. nums is sorted in place; the pointer scan needs constant additional state.",
+  "attribution": "Original repository-authored Blind75 JavaScript algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used.",
+  "correctness": "For a fixed sorted first value, moving the left pointer raises the candidate sum and moving the right pointer lowers it. Thus every discarded pair cannot complete a zero sum. Skipping equal fixed values and equal pair endpoints after a match avoids duplicates while retaining one representative of every distinct valid triple.",
+  "walkthrough": "For [-3,-1,0,1,2,4], fixing -3 finds pairs (-1,4) and (1,2). Fixing -1 later finds (0,1). Return the three triples [-3,-1,4],[-3,1,2],[-1,0,1], with any allowed triple order.",
+  "edgeCases": [
+    "Three distinct positions are required, even if some values are equal.",
+    "Duplicate values must not create duplicate triples.",
+    "Fewer than three values produce no triple."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        -3,
+        -1,
+        0,
+        1,
+        2,
+        4
+      ]
+    ],
+    "expected": [
+      [
+        -3,
+        -1,
+        4
+      ],
+      [
+        -3,
+        1,
+        2
+      ],
+      [
+        -1,
+        0,
+        1
+      ]
+    ]
+  }
 }

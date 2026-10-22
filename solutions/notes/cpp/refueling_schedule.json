@@ -1,6 +1,29 @@
 {
-  "explanation": "Track cumulative fuel remaining around the route and remember where that prefix balance is smallest. Starting immediately after the lowest prefix gives the ample city under the route’s fuel-feasibility assumptions.",
-  "timeComplexity": "O(n) time.",
-  "spaceComplexity": "O(1) auxiliary space.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/refueling_schedule.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "Measure each city’s net fuel as 20×gallons−distance miles. Choose the city after the smallest prefix sum. Starting at that lowest point prevents any later prefix of the circular traversal from falling below the starting level.",
+  "timeComplexity": "O(n). One pass examines each city once.",
+  "spaceComplexity": "O(1). Only a candidate index and constant-many fuel balances are retained.",
+  "attribution": "Original reference source: epi_judge_cpp_solutions/refueling_schedule.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice. Local correctness/empty-input fixes and explanation audit authored for EPI Practice; upstream reference files are unchanged. The displayed copy includes local contract or boundary corrections; the upstream reference file is preserved.",
+  "correctness": "Let P be the cumulative net-mile sum before each city and choose its first minimum. Until wraparound, every prefix relative to that minimum is nonnegative. After wraparound the relative sum is totalNet+P[j]−minimum, also nonnegative because totalNet is promised nonnegative. Therefore the returned city completes the tour. Widening before multiplication and avoiding division preserve fractional-gallon travel exactly.",
+  "walkthrough": "For gallons [1,0,2] and distances [25,10,25], net miles are −5,−10,+15. Prefix sums before cities are 0,−5,−15; the minimum is before city 2. Starting there gives balances 15,10,0 and completes the circuit. JSON arguments are [gallons,distances]. The callable returns a start index; expected true means the wrapper successfully simulated the complete trip from that returned index.",
+  "edgeCases": [
+    "Tank capacity is unlimited and starts empty.",
+    "A gallon always supplies 20 miles.",
+    "Several starts may be valid; any valid index is accepted.",
+    "The test contract supplies a nonempty feasible tour."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        1,
+        0,
+        2
+      ],
+      [
+        25,
+        10,
+        25
+      ]
+    ],
+    "expected": true
+  }
 }

@@ -1,6 +1,32 @@
 {
-  "explanation": "Process rows from top to bottom, storing the best cost reaching each entry. Interior entries choose the smaller of two parents; edge entries have only one parent.",
-  "timeComplexity": "O(number of triangle entries)",
-  "spaceComplexity": "O(number of rows)",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/MinimumWeightPathInATriangle.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "explanation": "Process rows from top to bottom, keeping the least cost to reach each position. Each position adds its weight to the smaller reachable parent cost; edge positions have only one parent. Return the smallest cost in the last row.",
+  "timeComplexity": "O(t) for t triangle cells: constant work per cell. Every triangle cell combines at most two adjacent costs, and only neighboring rows are kept.",
+  "spaceComplexity": "O(r) active-row storage for r rows; the input triangle is unchanged. At most two rows of costs are active; the largest row has one entry per triangle row.",
+  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/MinimumWeightPathInATriangle.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/).",
+  "correctness": "Every path reaching a cell must come from one of its two adjacent parents, or the sole parent on an edge. Replacing each parent path by an optimal one cannot hurt. Induction over rows proves each recorded cost is exact; the cheapest last-row endpoint is the overall optimum.",
+  "walkthrough": "For [[3],[4,1],[2,8,5]], costs progress [3], then [7,4], then [9,12,9]. The least final cost is 9. The walkthroughCase uses the judge’s JSON input format and expected observation.",
+  "edgeCases": [
+    "Negative weights do not invalidate the recurrence.",
+    "One row returns its only entry.",
+    "Only the two children directly below a cell are reachable."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          3
+        ],
+        [
+          4,
+          1
+        ],
+        [
+          2,
+          8,
+          5
+        ]
+      ]
+    ],
+    "expected": 9
+  }
 }

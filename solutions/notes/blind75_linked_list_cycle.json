@@ -1,17 +1,24 @@
 {
   "explanation": "Advance one pointer by one link and another by two. They meet inside a cycle; reaching a null fast pointer proves that the list terminates.",
-  "timeComplexity": "O(n) time for n reachable nodes.",
-  "spaceComplexity": "O(1) auxiliary space.",
+  "timeComplexity": "O(n) time for n reachable nodes. Before entering a cycle the pointers take O(n) steps; inside it the relative position closes within one cycle length.",
+  "spaceComplexity": "O(1) auxiliary space. Only two node references are retained.",
   "attribution": "Original EPI Practice C# implementation, reusing and refining the repository-authored Blind75 algorithm fixtures. Collection membership follows Crackr; no external solution service is used.",
   "correctness": "If the list terminates, the fast pointer reaches null. If a cycle exists, both pointers eventually enter it and their relative position advances by one cycle position per step, so they must meet. Thus reference equality of the pointers detects a cycle without changing the list.",
-  "walkthrough": "For values [6,1,9] with setup index 1, the tail node 9 points back to the original node containing 1. Slow and fast pointers eventually meet inside that two-node cycle, so return true. The setup index is supplied to the judge, not to HasCycle.",
+  "walkthrough": "For values [6,1,9] with setup index 1, the tail node 9 points back to the original node containing 1. Slow and fast pointers eventually meet inside that two-node cycle, so return true. The setup index is supplied to the judge, not to HasCycle. The extra serialized pos is harness setup, not a callable argument; expected is the returned boolean and the harness checks links and values remain unchanged.",
   "edgeCases": [
     "Setup index -1 means there is no cycle.",
     "Equal node values alone do not imply a cycle.",
     "The algorithm must not modify links or use a fixed iteration limit."
   ],
   "walkthroughCase": {
-    "arguments": [[6, 1, 9], 1],
+    "arguments": [
+      [
+        6,
+        1,
+        9
+      ],
+      1
+    ],
     "expected": true
   }
 }

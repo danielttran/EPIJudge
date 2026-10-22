@@ -543,6 +543,16 @@ export default function App() {
                       YOUR {currentLang.shortLabel.toUpperCase()} API
                     </div>
                     <code className="method-signature">{getSignature(problem, language)}</code>
+                    {!!problem.starters?.[language]?.contract?.length && (
+                      <section aria-label={`${currentLang.shortLabel} callable contract`}>
+                        <h2>What your function must do</h2>
+                        <ul className="constraints">
+                          {problem.starters[language].contract.map((line) => (
+                            <li key={line}>{line}</li>
+                          ))}
+                        </ul>
+                      </section>
+                    )}
                     <h2>Examples</h2>
                     {problem.examples.map((example, index) => (
                       <section className="example" key={index}>
@@ -564,10 +574,10 @@ export default function App() {
                     {(problem.collection ?? 'epi') === 'epi' &&
                       (language === 'cpp' || language === 'java') && (
                         <p className="practice-tip">
-                          Implement the TODO methods in the supplied {currentLang.shortLabel} file.
-                          Keep its class names, wrappers, and main function. These languages use the
-                          original EPI types; follow the supplied code where it differs from the C#
-                          types below.
+                          Implement the displayed {currentLang.shortLabel} callable. Required types
+                          are available in the reference panel. Examples may show a wrapper’s
+                          observed result; follow the callable contract for return values and
+                          mutations.
                         </p>
                       )}
                     <ul className="constraints">

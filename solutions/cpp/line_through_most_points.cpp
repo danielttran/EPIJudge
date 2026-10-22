@@ -21,26 +21,26 @@ struct Point {
 int FindLineWithMostPoints(const vector<Point>& points) {
   // Hash function for a pair.
   struct HashPair {
-    size_t operator()(const pair<int, int>& p) const {
+    size_t operator()(const pair<long long, long long>& p) const {
       return static_cast<size_t>(31) * p.first + p.second;
     }
   };
 
   int result = 0;
   for (int i = 0; i < size(points); ++i) {
-    unordered_map<pair<int, int>, int, HashPair> slope_table;
+    unordered_map<pair<long long, long long>, int, HashPair> slope_table;
     int overlap_points = 1;
     for (int j = i + 1; j < size(points); ++j) {
       if (points[i].x == points[j].x && points[i].y == points[j].y) {
         ++overlap_points;
       } else {
-        if (int x_diff = points[i].x - points[j].x,
-            y_diff = points[i].y - points[j].y;
+        if (long long x_diff = static_cast<long long>(points[i].x) - points[j].x,
+            y_diff = static_cast<long long>(points[i].y) - points[j].y;
             x_diff == 0) {
           // A vertical line with slope 1/0.
           slope_table[{x_diff, 1}] += 1;
         } else {
-          int gcd = std::gcd(x_diff, y_diff);
+          long long gcd = std::gcd(x_diff, y_diff);
           x_diff /= gcd, y_diff /= gcd;
           if (x_diff < 0) {
             x_diff = -x_diff, y_diff = -y_diff;

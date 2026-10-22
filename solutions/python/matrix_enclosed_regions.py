@@ -6,6 +6,8 @@ from test_framework import generic_test
 
 def fill_surrounded_regions(board: List[List[str]]) -> None:
 
+    if not board or not board[0]:
+        return
     n, m = len(board), len(board[0])
     q = collections.deque([(i, j) for k in range(n)
                            for i, j in ((k, 0), (k, m - 1))] +

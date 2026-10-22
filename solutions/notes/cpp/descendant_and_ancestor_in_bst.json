@@ -1,6 +1,30 @@
 {
-  "explanation": "Search from both candidate nodes toward the middle, stopping if either candidate reaches the other. If one reaches the middle properly, search downward from the middle for the opposite candidate. These searches follow BST value comparisons and compare node identity.",
-  "timeComplexity": "O(h) time for tree height h.",
-  "spaceComplexity": "O(1) auxiliary space.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/descendant_and_ancestor_in_bst.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "Search toward the middle from both candidate nodes in interleaved steps. Stop if a search finds the middle or reaches the other candidate. If one candidate reaches the middle first, search downward from the middle for the opposite candidate.",
+  "timeComplexity": "O(h): a constant number of directed BST paths are followed. Only a constant number of downward BST search paths are used, without retaining traversal histories.",
+  "spaceComplexity": "O(1): only search pointers are stored. Searches retain only a constant number of node cursors.",
+  "attribution": "Original reference source: epi_judge_cpp_solutions/descendant_and_ancestor_in_bst.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice. Local boundary or iterator-safety correction authored for EPI Practice. The displayed copy includes local contract or boundary corrections; the upstream reference file is preserved.",
+  "correctness": "If a candidate reaches the other candidate before the middle, the middle cannot lie strictly between them. If neither reaches the middle, neither can be the required ancestor. Otherwise the final search proves the remaining descendant link, establishing a proper ancestor–middle–descendant chain.",
+  "walkthrough": "In BST [8,4,12,2,6,10,14], node 8 is a proper ancestor of 4, and node 2 is a proper descendant of 4. Candidates 8 and 2 around middle 4 therefore return true. JSON arguments are [tree,candidate0Data,candidate1Data,middleData]. C#/JavaScript receive all four; native wrappers pass only the three resolved nodes.",
+  "edgeCases": [
+    "The callable receives three existing node references, not key indices.",
+    "Coincident candidates or a candidate equal to the middle must be rejected for proper ancestry.",
+    "The roles of the two candidates may be reversed."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        8,
+        4,
+        12,
+        2,
+        6,
+        10,
+        14
+      ],
+      8,
+      2,
+      4
+    ],
+    "expected": true
+  }
 }

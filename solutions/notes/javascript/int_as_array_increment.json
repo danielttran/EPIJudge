@@ -1,6 +1,28 @@
 {
-  "explanation": "Carry a one from the least significant digit. Every trailing nine becomes zero; increment the first smaller digit, or prepend one when the carry passes the first digit.",
-  "timeComplexity": "O(n) time.",
-  "spaceComplexity": "O(n) space for the returned copy; O(1) other auxiliary space.",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "explanation": "Copy the digits, then clear trailing nines while carrying one leftward. Increment the first digit below nine; if every digit was nine, insert a leading one.",
+  "timeComplexity": "O(n): copying n digits is required even when the carry stops immediately; the carry scan and possible leading insertion are also at most linear.",
+  "spaceComplexity": "O(n+1) for the returned copied digits; O(1) scalar carry state.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "Adding one affects only the suffix through the first digit below nine. Every carried position represents ten units of its place, which is exactly one unit of the place to its left; replacing ten with zero and carrying therefore preserves the value of the desired sum. When the carry stops, all digits are valid and the result is the original number plus one. If it passes the first position, the original number was all nines, so the result is one followed by n zeros.",
+  "walkthrough": "For [7,9,9], clear the last 9, clear the next 9, then increment 7. The copied digits become [8,0,0].",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        7,
+        9,
+        9
+      ]
+    ],
+    "expected": [
+      8,
+      0,
+      0
+    ]
+  },
+  "edgeCases": [
+    "Input is a nonempty canonical decimal digit sequence; zero is [0].",
+    "[9,9] grows to [1,0,0].",
+    "Without a trailing nine, only the final digit increases.",
+    "This implementation returns a copy and leaves the caller’s digits unchanged."
+  ]
 }

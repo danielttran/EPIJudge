@@ -1,6 +1,48 @@
 {
-  "explanation": "Compute all-pairs highway distances using Floyd\u2013Warshall. For each proposal, sum pairwise savings obtained by traversing that edge in either direction. Keep the first proposal achieving the greatest savings.",
-  "timeComplexity": "O(n\u00b3+pn\u00b2+h), for p proposals and h highways",
-  "spaceComplexity": "O(n\u00b2)",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/RoadNetwork.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "explanation": "Use Floyd–Warshall to compute original shortest paths, then evaluate every proposed edge in both directions for each ordered city pair. Sum nonnegative improvements and retain the first proposal with maximal savings.",
+  "timeComplexity": "O(h+n³+p·n²): initialize h roads, run three nested Floyd–Warshall loops, then score each of p proposals on O(n²) city pairs.",
+  "spaceComplexity": "O(n²) for the all-pairs distance matrix; proposal scoring keeps only running savings and the best proposal.",
+  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/RoadNetwork.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/).",
+  "correctness": "Floyd–Warshall establishes the shortest existing distance between every pair. Any shortest path improved by one new nonnegative undirected edge can use that edge at most once, in either direction; testing those two possibilities therefore finds its new distance. Summing pair savings compares proposals correctly, and updating only on a strict improvement preserves the first proposal on ties.",
+  "walkthrough": "For roads (0,1,8),(1,2,8), unordered original distances sum to 32. Proposal (0,2,3) saves 13, while (0,1,4) saves 8. This implementation counts both pair directions, obtaining 26 and 16; the maximizing proposal remains (0,2,3).",
+  "edgeCases": [
+    "An empty proposal list returns (−1,−1,0).",
+    "A proposal need not improve any path; the first zero-saving proposal wins a tie.",
+    "Nonnegative road lengths ensure an improved simple shortest path uses the proposed edge at most once.",
+    "Finite-distance scoring assumes the original road network is connected; disconnected-network objectives need an explicit infinity convention."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          0,
+          1,
+          8
+        ],
+        [
+          1,
+          2,
+          8
+        ]
+      ],
+      [
+        [
+          0,
+          2,
+          3
+        ],
+        [
+          0,
+          1,
+          4
+        ]
+      ],
+      3
+    ],
+    "expected": [
+      0,
+      2,
+      3
+    ]
+  }
 }

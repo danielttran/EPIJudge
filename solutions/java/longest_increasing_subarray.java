@@ -20,6 +20,7 @@ public class LongestIncreasingSubarray {
 
   public static Subarray findLongestIncreasingSubarray(List<Integer> A) {
 
+    if (A.isEmpty()) return new Subarray(0, -1);
     int maxLength = 1;
     Subarray result = new Subarray(0, 0);
     int i = 0;

@@ -1,6 +1,26 @@
 {
-  "explanation": "Draw a uniform real number in [0,1), then subtract consecutive probability masses until the draw lies in one value’s interval. A persistent random engine avoids reseeding each draw. The wrapper retains one million trials, the original five-standard-deviation bounds and retry behavior.",
-  "timeComplexity": "O(n) worst-case time per weighted draw; one million statistical draws per wrapper trial.",
-  "spaceComplexity": "O(1) algorithm workspace, plus O(n) wrapper frequency counts.",
-  "attribution": "Original C++ implementation and explanation authored for EPI Practice from the displayed weighted-random contract and repository-authored C# algorithm. The existing million-draw statistical protocol and 5σ acceptance bounds are preserved. No upstream reference implementation was modified."
+  "explanation": "Draw a uniform number in [0,1), then subtract consecutive probabilities until the remainder becomes negative. Return the associated value; the final value owns the remaining tail.",
+  "timeComplexity": "O(n) per call: at most n−1 probability subtractions. The bound includes all probability processing performed anew on each draw, rather than assuming precomputed endpoints.",
+  "spaceComplexity": "O(1) auxiliary space. The linear scan keeps only a draw and running threshold; binary-search variants retain n prefix endpoints.",
+  "attribution": "Original C++ implementation and explanation authored for EPI Practice from the displayed weighted-random contract and repository-authored C# algorithm. The existing million-draw statistical protocol and 5σ acceptance bounds are preserved. No upstream reference implementation was modified.",
+  "correctness": "Before subtracting probability i, the remainder equals the draw minus the earlier probabilities. A negative result means the draw lies inside interval i; otherwise that interval is skipped. Thus each interval has its specified probability mass.",
+  "walkthrough": "For values [4,9] with probabilities [0.25,0.75], draws below 0.25 return 4 and draws from 0.25 onward return 9. A draw of 0.6 therefore returns 9; repeated draws select 9 three times as often on average. JSON arguments are [values,probabilities]. Observed true validates repeated samples; the callable returns one value. Finite samples do not prove exact randomness.",
+  "edgeCases": [
+    "Zero-probability entries receive no interval.",
+    "One value is always selected when its probability is one.",
+    "The validator checks repeated samples rather than one fixed output."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        4,
+        9
+      ],
+      [
+        0.25,
+        0.75
+      ]
+    ],
+    "expected": true
+  }
 }

@@ -1,6 +1,20 @@
 {
-  "explanation": "Although the public function name is historical, this solution uses KMP. A prefix table tells how much of the pattern remains matched after a mismatch, avoiding repeated scans; return the first completed match.",
-  "timeComplexity": "O(n+m) for text and pattern lengths",
-  "spaceComplexity": "O(m) prefix table",
-  "attribution": "Original Python implementation authored for EPI Practice from its displayed contract and independently authored C# solution; no upstream reference source adapted."
+  "explanation": "Despite the historical RabinKarp name, this implementation uses KMP. Build a prefix table giving the longest proper border at every pattern position. On a mismatch, jump to a shorter known border instead of restarting the text scan. Python indexes Unicode code points directly; a non-BMP character before a match counts as one here but as two UTF-16 units in the other displayed implementations.",
+  "timeComplexity": "O(n+m): prefix construction and text scanning advance their main index once; each fallback decreases matched, so total fallback steps are linear. KMP fallback decreases a prefix length previously increased by scans; rolling hashes cost constant time per window plus exact verification when hashes agree.",
+  "spaceComplexity": "O(m) auxiliary prefix-table entries for a pattern of m Unicode code points, plus constant loop state; the text is not copied.",
+  "attribution": "Original Python implementation authored for EPI Practice from its displayed contract and independently authored C# solution; no upstream reference source adapted.",
+  "correctness": "The matched length is the longest pattern prefix equal to a suffix of text already scanned. A mismatch can only preserve a border of that prefix, and prefix-table jumps enumerate those possible shorter borders without skipping a match. Reaching the pattern length proves equality, and scanning text left to right yields the first match.",
+  "walkthrough": "For text cedar-ridge and pattern ridge, prefix-table entries are all zero. The letters through cedar- leave no matched prefix. At index 6, r starts a match; i,d,g,e extend it to five characters by index 10. Return 10-5+1=6.",
+  "edgeCases": [
+    "An empty pattern matches at index 0.",
+    "A pattern longer than the text cannot match.",
+    "Repeated matches return the first index; equal hashes alone never establish equality."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      "cedar-ridge",
+      "ridge"
+    ],
+    "expected": 6
+  }
 }

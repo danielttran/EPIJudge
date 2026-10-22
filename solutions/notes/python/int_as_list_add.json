@@ -1,6 +1,30 @@
 {
   "explanation": "Walk both least-significant-digit-first lists together. Emit each column sum modulo ten and carry its quotient to the next column. Continue for a final carry after both lists end.",
-  "timeComplexity": "O(max(m,n)) time.",
-  "spaceComplexity": "O(1) auxiliary space, plus O(max(m,n)) new result nodes.",
-  "attribution": "Unmodified reference from epi_judge_python_solutions/int_as_list_add.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice."
+  "timeComplexity": "O(max(m,n)) time. Each iteration consumes at least one input digit or the final carry.",
+  "spaceComplexity": "O(1) auxiliary space, plus O(max(m,n)) new result nodes. Only carry and node pointers are auxiliary; one output node is created per result digit.",
+  "attribution": "Unmodified reference from epi_judge_python_solutions/int_as_list_add.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice.",
+  "correctness": "At each iteration, the output already contains the correct lower decimal places and carry is the quotient passed to the current column. Adding the next digits plus carry gives the current output digit modulo ten and the next carry. The loop continues until no digits or carry remain.",
+  "walkthrough": "[8,6] represents 68 and [7,5] represents 57. The first column gives 8+7=15: emit 5, carry 1. The next gives 6+5+1=12: emit 2, carry 1. Emit the final 1, returning [5,2,1] for 125.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        8,
+        6
+      ],
+      [
+        7,
+        5
+      ]
+    ],
+    "expected": [
+      5,
+      2,
+      1
+    ]
+  },
+  "edgeCases": [
+    "The inputs may have different lengths.",
+    "A carry can create a new final node.",
+    "The digit order is least significant first; this differs from the array multiplication problem."
+  ]
 }

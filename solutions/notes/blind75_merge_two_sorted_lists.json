@@ -1,10 +1,10 @@
 {
   "explanation": "Repeatedly link the smaller current node onto the result, then append the remaining suffix. A temporary dummy head simplifies linking and is excluded from the returned list.",
-  "timeComplexity": "O(a + b) time for list lengths a and b.",
-  "spaceComplexity": "O(1) auxiliary space; original nodes are reused.",
+  "timeComplexity": "O(a + b) time for list lengths a and b. Each selected node advances one input head, so no more than a+b nodes are processed.",
+  "spaceComplexity": "O(1) auxiliary space; original nodes are reused. The dummy and tail references plus input heads are constant; output nodes are reused.",
   "attribution": "Original EPI Practice C# implementation, reusing and refining the repository-authored Blind75 algorithm fixtures. Collection membership follows Crackr; no external solution service is used.",
   "correctness": "At every step, each input head is its list’s smallest unmerged node. The smaller head is therefore the next globally smallest value. Linking it extends a sorted result containing exactly the consumed original nodes. Once a list is exhausted, the other sorted suffix can be appended directly.",
-  "walkthrough": "Merge [-2,4] and [0,3,8]. Choose -2, then 0, then 3, then 4; append the remaining 8. Return the chain [-2,0,3,4,8] made from the original five nodes.",
+  "walkthrough": "Merge [-2,4] and [0,3,8]. Choose -2, then 0, then 3, then 4; append the remaining 8. Return the chain [-2,0,3,4,8] made from the original five nodes. Expected serializes the returned list; the harness separately checks that every output node is an original node with its original value.",
   "edgeCases": [
     "Either input may be empty.",
     "Equal values from different lists are both retained.",
@@ -12,9 +12,22 @@
   ],
   "walkthroughCase": {
     "arguments": [
-      [-2, 4],
-      [0, 3, 8]
+      [
+        -2,
+        4
+      ],
+      [
+        0,
+        3,
+        8
+      ]
     ],
-    "expected": [-2, 0, 3, 4, 8]
+    "expected": [
+      -2,
+      0,
+      3,
+      4,
+      8
+    ]
   }
 }

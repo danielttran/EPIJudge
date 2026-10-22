@@ -1,6 +1,41 @@
 {
-  "explanation": "For the perfect tree, link each left child to its sibling and each right child to the next parent\u2019s left child. The already completed parent-level Next chain allows walking a level without a queue.",
-  "timeComplexity": "O(n) time.",
-  "spaceComplexity": "O(1) auxiliary space.",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "explanation": "For the perfect tree, link each left child to its sibling and each right child to the next parent’s left child. The already completed parent-level Next chain allows walking a level without a queue.",
+  "timeComplexity": "O(n) time. Each nonleaf node performs two link assignments while the already-built Next chain replaces a queue.",
+  "spaceComplexity": "O(1) auxiliary space. Completed Next links provide the level traversal; only level and node cursors are kept.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "Before processing a level, its Next links already form the correct left-to-right chain, starting with the root’s null Next. In a perfect tree, each left child’s next neighbor is its sibling, and each right child’s next neighbor is the following parent’s left child or null. Applying these assignments across the parent chain constructs the entire next-level chain. Induction establishes every level without extra queue storage.",
+  "walkthrough": "For perfect tree [16, 7, 25, 2, 11, 20, 30], set root Next to null. Link 7 → 25 → null. On the leaf level, sibling links give 2 → 11 and 20 → 30, while the cross-parent link gives 11 → 20. The complete chain is 2 → 11 → 20 → 30 → null. The adapter returns the verified levels [[16], [7, 25], [2, 11, 20, 30]]. JSON arguments are [tree]. Observed output is the verified list of levels reached by Next links; the callable itself returns void/None.",
+  "edgeCases": [
+    "Null and one-node trees need no child links.",
+    "The final node of every level must point to null.",
+    "The constant-space construction relies on the specified perfect-tree precondition."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        16,
+        7,
+        25,
+        2,
+        11,
+        20,
+        30
+      ]
+    ],
+    "expected": [
+      [
+        16
+      ],
+      [
+        7,
+        25
+      ],
+      [
+        2,
+        11,
+        20,
+        30
+      ]
+    ]
+  }
 }

@@ -1,6 +1,25 @@
 {
-  "explanation": "Maintain a candidate and cancellation count. Equal entries reinforce the candidate; unequal entries cancel a vote. The guaranteed strict majority survives all such cancellations.",
-  "timeComplexity": "O(n) comparisons, plus string comparison costs",
-  "spaceComplexity": "O(1)",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/MajorityElement.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "explanation": "Cancel pairs of unequal entries. Because one string occurs more than half the time, this cancellation cannot remove all of its occurrences; the surviving candidate is the promised majority.",
+  "timeComplexity": "O(n) Each entry makes one candidate/balance update. The entry-count bound treats word hashing/comparison as constant; include examined character lengths when words are unbounded.",
+  "spaceComplexity": "O(1) Only one candidate reference and one counter are retained, excluding string payload.",
+  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/MajorityElement.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/).",
+  "correctness": "Removing pairs of unequal entries cannot eliminate a strict majority: each removed majority occurrence is paired with a nonmajority occurrence. The balance counter performs that cancellation online, so the final candidate must be the guaranteed majority.",
+  "walkthrough": "For [\"oak\",\"pine\",\"oak\",\"elm\",\"oak\"], the first oak cancels pine and the next oak cancels elm. The final oak survives; it also occurs in 3 of the 5 entries.",
+  "edgeCases": [
+    "The contract guarantees a strict majority exists.",
+    "A candidate may change after the balance reaches zero.",
+    "A single-entry stream returns that entry."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        "oak",
+        "pine",
+        "oak",
+        "elm",
+        "oak"
+      ]
+    ],
+    "expected": "oak"
+  }
 }

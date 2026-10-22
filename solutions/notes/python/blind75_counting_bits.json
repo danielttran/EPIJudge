@@ -1,6 +1,27 @@
 {
-  "explanation": "Compute each integer’s built-in population count from zero through n and collect the results in that order.",
-  "timeComplexity": "O(n) fixed-width population-count calls over this collection’s 32-bit domain.",
-  "spaceComplexity": "O(1) extra workspace excluding O(n) output.",
-  "attribution": "Original repository-authored Blind75 Python algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used."
+  "explanation": "Build the output with a list comprehension calling bit_count() independently for every integer from zero through n. This code uses the built-in population count rather than a recurrence between output entries.",
+  "timeComplexity": "O(n+1) under the n≤100000 contract: every integer uses a bounded number of machine limbs, so each bit_count is constant time.",
+  "spaceComplexity": "O(n+1) output space and O(1) auxiliary space for the comprehension’s current integer and count.",
+  "attribution": "Original repository-authored Blind75 Python algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used.",
+  "correctness": "The comprehension visits each integer i in 0..n exactly once and places i.bit_count() at position i. Each value is the number of set bits in that nonnegative integer, so every required output entry is correct.",
+  "walkthrough": "For n=6, the comprehension counts bits in 0,1,10,11,100,101,110. Those counts are 0,1,1,2,1,2,2, producing [0,1,1,2,1,2,2].",
+  "edgeCases": [
+    "The output includes both zero and n.",
+    "n=0 returns [0].",
+    "Every population count is computed independently; no previous result is read."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      6
+    ],
+    "expected": [
+      0,
+      1,
+      1,
+      2,
+      1,
+      2,
+      2
+    ]
+  }
 }

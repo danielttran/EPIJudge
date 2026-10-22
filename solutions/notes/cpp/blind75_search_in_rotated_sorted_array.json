@@ -1,6 +1,26 @@
 {
   "explanation": "At each step one half is sorted. Check whether the target belongs to that half's value range, and discard the other half accordingly.",
-  "timeComplexity": "O(log n) time for n distinct values.",
-  "spaceComplexity": "O(1) auxiliary space.",
-  "attribution": "Original repository-authored Blind75 C++ algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used."
+  "timeComplexity": "O(log n) time for n distinct values. Each iteration either returns a match or discards one half of the candidate interval.",
+  "spaceComplexity": "O(1) auxiliary space. The search uses only left, right, and middle indices.",
+  "attribution": "Original repository-authored Blind75 C++ algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used.",
+  "correctness": "With distinct values, at least one half around mid is sorted. Its endpoint range tells whether the target can occur in that half; discarding a half that excludes the target cannot remove a valid match. Repeating until equality or an empty interval therefore returns the target’s index exactly when present.",
+  "walkthrough": "For [11,14,2,5,8] and target 14, the first middle value is 2. The sorted right half 2,5,8 excludes 14, so search left. That remaining half finds 14 at index 1; return 1.",
+  "edgeCases": [
+    "A missing target returns -1.",
+    "Distinct values are required for choosing the sorted half this way.",
+    "An unrotated input works as ordinary binary search."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        11,
+        14,
+        2,
+        5,
+        8
+      ],
+      14
+    ],
+    "expected": 1
+  }
 }

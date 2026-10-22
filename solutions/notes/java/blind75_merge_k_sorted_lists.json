@@ -1,6 +1,40 @@
 {
-  "explanation": "Gather every original node from every input list, sort the references by value, and relink them as one sorted terminated chain. Original nodes and values are reused rather than copied.",
-  "timeComplexity": "O(k + N log(N+1)) time for k lists and N total nodes.",
-  "spaceComplexity": "O(N) auxiliary reference/sort storage.",
-  "attribution": "Original repository-authored Blind75 Java algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used."
+  "explanation": "Collect references to all original nodes, sort those references by node value, and relink adjacent sorted entries. Set the final next link to null. This implementation uses a full sort rather than merging list frontiers.",
+  "timeComplexity": "O(k + N log(N+1)) for k input lists and N total nodes. Scanning heads and collecting nodes costs O(k+N), sorting dominates, and relinking takes O(N).",
+  "spaceComplexity": "O(N) auxiliary references and typical sorting workspace for N nodes; the output reuses original nodes.",
+  "attribution": "Original repository-authored Blind75 Java algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used.",
+  "correctness": "Disjoint inputs contribute every original node exactly once. Sorting all references gives nondecreasing values without altering any node value. Relinking adjacent entries creates one acyclic chain containing exactly the original nodes, so it satisfies sortedness and identity preservation.",
+  "walkthrough": "For [1,7],[2,5],[],[3,9], collect references in order [1,7,2,5,3,9]. Sorting gives [1,2,3,5,7,9]. Link each original node to the following reference and the last to null; return the original node1. Expected serializes the returned list; the harness separately checks that every output node is an original node with its original value.",
+  "edgeCases": [
+    "The collection of lists may be empty or contain empty lists.",
+    "Duplicate values are retained as separate original nodes.",
+    "Only the next node from each source needs to be in the priority queue."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          1,
+          7
+        ],
+        [
+          2,
+          5
+        ],
+        [],
+        [
+          3,
+          9
+        ]
+      ]
+    ],
+    "expected": [
+      1,
+      2,
+      3,
+      5,
+      7,
+      9
+    ]
+  }
 }

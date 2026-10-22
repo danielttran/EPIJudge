@@ -1,6 +1,21 @@
 {
-  "explanation": "Reverse the full character array, then reverse every maximal nonspace run. This restores each word\u2019s spelling while reversing word order and the order of intervening space runs.",
-  "timeComplexity": "O(n)",
-  "spaceComplexity": "O(1) for the character-array algorithm; the wrapper converts the string",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/ReverseWords.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "explanation": "Reverse all characters, then reverse each maximal run of non-space characters. Word spellings are restored while word order, space-run order, and leading/trailing spaces are reversed.",
+  "timeComplexity": "O(n). One full reversal and reversals of disjoint word runs touch each character a constant number of times.",
+  "spaceComplexity": "O(1) auxiliary space inside the callable, which reverses the supplied mutable character buffer in place. The wrapper creates an O(n) buffer/string representation for observation. Mutable native callers supply the buffer; immutable-string variants allocate a character copy and output.",
+  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/ReverseWords.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/).",
+  "correctness": "Reversing the entire character array reverses the order of all word and space runs, but also reverses each word’s characters. Reversing each non-space run afterward restores its spelling without changing the run order or any spaces. Thus word order and intervening space-run order are reversed exactly as required.",
+  "walkthrough": "For \"red  fox blue \", reversing all characters gives \" eulb xof  der\". Reversing each non-space run yields \" blue fox  red\". The original trailing space becomes leading, and the double-space run remains doubled.",
+  "edgeCases": [
+    "Only literal spaces separate words in this contract.",
+    "Repeated spaces are preserved rather than collapsed.",
+    "Leading and trailing space runs exchange positions.",
+    "Empty strings and strings consisting only of spaces remain valid.",
+    "Character positions in this implementation are UTF-16 code units, not user-perceived grapheme clusters."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      "red  fox blue "
+    ],
+    "expected": " blue fox  red"
+  }
 }

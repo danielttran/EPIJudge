@@ -26,7 +26,6 @@ public sealed class SolutionCatalogTests
             Assert.False(string.IsNullOrWhiteSpace(solution.TimeComplexity));
             Assert.False(string.IsNullOrWhiteSpace(solution.SpaceComplexity));
             Assert.False(string.IsNullOrWhiteSpace(solution.Attribution));
-            if(language=="csharp")
             {
                 Assert.False(string.IsNullOrWhiteSpace(solution.Correctness));
                 Assert.False(string.IsNullOrWhiteSpace(solution.Walkthrough));
@@ -36,6 +35,28 @@ public sealed class SolutionCatalogTests
         }
         Assert.Null(solutions.Find("unknown"));
         Assert.Null(solutions.Find("reading-parent-pointer-lca"));
+    }
+
+    [Theory]
+    [InlineData("csharp")]
+    [InlineData("javascript")]
+    [InlineData("python")]
+    [InlineData("cpp")]
+    [InlineData("java")]
+    public void EveryLanguageRequiresReasoningBeyondAnApproach(string language)
+    {
+        var entries = Entries();
+        var index = Array.FindIndex(entries, entry => entry.Language == language);
+        foreach (var invalid in new[] {
+            entries[index] with { Correctness = " " },
+            entries[index] with { Walkthrough = null },
+            entries[index] with { EdgeCases = [] }
+        })
+        {
+            var changed = entries.ToArray();
+            changed[index] = invalid;
+            Assert.Throws<InvalidOperationException>(() => SolutionCatalog.Validate(problems, changed));
+        }
     }
 
     [Fact]

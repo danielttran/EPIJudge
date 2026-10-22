@@ -1,6 +1,34 @@
 {
-  "explanation": "Memoize the best value for an item prefix and remaining capacity. Compare excluding the final item with including it once and moving to the preceding prefix.",
-  "timeComplexity": "O(nC) states for n items and capacity C",
-  "spaceComplexity": "O(nC+n) cache and recursion",
-  "attribution": "Unmodified reference from epi_judge_python_solutions/knapsack.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice."
+  "explanation": "Memoize the best value obtainable from items 0 through k with a given remaining capacity. Compare skipping item k with taking it, if it fits, then recurse only on earlier items.",
+  "timeComplexity": "O(n(C+1)) upper bound: n item stages and C+1 capacities, with two transitions per state. Every item-capacity state compares taking and skipping; descending one-row updates use O(C) rather than O(nC) storage.",
+  "spaceComplexity": "O(n(C+1)) memo storage plus O(n) recursion. The one-row update keeps capacity+1 values; native recursion stores item/capacity states and its call chain.",
+  "attribution": "Unmodified reference from epi_judge_python_solutions/knapsack.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice.",
+  "correctness": "Every feasible subset either excludes item k or includes it once. Removing an included item leaves exactly the residual-capacity problem on earlier items. The maximum of these exhaustive alternatives is optimal, and reducing k in both branches prevents reuse.",
+  "walkthrough": "For items (weight,value) [(2,7),(3,9),(4,12)] and capacity 5, choosing the first two gives weight 5 and value 16. The last item alone gives only 12, so the answer remains 16. JSON arguments are [items,capacity], with each item [weight,value]. C#/JavaScript use pair records and native wrappers construct Item records.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          2,
+          7
+        ],
+        [
+          3,
+          9
+        ],
+        [
+          4,
+          12
+        ]
+      ],
+      5
+    ],
+    "expected": 16
+  },
+  "edgeCases": [
+    "An item is selected at most once, including a zero-weight item.",
+    "Capacity zero permits zero-weight items but no positive-weight item.",
+    "Skipping all items allows value zero even when values are negative.",
+    "Item records are (weight,value), not the reverse."
+  ]
 }

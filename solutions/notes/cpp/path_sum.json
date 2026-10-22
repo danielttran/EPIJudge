@@ -1,6 +1,28 @@
 {
-  "explanation": "Carry the remaining target down each root-to-leaf path in a signed 64-bit integer. Subtract the current value, accept a leaf exactly when the remainder is zero, and reject a missing subtree. Wide intermediate arithmetic prevents signed 32-bit wraparound from creating a false path match.",
-  "timeComplexity": "O(n) worst-case time for n tree nodes.",
-  "spaceComplexity": "O(h) recursive traversal space for tree height h.",
-  "attribution": "Original EPI Practice C++ implementation, independently authored from the public EPI problem contract and the repository-authored C# algorithm. Uses the unchanged local EPI Judge serialization and test framework APIs; upstream reference sources are not modified."
+  "explanation": "Subtract each visited value from the target. Only a leaf with zero remaining weight completes a root-to-leaf path. A long remainder prevents intermediate sums from overflowing 32 bits.",
+  "timeComplexity": "O(n) in the worst case. Each node is explored at most once; early success can shorten the search, and recursion retains at most h frames.",
+  "spaceComplexity": "O(h) recursion stack for tree height h. Each active frame holds a node and residual target; no complete path list is kept.",
+  "attribution": "Original EPI Practice C++ implementation, independently authored from the public EPI problem contract and the repository-authored C# algorithm. Uses the unchanged local EPI Judge serialization and test framework APIs; upstream reference sources are not modified.",
+  "correctness": "At each node, the remainder equals the target minus all values on the path through that node. A root-to-leaf path therefore has the target sum exactly when a leaf has remainder zero. Recursing into both children explores every possible root-to-leaf path; using long avoids false matches from 32-bit wraparound.",
+  "walkthrough": "Use tree [7,4,3,null,2,5] and target 13. Visiting 7 leaves remainder 6; its left child 4 leaves 2; that node’s right leaf 2 leaves 0. The path 7→4→2 therefore proves the result true. The walkthroughCase uses the judge’s JSON input format and expected observation.",
+  "edgeCases": [
+    "An empty tree has no root-to-leaf path and returns false.",
+    "A nonleaf with remainder zero is not sufficient.",
+    "Negative values are handled by subtraction without pruning.",
+    "Intermediate sums may exceed int range even when the target fits."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        7,
+        4,
+        3,
+        null,
+        2,
+        5
+      ],
+      13
+    ],
+    "expected": true
+  }
 }

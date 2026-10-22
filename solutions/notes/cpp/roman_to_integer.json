@@ -1,6 +1,20 @@
 {
-  "explanation": "Scan from right to left. Subtract a symbol when its value is smaller than the symbol immediately to its right, and otherwise add it. The input is already a valid Roman numeral under this contract.",
-  "timeComplexity": "O(n) time.",
-  "spaceComplexity": "O(1) auxiliary space for the fixed symbol table.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/roman_to_integer.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "Initialize the sum with the final symbol, then scan right to left. Subtract a symbol when its immediate successor has greater value; otherwise add it. Return zero for empty text. This computes the specified local rule without validating canonical Roman notation.",
+  "timeComplexity": "O(n). Each symbol contributes once after one comparison with its immediate successor.",
+  "spaceComplexity": "O(1). The seven-symbol table and total have constant size.",
+  "attribution": "Original reference source: epi_judge_cpp_solutions/roman_to_integer.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice. The displayed copy includes local contract or boundary corrections; the upstream reference file is preserved.",
+  "correctness": "Each position contributes exactly the amount prescribed by the contract: negative when its value is smaller than the immediately following value, positive otherwise. Summing these independent contributions directly implements the rule; no canonical-numeral validation is introduced.",
+  "walkthrough": "For \"MIX\", M contributes 1000. I is smaller than the following X and contributes -1; X contributes 10. The total is 1000-1+10=1009.",
+  "edgeCases": [
+    "The empty string sums to zero.",
+    "The final symbol always contributes positively.",
+    "Noncanonical spellings still follow the immediate-successor subtraction rule.",
+    "Only I,V,X,L,C,D,M are valid symbols."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      "MIX"
+    ],
+    "expected": 1009
+  }
 }

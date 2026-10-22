@@ -1,6 +1,25 @@
 {
-  "explanation": "Represent only odd candidates after adding prime two. For each unmarked odd candidate, append it and mark its odd multiples starting at its square.",
-  "timeComplexity": "O(n log log n)",
-  "spaceComplexity": "O(n), including the odd-candidate sieve and output",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/PrimeSieve.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "explanation": "Emit 2 separately and store flags only for odd candidates 2i+3. For each unmarked candidate p, emit p and mark its odd multiples beginning at p²; in compressed indices these advance by p.",
+  "timeComplexity": "O(n log log n) for n≥3: initialization and the candidate scan cost O(n), while marking over primes costs O(n Σ(1/p)) = O(n log log n). Smaller inputs take constant time.",
+  "spaceComplexity": "O(n) including about n/2 flags for odd candidates and the returned primes. Compressing odd candidates improves the constant, not the asymptotic bound.",
+  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/PrimeSieve.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/).",
+  "correctness": "Every composite integer has a prime factor no larger than its square root. Before a candidate p is reached, every composite with a smaller prime factor has therefore been marked; an unmarked p is prime. Multiples below p² have a smaller prime factor and need no new marking. Marking from p² excludes every remaining composite divisible by p. All even numbers except 2 are composite, so omitting their flags loses no prime. Index i represents 2i+3; increasing the index by p increases the candidate by 2p, visiting exactly the odd multiples.",
+  "walkthrough": "For n=12, emit 2. The flags represent 3,5,7,9,11. Candidate 3 is unmarked, so emit it and mark 9, its first composite odd multiple. Candidates 5,7 and 11 remain unmarked and are emitted; their squares exceed 12. Return [2,3,5,7,11].",
+  "walkthroughCase": {
+    "arguments": [
+      12
+    ],
+    "expected": [
+      2,
+      3,
+      5,
+      7,
+      11
+    ]
+  },
+  "edgeCases": [
+    "n<2 yields no primes.",
+    "The upper bound is inclusive: n=2 returns [2].",
+    "Begin marking at p², not p, or a prime would eliminate itself."
+  ]
 }

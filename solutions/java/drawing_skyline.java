@@ -49,6 +49,7 @@ public class DrawingSkyline {
   @EpiTest(testDataFile = "drawing_skyline.tsv")
 
   public static List<Rect> drawingSkylines(List<Rect> buildings) {
+  if (buildings.isEmpty()) return new ArrayList<>();
 
     int minLeft = Integer.MAX_VALUE, maxRight = Integer.MIN_VALUE;
     for (Rect building : buildings) {

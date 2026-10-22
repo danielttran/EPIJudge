@@ -1,6 +1,39 @@
 {
-  "explanation": "Sort a copy of the full array with the standard comparison sort. This handles every monotonic-run arrangement and leaves the supplied array unchanged.",
-  "timeComplexity": "O(n log(n+1)) time.",
-  "spaceComplexity": "O(n) copied result space and O(log(n+1)) sorting stack.",
-  "attribution": "Original C++ implementation and explanation authored for EPI Practice from the displayed problem contract and repository-authored C# algorithms. Uses the existing local native test-framework API. No upstream reference implementation was altered or translated."
+  "explanation": "Copy the input and use the standard comparison sort. This implementation returns the correct sorted multiset but does not exploit a small number of monotone runs.",
+  "timeComplexity": "O(n log(n+1)) comparisons from std::sort; this displayed implementation does not exploit r monotone runs.",
+  "spaceComplexity": "O(n) returned copied array plus O(log(n+1)) typical sorting stack.",
+  "attribution": "Original C++ implementation and explanation authored for EPI Practice from the displayed problem contract and repository-authored C# algorithms. Uses the existing local native test-framework API. No upstream reference implementation was altered or translated.",
+  "correctness": "The copy preserves every occurrence. Sorting rearranges that multiset into nondecreasing order, exactly the required output. It makes no assumption about run boundaries, so equal neighbors and arbitrary direction changes are handled.",
+  "walkthrough": "Copy [2,8,13,10,7,4,9,15,12]. Comparison sorting reorders the copy into [2,4,7,8,9,10,12,13,15], preserving all nine values and leaving the caller’s array unchanged.",
+  "edgeCases": [
+    "An entirely increasing or decreasing array forms one sorted run after normalization.",
+    "Equal adjacent values can remain in either monotone direction without losing duplicates.",
+    "Empty and singleton arrays require no heap merging."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        2,
+        8,
+        13,
+        10,
+        7,
+        4,
+        9,
+        15,
+        12
+      ]
+    ],
+    "expected": [
+      2,
+      4,
+      7,
+      8,
+      9,
+      10,
+      12,
+      13,
+      15
+    ]
+  }
 }

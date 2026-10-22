@@ -1,6 +1,28 @@
 {
-  "explanation": "When the current key exceeds the target, remember it and search left for a smaller qualifying key. Otherwise search right. Return the last remembered node, if any.",
-  "timeComplexity": "O(h)",
-  "spaceComplexity": "O(1) traversal space",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/SearchFirstGreaterValueInBst.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "explanation": "When the current key exceeds k, remember it and search left for a smaller qualifying key. Otherwise all keys in its left subtree are too small, so move right. The callable returns the original node reference; the wrapper displays its data.",
+  "timeComplexity": "O(h) for tree height h. The loop descends one edge per comparison and keeps only a current node and candidate.",
+  "spaceComplexity": "O(1). Only the current node and the best candidate are retained.",
+  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/SearchFirstGreaterValueInBst.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/).",
+  "correctness": "candidate is the smallest qualifying key seen on the search path. When a node exceeds k, only its left subtree can improve that candidate; when it does not, neither it nor its left subtree can qualify, so move right. The BST property rules out every skipped key, leaving the smallest greater key or -1.",
+  "walkthrough": "For tree [9,4,15,2,6,12,19] and k=11, move right from 9. Record 15 and search left; record 12 and find no smaller qualifying left child. Return 12. The walkthroughCase uses the judge’s JSON input format and expected observation.",
+  "edgeCases": [
+    "Equality with k does not qualify.",
+    "No greater key returns null/None, displayed as −1 by the wrapper.",
+    "The smallest greater key need not be a leaf."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        9,
+        4,
+        15,
+        2,
+        6,
+        12,
+        19
+      ],
+      11
+    ],
+    "expected": 12
+  }
 }

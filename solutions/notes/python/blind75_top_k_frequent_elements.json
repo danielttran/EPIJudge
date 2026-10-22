@@ -1,6 +1,30 @@
 {
-  "explanation": "Count values with Counter and select its k most common keys. Counting preserves every occurrence and selection returns the uniquely defined top-k membership.",
-  "timeComplexity": "O(n + u log(k+1)) expected upper bound for n values and u distinct values; selecting every key may sort all u keys.",
-  "spaceComplexity": "O(u + k) frequency/selection/output space.",
-  "attribution": "Original repository-authored Blind75 Python algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used."
+  "explanation": "Count occurrences with Counter, then ask most_common(k) for the k greatest frequencies. It selects by frequency using a bounded heap when k is smaller than the number of distinct values, with special cases for one result or all results.",
+  "timeComplexity": "O(n + u log(k+1)) expected time for n inputs and u distinct values. Counter scans n values; selecting k frequencies scans u records and maintains at most k heap entries, then orders the selected entries. When k=u, sorting all u records has the same bound.",
+  "spaceComplexity": "O(u+k) space for the Counter and selection/output records.",
+  "attribution": "Original repository-authored Blind75 Python algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used.",
+  "correctness": "Counter records exactly each value’s multiplicity. most_common(k) retains the k greatest counts; a bounded min-heap discards only a count no larger than those it retains. The strict selection boundary fixes membership even though output ordering within a frequency tie is unrestricted.",
+  "walkthrough": "For [4,4,4,7,7,9] and k=2, frequencies are 4→3,7→2,9→1. Descending frequency order is 4,7,9, so the top two values are [4,7], in either accepted order.",
+  "edgeCases": [
+    "k may equal the number of distinct values.",
+    "Output order is unrestricted.",
+    "The kth frequency must exceed the next frequency when another value exists."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        4,
+        4,
+        4,
+        7,
+        7,
+        9
+      ],
+      2
+    ],
+    "expected": [
+      4,
+      7
+    ]
+  }
 }

@@ -1,15 +1,16 @@
 {
   "explanation": "Starting after the designated opener, count nested openers. A closer at nesting depth zero is its matching closer.",
-  "correctness": "The depth tracks unmatched parentheses from the designated opener. A closer belongs to that opener exactly when all nested pairs have closed; the scan returns that position before considering later unrelated pairs.",
-  "walkthrough": "In x(ab(cd)e)y, the opener at index 1 starts depth 1. The opener at index 4 increases depth to 2, its closer at index 7 reduces it to 1, and the closer at index 9 reduces it to 0. Return index 9 rather than the first closing parenthesis.",
+  "correctness": "Depth counts unmatched nested openers strictly after the designated opener. A closer with depth>0 belongs to a nested pair and reduces depth. A closer encountered at depth zero closes the designated opener, so returning immediately finds exactly its match.",
+  "walkthrough": "In x(ab(cd)e)y with opening index 1, start scanning index 2 with nested depth 0. The opener at index 4 raises depth to 1; the closer at index 7 lowers it to 0. The closer at index 9 arrives while depth is zero, so return 9.",
   "edgeCases": [
     "Immediately adjacent pair",
     "deeply nested pairs",
     "irrelevant characters",
-    "later unrelated pairs."
+    "later unrelated pairs.",
+    "An adjacent () returns the next index; nested pairs must close before the designated pair. The bank guarantees that a matching closer exists."
   ],
-  "timeComplexity": "O(n) time.",
-  "spaceComplexity": "O(1) auxiliary space.",
+  "timeComplexity": "O(n) worst-case time: scan forward from the supplied opener until its match, visiting each intervening character once.",
+  "spaceComplexity": "O(1) auxiliary space: an integer depth replaces a stack because only one bracket type matters.",
   "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
   "walkthroughCase": {
     "arguments": [

@@ -1,6 +1,25 @@
 {
-  "explanation": "Keep the best run length and examine candidate windows of that length backward. A nonincreasing adjacent pair rules out starts up through that pair; otherwise extend the candidate forward until its increasing run ends and update the answer.",
-  "timeComplexity": "O(n^2) safe worst-case upper bound for the backward-window/forward-extension scan.",
-  "spaceComplexity": "O(1) auxiliary space.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/longest_increasing_subarray.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "Maintain the best length and skip starts that cannot improve it. Check a prospective longer window backward; a nonincreasing pair rules out every start crossing that break. When the window passes, extend forward through the increasing run and retain its inclusive endpoints.",
+  "timeComplexity": "O(n) comparisons amortized: backward checks skip the tested broken segment, and successful forward extension advances beyond the checked window. A simple scan visits each pair once; skip-based implementations amortize backward checks against skipped starts.",
+  "spaceComplexity": "O(1) auxiliary state and one endpoint pair. Only indices, lengths and one best interval are retained.",
+  "attribution": "Original reference source: epi_judge_cpp_solutions/longest_increasing_subarray.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice. Local correctness/empty-input fixes and explanation audit authored for EPI Practice; upstream reference files are unchanged. The displayed copy includes local contract or boundary corrections; the upstream reference file is preserved.",
+  "correctness": "A nonincreasing adjacent pair cannot lie inside any strictly increasing subarray, so skipping starts that would include that pair loses no improving solution. A window longer than the current best that passes the backward check is increasing; forward extension finds its maximal end. The scan thus discovers any run longer than the saved best and returns a maximum-length interval.",
+  "walkthrough": "For [2,4,4,5,7], the first increasing run has indices (0,1), length 2. Equality between the 4s blocks any run crossing indices 1 and 2. The next run spans (2,4), length 3, so return those endpoints; the judge reports 3. The JSON expected value is the wrapper’s length, not the returned endpoint record.",
+  "edgeCases": [
+    "Empty input returns endpoints (0,−1), whose observed length is 0.",
+    "Equal neighbors break strict increase.",
+    "For a nonempty decreasing array, return a one-entry interval."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        2,
+        4,
+        4,
+        5,
+        7
+      ]
+    ],
+    "expected": 3
+  }
 }

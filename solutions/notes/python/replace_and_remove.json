@@ -1,6 +1,36 @@
 {
-  "explanation": "Compact the active prefix while deleting b and counting a. Traverse backward, replacing each retained a with two d characters, so writes never destroy unread characters. Return the active output length.",
-  "timeComplexity": "O(n)",
-  "spaceComplexity": "O(1) logical auxiliary state in the supplied character buffer",
-  "attribution": "Unmodified reference from epi_judge_python_solutions/replace_and_remove.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice."
+  "explanation": "Compact non-b characters into the front while counting a characters. The final length is compacted length plus a count. Scan that compacted prefix backward, replacing each a by two d characters and copying other characters backward.",
+  "timeComplexity": "O(size). Each active character is read a constant number of times and emits at most two characters.",
+  "spaceComplexity": "O(1) auxiliary space: indices and counts only; the supplied buffer must have capacity for the expanded result. New-list variants store output explicitly; in-place variants use existing capacity and constant index state.",
+  "attribution": "Unmodified reference from epi_judge_python_solutions/replace_and_remove.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice.",
+  "correctness": "Forward compaction writes no farther than the read position, preserving unread input. The extra a count gives exactly enough output positions for expansion. Backward writing stays at or after the unread compacted prefix, so expansion cannot overwrite a character still needed. The returned length selects exactly the transformed prefix.",
+  "walkthrough": "For size=5 and [a,c,b,a,e,\"\",\"\"], forward compaction leaves [a,c,a,e] with two a characters, so final length is 6. Backward writes place e at 5, dd at 3..4, c at 2 and dd at 0..1. Return 6; the wrapper observes [d,d,c,d,d,e].",
+  "edgeCases": [
+    "size=0 returns an empty result.",
+    "Unused buffer entries are never processed.",
+    "Every a expands to exactly two d characters.",
+    "Removing b can shrink the output even when expansion capacity exists."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      5,
+      [
+        "a",
+        "c",
+        "b",
+        "a",
+        "e",
+        "",
+        ""
+      ]
+    ],
+    "expected": [
+      "d",
+      "d",
+      "c",
+      "d",
+      "d",
+      "e"
+    ]
+  }
 }

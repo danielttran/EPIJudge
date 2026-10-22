@@ -1,15 +1,16 @@
 {
   "explanation": "Intersect the x intervals and y intervals separately. Both resulting lengths must be positive.",
   "correctness": "A coordinate belongs to the overlap exactly when it lies in both corresponding intervals. Their common lower endpoint is the maximum lower endpoint and their upper endpoint is the minimum upper endpoint.",
-  "walkthrough": "Rectangle [1,2,6,4] spans x=1..7 and y=2..6; [4,0,5,4] spans x=4..9 and y=0..4. The common x interval is 4..7 and the common y interval is 2..4, so return a new rectangle [4,2,3,2]. Both dimensions are positive.",
+  "walkthrough": "Rectangle [1,2,6,4] spans x=1..7 and y=2..6; [4,0,5,4] spans x=4..9 and y=0..4. The common x interval is 4..7 and the common y interval is 2..4, so return a new rectangle [4,2,3,2]. Both dimensions are positive. JSON rectangles are [LeftX,BottomY,Width,Height]; return a new Rectangle, including [0,0,0,0] when overlap has no positive area.",
   "edgeCases": [
     "Containment",
     "identical rectangles",
     "edge or corner contact",
-    "negative coordinates."
+    "negative coordinates.",
+    "Edge or corner contact returns a new [0,0,0,0] rectangle because at least one overlap dimension is zero. Containment returns the smaller rectangle’s geometry in a fresh object."
   ],
-  "timeComplexity": "O(1) time.",
-  "spaceComplexity": "O(1) auxiliary and result space.",
+  "timeComplexity": "O(1) time: four endpoint comparisons and at most two subtractions determine the intersection.",
+  "spaceComplexity": "O(1) auxiliary and result space: a fixed number of coordinates and one new Rectangle.",
   "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
   "walkthroughCase": {
     "arguments": [

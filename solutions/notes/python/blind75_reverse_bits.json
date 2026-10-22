@@ -1,6 +1,19 @@
 {
-  "explanation": "Format the unsigned input as exactly 32 binary digits, reverse that digit string, and parse it back as an integer. Width padding includes leading zeros.",
-  "timeComplexity": "O(32) work for the fixed-width representation.",
-  "spaceComplexity": "O(32) temporary character space, constant for this contract.",
-  "attribution": "Original repository-authored Blind75 Python algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used."
+  "explanation": "Format n as a zero-padded 32-character binary string, reverse those characters, and parse the reversed string in base two. The unsigned 32-bit bound ensures formatting produces exactly 32 characters.",
+  "timeComplexity": "O(32)=O(1): formatting, reversing, and parsing each process exactly 32 binary digits.",
+  "spaceComplexity": "O(32)=O(1) auxiliary space for the formatted and reversed 32-character strings.",
+  "attribution": "Original repository-authored Blind75 Python algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used.",
+  "correctness": "The format includes all 32 bit positions, including leading zeros. Reversal maps original bit i to position 31-i; base-two parsing assigns exactly the numerical weight of each reversed position. Thus the returned nonnegative integer is the required fixed-width reversal.",
+  "walkthrough": "For n=3, formatting yields thirty zeros followed by 11. Reversal yields 11 followed by thirty zeros, so parsing returns 2^31+2^30=3221225472.",
+  "edgeCases": [
+    "Exactly 32 bits are reversed, not all 64 bits of the carrier type.",
+    "The result is nonnegative in the range 0..2^32-1.",
+    "Leading zero bits are included."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      3
+    ],
+    "expected": 3221225472
+  }
 }

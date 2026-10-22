@@ -1,6 +1,38 @@
 {
-  "explanation": "Breadth-first traverse the reachable graph while mapping original vertices to copies. Recreate every directed adjacency entry through that identity map, preserving cycles and repeated edges without linking the returned graph to original vertices.",
-  "timeComplexity": "O(V+E) expected time.",
-  "spaceComplexity": "O(V+E) allocated space, including copied adjacency and allocations made while attempting duplicate map insertions.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/graph_clone.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "Breadth-first traversal creates one new vertex for each reachable original vertex. The identity map preserves cycles and shared neighbors. Append every original edge, including duplicates, to the copied adjacency list without modifying the input graph.",
+  "timeComplexity": "O(V + E) time over the reachable graph. Each reachable vertex is enqueued once and each outgoing edge is copied once.",
+  "spaceComplexity": "O(V) auxiliary space, plus O(V + E) for the returned graph. The identity map and queue store V vertices; returned adjacency stores E edges.",
+  "attribution": "Original reference source: epi_judge_cpp_solutions/graph_clone.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice. Local correctness/empty-input fixes and explanation audit authored for EPI Practice; upstream reference files are unchanged. The displayed copy includes local contract or boundary corrections; the upstream reference file is preserved.",
+  "correctness": "The identity map assigns exactly one fresh vertex to every discovered original. A vertex is enqueued only when first mapped, so every reachable vertex is processed once. Recreating every outgoing edge through the map preserves edge multiplicity, cycles and shared neighbors without using an original node in the returned graph.",
+  "walkthrough": "Use vertices 0,1,2 with edges 0→2 twice, 2→1 and 1→0. Create copy 0, then copy 2 and append it twice to copy 0. Processing 2 creates copy 1; processing 1 links back to the existing copy 0. The structural judge accepts the fresh three-vertex cycle. JSON arguments [vertexCount, directedEdgePairs] construct a graph rooted at vertex 0. The callable returns the copied root; expected true records structural validation, not a boolean return.",
+  "walkthroughCase": {
+    "arguments": [
+      3,
+      [
+        [
+          0,
+          2
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          1,
+          0
+        ]
+      ]
+    ],
+    "expected": true
+  },
+  "edgeCases": [
+    "Cycles and self-loops must terminate through the identity map.",
+    "Duplicate edges must remain duplicated.",
+    "Equal labels alone do not prove a deep copy; the judge checks node identity.",
+    "Only vertices reachable from the supplied starting vertex belong in its clone."
+  ]
 }

@@ -13,8 +13,8 @@ path. Complete code lives in `<language>/<id>.<extension>`. C# metadata lives in
 `notes/<id>.json`; other language metadata lives in `notes/<language>/<id>.json`.
 `scripts/solutions/build_catalog.py` rejects coverage gaps, extra files,
 unsupported languages and incomplete explanations before generating the embedded
-`catalog.json`. C# notes include an approach, correctness argument, original
-walkthrough, complexity and edge cases. Each original walkthrough also has an
+`catalog.json`. Every language’s notes include an approach, correctness argument,
+worked walkthrough, justified complexity and edge cases. Each walkthrough has an
 executable case, allowing its arithmetic and observable result to be checked.
 
 The adjacent **Problem** and **Solution** tabs share the left pane while the
@@ -24,14 +24,13 @@ Viewing an answer never restores or overwrites a draft, submits code, updates
 progress or changes history. Stale requests are discarded, and failed loads
 show a retry. Browser checks cover desktop and narrow layouts.
 
-C# EPI answers and their JavaScript ports are independently authored. Suitable
-upstream Python, C++ and Java reference files are reused **without modification**
-and attributed to their exact repository paths and the
-[repository license](../LICENSE). Where a reference depends on unfinished stubs
-or has a contract or portability defect, a complete independent implementation
-is supplied instead. Upstream reference directories remain intact. Blind 75
-answers reuse the repository's original algorithm fixtures and retain its
-original statements, corpora and local diagrams. Each answer displays provenance.
+C# EPI answers and their JavaScript ports are independently authored. Python,
+C++ and Java answers retain attribution to their exact reference paths and the
+[repository license](../LICENSE). Displayed copies identify local contract or
+boundary corrections where required; other answers use independent implementations.
+Upstream reference directories remain intact. Blind 75 answers reuse the
+repository's original algorithm fixtures and retain its corpora and local diagrams.
+Every answer displays provenance.
 
 Interview Cake task identities and technical facts are attributed by source URL.
 The bank independently authors statements, examples, algorithms, tests and art;
@@ -48,7 +47,14 @@ runner used by the editor, against each complete local corpus. Additive boundary
 and walkthrough audits create isolated corpora and retain original test files.
 Reports record outcomes and code, notes, corpus and compiled-harness hashes.
 `validation-results.json` is accepted only when every question/language pair has
-current full-corpus evidence, plus current boundary and C# walkthrough evidence.
+current full-corpus evidence, plus current boundary and five-language walkthrough evidence.
 The separate Interview Cake audit executes all starters, correct algorithms and
 meaningfully incorrect fixtures. [TESTING.md](../TESTING.md) contains commands
 and the HTTP, offline/browser and clean-checkout validation requirements.
+
+The [clarity review ledger](../scripts/clarity/review.json) records separate
+per-question and per-language semantic decisions and fingerprints. Authored
+question shards in `scripts/clarity/parts/` drive statements, callable contracts
+and executable examples. Field presence and passing fixtures cannot prove that
+a proof or complexity explanation is correct; see the review procedure in
+[TESTING.md](../TESTING.md#question-and-explanation-clarity).

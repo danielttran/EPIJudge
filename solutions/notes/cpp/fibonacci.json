@@ -1,6 +1,19 @@
 {
-  "explanation": "Recursively compute F(n−1)+F(n−2), with zero and one as base cases. Cache each computed index so later calls reuse it; the global cache also persists across calls in one process.",
-  "timeComplexity": "O(n) expected time from an empty cache; O(1) expected for a cached index.",
-  "spaceComplexity": "O(n) cached values and O(n) recursion depth from an empty cache.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/fibonacci.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "Apply F(n)=F(n−1)+F(n−2) recursively and cache computed values so repeated subproblems are reused. The cache persists across calls.",
+  "timeComplexity": "O(n) expected work for a fresh query: n states, each with constant-time cache work. A previously cached query is O(1) expected. Iterative code makes n updates with two values; memoized code computes n states and retains them.",
+  "spaceComplexity": "O(n_max) retained cache across calls, plus O(n) recursion for a fresh query. Iteration keeps two consecutive values. Memoized variants retain cached states and recursive frames.",
+  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/fibonacci.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice.",
+  "correctness": "The base cases return F(0)=0 and F(1)=1. Each new cached state adds two smaller correct states, so induction proves it equals F(n). Caching changes only reuse, not the recurrence.",
+  "walkthrough": "For n=7, compute and cache F(2)=1, F(3)=2, F(4)=3, F(5)=5, F(6)=8 and F(7)=13; repeated requests for these states reuse their cached results. The walkthroughCase uses the judge’s JSON input format and expected observation.",
+  "walkthroughCase": {
+    "arguments": [
+      7
+    ],
+    "expected": 13
+  },
+  "edgeCases": [
+    "n=0 and n=1 are recurrence bases.",
+    "For the fixed-width callable, require the requested Fibonacci value to fit its integer result.",
+    "The persistent cache may already contain results from earlier calls."
+  ]
 }

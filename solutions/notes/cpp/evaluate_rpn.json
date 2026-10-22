@@ -1,6 +1,19 @@
 {
-  "explanation": "Push integer operands onto a stack. An operator consumes the most recent operand as its right argument and the preceding operand as its left argument, then pushes the result. C# integer division supplies truncation toward zero.",
-  "timeComplexity": "O(n), where n is expression length",
-  "spaceComplexity": "O(n)",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/evaluate_rpn.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "Push numeric operands. For an operator, pop the right operand first and then the left operand, evaluate left operator right, and push the result. Integer division truncates toward zero; JavaScript uses BigInt internally before returning Number.",
+  "timeComplexity": "O(n), where n is expression length Each token is parsed once and pushed/popped a constant number of times, under bounded-integer arithmetic.",
+  "spaceComplexity": "O(n) Split tokens and the operand stack can each contain O(n) characters/entries.",
+  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/evaluate_rpn.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice.",
+  "correctness": "The stack contains results of completed subexpressions in encounter order. An operator consumes the latest two subexpressions with the earlier one on the left, so its result replaces exactly the expression it completes. The final stack value is the full expression’s value.",
+  "walkthrough": "For −9,4,/, push −9 and 4, then compute −9 divided by 4 with truncation toward zero. The result is −2.",
+  "edgeCases": [
+    "Operand order matters for subtraction and division.",
+    "Negative division truncates toward zero.",
+    "A signed integer token must not be mistaken for the subtraction operator."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      "-9,4,/"
+    ],
+    "expected": -2
+  }
 }

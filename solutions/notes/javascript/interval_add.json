@@ -1,6 +1,37 @@
 {
   "explanation": "Copy intervals strictly before the new closed interval. Merge every interval whose start touches or overlaps the growing interval, then append the merged interval and untouched suffix.",
-  "timeComplexity": "O(n) time.",
-  "spaceComplexity": "O(n) output space and O(1) other auxiliary space.",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "timeComplexity": "O(n) time. The before/overlap/after phases together consume every existing interval once.",
+  "spaceComplexity": "O(n) output space and O(1) other auxiliary space. The result contains at most n+1 intervals; scan indices and the growing interval need constant extra space.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "All intervals before the first overlap end before the new start and can be copied unchanged. While starts are no greater than the growing end, each interval joins the same closed union. The remaining suffix begins after that union and is unchanged, yielding a sorted disjoint result.",
+  "walkthrough": "Insert [3,8] into [[1,3],[7,10]]. The closed interval [1,3] touches the new start, producing [1,8]. That overlaps [7,10], extending the merged range to [1,10].",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          1,
+          3
+        ],
+        [
+          7,
+          10
+        ]
+      ],
+      [
+        3,
+        8
+      ]
+    ],
+    "expected": [
+      [
+        1,
+        10
+      ]
+    ]
+  },
+  "edgeCases": [
+    "Touching closed endpoints count as overlap.",
+    "An insertion may merge several intervals, not just one neighbor.",
+    "An empty input returns the new interval alone."
+  ]
 }

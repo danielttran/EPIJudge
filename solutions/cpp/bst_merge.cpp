@@ -33,6 +33,7 @@ shared_ptr<BstNode<int>> BuildBSTFromSortedDoublyList(
 }
 
 shared_ptr<BstNode<int>> BSTToDoublyList(const shared_ptr<BstNode<int>>& n) {
+  if (!n) return nullptr;
   auto result = BSTToDoublyListHelper(n);
   result->left->right = nullptr;  // breaks the link from tail to head.
   result->left = nullptr;         // breaks the link from head to tail.

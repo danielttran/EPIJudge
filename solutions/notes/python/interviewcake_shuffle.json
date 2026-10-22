@@ -1,14 +1,15 @@
 {
   "explanation": "For each position i, choose uniformly among positions i through n-1 and exchange the chosen value into position i.",
   "correctness": "At position i each remaining occurrence has probability 1/(n-i) of being selected. Multiplying conditional probabilities gives 1/n! for each full occurrence permutation.",
-  "walkthrough": "Starting with [4,8,1], position 0 chooses uniformly among all three occurrences. If it selects index 2, the array becomes [1,8,4]. Position 1 then chooses index 1 or 2 equally, producing [1,8,4] or [1,4,8]. Each full three-element permutation has probability 1/(3*2)=1/6. The judge returns true when these distribution and in-place properties hold.",
+  "walkthrough": "Starting with [4,8,1], position 0 chooses uniformly among all three occurrences. If it selects index 2, the array becomes [1,8,4]. Position 1 then chooses index 1 or 2 equally, producing [1,8,4] or [1,4,8]. Each full three-element permutation has probability 1/(3*2)=1/6. The judge returns true when these distribution and in-place properties hold. The callable mutates the supplied array and returns void/None/undefined. Expected true is the checker verdict for occurrence preservation, identity, legal source use and unbiased permutations; it is not a particular array result.",
   "edgeCases": [
     "Empty/singleton arrays",
     "duplicate values",
-    "possibility of retaining original positions."
+    "possibility of retaining original positions.",
+    "Empty and singleton arrays remain unchanged. Repeated values are separate occurrences; unbiased occurrence permutations may have the same visible value sequence."
   ],
-  "timeComplexity": "O(n) time.",
-  "spaceComplexity": "O(1) auxiliary space.",
+  "timeComplexity": "O(n) time: a constant-time random choice and swap fixes one position per iteration.",
+  "spaceComplexity": "O(1) auxiliary space: only indices and a swap temporary; all rearrangement uses the original array.",
   "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
   "walkthroughCase": {
     "arguments": [

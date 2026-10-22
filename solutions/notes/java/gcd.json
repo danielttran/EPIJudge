@@ -1,6 +1,20 @@
 {
-  "explanation": "Use binary GCD: factor out common powers of two, halve an even operand, and subtract the smaller from the larger when both are odd. Recursive calls preserve the greatest common divisor.",
-  "timeComplexity": "O(log(max(x,y)+1)) arithmetic steps",
-  "spaceComplexity": "O(log(max(x,y)+1)) recursion depth",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/Gcd.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "explanation": "Use binary GCD. Order the arguments; remove common powers of two, discard a factor of two from just the even argument when the other is odd, and subtract the smaller odd argument from the larger. Stop when the smaller argument becomes zero.",
+  "timeComplexity": "O(B) bounded-width arithmetic steps for B input bits: after at most a constant number of swaps/subtractions, an operand is halved. Big-integer bit costs are additional. Operand bit length decreases through Euclidean remainders or binary-GCD halving; big-integer arithmetic costs are separate.",
+  "spaceComplexity": "O(B) recursive frames; no tail-call elimination is assumed. Iterative variants keep a constant number of integer values; recursive binary variants keep O(B) frames.",
+  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/Gcd.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/).",
+  "correctness": "For even x,y, gcd(x,y)=2·gcd(x/2,y/2). If only one is even, halving that argument does not remove any common odd divisor. For two odd arguments, gcd(x,y)=gcd(x,y−x), after which the difference is even. These identities preserve the answer while shrinking the arguments, until gcd(0,y)=y.",
+  "walkthrough": "For (84,30), halve both and remember a factor 2: solve (42,15). Reorder to (15,42), halve the even argument to (15,21), subtract to (15,6), reorder to (6,15), halve to (3,15), and subtract/halve until (0,3). Restore the saved factor 2, returning 6.",
+  "walkthroughCase": {
+    "arguments": [
+      84,
+      30
+    ],
+    "expected": 6
+  },
+  "edgeCases": [
+    "Either operand may be zero.",
+    "The existing corpus defines Gcd(0,0)=0.",
+    "Use long arithmetic for the nonnegative input range."
+  ]
 }

@@ -1,6 +1,37 @@
 {
   "explanation": "Traverse in order to produce sorted keys. The BST property lets us skip the left subtree below the lower bound and the right subtree above the upper bound. Endpoints are included.",
-  "timeComplexity": "O(h + m) for height h and m returned keys in a BST with distinct keys; O(n) worst case.",
-  "spaceComplexity": "O(h) recursion stack, plus O(m) output.",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "timeComplexity": "O(h + m) for height h and m returned keys in a BST with distinct keys; O(n) worst case. Pruned search visits boundary paths and qualifying nodes; a skewed or duplicate-heavy tree can still require linear traversal.",
+  "spaceComplexity": "O(h) recursion stack, plus O(m) output. Recursion retains a root-to-node path; the output stores each qualifying key.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "Inorder traversal lists BST values in sorted order. A node’s left subtree can be skipped only when the node is below the lower endpoint; its right subtree can be skipped only when it is above the upper endpoint. Inclusive comparisons retain boundary keys, including duplicate boundary values. Every retained node lies in the requested interval.",
+  "walkthrough": "For tree [8,3,12,1,6,10,14] and interval [5,12], prune the part below 3 and ignore 14. Inorder visits the eligible values 6,8,10 and 12, so return [6,8,10,12]. The endpoint 12 is included. JSON arguments are [tree,[low,high]]. C# uses a value tuple, JavaScript a two-element array, and native callables an Interval record.",
+  "edgeCases": [
+    "An empty tree returns an empty list.",
+    "Equal interval endpoints retain matching keys.",
+    "Duplicate keys on either side of a BST boundary remain eligible.",
+    "A range outside every key returns no values."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        8,
+        3,
+        12,
+        1,
+        6,
+        10,
+        14
+      ],
+      [
+        5,
+        12
+      ]
+    ],
+    "expected": [
+      6,
+      8,
+      10,
+      12
+    ]
+  }
 }

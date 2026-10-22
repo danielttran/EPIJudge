@@ -1,6 +1,37 @@
 {
-  "explanation": "Depth-first search the DAG and store the longest outgoing path length on each vertex. Reuse a stored distance instead of recomputing its descendants, then take the maximum.",
-  "timeComplexity": "O(V+E)",
-  "spaceComplexity": "O(V) recursion and vertex distance state",
-  "attribution": "Unmodified reference from epi_judge_python_solutions/max_teams_in_photograph.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice."
+  "explanation": "Memoize the longest path starting at each vertex. A sink contributes one team; any other vertex contributes one plus the greatest already-computed or recursively computed successor length.",
+  "timeComplexity": "O(vertices + edges) Every edge contributes one path relaxation and each vertex is evaluated once.",
+  "spaceComplexity": "O(V) auxiliary recursion depth; the supplied adjacency structure uses O(V+E). Memoized path lengths require V entries; DFS or the ready queue holds at most V vertices.",
+  "attribution": "Unmodified reference from epi_judge_python_solutions/max_teams_in_photograph.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice.",
+  "correctness": "A DAG has no recursive dependency cycle. By reverse topological induction, each successor distance is its longest suffix path, so one plus their maximum is exactly the longest path from the current vertex. Cached distances avoid redoing shared suffixes. Taking the maximum over component searches gives the longest path anywhere.",
+  "walkthrough": "For edges 0→2,1→2,2→3,3→4, DFS computes lengths from the end: vertex 4 has 1, vertex 3 has 2, vertex 2 has 3, and vertices 0 and 1 each have 4. The answer counts four vertices.",
+  "edgeCases": [
+    "A path counts vertices rather than edges.",
+    "Disconnected components must all be considered.",
+    "The graph is acyclic."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      5,
+      [
+        [
+          0,
+          2
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          4
+        ]
+      ]
+    ],
+    "expected": 4
+  }
 }

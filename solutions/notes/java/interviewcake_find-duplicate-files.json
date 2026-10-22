@@ -1,16 +1,17 @@
 {
   "explanation": "Group files by size and a fingerprint of at most 64 bytes each at the beginning, middle and end. For each matching pair, orient the paths by modification time.",
   "correctness": "Equal fingerprints identify exactly the candidate groups defined by the adapter. Traversing every directory visits each file, and grouping retains enough information to emit each pair once without a full-content scan.",
-  "walkthrough": "The controlled directory contains a.txt and nested/b.txt, both with the bytes \"same bytes\". Their sizes and all three bounded samples match. Their modification times are 1000 and 2000, so report their full paths with a.txt first as the earlier-time candidate. This orientation is a heuristic, and equal fingerprints can still be false positives; neither file is changed.",
+  "walkthrough": "The controlled directory contains a.txt and nested/b.txt, both with the bytes \"same bytes\". Their sizes and all three bounded samples match. Their modification times are 1000 and 2000, so report their full paths with a.txt first as the earlier-time candidate. This orientation is a heuristic, and equal fingerprints can still be false positives; neither file is changed. JSON supplies controlled file descriptors. The callable receives the temporary directory’s full path and returns FilePaths pairs containing full paths; displayed expected paths are relative to that directory.",
   "edgeCases": [
     "Empty directory",
     "nested and sibling directories",
     "zero-byte files",
     "equal timestamps",
-    "deliberate sample collisions. No file deletion or writes."
+    "deliberate sample collisions. No file deletion or writes.",
+    "Empty directories return no pairs. Two empty files have identical fingerprints; equal timestamps permit either orientation. Matching sampled bytes do not prove equal complete content."
   ],
-  "timeComplexity": "O(f) file visits and bounded sampled bytes per file; path traversal costs also apply.",
-  "spaceComplexity": "O(f) fingerprints and paths.",
+  "timeComplexity": "Expected O(f+d) filesystem visits for f files and d directories, plus total path-character handling; each file reads at most 3*64 bytes and makes a constant number of metadata/seek operations. Hash grouping is expected constant time per bounded fingerprint.",
+  "spaceComplexity": "O(f) bounded fingerprints plus stored path characters and directory traversal state; returned pairs add path storage. The bound is independent of total file-content bytes.",
   "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
   "walkthroughCase": {
     "arguments": [

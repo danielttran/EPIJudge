@@ -1,6 +1,20 @@
 {
-  "explanation": "Format by repeatedly extracting decimal digits from the absolute value, then reverse the digits and optional sign. Parse by accumulating base-10 digits after an optional sign. Number exactly represents all signed 32-bit values and their absolute magnitudes.",
-  "timeComplexity": "O(d) time for d decimal digits.",
-  "spaceComplexity": "O(d) formatting space; O(1) parsing space.",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "explanation": "Separate the sign and magnitude. Extract decimal remainders until the magnitude is zero, reverse the digits, and prepend a minus sign if needed. Parse by multiplying the accumulated prefix by ten and adding each digit, then applying the sign.",
+  "timeComplexity": "O(d) time for d decimal digits. Each formatting step removes one decimal digit and each parsing step consumes one digit.",
+  "spaceComplexity": "O(d) formatting space; O(1) parsing space. Formatting stores d digits; parsing needs only the accumulator and sign, except Python/Java substring copies may use O(d).",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "Remainders recover decimal digits from least significant to most significant; reversing restores their order. During parsing, the accumulator equals the numeric value of the consumed digit prefix by the base-ten positional recurrence. Applying the separate sign therefore gives the represented integer.",
+  "walkthrough": "For value -1402 and text \"-1402\", formatting extracts digits 2, 0, 4, 1 from magnitude 1402, appends the minus sign, and reverses to \"-1402\". Parsing skips the sign, accumulates 1 → 14 → 140 → 1402, then negates to -1402. Both conversion checks pass, so the adapter verdict is true.",
+  "edgeCases": [
+    "The signed-32-bit domain includes -2147483648; JavaScript Number represents this magnitude exactly and Python integers are arbitrary precision.",
+    "Parsing accepts an optional + or - and leading zero digits.",
+    "Formatting zero yields 0 with no sign or redundant leading zeros."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      -1402,
+      "-1402"
+    ],
+    "expected": true
+  }
 }

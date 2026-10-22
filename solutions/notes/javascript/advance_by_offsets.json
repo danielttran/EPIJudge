@@ -1,6 +1,25 @@
 {
-  "explanation": "Track the farthest reachable index. Every position up to that boundary is reachable, so processing it can extend the boundary. A gap before the final position proves failure.",
-  "timeComplexity": "O(n)",
-  "spaceComplexity": "O(1)",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "explanation": "Track the farthest reachable position while scanning only reachable indices. A jump length is a maximum, so any intermediate position is also reachable. Extend the boundary by the current index plus its maximum jump; stop once the destination is reachable or the next index lies beyond that boundary.",
+  "timeComplexity": "O(n+1): each index is examined at most once, and the boundary update uses constant work.",
+  "spaceComplexity": "O(1) auxiliary space: an index and a reach boundary, without modifying the input.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "After processing reachable positions, the stored boundary is the greatest position reachable using those positions. Every index up to the boundary is reachable because a jump may choose any smaller distance up to its maximum. Processing the next reachable index extends this interval to the maximum of its old end and the new reach. If the next index lies beyond the boundary, no later position can be reached to extend it, proving failure. Reaching or passing the final index proves success, since a shorter allowed jump can land exactly on it.",
+  "walkthrough": "For [2,0,1,0], index 0 reaches every position through index 2. Index 1 has jump 0 and does not extend the boundary. Index 2 is reachable and has jump 1, so it reaches index 3. Return true. In contrast, [1,0,1] stops at index 1; the jump at unreachable index 2 cannot help.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        2,
+        0,
+        1,
+        0
+      ]
+    ],
+    "expected": true
+  },
+  "edgeCases": [
+    "An empty array returns true by the bank convention; a singleton is already at its final position.",
+    "A zero jump blocks progress only if no earlier reachable position can jump past it.",
+    "[1,2147483647,0] is reachable: index 1 can jump to the final index without overflowing an intermediate sum.",
+    "The jump length is a maximum, not a required exact distance."
+  ]
 }

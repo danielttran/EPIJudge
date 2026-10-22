@@ -1,7 +1,7 @@
 {
   "explanation": "Try shifted copies of the divisor from the largest quotient bit downward. Subtract a copy whenever it fits, setting that quotient bit without division, multiplication, or remainder.",
-  "timeComplexity": "O(w), with w = 31 value bits for a nonnegative int.",
-  "spaceComplexity": "O(1).",
+  "timeComplexity": "O(w), with w = 31 value bits for a nonnegative int. Each candidate bit is processed at most once in descending order.",
+  "spaceComplexity": "O(1). Quotient, remainder and the shifted divisor are the only running values.",
   "attribution": "Original C# implementation and explanation authored for EPI Practice from the displayed problem contract.",
   "correctness": "The invariant is x = quotient × y + remaining, with remaining nonnegative. Subtracting y shifted by bit and setting that quotient bit preserves the invariant. Processing bits from high to low leaves remaining < y after the final bit, so quotient is the integer quotient.",
   "walkthrough": "For 91 divided by 6, 6 shifted three places is 48, which fits: remainder 43 and quotient 8. Then 24,12 and 6 also fit, leaving remainders 19,7 and 1. The selected quotient bits add to 15, so return 15.",
@@ -12,7 +12,10 @@
     "Shifted comparisons use long so the nonnegative int operands cannot overflow them."
   ],
   "walkthroughCase": {
-    "arguments": [91, 6],
+    "arguments": [
+      91,
+      6
+    ],
     "expected": 15
   }
 }

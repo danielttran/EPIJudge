@@ -1,6 +1,30 @@
 {
-  "explanation": "Point the new node at the old successor, then make it the supplied predecessor\u2019s successor. The wrapper first locates the insertion position.",
-  "timeComplexity": "O(1) insertion; O(n) including wrapper lookup",
-  "spaceComplexity": "O(1) beyond the inserted node",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/InsertInList.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "explanation": "The callable receives the selected node and a new node. First point the new node to the selected node’s old successor, then point the selected node to the new node.",
+  "timeComplexity": "O(p): advance to one-based position p, then perform two constant-time link changes.",
+  "spaceComplexity": "O(1) auxiliary pointers plus exactly one newly allocated node.",
+  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/InsertInList.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/).",
+  "correctness": "Saving the successor in new_node.next before changing node.next keeps the suffix reachable. The two rewired links insert exactly the supplied node without replacing any original node or changing their relative order.",
+  "walkthrough": "Case [7,4,9], position 2, new value 6 selects node 4 using one-based indexing. The wrapper allocates node 6. The callable sets 6.next=9, then 4.next=6 and returns no value; the wrapper observes [7,4,6,9].",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        7,
+        4,
+        9
+      ],
+      2,
+      6
+    ],
+    "expected": [
+      7,
+      4,
+      6,
+      9
+    ]
+  },
+  "edgeCases": [
+    "Position 1 means insert after the head, not before it.",
+    "Inserting after the last node appends a new tail.",
+    "Existing nodes and their values are retained."
+  ]
 }

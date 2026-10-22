@@ -1,6 +1,37 @@
 {
-  "explanation": "Depth-first search the DAG and memoize the longest path starting at each vertex. Its value is one plus the largest successor value, or one for a sink.",
-  "timeComplexity": "O(V+E)",
-  "spaceComplexity": "O(V) state and recursion",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/MaxTeamsInPhotograph.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "explanation": "Memoize the longest path starting at each vertex. A sink contributes one team; any other vertex contributes one plus the greatest already-computed or recursively computed successor length.",
+  "timeComplexity": "O(vertices + edges) Every edge contributes one path relaxation and each vertex is evaluated once.",
+  "spaceComplexity": "O(V) auxiliary recursion depth; the supplied adjacency structure uses O(V+E). Memoized path lengths require V entries; DFS or the ready queue holds at most V vertices.",
+  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/MaxTeamsInPhotograph.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/).",
+  "correctness": "A DAG has no recursive dependency cycle. By reverse topological induction, each successor distance is its longest suffix path, so one plus their maximum is exactly the longest path from the current vertex. Cached distances avoid redoing shared suffixes. Taking the maximum over component searches gives the longest path anywhere.",
+  "walkthrough": "For edges 0→2,1→2,2→3,3→4, DFS computes lengths from the end: vertex 4 has 1, vertex 3 has 2, vertex 2 has 3, and vertices 0 and 1 each have 4. The answer counts four vertices.",
+  "edgeCases": [
+    "A path counts vertices rather than edges.",
+    "Disconnected components must all be considered.",
+    "The graph is acyclic."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      5,
+      [
+        [
+          0,
+          2
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          4
+        ]
+      ]
+    ],
+    "expected": 4
+  }
 }

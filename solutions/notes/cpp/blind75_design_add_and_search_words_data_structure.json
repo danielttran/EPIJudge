@@ -1,6 +1,36 @@
 {
-  "explanation": "Store complete words in a set. Search scans words of exactly the pattern length and compares each position, accepting a literal match or a dot wildcard. Matching requires the full pattern and word lengths to agree.",
-  "timeComplexity": "O((L+1) log(U+1)) insertion upper bound with an ordered set; O(U(P+1)) worst-case search for U words and pattern length P.",
-  "spaceComplexity": "O(S+U) stored strings/set entries; O(1) additional search workspace.",
-  "attribution": "Original repository-authored Blind75 C++ algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used."
+  "explanation": "Keep distinct inserted words in a set. For a query, scan stored words of the same length and compare each position, accepting a literal match or a dot wildcard. This implementation does not build a trie.",
+  "timeComplexity": "O(L log(W+1)) insertion into the ordered set for a length-L word. Search checks up to W words and up to L characters each: O(W(L+1)).",
+  "spaceComplexity": "O(S+W) stored word content/references for W distinct words with total length S; the direct comparison loop needs constant extra state.",
+  "attribution": "Original repository-authored Blind75 C++ algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used.",
+  "correctness": "The set contains exactly inserted words. Equal length ensures that every dot consumes exactly one character and no unmatched suffix remains. The positional test accepts exactly words agreeing with every literal, so finding any such word is both necessary and sufficient for a successful search.",
+  "walkthrough": "After inserting \"map\" and \"mat\", pattern \"ma.\" accepts either word because the first two letters agree and the dot matches its final letter. \"m..\" also accepts; \"maps\" fails the length check for both words. Query outputs are [true,true,false]. The arrays describe calls on one instance in order; expected contains only Search booleans, omitting AddWord returns.",
+  "edgeCases": [
+    "A dot matches exactly one character, never an arbitrary string.",
+    "Literal searches require a complete stored word.",
+    "Adding an already stored word does not change search results."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        "addWord",
+        "addWord",
+        "search",
+        "search",
+        "search"
+      ],
+      [
+        "map",
+        "mat",
+        "ma.",
+        "m..",
+        "maps"
+      ]
+    ],
+    "expected": [
+      true,
+      true,
+      false
+    ]
+  }
 }

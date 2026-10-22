@@ -1,6 +1,21 @@
 {
   "explanation": "Scan multiplier bits and accumulate each selected shifted multiplicand. The Add helper uses XOR for sum bits and shifted AND for carries, recursively repeating until no carry remains.",
-  "timeComplexity": "O(w^2) bit operations in the worst case for w-bit words; w=64 here.",
-  "spaceComplexity": "O(w) recursive carry-propagation space, fixed for the word width.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/primitive_multiply.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "timeComplexity": "O(w²) worst case for w-bit words; w = 64 here. For at most w bits of one operand, carry addition can take O(w) propagation steps: O(w²) word operations.",
+  "spaceComplexity": "O(w) recursion depth for carry propagation in Add, with w=64; the multiply loop uses constant additional state.",
+  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/primitive_multiply.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice.",
+  "correctness": "At each outer iteration, the accumulated product plus the unprocessed multiplicand times the shifted multiplier equals the original product. A set low bit contributes the shifted multiplier, after which shifting advances to the next bit. The Add helper preserves a+b because XOR holds carry-free sums and shifted AND holds pending carries; no arithmetic addition or multiplication is needed.",
+  "walkthrough": "For x=13 (binary 1101) and y=6, the set bits select 6,24 and 48. The carry-propagating helper combines those contributions into 78. The shifted contribution 12 is skipped because bit 1 of x is zero.",
+  "edgeCases": [
+    "Either operand zero returns zero.",
+    "The advertised operands are nonnegative.",
+    "Long results are assembled without converting bits to strings.",
+    "Input/result values must satisfy the displayed long contract."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      13,
+      6
+    ],
+    "expected": 78
+  }
 }

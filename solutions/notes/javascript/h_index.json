@@ -1,6 +1,24 @@
 {
   "explanation": "Bucket citation counts, capping values above the paper count at n. Scan possible h values downward while accumulating papers with at least h citations. The first feasible h is maximal.",
-  "timeComplexity": "O(n) time.",
-  "spaceComplexity": "O(n) auxiliary space.",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "timeComplexity": "O(n) time. Histogram variants fill and scan n+1 buckets; sort variants pay sorting cost then scan once.",
+  "spaceComplexity": "O(n) auxiliary space. Histogram variants store n+1 counters; sorting/copy workspace is stated separately.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "While scanning h downward, papers counts exactly the entries whose capped citation count is at least h. Capping at n cannot change any feasible h≤n. The first h with papers≥h is feasible, and every larger h has already failed, so it is maximal.",
+  "walkthrough": "For citations [0,2,4,7], there are only two papers with at least 3 citations, so h=3 fails. Three papers have at least 2 citations, so the answer is 2.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        0,
+        2,
+        4,
+        7
+      ]
+    ],
+    "expected": 2
+  },
+  "edgeCases": [
+    "An empty list or all-zero citations gives zero.",
+    "Citation counts above the number of papers may be capped at n.",
+    "The number of qualifying papers can exceed h; equality is not required."
+  ]
 }

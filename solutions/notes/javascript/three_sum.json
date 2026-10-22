@@ -1,6 +1,24 @@
 {
   "explanation": "Sort the values. For each possible first value, run a two-pointer sum search over the entire array. The pointers may coincide and the first value remains eligible, matching this EPI contract that permits element reuse.",
-  "timeComplexity": "O(n\u00b2) time.",
-  "spaceComplexity": "O(n) auxiliary space for the sorted copy.",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "timeComplexity": "O(n²) time. Sorting costs O(n log n); n fixed first values each run a pointer scan of at most 2n advances.",
+  "spaceComplexity": "O(n) auxiliary space for the sorted copy. A sorted copy of n entries is retained in every displayed implementation.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "For a fixed first value, the sorted two-pointer search preserves every possible remaining pair: if the sum is too small, no pair using the current smallest value and a no-larger right value can work; the symmetric argument excludes the current largest value when the sum is too large. Trying every first value covers all triples. Leaving both pointers inclusive and searching the entire array permits the element reuse explicitly allowed by this EPI contract.",
+  "walkthrough": "For [5, 12, 20] and target 29, fix first value 5. The remaining pointers initially select 5 and 20, totaling 30, so decrease the right pointer to 12. Now the total is 22, so increase the left pointer to 12. The total becomes 5 + 12 + 12 = 29. Reusing 12 is permitted; return true.",
+  "edgeCases": [
+    "A single entry may be reused three times.",
+    "Empty input has no triple.",
+    "Signed 32-bit entries have exactly representable three-term sums in Number."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        5,
+        12,
+        20
+      ],
+      29
+    ],
+    "expected": true
+  }
 }

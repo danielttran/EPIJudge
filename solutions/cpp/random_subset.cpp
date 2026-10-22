@@ -25,22 +25,13 @@ vector<int> RandomSubset(int n, int k) {
   for (int i = 0; i < k; ++i) {
     // Generate a random index in [i, n - 1].
     int rand_idx = uniform_int_distribution<int>{i, n - 1}(seed);
-    if (auto ptr1 = changed_elements.find(rand_idx),
-        ptr2 = changed_elements.find(i);
-        ptr1 == end(changed_elements) && ptr2 == end(changed_elements)) {
-      changed_elements[rand_idx] = i;
-      changed_elements[i] = rand_idx;
-    } else if (ptr1 == end(changed_elements) && ptr2 != end(changed_elements)) {
-      changed_elements[rand_idx] = ptr2->second;
-      ptr2->second = rand_idx;
-    } else if (ptr1 != end(changed_elements) && ptr2 == end(changed_elements)) {
-      changed_elements[i] = ptr1->second;
-      ptr1->second = i;
-    } else {
-      int temp = ptr2->second;
-      changed_elements[i] = ptr1->second;
-      changed_elements[rand_idx] = temp;
-    }
+    // Copy both values before inserting: insertion can rehash the map.
+    const auto selected = changed_elements.find(rand_idx);
+    const int selected_value = selected == changed_elements.end() ? rand_idx : selected->second;
+    const auto current = changed_elements.find(i);
+    const int current_value = current == changed_elements.end() ? i : current->second;
+    changed_elements[rand_idx] = current_value;
+    changed_elements[i] = selected_value;
   }
 
   vector<int> result;

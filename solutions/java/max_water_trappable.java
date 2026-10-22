@@ -10,6 +10,7 @@ public class MaxWaterTrappable {
   @EpiTest(testDataFile = "max_water_trappable.tsv")
 
   public static int calculateTrappingWater(List<Integer> heights) {
+  if (heights.isEmpty()) return 0;
 
     // Finds the index with maximum height.
     int maxH = heights.indexOf(Collections.max(heights));

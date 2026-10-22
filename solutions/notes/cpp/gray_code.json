@@ -1,6 +1,19 @@
 {
-  "explanation": "Backtrack through the b-dimensional bit cube, beginning at zero and trying one-bit flips. Keep a visited set to avoid repeated values and accept a full path only when its last value also differs from the first in one bit.",
-  "timeComplexity": "Backtracking upper bound O((b+1)^(2^b)); each accepted answer contains 2^b values.",
-  "spaceComplexity": "O(2^b) visited, path and recursion space.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/gray_code.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "Search the b-dimensional bit cube from zero. Try flipping each bit of the last code; append only an unseen result and backtrack if it cannot complete the sequence. At full length, also test that the last and first code differ by one bit.",
+  "timeComplexity": "O(b·b^(2^b)) conservative backtracking bound: depth is at most 2^b, each node tries b bit flips and set operations. The observed first successful path is often much shorter; a direct-formula linear bound does not describe this implementation. Formula variants perform constant word operations per one of 2^b outputs; search variants have the separately stated branching bound.",
+  "spaceComplexity": "O(2^b) auxiliary space for visited codes and recursion depth, plus O(2^b) output. Formula variants retain only loop state beyond output; search retains its history and path stack.",
+  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/gray_code.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice.",
+  "correctness": "The history set equals the current path and prevents repeated codes. Every extension changes exactly one bit, so any full path has all 2^b distinct b-bit values with valid neighbors. The final check additionally closes the cycle. Trying every unused one-bit neighbor is complete for this search. For b>0 the reflected sequence also closes cyclically: its last value is 1<<(b-1), one bit from zero. The bank adapter only requires consecutive output pairs.",
+  "walkthrough": "For b=3, low-bit-first extensions visit 0,1,3,2,6,7,5,4. Each XOR of adjacent values has one set bit; 4 XOR 0 also has one bit. Return the sequence; the bank wrapper reports true after validating it.",
+  "walkthroughCase": {
+    "arguments": [
+      3
+    ],
+    "expected": true
+  },
+  "edgeCases": [
+    "Zero bits gives the single value [0].",
+    "Do not repeat a pattern or use values outside the b-bit range.",
+    "The output has exponential size even though each value is computed in constant word operations."
+  ]
 }

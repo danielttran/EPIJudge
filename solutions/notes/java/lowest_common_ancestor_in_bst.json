@@ -1,6 +1,29 @@
 {
-  "explanation": "Descend right when both target keys exceed the current key and left when both are smaller. Stop where the current key lies between the ordered target values.",
-  "timeComplexity": "O(h) traversal; O(n) including wrapper target lookup",
-  "spaceComplexity": "O(1) traversal space",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/LowestCommonAncestorInBst.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "explanation": "If both target values are smaller, descend left; if both are larger, descend right. The first node whose value lies between the targets is their split point or one target itself. The callable returns the original node reference; the wrapper displays its data.",
+  "timeComplexity": "O(h), where h is the tree height. Each comparison moves downward, so at most h nodes are examined using constant cursor storage.",
+  "spaceComplexity": "O(1). Only the current node and target comparisons are needed.",
+  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/LowestCommonAncestorInBst.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/).",
+  "correctness": "If both target values lie below a node, their common ancestor must be in its left subtree; the symmetric rule holds above it. The first node between the ordered target values either equals a target or splits their search paths, making it their lowest common ancestor.",
+  "walkthrough": "For BST [10,5,15,2,7,12,20] and targets 2 and 7, both targets are below 10, so descend to 5. Since 2≤5≤7, that node is the split point and the result is 5. JSON arguments are [tree,sData,bData]. Native wrappers resolve both target values to nodes before calling the three-node function.",
+  "edgeCases": [
+    "The ancestor may equal either target.",
+    "The ordered targets are promised to identify existing nodes.",
+    "A skewed BST may require visiting its full height."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        10,
+        5,
+        15,
+        2,
+        7,
+        12,
+        20
+      ],
+      2,
+      7
+    ],
+    "expected": 5
+  }
 }

@@ -1,6 +1,21 @@
 {
   "explanation": "Match each pattern/text position with memoization. A starred token either consumes nothing or one matching character and stays available. A leading ^ restricts the start; a trailing $ requires the end. Otherwise try every substring start.",
-  "timeComplexity": "O(p \u00b7 (n + 1)) for pattern length p and text length n.",
-  "spaceComplexity": "O(p \u00b7 (n + 1)) memoization plus O(p + n) recursion stack.",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "timeComplexity": "O((p+1)(n+1)): at most one evaluation of each pattern/text offset pair, with constant work and at most two transitions per state.",
+  "spaceComplexity": "O((p+1)(n+1)) cached states plus O(p+n+1) recursion frames; every recursive step advances a pattern or text offset.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "Match(p,t) states whether the pattern suffix at p can match beginning at text position t under the end-anchor rule. A normal token must match one character; a starred token either takes zero repetitions or consumes one matching character and tries again. These cases are exhaustive. Memoization reuses identical suffix states, while start/end anchors constrain the allowed positions.",
+  "walkthrough": "For regex \"^ab*c$\" and text \"abbbc\", the start anchor fixes position zero. Match a, let b* consume the three b characters, then match c at the text end. The end anchor succeeds, so return true.",
+  "edgeCases": [
+    "An unanchored pattern may match an empty substring.",
+    "^ anchors only the beginning and a trailing $ anchors the end.",
+    "A starred token may consume zero characters.",
+    "Dot matches one character, not an arbitrary-length substring."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      "^ab*c$",
+      "abbbc"
+    ],
+    "expected": true
+  }
 }

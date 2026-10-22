@@ -1,6 +1,29 @@
 {
-  "explanation": "At each offset, try every next substring and test it for palindromicity. Recurse only on palindromic pieces and copy each complete partition into the output, preserving the original character order.",
-  "timeComplexity": "O(n^2 2^n) safe worst-case upper bound including substring copying and palindrome checks.",
-  "spaceComplexity": "O(n) current partition and recursion space, plus O(n 2^n) worst-case output.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/enumerate_palindromic_decompositions.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "At the current offset, try every nonempty prefix of the remaining text. Check that prefix by comparing mirrored characters (Python compares it with its reversal), recurse only on palindromes, and record a partition when all text has been consumed.",
+  "timeComplexity": "O(n·2^n) worst-case time: there are at most 2^(n-1) partitions and substring testing/copying and materializing their pieces contribute a linear factor. At most 2^(n-1) cut subsets exist; recording a partition requires its pieces. The table variants additionally fill n² cells.",
+  "spaceComplexity": "O(n) auxiliary live substring characters, recursion frames and partition entries; C++ reuses the partition vector with push/pop. Returned partitions can occupy O(n·2^n).",
+  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/enumerate_palindromic_decompositions.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice.",
+  "correctness": "The current pieces concatenate to exactly the consumed text and every piece is a palindrome. Every possible next cut is tested, so each legal partition follows exactly one branch. Reaching the end proves completeness of that partition; rejecting a nonpalindromic prefix loses no valid partition.",
+  "walkthrough": "For pop, choosing single characters produces [p,o,p]. The entire substring pop is also palindromic, producing [pop]. No other next boundary yields a palindrome partition.",
+  "edgeCases": [
+    "An empty string has one empty partition.",
+    "Each partition preserves substring order.",
+    "Repeated characters can create exponentially many valid partitions.",
+    "Character positions in this implementation are UTF-8 bytes, not user-perceived grapheme clusters."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      "pop"
+    ],
+    "expected": [
+      [
+        "p",
+        "o",
+        "p"
+      ],
+      [
+        "pop"
+      ]
+    ]
+  }
 }

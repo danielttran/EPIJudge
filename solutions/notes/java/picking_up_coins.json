@@ -1,6 +1,24 @@
 {
-  "explanation": "Recursively compare taking either endpoint. Assume the opponent chooses the next endpoint that leaves the smaller future revenue, and store interval results in a table.",
-  "timeComplexity": "O(n\u00b2) when nonempty interval revenues are nonzero; zero-valued memo states can be recomputed exponentially",
-  "spaceComplexity": "O(n\u00b2) table plus O(n) recursion",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/PickingUpCoins.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "explanation": "Memoize the maximum revenue for each remaining interval. Try either endpoint, then account for an optimal opponent by taking the smaller of the two revenues left after their reply.",
+  "timeComplexity": "O(n²) for strictly positive coin values. This code uses zero as an uncached sentinel; zero-valued optimum intervals are recomputed, potentially exponentially often. There are O(n²) intervals and constant choices per interval when memoization recognizes the cached value.",
+  "spaceComplexity": "O(n²) memo storage plus O(n) recursive depth. The interval table has n² entries; recursive variants add at most linear call depth.",
+  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/PickingUpCoins.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/).",
+  "correctness": "After our endpoint choice the opponent chooses an endpoint that maximizes their own total, equivalently minimizes ours because the remaining total is fixed. The two replies produce the two smaller intervals in the recurrence. Maximizing over our first choice therefore gives exactly the guaranteed optimal revenue.",
+  "walkthrough": "For coins [4,9,2], taking 4 lets the opponent take 9, leaving 2: the first player gets 6. Taking 2 similarly lets the opponent take 9, leaving 4: again 6. Both endpoint choices guarantee 6, so return 6. The walkthroughCase uses the judge’s JSON input format and expected observation.",
+  "edgeCases": [
+    "An empty row returns 0.",
+    "One coin is taken immediately.",
+    "Odd-length rows still alternate turns correctly.",
+    "The opponent’s choice uses a minimum, not an additional maximum."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        4,
+        9,
+        2
+      ]
+    ],
+    "expected": 6
+  }
 }

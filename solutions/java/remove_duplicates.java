@@ -51,6 +51,7 @@ public class RemoveDuplicates {
 
   public static void eliminateDuplicate(List<Name> names) {
 
+    if (names.isEmpty()) return;
     Collections.sort(names); // Makes identical elements become neighbors.
     int writeIdx = 0;
     for (int i = 1; i < names.size(); i++) {

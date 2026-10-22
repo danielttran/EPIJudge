@@ -1,6 +1,20 @@
 {
   "explanation": "Use exponentiation by squaring: an odd exponent contributes the current factor, then the factor is squared and the exponent is halved. Widen before negating to handle int.MinValue.",
-  "timeComplexity": "O(log(|y| + 1)).",
-  "spaceComplexity": "O(1).",
-  "attribution": "Unmodified reference from epi_judge_python_solutions/power_x_y.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice."
+  "timeComplexity": "O(log(|y| + 1)). Each iteration halves the exponent, giving O(log(|y|+1)) iterations.",
+  "spaceComplexity": "O(1). Only base, exponent and result are retained.",
+  "attribution": "Unmodified reference from epi_judge_python_solutions/power_x_y.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice.",
+  "correctness": "After a negative exponent is normalized by inverting x, maintain result × x^exponent equal to the requested power. An odd exponent transfers one factor into result. Squaring x and halving the exponent preserves the remaining power. Termination at exponent zero leaves the required result.",
+  "walkthrough": "For x=2 and y=-3, invert the base to 0.5 and use exponent 3. Its low bit contributes 0.5; square the base to 0.25 and halve the exponent to 1. That bit contributes another factor 0.25, giving 0.125.",
+  "edgeCases": [
+    "Exponent zero returns one, including 0^0 by this implementation convention.",
+    "For negative exponents the base must be nonzero.",
+    "Intermediate floating-point overflow/underflow follows the selected language runtime."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      2.0,
+      -3
+    ],
+    "expected": 0.125
+  }
 }

@@ -19,6 +19,7 @@ public class MaxSubmatrix {
   @EpiTest(testDataFile = "max_submatrix.tsv")
 
   public static int maxRectangleSubmatrix(List<List<Boolean>> A) {
+  if (A.isEmpty()) return 0;
 
     // DP table stores (h, w) for each (i, j).
     MaxHW[][] table = new MaxHW[A.size()][A.get(0).size()];

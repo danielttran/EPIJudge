@@ -1,6 +1,19 @@
 {
-  "explanation": "Store unmatched opening indices above an initial -1 boundary. An unmatched closing parenthesis becomes the new boundary index. After a matched close, the distance to the remaining stack top is the longest balanced suffix.",
-  "timeComplexity": "O(n)",
-  "spaceComplexity": "O(n)",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "explanation": "A stack stores unmatched opening indices plus the boundary after the last unmatched closing parenthesis. After each matched close, the distance to the remaining top is the longest balanced suffix.",
+  "timeComplexity": "O(n) Each character pushes or pops at most one index.",
+  "spaceComplexity": "O(n) An all-opening string leaves n unmatched indices on the stack.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "The stack stores unmatched opening positions plus a base boundary after the latest unmatched close. After matching a close, the new top is the nearest position that cannot belong to the balanced suffix. Its distance to the current position is therefore the longest balanced suffix, and maximizing these distances finds the optimum.",
+  "walkthrough": "For \")()(()\", the leading close sets the invalid-prefix boundary. The following () gives length 2. The trailing (() contains another matched pair of length 2, so the answer remains 2.",
+  "edgeCases": [
+    "An unmatched closing parenthesis resets the base boundary.",
+    "Unmatched openings separate possible balanced suffixes.",
+    "The empty string has length 0."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      ")()(()"
+    ],
+    "expected": 2
+  }
 }

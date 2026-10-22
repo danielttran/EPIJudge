@@ -1,6 +1,21 @@
 {
-  "explanation": "Simulate the first k swaps of Fisher–Yates on 0 through n−1 without allocating the full range. A hash map records only positions whose values changed; collect the first k virtual positions.",
-  "timeComplexity": "O(k) expected sampling time; the wrapper performs repeated statistical trials.",
-  "spaceComplexity": "O(k) map and output space.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/random_subset.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "Represent the virtual array [0,…,n−1] by a map: absent positions contain their own indices. Read both mapped values before swapping positions i and a uniformly chosen suffix position. Return the first k virtual positions.",
+  "timeComplexity": "O(k) expected: k swaps and k result reads, each using constant expected hash work. Each of k iterations performs a constant number of expected-time hash operations; at most O(k) map entries are introduced.",
+  "spaceComplexity": "O(k) map entries and O(k) returned values. At most a constant number of virtual-map entries are added per selection, plus k output entries.",
+  "attribution": "Original reference source: epi_judge_cpp_solutions/random_subset.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice. Local boundary or iterator-safety correction authored for EPI Practice. The displayed copy includes local contract or boundary corrections; the upstream reference file is preserved.",
+  "correctness": "After step i the map agrees with a real Fisher–Yates shuffle through position i. Reading absent positions as their indices preserves all untouched entries. Each suffix choice is uniform, so the k-prefix is a uniform ordered sample; forgetting its order makes each subset equally likely.",
+  "walkthrough": "For n=5 and k=2, one possible run chooses virtual position 3, then position 4. It returns [3,4], recording the displaced virtual values only where necessary. Every two-element subset of {0,1,2,3,4} has probability 1/10, regardless of returned order. JSON arguments are [n,k]. Observed true is the property/distribution check, not the callable return.",
+  "edgeCases": [
+    "k=0 returns an empty subset.",
+    "k=n returns every value in some order.",
+    "Valid inputs require 0≤k≤n.",
+    "No selected value can appear twice."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      5,
+      2
+    ],
+    "expected": true
+  }
 }

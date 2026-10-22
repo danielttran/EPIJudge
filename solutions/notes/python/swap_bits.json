@@ -1,6 +1,22 @@
 {
   "explanation": "Mask to 64 bits, compare the selected bit values, and toggle both only when they differ. Interpret the final pattern using the displayed signed 64-bit convention, including the sign bit.",
-  "timeComplexity": "O(1) fixed-width bit operations",
-  "spaceComplexity": "O(1) for fixed-width inputs",
-  "attribution": "Original Python implementation authored for EPI Practice from its displayed contract and independently authored C# solution; no upstream reference source adapted."
+  "timeComplexity": "O(1) time. Two bit extractions and at most one XOR mask are performed.",
+  "spaceComplexity": "O(1) auxiliary space. Only fixed-width words and shift indices are stored.",
+  "attribution": "Original Python implementation authored for EPI Practice from its displayed contract and independently authored C# solution; no upstream reference source adapted.",
+  "correctness": "If the selected bits are equal, swapping them changes nothing. If they differ, XOR with a mask containing exactly those two positions toggles each to the other’s value while leaving every unselected bit unchanged. Reinterpreting the input as ulong makes shifts logical across all 64 positions; converting the final bit pattern back preserves its signed two’s-complement interpretation.",
+  "walkthrough": "82 has set bits at positions 6, 4 and 1. Swap positions 1 and 5: they contain 1 and 0, so XOR with 2 + 32 = 34. The resulting set positions are 6, 5 and 4, representing 64 + 32 + 16 = 112. Return 112.",
+  "edgeCases": [
+    "Equal positions or equal selected bits leave the value unchanged.",
+    "Position 63 is the sign bit and must still participate in the swap.",
+    "Negative inputs are treated as full 64-bit two’s-complement bit patterns.",
+    "The input is masked to 64 bits and the output pattern is converted to signed two’s-complement form."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      82,
+      1,
+      5
+    ],
+    "expected": 112
+  }
 }

@@ -44,6 +44,7 @@ bool CheckFeasible(const vector<Jug>& jugs, int L, int H) {
 
 bool CheckFeasibleHelper(const vector<Jug>& jugs, int L, int H,
                          unordered_set<VolumeRange, HashVolumeRange>* c) {
+  if (L <= 0 && H >= 0) return true;
   if (L > H || c->count({L, H}) || (L < 0 && H < 0)) {
     return false;
   }

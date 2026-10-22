@@ -1,6 +1,27 @@
 {
-  "explanation": "Compute subtree heights and a balanced flag in postorder. Propagate an unbalanced child immediately; otherwise compare child heights and return the current height.",
-  "timeComplexity": "O(n)",
-  "spaceComplexity": "O(h) recursion",
-  "attribution": "Unmodified reference from epi_judge_python_solutions/is_tree_balanced.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice."
+  "explanation": "Return both a subtree’s balance status and its height from a postorder traversal. An empty subtree has height −1. Stop propagating heights as soon as a child is unbalanced; otherwise compare the two child heights.",
+  "timeComplexity": "O(n): at most one postorder visit per node. Postorder computes each visited node’s height once instead of recomputing subtree heights.",
+  "spaceComplexity": "O(h) recursion stack. Only postorder frames along the active root-to-node path are needed.",
+  "attribution": "Unmodified reference from epi_judge_python_solutions/is_tree_balanced.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice.",
+  "correctness": "Assuming each child result is correct, the subtree is balanced exactly when both children are balanced and their heights differ by at most one. Its height is one plus the larger child height. This induction begins with the empty subtree.",
+  "walkthrough": "For [4,2,7,1,null,null,9], leaves 1 and 9 have height 0; nodes 2 and 7 have height 1. The root’s child heights match, so its balance status is true. The walkthroughCase uses the judge’s JSON input format and expected observation.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        4,
+        2,
+        7,
+        1,
+        null,
+        null,
+        9
+      ]
+    ],
+    "expected": true
+  },
+  "edgeCases": [
+    "The empty tree is balanced.",
+    "A subtree imbalance must be detected even if the root’s own child heights are similar.",
+    "A long one-sided chain is unbalanced once a height difference exceeds one."
+  ]
 }

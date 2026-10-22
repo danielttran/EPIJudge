@@ -16,6 +16,7 @@ struct Rect {
 using Skyline = vector<Rect>;
 
 Skyline ComputeSkyline(const vector<Rect>& buildings) {
+  if (buildings.empty()) return {};
   int min_left = numeric_limits<int>::max(),
       max_right = numeric_limits<int>::min();
   for (const Rect& building : buildings) {

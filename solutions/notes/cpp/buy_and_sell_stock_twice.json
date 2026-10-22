@@ -1,6 +1,26 @@
 {
-  "explanation": "Record the best one-transaction profit for every prefix. Scan backward while maintaining the best sale price to combine a second transaction with each prefix result. The file also contains a separate constant-space alternative.",
-  "timeComplexity": "O(n) time for the called prefix/suffix implementation.",
-  "spaceComplexity": "O(n) auxiliary space for prefix profits.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/buy_and_sell_stock_twice.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "Store the best one-transaction profit achievable through each day. Then scan backward, retaining the greatest sale price at or after the current day. Treat that day as the second purchase and combine its best possible profit with the stored first-transaction profit.",
+  "timeComplexity": "O(n+1): one forward scan and one backward scan with constant work at each day.",
+  "spaceComplexity": "O(n+1): n stored prefix profits; the backward maximum uses constant additional space.",
+  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/buy_and_sell_stock_twice.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice.",
+  "correctness": "The forward minimum gives the best purchase price through day i, and the prefix maximum therefore records the best first transaction completed by i, not necessarily sold on i. In the backward pass, the maximum price gives the best sale at or after i. Combining these values makes a feasible pair whose second purchase is at i. Conversely, every feasible pair has a second purchase day; its first profit is bounded by that day’s prefix value and its second profit by that day’s suffix maximum minus price. Maximizing these candidates is therefore optimal. Starting from the best single profit also covers fewer than two trades. Sharing a sale/purchase day adds no extra profit and is allowed.",
+  "walkthrough": "For [5,1,4,2,7], the best first profits through each day are [0,0,3,3,6]. On the backward scan at index 3, the best sale price is 7, so buying the second share for 2 earns 5. Adding prefix[3]=3 gives 8: buy at 1, sell at 4, buy at 2, sell at 7.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        5.0,
+        1.0,
+        4.0,
+        2.0,
+        7.0
+      ]
+    ],
+    "expected": 8.0
+  },
+  "edgeCases": [
+    "Empty or singleton price arrays return zero.",
+    "Nonincreasing prices make no profitable transaction, so return zero.",
+    "One transaction is allowed; exactly two are not required.",
+    "The two transactions cannot hold shares simultaneously."
+  ]
 }

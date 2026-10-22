@@ -33,6 +33,7 @@ export type Problem = {
       runtime: string;
       codeFormat?: CodeFormat;
       references?: CodeReference[];
+      contract?: string[];
     }
   >;
   examples: { input: string; output: string; explanation: string }[];

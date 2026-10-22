@@ -1,6 +1,21 @@
 {
   "explanation": "Shift all 64 bits into a new unsigned result in reverse order, including leading zeros. This compact implementation computes the transformation directly without precomputed expected outputs.",
-  "timeComplexity": "O(64), constant time for a 64-bit word.",
-  "spaceComplexity": "O(1) auxiliary space.",
-  "attribution": "Original C++ implementation and explanation authored for EPI Practice from the displayed 64-bit reversal contract and the repository-authored C# algorithm. Uses the existing local test-framework API; no upstream reference implementation was altered."
+  "timeComplexity": "O(64), or O(w) for w-bit words. Exactly 64 low-bit extractions and shifts are performed.",
+  "spaceComplexity": "O(1). Only two 64-bit words are retained.",
+  "attribution": "Original C++ implementation and explanation authored for EPI Practice from the displayed 64-bit reversal contract and the repository-authored C# algorithm. Uses the existing local test-framework API; no upstream reference implementation was altered.",
+  "correctness": "After i iterations, result contains the reversed order of the lowest i original bits, while source contains the unprocessed higher bits. Shifting the result and appending source’s low bit preserves this relation. After exactly 64 steps, every bit is reversed; the final cast changes representation, not the bit pattern.",
+  "walkthrough": "For x=5, bits 0 and 2 are set. Reversal moves them to bits 63 and 61, giving the unsigned pattern 0xA000000000000000. Interpreted as signed long, that same pattern is -6917529027641081856.",
+  "edgeCases": [
+    "All 64 positions are reversed, including leading zeros and the sign bit.",
+    "Zero remains zero.",
+    "The all-ones pattern -1 remains -1.",
+    "Unsigned shifts prevent sign extension while reading bits.",
+    "The callable may expose an unsigned word; the shared corpus compares the corresponding 64-bit pattern."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      5
+    ],
+    "expected": -6917529027641081856
+  }
 }

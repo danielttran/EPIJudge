@@ -1,6 +1,41 @@
 {
   "explanation": "Map every original node to its new copy before visiting its neighbors. This breaks recursive cycles and preserves adjacency while sharing no original graph nodes.",
-  "timeComplexity": "O(V + E) expected time for reachable vertices V and directed adjacency entries E.",
-  "spaceComplexity": "O(V) map/recursion space, plus O(V + E) cloned output.",
-  "attribution": "Original repository-authored Blind75 Python algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used."
+  "timeComplexity": "O(V + E) expected time for reachable vertices V and directed adjacency entries E. The identity map processes each reachable vertex once and translates every adjacency entry once.",
+  "spaceComplexity": "O(V) map/recursion space, plus O(V + E) cloned output. The map and recursion have at most V entries/frames; cloned vertices and edges are output space.",
+  "attribution": "Original repository-authored Blind75 Python algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used.",
+  "correctness": "The identity map creates one new vertex per original vertex before traversing its neighbors, so cycles cannot cause repeated cloning. Every original adjacency entry is translated through that map, preserving connectivity and sharing. All returned vertices are newly allocated and no original value or edge is modified.",
+  "walkthrough": "For adjacency [[2],[1,3],[2]], allocate copies of vertices 1,2 and 3. The copied edges are 1↔2 and 2↔3, so the cloned adjacency is again [[2],[1,3],[2]], but every vertex is a different object from its original. Expected is serialized adjacency of the returned clone; the harness separately checks fresh nodes and preservation of the original graph.",
+  "edgeCases": [
+    "An empty graph clones to null.",
+    "A single isolated vertex still needs a new object.",
+    "Returning the original graph fails even when its adjacency looks correct."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          2
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          2
+        ]
+      ]
+    ],
+    "expected": [
+      [
+        2
+      ],
+      [
+        1,
+        3
+      ],
+      [
+        2
+      ]
+    ]
+  }
 }

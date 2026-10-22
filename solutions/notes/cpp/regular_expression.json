@@ -1,6 +1,21 @@
 {
-  "explanation": "Try each possible start unless the pattern begins with an anchor. Match literal characters or dots recursively; for a starred atom try all matching repetition lengths, and honor an ending dollar anchor.",
-  "timeComplexity": "Exponential worst-case backtracking; O((n+1)^(p+1)) is a safe upper bound for text length n and pattern length p.",
-  "spaceComplexity": "O(p) recursion depth, excluding the supplied strings.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/regular_expression.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "Try each possible text start unless ^ anchors the pattern. Recursively match one ordinary character, or enumerate all compatible repetition lengths for a starred token; a trailing $ requires the remaining text to be empty.",
+  "timeComplexity": "O((p+1)(n+1)): at most one evaluation of each pattern/text offset pair, with constant work and at most two transitions per state.",
+  "spaceComplexity": "O((p+1)(n+1)) cached states plus O(p+n+1) recursion frames; every recursive step advances a pattern or text offset.",
+  "attribution": "Original reference source: epi_judge_cpp_solutions/regular_expression.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice. The displayed copy includes local contract or boundary corrections; the upstream reference file is preserved.",
+  "correctness": "At each pattern suffix, an ordinary token must match exactly the next text character. A starred token can consume any prefix consisting only of compatible characters, including length zero; the loop and final zero-length branch cover exactly those choices. Exhausting the pattern succeeds unless its trailing end anchor still requires more text to be consumed. Trying all starts implements substring matching.",
+  "walkthrough": "For ^ab*c$ on abbbc, the anchor fixes start 0 and a consumes the first character. The b* branch tries one b (c then fails), two b characters (c still fails), then three b characters. The remaining c matches and $ sees empty text, so return true.",
+  "edgeCases": [
+    "An unanchored pattern may match an empty substring.",
+    "^ anchors only the beginning and a trailing $ anchors the end.",
+    "A starred token may consume zero characters.",
+    "Dot matches one character, not an arbitrary-length substring."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      "^ab*c$",
+      "abbbc"
+    ],
+    "expected": true
+  }
 }

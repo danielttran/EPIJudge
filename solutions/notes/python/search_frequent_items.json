@@ -1,6 +1,31 @@
 {
-  "explanation": "Use a bounded candidate counter: when k distinct candidates occur, decrement all counters and discard zeros. A second pass verifies candidate frequencies exceed n/k. itertools.tee buffers the stream for that pass.",
-  "timeComplexity": "O(n) amortized expected counter work",
-  "spaceComplexity": "O(n+k), including the tee buffer",
-  "attribution": "Unmodified reference from epi_judge_python_solutions/search_frequent_items.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice."
+  "explanation": "Cancel one occurrence of each candidate whenever k distinct candidates accumulate. At most k−1 survive; recount these candidates in a second pass and retain only those occurring strictly more than n/k times.",
+  "timeComplexity": "O(n) expected dictionary operations, plus character hashing: count every stream element once, then inspect at most n distinct keys once.",
+  "spaceComplexity": "O(u) entries, where u is the number of distinct strings, plus output; each distinct value has one exact counter.",
+  "attribution": "Unmodified reference from epi_judge_python_solutions/search_frequent_items.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice.",
+  "correctness": "Every cancellation removes k distinct occurrences, so any item loses at most one occurrence per cancellation. An item occurring more than n/k times cannot be completely canceled and must survive as a candidate. Candidates can be false positives, so the second pass computes their exact frequencies before applying the strict threshold.",
+  "walkthrough": "For k=3 and [a,b,a,c,a,b,d], counts reach {a:2,b:1,c:1} at c; cancel to {a:1}. After the remaining a,b,d, cancel {a:2,b:1,d:1} again to {a:1}. Recount gives a:3>7/3, so return [a].",
+  "edgeCases": [
+    "k must be positive.",
+    "k=1 yields no frequent item because no count exceeds n.",
+    "Recounting excludes candidates whose final count is exactly n/k.",
+    "Output order is irrelevant."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      3,
+      [
+        "a",
+        "b",
+        "a",
+        "c",
+        "a",
+        "b",
+        "d"
+      ]
+    ],
+    "expected": [
+      "a"
+    ]
+  }
 }

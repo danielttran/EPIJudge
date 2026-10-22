@@ -1,6 +1,30 @@
 {
-  "explanation": "Precompute downward heights and rightward widths of true cells. For each possible upper-left corner, extend downward and maintain the narrowest available width to evaluate rectangles.",
-  "timeComplexity": "O(R\u00b2C) worst case",
-  "spaceComplexity": "O(RC) height/width table",
-  "attribution": "Unmodified reference from epi_judge_python_solutions/max_submatrix.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice."
+  "explanation": "Precompute the consecutive true height downward and width rightward at each cell. For every promising top-left corner, extend the rectangle downward while maintaining the minimum row width; maximize height times that width.",
+  "timeComplexity": "O(r²c) worst-case upper bound: O(rc) run preprocessing, followed by up to r row extensions for each of rc starting cells.",
+  "spaceComplexity": "O(rc) for the height/width table; the scan uses constant extra counters.",
+  "attribution": "Adapted reference from epi_judge_python_solutions/max_submatrix.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice.",
+  "correctness": "For a fixed top-left cell and height, all included rows must be true through the chosen width, so the maximal width is the minimum rightward run across those rows. Enumerating all valid heights at every top-left cell covers every all-true rectangle. The initial width×height test is a safe upper bound: no rectangle from that corner can exceed either run.",
+  "walkthrough": "For [[true,true,false],[true,true,true]], the run at top-left has height 2 and width 2. Extending to its second row leaves minimum width min(2,3)=2, producing area 2×2=4. Starting in the second row yields at most width 3 and height 1, so return 4.",
+  "edgeCases": [
+    "Empty input returns zero.",
+    "A false cell stops a downward or rightward run.",
+    "Return rectangle area; a nonsquare rectangle may be optimal."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          true,
+          true,
+          false
+        ],
+        [
+          true,
+          true,
+          true
+        ]
+      ]
+    ],
+    "expected": 4
+  }
 }

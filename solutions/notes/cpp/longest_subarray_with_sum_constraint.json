@@ -1,6 +1,25 @@
 {
-  "explanation": "Compute prefix sums and the minimum prefix sum at or after each index. Advance two endpoints using these suffix minima to determine whether some extension can meet the sum bound, updating the longest feasible range.",
-  "timeComplexity": "O(n) time.",
-  "spaceComplexity": "O(n) auxiliary prefix/suffix arrays.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/longest_subarray_with_sum_constraint.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "Build prefix sums and their suffix minima. For each moving start/end threshold, ask whether some endpoint at or beyond the current end can give sum ≤k; advance the end when feasible, otherwise advance the start.",
+  "timeComplexity": "O(n): prefix construction and suffix minima are linear, and each pointer advances at most n times.",
+  "spaceComplexity": "O(n) for prefix sums and suffix minima.",
+  "attribution": "Original reference source: epi_judge_cpp_solutions/longest_subarray_with_sum_constraint.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice. The displayed copy includes local contract or boundary corrections; the upstream reference file is preserved.",
+  "correctness": "For a start a, the minimum prefix sum from b onward minus the prefix before a is the minimum sum attainable with an endpoint at least b. If this exceeds k, no extension from a can work and discarding that start is safe. Otherwise a qualifying interval of length at least b−a+1 exists, so this length is a valid lower bound and b can advance. Both pointers move only forward, and every longer possible answer is eventually considered.",
+  "walkthrough": "For [4,−6,3,1], k=0, prefixes are [4,−2,1,2] and suffix minima [−2,−2,1,2]. Starting at 0 permits b=0,1 but not b=2. Move a to 1: subtract prefix 4, so b=2 and b=3 are feasible. The best length becomes 3, realized by [−6,3,1].",
+  "edgeCases": [
+    "Empty input returns zero.",
+    "Negative entries are allowed; ordinary positive-only sliding windows are invalid.",
+    "If the full sum is ≤k, return the entire length immediately."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        4,
+        -6,
+        3,
+        1
+      ],
+      0
+    ],
+    "expected": 3
+  }
 }

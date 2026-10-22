@@ -1,6 +1,27 @@
 {
   "explanation": "Maintain less-than, equal-to and greater-than regions around the pivot. Move an inspected value to its appropriate region, inspecting a swapped-in value before advancing.",
-  "timeComplexity": "O(n)",
-  "spaceComplexity": "O(1) for partitioning; the wrapper builds a color list",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/DutchNationalFlag.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "timeComplexity": "O(n): the unknown region begins with n entries and loses exactly one at each iteration.",
+  "spaceComplexity": "O(1): a saved pivot value and three indices; the partition uses swaps in the existing input.",
+  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/DutchNationalFlag.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/).",
+  "correctness": "Maintain four half-open regions: [0,smaller) is below the saved pivot, [smaller,current) equals it, [current,larger) is unknown, and [larger,n) is above it. Moving a smaller value to the first region exchanges it with an equal value, so both indices can advance. An equal value only advances current. A larger value swaps with the unknown region’s last value; that incoming value still needs examination, so current stays fixed. Each step shrinks the unknown region by one, and swaps preserve every occurrence. When it is empty, the required partition holds.",
+  "walkthrough": "For values [2,0,1,2,1] and pivotIndex=2, save pivot 1. Swap the leading 2 with the final 1 to obtain [1,0,1,2,2]. Advance past 1, then move 0 into the smaller region to obtain [0,1,1,2,2]. Advance past the remaining 1; classify the remaining 2 in the larger region. The expected true denotes successful partition/multiset validation, not the void callable’s return value.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        2,
+        0,
+        1,
+        2,
+        1
+      ],
+      2
+    ],
+    "expected": true
+  },
+  "edgeCases": [
+    "pivotIndex is zero-based and must identify an element of a nonempty input.",
+    "Save the original pivot value before swapping the element at that index.",
+    "All equal values produce an empty smaller and larger region.",
+    "C++ and Java use Color values ordered RED=0, WHITE=1, BLUE=2; numeric examples use these encodings."
+  ]
 }

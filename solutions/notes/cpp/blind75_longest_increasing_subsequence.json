@@ -1,6 +1,27 @@
 {
   "explanation": "Maintain the smallest possible tail for every subsequence length. Binary-search the first tail not smaller than each value and replace it, or append when all tails are smaller.",
-  "timeComplexity": "O(n log(n + 1)) time for n values.",
-  "spaceComplexity": "O(n) auxiliary space.",
-  "attribution": "Original repository-authored Blind75 C++ algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used."
+  "timeComplexity": "O(n log(n + 1)) time for n values. Each of n values binary-searches at most n tails, then performs one update.",
+  "spaceComplexity": "O(n) auxiliary space. There is one tail per attainable subsequence length, at most n.",
+  "attribution": "Original repository-authored Blind75 C++ algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used.",
+  "correctness": "For each length, tails stores the smallest possible ending value of an increasing subsequence of that length. Replacing the first tail at least as large as a new value cannot invalidate shorter subsequences and improves future extension opportunities. Appending occurs exactly when a longer subsequence is possible, so the final tails length is optimal.",
+  "walkthrough": "For [4,1,5,2,6,3,7], tails changes through [4],[1],[1,5],[1,2],[1,2,6],[1,2,3],[1,2,3,7]. Its final length is 4, witnessed by subsequence 1,2,3,7.",
+  "edgeCases": [
+    "The subsequence need not be contiguous.",
+    "Equal values cannot extend a strictly increasing subsequence.",
+    "The tails array represents optimal ending values and need not itself reproduce an earlier input prefix."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        4,
+        1,
+        5,
+        2,
+        6,
+        3,
+        7
+      ]
+    ],
+    "expected": 4
+  }
 }

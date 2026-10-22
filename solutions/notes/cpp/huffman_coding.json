@@ -1,6 +1,32 @@
 {
-  "explanation": "Build a Huffman tree by repeatedly merging the two least frequent candidate subtrees. Traverse the resulting tree to assign bit strings, then sum each frequency times its code length and divide by 100 as the corpus requires.",
-  "timeComplexity": "O(n log(n+1) + Σ code lengths) expected time; O(n^2) is a worst-case bound.",
-  "spaceComplexity": "O(n + Σ code lengths) space for the tree, heap and assigned code strings.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/huffman_coding.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "Build a min-heap of leaf trees, repeatedly combine the two least frequent trees, then traverse the final tree assigning 0/1 edge strings. Sum each symbol’s frequency times its code length and divide by 100.",
+  "timeComplexity": "O(n log n + L), where L is the sum of stored codeword lengths: n−1 heap merges plus traversal and copying code strings. L can be O(n²) for an unbalanced code tree.",
+  "spaceComplexity": "O(n+L): O(n) heap/tree nodes plus L stored code characters; recursive traversal and its mutable path use O(n) in a skew tree.",
+  "attribution": "Original reference source: epi_judge_cpp_solutions/huffman_coding.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice. The displayed copy includes local contract or boundary corrections; the upstream reference file is preserved.",
+  "correctness": "In an optimal prefix tree the two least frequent symbols can be deepest siblings: swapping them with deeper higher-frequency symbols cannot increase cost. Contracting those siblings gives the same optimal subproblem with their summed weight. Repeating this exchange argument proves the greedy tree optimal. Leaf path lengths are its code lengths, so the final weighted sum is the objective.",
+  "walkthrough": "For R=12,S=18,T=30, merge R and S into weight 30, then merge that tree with T. R and S have code length 2 and T length 1 (bit labels may differ). Return (12×2+18×2+30×1)/100=0.9.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          "R",
+          12.0
+        ],
+        [
+          "S",
+          18.0
+        ],
+        [
+          "T",
+          30.0
+        ]
+      ]
+    ],
+    "expected": 0.9
+  },
+  "edgeCases": [
+    "A singleton symbol can use an empty codeword and has result zero.",
+    "Equal weights may produce different optimal trees with the same weighted length.",
+    "Divide by 100 even if the supplied frequencies sum to a value other than 100."
+  ]
 }

@@ -1,6 +1,25 @@
 {
   "explanation": "Compare the middle value with the right endpoint. A larger middle places the rotation minimum strictly to its right; otherwise keep the middle in the left candidate interval.",
-  "timeComplexity": "O(log n) time.",
-  "spaceComplexity": "O(1) auxiliary space.",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "timeComplexity": "O(log n) time. Each comparison retains at most roughly half the current candidate interval.",
+  "spaceComplexity": "O(1) auxiliary space. Only endpoints and midpoint are stored.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "The candidate interval always contains the minimum. If A[middle] exceeds A[right], the rotation boundary must lie strictly after middle, so discarding the left half cannot remove the minimum. Otherwise middle lies in the increasing suffix containing the minimum, which is at or before middle. Each step shrinks the interval until its only index is the minimum.",
+  "walkthrough": "For [29, 41, 6, 12, 18], left = 0 and right = 4. Middle index 2 contains 6, which is below the right value 18, so right becomes 2. Middle index 1 then contains 41, above 6, so left becomes 2. The pointers meet at index 2; return 2.",
+  "edgeCases": [
+    "An unshifted sorted array returns index 0.",
+    "A single element is its own minimum.",
+    "The rotation minimum may be the final element; distinct values make the comparison decisive."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        29,
+        41,
+        6,
+        12,
+        18
+      ]
+    ],
+    "expected": 2
+  }
 }

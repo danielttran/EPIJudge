@@ -1,6 +1,20 @@
 {
-  "explanation": "Split the path into components and use a stack to remove dots and cancel ordinary components against parent markers. Preserve unresolved parents for relative paths and retain an absolute-root marker. Join the remaining components with slashes.",
-  "timeComplexity": "O(n) time for path length n, using amortized string growth.",
-  "spaceComplexity": "O(n) component and result space.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/directory_path_normalization.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "Use a component stack with a root sentinel for absolute paths. Ignore dots and empty components; pop a normal name on .., retain unresolved relative parents, and reject attempts to pop the absolute root. Join the remaining stack with slashes.",
+  "timeComplexity": "O(n), where n is path length Every component is classified once, pushed at most once and popped at most once; joining emits the result once.",
+  "spaceComplexity": "O(n) Split components and the surviving component stack together require linear storage.",
+  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/directory_path_normalization.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice.",
+  "correctness": "The component stack always represents the normalized processed prefix. A name appends one level, a dot changes nothing, and a parent removes a normal level if possible. Only unresolved relative parents are retained, so the final joined components describe the same rooted or relative path.",
+  "walkthrough": "For oak/./elm/../ash, ignore the dot, append elm, then cancel elm on the parent step. Append ash and join to obtain oak/ash.",
+  "edgeCases": [
+    "Repeated slashes do not create components.",
+    "A fully cancelled relative path becomes empty.",
+    "Unresolved leading parents are preserved for relative paths.",
+    "This native callable throws on empty input and on attempts to climb above absolute root; other displayed languages permit these inputs."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      "oak/./elm/../ash"
+    ],
+    "expected": "oak/ash"
+  }
 }

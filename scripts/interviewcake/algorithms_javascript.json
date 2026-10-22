@@ -2,232 +2,1449 @@
   "interviewcake_second-largest-item-in-bst": {
     "code": "class Solution {\n    FindSecondLargest(root) {\n        let parent = null, node = root;\n        while (node.Right !== null) { parent = node; node = node.Right; }\n        if (node.Left !== null) {\n            node = node.Left;\n            while (node.Right !== null) node = node.Right;\n            return node.Value;\n        }\n        return parent.Value;\n    }\n}\n",
     "incorrectCode": "class Solution {\n    FindSecondLargest(root) {\n        let parent = null, node = root;\n        while (node.Right !== null) { parent = node; node = node.Right; }\n        return parent === null ? root.Left.Value : parent.Value;\n    }\n}\n",
-    "incorrectReason": "Assumes the maximum node has no left subtree; its predecessor may instead be the rightmost node of that subtree."
+    "incorrectReason": "Assumes the maximum node has no left subtree; its predecessor may instead be the rightmost node of that subtree.",
+    "notes": {
+      "explanation": "Walk toward the largest key. If that node has a left subtree, its predecessor is the rightmost key in that subtree; otherwise its parent is the predecessor.",
+      "correctness": "A node's predecessor is the largest key in its left subtree, if that subtree exists. Otherwise it is the closest ancestor for which the node lies in the ancestor's right subtree. For the globally largest node this ancestor is its parent, so these cases identify exactly the greatest key remaining after the maximum is excluded.",
+      "walkthrough": "In the tree [12,5,20,2,9,17,25], the rightward search visits 12, 20 and 25. Node 25 has no left subtree, so its parent, 20, is the second-largest key. The tree remains unchanged.",
+      "edgeCases": [
+        "Two nodes",
+        "largest node with a left branch",
+        "negative keys",
+        "skewed trees.",
+        "With two nodes, return the smaller key; if the maximum has a left subtree, use that subtree’s rightmost key rather than its parent."
+      ],
+      "timeComplexity": "O(h) time: the search follows a downward path to the maximum and at most another downward path in its left subtree, bounded by tree height h.",
+      "spaceComplexity": "O(1) auxiliary space: only the current node and its parent are retained; no traversal stack is built.",
+      "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
+      "walkthroughCase": {
+        "arguments": [
+          [
+            12,
+            5,
+            20,
+            2,
+            9,
+            17,
+            25
+          ]
+        ],
+        "expected": 20
+      }
+    }
   },
   "interviewcake_stock-price": {
     "code": "class Solution {\n    GetMaxProfit(prices) {\n        let minimum = prices[0], best = prices[1] - prices[0];\n        for (let i = 1; i < prices.length; i++) {\n            best = Math.max(best, prices[i] - minimum);\n            minimum = Math.min(minimum, prices[i]);\n        }\n        return best;\n    }\n}\n",
     "incorrectCode": "class Solution {\n    GetMaxProfit(prices) {\n        let minimum = prices[0], best = 0;\n        for (let i = 1; i < prices.length; i++) {\n            best = Math.max(best, prices[i] - minimum);\n            minimum = Math.min(minimum, prices[i]);\n        }\n        return best;\n    }\n}\n",
-    "incorrectReason": "Allows skipping the required transaction, incorrectly clamping every all-loss result to zero."
+    "incorrectReason": "Allows skipping the required transaction, incorrectly clamping every all-loss result to zero.",
+    "notes": {
+      "explanation": "Keep the lowest earlier price and the best profit seen. Evaluate a sale before allowing its own price to become the next minimum.",
+      "correctness": "Before each sale, the minimum contains precisely earlier prices. The best sale at that position uses that minimum; maximizing these candidates examines every legal pair implicitly.",
+      "walkthrough": "For prices [11,7,13,4,10], the first feasible profit is 7-11=-4. Price 7 becomes the cheapest earlier purchase; selling at 13 improves the profit to 6. The later low price 4 followed by 10 also gives 6. Updating the minimum only after considering a sale prevents buying and selling at the same position.",
+      "edgeCases": [
+        "Declining prices",
+        "equal prices",
+        "minimum at the final position.",
+        "For [19,14,8,3], return -5; initializing the best profit to zero would incorrectly allow skipping the mandatory trade."
+      ],
+      "timeComplexity": "O(n) time: each of the n-1 possible sale positions performs a constant number of comparisons.",
+      "spaceComplexity": "O(1) auxiliary space: one earlier minimum and one best profit.",
+      "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
+      "walkthroughCase": {
+        "arguments": [
+          [
+            11,
+            7,
+            13,
+            4,
+            10
+          ]
+        ],
+        "expected": 6
+      }
+    }
   },
   "interviewcake_balanced-binary-tree": {
     "code": "class Solution {\n    IsBalanced(root) {\n        if (root === null) return true;\n        const stack = [[root, 0]];\n        let shallowest = Infinity, deepest = -Infinity;\n        while (stack.length !== 0) {\n            const [node, depth] = stack.pop();\n            if (node.Left === null && node.Right === null) {\n                shallowest = Math.min(shallowest, depth);\n                deepest = Math.max(deepest, depth);\n                if (deepest - shallowest > 1) return false;\n            }\n            if (node.Left !== null) stack.push([node.Left, depth + 1]);\n            if (node.Right !== null) stack.push([node.Right, depth + 1]);\n        }\n        return true;\n    }\n}\n",
     "incorrectCode": "class Solution {\n    IsBalanced(root) {\n        function height(node) {\n            if (node === null) return 0;\n            const left = height(node.Left), right = height(node.Right);\n            if (left < 0 || right < 0 || Math.abs(left - right) > 1) return -1;\n            return 1 + Math.max(left, right);\n        }\n        return height(root) >= 0;\n    }\n}\n",
-    "incorrectReason": "Checks AVL-style local subtree heights instead of the specified deepest/shallowest LEAF depths; a one-leaf chain must be accepted."
+    "incorrectReason": "Checks AVL-style local subtree heights instead of the specified deepest/shallowest LEAF depths; a one-leaf chain must be accepted.",
+    "notes": {
+      "explanation": "Traverse nodes with their depths, tracking the smallest and largest depths encountered at leaves. Reject once their difference exceeds one.",
+      "correctness": "The stored extremes are exactly the extrema among visited leaves. The final spread is the required global condition; an excessive partial spread can never decrease when more leaves are visited.",
+      "walkthrough": "For [4,2,7,1,3,null,9], the leaves are 1, 3 and 9. Each is two edges below the root, so the shallowest and deepest depths are both 2 and their difference is 0. Return true. A long chain would also return true because it has only one leaf.",
+      "edgeCases": [
+        "Empty tree",
+        "one-leaf chain",
+        "leaf depths in separate subtrees. This is not per-node AVL height balance.",
+        "An empty tree returns true, and a chain of any supported length returns true because its only leaf supplies both depth extremes."
+      ],
+      "timeComplexity": "O(n) time: each of n nodes is pushed and visited at most once, with constant work per visit.",
+      "spaceComplexity": "O(h) auxiliary space: depth-first pending siblings occupy at most a constant number of entries per tree level; h can be n.",
+      "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
+      "walkthroughCase": {
+        "arguments": [
+          [
+            4,
+            2,
+            7,
+            1,
+            3,
+            null,
+            9
+          ]
+        ],
+        "expected": true
+      }
+    }
   },
   "interviewcake_bst-checker": {
     "code": "class Solution {\n    IsBinarySearchTree(root) {\n        const pending = root === null ? [] : [[root, -Infinity, Infinity]];\n        while (pending.length !== 0) {\n            const [node, lower, upper] = pending.pop();\n            if (node.Value <= lower || node.Value >= upper) return false;\n            if (node.Left !== null) pending.push([node.Left, lower, node.Value]);\n            if (node.Right !== null) pending.push([node.Right, node.Value, upper]);\n        }\n        return true;\n    }\n}\n",
     "incorrectCode": "class Solution {\n    IsBinarySearchTree(root) {\n        if (root === null) return true;\n        if (root.Left !== null && root.Left.Value >= root.Value) return false;\n        if (root.Right !== null && root.Right.Value <= root.Value) return false;\n        return this.IsBinarySearchTree(root.Left) && this.IsBinarySearchTree(root.Right);\n    }\n}\n",
-    "incorrectReason": "Checks only immediate child ordering, missing violations of a more distant ancestor bound."
+    "incorrectReason": "Checks only immediate child ordering, missing violations of a more distant ancestor bound.",
+    "notes": {
+      "explanation": "Use a depth-first stack of nodes and open lower/upper bounds inherited from ancestors. The initial sentinels lie outside all signed 32-bit keys. Tighten the upper bound for a left child and the lower bound for a right child.",
+      "correctness": "Each bound summarizes every relevant ancestor restriction. Passing the current key as the new bound enforces all descendant restrictions inductively.",
+      "walkthrough": "For [10,4,16,1,7,12,19], node 4 inherits an upper bound of 10; its right child 7 must lie strictly between 4 and 10. Node 16 inherits a lower bound of 10, and its left child 12 must lie between 10 and 16. Every inherited interval is respected, so the answer is true.",
+      "edgeCases": [
+        "Ancestor violation several levels down",
+        "duplicates",
+        "integer endpoints",
+        "empty tree.",
+        "A left descendant exceeding the root fails even if its immediate parent comparison succeeds; duplicate keys also fail. Signed 32-bit endpoints are valid keys."
+      ],
+      "timeComplexity": "O(n) time: each node is checked once against two inherited bounds.",
+      "spaceComplexity": "O(h) auxiliary space for pending branches or recursive frames along tree height h; O(n) on a skewed tree.",
+      "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
+      "walkthroughCase": {
+        "arguments": [
+          [
+            10,
+            4,
+            16,
+            1,
+            7,
+            12,
+            19
+          ]
+        ],
+        "expected": true
+      }
+    }
   },
   "interviewcake_bracket-validator": {
     "code": "class Solution {\n    IsValid(code) {\n        const stack = [], matching = new Map([[')', '('], [']', '['], ['}', '{']]);\n        for (const character of code) {\n            if ('([{'.includes(character)) stack.push(character);\n            else if (matching.has(character) && stack.pop() !== matching.get(character)) return false;\n        }\n        return stack.length === 0;\n    }\n}\n",
     "incorrectCode": "class Solution {\n    IsValid(code) {\n        const counts = new Map([['(', 0], ['[', 0], ['{', 0]]);\n        const matching = new Map([[')', '('], [']', '['], ['}', '{']]);\n        for (const character of code) {\n            if (counts.has(character)) counts.set(character, counts.get(character) + 1);\n            else if (matching.has(character)) {\n                const opener = matching.get(character);\n                counts.set(opener, counts.get(opener) - 1);\n                if (counts.get(opener) < 0) return false;\n            }\n        }\n        return [...counts.values()].every(count => count === 0);\n    }\n}\n",
-    "incorrectReason": "Independent delimiter counts cannot detect crossed nesting such as ([)]."
+    "incorrectReason": "Independent delimiter counts cannot detect crossed nesting such as ([)].",
+    "notes": {
+      "explanation": "Push openers onto a stack and compare each closer with the top. Reject a mismatch or an empty stack at a closer.",
+      "correctness": "The stack records exactly the unmatched openers in nesting order. A closer can legally match only the top, so each accepted match preserves the invariant.",
+      "walkthrough": "Scanning a{b[c](d)}, ignore letters and push {, then [. The ] removes [, the ( is pushed and removed by ), and the final } removes {. No closer crosses another pair and the stack finishes empty, so return true.",
+      "edgeCases": [
+        "Empty input",
+        "stray closer",
+        "unfinished opener",
+        "mixed delimiter kinds.",
+        "Empty or delimiter-free input returns true; ([)] returns false because ) cannot close the top [."
+      ],
+      "timeComplexity": "O(n) time: inspect each character once, pushing and popping each delimiter at most once.",
+      "spaceComplexity": "O(n) auxiliary space: an input consisting only of openers leaves n unmatched entries.",
+      "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
+      "walkthroughCase": {
+        "arguments": [
+          "a{b[c](d)}"
+        ],
+        "expected": true
+      }
+    }
   },
   "interviewcake_cafe-order-checker": {
     "code": "class Solution {\n    IsFirstComeFirstServed(takeOut, dineIn, served) {\n        if (served.length !== takeOut.length + dineIn.length) return false;\n        let take = 0, dine = 0;\n        for (const order of served) {\n            if (take < takeOut.length && order === takeOut[take]) take++;\n            else if (dine < dineIn.length && order === dineIn[dine]) dine++;\n            else return false;\n        }\n        return take === takeOut.length && dine === dineIn.length;\n    }\n}\n",
     "incorrectCode": "class Solution {\n    IsFirstComeFirstServed(takeOut, dineIn, served) {\n        const expected = new Set([...takeOut, ...dineIn]);\n        return served.length === expected.size && new Set(served).size === expected.size && served.every(order => expected.has(order));\n    }\n}\n",
-    "incorrectReason": "Checks only membership and multiplicity, discarding each source queue ordering."
+    "incorrectReason": "Checks only membership and multiplicity, discarding each source queue ordering.",
+    "notes": {
+      "explanation": "Maintain the next unread index in each source. Each served ID must consume the next ID from exactly one source.",
+      "correctness": "At every step the consumed prefixes are exactly the source orders already served. Any different next ID violates at least one source order; exhausting both sources proves exact coverage.",
+      "walkthrough": "For takeOut=[8,3], dineIn=[5,9], served=[5,8,3,9], consume 5 from the dine-in head, then 8 and 3 from takeout, then 9 from dine-in. Both source positions reach their ends exactly, so return true.",
+      "edgeCases": [
+        "Either source empty",
+        "unknown or repeated served ID",
+        "missing orders.",
+        "Three empty arrays return true. A missing served order fails the final exhaustion check; an unknown or out-of-order ID fails when encountered."
+      ],
+      "timeComplexity": "O(c+1) time for c served entries: each entry checks two current source heads; source arrays are not rescanned. With a valid interleaving c=a+b.",
+      "spaceComplexity": "O(1) auxiliary space: two source indices, regardless of input lengths.",
+      "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
+      "walkthroughCase": {
+        "arguments": [
+          [
+            8,
+            3
+          ],
+          [
+            5,
+            9
+          ],
+          [
+            5,
+            8,
+            3,
+            9
+          ]
+        ],
+        "expected": true
+      }
+    }
   },
   "interviewcake_nth-fibonacci": {
     "code": "class Solution {\n    Fib(n) {\n        let previous = 0, current = 1;\n        for (let i = 0; i < n; i++) [previous, current] = [current, previous + current];\n        return previous;\n    }\n}\n",
     "incorrectCode": "class Solution {\n    Fib(n) {\n        let previous = 1, current = 1;\n        for (let i = 0; i < n; i++) [previous, current] = [current, previous + current];\n        return previous;\n    }\n}\n",
-    "incorrectReason": "Uses one-based Fibonacci seeds and returns F(n+1), including the wrong F(0)."
+    "incorrectReason": "Uses one-based Fibonacci seeds and returns F(n+1), including the wrong F(0).",
+    "notes": {
+      "explanation": "Advance a pair holding consecutive Fibonacci numbers until the requested index is reached.",
+      "correctness": "Initially the pair is F(0), F(1). Replacing it with its second value and its sum advances both indices by one.",
+      "walkthrough": "For n=6, start with F(0)=0 and F(1)=1. Advancing the two running values produces 1, 2, 3, 5 and 8 for indices 2 through 6. The required result is 8; there is no recursive tree of repeated work.",
+      "edgeCases": [
+        "Indices zero and one",
+        "largest supported index.",
+        "F(0)=0 and F(1)=1; the maximum supported result is F(46)=1836311903."
+      ],
+      "timeComplexity": "O(n+1) time: a constant-size pair advances at most n times; n=0 takes constant work.",
+      "spaceComplexity": "O(1) auxiliary space: only consecutive values and a loop counter are stored; the bounded bank domain uses fixed-width-size values.",
+      "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
+      "walkthroughCase": {
+        "arguments": [
+          6
+        ],
+        "expected": 8
+      }
+    }
   },
   "interviewcake_delete-node": {
     "code": "class Solution {\n    DeleteNode(nodeToDelete) {\n        nodeToDelete.Value = nodeToDelete.Next.Value;\n        nodeToDelete.Next = nodeToDelete.Next.Next;\n    }\n}\n",
     "incorrectCode": "class Solution {\n    DeleteNode(nodeToDelete) {\n        nodeToDelete = nodeToDelete.Next;\n    }\n}\n",
-    "incorrectReason": "Rebinding the local parameter cannot change the caller-visible node object or remove a position."
+    "incorrectReason": "Rebinding the local parameter cannot change the caller-visible node object or remove a position.",
+    "notes": {
+      "explanation": "Copy the successor's payload into the target and link the target directly to the successor's successor.",
+      "correctness": "Every path before the target is unchanged. Replacing the target value and bypassing its successor removes exactly the target position from the value sequence while preserving the required target identity.",
+      "walkthrough": "The list is 9 -> 4 -> 7 -> 2 and the supplied target is the node currently holding 4. Copy 7 into that same target object and point it to the node holding 2. The head-to-tail values become [9,7,2]. An alias to the target now observes 7, while an alias to the bypassed successor still refers to its separate, unchanged object. The callable receives only the target node and returns void/None/undefined. JSON supplies [listValues,targetIndex]; expected is the reachable value sequence after mutation, with identity checked separately.",
+      "edgeCases": [
+        "Target is head",
+        "target immediately precedes tail",
+        "repeated values",
+        "aliases to bypassed successor.",
+        "Deleting the head of [3,6] leaves that same head object holding 6 with Next=null. A tail target is outside the valid bank domain."
+      ],
+      "timeComplexity": "O(1) time: read the successor and replace exactly the target’s Value and Next fields.",
+      "spaceComplexity": "O(1) auxiliary space: retain at most one successor reference; allocate no list nodes.",
+      "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
+      "walkthroughCase": {
+        "arguments": [
+          [
+            9,
+            4,
+            7,
+            2
+          ],
+          1
+        ],
+        "expected": [
+          9,
+          7,
+          2
+        ]
+      }
+    }
   },
   "interviewcake_linked-list-cycles": {
     "code": "class Solution {\n    ContainsCycle(firstNode) {\n        let slow = firstNode, fast = firstNode;\n        while (fast !== null && fast.Next !== null) {\n            slow = slow.Next; fast = fast.Next.Next;\n            if (slow === fast) return true;\n        }\n        return false;\n    }\n}\n",
     "incorrectCode": "class Solution {\n    ContainsCycle(firstNode) {\n        const values = new Set();\n        for (let node = firstNode; node !== null; node = node.Next) {\n            if (values.has(node.Value)) return true;\n            values.add(node.Value);\n        }\n        return false;\n    }\n}\n",
-    "incorrectReason": "Confuses equal node values with revisiting the same node identity, falsely rejecting acyclic repeated values."
+    "incorrectReason": "Confuses equal node values with revisiting the same node identity, falsely rejecting acyclic repeated values.",
+    "notes": {
+      "explanation": "Move one pointer by one link and another by two. They meet exactly when a reachable cycle exists.",
+      "correctness": "Without a cycle the faster pointer reaches null. Within a cycle its relative position advances by one per iteration and eventually equals the slower pointer.",
+      "walkthrough": "For values [2,2,9] with tail link -1, the last node points to null. The repeated payload 2 does not imply a cycle: the two nodes are different objects. The fast pointer reaches the end, so return false. JSON supplies [listValues,tailLinkIndex]; -1 means a null tail. The callable receives only the constructed entry node and returns a boolean based on node identity.",
+      "edgeCases": [
+        "Empty entry",
+        "self-loop",
+        "equal values without a cycle",
+        "noncyclic prefix.",
+        "An empty entry returns false. A node pointing to itself returns true; distinct nodes with equal values do not constitute a cycle."
+      ],
+      "timeComplexity": "O(n) time: an acyclic fast pointer reaches null after at most n links; after entering a cycle, the relative offset advances by one and meets within at most n more steps.",
+      "spaceComplexity": "O(1) auxiliary space: two node references, with no visited set.",
+      "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
+      "walkthroughCase": {
+        "arguments": [
+          [
+            2,
+            2,
+            9
+          ],
+          -1
+        ],
+        "expected": false
+      }
+    }
   },
   "interviewcake_find-duplicate-files": {
     "code": "class Solution {\n    FindDuplicateFiles(startingDirectory) {\n        const directories = [path.resolve(startingDirectory)], groups = new Map(), result = [];\n        while (directories.length !== 0) {\n            const directory = directories.pop();\n            for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {\n                const fullPath = path.join(directory, entry.name);\n                if (entry.isDirectory()) { directories.push(fullPath); continue; }\n                const info = fs.statSync(fullPath), parts = [String(info.size)];\n                const offsets = [0, Math.floor(Math.max(0, info.size - 64) / 2), Math.max(0, info.size - 64)];\n                const handle = fs.openSync(fullPath, 'r');\n                try {\n                    for (const offset of offsets) {\n                        const buffer = Buffer.alloc(Math.min(64, info.size - offset));\n                        if (buffer.length !== 0) fs.readSync(handle, buffer, 0, buffer.length, offset);\n                        parts.push(buffer.toString('hex'));\n                    }\n                } finally { fs.closeSync(handle); }\n                const fingerprint = parts.join(':');\n                const previous = groups.get(fingerprint);\n                if (previous === undefined) groups.set(fingerprint, { fullPath, modified: info.mtimeMs });\n                else if (previous.modified <= info.mtimeMs) result.push(new FilePaths(previous.fullPath, fullPath));\n                else result.push(new FilePaths(fullPath, previous.fullPath));\n            }\n        }\n        return result;\n    }\n}\n",
     "incorrectCode": "class Solution {\n    FindDuplicateFiles(startingDirectory) {\n        const directories = [path.resolve(startingDirectory)], groups = new Map(), result = [];\n        while (directories.length !== 0) {\n            const directory = directories.pop();\n            for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {\n                const fullPath = path.join(directory, entry.name);\n                if (entry.isDirectory()) { directories.push(fullPath); continue; }\n                const info = fs.statSync(fullPath), parts = [String(info.size)];\n                const offsets = [0, Math.floor(Math.max(0, info.size - 64) / 2), Math.max(0, info.size - 64)];\n                const handle = fs.openSync(fullPath, 'r');\n                try {\n                    for (const offset of offsets) {\n                        const buffer = Buffer.alloc(Math.min(64, info.size - offset));\n                        if (buffer.length !== 0) fs.readSync(handle, buffer, 0, buffer.length, offset);\n                        parts.push(buffer.toString('hex'));\n                    }\n                } finally { fs.closeSync(handle); }\n                const fingerprint = String(info.size);\n                const previous = groups.get(fingerprint);\n                if (previous === undefined) groups.set(fingerprint, { fullPath, modified: info.mtimeMs });\n                else if (previous.modified <= info.mtimeMs) result.push(new FilePaths(previous.fullPath, fullPath));\n                else result.push(new FilePaths(fullPath, previous.fullPath));\n            }\n        }\n        return result;\n    }\n}\n",
-    "incorrectReason": "Groups files by length alone, falsely labeling equal-length files with different sampled bytes as duplicates."
+    "incorrectReason": "Groups files by length alone, falsely labeling equal-length files with different sampled bytes as duplicates.",
+    "notes": {
+      "explanation": "Group files by size and a fingerprint of at most 64 bytes each at the beginning, middle and end. For each matching pair, orient the paths by modification time.",
+      "correctness": "Equal fingerprints identify exactly the candidate groups defined by the adapter. Traversing every directory visits each file, and grouping retains enough information to emit each pair once without a full-content scan.",
+      "walkthrough": "The controlled directory contains a.txt and nested/b.txt, both with the bytes \"same bytes\". Their sizes and all three bounded samples match. Their modification times are 1000 and 2000, so report their full paths with a.txt first as the earlier-time candidate. This orientation is a heuristic, and equal fingerprints can still be false positives; neither file is changed. JSON supplies controlled file descriptors. The callable receives the temporary directory’s full path and returns FilePaths pairs containing full paths; displayed expected paths are relative to that directory.",
+      "edgeCases": [
+        "Empty directory",
+        "nested and sibling directories",
+        "zero-byte files",
+        "equal timestamps",
+        "deliberate sample collisions. No file deletion or writes.",
+        "Empty directories return no pairs. Two empty files have identical fingerprints; equal timestamps permit either orientation. Matching sampled bytes do not prove equal complete content."
+      ],
+      "timeComplexity": "Expected O(f+d) filesystem visits for f files and d directories, plus total path-character handling; each file reads at most 3*64 bytes and makes a constant number of metadata/seek operations. Hash grouping is expected constant time per bounded fingerprint.",
+      "spaceComplexity": "O(f) bounded fingerprints plus stored path characters and directory traversal state; returned pairs add path storage. The bound is independent of total file-content bytes.",
+      "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
+      "walkthroughCase": {
+        "arguments": [
+          [
+            {
+              "path": "a.txt",
+              "content": "same bytes",
+              "modified": 1000
+            },
+            {
+              "path": "nested/b.txt",
+              "content": "same bytes",
+              "modified": 2000
+            }
+          ]
+        ],
+        "expected": [
+          [
+            "a.txt",
+            "nested/b.txt"
+          ]
+        ]
+      }
+    }
   },
   "interviewcake_find-duplicate-optimize-for-space": {
     "code": "class Solution {\n    FindRepeat(numbers) {\n        let lower = 1, upper = numbers.length - 1;\n        while (lower < upper) {\n            const middle = lower + Math.floor((upper - lower) / 2);\n            let count = 0;\n            for (const value of numbers) if (value <= middle) count++;\n            if (count > middle) upper = middle; else lower = middle + 1;\n        }\n        return lower;\n    }\n}\n",
     "incorrectCode": "class Solution {\n    FindRepeat(numbers) {\n        let lower = 1, upper = numbers.length - 1;\n        while (lower < upper) {\n            const middle = lower + Math.floor((upper - lower) / 2);\n            let count = 0;\n            for (const value of numbers) if (value <= middle) count++;\n            if (count >= middle) upper = middle; else lower = middle + 1;\n        }\n        return lower;\n    }\n}\n",
     "incorrectReason": "Treats a prefix exactly at capacity as overcrowded, steering toward a value that may occur only once.",
     "notes": {
-      "explanation": "Binary-search the value bounds using prefix counts. Count all entries at most middle; if this exceeds middle, keep the lower value bounds, otherwise move the lower bound above middle. Read the original array without sorting or changing it.",
-      "correctness": "Maintain an overfull prefix ending at upper and a non-overfull prefix ending at lower-1. Initially the first contains n+1 entries for n possible values and the empty prefix contains zero. The count comparison preserves these bounds. When lower equals upper, subtracting the two prefix counts shows that this single value occurs at least twice.",
-      "walkthrough": "For [1,3,4,2,3], start with bounds 1..4. At middle 2, exactly two entries are at most 2, so move lower to 3. At middle 3, four entries are at most 3, exceeding three available prefix values, so upper becomes 3. Return 3, leaving the input unchanged."
+      "explanation": "Bisect candidate values using the count C(m) of all entries at most midpoint m, comparing that count with the m available values in 1..m. Keep the half whose endpoint counts still bracket excess population.",
+      "correctness": "Maintain C(lower-1)<=lower-1 and C(upper)>upper. Initially C(0)=0 and C(n)=n+1. If C(mid)>mid, set upper=mid; otherwise set lower=mid+1. At the final value v, C(v)>v and C(v-1)<=v-1, so their difference, the number of v entries, is at least two. This argument does not assume that C(m)>m is monotone.",
+      "walkthrough": "For [1,3,4,2,3], lower=1 and upper=4. At midpoint 2, C(2)=2, so lower becomes 3. At midpoint 3, C(3)=4>3, so upper becomes 3. Return 3. Counts cover the whole prefix 1..midpoint, not just the current interval; the endpoint invariant guarantees that the final value repeats.",
+      "edgeCases": [
+        "Several repeated values",
+        "one value repeated many times",
+        "smallest valid array.",
+        "[1,1] returns 1 without a counting pass. Multiple repeated values are allowed; any actual duplicate passes."
+      ],
+      "timeComplexity": "O(n log n) time: halving the n-value search interval takes O(log n) rounds, each scanning all n+1 entries.",
+      "spaceComplexity": "O(1) auxiliary space: interval endpoints, midpoint and count only; input is read-only.",
+      "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
+      "walkthroughCase": {
+        "arguments": [
+          [
+            1,
+            3,
+            4,
+            2,
+            3
+          ]
+        ],
+        "expected": 3
+      }
     }
   },
   "interviewcake_find-duplicate-optimize-for-space-beast-mode": {
     "code": "class Solution {\n    FindDuplicate(numbers) {\n        let slow = numbers[0], fast = numbers[0];\n        do { slow = numbers[slow]; fast = numbers[numbers[fast]]; } while (slow !== fast);\n        slow = numbers[0];\n        while (slow !== fast) { slow = numbers[slow]; fast = numbers[fast]; }\n        return slow;\n    }\n}\n",
     "incorrectCode": "class Solution {\n    FindDuplicate(numbers) {\n        let slow = numbers[0], fast = numbers[0];\n        do { slow = numbers[slow]; fast = numbers[numbers[fast]]; } while (slow !== fast);\n        slow = numbers[0];\n        while (slow !== fast) { slow = numbers[slow]; fast = numbers[fast]; }\n        return numbers[slow];\n    }\n}\n",
-    "incorrectReason": "Returns the cycle entry successor instead of its index; that successor need not be a duplicated value."
+    "incorrectReason": "Returns the cycle entry successor instead of its index; that successor need not be a duplicated value.",
+    "notes": {
+      "explanation": "View each array entry as the next-index pointer. Run Floyd’s slow/fast search starting at numbers[0], then reset slow to that same start and advance both one step to the cycle entry.",
+      "correctness": "The path from index 0 enters a cycle because all links are in 1..n, excluding 0. Its entry has two distinct incoming source indices: the path predecessor and the cycle predecessor. Starting Floyd at numbers[0] removes the first path edge but preserves this entry (or starts directly on it). At a meeting, the faster walker has gained whole cycle lengths; resetting one walker to the chosen start makes equal-speed walkers meet at the entry.",
+      "walkthrough": "For [4,1,3,4,2], start both walkers at numbers[0]=4. After successive moves (slow,fast) is (2,3), (3,2), then (4,4). Reset slow to 4; the walkers already agree, so return 4. In the full path 0 -> 4 -> 2 -> 3 -> 4, indices 0 and 3 both point to 4, proving it is repeated.",
+      "edgeCases": [
+        "Cycle near the start",
+        "several valid duplicate answers",
+        "values repeated more than twice.",
+        "[1,1] returns 1; other valid inputs may contain several duplicate values, so no particular duplicate is mandated."
+      ],
+      "timeComplexity": "O(n) time: Floyd’s meeting phase traverses a prefix and cycle of at most n+1 indices; the entry phase takes at most the prefix length.",
+      "spaceComplexity": "O(1) auxiliary space: a fixed number of index walkers, with no copied array or visited set.",
+      "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
+      "walkthroughCase": {
+        "arguments": [
+          [
+            4,
+            1,
+            3,
+            4,
+            2
+          ]
+        ],
+        "expected": 4
+      }
+    }
   },
   "interviewcake_find-rotation-point": {
     "code": "class Solution {\n    FindRotationPoint(words) {\n        let lower = 0, upper = words.length - 1;\n        while (lower < upper) {\n            const middle = lower + Math.floor((upper - lower) / 2);\n            if (words[middle] > words[upper]) lower = middle + 1;\n            else upper = middle;\n        }\n        return lower;\n    }\n}\n",
     "incorrectCode": "class Solution {\n    FindRotationPoint(words) {\n        let lower = 0, upper = words.length - 1;\n        while (lower < upper) {\n            const middle = lower + Math.floor((upper - lower) / 2);\n            if (words[middle] > words[upper]) lower = middle + 1;\n            else upper = middle;\n        }\n        return lower + 1;\n    }\n}\n",
-    "incorrectReason": "Returns a one-based position even though the specified rotation index is zero-based."
+    "incorrectReason": "Returns a one-based position even though the specified rotation index is zero-based.",
+    "notes": {
+      "explanation": "Compare the middle word with the right boundary. The smallest word remains in the half containing the ordering break, or at the middle boundary.",
+      "correctness": "If the middle word is greater than the right word, a wrap occurs after the middle. Otherwise the minimum cannot lie strictly after the middle. Shrinking these bounds leaves its exact index.",
+      "walkthrough": "For [mint,oak,ant,birch,cedar], middle index 2 contains ant, which is less than cedar at upper index 4, so set upper=2. Next middle index 1 contains oak, greater than ant, so set lower=2. The bounds meet at index 2, the minimum ant; return 2 without changing the array.",
+      "edgeCases": [
+        "Singleton",
+        "rotation by one",
+        "unrotated input under the stated bank extension.",
+        "A singleton or unrotated sorted array returns index 0 under the bank convention; duplicate words and empty arrays are excluded."
+      ],
+      "timeComplexity": "O(log n) comparisons because each step halves the candidate interval; comparing words may inspect L characters, giving O(L log n) character work.",
+      "spaceComplexity": "O(1) auxiliary space: only three indices and references to existing words.",
+      "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
+      "walkthroughCase": {
+        "arguments": [
+          [
+            "mint",
+            "oak",
+            "ant",
+            "birch",
+            "cedar"
+          ]
+        ],
+        "expected": 2
+      }
+    }
   },
   "interviewcake_graph-coloring": {
     "code": "class Solution {\n    ColorGraph(graph, colors) {\n        for (const node of graph) {\n            const unavailable = new Set();\n            for (const neighbor of node.Neighbors) if (neighbor.Color !== null) unavailable.add(neighbor.Color);\n            node.Color = colors.find(color => !unavailable.has(color));\n        }\n    }\n}\n",
     "incorrectCode": "class Solution {\n    ColorGraph(graph, colors) {\n        for (const node of graph) {\n            const unavailable = new Set();\n            for (const neighbor of node.Neighbors) if (neighbor.Color !== null) unavailable.add(neighbor.Label);\n            node.Color = colors.find(color => !unavailable.has(color));\n        }\n    }\n}\n",
-    "incorrectReason": "Compares palette colors with neighbor labels instead of assigned colors, permitting adjacent equal colors."
+    "incorrectReason": "Compares palette colors with neighbor labels instead of assigned colors, permitting adjacent equal colors.",
+    "notes": {
+      "explanation": "For each node, collect colors already used by its neighbors and choose a palette color outside that set.",
+      "correctness": "At most degree(node) colors are forbidden by its neighbors. A prefix of degree(node)+1 distinct colors therefore contains an available color. A later neighbor avoids this assigned color, so every edge remains valid.",
+      "walkthrough": "For the triangle with adjacency [[1,2],[0,2],[0,1]] and palette [red,blue,green], assign red to v0, blue to v1 because v0 is red, and green to v2 because its neighbors use both red and blue. Every edge has different endpoint colors. Any other valid assignment also passes; the displayed true reports successful properties. JSON supplies [adjacency,palette]; the callable receives graph nodes and colors and returns void/None/undefined. Expected true is the checker verdict for legal Color mutations and preserved graph identity/links.",
+      "edgeCases": [
+        "Disconnected components",
+        "isolated nodes",
+        "complete graph",
+        "empty graph.",
+        "An empty graph needs no assignments. Isolated nodes can all use the first color. A clique of D+1 nodes uses D+1 distinct colors."
+      ],
+      "timeComplexity": "Expected O(V+E) time: neighbor scans total 2E in an undirected graph, and the first degree(v)+1 distinct palette entries must include an available color. Hash membership is expected O(1), treating color names as bounded-size keys.",
+      "spaceComplexity": "O(D+1) auxiliary space: the current node’s forbidden-color set contains at most D neighbor colors, and is discarded before the next node.",
+      "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
+      "walkthroughCase": {
+        "arguments": [
+          [
+            [
+              1,
+              2
+            ],
+            [
+              0,
+              2
+            ],
+            [
+              0,
+              1
+            ]
+          ],
+          [
+            "red",
+            "blue",
+            "green"
+          ]
+        ],
+        "expected": true
+      }
+    }
   },
   "interviewcake_highest-product-of-3": {
     "code": "class Solution {\n    HighestProductOf3(values) {\n        let highest = Math.max(values[0], values[1]), lowest = Math.min(values[0], values[1]);\n        let highestPair = values[0] * values[1], lowestPair = highestPair;\n        let best = highestPair * values[2];\n        for (let i = 2; i < values.length; i++) {\n            const value = values[i];\n            best = Math.max(best, value * highestPair, value * lowestPair);\n            highestPair = Math.max(highestPair, value * highest, value * lowest);\n            lowestPair = Math.min(lowestPair, value * highest, value * lowest);\n            highest = Math.max(highest, value); lowest = Math.min(lowest, value);\n        }\n        return best;\n    }\n}\n",
     "incorrectCode": "class Solution {\n    HighestProductOf3(values) {\n        const largest = values.slice().sort((a, b) => b - a);\n        return largest[0] * largest[1] * largest[2];\n    }\n}\n",
-    "incorrectReason": "Taking only the three largest values misses two large-magnitude negative values whose product is positive."
+    "incorrectReason": "Taking only the three largest values misses two large-magnitude negative values whose product is positive.",
+    "notes": {
+      "explanation": "Track the largest and smallest one-value and two-value products while scanning. Each new value can extend either extreme two-value product to a three-value candidate.",
+      "correctness": "Multiplication by a new negative value reverses order, so both extremes are sufficient. Updating three-value candidates before pairs and pairs before singles guarantees distinct positions.",
+      "walkthrough": "For [-8,-5,2,4], the first two negatives have product 40. Combining that pair with 2 gives 80, and later with 4 gives 160. Selecting the three numerically largest values would miss this result; tracking both low and high pair products preserves the winning candidate.",
+      "edgeCases": [
+        "All negative",
+        "two large-magnitude negatives",
+        "zeros",
+        "repeated extrema.",
+        "For [-6,-3,-2,-1], return -6, even though it is negative. Equal values at different positions remain distinct eligible factors."
+      ],
+      "timeComplexity": "O(n) time: one pass maintains a fixed set of extrema with constant work per value.",
+      "spaceComplexity": "O(1) auxiliary space: the extrema and candidate product are scalars; the input is never sorted or copied.",
+      "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
+      "walkthroughCase": {
+        "arguments": [
+          [
+            -8,
+            -5,
+            2,
+            4
+          ]
+        ],
+        "expected": 160
+      }
+    }
   },
   "interviewcake_queue-two-stacks": {
     "code": "class QueueTwoStacks {\n    constructor() { this.incoming = []; this.outgoing = []; }\n    Enqueue(item) { this.incoming.push(item); }\n    Dequeue() {\n        if (this.outgoing.length === 0) while (this.incoming.length !== 0) this.outgoing.push(this.incoming.pop());\n        if (this.outgoing.length === 0) throw new Error('empty');\n        return this.outgoing.pop();\n    }\n}\n",
     "incorrectCode": "class QueueTwoStacks {\n    constructor() { this.items = []; }\n    Enqueue(item) { this.items.push(item); }\n    Dequeue() {\n        if (this.items.length === 0) throw new Error('empty');\n        return this.items.pop();\n    }\n}\n",
-    "incorrectReason": "Implements LIFO removal rather than FIFO order when several enqueued items remain."
+    "incorrectReason": "Implements LIFO removal rather than FIFO order when several enqueued items remain.",
+    "notes": {
+      "explanation": "Push new items to an input stack. When the output stack is empty, transfer all input items into it; this reverses their order once.",
+      "correctness": "The output stack top is always the oldest remaining item. Transfer is performed only when it is empty, so newer items never pass older ones. Each item is moved at most once.",
+      "walkthrough": "Enqueue 4 and 9 into the incoming stack. The first Dequeue moves them to the outgoing stack and removes 4. Enqueue 2 without moving the still-pending 9. The next Dequeue removes 9; only then does transferring the incoming stack expose 2. The returned values are 4, 9 and 2 in FIFO order. JSON supplies [operationNames,argumentLists] for one fresh QueueTwoStacks. Void operations display null; Dequeue displays the returned item or {\"error\":\"empty\"}.",
+      "edgeCases": [
+        "Empty and drained queue",
+        "alternating operations",
+        "duplicate values.",
+        "Dequeue on a fresh or drained queue throws an empty-state exception, normalized to {\"error\":\"empty\"}; duplicate values remain separate occurrences."
+      ],
+      "timeComplexity": "O(1) amortized per operation: each item is pushed to incoming, transferred once, then popped from outgoing. A single transfer-triggering Dequeue can cost O(q); m operations cost O(m).",
+      "spaceComplexity": "O(q) persistent space: each of q queued occurrences lives in exactly one of the two stacks.",
+      "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
+      "walkthroughCase": {
+        "arguments": [
+          [
+            "Enqueue",
+            "Enqueue",
+            "Dequeue",
+            "Enqueue",
+            "Dequeue",
+            "Dequeue"
+          ],
+          [
+            [
+              4
+            ],
+            [
+              9
+            ],
+            [],
+            [
+              2
+            ],
+            [],
+            []
+          ]
+        ],
+        "expected": [
+          null,
+          null,
+          4,
+          null,
+          9,
+          2
+        ]
+      }
+    }
   },
   "interviewcake_shuffle": {
     "code": "class Solution {\n    Shuffle(array) {\n        for (let i = array.length - 1; i > 0; i--) {\n            const chosen = RandomSource.GetRandom(0, i);\n            [array[i], array[chosen]] = [array[chosen], array[i]];\n        }\n    }\n}\n",
     "incorrectCode": "class Solution {\n    Shuffle(array) {\n        for (let i = 0; i < array.length; i++) {\n            const chosen = RandomSource.GetRandom(0, array.length - 1);\n            [array[i], array[chosen]] = [array[chosen], array[i]];\n        }\n    }\n}\n",
     "incorrectReason": "Swapping each slot with an unrestricted random slot is biased: for three distinct entries, 27 equal-probability choice streams cannot distribute equally over six permutations.",
     "notes": {
-      "explanation": "Fill positions from right to left. At position i, choose an index uniformly from 0 through i with the supplied random source and swap that occurrence into position i.",
-      "correctness": "Before an iteration, the unfilled prefix contains exactly the remaining occurrences. Each has probability 1/(i+1) of entering position i. Later swaps only touch earlier positions, so the filled suffix is final. Multiplying these conditional probabilities gives 1/n! for every occurrence permutation.",
-      "walkthrough": "Start with [4,8,1]. At i=2, a supplied draw of 0 swaps the final occurrence with index 0, giving [1,8,4]. At i=1, a draw of 0 then gives [8,1,4]. Those choices have probability (1/3)*(1/2)=1/6. The actual draws may produce any of the six equally likely permutations; true denotes the judge validating distribution, multiplicities and mutation of the supplied array."
+      "explanation": "Work from the last position toward index 1. At position i, choose uniformly from the still-unfixed prefix 0..i, using inclusive bounds, and swap that occurrence into i.",
+      "correctness": "Before fixing i, the suffix after i is final and all other occurrences remain in 0..i. Each has conditional probability 1/(i+1) of being chosen. Multiplying n,n-1,...,2 choice probabilities gives 1/n! for every occurrence permutation.",
+      "walkthrough": "For [4,8,1], start at i=2 and draw from 0..2. If chosen=0, swap to [1,8,4], fixing 4 at the end. At i=1, choose 0 or 1, producing [8,1,4] or [1,8,4]. Each full permutation has probability 1/(3*2)=1/6. The method returns no array; true is the adapter’s distribution and mutation verdict. The callable mutates the supplied array and returns void/None/undefined. Expected true is the checker verdict for occurrence preservation, identity, legal source use and unbiased permutations; it is not a particular array result.",
+      "edgeCases": [
+        "Empty/singleton arrays",
+        "duplicate values",
+        "possibility of retaining original positions.",
+        "Empty and singleton arrays remain unchanged. Repeated values are separate occurrences; unbiased occurrence permutations may have the same visible value sequence."
+      ],
+      "timeComplexity": "O(n) time: a constant-time random choice and swap fixes one position per iteration.",
+      "spaceComplexity": "O(1) auxiliary space: only indices and a swap temporary; all rearrangement uses the original array.",
+      "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
+      "walkthroughCase": {
+        "arguments": [
+          [
+            4,
+            8,
+            1
+          ]
+        ],
+        "expected": true
+      }
     }
   },
   "interviewcake_inflight-entertainment": {
     "code": "class Solution {\n    CanTwoMoviesFillFlight(movieLengths, flightLength) {\n        const seen = new Set();\n        for (const length of movieLengths) {\n            if (seen.has(flightLength - length)) return true;\n            seen.add(length);\n        }\n        return false;\n    }\n}\n",
     "incorrectCode": "class Solution {\n    CanTwoMoviesFillFlight(movieLengths, flightLength) {\n        const seen = new Set(movieLengths);\n        return movieLengths.some(length => seen.has(flightLength - length));\n    }\n}\n",
-    "incorrectReason": "Preloading every duration allows a single movie entry to pair with itself."
+    "incorrectReason": "Preloading every duration allows a single movie entry to pair with itself.",
+    "notes": {
+      "explanation": "Before inserting a duration into a set, check whether its complement has appeared earlier.",
+      "correctness": "A match in the set always uses an earlier distinct position. Every legal pair is found when its later position is scanned.",
+      "walkthrough": "For movieLengths=[35,60,45,20] and flightLength=80, remember 35, then 60. At duration 45, the needed complement is 35, which is already from a different position, so return true. A single duration 40 would not be enough by itself.",
+      "edgeCases": [
+        "No entries",
+        "a single half-target duration",
+        "duplicate half-target durations",
+        "zero durations.",
+        "One movie of length 40 cannot fill target 80, but two entries [40,40] can. Empty input returns false."
+      ],
+      "timeComplexity": "Expected O(n) time: each duration performs one hash lookup and at most one insertion.",
+      "spaceComplexity": "O(n) auxiliary space: the set may retain every distinct earlier duration.",
+      "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
+      "walkthroughCase": {
+        "arguments": [
+          [
+            35,
+            60,
+            45,
+            20
+          ],
+          80
+        ],
+        "expected": true
+      }
+    }
   },
   "interviewcake_kth-to-last-node-in-singly-linked-list": {
     "code": "class Solution {\n    KthToLastNode(k, head) {\n        let leading = head, following = head;\n        for (let i = 0; i < k; i++) leading = leading.Next;\n        while (leading !== null) { leading = leading.Next; following = following.Next; }\n        return following;\n    }\n}\n",
     "incorrectCode": "class Solution {\n    KthToLastNode(k, head) {\n        let leading = head, following = head;\n        for (let i = 0; i < k; i++) leading = leading.Next;\n        while (leading !== null) { leading = leading.Next; following = following.Next; }\n        return new LinkedListNode(following.Value);\n    }\n}\n",
-    "incorrectReason": "Copies the correct value into a new object instead of returning the required existing node identity."
+    "incorrectReason": "Copies the correct value into a new object instead of returning the required existing node identity.",
+    "notes": {
+      "explanation": "Move a leading pointer k steps, then advance a second pointer with it until the leading pointer reaches null.",
+      "correctness": "The pointers stay k links apart. When the leading pointer is past the tail, the second pointer is exactly k positions from the end.",
+      "walkthrough": "For k=2 and list 5 -> 8 -> 1 -> 6, advance the leading pointer two nodes to 1. Move both pointers together until the leading pointer passes the tail; the following pointer then refers to the original node holding 1. Its zero-based identity index is 2, which is the adapter output; the method returns that node object. JSON supplies [k,listValues]. The callable returns the original node object; the adapter displays its zero-based index in the original list, not its value and not k.",
+      "edgeCases": [
+        "Select head",
+        "select tail",
+        "repeated payloads must not confuse identity.",
+        "k=1 returns the original tail object; k=n returns the original head. Values are irrelevant to identity, and invalid k is outside the bank domain."
+      ],
+      "timeComplexity": "O(n) time: lead advances n times in total and follow at most n-k times.",
+      "spaceComplexity": "O(1) auxiliary space: two references and an offset counter; no nodes are copied.",
+      "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
+      "walkthroughCase": {
+        "arguments": [
+          2,
+          [
+            5,
+            8,
+            1,
+            6
+          ]
+        ],
+        "expected": 2
+      }
+    }
   },
   "interviewcake_largest-stack": {
     "code": "class MaxStack {\n    constructor() { this.values = []; this.maxima = []; }\n    Push(item) {\n        this.values.push(item);\n        if (this.maxima.length === 0 || item >= this.maxima[this.maxima.length - 1]) this.maxima.push(item);\n    }\n    Pop() {\n        if (this.values.length === 0) throw new Error('empty');\n        const value = this.values.pop();\n        if (value === this.maxima[this.maxima.length - 1]) this.maxima.pop();\n        return value;\n    }\n    GetMax() {\n        if (this.maxima.length === 0) throw new Error('empty');\n        return this.maxima[this.maxima.length - 1];\n    }\n}\n",
     "incorrectCode": "class MaxStack {\n    constructor() { this.values = []; this.maxima = []; }\n    Push(item) {\n        this.values.push(item);\n        if (this.maxima.length === 0 || item > this.maxima[this.maxima.length - 1]) this.maxima.push(item);\n    }\n    Pop() {\n        if (this.values.length === 0) throw new Error('empty');\n        const value = this.values.pop();\n        if (value === this.maxima[this.maxima.length - 1]) this.maxima.pop();\n        return value;\n    }\n    GetMax() {\n        if (this.maxima.length === 0) throw new Error('empty');\n        return this.maxima[this.maxima.length - 1];\n    }\n}\n",
-    "incorrectReason": "Does not retain repeated maxima; popping one equal maximum incorrectly removes the maximum for remaining equal entries."
+    "incorrectReason": "Does not retain repeated maxima; popping one equal maximum incorrectly removes the maximum for remaining equal entries.",
+    "notes": {
+      "explanation": "Maintain the item stack and a second stack of running maxima, retaining repeated maximum occurrences.",
+      "correctness": "Each stored maximum equals the maximum of the matching stack prefix. Push extends that invariant and Pop restores the preceding prefix; GetMax simply reads it.",
+      "walkthrough": "Push 5, then 9. The auxiliary maximum stack records both increases, so GetMax returns 9. Pop removes 9 from both stacks. The remaining maximum is 5, and the next GetMax reads it without removing it. Equal maxima would each need a retained occurrence as well. JSON supplies [operationNames,argumentLists] for one fresh MaxStack. Push displays null; Pop/GetMax display integer results or {\"error\":\"empty\"}.",
+      "edgeCases": [
+        "Negative values",
+        "repeated maxima",
+        "empty/drained state",
+        "repeated GetMax calls.",
+        "After pushing 8 twice and popping once, GetMax still returns 8. Empty Pop/GetMax raise an exception normalized to {\"error\":\"empty\"}."
+      ],
+      "timeComplexity": "O(1) per operation under the stack push/pop cost model (amortized for dynamically grown arrays): only a constant number of stack operations occur.",
+      "spaceComplexity": "O(s) persistent space for s live entries, including their stored maximum information.",
+      "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
+      "walkthroughCase": {
+        "arguments": [
+          [
+            "Push",
+            "Push",
+            "GetMax",
+            "Pop",
+            "GetMax"
+          ],
+          [
+            [
+              5
+            ],
+            [
+              9
+            ],
+            [],
+            [],
+            []
+          ]
+        ],
+        "expected": [
+          null,
+          null,
+          9,
+          9,
+          5
+        ]
+      }
+    }
   },
   "interviewcake_coin": {
     "code": "class Solution {\n    ChangePossibilitiesBottomUp(amount, denominations) {\n        const ways = Array(amount + 1).fill(0); ways[0] = 1;\n        for (const coin of denominations)\n            for (let value = coin; value <= amount; value++) ways[value] += ways[value - coin];\n        return ways[amount];\n    }\n}\n",
     "incorrectCode": "class Solution {\n    ChangePossibilitiesBottomUp(amount, denominations) {\n        const ways = Array(amount + 1).fill(0); ways[0] = 1;\n        for (let value = 1; value <= amount; value++)\n            for (const coin of denominations) if (coin <= value) ways[value] += ways[value - coin];\n        return ways[amount];\n    }\n}\n",
-    "incorrectReason": "Iterating amounts before denominations counts different orderings of the same coin multiset as distinct combinations."
+    "incorrectReason": "Iterating amounts before denominations counts different orderings of the same coin multiset as distinct combinations.",
+    "notes": {
+      "explanation": "Set ways[0]=1. Process denominations one at a time, adding ways[a-coin] into ways[a] for increasing amounts.",
+      "correctness": "After processing a denomination prefix, ways[a] counts exactly combinations using that prefix. Increasing amounts permits repeated use of the current coin; processing each coin once avoids counting orderings.",
+      "walkthrough": "For amount 8 and denominations [2,3,5], the three unordered combinations are 2+2+2+2, 2+3+3, and 3+5. Processing each denomination in the outer loop adds each combination once; 5+3 is the same combination as 3+5, not a fourth answer.",
+      "edgeCases": [
+        "Zero target",
+        "no denominations",
+        "unreachable target",
+        "coins larger than target.",
+        "Amount zero has one combination (choose no coins), even with no denominations. Positive amount with no usable coins has zero combinations."
+      ],
+      "timeComplexity": "O(A*d+A+d+1) time for amount A and d denominations: initialize A+1 cells, then visit up to A cells per denomination. This also covers empty denominations and amount zero.",
+      "spaceComplexity": "O(A+1) auxiliary space: one count per subtotal from 0 through A.",
+      "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
+      "walkthroughCase": {
+        "arguments": [
+          8,
+          [
+            2,
+            3,
+            5
+          ]
+        ],
+        "expected": 3
+      }
+    }
   },
   "interviewcake_merge-sorted-arrays": {
     "code": "class Solution {\n    MergeArrays(first, second) {\n        const result = []; let left = 0, right = 0;\n        while (left < first.length && right < second.length)\n            result.push(first[left] <= second[right] ? first[left++] : second[right++]);\n        while (left < first.length) result.push(first[left++]);\n        while (right < second.length) result.push(second[right++]);\n        return result;\n    }\n}\n",
     "incorrectCode": "class Solution {\n    MergeArrays(first, second) {\n        return [...new Set([...first, ...second])].sort((a, b) => a - b);\n    }\n}\n",
-    "incorrectReason": "A set union discards repeated occurrences that the merged result must preserve."
+    "incorrectReason": "A set union discards repeated occurrences that the merged result must preserve.",
+    "notes": {
+      "explanation": "Read the smallest unconsumed head from either input until both are exhausted.",
+      "correctness": "The smallest remaining item must be at one of the two heads. Appending that head preserves the sorted prefix and consumes every occurrence exactly once.",
+      "walkthrough": "Merge [1,4,4] and [2,4,9] by repeatedly taking the smaller head: 1, then 2, then the three occurrences of 4, then 9. The new output is [1,2,4,4,4,9]; neither input is sorted again or modified.",
+      "edgeCases": [
+        "Empty inputs",
+        "repeated keys",
+        "one input entirely precedes the other.",
+        "Empty inputs produce a new empty result; if only one input is empty, copy the other. Equal values are retained with their full multiplicity."
+      ],
+      "timeComplexity": "O(a+b) time: each of the a+b input occurrences is appended exactly once.",
+      "spaceComplexity": "O(a+b) result storage and O(1) auxiliary space beyond the new result and two source indices.",
+      "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
+      "walkthroughCase": {
+        "arguments": [
+          [
+            1,
+            4,
+            4
+          ],
+          [
+            2,
+            4,
+            9
+          ]
+        ],
+        "expected": [
+          1,
+          2,
+          4,
+          4,
+          4,
+          9
+        ]
+      }
+    }
   },
   "interviewcake_merging-ranges": {
     "code": "class Solution {\n    MergeRanges(meetings) {\n        const sorted = meetings.slice().sort((a, b) => a.StartTime - b.StartTime || a.EndTime - b.EndTime);\n        const result = [];\n        for (const meeting of sorted) {\n            const last = result[result.length - 1];\n            if (last !== undefined && meeting.StartTime <= last.EndTime) last.EndTime = Math.max(last.EndTime, meeting.EndTime);\n            else result.push(new Meeting(meeting.StartTime, meeting.EndTime));\n        }\n        return result;\n    }\n}\n",
     "incorrectCode": "class Solution {\n    MergeRanges(meetings) {\n        meetings.sort((a, b) => a.StartTime - b.StartTime);\n        const result = [];\n        for (const meeting of meetings) {\n            const last = result[result.length - 1];\n            if (last !== undefined && meeting.StartTime <= last.EndTime) last.EndTime = Math.max(last.EndTime, meeting.EndTime);\n            else result.push(meeting);\n        }\n        return result;\n    }\n}\n",
-    "incorrectReason": "Computes union values while sorting the original list and returning/mutating original interval objects, violating preservation and fresh-result contracts."
+    "incorrectReason": "Computes union values while sorting the original list and returning/mutating original interval objects, violating preservation and fresh-result contracts.",
+    "notes": {
+      "explanation": "Sort copies by start, then extend the current output interval while the next interval begins no later than its end.",
+      "correctness": "Once intervals are sorted, a gap before the next start means no later interval can bridge it. Otherwise joining the ranges preserves exactly their union.",
+      "walkthrough": "Sort [[9,12],[1,4],[4,7],[10,14]] by start to obtain [1,4], [4,7], [9,12], [10,14]. The first two touch and become [1,7]. The last two overlap and become [9,14]. The gap from 7 to 9 remains, giving [[1,7],[9,14]] in newly allocated meeting objects. JSON intervals are [StartTime,EndTime] pairs; return newly allocated Meeting objects in increasing start order and preserve the supplied list and objects.",
+      "edgeCases": [
+        "Touching boundaries",
+        "containment",
+        "duplicate intervals",
+        "a chain of overlaps",
+        "empty extension.",
+        "Touching [1,4] and [4,7] merge to [1,7]. An interval contained in another adds no extent; empty input returns an empty new list."
+      ],
+      "timeComplexity": "O(n log n+n) time: sort n meeting references by start, then process each once.",
+      "spaceComplexity": "O(n) auxiliary space for the sorted reference copy and up to n newly allocated result intervals; original intervals are untouched.",
+      "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
+      "walkthroughCase": {
+        "arguments": [
+          [
+            [
+              9,
+              12
+            ],
+            [
+              1,
+              4
+            ],
+            [
+              4,
+              7
+            ],
+            [
+              10,
+              14
+            ]
+          ]
+        ],
+        "expected": [
+          [
+            1,
+            7
+          ],
+          [
+            9,
+            14
+          ]
+        ]
+      }
+    }
   },
   "interviewcake_mesh-message": {
     "code": "class Solution {\n    BfsGetPath(graph, start, end) {\n        const previous = new Map([[start, null]]), queue = [start];\n        for (let head = 0; head < queue.length; head++) {\n            const node = queue[head]; if (node === end) break;\n            for (const neighbor of graph[node]) if (!previous.has(neighbor)) { previous.set(neighbor, node); queue.push(neighbor); }\n        }\n        if (!previous.has(end)) return null;\n        const route = []; for (let node = end; node !== null; node = previous.get(node)) route.push(node);\n        route.reverse(); return route;\n    }\n}\n",
     "incorrectCode": "class Solution {\n    BfsGetPath(graph, start, end) {\n        const previous = new Map([[start, null]]), queue = [start];\n        for (let head = 0; head < queue.length; head++) {\n            const node = queue[head]; if (node === end) break;\n            for (const neighbor of graph[node]) if (!previous.has(neighbor)) { previous.set(neighbor, node); queue.push(neighbor); }\n        }\n        if (!previous.has(end)) return [];\n        const route = []; for (let node = end; node !== null; node = previous.get(node)) route.push(node);\n        route.reverse(); return route;\n    }\n}\n",
-    "incorrectReason": "Returns an empty route instead of the explicitly required null when the endpoints are disconnected."
+    "incorrectReason": "Returns an empty route instead of the explicitly required null when the endpoints are disconnected.",
+    "notes": {
+      "explanation": "Breadth-first search records the predecessor of each first-discovered vertex. Reconstruct the route backward from the destination.",
+      "correctness": "BFS discovers vertices in nondecreasing distance from start. A predecessor chain from first discovery therefore has minimum edge count; the visited set prevents cycling.",
+      "walkthrough": "In the network a:{b,c}, b:{a,d}, c:{a,d}, d:{b,c}, breadth-first search visits b and c at distance 1 and discovers d at distance 2. Reconstructing via b gives [a,b,d]. The equally short route [a,c,d] is also valid; both contain two edges. JSON supplies an adjacency map and two endpoint labels. Return any shortest route including endpoints; the adapter accepts tied routes and a no-route result.",
+      "edgeCases": [
+        "Tied shortest routes",
+        "source equals destination",
+        "disconnected graph",
+        "cycles.",
+        "start=end returns [start]. A disconnected destination returns no route; tied shortest paths may use different valid predecessor choices."
+      ],
+      "timeComplexity": "Expected O(V+E) time: each discovered vertex is enqueued once and each outgoing adjacency entry examined at most once; reconstruction visits at most V predecessors. Labels are treated as bounded-size hash keys.",
+      "spaceComplexity": "O(V) auxiliary space for the queue and predecessor map, plus an O(V) result route.",
+      "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
+      "walkthroughCase": {
+        "arguments": [
+          {
+            "a": [
+              "b",
+              "c"
+            ],
+            "b": [
+              "a",
+              "d"
+            ],
+            "c": [
+              "a",
+              "d"
+            ],
+            "d": [
+              "b",
+              "c"
+            ]
+          },
+          "a",
+          "d"
+        ],
+        "expected": [
+          "a",
+          "b",
+          "d"
+        ]
+      }
+    }
   },
   "interviewcake_compress-url-list": {
     "code": "class Trie {\n    constructor() { this.root = { children: new Map(), terminal: false }; }\n    AddWord(word) {\n        let node = this.root;\n        for (const character of word) {\n            if (!node.children.has(character)) node.children.set(character, { children: new Map(), terminal: false });\n            node = node.children.get(character);\n        }\n        if (node.terminal) return false;\n        node.terminal = true; return true;\n    }\n}\n",
     "incorrectCode": "class Trie {\n    constructor() { this.root = new Map(); }\n    AddWord(word) {\n        let node = this.root, created = false;\n        for (const character of word) {\n            if (!node.has(character)) { node.set(character, new Map()); created = true; }\n            node = node.get(character);\n        }\n        return created;\n    }\n}\n",
-    "incorrectReason": "Confuses an existing prefix path with an inserted complete word; first insertion of a prefix or the empty key incorrectly reports false."
+    "incorrectReason": "Confuses an existing prefix path with an inserted complete word; first insertion of a prefix or the empty key incorrectly reports false.",
+    "notes": {
+      "explanation": "Store a trie edge per next character and an explicit terminal flag at complete keys.",
+      "correctness": "The path represents a key's exact characters. Only its terminal flag denotes complete-key membership, so shared prefixes never create false complete keys.",
+      "walkthrough": "Insert https://a/b: create missing character links and mark its final node, returning true. Insert https://a next: its character path exists, but its final node was not a complete key, so return true. Repeating https://a/b returns false. Extending it to https://a/b/c marks a different complete key and returns true. JSON supplies [operationNames,argumentLists] for one fresh Trie. Each AddWord receives one exact string and returns whether that complete key was newly inserted.",
+      "edgeCases": [
+        "Duplicate keys",
+        "empty key",
+        "shorter prefix inserted after longer key",
+        "case-sensitive keys.",
+        "The empty key marks the root and returns true once, then false. Inserting a shorter prefix after a longer key returns true if its terminal marker was unset."
+      ],
+      "timeComplexity": "Expected O(L+1) time per insertion: follow or create one hash-map edge per character of a length-L key, then inspect its terminal marker.",
+      "spaceComplexity": "O(P+1) persistent trie storage for P distinct nonempty prefixes; each new key creates only its missing prefixes.",
+      "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
+      "walkthroughCase": {
+        "arguments": [
+          [
+            "AddWord",
+            "AddWord",
+            "AddWord",
+            "AddWord"
+          ],
+          [
+            [
+              "https://a/b"
+            ],
+            [
+              "https://a"
+            ],
+            [
+              "https://a/b"
+            ],
+            [
+              "https://a/b/c"
+            ]
+          ]
+        ],
+        "expected": [
+          true,
+          true,
+          false,
+          true
+        ]
+      }
+    }
   },
   "interviewcake_matching-parens": {
     "code": "class Solution {\n    GetClosingParen(sentence, openingParenIndex) {\n        let depth = 0;\n        for (let i = openingParenIndex; i < sentence.length; i++) {\n            if (sentence[i] === '(') depth++;\n            else if (sentence[i] === ')' && --depth === 0) return i;\n        }\n        throw new Error('unmatched opener');\n    }\n}\n",
     "incorrectCode": "class Solution {\n    GetClosingParen(sentence, openingParenIndex) {\n        return sentence.indexOf(')', openingParenIndex + 1);\n    }\n}\n",
     "incorrectReason": "Returns the first closing parenthesis, ignoring nested pairs that must close before the supplied opener.",
     "notes": {
-      "explanation": "Scan from the supplied opener, including that character. Increment depth for each opener and decrement it for each closer; return when a closer first brings depth back to zero.",
-      "correctness": "After consuming the designated opener, depth counts the still-unclosed openers within that outer pair, including the outer opener itself. Nested pairs increase and then decrease this count. The first return to zero therefore closes the designated opener rather than an inner pair."
+      "explanation": "Scan starting at the designated opening parenthesis, including it in the depth count. Increment for each opener and decrement for each closer; the first decrement to zero identifies its matching closer.",
+      "correctness": "After consuming the designated opener, depth counts the still-unclosed openers within that outer pair, including the outer opener itself. Nested pairs increase and then decrease this count. The first return to zero therefore closes the designated opener rather than an inner pair.",
+      "walkthrough": "In x(ab(cd)e)y, the opener at index 1 starts depth 1. The opener at index 4 increases depth to 2, its closer at index 7 reduces it to 1, and the closer at index 9 reduces it to 0. Return index 9 rather than the first closing parenthesis.",
+      "edgeCases": [
+        "Immediately adjacent pair",
+        "deeply nested pairs",
+        "irrelevant characters",
+        "later unrelated pairs.",
+        "An adjacent () returns the next index; nested pairs must close before the designated pair. The bank guarantees that a matching closer exists."
+      ],
+      "timeComplexity": "O(n) worst-case time: scan forward from the supplied opener until its match, visiting each intervening character once.",
+      "spaceComplexity": "O(1) auxiliary space: an integer depth replaces a stack because only one bracket type matters.",
+      "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
+      "walkthroughCase": {
+        "arguments": [
+          "x(ab(cd)e)y",
+          1
+        ],
+        "expected": 9
+      }
     }
   },
   "interviewcake_permutation-palindrome": {
     "code": "class Solution {\n    HasPalindromePermutation(text) {\n        const odd = new Set();\n        for (const character of text) { if (odd.has(character)) odd.delete(character); else odd.add(character); }\n        return odd.size <= 1;\n    }\n}\n",
     "incorrectCode": "class Solution {\n    HasPalindromePermutation(text) {\n        const odd = new Set();\n        for (const character of text) { if (odd.has(character)) odd.delete(character); else odd.add(character); }\n        return odd.size === 0;\n    }\n}\n",
-    "incorrectReason": "Rejects every valid odd-length palindrome multiset with its permitted single odd-frequency center."
+    "incorrectReason": "Rejects every valid odd-length palindrome multiset with its permitted single odd-frequency center.",
+    "notes": {
+      "explanation": "Toggle each letter in a set of odd-frequency letters. A palindrome permits at most one odd frequency.",
+      "correctness": "Mirrored positions use characters in pairs, leaving at most one center occurrence. Conversely, pairing each even part and placing the possible odd remainder at the center constructs a palindrome.",
+      "walkthrough": "For aabbc, toggling odd-frequency membership removes a after its second occurrence and removes b after its second. Only c remains odd. It can occupy the middle of a palindrome such as abcba, so return true without enumerating reorderings.",
+      "edgeCases": [
+        "Empty input",
+        "single letter",
+        "many repeated letters",
+        "two odd counts.",
+        "The empty string is a palindrome permutation. aabc returns false because both b and c have odd counts."
+      ],
+      "timeComplexity": "O(n) time: each of n letters toggles one parity and the final odd count is checked.",
+      "spaceComplexity": "O(1) auxiliary space for the fixed 26-letter domain, except a language implementation that copies the input characters as noted below.",
+      "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
+      "walkthroughCase": {
+        "arguments": [
+          "aabbc"
+        ],
+        "expected": true
+      }
+    }
   },
   "interviewcake_product-of-other-numbers": {
     "code": "class Solution {\n    GetProductsOfAllIntsExceptAtIndex(values) {\n        const products = Array(values.length); let prefix = 1;\n        for (let i = 0; i < values.length; i++) { products[i] = prefix; prefix *= values[i]; }\n        let suffix = 1;\n        for (let i = values.length - 1; i >= 0; i--) { products[i] *= suffix; suffix *= values[i]; }\n        return products;\n    }\n}\n",
     "incorrectCode": "class Solution {\n    GetProductsOfAllIntsExceptAtIndex(values) {\n        let product = 1; for (const value of values) product *= value;\n        return values.map(value => product / value);\n    }\n}\n",
-    "incorrectReason": "The division shortcut fails on zero entries and violates the required division-free approach."
+    "incorrectReason": "The division shortcut fails on zero entries and violates the required division-free approach.",
+    "notes": {
+      "explanation": "Write left-prefix products into the output, then multiply them by a running right-suffix product while scanning backward.",
+      "correctness": "Before the reverse scan, output[i] contains precisely factors left of i. The suffix contains precisely factors right of i, so multiplying them excludes exactly the required position.",
+      "walkthrough": "For [2,0,-3,4], the left-product pass writes [1,2,0,0]. Multiplying right products into those entries gives [0,-24,0,0]. At the zero position, the other values multiply to 2*(-3)*4=-24; every other position includes the zero. Division is unnecessary.",
+      "edgeCases": [
+        "One zero",
+        "several zeros",
+        "negatives",
+        "two entries.",
+        "One zero leaves only its own result potentially nonzero; two zeros make every result zero. No division or special zero branch is needed."
+      ],
+      "timeComplexity": "O(n) time: two passes each perform a constant number of multiplications per position.",
+      "spaceComplexity": "O(n) result storage and O(1) additional auxiliary space: only running prefix/suffix products and indices.",
+      "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
+      "walkthroughCase": {
+        "arguments": [
+          [
+            2,
+            0,
+            -3,
+            4
+          ]
+        ],
+        "expected": [
+          0,
+          -24,
+          0,
+          0
+        ]
+      }
+    }
   },
   "interviewcake_rectangular-love": {
     "code": "class Solution {\n    FindRectangularOverlap(first, second) {\n        const left = Math.max(first.LeftX, second.LeftX), bottom = Math.max(first.BottomY, second.BottomY);\n        const right = Math.min(first.LeftX + first.Width, second.LeftX + second.Width);\n        const top = Math.min(first.BottomY + first.Height, second.BottomY + second.Height);\n        if (right <= left || top <= bottom) return new Rectangle();\n        return new Rectangle(left, bottom, right - left, top - bottom);\n    }\n}\n",
     "incorrectCode": "class Solution {\n    FindRectangularOverlap(first, second) {\n        const left = Math.max(first.LeftX, second.LeftX), bottom = Math.max(first.BottomY, second.BottomY);\n        const right = Math.min(first.LeftX + first.Width, second.LeftX + second.Width);\n        const top = Math.min(first.BottomY + first.Height, second.BottomY + second.Height);\n        if (right < left || top < bottom) return new Rectangle();\n        return new Rectangle(left, bottom, right - left, top - bottom);\n    }\n}\n",
-    "incorrectReason": "Treats boundary contact as an area intersection instead of returning the required all-zero no-overlap rectangle."
+    "incorrectReason": "Treats boundary contact as an area intersection instead of returning the required all-zero no-overlap rectangle.",
+    "notes": {
+      "explanation": "Intersect the x intervals and y intervals separately. Both resulting lengths must be positive.",
+      "correctness": "A coordinate belongs to the overlap exactly when it lies in both corresponding intervals. Their common lower endpoint is the maximum lower endpoint and their upper endpoint is the minimum upper endpoint.",
+      "walkthrough": "Rectangle [1,2,6,4] spans x=1..7 and y=2..6; [4,0,5,4] spans x=4..9 and y=0..4. The common x interval is 4..7 and the common y interval is 2..4, so return a new rectangle [4,2,3,2]. Both dimensions are positive. JSON rectangles are [LeftX,BottomY,Width,Height]; return a new Rectangle, including [0,0,0,0] when overlap has no positive area.",
+      "edgeCases": [
+        "Containment",
+        "identical rectangles",
+        "edge or corner contact",
+        "negative coordinates.",
+        "Edge or corner contact returns a new [0,0,0,0] rectangle because at least one overlap dimension is zero. Containment returns the smaller rectangle’s geometry in a fresh object."
+      ],
+      "timeComplexity": "O(1) time: four endpoint comparisons and at most two subtractions determine the intersection.",
+      "spaceComplexity": "O(1) auxiliary and result space: a fixed number of coordinates and one new Rectangle.",
+      "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
+      "walkthroughCase": {
+        "arguments": [
+          [
+            1,
+            2,
+            6,
+            4
+          ],
+          [
+            4,
+            0,
+            5,
+            4
+          ]
+        ],
+        "expected": [
+          4,
+          2,
+          3,
+          2
+        ]
+      }
+    }
   },
   "interviewcake_recursive-string-permutations": {
     "code": "class Solution {\n    GetPermutations(text) {\n        const counts = new Map(), output = new Set();\n        for (const character of text) counts.set(character, (counts.get(character) || 0) + 1);\n        function build(prefix) {\n            if (prefix.length === text.length) { output.add(prefix); return; }\n            for (const [character, count] of counts) if (count !== 0) {\n                counts.set(character, count - 1); build(prefix + character); counts.set(character, count);\n            }\n        }\n        build(''); return output;\n    }\n}\n",
     "incorrectCode": "class Solution {\n    GetPermutations(text) {\n        if (text.length === 0) return new Set();\n        const counts = new Map(), output = new Set();\n        for (const character of text) counts.set(character, (counts.get(character) || 0) + 1);\n        function build(prefix) {\n            if (prefix.length === text.length) { output.add(prefix); return; }\n            for (const [character, count] of counts) if (count !== 0) {\n                counts.set(character, count - 1); build(prefix + character); counts.set(character, count);\n            }\n        }\n        build(''); return output;\n    }\n}\n",
     "incorrectReason": "Omits the empty string permutation, although the empty input has one valid permutation rather than zero.",
     "notes": {
-      "explanation": "Count each distinct character, then build prefixes recursively. For every character with a positive remaining count, append it, recurse with that count reduced, and restore the count before exploring the next choice. Store complete strings in a set.",
-      "correctness": "At each recursion level, the remaining counts are exactly the unused occurrences of the original input. Every chosen character preserves that invariant, so a completed prefix is a valid permutation. Every valid permutation determines a sequence of available-character choices and is therefore generated. Choosing characters by value rather than occurrence gives one path for each distinct string, including the empty string at the initial base case.",
-      "walkthrough": "For ab, the initial counts are a:1 and b:1. Choosing a leaves only b, so the first branch emits ab. Restoring both counts lets the next branch choose b then a and emit ba. For an empty input, the initial empty prefix is already complete and the result contains the empty string.",
-      "timeComplexity": "O(n * n!) worst-case time for n distinct characters, including prefix and result-string construction; repeated characters reduce the number of distinct branches.",
-      "spaceComplexity": "O(n * n!) result storage in the worst case. The recursion has depth O(n), and simultaneously retained immutable prefix strings can occupy O(n²) additional characters."
+      "explanation": "Count each distinct character, then recursively extend a prefix with any character whose remaining count is positive. Decrement before recursion and restore after it so sibling choices see the original counts.",
+      "correctness": "Each recursive state has used exactly the prefix multiset and retains exactly the unused occurrences. Choosing a positive-count character preserves this invariant; reaching full length uses every occurrence. Every distinct target string determines one available next-character choice at each level, so all and only distinct permutations are reached.",
+      "walkthrough": "For ab, counts start as {a:1,b:1}. Choose a, leaving only b and emitting ab; restore the counts. Choose b, leaving only a and emitting ba. For aa, there is only one available character choice at either level, so aa is emitted once. Empty input immediately emits the empty string. Return a set of strings; the adapter displays a JSON array and compares membership without imposing output order.",
+      "edgeCases": [
+        "Empty string has one permutation",
+        "singleton",
+        "repeated characters under the bank extension.",
+        "Empty input returns the singleton set {\"\"}; repeated characters yield distinct strings only, not repeated output entries."
+      ],
+      "timeComplexity": "Expected O(n*n!) worst-case time: with distinct characters there are n! output strings, each constructed/hashed in O(n); all smaller recursion levels are dominated by this bound.",
+      "spaceComplexity": "O(n*n!) worst-case output storage. Outside the output, the count map and recursion depth are O(n); immutable prefixes retained along a recursion path can total O(n²) characters.",
+      "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
+      "walkthroughCase": {
+        "arguments": [
+          "ab"
+        ],
+        "expected": [
+          "ab",
+          "ba"
+        ]
+      }
     }
   },
   "interviewcake_reverse-linked-list": {
     "code": "class Solution {\n    Reverse(head) {\n        let previous = null, current = head;\n        while (current !== null) {\n            const next = current.Next; current.Next = previous;\n            previous = current; current = next;\n        }\n        return previous;\n    }\n}\n",
     "incorrectCode": "class Solution {\n    Reverse(head) {\n        let result = null;\n        for (let node = head; node !== null; node = node.Next) result = new LinkedListNode(node.Value, result);\n        return result;\n    }\n}\n",
-    "incorrectReason": "Returns reversed values in newly allocated nodes instead of reversing the required original objects and links."
+    "incorrectReason": "Returns reversed values in newly allocated nodes instead of reversing the required original objects and links.",
+    "notes": {
+      "explanation": "Maintain the already reversed prefix and detach one node at a time from the remaining suffix, pointing it back to the prefix.",
+      "correctness": "The prefix always contains the original first nodes in reverse order, and the suffix is untouched. Moving its first node extends the invariant until no suffix remains.",
+      "walkthrough": "For nodes 3 -> 8 -> 1, first set node 3.Next to null. Next point the original node 8 to node 3, then point the original node 1 to node 8. Return the original node holding 1. The resulting values are [1,8,3], with every payload still attached to its original object. The callable returns the new head of the same node objects. JSON displays the returned head’s value sequence; the adapter also checks original identities, payloads and reversed links.",
+      "edgeCases": [
+        "Empty list",
+        "singleton identity",
+        "repeated values",
+        "old head becomes tail.",
+        "Empty input returns null; a singleton returns the same object. The old head becomes the tail with Next=null, even when payload values repeat."
+      ],
+      "timeComplexity": "O(n) time: each of n nodes has its Next link rewritten once.",
+      "spaceComplexity": "O(1) auxiliary space: current, saved next and previous references; no replacement nodes.",
+      "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
+      "walkthroughCase": {
+        "arguments": [
+          [
+            3,
+            8,
+            1
+          ]
+        ],
+        "expected": [
+          1,
+          8,
+          3
+        ]
+      }
+    }
   },
   "interviewcake_reverse-string-in-place": {
     "code": "class Solution {\n    Reverse(characters) {\n        for (let left = 0, right = characters.length - 1; left < right; left++, right--)\n            [characters[left], characters[right]] = [characters[right], characters[left]];\n    }\n}\n",
     "incorrectCode": "class Solution {\n    Reverse(characters) {\n        characters = characters.slice().reverse();\n    }\n}\n",
-    "incorrectReason": "Reverses a copy and rebinds the local parameter, leaving the caller-owned mutable character array unchanged."
+    "incorrectReason": "Reverses a copy and rebinds the local parameter, leaving the caller-owned mutable character array unchanged.",
+    "notes": {
+      "explanation": "Swap the leftmost and rightmost unprocessed characters, moving both boundaries inward.",
+      "correctness": "Each swap places both boundary characters at their final reversed positions. The remaining middle interval is the same problem on fewer characters.",
+      "walkthrough": "For the mutable characters of cloud, exchange c with d, then l with u; the middle o stays in place. The same array now contains duolc. No replacement array is returned. JSON encodes the mutable character array as one string. The callable returns void/None/undefined; expected is the same array’s content after mutation.",
+      "edgeCases": [
+        "Empty array",
+        "singleton",
+        "even and odd lengths.",
+        "Empty and singleton arrays retain their identity and content. An odd-length center character stays unchanged."
+      ],
+      "timeComplexity": "O(n) time: each inward swap fixes two characters, with at most ceil(n/2) swaps.",
+      "spaceComplexity": "O(1) auxiliary space: two indices and a swap temporary; no new character buffer.",
+      "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
+      "walkthroughCase": {
+        "arguments": [
+          "cloud"
+        ],
+        "expected": "duolc"
+      }
+    }
   },
   "interviewcake_reverse-words": {
     "code": "class Solution {\n    ReverseWords(message) {\n        function reverse(left, right) {\n            while (left < right) { [message[left], message[right]] = [message[right], message[left]]; left++; right--; }\n        }\n        reverse(0, message.length - 1); let start = 0;\n        for (let end = 0; end <= message.length; end++) if (end === message.length || message[end] === ' ') {\n            reverse(start, end - 1); start = end + 1;\n        }\n    }\n}\n",
     "incorrectCode": "class Solution {\n    ReverseWords(message) {\n        for (let left = 0, right = message.length - 1; left < right; left++, right--)\n            [message[left], message[right]] = [message[right], message[left]];\n    }\n}\n",
-    "incorrectReason": "Reverses the entire message but forgets to restore the internal character order of each word."
+    "incorrectReason": "Reverses the entire message but forgets to restore the internal character order of each word.",
+    "notes": {
+      "explanation": "Reverse the entire character array, then reverse the characters of each resulting word.",
+      "correctness": "The first reversal reverses word order and each word's letters. Reversing each word restores its spelling while leaving the new word order intact.",
+      "walkthrough": "For foxes run fast, reversing all characters gives tsaf nur sexof. Reverse each space-delimited segment in that same array to restore the internal spelling, producing fast run foxes. Spaces remain separators and the array length is unchanged. JSON encodes the mutable character array as one string. The callable returns void/None/undefined; expected is the same array’s word-reversed content.",
+      "edgeCases": [
+        "Empty/single word",
+        "unequal word lengths",
+        "two words.",
+        "Empty input stays empty. A single word is reversed twice and finishes unchanged; unequal word lengths need no extra storage."
+      ],
+      "timeComplexity": "O(n) time: one full reversal, one boundary scan, and word reversals whose total lengths sum to at most n.",
+      "spaceComplexity": "O(1) auxiliary space: all reversals swap within the original mutable character array; only range indices are stored.",
+      "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
+      "walkthroughCase": {
+        "arguments": [
+          "foxes run fast"
+        ],
+        "expected": "fast run foxes"
+      }
+    }
   },
   "interviewcake_simulate-5-sided-die": {
     "code": "class Solution {\n    Rand5() {\n        while (true) {\n            const value = RandomSource.Rand7();\n            if (value <= 5) return value;\n        }\n    }\n}\n",
     "incorrectCode": "class Solution {\n    Rand5() {\n        return (RandomSource.Rand7() - 1) % 5 + 1;\n    }\n}\n",
-    "incorrectReason": "Modulo maps seven equally likely draws onto five outcomes unevenly instead of rejecting source values 6 and 7."
+    "incorrectReason": "Modulo maps seven equally likely draws onto five outcomes unevenly instead of rejecting source values 6 and 7.",
+    "notes": {
+      "explanation": "Reject source outcomes 6 and 7; return every remaining outcome unchanged.",
+      "correctness": "Each accepted source value has the same probability 1/7. Conditioning on acceptance gives probability 1/5 for each result; repeated independent attempts preserve that distribution.",
+      "walkthrough": "With injected draws 6, 7, 3, reject 6 and 7 and return 3. In general each accepted source value 1..5 has the same source probability, so conditioning on acceptance gives probability 1/5. The judge output true denotes passed range, source-use and probability properties, not a fixed rolled value. Rand5 has no value arguments and returns one integer 1..5. JSON contains a judge-only forced Rand7 draw prefix; expected true denotes random-source/range/distribution checks, not the rolled integer.",
+      "edgeCases": [
+        "Repeated rejections",
+        "every accepted value",
+        "do not map rejected outcomes modulo five.",
+        "Any number of 6/7 draws must be rejected; returning draw modulo five would bias outcomes. Every call uses fresh supplied randomness."
+      ],
+      "timeComplexity": "Expected O(1) time: each attempt succeeds with probability 5/7, so the expected number of source calls is 7/5. There is no finite worst-case call bound.",
+      "spaceComplexity": "O(1) auxiliary space: retain only the current draw, regardless of the number of rejected attempts.",
+      "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
+      "walkthroughCase": {
+        "arguments": [
+          [
+            6,
+            7,
+            3
+          ]
+        ],
+        "expected": true
+      }
+    }
   },
   "interviewcake_simulate-7-sided-die": {
     "code": "class Solution {\n    Rand7() {\n        while (true) {\n            const value = (RandomSource.Rand5() - 1) * 5 + RandomSource.Rand5() - 1;\n            if (value < 21) return value % 7 + 1;\n        }\n    }\n}\n",
     "incorrectCode": "class Solution {\n    Rand7() {\n        const value = (RandomSource.Rand5() - 1) * 5 + RandomSource.Rand5() - 1;\n        return value % 7 + 1;\n    }\n}\n",
-    "incorrectReason": "Skips rejection of the last four draw pairs, giving some output faces four preimages and others only three."
+    "incorrectReason": "Skips rejection of the last four draw pairs, giving some output faces four preimages and others only three.",
+    "notes": {
+      "explanation": "Combine two zero-based source draws into a uniform state in 0..24. Accept states below 21 and map each group of seven uniformly into 1..7.",
+      "correctness": "Each pair is one of 25 equally likely states. Accepting 21 states leaves three representatives for each remainder modulo seven, so each result has conditional probability 1/7.",
+      "walkthrough": "For injected draws 5,5,1,1, the first pair creates state (5-1)*5+(5-1)=24, which is rejected. The next pair creates state 0 and returns 1. Among accepted states 0..20, each remainder modulo seven occurs three times, giving probability 1/7 for each output. The displayed true reports the judge properties. Rand7 has no value arguments and returns one integer 1..7. JSON contains a judge-only forced Rand5 draw prefix; expected true denotes random-source/range/distribution checks, not the rolled integer.",
+      "edgeCases": [
+        "Rejected top four states",
+        "repeated attempts",
+        "pair endpoints",
+        "no modulo bias from all 25 states.",
+        "States 21..24 must be rejected; taking all 25 states modulo seven would favor four outcomes. Repeated rejections must not cache a previous roll."
+      ],
+      "timeComplexity": "Expected O(1) time: an attempt succeeds with probability 21/25 and uses two source calls, for 50/21 expected calls. Worst-case attempts are unbounded.",
+      "spaceComplexity": "O(1) auxiliary space: two draws and one encoded state, reused on every retry.",
+      "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
+      "walkthroughCase": {
+        "arguments": [
+          [
+            5,
+            5,
+            1,
+            1
+          ]
+        ],
+        "expected": true
+      }
+    }
   },
   "interviewcake_temperature-tracker": {
     "code": "class TempTracker {\n    constructor() {\n        this.count = 0; this.total = 0; this.minimum = null; this.maximum = null;\n        this.counts = Array(111).fill(0); this.mode = null; this.modeCount = 0;\n    }\n    Insert(temperature) {\n        this.count++; this.total += temperature;\n        this.minimum = this.minimum === null ? temperature : Math.min(this.minimum, temperature);\n        this.maximum = this.maximum === null ? temperature : Math.max(this.maximum, temperature);\n        this.counts[temperature]++;\n        if (this.counts[temperature] > this.modeCount) { this.mode = temperature; this.modeCount = this.counts[temperature]; }\n    }\n    GetMin() { return this.minimum; }\n    GetMax() { return this.maximum; }\n    GetMean() { return this.count === 0 ? null : this.total / this.count; }\n    GetMode() { return this.mode; }\n}\n",
     "incorrectCode": "class TempTracker {\n    constructor() {\n        this.count = 0; this.total = 0; this.minimum = null; this.maximum = null;\n        this.counts = Array(111).fill(0); this.mode = null; this.modeCount = 0;\n    }\n    Insert(temperature) {\n        this.count++; this.total += temperature;\n        this.minimum = this.minimum === null ? temperature : Math.min(this.minimum, temperature);\n        this.maximum = this.maximum === null ? temperature : Math.max(this.maximum, temperature);\n        this.counts[temperature]++;\n        if (this.counts[temperature] > this.modeCount) { this.mode = temperature; this.modeCount = this.counts[temperature]; }\n    }\n    GetMin() { return this.minimum; }\n    GetMax() { return this.maximum; }\n    GetMean() { return this.count === 0 ? null : Math.trunc(this.total / this.count); }\n    GetMode() { return this.mode; }\n}\n",
-    "incorrectReason": "Truncates nonintegral means even though GetMean must preserve the arithmetic fractional result."
+    "incorrectReason": "Truncates nonintegral means even though GetMean must preserve the arithmetic fractional result.",
+    "notes": {
+      "explanation": "Keep a fixed 111-entry frequency table, running sum/count and cached extrema/mode. Each insertion updates these constant-size statistics.",
+      "correctness": "The frequency table counts every insertion. Extrema are updated against every new value; sum/count define the mean; updating the mode on a new largest frequency preserves a maximizing value.",
+      "walkthrough": "Insert 4, 10 and 4. The minimum is 4, maximum 10, sum 18 and count 3, so the mean is 6. Frequency 4 is 2 while frequency 10 is 1, so GetMode returns 4. Repeating getters does not consume any reading. JSON supplies [operationNames,argumentLists] for one fresh TempTracker. Insert displays null; empty getters return null, means allow 1e-9 tolerance and any maximizing mode is valid.",
+      "edgeCases": [
+        "Empty tracker",
+        "tied modes",
+        "repeated extrema",
+        "0 and 110",
+        "interleaved getters.",
+        "Empty getters return null. With readings 3 and 8, either mode is accepted; means use floating-point division and getters do not consume readings."
+      ],
+      "timeComplexity": "O(1) per insertion/getter: insertion changes one frequency bucket and a fixed number of cached statistics; getters read cached values.",
+      "spaceComplexity": "O(1) persistent space: exactly 111 frequency slots plus count, sum, extrema and mode, independent of reading count.",
+      "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
+      "walkthroughCase": {
+        "arguments": [
+          [
+            "Insert",
+            "Insert",
+            "Insert",
+            "GetMin",
+            "GetMax",
+            "GetMean",
+            "GetMode"
+          ],
+          [
+            [
+              4
+            ],
+            [
+              10
+            ],
+            [
+              4
+            ],
+            [],
+            [],
+            [],
+            []
+          ]
+        ],
+        "expected": [
+          null,
+          null,
+          null,
+          4,
+          10,
+          6,
+          4
+        ]
+      }
+    }
   },
   "interviewcake_cake-thief": {
     "code": "class Solution {\n    MaxDuffelBagValue(types, capacity) {\n        for (const type of types) if (type.Weight === 0 && type.Value > 0) throw new InfinityException();\n        const best = Array(capacity + 1).fill(0);\n        for (let weight = 1; weight <= capacity; weight++)\n            for (const type of types) if (type.Weight > 0 && type.Weight <= weight)\n                best[weight] = Math.max(best[weight], best[weight - type.Weight] + type.Value);\n        return best[capacity];\n    }\n}\n",
     "incorrectCode": "class Solution {\n    MaxDuffelBagValue(types, capacity) {\n        for (const type of types) if (type.Weight === 0 && type.Value > 0) throw new InfinityException();\n        const best = Array(capacity + 1).fill(0);\n        for (const type of types) if (type.Weight > 0)\n            for (let weight = capacity; weight >= type.Weight; weight--)\n                best[weight] = Math.max(best[weight], best[weight - type.Weight] + type.Value);\n        return best[capacity];\n    }\n}\n",
-    "incorrectReason": "Uses a descending 0/1-knapsack update, allowing each cake type only once instead of an unbounded number of whole items."
+    "incorrectReason": "Uses a descending 0/1-knapsack update, allowing each cake type only once instead of an unbounded number of whole items.",
+    "notes": {
+      "explanation": "First detect an unbounded zero-weight type. Otherwise compute the best value for each capacity by considering the last positive-weight item selected.",
+      "correctness": "For a bounded instance, an optimal nonempty selection has a final positive-weight item. Removing it leaves a feasible selection at the remaining capacity, so maximizing all such choices establishes the recurrence by induction.",
+      "walkthrough": "For types [weight=3,value=7] and [weight=5,value=13] with capacity 11, choose one weight-5 item and two weight-3 items. Total weight is 11 and value is 13+7+7=27. Two weight-5 items yield only 26; three weight-3 items yield 21. The unbounded dynamic program reuses earlier capacity optima to find 27.",
+      "edgeCases": [
+        "Zero-weight positive value",
+        "zero-weight zero value",
+        "empty types",
+        "zero capacity",
+        "values above 32 bits.",
+        "Any zero-weight positive-value type raises InfinityException even when capacity is zero. Zero-weight zero-value types are ignored; empty types produce value 0."
+      ],
+      "timeComplexity": "O(t*C+t+C+1) time: inspect t types for infinity, initialize C+1 cells, and test every type for each capacity 1..C.",
+      "spaceComplexity": "O(C+1) auxiliary space: one best value per capacity, with no table indexed by item counts.",
+      "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
+      "walkthroughCase": {
+        "arguments": [
+          [
+            [
+              3,
+              7
+            ],
+            [
+              5,
+              13
+            ]
+          ],
+          11
+        ],
+        "expected": 27
+      }
+    }
   },
   "interviewcake_find-unique-int-among-duplicates": {
     "code": "class Solution {\n    FindUniqueDeliveryId(deliveryIds) {\n        let unique = 0; for (const value of deliveryIds) unique ^= value;\n        return unique;\n    }\n}\n",
     "incorrectCode": "class Solution {\n    FindUniqueDeliveryId(deliveryIds) {\n        let total = 0, distinctTotal = 0; const distinct = new Set();\n        for (const value of deliveryIds) { total += value; if (!distinct.has(value)) { distinct.add(value); distinctTotal += value; } }\n        return total - 2 * distinctTotal;\n    }\n}\n",
-    "incorrectReason": "Reverses the sign in the distinct-sum identity, returning the negative of the unique positive ID."
+    "incorrectReason": "Reverses the sign in the distinct-sum identity, returning the negative of the unique positive ID.",
+    "notes": {
+      "explanation": "XOR all values. Each duplicated value cancels itself, leaving the unmatched one.",
+      "correctness": "XOR is associative and commutative, and x XOR x is zero. Paired values therefore cancel regardless of ordering, leaving the unique value.",
+      "walkthrough": "For [14,3,14,8,3], XOR combines equal pairs to zero: 14^14=0 and 3^3=0. Since XOR is associative and commutative, the final accumulator equals 8, the only identifier without a cancelling partner.",
+      "edgeCases": [
+        "Singleton",
+        "large nonconsecutive IDs",
+        "unique value at either end.",
+        "A singleton returns its value. Large or nonconsecutive IDs need no range-indexed storage; the exact once/twice multiplicity promise is essential."
+      ],
+      "timeComplexity": "O(n) time: perform one XOR per input entry.",
+      "spaceComplexity": "O(1) auxiliary space: a single XOR accumulator and iteration state.",
+      "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
+      "walkthroughCase": {
+        "arguments": [
+          [
+            14,
+            3,
+            14,
+            8,
+            3
+          ]
+        ],
+        "expected": 8
+      }
+    }
   },
   "interviewcake_top-scores": {
     "code": "class Solution {\n    SortScores(scores, highestPossibleScore) {\n        const counts = Array(highestPossibleScore + 1).fill(0), sorted = [];\n        for (const score of scores) counts[score]++;\n        for (let score = highestPossibleScore; score >= 0; score--)\n            for (let copy = 0; copy < counts[score]; copy++) sorted.push(score);\n        return sorted;\n    }\n}\n",
     "incorrectCode": "class Solution {\n    SortScores(scores, highestPossibleScore) {\n        const counts = Array(highestPossibleScore + 1).fill(0), sorted = [];\n        for (const score of scores) counts[score]++;\n        for (let score = 0; score <= highestPossibleScore; score++)\n            for (let copy = 0; copy < counts[score]; copy++) sorted.push(score);\n        return sorted;\n    }\n}\n",
-    "incorrectReason": "Emits the counting-sort buckets in ascending order instead of the requested nonincreasing order."
+    "incorrectReason": "Emits the counting-sort buckets in ascending order instead of the requested nonincreasing order.",
+    "notes": {
+      "explanation": "Count occurrences in K+1 buckets, then emit each bucket from K down to zero.",
+      "correctness": "Each input occurrence increments exactly its score bucket. Emitting buckets in decreasing score order preserves multiplicity and produces the required ordering.",
+      "walkthrough": "For scores [3,8,3,0,5] and K=8, the count table records one 8, one 5, two 3s and one 0. Reading counts from score 8 down to 0 emits [8,5,3,3,0] in a new array. Both occurrences of 3 are retained.",
+      "edgeCases": [
+        "Empty input",
+        "K=0",
+        "repeated scores",
+        "unused top bucket.",
+        "K=0 permits only zeros, all retained; empty scores yield an empty new array even if K is positive."
+      ],
+      "timeComplexity": "O(n+K+1) time: initialize and scan K+1 buckets, count n entries, then emit exactly n occurrences.",
+      "spaceComplexity": "O(K+1) auxiliary count storage plus O(n) for the new output array.",
+      "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
+      "walkthroughCase": {
+        "arguments": [
+          [
+            3,
+            8,
+            3,
+            0,
+            5
+          ],
+          8
+        ],
+        "expected": [
+          8,
+          5,
+          3,
+          3,
+          0
+        ]
+      }
+    }
   },
   "interviewcake_which-appears-twice": {
     "code": "class Solution {\n    FindRepeat(numbers) {\n        let repeat = 0; for (const value of numbers) repeat ^= value;\n        for (let value = 1; value <= numbers.length - 1; value++) repeat ^= value;\n        return repeat;\n    }\n}\n",
     "incorrectCode": "class Solution {\n    FindRepeat(numbers) {\n        let repeat = 0; for (const value of numbers) repeat ^= value;\n        for (let value = 1; value < numbers.length - 1; value++) repeat ^= value;\n        return repeat;\n    }\n}\n",
-    "incorrectReason": "Omits the largest domain value from the XOR cancellation loop, an off-by-one error that changes the duplicated value."
+    "incorrectReason": "Omits the largest domain value from the XOR cancellation loop, an off-by-one error that changes the duplicated value.",
+    "notes": {
+      "explanation": "XOR every array entry, then XOR every integer in the promised range 1..n. Each required occurrence cancels its matching range occurrence, leaving the extra value.",
+      "correctness": "Associativity and commutativity let matching values cancel because x XOR x=0. The input is exactly the range multiset plus one extra occurrence, so cancellation leaves that occurrence. No large sum or multiplication is formed.",
+      "walkthrough": "For [3,1,4,2,3], XOR the input values, then XOR 1,2,3,4 because n=4. One copy of every required value cancels its range partner; the extra 3 remains, so return 3. The algorithm uses XOR rather than a sum formula.",
+      "edgeCases": [
+        "Minimum valid array",
+        "duplicate at endpoints of range",
+        "large n without sum overflow.",
+        "[1,1] returns 1. The promise includes every value 1..n and exactly one extra occurrence; the more general pigeonhole problem has a different contract."
+      ],
+      "timeComplexity": "O(n) time: process the n+1 input entries; the range sum is constant-time arithmetic, or an additional n XOR operations in the XOR variants.",
+      "spaceComplexity": "O(1) auxiliary space: scalar accumulator and range/loop variables, with no input mutation.",
+      "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
+      "walkthroughCase": {
+        "arguments": [
+          [
+            3,
+            1,
+            4,
+            2,
+            3
+          ]
+        ],
+        "expected": 3
+      }
+    }
   },
   "interviewcake_word-cloud": {
     "code": "class WordCloudData {\n    constructor(input) {\n        this.WordsToCounts = Object.create(null);\n        const words = input.match(/[A-Za-z]+(?:['-][A-Za-z]+)*/g) || [];\n        for (const raw of words) {\n            const word = raw.toLowerCase();\n            this.WordsToCounts[word] = (this.WordsToCounts[word] || 0) + 1;\n        }\n    }\n}\n",
     "incorrectCode": "class WordCloudData {\n    constructor(input) {\n        this.WordsToCounts = Object.create(null);\n        const words = input.match(/[A-Za-z]+/g) || [];\n        for (const raw of words) {\n            const word = raw.toLowerCase();\n            this.WordsToCounts[word] = (this.WordsToCounts[word] || 0) + 1;\n        }\n    }\n}\n",
     "incorrectReason": "Drops internal apostrophes and hyphens, splitting valid bank words such as contractions and hyphenated compounds.",
     "notes": {
-      "explanation": "Match maximal tokens of ASCII letters joined by internal apostrophes or hyphens followed by more letters. Lowercase each matched token and increment a null-prototype dictionary, so ordinary words such as constructor cannot collide with inherited properties.",
+      "explanation": "Find all maximal tokens with the pattern [A-Za-z]+(?:['-][A-Za-z]+)*, lowercase each match, and increment its key in a null-prototype dictionary. The pattern permits a hyphen/apostrophe only between letter runs, and a null prototype keeps words such as constructor from colliding with inherited properties.",
       "correctness": "The expression starts each token with at least one letter and extends it only through another letter block joined by one allowed connector. Each maximal token under the disclosed grammar is therefore matched once; separators are excluded. Lowercasing sends all permitted case variants to the same key, and one increment per match records exactly their occurrence count.",
-      "spaceComplexity": "O(n) result storage and O(n) auxiliary matched-token storage for n input characters; the regular-expression match call materializes the token array."
+      "walkthrough": "For \"Owls fly; OWLS don't crawl. Fly-by owls!\", punctuation ends tokens but internal apostrophes and letter-surrounded hyphens remain. Lowercasing combines Owls, OWLS and owls into count 3. The other keys are fly, don't, crawl and fly-by, each counted once under the disclosed bank policy. Construct WordCloudData from the input string and inspect WordsToCounts; the displayed dictionary is the exposed property, not a constructor return value. Dictionary order is irrelevant.",
+      "edgeCases": [
+        "Empty text",
+        "mixed case",
+        "internal apostrophes/hyphens",
+        "repeated punctuation",
+        "leading/trailing punctuation.",
+        "Empty text yields an empty dictionary. red--blue splits into red and blue; a letter-surrounded apostrophe or single hyphen remains inside a token."
+      ],
+      "timeComplexity": "Expected O(n) time: tokenization, lowercase conversion and hashing examine O(n) total characters. The dictionary performs one expected constant-time update per token after hashing.",
+      "spaceComplexity": "O(n) worst-case space: input.match materializes all matched tokens, and the result dictionary stores distinct normalized keys and counts.",
+      "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
+      "walkthroughCase": {
+        "arguments": [
+          "Owls fly; OWLS don't crawl. Fly-by owls!"
+        ],
+        "expected": {
+          "owls": 3,
+          "fly": 1,
+          "don't": 1,
+          "crawl": 1,
+          "fly-by": 1
+        }
+      }
     }
   }
 }

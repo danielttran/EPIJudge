@@ -1,6 +1,33 @@
 {
-  "explanation": "Gather the original nodes from both lists, sort their references by node value, and relink them in that order. Values remain unchanged and every returned data node comes from the supplied lists.",
-  "timeComplexity": "O(N log(N+1)) time for N total nodes.",
-  "spaceComplexity": "O(N) auxiliary reference/sort storage.",
-  "attribution": "Original repository-authored Blind75 C++ algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used."
+  "explanation": "Collect references to all original nodes, sort those references by node value, and relink adjacent sorted entries. Set the final next link to null. This implementation uses a full sort rather than merging list frontiers.",
+  "timeComplexity": "O(N log(N+1)) for N=a+b nodes: collect both lists in O(N), sort all references, then relink in O(N).",
+  "spaceComplexity": "O(N) auxiliary references and typical sorting workspace for N nodes; the output reuses original nodes.",
+  "attribution": "Original repository-authored Blind75 C++ algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used.",
+  "correctness": "Disjoint inputs contribute every original node exactly once. Sorting all references gives nondecreasing values without altering any node value. Relinking adjacent entries creates one acyclic chain containing exactly the original nodes, so it satisfies sortedness and identity preservation.",
+  "walkthrough": "Collect nodes from [-2,4] and [0,3,8] into [-2,4,0,3,8]. Sorting their references gives [-2,0,3,4,8]. Relink in that order and set the original node8.next to null; return the original node-2. Expected serializes the returned list; the harness separately checks that every output node is an original node with its original value.",
+  "edgeCases": [
+    "Either input may be empty.",
+    "Equal values from different lists are both retained.",
+    "New replacement data nodes cannot stand in for original nodes."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        -2,
+        4
+      ],
+      [
+        0,
+        3,
+        8
+      ]
+    ],
+    "expected": [
+      -2,
+      0,
+      3,
+      4,
+      8
+    ]
+  }
 }

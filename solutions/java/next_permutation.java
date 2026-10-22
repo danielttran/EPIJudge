@@ -18,7 +18,7 @@ public class NextPermutation {
            perm.get(inversionPoint) >= perm.get(inversionPoint + 1)) {
       --inversionPoint;
     }
-    if (inversionPoint == -1) {
+    if (inversionPoint < 0) {
       return Collections.emptyList(); // perm is the last permutation.
     }
 

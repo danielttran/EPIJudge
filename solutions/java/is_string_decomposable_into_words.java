@@ -15,6 +15,8 @@ public class IsStringDecomposableIntoWords {
 
   public static List<String>
   decomposeIntoDictionaryWords(String domain, Set<String> dictionary) {
+    if (domain.isEmpty()) return new ArrayList<>();
+
 
     int[] lastLength = new int[domain.length()];
     Arrays.fill(lastLength, -1);

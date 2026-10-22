@@ -11,6 +11,8 @@ Jug = collections.namedtuple('Jug', ('low', 'high'))
 def check_feasible(jugs: List[Jug], L: int, H: int) -> bool:
     @functools.lru_cache(None)
     def check_feasible_helper(L, H):
+        if L <= 0 <= H:
+            return True
         if L > H or (L < 0 and H < 0):
             return False
 

@@ -1,6 +1,29 @@
 {
   "explanation": "Write the product of values before each index, then multiply by a running product of values after it. This handles zeros without division.",
-  "timeComplexity": "O(n) time for n values.",
-  "spaceComplexity": "O(1) auxiliary space excluding the O(n) result.",
-  "attribution": "Original repository-authored Blind75 Java algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used."
+  "timeComplexity": "O(n) time for n values. Two passes do constant work per position.",
+  "spaceComplexity": "O(1) auxiliary space excluding the O(n) result. Only the running product and indices are stored besides the result array.",
+  "attribution": "Original repository-authored Blind75 Java algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used.",
+  "correctness": "After the first pass, output[i] is the product strictly before i. During the reverse pass, the running product contains exactly the values strictly after i. Multiplying them excludes only nums[i], so each final entry has the required product without division.",
+  "walkthrough": "For [3,0,-2,5], prefix products written to output are [1,3,0,0]. Multiply by suffix products [0,-10,5,1] at the corresponding positions, giving [0,-30,0,0]. Only the position containing the single zero has a nonzero result.",
+  "edgeCases": [
+    "One zero leaves a possible nonzero product only at that zero’s position.",
+    "Two or more zeros make every output zero.",
+    "Negative factors keep their ordinary product sign."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        3,
+        0,
+        -2,
+        5
+      ]
+    ],
+    "expected": [
+      0,
+      -30,
+      0,
+      0
+    ]
+  }
 }

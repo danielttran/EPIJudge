@@ -1,6 +1,21 @@
 {
-  "explanation": "Recursively match the regex prefix, trying repetition lengths for star and literal/dot matches otherwise. Anchors restrict the allowed start or end; without a start anchor, try each text suffix. This version is not memoized.",
-  "timeComplexity": "Exponential worst case; O((n+1)(n+m)\u00b72^(n+m)) is a conservative bound",
-  "spaceComplexity": "O((n+m)\u00b2) conservative live sliced-string/recursion space",
-  "attribution": "Unmodified reference from epi_judge_python_solutions/regular_expression.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice."
+  "explanation": "Try each possible text start unless ^ anchors the pattern. Recursively match one ordinary character, or enumerate all compatible repetition lengths for a starred token; a trailing $ requires the remaining text to be empty.",
+  "timeComplexity": "O((p+1)(n+1)): at most one evaluation of each pattern/text offset pair, with constant work and at most two transitions per state.",
+  "spaceComplexity": "O((p+1)(n+1)) cached states plus O(p+n+1) recursion frames; every recursive step advances a pattern or text offset.",
+  "attribution": "Adapted reference from epi_judge_python_solutions/regular_expression.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice.",
+  "correctness": "At each pattern suffix, an ordinary token must match exactly the next text character. A starred token can consume any prefix consisting only of compatible characters, including length zero; the loop and final zero-length branch cover exactly those choices. Exhausting the pattern succeeds unless its trailing end anchor still requires more text to be consumed. Trying all starts implements substring matching.",
+  "walkthrough": "For ^ab*c$ on abbbc, the anchor fixes start 0 and a consumes the first character. The b* branch tries one b (c then fails), two b characters (c still fails), then three b characters. The remaining c matches and $ sees empty text, so return true.",
+  "edgeCases": [
+    "An unanchored pattern may match an empty substring.",
+    "^ anchors only the beginning and a trailing $ anchors the end.",
+    "A starred token may consume zero characters.",
+    "Dot matches one character, not an arbitrary-length substring."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      "^ab*c$",
+      "abbbc"
+    ],
+    "expected": true
+  }
 }

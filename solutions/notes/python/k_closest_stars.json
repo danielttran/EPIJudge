@@ -1,6 +1,39 @@
 {
-  "explanation": "Maintain a size-k max-heap using negative Euclidean distances. Remove a farthest star whenever the heap grows too large, then extract the retained stars for the wrapper\u2019s distance comparison.",
-  "timeComplexity": "O(n log(k+1)+k log(k+1))",
-  "spaceComplexity": "O(k) heap and output stars",
-  "attribution": "Unmodified reference from epi_judge_python_solutions/k_closest_stars.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice."
+  "explanation": "Keep at most k Star objects in a max heap ordered by Euclidean distance. Discard the farthest when a new star makes the heap too large. Return the retained Star objects; the judge compares their distances.",
+  "timeComplexity": "O(n log(k + 1)) time. Each star makes a bounded-heap update; extracting the retained stars adds O(k log(k+1)).",
+  "spaceComplexity": "O(k) auxiliary and output space. At most k+1 heap entries are live, plus k output entries.",
+  "attribution": "Unmodified reference from epi_judge_python_solutions/k_closest_stars.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice.",
+  "correctness": "After each insertion, removing the farthest among k+1 candidates leaves the k closest seen stars, preserving multiplicity. Induction proves the retained set is correct at the end. Equal distances permit either tied object, because the judge compares distances rather than identity.",
+  "walkthrough": "The stars (2,0,0),(0,0,5),(1,2,2) have distances 2,5,3. With k=2, the third insertion removes distance 5. The callable returns the stars of distances 2 and 3; the comparator sorts by distance and checks [2,3].",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          2.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          5.0
+        ],
+        [
+          1.0,
+          2.0,
+          2.0
+        ]
+      ],
+      2
+    ],
+    "expected": [
+      2.0,
+      3.0
+    ]
+  },
+  "edgeCases": [
+    "k=0 returns an empty selection.",
+    "Repeated coordinates and equal distances remain separate occurrences.",
+    "Return Star objects in this language; the wrapper compares distances and permits any output order."
+  ]
 }

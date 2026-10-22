@@ -1,5 +1,6 @@
 """Generate the isolated catalog and language scaffolds; run from the repository root."""
 import json, re
+import sys
 from pathlib import Path
 from specs import SPECS
 from oracle import solve, equivalent
@@ -7,6 +8,8 @@ from corpus import extend
 from explanations import explain
 
 ROOT=Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / 'scripts'))
+from clarity.content import apply_question, questions as clarity_questions
 LANGS=['csharp','javascript','python','cpp','java']
 TYPES={
  'csharp':dict(i='int',l='long',b='bool',s='string',ai='int[]',aai='int[][]',aas='string[][]',ab='bool[]',ad='double[]',**{'as':'string[]','list':'ListNode?','lists':'ListNode?[]','tree':'TreeNode?','tree_node':'TreeNode?','graph':'Node?','void':'void'}),
@@ -176,6 +179,8 @@ def generate():
         item['examples']=[dict(input=', '.join((s['params'][i]['name'] if i<len(s['params']) else 'pos')+' = '+json.dumps(v,ensure_ascii=True) for i,v in enumerate(c['arguments'])),output=json.dumps(c['expected'],ensure_ascii=True),explanation=explain(s,c)) for c in s['cases'][:3]]
         catalog.append(item)
         path=ROOT/'blind75'/'cases'/f'{s["id"]}.json';path.parent.mkdir(exist_ok=True);path.write_text(json.dumps(s['cases'],indent=2)+'\n')
+    reviewed = clarity_questions()
+    catalog = [apply_question(problem, reviewed) for problem in catalog]
     (ROOT/'blind75/catalog.json').write_text(json.dumps(catalog,indent=2)+'\n')
     print(f'Generated {len(catalog)} isolated problems and {len(catalog)*5} typed starters.')
 

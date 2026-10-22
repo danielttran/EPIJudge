@@ -21,7 +21,7 @@ public class Permutations {
 
   private static void directedPermutations(int i, List<Integer> A,
                                            List<List<Integer>> result) {
-    if (i == A.size() - 1) {
+    if (i == A.size()) {
       result.add(new ArrayList<>(A));
       return;
     }

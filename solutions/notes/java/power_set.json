@@ -1,6 +1,34 @@
 {
-  "explanation": "For every input entry, recursively explore both including it and excluding it. Copy the selected entries once every include/exclude decision has been made.",
-  "timeComplexity": "O(n\u00b72^n)",
-  "spaceComplexity": "O(n) working space plus O(n\u00b72^n) output",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/PowerSet.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "explanation": "Recursively decide whether to include each input element. Record the selected values once all input positions have been considered; inclusion and exclusion cover the full power set.",
+  "timeComplexity": "O(n·2^n) for n>0: the 2^n subset leaves contain n·2^(n−1) total elements to construct/copy; empty input takes O(1).",
+  "spaceComplexity": "O(n) recursion and mutable selected path, plus O(n·2^n) copied output element storage.",
+  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/PowerSet.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/).",
+  "correctness": "A subset corresponds uniquely to one include/exclude decision for every input value. Each recursion branch makes one such decision and leaves earlier decisions intact. Therefore all 2^n subsets, including the empty subset, are produced exactly once for distinct input values.",
+  "walkthrough": "For [6,9], the four include/exclude paths produce [6,9], [6], [9], and []. Python explores exclusion first, while C++/Java explore inclusion first; the judge ignores subset and element order.",
+  "edgeCases": [
+    "An empty set returns a list containing the empty subset.",
+    "The input is a set; distinct values avoid duplicate subset identities.",
+    "Copies keep previously generated subsets unchanged."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        6,
+        9
+      ]
+    ],
+    "expected": [
+      [],
+      [
+        6
+      ],
+      [
+        9
+      ],
+      [
+        6,
+        9
+      ]
+    ]
+  }
 }

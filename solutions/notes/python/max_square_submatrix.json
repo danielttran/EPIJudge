@@ -1,6 +1,35 @@
 {
-  "explanation": "Compute downward heights and rightward widths at every true cell. A second backward pass combines those run bounds with the square extending diagonally below-right, yielding the largest square area.",
-  "timeComplexity": "O(RC)",
-  "spaceComplexity": "O(RC) tables",
-  "attribution": "Unmodified reference from epi_judge_python_solutions/max_square_submatrix.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice."
+  "explanation": "Precompute downward heights and rightward widths. Scan from bottom-right: a true cell starts a square whose side is the minimum of its two runs and one plus the square starting diagonally below-right.",
+  "timeComplexity": "O(rc): two complete cell scans with constant work per cell.",
+  "spaceComplexity": "O(rc): height/width runs and square sides are stored for every cell.",
+  "attribution": "Adapted reference from epi_judge_python_solutions/max_square_submatrix.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice.",
+  "correctness": "A square starting at a cell consists of its top row, left column, and the square beginning one step diagonally inward. The two runs bound the first two parts; one plus the diagonal square side bounds the interior. Their minimum is therefore both feasible and maximal. Reverse traversal ensures these dependencies are known.",
+  "walkthrough": "For [[true,true,false],[true,true,true],[false,true,true]], the diagonal square at (1,1) has side 2. At (0,0), the downward and rightward runs both have length 2, so min(2,2,1+2)=2. The largest area is 2²=4; false corners prevent side 3.",
+  "edgeCases": [
+    "Empty input returns zero.",
+    "False cells have side zero.",
+    "Return side squared, not the side length."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          true,
+          true,
+          false
+        ],
+        [
+          true,
+          true,
+          true
+        ],
+        [
+          false,
+          true,
+          true
+        ]
+      ]
+    ],
+    "expected": 4
+  }
 }

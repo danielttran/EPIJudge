@@ -1,6 +1,57 @@
 {
-  "explanation": "Flood-fill white cells reachable from any boundary. Those cells are protected; every remaining white cell belongs to an enclosed region and becomes black.",
-  "timeComplexity": "O(rows \u00d7 columns)",
-  "spaceComplexity": "O(rows \u00d7 columns)",
-  "attribution": "Unmodified reference from epi_judge_python_solutions/matrix_enclosed_regions.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice."
+  "explanation": "Flood-fill from every boundary white cell, marking reached cells T so they are visited once. A white cell is enclosed exactly when no such path reaches it. Restore T to W and turn all other cells black.",
+  "timeComplexity": "O(rows × columns) Every cell is marked once and generates at most four neighbor attempts.",
+  "spaceComplexity": "O(rows × columns) The queue and, in C#/JavaScript, visited bitmap can hold O(rows×columns) entries.",
+  "attribution": "Reference-derived implementation from epi_judge_python_solutions/matrix_enclosed_regions.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice. Local correctness/empty-input fixes and explanation audit authored for EPI Practice; upstream reference files are unchanged.",
+  "correctness": "The BFS marks exactly the white cells connected by white steps to a boundary: boundary white cells initialize it and each expansion follows an allowed adjacency. Thus unmarked white cells, and only those cells, are enclosed. Recoloring that complement preserves every boundary-connected region.",
+  "walkthrough": "On [\"BBBW\",\"BWBW\",\"BBBW\"], the rightmost white column touches the boundary and remains white. The lone interior white cell is surrounded by black and becomes black, giving [\"BBBW\",\"BBBW\",\"BBBW\"]. The native callable mutates the matrix and returns void/None; expected is the matrix observed by the wrapper.",
+  "edgeCases": [
+    "Only horizontal and vertical adjacency counts.",
+    "Boundary-connected whites remain white.",
+    "Empty dimensions are unchanged; T is an internal marker and is not an input color."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          "B",
+          "B",
+          "B",
+          "W"
+        ],
+        [
+          "B",
+          "W",
+          "B",
+          "W"
+        ],
+        [
+          "B",
+          "B",
+          "B",
+          "W"
+        ]
+      ]
+    ],
+    "expected": [
+      [
+        "B",
+        "B",
+        "B",
+        "W"
+      ],
+      [
+        "B",
+        "B",
+        "B",
+        "W"
+      ],
+      [
+        "B",
+        "B",
+        "B",
+        "W"
+      ]
+    ]
+  }
 }

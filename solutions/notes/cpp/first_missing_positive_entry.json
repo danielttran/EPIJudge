@@ -1,6 +1,25 @@
 {
-  "explanation": "Rearrange a copy of the array so every value v in 1 through n occupies index v−1 when present. Ignore out-of-range values and already placed duplicates. The first misplaced index gives the missing positive.",
-  "timeComplexity": "O(n) time: each swap fixes one value’s position.",
-  "spaceComplexity": "O(n) space for the copied value parameter; O(1) further auxiliary space.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/first_missing_positive_entry.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "Work on the by-value array copy. Swap every value v in 1..n into index v−1, stopping on duplicates. Each successful swap fixes one destination, so the first mismatching slot identifies the smallest missing positive.",
+  "timeComplexity": "O(n) time: each swap places a value in its final slot. Each successful swap fixes a previously unfilled destination; there are at most n such destinations.",
+  "spaceComplexity": "O(n) for the by-value argument copy; O(1) additional workspace after that copy. The placement loop uses constant workspace; C++ additionally receives a by-value O(n) array copy.",
+  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/first_missing_positive_entry.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice.",
+  "correctness": "A swap places a valid value v into its unique destination v−1, and already correct destinations are never displaced by a different value. After all swaps, every present value in 1..n occupies its destination. The first mismatching destination is therefore the smallest missing positive.",
+  "walkthrough": "For [4,1,0,2,2], placing 4 and then 2 changes the array to [1,2,0,4,2]. Index 2 does not contain 3, so return 3.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        4,
+        1,
+        0,
+        2,
+        2
+      ]
+    ],
+    "expected": 3
+  },
+  "edgeCases": [
+    "Duplicates must stop a swap loop instead of swapping forever.",
+    "Ignore zero, negatives and values greater than n.",
+    "If every value 1..n appears, the answer is n+1."
+  ]
 }

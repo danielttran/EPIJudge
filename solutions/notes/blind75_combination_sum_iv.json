@@ -1,7 +1,7 @@
 {
   "explanation": "Let dp[v] count ordered sequences totaling v. Try every candidate as the final value and add dp[v minus candidate]. BigInteger avoids intermediate overflow before the contract's int-sized final count.",
-  "timeComplexity": "O(target times c) arithmetic operations for c candidates; big-integer costs depend on count width.",
-  "spaceComplexity": "O(target) BigInteger cells, plus their count bit storage.",
+  "timeComplexity": "O(target times c) arithmetic operations for c candidates; big-integer costs depend on count width. Each of target amounts tests c candidates. Counts may need O(target log(c+1)) bits, so arithmetic operation counts do not imply constant-cost large-integer additions.",
+  "spaceComplexity": "O(target) BigInteger cells, plus their count bit storage. The target+1 table cells store arbitrary-precision counts, each requiring at most O(target log(c+1)) bits.",
   "attribution": "Original EPI Practice C# implementation, reusing and refining the repository-authored Blind75 algorithm fixtures. Collection membership follows Crackr; no external solution service is used.",
   "correctness": "A sequence totaling v has one final candidate c and a preceding sequence totaling v-c. Grouping sequences by that last value partitions them into disjoint cases. Adding dp[v-c] across candidates therefore counts every ordered sequence exactly once, with dp[0]=1 for the empty sequence.",
   "walkthrough": "For candidates [2,3] and target 7, the only multiset is two 2s and one 3. Its orders are [2,2,3],[2,3,2],[3,2,2], so return 3. These orders count separately, unlike Combination Sum.",
@@ -12,7 +12,13 @@
     "Arbitrary-precision intermediate counts avoid overflow before the int-sized final result."
   ],
   "walkthroughCase": {
-    "arguments": [[2, 3], 7],
+    "arguments": [
+      [
+        2,
+        3
+      ],
+      7
+    ],
     "expected": 3
   }
 }

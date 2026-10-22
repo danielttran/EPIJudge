@@ -1,14 +1,15 @@
 {
   "explanation": "Use the sorted characters of each entire entry as its key. Entries with identical character frequencies share a group. Preserve the original entries and omit singleton groups, as required by this EPI variant.",
-  "timeComplexity": "O(n + \u03a3 L log(L+1)), where n is entry count and L is an entry length",
-  "spaceComplexity": "O(n + \u03a3 L) for keys and grouped entries",
+  "timeComplexity": "Expected O(n + Σ L log(L+1)) for n entries of lengths L. Sorting each key costs O(L log(L+1)); constructing and hashing keys costs O(L), and visiting/filtering buckets costs O(n). This assumes expected hash-table lookup behavior.",
+  "spaceComplexity": "O(n + Σ L) auxiliary storage including keys and grouped entries. The returned groups add O(n) references (and copied string contents in C++); the bound includes these outputs.",
   "attribution": "Original C# implementation and explanation authored for EPI Practice from the displayed problem contract.",
-  "correctness": "Sorting characters gives equal keys exactly when their character multiplicities match. Placing each original entry in its key\u2019s bucket therefore creates precisely the anagram groups. Filtering buckets by count implements this EPI exercise\u2019s omission of singleton groups without losing duplicates.",
+  "correctness": "Sorting characters gives equal keys exactly when their character multiplicities match. Placing each original entry in its key’s bucket therefore creates precisely the anagram groups. Filtering buckets by count implements this EPI exercise’s omission of singleton groups without losing duplicates.",
   "walkthrough": "For [\"arc\",\"car\",\"pear\",\"rac\",\"dog\"], arc, car and rac all have key acr. Pear and dog each have unique keys and are omitted. Return one group containing arc, car and rac.",
   "edgeCases": [
     "Spaces and character case remain significant.",
     "Duplicate dictionary entries count as separate entries.",
-    "Singleton groups are omitted even when other groups exist."
+    "Singleton groups are omitted even when other groups exist.",
+    "An empty dictionary produces no groups. Two empty strings form a group because their keys agree."
   ],
   "walkthroughCase": {
     "arguments": [

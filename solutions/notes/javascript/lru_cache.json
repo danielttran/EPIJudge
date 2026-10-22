@@ -1,6 +1,60 @@
 {
-  "explanation": "Map insertion order tracks recency: refresh a hit by deleting and reinserting it. Reinserting an existing ISBN preserves its old price. When full, evict the first key before adding a new one.",
-  "timeComplexity": "O(1) expected per lookup, insert and erase; O(1) constructor.",
-  "spaceComplexity": "O(c) for capacity c.",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "explanation": "Use Map insertion order as least-to-most recent order. A hit deletes and reinserts its key with the same price, moving it to the newest end. New keys evict the first key when full; erasure removes the key.",
+  "timeComplexity": "O(1) expected per Lookup, Insert and Erase; O(c) to Initialize an existing cache Hash lookup and linked-order changes take expected constant time per operation.",
+  "spaceComplexity": "O(c), where c is capacity At most capacity keys, prices and order nodes are retained.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "The Map contains exactly the stored keys in recency order. Every successful lookup or reinsertion moves its key to the end, preserving its price. Therefore its first key is exactly the least recently used and is the correct eviction choice. Missing lookups change nothing.",
+  "walkthrough": "With capacity 2, insert (1,10), insert (2,20), reinsert (1,99), then insert (3,30). Key 1 still costs 10 and is recent, so key 2 is evicted. Lookups return 10, −1 and 30 for keys 1, 2 and 3. JSON arguments contain one command array. LruCache initializes capacity; lookup/erase commands include expected results (erase uses 1/0). The wrapper observes all commands succeeding as true; the class itself has separate lookup, insert and erase results.",
+  "edgeCases": [
+    "Reinserting a key preserves its old price.",
+    "A missing lookup returns −1 and does not add a key.",
+    "Initialize resets all stored entries and recency."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          "LruCache",
+          2,
+          0
+        ],
+        [
+          "insert",
+          1,
+          10
+        ],
+        [
+          "insert",
+          2,
+          20
+        ],
+        [
+          "insert",
+          1,
+          99
+        ],
+        [
+          "insert",
+          3,
+          30
+        ],
+        [
+          "lookup",
+          1,
+          10
+        ],
+        [
+          "lookup",
+          2,
+          -1
+        ],
+        [
+          "lookup",
+          3,
+          30
+        ]
+      ]
+    ],
+    "expected": true
+  }
 }

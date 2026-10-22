@@ -1,6 +1,25 @@
 {
   "explanation": "Track the increasing run ending at each position. Extend it only when the current value is strictly greater than the previous one; otherwise start a new run.",
-  "timeComplexity": "O(n)",
-  "spaceComplexity": "O(1)",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "timeComplexity": "O(n) A simple scan visits each pair once; skip-based implementations amortize backward checks against skipped starts.",
+  "spaceComplexity": "O(1) Only indices, lengths and one best interval are retained.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "The maintained length is the longest strictly increasing suffix ending at the current entry. It extends exactly when the latest adjacent pair increases; otherwise no earlier start can cross that pair, so the suffix restarts at length one. Taking the maximum suffix length considers every contiguous increasing subarray.",
+  "walkthrough": "For [2,4,4,5,7], the first run reaches length 2. The equal 4 values force a restart; the final run [4,5,7] then reaches length 3.",
+  "edgeCases": [
+    "Empty input returns 0.",
+    "Equal neighbors break strict increase.",
+    "A decreasing nonempty input has best length 1."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        2,
+        4,
+        4,
+        5,
+        7
+      ]
+    ],
+    "expected": 3
+  }
 }

@@ -1,6 +1,26 @@
 {
-  "explanation": "Build cumulative probabilities on each call, draw a uniform value in [0,1), and binary-search its probability interval. The corresponding input value has that interval\u2019s probability.",
-  "timeComplexity": "O(n) per draw, including prefix construction",
-  "spaceComplexity": "O(n) per-draw prefix array",
-  "attribution": "Unmodified reference from epi_judge_python_solutions/nonuniform_random_number.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice."
+  "explanation": "Build cumulative probability endpoints, draw uniformly in [0,1), and find the first endpoint strictly greater than the draw. The interval lengths encode the requested distribution; strict comparison skips zero-width intervals.",
+  "timeComplexity": "O(n) per call: building n endpoints dominates O(log n) binary search. The bound includes all probability processing performed anew on each draw, rather than assuming precomputed endpoints.",
+  "spaceComplexity": "O(n) temporary prefix endpoints. The linear scan keeps only a draw and running threshold; binary-search variants retain n prefix endpoints.",
+  "attribution": "Unmodified reference from epi_judge_python_solutions/nonuniform_random_number.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice.",
+  "correctness": "For prefix endpoints p, value i owns [p[i−1],p[i]). Upper-bound search returns exactly that interval, including at a repeated endpoint. Its length is probabilities[i], so an ideal uniform draw selects i with that probability.",
+  "walkthrough": "For values [4,9] with probabilities [0.25,0.75], draws below 0.25 return 4 and draws from 0.25 onward return 9. A draw of 0.6 therefore returns 9; repeated draws select 9 three times as often on average. JSON arguments are [values,probabilities]. Observed true validates repeated samples; the callable returns one value. Finite samples do not prove exact randomness.",
+  "edgeCases": [
+    "Zero-probability entries receive no interval.",
+    "One value is always selected when its probability is one.",
+    "The validator checks repeated samples rather than one fixed output."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        4,
+        9
+      ],
+      [
+        0.25,
+        0.75
+      ]
+    ],
+    "expected": true
+  }
 }

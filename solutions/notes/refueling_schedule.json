@@ -1,10 +1,10 @@
 {
   "explanation": "Track fuel as miles of remaining range. If a candidate start cannot reach the next city, no city in that failed segment can be a valid start, so restart after it. When a feasible tour exists, the final candidate is valid.",
-  "timeComplexity": "O(n).",
-  "spaceComplexity": "O(1).",
+  "timeComplexity": "O(n). One pass examines each city once.",
+  "spaceComplexity": "O(1). Only a candidate index and constant-many fuel balances are retained.",
   "attribution": "Original C# implementation and explanation authored for EPI Practice from the displayed problem contract.",
   "correctness": "When the accumulated net range from a candidate start becomes negative, no city in that failed segment can be a valid start: a later start omits a nonnegative prefix and cannot repair that deficit. Restart after the failed segment. With the promised feasible total tour, the final candidate can complete the wraparound trip.",
-  "walkthrough": "For gallons [1,0,2] and distances [25,10,25], the net ranges are -5,-10,+15 miles. The first two candidates fail, leaving start city 2. From city 2 the tank ranges are 15, then 10, then 0, so the full circuit succeeds.",
+  "walkthrough": "For gallons [1,0,2] and distances [25,10,25], the net ranges are -5,-10,+15 miles. The first two candidates fail, leaving start city 2. From city 2 the tank ranges are 15, then 10, then 0, so the full circuit succeeds. JSON arguments are [gallons,distances]. The callable returns a start index; expected true means the wrapper successfully simulated the complete trip from that returned index.",
   "edgeCases": [
     "Tank capacity is unlimited and starts empty.",
     "A gallon always supplies 20 miles.",
@@ -13,8 +13,16 @@
   ],
   "walkthroughCase": {
     "arguments": [
-      [1, 0, 2],
-      [25, 10, 25]
+      [
+        1,
+        0,
+        2
+      ],
+      [
+        25,
+        10,
+        25
+      ]
     ],
     "expected": true
   }

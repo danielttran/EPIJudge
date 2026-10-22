@@ -1,6 +1,19 @@
 {
-  "explanation": "Mask to the contract\u2019s 32-bit representation, including negative inputs, then clear one lowest set bit per iteration.",
-  "timeComplexity": "O(s), with s\u226432 set bits",
-  "spaceComplexity": "O(1) for the fixed 32-bit input",
-  "attribution": "Original Python implementation authored for EPI Practice from its displayed contract and independently authored C# solution; no upstream reference source adapted."
+  "explanation": "Mask to the contract’s 32-bit representation, including negative inputs, then clear one lowest set bit per iteration.",
+  "timeComplexity": "O(s+1) operations for s set bits, with 0 ≤ s ≤ 32: each iteration removes one set bit. Thus worst-case time is constant for this fixed-width contract.",
+  "spaceComplexity": "O(1) auxiliary space: only a fixed-width remaining value and a counter are retained.",
+  "attribution": "Original Python implementation authored for EPI Practice from its displayed contract and independently authored C# solution; no upstream reference source adapted.",
+  "correctness": "The count plus the number of remaining set bits equals the original population count. Subtracting one flips the lowest 1 to 0 and the lower zeros to 1; AND with the original value removes exactly that lowest 1. Each iteration therefore increments the count once and reduces the remaining population by one. At zero, the count is the answer.",
+  "walkthrough": "For x=44 (binary 101100), clearing the lowest 1 gives 40 (101000), then 32 (100000), then 0. The count advances 0 → 1 → 2 → 3, so return 3.",
+  "walkthroughCase": {
+    "arguments": [
+      44
+    ],
+    "expected": 3
+  },
+  "edgeCases": [
+    "Zero performs no iterations and returns 0.",
+    "The signed input -1 denotes 32 set bits; the result is 32.",
+    "The highest bit alone has count 1. Masking to 0xFFFFFFFF prevents Python’s unbounded negative representation from entering the loop."
+  ]
 }

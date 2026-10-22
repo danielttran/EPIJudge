@@ -11,6 +11,8 @@ public class NumberOfScoreCombinations {
   public static int
   numCombinationsForFinalScore(int finalScore,
                                List<Integer> individualPlayScores) {
+    if (individualPlayScores.isEmpty()) return finalScore == 0 ? 1 : 0;
+
 
     int[][] numCombinationsForScore =
         new int[individualPlayScores.size()][finalScore + 1];

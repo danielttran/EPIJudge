@@ -12,6 +12,7 @@ public class InsertOperatorsInString {
   @EpiTest(testDataFile = "insert_operators_in_string.tsv")
 
   public static boolean expressionSynthesis(List<Integer> digits, int target) {
+  if (digits.isEmpty()) return false;
 
     return directedExpressionSynthesis(digits, target, 0, 0, new ArrayList<>(),
                                        new ArrayList<>());

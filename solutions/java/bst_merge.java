@@ -84,10 +84,10 @@ public class BstMerge {
 
     A = bstToDoublyLinkedList(A);
     B = bstToDoublyLinkedList(B);
-    A.left.right = null;
-    B.left.right = null;
-    A.left = null;
-    B.left = null;
+    if (A != null) A.left.right = null;
+    if (B != null) B.left.right = null;
+    if (A != null) A.left = null;
+    if (B != null) B.left = null;
     int ALength = countLength(A);
     int BLength = countLength(B);
     return buildSortedDoublyLinkedList(mergeTwoSortedLinkedLists(A, B),

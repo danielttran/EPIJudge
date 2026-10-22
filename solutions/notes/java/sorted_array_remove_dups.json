@@ -1,6 +1,31 @@
 {
-  "explanation": "Keep a write position for the next distinct value. Copy a scanned value only when it differs from the last retained value and return the distinct-prefix length.",
-  "timeComplexity": "O(n)",
-  "spaceComplexity": "O(1)",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/SortedArrayRemoveDups.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "explanation": "Maintain a write position for the next distinct entry. Read from left to right, copying a value into the compact prefix only when it differs from the last retained value. Return the prefix length; the wrapper displays that prefix.",
+  "timeComplexity": "O(n+1): each input entry is read once and performs at most one append or prefix write. Java lists provided by the judge support constant-time indexed access.",
+  "spaceComplexity": "O(1) auxiliary compaction state. The wrapper may copy the O(u) observed prefix for grading, where u is the number of distinct entries; that is separate from the callable.",
+  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/SortedArrayRemoveDups.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/).",
+  "correctness": "Before reading position i, the first write entries contain exactly one copy of every distinct value in the consumed prefix, in sorted order. If the next value equals the last retained one, ignoring it preserves that set. Otherwise sorting guarantees it is a new, larger value and appending it preserves both uniqueness and order. write never exceeds i, so a write cannot overwrite an unread value. At exhaustion the compact prefix is exactly the required distinct sequence.",
+  "walkthrough": "For [-2,-2,0,0,0,3], retain the first -2, so write=1. Skip the next -2. Reading 0 writes it at index 1 and makes write=2; skip the next two zeros. Reading 3 writes it at index 2 and makes write=3. Return 3. The wrapper shows the prefix [-2,0,3]; the suffix is unspecified.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        -2,
+        -2,
+        0,
+        0,
+        0,
+        3
+      ]
+    ],
+    "expected": [
+      -2,
+      0,
+      3
+    ]
+  },
+  "edgeCases": [
+    "Empty input yields an empty distinct sequence and a returned prefix length of 0.",
+    "All equal values retain exactly one entry.",
+    "Negative values need no special handling.",
+    "Already distinct input retains every entry."
+  ]
 }

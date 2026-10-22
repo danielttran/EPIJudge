@@ -1,6 +1,42 @@
 {
   "explanation": "The next preorder value is the subtree root. Its position in inorder splits that subtree into left and right intervals; recursively consume those intervals in preorder order. A position dictionary avoids repeated scans.",
-  "timeComplexity": "O(n) expected time.",
-  "spaceComplexity": "O(n + h) auxiliary dictionary/recursion space, plus O(n) output nodes.",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "timeComplexity": "O(n) expected time. The index map is built once and each node creates two disjoint smaller traversal ranges.",
+  "spaceComplexity": "O(n + h) auxiliary dictionary/recursion space, plus O(n) output nodes. The inorder index map holds n entries, the recursion has height h, and the output allocates n nodes.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "For each inorder interval, the next unused preorder entry must be that subtree’s root. Distinct values locate its unique inorder position, dividing the remaining nodes into exactly the left and right subtrees. Recursively consuming the left interval before the right reproduces preorder order and both inorder intervals. Induction on interval size therefore reconstructs the unique tree, with every traversal entry consumed once.",
+  "walkthrough": "Take preorder [16, 7, 2, 11, 25, 30] and inorder [2, 7, 11, 16, 25, 30]. Root 16 splits inorder into [2, 7, 11] and [25, 30]. The next root 7 gets children 2 and 11; root 25 gets right child 30. Return level order [16, 7, 25, 2, 11, null, 30]. The walkthroughCase uses the judge’s JSON input format and expected observation.",
+  "edgeCases": [
+    "Empty traversals return null.",
+    "Distinct node values are required for the position dictionary.",
+    "Skewed trees still follow the same interval rule, although recursion height can grow to n."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        16,
+        7,
+        2,
+        11,
+        25,
+        30
+      ],
+      [
+        2,
+        7,
+        11,
+        16,
+        25,
+        30
+      ]
+    ],
+    "expected": [
+      16,
+      7,
+      25,
+      2,
+      11,
+      null,
+      30
+    ]
+  }
 }

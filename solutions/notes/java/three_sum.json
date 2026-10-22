@@ -1,6 +1,24 @@
 {
-  "explanation": "Sort a copy of the values. For each fixed first entry, move two pointers to find a completing pair. Equal pointer positions are allowed because this EPI contract permits element reuse. Long sums prevent intermediate int overflow.",
-  "timeComplexity": "O(n\u00b2)",
-  "spaceComplexity": "O(n) sorted copy and sorting workspace",
-  "attribution": "Original Java implementation and explanation for EPI Practice, based on the displayed public contract and our independently authored C# solution; no upstream reference code adapted."
+  "explanation": "Sort the values. For each possible first value, run a two-pointer sum search over the entire array. The pointers may coincide and the first value remains eligible, matching this EPI contract that permits element reuse.",
+  "timeComplexity": "O(n²) time. Sorting costs O(n log n); n fixed first values each run a pointer scan of at most 2n advances.",
+  "spaceComplexity": "O(n) auxiliary space for the sorted copy. A sorted copy of n entries is retained in every displayed implementation.",
+  "attribution": "Original Java implementation and explanation for EPI Practice, based on the displayed public contract and our independently authored C# solution; no upstream reference code adapted.",
+  "correctness": "For a fixed first value, the sorted two-pointer search preserves every possible remaining pair: if the sum is too small, no pair using the current smallest value and a no-larger right value can work; the symmetric argument excludes the current largest value when the sum is too large. Trying every first value covers all triples. Leaving both pointers inclusive and searching the entire array permits the element reuse explicitly allowed by this EPI contract.",
+  "walkthrough": "For [5, 12, 20] and target 29, fix first value 5. The remaining pointers initially select 5 and 20, totaling 30, so decrease the right pointer to 12. Now the total is 22, so increase the left pointer to 12. The total becomes 5 + 12 + 12 = 29. Reusing 12 is permitted; return true.",
+  "edgeCases": [
+    "A single value can be used three times under this contract.",
+    "An empty array has no triple.",
+    "The long sum prevents signed-int overflow from inventing a match; negative values remain valid inputs."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        5,
+        12,
+        20
+      ],
+      29
+    ],
+    "expected": true
+  }
 }

@@ -30,7 +30,7 @@ public class SortedArraysMerge {
       iters.add(array.iterator());
     }
     PriorityQueue<ArrayEntry> minHeap = new PriorityQueue<>(
-        sortedArrays.size(), (o1, o2) -> Integer.compare(o1.value, o2.value));
+        Math.max(1, sortedArrays.size()), (o1, o2) -> Integer.compare(o1.value, o2.value));
     for (int i = 0; i < iters.size(); ++i) {
       if (iters.get(i).hasNext()) {
         minHeap.add(new ArrayEntry(iters.get(i).next(), i));

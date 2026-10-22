@@ -1,6 +1,29 @@
 {
-  "explanation": "Gather references to all original nodes. Remove the reference at zero-based position length-n, then relink all retained references in their original order. The removed node is excluded and no replacement nodes are introduced.",
-  "timeComplexity": "O(n) time for n nodes.",
-  "spaceComplexity": "O(n) auxiliary node-reference storage.",
-  "attribution": "Original repository-authored Blind75 JavaScript algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used."
+  "explanation": "Collect references in forward order. For length L, the nth node from the end is at zero-based index L-n. Remove that reference from the array, relink the remaining entries, and return its first entry or null.",
+  "timeComplexity": "O(L) for L nodes: collecting, shifting after array deletion, and relinking are all linear.",
+  "spaceComplexity": "O(L) auxiliary space for the array of original-node references.",
+  "attribution": "Original repository-authored Blind75 JavaScript algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used.",
+  "correctness": "Counting backward from the tail maps rank n to forward index L-n. Removing exactly that entry leaves all other original nodes in their original relative order. Relinking them bypasses precisely the requested node, preserves their values, and terminates the result.",
+  "walkthrough": "For [3,5,8,1] and n=3, the reference array has length 4. Delete index 4-3=1, which refers to node5, leaving [node3,node8,node1]. Set links 3→8→1→null and return node3. Expected serializes the returned list; the harness separately checks that exactly the requested original node was removed and all other nodes and values remain.",
+  "edgeCases": [
+    "n is valid from 1 through the list length.",
+    "Removing the head changes the returned head, handled through a dummy predecessor.",
+    "Removing the tail leaves its predecessor pointing to null."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        3,
+        5,
+        8,
+        1
+      ],
+      3
+    ],
+    "expected": [
+      3,
+      8,
+      1
+    ]
+  }
 }

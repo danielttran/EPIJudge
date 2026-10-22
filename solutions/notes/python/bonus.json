@@ -1,6 +1,23 @@
 {
-  "explanation": "Process employees from lowest productivity upward using a heap. Their lower-productivity neighbors already have bonuses, so choose the smallest bonus exceeding those neighbors where required.",
-  "timeComplexity": "O(n log(n+1))",
-  "spaceComplexity": "O(n) heap and bonus array",
-  "attribution": "Unmodified reference from epi_judge_python_solutions/bonus.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice."
+  "explanation": "Process employees in increasing productivity with a min heap. Start every bonus at one, then set each employee’s bonus to one more than any strictly lower-productivity neighbor, taking the greater requirement if both neighbors qualify.",
+  "timeComplexity": "O(n log(n+1)) time: heap construction/insertion and n removals, with two constant-time neighbor checks per removal. Two-pass variants visit each employee twice; heap variants remove n employees at logarithmic cost.",
+  "spaceComplexity": "O(n) auxiliary space for heap entries and bonuses. Every version retains n bonus values; heap variants additionally retain n employee entries.",
+  "attribution": "Unmodified reference from epi_judge_python_solutions/bonus.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice.",
+  "correctness": "Every lower-productivity neighbor is processed before the current employee, so its minimum feasible bonus is already final. Any valid assignment must exceed each such neighbor and give at least one. Taking exactly the greatest of these lower bounds is feasible and individually minimal. Summing these minima therefore minimizes the total.",
+  "walkthrough": "For productivity [2,5,3], process values 2 and 3 first; both keep one bonus. Then productivity 5 must exceed both adjacent bonuses, so it gets 2. The total is 1+2+1=4.",
+  "edgeCases": [
+    "Equal productivity does not impose a strict inequality.",
+    "Both neighbors may force an increase; take their maximum.",
+    "Empty input has total 0."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        2,
+        5,
+        3
+      ]
+    ],
+    "expected": 4
+  }
 }

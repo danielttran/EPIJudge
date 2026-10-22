@@ -1,10 +1,10 @@
 {
   "explanation": "Store one character per trie edge and mark terminal nodes. Insertion creates missing edges. Exact search requires a terminal marker. Prefix search requires a matching path and at least one stored word, so the empty prefix is false before any insertion, as this collection specifies.",
-  "timeComplexity": "O(L) expected time per operation for word or prefix length L.",
-  "spaceComplexity": "O(T) stored trie nodes across all insertions; O(1) extra per search.",
+  "timeComplexity": "O(L) expected time per operation for word or prefix length L. Following or creating a path performs one expected constant-time child lookup per character.",
+  "spaceComplexity": "O(T) stored trie nodes across all insertions; O(1) extra per search. One node is created per new prefix; a search holds only its current node reference.",
   "attribution": "Original EPI Practice C# implementation, reusing and refining the repository-authored Blind75 algorithm fixtures. Collection membership follows Crackr; no external solution service is used.",
   "correctness": "Every trie path spells exactly its edge characters, and a terminal marker denotes an inserted complete word. Insertion creates only the needed path and marks its endpoint. Exact search checks the terminal marker, while prefix search checks a path and the collection’s nonempty-word-set condition. Those rules distinguish an inserted word from a mere prefix.",
-  "walkthrough": "Before insertion, startsWith(\"\") is false in this collection. Insert \"mint\": startsWith(\"mi\") becomes true, but search(\"mi\") is still false. Insert \"mi\", after which search(\"mi\") is true. Query results are [false,true,false,true].",
+  "walkthrough": "Before insertion, startsWith(\"\") is false in this collection. Insert \"mint\": startsWith(\"mi\") becomes true, but search(\"mi\") is still false. Insert \"mi\", after which search(\"mi\") is true. Query results are [false,true,false,true]. The arrays describe calls on one instance in order; expected contains only Search/StartsWith boolean results, omitting Insert returns.",
   "edgeCases": [
     "Prefix search and exact search are different operations.",
     "Reinserting the same word does not duplicate it.",
@@ -12,9 +12,28 @@
   ],
   "walkthroughCase": {
     "arguments": [
-      ["startsWith", "insert", "startsWith", "search", "insert", "search"],
-      ["", "mint", "mi", "mi", "mi", "mi"]
+      [
+        "startsWith",
+        "insert",
+        "startsWith",
+        "search",
+        "insert",
+        "search"
+      ],
+      [
+        "",
+        "mint",
+        "mi",
+        "mi",
+        "mi",
+        "mi"
+      ]
     ],
-    "expected": [false, true, false, true]
+    "expected": [
+      false,
+      true,
+      false,
+      true
+    ]
   }
 }

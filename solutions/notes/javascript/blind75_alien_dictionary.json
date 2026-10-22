@@ -1,6 +1,25 @@
 {
   "explanation": "For each neighboring word pair, add the first differing character's ordering edge; reject a longer word before its own prefix. Topologically sort all seen characters and reject cycles.",
-  "timeComplexity": "O(W + S + E + V² log(V+1)) expected upper bound, including repeated sorting of the ready array, for W words, S characters, V distinct symbols and E edges.",
-  "spaceComplexity": "O(S + V + E) auxiliary space, including the joined input text.",
-  "attribution": "Original repository-authored Blind75 JavaScript algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used."
+  "timeComplexity": "O(W+S+E+V squared log(V+1)) general upper bound: adjacent comparisons and graph construction are linear in input, but each of V removals sorts the current ready array again; shift can also move O(V) entries. Under the fixed lowercase alphabet V≤26.",
+  "spaceComplexity": "O(S + V + E) auxiliary space, including concatenated input characters. The graph stores V vertices and E distinct edges; this implementation also concatenates input characters.",
+  "attribution": "Original repository-authored Blind75 JavaScript algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used.",
+  "correctness": "The first differing characters in adjacent sorted words give a necessary alphabet precedence edge; later characters cannot affect that comparison. A longer word before its own prefix is impossible. Any topological ordering of all seen characters satisfies every extracted comparison, while a cycle proves no alphabet can satisfy them all.",
+  "walkthrough": "Words [\"ca\",\"cb\",\"da\",\"db\"] require a before b and c before d. One valid character order is \"abcd\"; using it keeps all four words sorted. The algorithm’s smallest-ready-character rule returns that order.",
+  "edgeCases": [
+    "Every seen character appears once, even if it has no ordering edges.",
+    "A longer word preceding its own prefix returns an empty string.",
+    "Cycles return an empty string.",
+    "Several different alphabet orders may be valid."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        "ca",
+        "cb",
+        "da",
+        "db"
+      ]
+    ],
+    "expected": "abcd"
+  }
 }

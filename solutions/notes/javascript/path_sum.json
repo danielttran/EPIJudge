@@ -1,6 +1,28 @@
 {
-  "explanation": "Subtract node values from a BigInt remainder while descending. Only a leaf with a zero remainder completes a root-to-leaf path; the wide remainder prevents integer overflow.",
-  "timeComplexity": "O(n) in the worst case.",
-  "spaceComplexity": "O(h) recursion stack for tree height h.",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "explanation": "Subtract each visited value from the target. Only a leaf with zero remaining weight completes a root-to-leaf path. A long remainder prevents intermediate sums from overflowing 32 bits.",
+  "timeComplexity": "O(n) in the worst case. Each node is explored at most once; early success can shorten the search, and recursion retains at most h frames.",
+  "spaceComplexity": "O(h) recursion stack for tree height h. Each active frame holds a node and residual target; no complete path list is kept.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "At each node, the remainder equals the target minus all values on the path through that node. A root-to-leaf path therefore has the target sum exactly when a leaf has remainder zero. Recursing into both children explores every possible root-to-leaf path; using long avoids false matches from 32-bit wraparound.",
+  "walkthrough": "Use tree [7,4,3,null,2,5] and target 13. Visiting 7 leaves remainder 6; its left child 4 leaves 2; that node’s right leaf 2 leaves 0. The path 7→4→2 therefore proves the result true. The walkthroughCase uses the judge’s JSON input format and expected observation.",
+  "edgeCases": [
+    "An empty tree has no root-to-leaf path and returns false.",
+    "A nonleaf with remainder zero is not sufficient.",
+    "Negative values are handled by subtraction without pruning.",
+    "Intermediate sums may exceed int range even when the target fits."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        7,
+        4,
+        3,
+        null,
+        2,
+        5
+      ],
+      13
+    ],
+    "expected": true
+  }
 }

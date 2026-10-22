@@ -1,15 +1,16 @@
 {
   "explanation": "Store a trie edge per next character and an explicit terminal flag at complete keys.",
   "correctness": "The path represents a key's exact characters. Only its terminal flag denotes complete-key membership, so shared prefixes never create false complete keys.",
-  "walkthrough": "Insert https://a/b: create missing character links and mark its final node, returning true. Insert https://a next: its character path exists, but its final node was not a complete key, so return true. Repeating https://a/b returns false. Extending it to https://a/b/c marks a different complete key and returns true.",
+  "walkthrough": "Insert https://a/b: create missing character links and mark its final node, returning true. Insert https://a next: its character path exists, but its final node was not a complete key, so return true. Repeating https://a/b returns false. Extending it to https://a/b/c marks a different complete key and returns true. JSON supplies [operationNames,argumentLists] for one fresh Trie. Each AddWord receives one exact string and returns whether that complete key was newly inserted.",
   "edgeCases": [
     "Duplicate keys",
     "empty key",
     "shorter prefix inserted after longer key",
-    "case-sensitive keys."
+    "case-sensitive keys.",
+    "The empty key marks the root and returns true once, then false. Inserting a shorter prefix after a longer key returns true if its terminal marker was unset."
   ],
-  "timeComplexity": "O(L) time per insertion of a length-L key.",
-  "spaceComplexity": "O(P) storage for P distinct stored prefixes.",
+  "timeComplexity": "Expected O(L+1) time per insertion: follow or create one hash-map edge per character of a length-L key, then inspect its terminal marker.",
+  "spaceComplexity": "O(P+1) persistent space for P distinct nonempty prefixes, plus O(L) temporary space from word.toCharArray() during an insertion of length L.",
   "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
   "walkthroughCase": {
     "arguments": [

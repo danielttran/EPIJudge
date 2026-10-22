@@ -59,6 +59,7 @@ public class DefectiveJugs {
 
   private static boolean checkFeasibleHelper(List<Jug> jugs, int L, int H,
                                              Set<VolumeRange> c) {
+  if (L <= 0 && H >= 0) return true;
     if (L > H || c.contains(new VolumeRange(L, H)) || (L < 0 && H < 0)) {
       return false;
     }

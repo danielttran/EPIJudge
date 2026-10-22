@@ -1,6 +1,34 @@
 {
-  "explanation": "Memoize whether a pattern suffix can start at a particular cell. Explore four neighboring cells for the next value; cells may be revisited at later pattern positions.",
-  "timeComplexity": "O(RCL)",
-  "spaceComplexity": "O(RCL+L) memoized cell/position states and recursion",
-  "attribution": "Unmodified reference from epi_judge_python_solutions/is_string_in_matrix.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice."
+  "explanation": "Search for a matching pattern suffix from each cell, trying its four neighbors after a matching value. Cache failed (row,column,offset) states; Python’s shared memo cache also stores successes. Cells may be reused at different offsets.",
+  "timeComplexity": "O(RCL+RC): one shared memo bounds the number of cell/offset states; each tries four neighbors. There are at most RCL cell/offset states per memo scope; C++/Java recreate that scope for each starting cell.",
+  "spaceComplexity": "O(RCL+L) upper bound for memo states and recursion. Layered DP keeps two Boolean grids; suffix search keeps cell/offset memo entries and recursion.",
+  "attribution": "Adapted reference from epi_judge_python_solutions/is_string_in_matrix.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice. Local boundary or iterator-safety correction authored for EPI Practice.",
+  "correctness": "A state succeeds exactly when its current value matches and at least one neighbor can match the remaining suffix. The pattern offset strictly increases, so recursion terminates even when cells are revisited. Memoizing a state is valid because future feasibility depends on the cell and offset, not on visited history.",
+  "walkthrough": "For [[5,8],[9,2]] and pattern [5,8,5,9], use (0,0)→(0,1)→(0,0)→(1,0). The first cell is legally reused, so return true. The walkthroughCase uses the judge’s JSON input format and expected observation.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          5,
+          8
+        ],
+        [
+          9,
+          2
+        ]
+      ],
+      [
+        5,
+        8,
+        5,
+        9
+      ]
+    ],
+    "expected": true
+  },
+  "edgeCases": [
+    "Cell reuse is allowed; moves must be orthogonal.",
+    "An empty pattern is true, including on an empty grid.",
+    "An empty grid cannot match a nonempty pattern."
+  ]
 }

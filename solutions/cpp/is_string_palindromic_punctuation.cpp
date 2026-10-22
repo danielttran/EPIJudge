@@ -10,13 +10,13 @@ bool IsPalindrome(const string& s) {
   int i = 0, j = size(s) - 1;
   while (i < j) {
     // i and j both skip non-alphanumeric characters.
-    while (!isalnum(s[i]) && i < j) {
+    while (!isalnum(static_cast<unsigned char>(s[i])) && i < j) {
       ++i;
     }
-    while (!isalnum(s[j]) && i < j) {
+    while (!isalnum(static_cast<unsigned char>(s[j])) && i < j) {
       --j;
     }
-    if (tolower(s[i++]) != tolower(s[j--])) {
+    if (tolower(static_cast<unsigned char>(s[i++])) != tolower(static_cast<unsigned char>(s[j--]))) {
       return false;
     }
   }

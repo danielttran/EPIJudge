@@ -1,6 +1,28 @@
 {
-  "explanation": "Carry a one from the least significant digit. Every trailing nine becomes zero; increment the first smaller digit, or prepend one when the carry passes the first digit.",
-  "timeComplexity": "O(n) time.",
-  "spaceComplexity": "O(n) space for the returned copy; O(1) other auxiliary space.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/int_as_array_increment.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "Add one to the last digit. Whenever a digit becomes ten, reset it to zero and carry one to its predecessor. If the first digit also becomes ten, replace it with one and append a zero, producing the extra place needed.",
+  "timeComplexity": "O(n): copying n digits is required even when the carry stops immediately; the carry scan and possible leading insertion are also at most linear.",
+  "spaceComplexity": "O(n+1) for the returned copied digits; O(1) scalar carry state.",
+  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/int_as_array_increment.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice.",
+  "correctness": "Adding one affects only the suffix through the first digit below nine. Every carried position represents ten units of its place, which is exactly one unit of the place to its left; replacing ten with zero and carrying therefore preserves the value of the desired sum. When the carry stops, all digits are valid and the result is the original number plus one. If it passes the first position, the original number was all nines, so the result is one followed by n zeros.",
+  "walkthrough": "For [7,9,9], increment the final digit to get [7,9,10]. Carry left to get [7,10,0], then carry again to get [8,0,0]. Return this digit sequence.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        7,
+        9,
+        9
+      ]
+    ],
+    "expected": [
+      8,
+      0,
+      0
+    ]
+  },
+  "edgeCases": [
+    "Input is a nonempty canonical decimal digit sequence; zero is [0].",
+    "[9,9] grows to [1,0,0].",
+    "Without a trailing nine, only the final digit increases.",
+    "This implementation returns a copy and leaves the caller’s digits unchanged."
+  ]
 }

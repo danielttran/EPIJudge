@@ -1,6 +1,24 @@
 {
-  "explanation": "Let dp[v] count ordered sequences totaling v. For every candidate as the final value, add dp[v-candidate]. This displayed C++ version uses fixed-width uint64_t intermediate cells and returns the promised int-sized count.",
-  "timeComplexity": "O(target × c) fixed-width arithmetic steps for c candidates.",
-  "spaceComplexity": "O(target) fixed-width counter cells.",
-  "attribution": "Original repository-authored Blind75 C++ algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used."
+  "explanation": "Let dp[v] count ordered sequences totaling v using uint64_t cells. Sum dp[v-c] for each candidate c that fits as the final value. Unsigned additions compute residues modulo 2^64; the final guaranteed 32-bit answer is recovered exactly.",
+  "timeComplexity": "O(target·c) time: target amounts each try c candidates with constant-cost uint64_t addition.",
+  "spaceComplexity": "O(target) auxiliary space for target+1 fixed-width uint64_t cells.",
+  "attribution": "Original repository-authored Blind75 C++ algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used.",
+  "correctness": "Every ordered sequence has one final candidate c and a prefix totaling v-c, so summing those disjoint classes gives the exact mathematical recurrence. The uint64_t table maintains its residue modulo 2^64. Since the final true count fits a signed 32-bit integer, its residue equals that count even if unrelated intermediate totals overflow.",
+  "walkthrough": "For candidates [2,3] and target 7, the only multiset is two 2s and one 3. Its orders are [2,2,3],[2,3,2],[3,2,2], so return 3. These orders count separately, unlike Combination Sum.",
+  "edgeCases": [
+    "Target zero has one empty sequence.",
+    "Different orders count separately.",
+    "Positive candidates make every dependency smaller.",
+    "Only the final count is guaranteed 32-bit; unsigned modular arithmetic remains valid for this addition-only recurrence."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        2,
+        3
+      ],
+      7
+    ],
+    "expected": 3
+  }
 }

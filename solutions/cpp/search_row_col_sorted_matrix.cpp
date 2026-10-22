@@ -5,6 +5,7 @@
 using std::vector;
 
 bool MatrixSearch(const vector<vector<int>>& A, int x) {
+  if (A.empty() || A[0].empty()) return false;
   int row = 0, col = size(A[0]) - 1;  // Start from the top-right corner.
   // Keeps searching while there are unclassified rows and columns.
   while (row < size(A) && col >= 0) {

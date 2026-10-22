@@ -1,6 +1,25 @@
 {
-  "explanation": "Try concatenation, multiplication and addition at each digit boundary. At completed expressions, evaluate multiplication before addition using an operand stack. A bound based on the remaining concatenated digits prunes some addition branches.",
-  "timeComplexity": "O(n 3^n) worst-case time for n digits, including expression evaluation.",
-  "spaceComplexity": "O(n) operands, operators and recursion space.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/insert_operators_in_string.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "Recursively choose concatenation, multiplication, or addition at each digit boundary. Store operands/operators and evaluate multiplication groups before summing them. Before an addition branch, concatenating the unused digits bounds the maximum remaining contribution.",
+  "timeComplexity": "O(3^n) search nodes under fixed-width arithmetic: each digit boundary ultimately means concatenate, + or *, and prefix work sums geometrically over the search tree. BigInt arithmetic additionally depends on operand widths.",
+  "spaceComplexity": "O(n) recursive frames with a constant number of numeric accumulators each. For unbounded BigInt values, bit storage also grows with the digit count.",
+  "attribution": "Original reference source: epi_judge_cpp_solutions/insert_operators_in_string.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice. The displayed copy includes local contract or boundary corrections; the upstream reference file is preserved.",
+  "correctness": "Each boundary has exactly the three permitted choices, so the recursion covers every expression. Evaluation multiplies within each term before summing terms, preserving precedence. For nonnegative decimal digits, concatenating a suffix is at least every sum/product expression on that suffix; an addition branch whose required residual exceeds that bound cannot succeed. Backtracking removes appended operands/operators before trying another branch.",
+  "walkthrough": "For [4,2,3] and target 10, the branch with operands [4,2,3] and operators [+,*] evaluates multiplication first: 2×3=6. The remaining terms 4 and 6 sum to 10, so the search succeeds.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        4,
+        2,
+        3
+      ],
+      10
+    ],
+    "expected": true
+  },
+  "edgeCases": [
+    "Empty digits return false: there is no expression.",
+    "Each input digit is between 0 and 9; concatenation may include zeros.",
+    "Only + and * are inserted, with multiplication first.",
+    "The fixed-width implementations require intermediate numeric expressions to remain representable; Python integers grow as needed."
+  ]
 }

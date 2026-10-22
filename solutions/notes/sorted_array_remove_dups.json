@@ -1,30 +1,31 @@
 {
-  "explanation": "Equal values are adjacent in the sorted input. Append a value only when it differs from the most recently appended value.",
-  "timeComplexity": "O(n) time.",
-  "spaceComplexity": "O(u) output space for u distinct values; O(1) other space.",
+  "explanation": "Build a result sequence from left to right. Append a value only when the result is empty or its last value differs. Sorting makes all copies of a value consecutive, so only one representative is appended.",
+  "timeComplexity": "O(n+1): each input entry is read once and performs at most one append or prefix write. Java lists provided by the judge support constant-time indexed access.",
+  "spaceComplexity": "O(u+1) for the returned sequence of u distinct entries; O(1) working state besides that output.",
   "attribution": "Original C# implementation and explanation authored for EPI Practice from the displayed problem contract; EPI problem attribution remains in the collection.",
-  "correctness": "After each input position, result contains exactly the distinct values seen so far, in sorted order. Sortedness places every repeat adjacent to its first occurrence, so a value equal to the last result entry is already represented. Any different value is a new distinct value and is appended. This invariant gives exactly one copy of every input value at completion.",
-  "walkthrough": "Read [-4, -4, 2, 2, 2, 11]. Append the first -4 and skip its repeat. Append 2 and skip the next two 2s. Append 11. Return [-4, 2, 11].",
+  "correctness": "After each input entry, the result contains exactly the distinct values in the processed prefix, in increasing order. Equal values are consecutive in sorted input, so the next value is either the last retained value or a new larger value. Skipping the former and appending the latter preserves this invariant. Exhausting the input therefore yields precisely one copy of every value.",
+  "walkthrough": "For [-2,-2,0,0,0,3], append -2, skip its second copy, append 0, skip its next two copies, and append 3. Return [-2,0,3].",
   "edgeCases": [
-    "Empty input returns an empty result.",
-    "An all-equal input keeps exactly one entry.",
-    "Negative values and integer extremes need only equality comparisons."
+    "Empty input yields an empty distinct sequence.",
+    "All equal values retain exactly one entry.",
+    "Negative values need no special handling.",
+    "Already distinct input retains every entry."
   ],
   "walkthroughCase": {
     "arguments": [
       [
-        -4,
-        -4,
-        2,
-        2,
-        2,
-        11
+        -2,
+        -2,
+        0,
+        0,
+        0,
+        3
       ]
     ],
     "expected": [
-      -4,
-      2,
-      11
+      -2,
+      0,
+      3
     ]
   }
 }

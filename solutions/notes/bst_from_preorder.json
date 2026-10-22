@@ -1,14 +1,14 @@
 {
-  "explanation": "Maintain the ancestors whose right subtrees have not yet been entered. A smaller preorder value becomes the current node\u2019s left child. Otherwise pop ancestors no larger than that value and attach the new node as the last popped ancestor\u2019s right child.",
-  "timeComplexity": "O(n)",
-  "spaceComplexity": "O(h), where h is tree height",
+  "explanation": "Maintain the ancestors whose right subtrees have not yet been entered. A smaller preorder value becomes the current node’s left child. Otherwise pop ancestors no larger than that value and attach the new node as the last popped ancestor’s right child.",
+  "timeComplexity": "O(n+1): each key creates one node, is pushed once and is popped at most once. The nested loop therefore performs O(n) total pops.",
+  "spaceComplexity": "O(h+1) auxiliary stack for tree height h, plus O(n) output nodes. A decreasing chain makes h=n.",
   "attribution": "Original C# implementation and explanation authored for EPI Practice from the displayed problem contract.",
-  "correctness": "The stack contains the ancestor path whose right branches remain eligible. A smaller next value must begin the current node\u2019s left subtree. Otherwise the last popped ancestor is the nearest eligible parent whose right subtree contains the value, reproducing valid BST preorder.",
-  "walkthrough": "For preorder [8,4,6,10,9], 4 becomes 8\u2019s left child and 6 becomes 4\u2019s right child. Popping past 8 attaches 10 on the right; 9 becomes 10\u2019s left child. Level order is [8,4,10,null,6,9].",
+  "correctness": "The stack tracks ancestors whose right subtrees may still accept nodes. In valid preorder, a smaller next key begins the current node’s left subtree. For a larger key, pop the completed subtrees until the surviving ancestor, if any, bounds that key from above. The last popped node is the parent whose right subtree now begins. Attaching there preserves BST ordering and consumes the next preorder key exactly once. Induction over the traversal reconstructs the unique distinct-key BST.",
+  "walkthrough": "For [8,4,6,10,9], 8 starts the stack. Attach 4 as 8’s left child. Key 6 pops 4 and becomes 4’s right child. Key 10 pops 6 and 8 and becomes 8’s right child. Key 9 becomes 10’s left child. The resulting level order is [8,4,10,null,6,9].",
   "edgeCases": [
-    "Empty preorder returns null.",
-    "A monotone traversal can produce a skewed tree.",
-    "The stack avoids recursive construction on a chain."
+    "An empty traversal returns null.",
+    "A monotone traversal yields a chain, not a balanced tree.",
+    "Inputs are valid BST preorder traversals with distinct keys. Duplicate-key placement and invalid traversals are outside this task’s domain."
   ],
   "walkthroughCase": {
     "arguments": [

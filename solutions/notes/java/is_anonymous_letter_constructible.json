@@ -1,6 +1,20 @@
 {
-  "explanation": "Count the characters needed by the letter, then consume matching magazine characters. Remove exhausted counts and succeed once no required characters remain.",
-  "timeComplexity": "O(letter length + magazine length) expected",
-  "spaceComplexity": "O(number of distinct required characters)",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/IsAnonymousLetterConstructible.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "explanation": "Count the exact characters required by the letter. Spend one needed occurrence for each matching magazine character. The letter is constructible exactly when every needed occurrence has been supplied; spaces and case remain significant.",
+  "timeComplexity": "O(L + M) expected time for letter and magazine lengths. Each letter and magazine character makes one expected-constant-time count update.",
+  "spaceComplexity": "O(u + M) auxiliary space: u distinct letter-character counts plus magazineText.toCharArray(), which materializes M characters.",
+  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/IsAnonymousLetterConstructible.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/).",
+  "correctness": "The frequency map contains exactly the positive unsupplied letter counts. Matching a magazine occurrence decrements one count and deletes a key at zero, so no magazine character is used twice. An empty map is equivalent to supplying every letter occurrence; any remaining positive count proves failure.",
+  "walkthrough": "For letter \"Bee!\" and magazine \"eB!e?\", consume one e, then B, then !, then the second e. Nothing remains needed, and the unused ? is harmless, so return true.",
+  "walkthroughCase": {
+    "arguments": [
+      "Bee!",
+      "eB!e?"
+    ],
+    "expected": true
+  },
+  "edgeCases": [
+    "An empty letter is always constructible.",
+    "Case and whitespace are significant.",
+    "Extra magazine characters do not invalidate a successful construction."
+  ]
 }

@@ -1,6 +1,20 @@
 {
   "explanation": "Each cell receives paths from directly above and directly left. Fill a single row of this recurrence; boundary cells have one path, and choosing the shorter dimension minimizes memory.",
-  "timeComplexity": "O(nm)",
-  "spaceComplexity": "O(min(n,m))",
-  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied."
+  "timeComplexity": "O(nm). Every grid state combines two predecessor counts; iterative code retains only the shorter row.",
+  "spaceComplexity": "O(min(n,m)). Iterative variants keep one short row; recursive variants retain grid-state counts and call frames.",
+  "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
+  "correctness": "Every path to a cell ends with either a down move from above or a right move from the left, and those cases are disjoint. Their counts therefore add. Boundary cells have one path, and the row array preserves exactly the above and left counts needed by the recurrence.",
+  "walkthrough": "In a 2×4 grid, every path makes one down move and three right moves. The down move can occur in any of four positions, so the result is 4. The walkthroughCase uses the judge’s JSON input format and expected observation.",
+  "edgeCases": [
+    "A single row or single column has exactly one path.",
+    "Grid dimensions are cell counts, not move counts.",
+    "The smaller dimension determines working memory."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      2,
+      4
+    ],
+    "expected": 4
+  }
 }

@@ -1,6 +1,41 @@
 {
   "explanation": "Flood inland from each ocean's boundary, traversing to equal or greater heights. These reversed paths identify cells that can drain to each ocean; return the intersection.",
-  "timeComplexity": "O(rows times columns) time.",
-  "spaceComplexity": "O(rows times columns) auxiliary and output space.",
-  "attribution": "Original repository-authored Blind75 JavaScript algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used."
+  "timeComplexity": "O(rows times columns) time. Each of two reverse floods visits each cell at most once and examines four neighbors; the intersection scans the grid.",
+  "spaceComplexity": "O(rows times columns) auxiliary and output space. Two visited grids and flood queues each have at most RC entries.",
+  "attribution": "Original repository-authored Blind75 JavaScript algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used.",
+  "correctness": "A cell can drain to an ocean exactly when the ocean can reach it along reversed flow edges, from lower or equal height to higher or equal height. Flooding inland from every boundary touching each ocean therefore finds its complete drainage set. Intersecting the two sets returns exactly cells that can drain to both oceans.",
+  "walkthrough": "For heights [[1,2],[4,3]], top-right (0,1) touches both the top and right boundaries; bottom-left (1,0) touches both left and bottom. Bottom-right (1,1) can also flow uphill in the reversed search from top-right, corresponding to real downhill drainage back to the Pacific. Return [[0,1],[1,0],[1,1]].",
+  "edgeCases": [
+    "Equal-height flow is allowed.",
+    "A one-cell grid drains to both oceans.",
+    "Output coordinates are zero-based row,column pairs."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          1,
+          2
+        ],
+        [
+          4,
+          3
+        ]
+      ]
+    ],
+    "expected": [
+      [
+        0,
+        1
+      ],
+      [
+        1,
+        0
+      ],
+      [
+        1,
+        1
+      ]
+    ]
+  }
 }

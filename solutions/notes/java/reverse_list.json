@@ -1,6 +1,27 @@
 {
-  "explanation": "Save the next node, reverse the current next pointer, and advance through the original chain. The last processed node becomes the new head.",
-  "timeComplexity": "O(n)",
-  "spaceComplexity": "O(1)",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/ReverseList.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "explanation": "Keep the reversed prefix and the unprocessed suffix separately. Save the current node’s next link before redirecting it toward the prefix, then advance to the saved successor. Return the reversed prefix head.",
+  "timeComplexity": "O(n+1): each of n nodes is visited once and performs a constant number of link updates.",
+  "spaceComplexity": "O(1) auxiliary space: a fixed number of node references; no replacement data nodes.",
+  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/ReverseList.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/).",
+  "correctness": "Before each step the prefix contains exactly the already visited nodes in reverse order, and the suffix contains the remaining nodes in original order. Saving the suffix successor prevents losing it when changing the current link. Prepending the current node preserves the invariant and shortens the suffix by one. When the suffix is empty, the prefix contains every original node in reverse order; its last link is null.",
+  "walkthrough": "For original nodes 3 → 8 → −2, first redirect 3 to null, then 8 to 3, then −2 to 8. The reversed prefix grows [3], [8,3], [−2,8,3]. Return the original node containing −2, which is now the head.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        3,
+        8,
+        -2
+      ]
+    ],
+    "expected": [
+      -2,
+      8,
+      3
+    ]
+  },
+  "edgeCases": [
+    "An empty list returns null.",
+    "One node is its own reversed head, with next=null.",
+    "Save the original successor before overwriting a link; otherwise the remaining list becomes unreachable."
+  ]
 }

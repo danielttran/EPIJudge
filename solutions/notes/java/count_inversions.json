@@ -1,6 +1,24 @@
 {
   "explanation": "Use merge sort. Whenever a right-half entry precedes an unmerged left-half entry, add the number of left entries still remaining; those are exactly its cross-half inversions.",
-  "timeComplexity": "O(n log n)",
-  "spaceComplexity": "O(n) merge buffers plus O(log n) recursion stack",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/CountInversions.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "timeComplexity": "O(n log n) Each merge level scans all n values; there are O(log(n+1)) levels.",
+  "spaceComplexity": "O(n) Temporary merge arrays and the active recursion require O(n) peak storage.",
+  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/CountInversions.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/).",
+  "correctness": "Recursive calls count inversions within each half. During merge, when a right value is smaller than the current left value, it is smaller than every remaining left value, contributing exactly that remaining count. Every inversion belongs to exactly one of these categories.",
+  "walkthrough": "For [3,1,2,1], the first 3 exceeds the three later values, giving three inversions. The 2 exceeds the final 1, giving one more. The total is 4.",
+  "edgeCases": [
+    "Equal values are not inversions.",
+    "Empty or already sorted input returns zero.",
+    "This implementation sorts the supplied mutable list while counting."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        3,
+        1,
+        2,
+        1
+      ]
+    ],
+    "expected": 4
+  }
 }

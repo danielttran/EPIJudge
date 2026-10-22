@@ -1,6 +1,20 @@
 {
   "explanation": "XOR adds bits without carries. AND followed by a left shift produces the carry bits. Repeat until no carries remain, using the contract's signed 32-bit arithmetic.",
-  "timeComplexity": "O(32), at most a constant number of carry-propagation rounds for 32-bit values.",
-  "spaceComplexity": "O(1) auxiliary space.",
-  "attribution": "Original repository-authored Blind75 C++ algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used."
+  "timeComplexity": "O(32), at most a constant number of carry-propagation rounds for 32-bit values. Every carry moves at least one position left, and fixed-width carries disappear after at most 32 rounds.",
+  "spaceComplexity": "O(1) auxiliary space. Only the two current operands and carry pattern are retained.",
+  "attribution": "Original repository-authored Blind75 C++ algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used.",
+  "correctness": "For fixed-width integers, a XOR b contains the sum bits without carries and (a AND b)<<1 contains exactly the pending carry bits. Replacing the operands with these values preserves their sum modulo 2^32. Carries move left until none remain, leaving the signed 32-bit sum.",
+  "walkthrough": "For a=5 (0101) and b=3 (0011), XOR gives 0110=6 and shifted AND gives 0010=2. The next pair is (0100=4,0100=4), then (0000=0,1000=8), then (1000=8,0000=0). No carry remains, so return 8.",
+  "edgeCases": [
+    "Negative operands use two’s-complement 32-bit arithmetic.",
+    "A zero operand needs no carry propagation.",
+    "The displayed input contract guarantees the mathematical sum fits a signed int."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      5,
+      3
+    ],
+    "expected": 8
+  }
 }

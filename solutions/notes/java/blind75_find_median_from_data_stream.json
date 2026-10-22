@@ -1,6 +1,35 @@
 {
-  "explanation": "Append every new value and re-sort the stored collection. Its central entry is the odd-count median; the average of the two central entries is the even-count median. This displayed version uses sorting rather than two heaps.",
-  "timeComplexity": "O(n log(n+1)) sorting upper bound per insertion; adaptive sorting of the nearly sorted collection may be faster. Median queries take O(1).",
-  "spaceComplexity": "O(n) stored values and up to O(n) sorting workspace.",
-  "attribution": "Original repository-authored Blind75 Java algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used."
+  "explanation": "Append every new value to a dynamic array and sort the whole array after each insertion. Query the entries at floor((n-1)/2) and floor(n/2), averaging them; those indices coincide for odd size.",
+  "timeComplexity": "O(n log(n+1)) general sorting upper bound per insertion of the nth value and O(1) per query. This code re-sorts the entire array instead of maintaining heaps.",
+  "spaceComplexity": "O(n) stored values, with up to O(n) additional sorting workspace depending on the language/runtime.",
+  "attribution": "Original repository-authored Blind75 Java algorithm, promoted from the validated correct fixtures. Collection membership follows Crackr; no external solution service is used.",
+  "correctness": "After each insertion, sorting restores the array as all inserted values in nondecreasing order, including duplicates. The chosen indices are exactly the two central positions for even n and the same central position for odd n. Their average is therefore the required median.",
+  "walkthrough": "Insert 9 to get [9]. Insert 3 and sort to [3,9], whose two middle entries average to 6. Insert 12 and sort to [3,9,12]; both middle indices are 1, so the next query returns 9. Outputs are [6,9]. The arrays describe calls on one instance in order; expected contains only FindMedian results, and values entries for queries are ignored.",
+  "edgeCases": [
+    "A median query requires at least one insertion.",
+    "Even counts require an average, which may be fractional.",
+    "Negative values and duplicate values remain ordinary stream entries."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        "addNum",
+        "addNum",
+        "findMedian",
+        "addNum",
+        "findMedian"
+      ],
+      [
+        9,
+        3,
+        0,
+        12,
+        0
+      ]
+    ],
+    "expected": [
+      6.0,
+      9.0
+    ]
+  }
 }

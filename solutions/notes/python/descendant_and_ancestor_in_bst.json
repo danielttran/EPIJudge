@@ -1,6 +1,30 @@
 {
-  "explanation": "Interleave searches from both candidate nodes toward the middle. Once one reaches it, search downward from the middle for the other candidate, comparing actual node references.",
-  "timeComplexity": "O(h) for the ancestor/descendant test; wrapper node lookup can visit O(n)",
-  "spaceComplexity": "O(1) for the test, plus wrapper lookup recursion",
-  "attribution": "Unmodified reference from epi_judge_python_solutions/descendant_and_ancestor_in_bst.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice."
+  "explanation": "Search toward the middle from both candidate nodes in interleaved steps. Stop if a search finds the middle or reaches the other candidate. If one candidate reaches the middle first, search downward from the middle for the opposite candidate.",
+  "timeComplexity": "O(h): a constant number of directed BST paths are followed. Only a constant number of downward BST search paths are used, without retaining traversal histories.",
+  "spaceComplexity": "O(1): only search pointers are stored. Searches retain only a constant number of node cursors.",
+  "attribution": "Adapted reference from epi_judge_python_solutions/descendant_and_ancestor_in_bst.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice. Local boundary or iterator-safety correction authored for EPI Practice.",
+  "correctness": "If a candidate reaches the other candidate before the middle, the middle cannot lie strictly between them. If neither reaches the middle, neither can be the required ancestor. Otherwise the final search proves the remaining descendant link, establishing a proper ancestor–middle–descendant chain.",
+  "walkthrough": "In BST [8,4,12,2,6,10,14], node 8 is a proper ancestor of 4, and node 2 is a proper descendant of 4. Candidates 8 and 2 around middle 4 therefore return true. JSON arguments are [tree,candidate0Data,candidate1Data,middleData]. C#/JavaScript receive all four; native wrappers pass only the three resolved nodes.",
+  "edgeCases": [
+    "The callable receives three existing node references, not key indices.",
+    "Coincident candidates or a candidate equal to the middle must be rejected for proper ancestry.",
+    "The roles of the two candidates may be reversed."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        8,
+        4,
+        12,
+        2,
+        6,
+        10,
+        14
+      ],
+      8,
+      2,
+      4
+    ],
+    "expected": true
+  }
 }

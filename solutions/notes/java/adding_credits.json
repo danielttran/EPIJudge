@@ -1,6 +1,71 @@
 {
-  "explanation": "Keep a 64-bit global offset and store each client credit minus that offset in a hash map. A balanced ordered set ranks pairs of normalized credit and client ID; adding the same offset preserves this ranking. Insertion removes any old pair before adding the replacement. The operation adapter checks every query and removal, including Max, and recreates the database for each constructor/reset command.",
-  "timeComplexity": "Insert/Remove: O(log n) expected; Lookup: O(1) expected; AddAll: O(1); Max: O(log n), excluding identifier hashing/comparison costs. Constructor/reset clears O(n) retained entries.",
-  "spaceComplexity": "O(n) retained client and ranking entries.",
-  "attribution": "Original Java implementation and complete reset-aware operation adapter independently authored for EPI Practice from its displayed credit-database contract. No upstream reference implementation adapted. Public EPIJudge interface and test framework retained under the repository LICENSE."
+  "explanation": "Store every credit relative to one global offset. AddAll changes only the offset, while a sorted set of normalized credits identifies a maximum client. Replacing or removing a client updates both indexes.",
+  "timeComplexity": "Insert/Remove/Max: O(log n) for TreeSet operations; Lookup: expected O(1); AddAll: O(1).",
+  "spaceComplexity": "O(n). The client dictionary and any ranking index contain one entry per live client.",
+  "attribution": "Original Java implementation and complete reset-aware operation adapter independently authored for EPI Practice from its displayed credit-database contract. No upstream reference implementation adapted. Public EPIJudge interface and test framework retained under the repository LICENSE.",
+  "correctness": "Each stored credit plus the common offset equals that client’s observable credit. AddAll preserves this invariant by changing only the offset. Insertion/removal updates both the client map and ordered ranking, so the highest ranked normalized credit also has the highest observable credit.",
+  "walkthrough": "Insert client Nora with credit 4, then AddAll(6): Lookup(Nora) is 10. Reinsert Nora with credit 3, which replaces its absolute credit. Max is Nora; after removal Lookup is −1 and Max is empty. JSON arguments are [operations], with each operation [name,stringArg,intArg]. lookup/remove/max records carry expected observations, not extra callable parameters. Observed true means all operations validated.",
+  "edgeCases": [
+    "Reinsertion replaces an absolute credit.",
+    "Missing lookup returns −1; missing removal returns false.",
+    "A new instance resets the database; the mathematical Max contract permits any tied maximum client.",
+    "The judge maintains expected credits independently and accepts any existing client with the maximum credit. No universal tie-breaker is required."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          "ClientsCreditsInfo",
+          "",
+          0
+        ],
+        [
+          "insert",
+          "Nora",
+          4
+        ],
+        [
+          "add_all",
+          "",
+          6
+        ],
+        [
+          "lookup",
+          "Nora",
+          10
+        ],
+        [
+          "insert",
+          "Nora",
+          3
+        ],
+        [
+          "lookup",
+          "Nora",
+          3
+        ],
+        [
+          "max",
+          "Nora",
+          0
+        ],
+        [
+          "remove",
+          "Nora",
+          1
+        ],
+        [
+          "lookup",
+          "Nora",
+          -1
+        ],
+        [
+          "max",
+          "",
+          0
+        ]
+      ]
+    ],
+    "expected": true
+  }
 }

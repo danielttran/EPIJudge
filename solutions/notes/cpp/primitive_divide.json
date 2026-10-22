@@ -1,6 +1,20 @@
 {
-  "explanation": "Align a shifted divisor with the remaining dividend. Subtract each largest fitting shifted divisor and set its corresponding quotient bit, moving the shift downward as necessary.",
-  "timeComplexity": "O(32), constant time for 32-bit nonnegative operands.",
-  "spaceComplexity": "O(1) auxiliary space.",
-  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/primitive_divide.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice."
+  "explanation": "Start with a wide shifted divisor, decrease its shift until it fits the remaining dividend, subtract it and add the corresponding quotient bit. Keep decreasing the shift as the remainder shrinks.",
+  "timeComplexity": "O(w): the divisor shift decreases at most w times, and each successful subtraction sets a distinct quotient bit; w=31 value bits for nonnegative int inputs.",
+  "spaceComplexity": "O(1): quotient, remaining dividend, wide shifted divisor and shift index are the only state.",
+  "attribution": "Unmodified reference source: epi_judge_cpp_solutions/primitive_divide.cc. Elements of Programming Interviews Judge authors; repository LICENSE: Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International. Explanation authored for EPI Practice.",
+  "correctness": "The invariant is x = quotient × y + remaining, with remaining nonnegative. Subtracting y shifted by bit and setting that quotient bit preserves the invariant. Processing bits from high to low leaves remaining < y after the final bit, so quotient is the integer quotient.",
+  "walkthrough": "For 91 divided by 6, 6 shifted three places is 48, which fits: remainder 43 and quotient 8. Then 24,12 and 6 also fit, leaving remainders 19,7 and 1. The selected quotient bits add to 15, so return 15.",
+  "edgeCases": [
+    "The dividend is a nonnegative 32-bit integer and the divisor is positive.",
+    "A smaller dividend returns zero.",
+    "The shifted divisor is computed in a wider integer type."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      91,
+      6
+    ],
+    "expected": 15
+  }
 }

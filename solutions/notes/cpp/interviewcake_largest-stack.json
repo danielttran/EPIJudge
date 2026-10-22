@@ -1,15 +1,16 @@
 {
-  "explanation": "Store each pushed value together with the maximum of the stack prefix ending at that entry, using the built-in stack. Pop discards one pair, and GetMax reads the maximum cached with the current top.",
-  "correctness": "Each stored maximum equals the maximum of the matching stack prefix. Push extends that invariant and Pop restores the preceding prefix; GetMax simply reads it.",
-  "walkthrough": "Push 5, then 9. The auxiliary maximum stack records both increases, so GetMax returns 9. Pop removes 9 from both stacks. The remaining maximum is 5, and the next GetMax reads it without removing it. Equal maxima would each need a retained occurrence as well.",
+  "explanation": "Store a pair (item,maximum-so-far) at every stack depth. Push computes the new maximum from the item and the previous top’s cached maximum; Pop removes one pair and GetMax reads the top pair’s second field.",
+  "correctness": "By induction, each entry’s second field is the maximum of all items at or below that depth. Push extends this prefix maximum, and Pop reveals the already-correct maximum for the remaining prefix. Equal maxima need no special removal rule because every depth has its own snapshot.",
+  "walkthrough": "Push 5 to store (5,5), then push 9 to store (9,9). GetMax reads 9 from the top pair. Pop returns its item 9 and removes that pair; GetMax now reads 5 from (5,5). Two pushes of 8 create two (8,8) entries, so one pop still leaves maximum 8. JSON supplies [operationNames,argumentLists] for one fresh MaxStack. Push displays null; Pop/GetMax display integer results or {\"error\":\"empty\"}.",
   "edgeCases": [
     "Negative values",
     "repeated maxima",
     "empty/drained state",
-    "repeated GetMax calls."
+    "repeated GetMax calls.",
+    "After pushing 8 twice and popping once, GetMax still returns 8. Empty Pop/GetMax raise an exception normalized to {\"error\":\"empty\"}."
   ],
-  "timeComplexity": "O(1) stack operations per method; amortized O(1) time with array-backed stacks.",
-  "spaceComplexity": "O(p) retained storage for peak p live items.",
+  "timeComplexity": "O(1) per operation under the stack push/pop cost model (amortized for dynamically grown arrays): only a constant number of stack operations occur.",
+  "spaceComplexity": "O(s) persistent space for s live entries, including their stored maximum information.",
   "attribution": "Original EPI Practice implementation and explanation. Task identity and technical compatibility facts are attributed to Interview Cake; no course prose, examples, solution code or artwork are included. No affiliation is implied.",
   "walkthroughCase": {
     "arguments": [

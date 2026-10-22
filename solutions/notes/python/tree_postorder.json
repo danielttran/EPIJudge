@@ -1,6 +1,30 @@
 {
-  "explanation": "Use completion flags on an explicit stack so each node is appended only after both child subtrees have been traversed.",
-  "timeComplexity": "O(n)",
-  "spaceComplexity": "O(h) stack, plus O(n) output",
-  "attribution": "Unmodified reference from epi_judge_python_solutions/tree_postorder.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice."
+  "explanation": "Represent work as (node, subtreesTraversed) stack entries. Push a marked copy of the current node, then its right child, then its left child. LIFO order makes both subtrees finish before the marked node is emitted.",
+  "timeComplexity": "O(n+1): each node creates a constant number of stack actions and is emitted once.",
+  "spaceComplexity": "O(h+1) auxiliary pending-action stack for tree height h, plus O(n) returned values. Worst-case h=n.",
+  "attribution": "Unmodified reference from epi_judge_python_solutions/tree_postorder.py; Elements of Programming Interviews Judge contributors; CC BY-NC-ND 4.0 International, retained in repository LICENSE. Explanation authored for EPI Practice.",
+  "correctness": "The stack records the remaining traversal actions in reverse execution order. Expanding a node schedules exactly left subtree, right subtree, root, because the most recently pushed action runs first. A marked entry emits its value once instead of expanding again; null entries do nothing. Each real node is expanded and emitted once, so exhausting the stack returns every value in the required order.",
+  "walkthrough": "For the tree with root 8, left child 4 (whose right child is 6), and right child 10, finish 6 before emitting 4, then finish 10, and only then emit 8. Result: [6,4,10,8]. The explicit marked entry delays each emission until its scheduled turn.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        8,
+        4,
+        10,
+        null,
+        6
+      ]
+    ],
+    "expected": [
+      6,
+      4,
+      10,
+      8
+    ]
+  },
+  "edgeCases": [
+    "An empty tree returns an empty list.",
+    "Repeated values are emitted once per node; do not deduplicate.",
+    "A skewed tree has height n, so pending-stack space can be linear."
+  ]
 }

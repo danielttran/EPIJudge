@@ -1,6 +1,19 @@
 {
-  "explanation": "Inspect the low bit and XOR it into the parity, shifting right without sign extension until no bits remain. This handles the full 64-bit pattern.",
-  "timeComplexity": "O(w), with w=64",
-  "spaceComplexity": "O(1)",
-  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/Parity.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/)."
+  "explanation": "Scan the 64-bit word from low bit to high bit, XORing each extracted bit into a one-bit accumulator. Unsigned right shifts eventually reach zero even when the signed Java input is negative.",
+  "timeComplexity": "O(w) for w significant bit positions, at most 64; unlike clearing set bits, zero positions are also scanned.",
+  "spaceComplexity": "O(1): retain only the fixed 64-bit remaining word and one parity bit.",
+  "attribution": "Unmodified EPIJudge reference source: epi_judge_java_solutions/epi/Parity.java. Original contributors; repository LICENSE: CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/).",
+  "correctness": "After each shift, result is the XOR of all bits removed so far. XORing the next low bit preserves this invariant; after the remaining word is zero, result is the parity of every original set bit.",
+  "walkthrough": "For 13 (1101₂), read low bits 1,0,1,1. The accumulator changes 0→1→1→0→1, so return 1.",
+  "edgeCases": [
+    "Zero has no set bits and returns 0.",
+    "Negative values retain their two’s-complement sign bit through the ulong cast.",
+    "The minimum signed long has exactly one set bit and returns 1."
+  ],
+  "walkthroughCase": {
+    "arguments": [
+      13
+    ],
+    "expected": 1
+  }
 }
