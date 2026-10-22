@@ -254,6 +254,10 @@ Review each question against its actual callables, adapters and original corpus:
 4. Execute every authored example, each language’s walkthrough and added boundary
    fixtures, plus the complete original corpus. Original test data remains
    unchanged. The generated `boundaries-clarity-*.json` files are additive.
+   Native EPI tree fixtures use `[null]` for an empty tree, matching the original
+   TSV protocol; `[]` remains the ordinary empty-array encoding. Nearest-star
+   fixture expectations list distances in ascending order; the native comparator
+   sorts returned stars, so the callable itself may return them in any order.
 5. Rebuild the app and inspect the longest explanations and unbroken source paths in all five languages
    on desktop, a 320px mobile viewport and native browser 200% zoom:
    `node scripts/clarity/browser.cjs http://127.0.0.1:PORT`.

@@ -12332,7 +12332,7 @@
     "spaceComplexity": "O(m+n) Each guard set can retain every distinct node of its list.",
     "attribution": "Original C# implementation and explanation authored for EPI Practice from the displayed problem contract.",
     "correctness": "The first traversal records every distinct node reachable from the first head, including its cycle if present. The second traversal checks every distinct reachable node until termination or repetition. An identity in both traversals is exactly an overlapping node; if none exists, the reachable sets are disjoint.",
-    "walkthrough": "The first prefix [1,2] and second prefix [3] share tail [8,9]. Link each tail back to shared node 8 to make a shared cycle. The second traversal first finds shared node 8 and returns that actual reference. The executable case’s true result is the judge adapter verdict; the callable returns the tree/node/list of moves/random sample described above.",
+    "walkthrough": "The first prefix [1,2] and second prefix [3] share tail [8,9]. Link each tail back to shared node 8 to make a shared cycle. The second traversal first finds shared node 8 and returns that actual reference.",
     "edgeCases": [
       "Only one cyclic list cannot overlap an acyclic list.",
       "Equal values in separate nodes do not establish overlap.",
@@ -12349,7 +12349,7 @@
     "spaceComplexity": "O(m+n) Each guard set can retain every distinct node of its list.",
     "attribution": "JavaScript port of the independently authored EPI Practice C# algorithm; no upstream reference code copied.",
     "correctness": "The first traversal records every distinct node reachable from the first head, including its cycle if present. The second traversal checks every distinct reachable node until termination or repetition. An identity in both traversals is exactly an overlapping node; if none exists, the reachable sets are disjoint.",
-    "walkthrough": "The first prefix [1,2] and second prefix [3] share tail [8,9]. Link each tail back to shared node 8 to make a shared cycle. The second traversal first finds shared node 8 and returns that actual reference. The executable case’s true result is the judge adapter verdict; the callable returns the tree/node/list of moves/random sample described above.",
+    "walkthrough": "The first prefix [1,2] and second prefix [3] share tail [8,9]. Link each tail back to shared node 8 to make a shared cycle. The second traversal first finds shared node 8 and returns that actual reference.",
     "edgeCases": [
       "Only one cyclic list cannot overlap an acyclic list.",
       "Equal values in separate nodes do not establish overlap.",
@@ -12360,17 +12360,18 @@
     "problemId": "do_lists_overlap",
     "collection": "epi",
     "language": "python",
-    "code": "def overlapping_lists(first, second):\n    reachable = set()\n    while first is not None and id(first) not in reachable:\n        reachable.add(id(first))\n        first = first.next\n    visited = set()\n    while second is not None and id(second) not in visited:\n        if id(second) in reachable:\n            return second\n        visited.add(id(second))\n        second = second.next\n    return None\n",
+    "code": "def overlapping_lists(first, second):\n    reachable = set()\n    while first is not None and id(first) not in reachable:\n        reachable.add(id(first))\n        first = first.next\n    visited = set()\n    while second is not None and id(second) not in visited:\n        if id(second) in reachable:\n            return second\n        visited.add(id(second))\n        second = second.next\n    return None\n\n\nfrom test_framework.test_failure import TestFailure as _OverlapFailure\nfrom test_framework.test_utils import enable_executor_hook as _overlap_executor_hook\n\n\n@_overlap_executor_hook\ndef overlapping_lists_wrapper(executor, first, second, common, cycle0, cycle1):\n    \"\"\"Construct both cycles from acyclic snapshots, then validate node identity.\"\"\"\n    def nodes(head):\n        result = []\n        seen = set()\n        while head is not None and id(head) not in seen:\n            seen.add(id(head))\n            result.append(head)\n            head = head.next\n        return result\n\n    first_prefix, second_prefix = nodes(first), nodes(second)\n    if first_prefix:\n        first_prefix[-1].next = common\n    else:\n        first = common\n    if second_prefix:\n        second_prefix[-1].next = common\n    else:\n        second = common\n\n    # Shared tails may become cyclic after either assignment. Never traverse\n    # that modified topology while finding the other original tail.\n    first_nodes, second_nodes = nodes(first), nodes(second)\n    for chain, position in ((first_nodes, cycle0), (second_nodes, cycle1)):\n        if position != -1:\n            if not 0 <= position < len(chain):\n                raise ValueError('Cycle position is outside the original chain.')\n            chain[-1].next = chain[position]\n\n    shared_ids = {id(node) for node in nodes(first)} & {id(node) for node in nodes(second)}\n    result = executor.run(lambda: overlapping_lists(first, second))\n    if (result is None and not shared_ids) or id(result) in shared_ids:\n        return\n    raise _OverlapFailure('Return an original node reachable from both heads, or None when disjoint.')\n",
     "explanation": "Collect distinct node identities reachable from the first head, stopping at a repeated reference. Traverse the second list under a cycle guard and return an actual shared node, not a node with merely equal data.",
     "timeComplexity": "O(m+n), counting distinct reachable nodes Each distinct node is visited once in each reachable set; hash operations are expected O(1).",
     "spaceComplexity": "O(m+n) Each guard set can retain every distinct node of its list.",
     "attribution": "Original Python implementation authored for EPI Practice from its displayed contract and independently authored C# solution; no upstream reference source adapted.",
     "correctness": "The first traversal records every distinct node reachable from the first head, including its cycle if present. The second traversal checks every distinct reachable node until termination or repetition. An identity in both traversals is exactly an overlapping node; if none exists, the reachable sets are disjoint.",
-    "walkthrough": "The first prefix [1,2] and second prefix [3] share tail [8,9]. Link each tail back to shared node 8 to make a shared cycle. The second traversal first finds shared node 8 and returns that actual reference. The executable case’s true result is the judge adapter verdict; the callable returns the tree/node/list of moves/random sample described above.",
+    "walkthrough": "The first prefix [1,2] and second prefix [3] share tail [8,9]. Link each tail back to shared node 8 to make a shared cycle. The second traversal first finds shared node 8 and returns that actual reference.",
     "edgeCases": [
       "Only one cyclic list cannot overlap an acyclic list.",
       "Equal values in separate nodes do not establish overlap.",
-      "A repeated-node guard is required for both traversals."
+      "A repeated-node guard is required for both traversals.",
+      "The bank wrapper snapshots both acyclic chains before connecting either cycle. A shared tail can make both heads cyclic after the first link; the wrapper must not search that modified chain for its end."
     ]
   },
   {
@@ -12383,7 +12384,7 @@
     "spaceComplexity": "O(m+n) Each guard set can retain every distinct node of its list.",
     "attribution": "Original C++ implementation and explanation authored for EPI Practice from the displayed problem contract and repository-authored C# algorithms. Uses the existing local native test-framework API. No upstream reference implementation was altered or translated.",
     "correctness": "The first traversal records every distinct node reachable from the first head, including its cycle if present. The second traversal checks every distinct reachable node until termination or repetition. An identity in both traversals is exactly an overlapping node; if none exists, the reachable sets are disjoint.",
-    "walkthrough": "The first prefix [1,2] and second prefix [3] share tail [8,9]. Link each tail back to shared node 8 to make a shared cycle. The second traversal first finds shared node 8 and returns that actual reference. The executable case’s true result is the judge adapter verdict; the callable returns the tree/node/list of moves/random sample described above.",
+    "walkthrough": "The first prefix [1,2] and second prefix [3] share tail [8,9]. Link each tail back to shared node 8 to make a shared cycle. The second traversal first finds shared node 8 and returns that actual reference.",
     "edgeCases": [
       "Only one cyclic list cannot overlap an acyclic list.",
       "Equal values in separate nodes do not establish overlap.",
@@ -12400,7 +12401,7 @@
     "spaceComplexity": "O(m+n) Each guard set can retain every distinct node of its list.",
     "attribution": "Original Java implementation and explanation for EPI Practice, based on the displayed public contract and our independently authored C# solution; no upstream reference code adapted.",
     "correctness": "The first traversal records every distinct node reachable from the first head, including its cycle if present. The second traversal checks every distinct reachable node until termination or repetition. An identity in both traversals is exactly an overlapping node; if none exists, the reachable sets are disjoint.",
-    "walkthrough": "The first prefix [1,2] and second prefix [3] share tail [8,9]. Link each tail back to shared node 8 to make a shared cycle. The second traversal first finds shared node 8 and returns that actual reference. The executable case’s true result is the judge adapter verdict; the callable returns the tree/node/list of moves/random sample described above.",
+    "walkthrough": "The first prefix [1,2] and second prefix [3] share tail [8,9]. Link each tail back to shared node 8 to make a shared cycle. The second traversal first finds shared node 8 and returns that actual reference.",
     "edgeCases": [
       "Only one cyclic list cannot overlap an acyclic list.",
       "Equal values in separate nodes do not establish overlap.",

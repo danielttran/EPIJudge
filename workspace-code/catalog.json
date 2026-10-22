@@ -21632,7 +21632,7 @@
       "signature": "def overlapping_lists(l0: ListNode, l1: ListNode) -> Optional[ListNode]",
       "starterCode": "from typing import Optional\n\n\ndef overlapping_lists(l0: ListNode, l1: ListNode) -> Optional[ListNode]:\n    # TODO - you fill in here.\n    return None\n",
       "solutionCode": "def overlapping_lists(first, second):\n    reachable = set()\n    while first is not None and id(first) not in reachable:\n        reachable.add(id(first))\n        first = first.next\n    visited = set()\n    while second is not None and id(second) not in visited:\n        if id(second) in reachable:\n            return second\n        visited.add(id(second))\n        second = second.next\n    return None\n",
-      "prefix": "from list_node import ListNode\n\n",
+      "prefix": "from list_node import ListNode\n\nfrom test_framework.test_failure import TestFailure as _OverlapFailure\n\nfrom test_framework.test_utils import enable_executor_hook as _overlap_executor_hook\n\n@_overlap_executor_hook\ndef overlapping_lists_wrapper(executor, first, second, common, cycle0, cycle1):\n    \"\"\"Construct both cycles from acyclic snapshots, then validate node identity.\"\"\"\n    def nodes(head):\n        result = []\n        seen = set()\n        while head is not None and id(head) not in seen:\n            seen.add(id(head))\n            result.append(head)\n            head = head.next\n        return result\n\n    first_prefix, second_prefix = nodes(first), nodes(second)\n    if first_prefix:\n        first_prefix[-1].next = common\n    else:\n        first = common\n    if second_prefix:\n        second_prefix[-1].next = common\n    else:\n        second = common\n\n    # Shared tails may become cyclic after either assignment. Never traverse\n    # that modified topology while finding the other original tail.\n    first_nodes, second_nodes = nodes(first), nodes(second)\n    for chain, position in ((first_nodes, cycle0), (second_nodes, cycle1)):\n        if position != -1:\n            if not 0 <= position < len(chain):\n                raise ValueError('Cycle position is outside the original chain.')\n            chain[-1].next = chain[position]\n\n    shared_ids = {id(node) for node in nodes(first)} & {id(node) for node in nodes(second)}\n    result = executor.run(lambda: overlapping_lists(first, second))\n    if (result is None and not shared_ids) or id(result) in shared_ids:\n        return\n    raise _OverlapFailure('Return an original node reachable from both heads, or None when disjoint.')\n\n",
       "suffix": "",
       "references": [
         {
@@ -21646,7 +21646,9 @@
       "visibleSymbols": [
         "overlapping_lists"
       ],
-      "hiddenSymbols": [],
+      "hiddenSymbols": [
+        "overlapping_lists_wrapper"
+      ],
       "removedUnrelatedSymbols": [],
       "sourcePaths": [
         "EpiJudge.Runner/catalog.json",
@@ -21656,7 +21658,7 @@
       ],
       "sourceSha256": {
         "starter": "97f870849e7254b5ebfee7903f10d8fe895e7d330e854f0a829951bc563f68a1",
-        "solution": "9ce54ca9be37501d1c25cb47e9a8d4c320238d2592d99f2e17764ea6383c3945"
+        "solution": "69b53a8270c20a0fbc914da4e60d2344b4902c97958c5b159c62647898d5c150"
       }
     },
     {

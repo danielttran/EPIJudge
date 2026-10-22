@@ -2579,8 +2579,8 @@
         "inputDomain": "Finite (x,y,z) coordinates with representable Euclidean distances, and 0≤k≤number of stars. Select k occurrences closest to the origin, including repeated coordinates.",
         "outputAndTies": "C#/JavaScript return distances; Python/C++/Java return Star objects. The judge compares the k selected distances in any order; any tied star occurrence is acceptable.",
         "mutationAndIdentity": "The callable reads its input; no caller-visible mutation is needed for this result.",
-        "boundaryBehavior": "Equal-distance stars are still separate input entries. k=0 gives an empty result when allowed by the input contract. Return distances rather than coordinates. Output order is unrestricted.",
-        "examples": "The compact teaching example is tied exactly to exampleCases[0] and all five language walkthroughCase records; wrappers and native return-type differences are stated explicitly.",
+        "boundaryBehavior": "k=0 selects no stars. Equal-distance occurrences remain separate eligible entries. Native callables return Star objects, while their wrappers observe distances in canonical ascending fixture order; callable output order is unrestricted.",
+        "examples": "Derived distances 2 and 3 from the three coordinates. Displayed output [3,2] is a permitted order; native fixture expectations use canonical ascending [2,3] because their wrappers sort the returned stars before comparison. All five walkthroughs describe the same selected occurrences.",
         "languageContracts": "Reviewed all five displayed implementations, source copies and fixture adapters; documented C#/JavaScript return distances; Python/C++/Java return Star objects. The judge compares the k selected distances in any order; any tied star occurrence is acceptable. The callable reads its input; no caller-visible mutation is needed for this result.",
         "judgeAgreement": "Compared the TSV type header and wrapper protocol to the callable. C#/JavaScript return distances; Python/C++/Java return Star objects. The judge compares the k selected distances in any order; any tied star occurrence is acceptable. The example uses the same fixture argument ordering and observed-output format."
       },
@@ -24866,12 +24866,12 @@
     "do_lists_overlap/csharp": {
       "codePath": "solutions/csharp/do_lists_overlap.cs",
       "notesPath": "solutions/notes/do_lists_overlap.json",
-      "contentSha256": "98dd8fa775d3add4cae1cccbe9a5b504490fb0ad89cbd53097dfe4dcb9bc0e91",
+      "contentSha256": "4cf43fcfdbdce78df51570ed385128ea6b60c2c953d1180571f8ae97928e45c6",
       "status": "reviewed",
       "checks": {
         "actualAlgorithm": "Record every distinct node reachable from the first head, stopping at null or a repeated reference. Traverse the second list under the same cycle guard and return the first reference also reachable from the first list. Comparing references avoids confusing equal values with overlap.",
         "correctness": "The first traversal records every distinct node reachable from the first head, including its cycle if present. The second traversal checks every distinct reachable node until termination or repetition. An identity in both traversals is exactly an overlapping node; if none exists, the reachable sets are disjoint.",
-        "workedTrace": "The first prefix [1,2] and second prefix [3] share tail [8,9]. Link each tail back to shared node 8 to make a shared cycle. The second traversal first finds shared node 8 and returns that actual reference. The executable case’s true result is the judge adapter verdict; the callable returns the tree/node/list of moves/random sample described above.",
+        "workedTrace": "The first prefix [1,2] and second prefix [3] share tail [8,9]. Link each tail back to shared node 8 to make a shared cycle. The second traversal first finds shared node 8 and returns that actual reference.",
         "edgeCases": "Only one cyclic list cannot overlap an acyclic list. Equal values in separate nodes do not establish overlap. A repeated-node guard is required for both traversals.",
         "timeDerivation": "O(m+n), counting distinct reachable nodes Each distinct node is visited once in each reachable set; hash operations are expected O(1).",
         "spaceDerivation": "O(m+n) Each guard set can retain every distinct node of its list.",
@@ -24890,12 +24890,12 @@
     "do_lists_overlap/javascript": {
       "codePath": "solutions/javascript/do_lists_overlap.js",
       "notesPath": "solutions/notes/javascript/do_lists_overlap.json",
-      "contentSha256": "49ccba6d07ebc1830369fb3f4d4d97eb58081f17ec6021a9689a1516c583d647",
+      "contentSha256": "7eb78f6c40e0ccd32675e4e3cff961e9abd6ec1bbbc650e7005da7507a334fa1",
       "status": "reviewed",
       "checks": {
         "actualAlgorithm": "Record every distinct node reachable from the first head, stopping at null or a repeated reference. Traverse the second list under the same cycle guard and return the first reference also reachable from the first list. Comparing references avoids confusing equal values with overlap.",
         "correctness": "The first traversal records every distinct node reachable from the first head, including its cycle if present. The second traversal checks every distinct reachable node until termination or repetition. An identity in both traversals is exactly an overlapping node; if none exists, the reachable sets are disjoint.",
-        "workedTrace": "The first prefix [1,2] and second prefix [3] share tail [8,9]. Link each tail back to shared node 8 to make a shared cycle. The second traversal first finds shared node 8 and returns that actual reference. The executable case’s true result is the judge adapter verdict; the callable returns the tree/node/list of moves/random sample described above.",
+        "workedTrace": "The first prefix [1,2] and second prefix [3] share tail [8,9]. Link each tail back to shared node 8 to make a shared cycle. The second traversal first finds shared node 8 and returns that actual reference.",
         "edgeCases": "Only one cyclic list cannot overlap an acyclic list. Equal values in separate nodes do not establish overlap. A repeated-node guard is required for both traversals.",
         "timeDerivation": "O(m+n), counting distinct reachable nodes Each distinct node is visited once in each reachable set; hash operations are expected O(1).",
         "spaceDerivation": "O(m+n) Each guard set can retain every distinct node of its list.",
@@ -24914,16 +24914,16 @@
     "do_lists_overlap/python": {
       "codePath": "solutions/python/do_lists_overlap.py",
       "notesPath": "solutions/notes/python/do_lists_overlap.json",
-      "contentSha256": "88369eab5d081d9ffcb2a64efed5c4c11ff3b1bf9e5c4e9d6a48a5062b6efad7",
+      "contentSha256": "d4af1710d329f7bf182f6c0f90b0a7cabf693a40cf3d5764e604d403b5c0a4a6",
       "status": "reviewed",
       "checks": {
         "actualAlgorithm": "Collect distinct node identities reachable from the first head, stopping at a repeated reference. Traverse the second list under a cycle guard and return an actual shared node, not a node with merely equal data.",
         "correctness": "The first traversal records every distinct node reachable from the first head, including its cycle if present. The second traversal checks every distinct reachable node until termination or repetition. An identity in both traversals is exactly an overlapping node; if none exists, the reachable sets are disjoint.",
-        "workedTrace": "The first prefix [1,2] and second prefix [3] share tail [8,9]. Link each tail back to shared node 8 to make a shared cycle. The second traversal first finds shared node 8 and returns that actual reference. The executable case’s true result is the judge adapter verdict; the callable returns the tree/node/list of moves/random sample described above.",
-        "edgeCases": "Only one cyclic list cannot overlap an acyclic list. Equal values in separate nodes do not establish overlap. A repeated-node guard is required for both traversals.",
+        "workedTrace": "The first prefix [1,2] and second prefix [3] share tail [8,9]. Link each tail back to shared node 8 to make a shared cycle. The second traversal first finds shared node 8 and returns that actual reference.",
+        "edgeCases": "Only one cyclic list cannot overlap an acyclic list. Equal values in separate nodes do not establish overlap. A repeated-node guard is required for both traversals. The bank wrapper snapshots both acyclic chains before connecting either cycle. A shared tail can make both heads cyclic after the first link; the wrapper must not search that modified chain for its end.",
         "timeDerivation": "O(m+n), counting distinct reachable nodes Each distinct node is visited once in each reachable set; hash operations are expected O(1).",
         "spaceDerivation": "O(m+n) Each guard set can retain every distinct node of its list.",
-        "callableAgreement": "Callable: def overlapping_lists(l0: ListNode, l1: ListNode) -> Optional[ListNode]. Return an actual shared node or null. The adapter constructs sharing/cycles from five JSON arguments; only the two heads reach the callable. A true case result is validation, not the method return. Returns any actual shared node, or null, without changing links; equal values alone never establish overlap."
+        "callableAgreement": "Reviewed the bank-owned wrapper in the legacy program and hidden callable prefix: both cycles use pre-cycle snapshots, and validation compares actual shared node identities. The reference algorithm remains the two visited-set traversal."
       },
       "evidence": [
         "solutions/python/do_lists_overlap.py",
@@ -24933,19 +24933,21 @@
         "EpiJudge.Runner/JudgeAdapters.cs",
         "EpiJudge.Runner/catalog.json",
         "scripts/code_workspace/managed-roots.json",
-        "epi_judge_python/do_lists_overlap.py"
+        "epi_judge_python/do_lists_overlap.py",
+        "scripts/code_workspace/managed.py",
+        "scripts/code_workspace/test_managed.py"
       ],
       "reviewSource": "scripts/clarity/parts/epi_3.json"
     },
     "do_lists_overlap/cpp": {
       "codePath": "solutions/cpp/do_lists_overlap.cpp",
       "notesPath": "solutions/notes/cpp/do_lists_overlap.json",
-      "contentSha256": "10e91b72b904b5837b7a8a95d8aacb72dabbb50ebccdd99d69f836491b6b1e74",
+      "contentSha256": "5688aa485babd1794d2f43e8318d8c5bacda0bf3ab10befc4f717b4c86f06d8a",
       "status": "reviewed",
       "checks": {
         "actualAlgorithm": "Record every distinct original node reachable from the first head, stopping on a repeated reference. Traverse the second head with the same cycle guard and return its first node also reachable from the first. The wrapper verifies overlap identity and input preservation.",
         "correctness": "The first traversal records every distinct node reachable from the first head, including its cycle if present. The second traversal checks every distinct reachable node until termination or repetition. An identity in both traversals is exactly an overlapping node; if none exists, the reachable sets are disjoint.",
-        "workedTrace": "The first prefix [1,2] and second prefix [3] share tail [8,9]. Link each tail back to shared node 8 to make a shared cycle. The second traversal first finds shared node 8 and returns that actual reference. The executable case’s true result is the judge adapter verdict; the callable returns the tree/node/list of moves/random sample described above.",
+        "workedTrace": "The first prefix [1,2] and second prefix [3] share tail [8,9]. Link each tail back to shared node 8 to make a shared cycle. The second traversal first finds shared node 8 and returns that actual reference.",
         "edgeCases": "Only one cyclic list cannot overlap an acyclic list. Equal values in separate nodes do not establish overlap. A repeated-node guard is required for both traversals.",
         "timeDerivation": "O(m+n), counting distinct reachable nodes Each distinct node is visited once in each reachable set; hash operations are expected O(1).",
         "spaceDerivation": "O(m+n) Each guard set can retain every distinct node of its list.",
@@ -24965,12 +24967,12 @@
     "do_lists_overlap/java": {
       "codePath": "solutions/java/do_lists_overlap.java",
       "notesPath": "solutions/notes/java/do_lists_overlap.json",
-      "contentSha256": "5c914acbf41fde2a18200ea9654ff261537e50873698950e38902c34de5c3966",
+      "contentSha256": "709b1dae48bbbc263a2b8c0a1b50a2a52c1416705f6088121315d503a01a1d2e",
       "status": "reviewed",
       "checks": {
         "actualAlgorithm": "Collect first-list nodes in an identity set, stopping at a repeated node to handle cycles. Traverse the second list similarly and return its first node present in that set. Identity-based sets distinguish equal-valued but separate nodes.",
         "correctness": "The first traversal records every distinct node reachable from the first head, including its cycle if present. The second traversal checks every distinct reachable node until termination or repetition. An identity in both traversals is exactly an overlapping node; if none exists, the reachable sets are disjoint.",
-        "workedTrace": "The first prefix [1,2] and second prefix [3] share tail [8,9]. Link each tail back to shared node 8 to make a shared cycle. The second traversal first finds shared node 8 and returns that actual reference. The executable case’s true result is the judge adapter verdict; the callable returns the tree/node/list of moves/random sample described above.",
+        "workedTrace": "The first prefix [1,2] and second prefix [3] share tail [8,9]. Link each tail back to shared node 8 to make a shared cycle. The second traversal first finds shared node 8 and returns that actual reference.",
         "edgeCases": "Only one cyclic list cannot overlap an acyclic list. Equal values in separate nodes do not establish overlap. A repeated-node guard is required for both traversals.",
         "timeDerivation": "O(m+n), counting distinct reachable nodes Each distinct node is visited once in each reachable set; hash operations are expected O(1).",
         "spaceDerivation": "O(m+n) Each guard set can retain every distinct node of its list.",

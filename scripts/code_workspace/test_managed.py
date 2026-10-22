@@ -128,6 +128,64 @@ class ManagedWorkspaceTests(unittest.TestCase):
                     count += 1
         self.assertEqual(count, 436)
 
+    def test_overlap_wrapper_handles_shared_cycles_and_checks_original_identity(self):
+        entry = next(
+            e
+            for e in self.entries
+            if e["problemId"] == "do_lists_overlap" and e["language"] == "python"
+        )
+        self.assertNotIn("overlapping_lists_wrapper", entry["solutionCode"])
+        namespace = {}
+        # Execute only the bank-owned composition under a bounded node-read guard.
+        exec(  # noqa: S102
+            compile(
+                entry["prefix"] + entry["solutionCode"] + entry["suffix"],
+                "solution.py",
+                "exec",
+            ),
+            namespace,
+        )
+
+        class Node:
+            reads = 0
+
+            def __init__(self, data, next_node=None):
+                self.data, self._next = data, next_node
+
+            @property
+            def next(self):
+                Node.reads += 1
+                if Node.reads > 200:
+                    raise AssertionError("Wrapper traversed a cycle without a guard")
+                return self._next
+
+            @next.setter
+            def next(self, value):
+                self._next = value
+
+        class Executor:
+            @staticmethod
+            def run(callback):
+                return callback()
+
+        def shared_cycle():
+            Node.reads = 0
+            common = Node(8, Node(9))
+            return Node(1, Node(2)), Node(3), common
+
+        wrapper = namespace["overlapping_lists_wrapper"]
+        first, second, common = shared_cycle()
+        wrapper(Executor(), first, second, common, 2, 1)
+        self.assertIs(common.next.next, common)
+        original = namespace["overlapping_lists"]
+        namespace["overlapping_lists"] = lambda _a, _b: Node(8)
+        first, second, common = shared_cycle()
+        with self.assertRaises(namespace["_OverlapFailure"]):
+            wrapper(Executor(), first, second, common, 2, 1)
+        namespace["overlapping_lists"] = original
+        Node.reads = 0
+        wrapper(Executor(), Node(1, Node(2)), Node(1), None, 0, -1)
+
     def test_python_glue_and_models_are_not_editable(self):
         forbidden = {
             "TestFailure",
