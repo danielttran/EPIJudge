@@ -1,0 +1,34 @@
+{
+  "explanation": "When a new set member arrives, every resulting subset either excludes it or includes it. Keep the existing subsets for the first group and make one independent copy with the new member appended for the second group. Snapshot the old subset count so newly created subsets are not processed again in that same pass.",
+  "correctness": "Initially the result contains precisely the empty set, all subsets of zero processed members. Inductively, existing subsets are exactly the subsets that exclude the next distinct member. Appending that member to a copy of each old subset gives exactly those that include it. The groups are disjoint, and the copy mapping is one-to-one, so no subset is omitted or repeated. Copying before appending preserves the old subsets and the original input.",
+  "walkthrough": "Starting with [[]], process 3 to obtain [[],[3]]. Then process 1: keep those two subsets and append independent copies [1] and [3,1]. All four subsets appear once. Appending to the original [3] object instead of a copy would corrupt an already completed subset.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        3,
+        1
+      ]
+    ],
+    "expected": [
+      [],
+      [
+        3
+      ],
+      [
+        1
+      ],
+      [
+        3,
+        1
+      ]
+    ]
+  },
+  "timeComplexity": "O(n*2^n) time to construct the output for n distinct members.",
+  "spaceComplexity": "O(n*2^n) total returned storage; each copied subset has at most n members. No recursive stack is used.",
+  "edgeCases": [
+    "Empty input and one member.",
+    "Negative and extreme signed values; input order need not be sorted.",
+    "All 4096 subsets at the admitted maximum size, without duplicates or input mutation."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 8.4. No affiliation is implied."
+}

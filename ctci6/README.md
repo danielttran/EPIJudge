@@ -41,9 +41,9 @@ It does **not** prove statement clarity, solution correctness, test adequacy, or
 completed semantic review. Those are separately recorded and executed before the
 collection is published.
 
-The current local checkpoint stages 33 coding exercises: chapters 1–3, all seven
-coding tasks of chapter 5, and 8.1, 8.5 and 8.11. Their 165 language implementations
-pass standalone and separate-submission runs with 33,855 positive cases per stage
+The current local checkpoint stages 37 coding exercises: chapters 1–3, all seven
+coding tasks of chapter 5, and seven tasks from chapter 8. Their 185 language implementations
+pass standalone and separate-submission runs with 34,835 positive cases per stage
 and the same number of starter observations. A starter passes its negative check
 only when at least one case rejects it; this does not mean every starter fails
 every case. Five conceptual and eight system-design references are explicitly
@@ -57,8 +57,8 @@ Inventory/evidence integrity is checked by `python3 scripts/ctci6/audit.py`;
 Structural checks are not semantic review or execution credit.
 
 Application evidence is preserved in separate source/build scopes: the first 23
-exercises, three initial bit exercises, four further bit exercises, and three
-recursion/DP exercises. Each batch passed both submission formats. The individual
+exercises, three initial bit exercises, four further bit exercises, three initial
+recursion/DP exercises, and four combinatorial generation exercises. Each batch passed both submission formats. The individual
 reports under `runtime/application-validation*.json` and `checkpoint.json` retain
 these scopes. They are not one final combined current-build acceptance run.
 Final collection integration, remaining known content/classifications, whole-bank

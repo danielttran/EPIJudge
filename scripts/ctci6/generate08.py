@@ -2,22 +2,28 @@
 
 from algorithms08 import body
 from chapter08 import SPECS
-from core import HEADERS
+from core import LANGUAGES, ROOT
 from corpus08 import cases, oracle
 from generate import generate
+from models08 import declare, header, neutral
+import json
 
 
 def generate08():
-    headers = dict(HEADERS)
-    headers["cpp"] += "#include <cstdint>\n"
-    generate(
-        specs=SPECS,
-        algorithm=body,
-        corpus=cases,
-        reference=oracle,
-        headers=headers,
-        staging_name="staged08",
-    )
+    rows = []
+    for spec in SPECS:
+        generate(
+            specs=[spec],
+            algorithm=body,
+            corpus=cases,
+            reference=oracle,
+            headers={language: header(spec["ref"], language) for language in LANGUAGES},
+            declare=declare,
+            neutral=neutral,
+            staging_name="staged08",
+        )
+        rows.extend(json.loads((ROOT / "ctci6/staged08/catalog.json").read_text()))
+    (ROOT / "ctci6/staged08/catalog.json").write_text(json.dumps(rows, indent=2) + "\n")
 
 
 if __name__ == "__main__":

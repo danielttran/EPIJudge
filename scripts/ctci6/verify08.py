@@ -42,7 +42,7 @@ def verify():
                     observed=value,
                 )
                 for case, value in zip(rows, actual)
-                if not valid_observation(case, value)
+                if not valid_observation(case["ref"], case, value)
             ]
             if not starters and failures:
                 (output / "failure.json").write_text(json.dumps(failures[:3], indent=2))

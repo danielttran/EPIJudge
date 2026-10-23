@@ -1,0 +1,22 @@
+{
+  "explanation": "Fix one output position at a time. Swap each remaining character into that position, recursively arrange the suffix, then undo the swap. Distinct characters make these branches disjoint, so no deduplication set is needed.",
+  "correctness": "At recursion depth d, the prefix contains d distinct chosen input characters and the remaining suffix contains exactly the unchosen ones. Swapping each suffix position into d enumerates every possible next character once. Induction on remaining length therefore gives every arrangement of the suffix once for each unique prefix. At full depth, copying the character buffer captures one completed permutation. Restoring the swap preserves the parent state for the next branch.",
+  "walkthrough": "For ab, fix a first and emit ab; undo that choice, fix b first and emit ba. For abc, the a-first branch emits abc and acb before the b-first and c-first branches. Restoring swaps is what lets each later branch start from the correct unchosen characters.",
+  "walkthroughCase": {
+    "arguments": [
+      "ab"
+    ],
+    "expected": [
+      "ab",
+      "ba"
+    ]
+  },
+  "timeComplexity": "O(n*n!) time including construction of every length-n output string.",
+  "spaceComplexity": "O(n) workspace and recursion depth, excluding O(n*n!) returned character storage.",
+  "edgeCases": [
+    "Empty text gives one empty permutation.",
+    "One character and unsorted distinct input.",
+    "Length eight produces all 40320 distinct outputs."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 8.7. No affiliation is implied."
+}

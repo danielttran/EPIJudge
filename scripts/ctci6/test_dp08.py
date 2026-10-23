@@ -43,7 +43,7 @@ class DpContractTests(unittest.TestCase):
             dict(actual=1),
             None,
         ):
-            self.assertFalse(valid_observation(dict(expected=1), observed))
+            self.assertFalse(valid_observation("8.1", dict(expected=1), observed))
 
 
 if __name__ == "__main__":

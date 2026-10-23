@@ -18,6 +18,7 @@ import time
 from core import EXT, LANGUAGES, ROOT
 from corpus02 import valid_observation
 from corpus03 import valid_observation as state_match
+from corpus08 import valid_observation as recursive_match
 from runtime import generate_runtime
 from verify01 import execute
 
@@ -66,6 +67,9 @@ def verify(only_ref=None, only_language=None, starters=False):
     tools = tool_versions()
     grader_hashes = dict(
         core=digest(inspect.getsource(core_match)),
+        combinatorial=hashlib.sha256(
+            (ROOT / "scripts/ctci6/corpus08.py").read_bytes()
+        ).hexdigest(),
         state=hashlib.sha256(
             (ROOT / "scripts/ctci6/corpus03.py").read_bytes()
         ).hexdigest(),
@@ -130,9 +134,16 @@ def verify(only_ref=None, only_language=None, starters=False):
                         cases=cases,
                         tool=tools[language],
                         grader=grader_hashes[
-                            {1: "core", 2: "lists", 3: "state", 5: "core", 8: "core"}[
-                                entry["batch"]
-                            ]
+                            "combinatorial"
+                            if entry["batch"] == 8
+                            and entry["result"] in ("sets", "strings")
+                            else {
+                                1: "core",
+                                2: "lists",
+                                3: "state",
+                                5: "core",
+                                8: "core",
+                            }[entry["batch"]]
                         ],
                     )
                 )
@@ -187,7 +198,10 @@ def verify(only_ref=None, only_language=None, starters=False):
                 elapsed += value["elapsedMs"]
                 try:
                     accepted = (
-                        core_match(case, observed)
+                        recursive_match(entry["ref"], case, observed)
+                        if entry["batch"] == 8
+                        and entry["result"] in ("sets", "strings")
+                        else core_match(case, observed)
                         if entry["batch"] in (1, 5, 8)
                         else valid_observation(entry["ref"], case, observed)
                         if entry["batch"] == 2

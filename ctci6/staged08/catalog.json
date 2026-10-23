@@ -64,6 +64,88 @@
     }
   },
   {
+    "ref": "8.4",
+    "method": "PowerSet",
+    "params": [
+      [
+        "values",
+        "ai"
+      ]
+    ],
+    "result": "sets",
+    "mutation": "none",
+    "description": "Return every subset of the set represented by values, including the empty set and the entire set, exactly once. Return a collection of integer collections. The outer order and the element order inside each subset are unrestricted.",
+    "constraints": [
+      "values contains 0..12 distinct signed 32-bit integers. Equal values are not admitted; each input element represents one set member.",
+      "Do not modify the input. Every returned subset must contain only input members, with no repeated member. Different orders of the same members are the same subset, not different answers. For an empty input return one empty subset, not an empty outer collection.",
+      "Examples show one deterministic valid ordering; the judge accepts all valid orders.",
+      "Return the concrete lists/vectors in the selected callable signature: a List in C#/Java, an Array in JavaScript, a list in Python, or a vector in C++. A generator or iterator alone is not the return value. ",
+      "Each returned subset is a concrete integer list/vector as well; both levels must be materialized."
+    ],
+    "why": "When a new set member arrives, every resulting subset either excludes it or includes it. Keep the existing subsets for the first group and make one independent copy with the new member appended for the second group. Snapshot the old subset count so newly created subsets are not processed again in that same pass.",
+    "correctness": "Initially the result contains precisely the empty set, all subsets of zero processed members. Inductively, existing subsets are exactly the subsets that exclude the next distinct member. Appending that member to a copy of each old subset gives exactly those that include it. The groups are disjoint, and the copy mapping is one-to-one, so no subset is omitted or repeated. Copying before appending preserves the old subsets and the original input.",
+    "walkthrough": "Starting with [[]], process 3 to obtain [[],[3]]. Then process 1: keep those two subsets and append independent copies [1] and [3,1]. All four subsets appear once. Appending to the original [3] object instead of a copy would corrupt an already completed subset.",
+    "example": [
+      [
+        [
+          3,
+          1
+        ]
+      ],
+      [
+        [],
+        [
+          3
+        ],
+        [
+          1
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    ],
+    "time": "O(n*2^n) time to construct the output for n distinct members.",
+    "space": "O(n*2^n) total returned storage; each copied subset has at most n members. No recursive stack is used.",
+    "edges": [
+      "Empty input and one member.",
+      "Negative and extreme signed values; input order need not be sorted.",
+      "All 4096 subsets at the admitted maximum size, without duplicates or input mutation."
+    ],
+    "related": "Existing subset algorithms require a domain/order/mutation comparison before aliasing; this reference retains its own explicit set-valued grading contract.",
+    "id": "ctci6_8_4",
+    "title": "Power Set",
+    "testCount": 34,
+    "languages": {
+      "csharp": {
+        "signature": "List<List<int>> PowerSet(int[] values)",
+        "starterCode": "public class Solution\n{\n    public List<List<int>> PowerSet(int[] values)\n    {\n        return [];\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public List<List<int>> PowerSet(int[] values)\n    {\n        var result = new List<List<int>> { new() };\n        foreach (int value in values)\n        {\n            int original = result.Count;\n            for (int i = 0; i < original; ++i)\n            {\n                var subset = new List<int>(result[i]);\n                subset.Add(value);\n                result.Add(subset);\n            }\n        }\n        return result;\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function PowerSet(values)",
+        "starterCode": "function PowerSet(values) {\n  return [];\n}\n",
+        "solutionCode": "function PowerSet(values) {\n  const result = [[]];\n  for (const value of values) {\n    const original = result.length;\n    for (let i = 0; i < original; ++i) result.push([...result[i], value]);\n  }\n  return result;\n}\n"
+      },
+      "python": {
+        "signature": "def PowerSet(values: list[int]) -> list[list[int]]",
+        "starterCode": "def PowerSet(values: list[int]) -> list[list[int]]:\n    return []\n",
+        "solutionCode": "def PowerSet(values: list[int]) -> list[list[int]]:\n    result = [[]]\n    for value in values:\n        original = len(result)\n        for index in range(original):\n            result.append(result[index] + [value])\n    return result\n"
+      },
+      "cpp": {
+        "signature": "std::vector<std::vector<int>> PowerSet(const std::vector<int>& values)",
+        "starterCode": "class Solution {\n public:\n  std::vector<std::vector<int>> PowerSet(const std::vector<int>& values) {\n    return {};\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  std::vector<std::vector<int>> PowerSet(const std::vector<int>& values) {\n    std::vector<std::vector<int>> result(1);\n    for (int value : values) {\n      auto original = result.size();\n      for (std::size_t i = 0; i < original; ++i) {\n        auto subset = result[i];\n        subset.push_back(value);\n        result.push_back(std::move(subset));\n      }\n    }\n    return result;\n  }\n};\n"
+      },
+      "java": {
+        "signature": "List<List<Integer>> PowerSet(int[] values)",
+        "starterCode": "class Solution {\n  public List<List<Integer>> PowerSet(int[] values) {\n    return new ArrayList<>();\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public List<List<Integer>> PowerSet(int[] values) {\n    List<List<Integer>> result = new ArrayList<>();\n    result.add(new ArrayList<>());\n    for (int value : values) {\n      int original = result.size();\n      for (int i = 0; i < original; ++i) {\n        var subset = new ArrayList<>(result.get(i));\n        subset.add(value);\n        result.add(subset);\n      }\n    }\n    return result;\n  }\n}\n"
+      }
+    }
+  },
+  {
     "ref": "8.5",
     "method": "RecursiveMultiply",
     "params": [
@@ -129,6 +211,211 @@
         "signature": "int RecursiveMultiply(int first, int second)",
         "starterCode": "class Solution {\n  public int RecursiveMultiply(int first, int second) {\n    return 0;\n  }\n}\n",
         "solutionCode": "class Solution {\n  public int RecursiveMultiply(int first, int second) {\n    int smaller = Math.min(first, second), larger = Math.max(first, second);\n    if (smaller == 0)\n      return 0;\n    int half = RecursiveMultiply(smaller >> 1, larger);\n    return half + half + ((smaller & 1) != 0 ? larger : 0);\n  }\n}\n"
+      }
+    }
+  },
+  {
+    "ref": "8.7",
+    "method": "PermutationsDistinct",
+    "params": [
+      [
+        "text",
+        "s"
+      ]
+    ],
+    "result": "strings",
+    "mutation": "none",
+    "description": "Return every permutation of text exactly once. Input characters are all distinct, so different choices of which character occupies a position produce different strings. Output order is unrestricted.",
+    "constraints": [
+      "text contains 0..8 distinct lowercase ASCII English letters a..z. It is nonnull. Preserve the input.",
+      "Return one empty string for the empty input. Every result has the same length and characters as text; there must be no repeated result. Examples display one valid ordering, and any output order is accepted.",
+      "Return the concrete lists/vectors in the selected callable signature: a List in C#/Java, an Array in JavaScript, a list in Python, or a vector in C++. A generator or iterator alone is not the return value. "
+    ],
+    "why": "Fix one output position at a time. Swap each remaining character into that position, recursively arrange the suffix, then undo the swap. Distinct characters make these branches disjoint, so no deduplication set is needed.",
+    "correctness": "At recursion depth d, the prefix contains d distinct chosen input characters and the remaining suffix contains exactly the unchosen ones. Swapping each suffix position into d enumerates every possible next character once. Induction on remaining length therefore gives every arrangement of the suffix once for each unique prefix. At full depth, copying the character buffer captures one completed permutation. Restoring the swap preserves the parent state for the next branch.",
+    "walkthrough": "For ab, fix a first and emit ab; undo that choice, fix b first and emit ba. For abc, the a-first branch emits abc and acb before the b-first and c-first branches. Restoring swaps is what lets each later branch start from the correct unchosen characters.",
+    "example": [
+      [
+        "ab"
+      ],
+      [
+        "ab",
+        "ba"
+      ]
+    ],
+    "time": "O(n*n!) time including construction of every length-n output string.",
+    "space": "O(n) workspace and recursion depth, excluding O(n*n!) returned character storage.",
+    "edges": [
+      "Empty text gives one empty permutation.",
+      "One character and unsorted distinct input.",
+      "Length eight produces all 40320 distinct outputs."
+    ],
+    "related": "The duplicate-aware permutation exercise has different branching and uniqueness requirements and is retained separately.",
+    "id": "ctci6_8_7",
+    "title": "Permutations Without Dups",
+    "testCount": 26,
+    "languages": {
+      "csharp": {
+        "signature": "List<string> PermutationsDistinct(string text)",
+        "starterCode": "public class Solution\n{\n    public List<string> PermutationsDistinct(string text)\n    {\n        return [];\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public List<string> PermutationsDistinct(string text)\n    {\n        char[] chars = text.ToCharArray();\n        var result = new List<string>();\n        void Visit(int depth)\n        {\n            if (depth == chars.Length)\n            {\n                result.Add(new string(chars));\n                return;\n            }\n            for (int i = depth; i < chars.Length; ++i)\n            {\n                char temporary = chars[depth];\n                chars[depth] = chars[i];\n                chars[i] = temporary;\n                Visit(depth + 1);\n                temporary = chars[depth];\n                chars[depth] = chars[i];\n                chars[i] = temporary;\n            }\n        }\n        Visit(0);\n        return result;\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function PermutationsDistinct(text)",
+        "starterCode": "function PermutationsDistinct(text) {\n  return [];\n}\n",
+        "solutionCode": "function PermutationsDistinct(text) {\n  const chars = Array.from(text),\n    result = [];\n  function visit(depth) {\n    if (depth === chars.length) {\n      result.push(chars.join(\"\"));\n      return;\n    }\n    for (let i = depth; i < chars.length; ++i) {\n      [chars[depth], chars[i]] = [chars[i], chars[depth]];\n      visit(depth + 1);\n      [chars[depth], chars[i]] = [chars[i], chars[depth]];\n    }\n  }\n  visit(0);\n  return result;\n}\n"
+      },
+      "python": {
+        "signature": "def PermutationsDistinct(text: str) -> list[str]",
+        "starterCode": "def PermutationsDistinct(text: str) -> list[str]:\n    return []\n",
+        "solutionCode": "def PermutationsDistinct(text: str) -> list[str]:\n    chars = list(text)\n    result = []\n\n    def visit(depth):\n        if depth == len(chars):\n            result.append(\"\".join(chars))\n            return\n        for index in range(depth, len(chars)):\n            chars[depth], chars[index] = chars[index], chars[depth]\n            visit(depth + 1)\n            chars[depth], chars[index] = chars[index], chars[depth]\n\n    visit(0)\n    return result\n"
+      },
+      "cpp": {
+        "signature": "std::vector<std::string> PermutationsDistinct(const std::string& text)",
+        "starterCode": "class Solution {\n public:\n  std::vector<std::string> PermutationsDistinct(const std::string& text) {\n    return {};\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  std::vector<std::string> PermutationsDistinct(const std::string& text) {\n    std::string chars = text;\n    std::vector<std::string> result;\n    std::function<void(int)> visit = [&](int depth) {\n      if (depth == static_cast<int>(chars.size())) {\n        result.push_back(chars);\n        return;\n      }\n      for (int i = depth; i < static_cast<int>(chars.size()); ++i) {\n        char temporary = chars[depth];\n        chars[depth] = chars[i];\n        chars[i] = temporary;\n        visit(depth + 1);\n        temporary = chars[depth];\n        chars[depth] = chars[i];\n        chars[i] = temporary;\n      }\n    };\n    visit(0);\n    return result;\n  }\n};\n"
+      },
+      "java": {
+        "signature": "List<String> PermutationsDistinct(String text)",
+        "starterCode": "class Solution {\n  public List<String> PermutationsDistinct(String text) {\n    return new ArrayList<>();\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public List<String> PermutationsDistinct(String text) {\n    char[] chars = text.toCharArray();\n    List<String> result = new ArrayList<>();\n    class Search {\n      void Visit(int depth) {\n        if (depth == chars.length) {\n          result.add(new String(chars));\n          return;\n        }\n        for (int i = depth; i < chars.length; ++i) {\n          char temporary = chars[depth];\n          chars[depth] = chars[i];\n          chars[i] = temporary;\n          Visit(depth + 1);\n          temporary = chars[depth];\n          chars[depth] = chars[i];\n          chars[i] = temporary;\n        }\n      }\n    }\n    new Search().Visit(0);\n    return result;\n  }\n}\n"
+      }
+    }
+  },
+  {
+    "ref": "8.8",
+    "method": "PermutationsWithDuplicates",
+    "params": [
+      [
+        "text",
+        "s"
+      ]
+    ],
+    "result": "strings",
+    "mutation": "none",
+    "description": "Return every DISTINCT permutation of text exactly once, even when equal characters occur multiple times. Equal copies of a letter are indistinguishable. Output order is unrestricted.",
+    "constraints": [
+      "text contains 0..8 lowercase ASCII English letters a..z and is nonnull. Repeated letters are allowed; all-distinct input is also valid. Preserve the input.",
+      "Every result uses each letter exactly as many times as text. Return one empty string for empty input. Returning duplicate strings and relying on the caller to deduplicate is incorrect.",
+      "Return the concrete lists/vectors in the selected callable signature: a List in C#/Java, an Array in JavaScript, a list in Python, or a vector in C++. A generator or iterator alone is not the return value. "
+    ],
+    "why": "Choose the next letter by its remaining frequency, rather than by the identity of one equal input occurrence. This combines equal-occurrence branches before they generate duplicate strings. Decrement before descent and restore afterward so sibling branches see the original remaining counts.",
+    "correctness": "At depth d, the character counts describe exactly the multiset not yet placed in the output prefix. A branch exists once for each letter with a positive remaining count and consumes exactly one copy. Thus every emitted string has the required multiplicities. Any valid permutation has a unique next letter at each depth, so it follows exactly one branch sequence and is emitted once. Restoring each count maintains the invariant for later choices.",
+    "walkthrough": "For aab, the first choice is a or b, not first-a versus second-a. Choosing a leaves counts a:1,b:1 and yields aab or aba; choosing b leaves a:2 and yields baa. Three strings are returned, rather than six occurrence-labeled branches containing duplicates.",
+    "example": [
+      [
+        "aab"
+      ],
+      [
+        "aab",
+        "aba",
+        "baa"
+      ]
+    ],
+    "time": "O(26*n*U), hence O(n*U) for this fixed alphabet, where U=n! divided by the product of each letter-count factorial. The bound includes prefix traversal and copied output strings.",
+    "space": "O(n+26) workspace/recursion storage, excluding O(n*U) returned character storage.",
+    "edges": [
+      "All letters equal, mixed multiplicities and all-distinct text.",
+      "Empty text and the maximum input length.",
+      "Repeated outputs or missing multiplicities are rejected irrespective of output order."
+    ],
+    "related": "The distinct-character permutation exercise cannot simply enumerate occurrence permutations without duplicate-aware branching.",
+    "id": "ctci6_8_8",
+    "title": "Permutations With Dups",
+    "testCount": 127,
+    "languages": {
+      "csharp": {
+        "signature": "List<string> PermutationsWithDuplicates(string text)",
+        "starterCode": "public class Solution\n{\n    public List<string> PermutationsWithDuplicates(string text)\n    {\n        return [];\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public List<string> PermutationsWithDuplicates(string text)\n    {\n        int[] counts = new int[26];\n        foreach (char c in text)\n            ++counts[c - 'a'];\n        char[] buffer = new char[text.Length];\n        var result = new List<string>();\n        void Visit(int depth)\n        {\n            if (depth == buffer.Length)\n            {\n                result.Add(new string(buffer));\n                return;\n            }\n            for (int letter = 0; letter < 26; ++letter)\n            {\n                if (counts[letter] > 0)\n                {\n                    --counts[letter];\n                    buffer[depth] = (char)('a' + letter);\n                    Visit(depth + 1);\n                    ++counts[letter];\n                }\n            }\n        }\n        Visit(0);\n        return result;\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function PermutationsWithDuplicates(text)",
+        "starterCode": "function PermutationsWithDuplicates(text) {\n  return [];\n}\n",
+        "solutionCode": "function PermutationsWithDuplicates(text) {\n  const counts = Array(26).fill(0),\n    buffer = Array(text.length),\n    result = [];\n  for (const char of text) ++counts[char.charCodeAt(0) - 97];\n  function visit(depth) {\n    if (depth === buffer.length) {\n      result.push(buffer.join(\"\"));\n      return;\n    }\n    for (let letter = 0; letter < 26; ++letter) {\n      if (counts[letter] > 0) {\n        --counts[letter];\n        buffer[depth] = String.fromCharCode(97 + letter);\n        visit(depth + 1);\n        ++counts[letter];\n      }\n    }\n  }\n  visit(0);\n  return result;\n}\n"
+      },
+      "python": {
+        "signature": "def PermutationsWithDuplicates(text: str) -> list[str]",
+        "starterCode": "def PermutationsWithDuplicates(text: str) -> list[str]:\n    return []\n",
+        "solutionCode": "def PermutationsWithDuplicates(text: str) -> list[str]:\n    counts = [0] * 26\n    for char in text:\n        counts[ord(char) - ord(\"a\")] += 1\n    buffer = [\"\"] * len(text)\n    result = []\n\n    def visit(depth):\n        if depth == len(buffer):\n            result.append(\"\".join(buffer))\n            return\n        for letter in range(26):\n            if counts[letter]:\n                counts[letter] -= 1\n                buffer[depth] = chr(ord(\"a\") + letter)\n                visit(depth + 1)\n                counts[letter] += 1\n\n    visit(0)\n    return result\n"
+      },
+      "cpp": {
+        "signature": "std::vector<std::string> PermutationsWithDuplicates(const std::string& text)",
+        "starterCode": "class Solution {\n public:\n  std::vector<std::string> PermutationsWithDuplicates(const std::string& text) {\n    return {};\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  std::vector<std::string> PermutationsWithDuplicates(const std::string& text) {\n    std::array<int, 26> counts{};\n    for (char c : text)\n      ++counts[c - 'a'];\n    std::string buffer(text.size(), ' ');\n    std::vector<std::string> result;\n    std::function<void(int)> visit = [&](int depth) {\n      if (depth == static_cast<int>(buffer.size())) {\n        result.push_back(buffer);\n        return;\n      }\n      for (int letter = 0; letter < 26; ++letter) {\n        if (counts[letter] > 0) {\n          --counts[letter];\n          buffer[depth] = static_cast<char>('a' + letter);\n          visit(depth + 1);\n          ++counts[letter];\n        }\n      }\n    };\n    visit(0);\n    return result;\n  }\n};\n"
+      },
+      "java": {
+        "signature": "List<String> PermutationsWithDuplicates(String text)",
+        "starterCode": "class Solution {\n  public List<String> PermutationsWithDuplicates(String text) {\n    return new ArrayList<>();\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public List<String> PermutationsWithDuplicates(String text) {\n    int[] counts = new int[26];\n    for (char c : text.toCharArray())\n      ++counts[c - 'a'];\n    char[] buffer = new char[text.length()];\n    List<String> result = new ArrayList<>();\n    class Search {\n      void Visit(int depth) {\n        if (depth == buffer.length) {\n          result.add(new String(buffer));\n          return;\n        }\n        for (int letter = 0; letter < 26; ++letter) {\n          if (counts[letter] > 0) {\n            --counts[letter];\n            buffer[depth] = (char) ('a' + letter);\n            Visit(depth + 1);\n            ++counts[letter];\n          }\n        }\n      }\n    }\n    new Search().Visit(0);\n    return result;\n  }\n}\n"
+      }
+    }
+  },
+  {
+    "ref": "8.9",
+    "method": "GenerateParentheses",
+    "params": [
+      [
+        "pairs",
+        "i"
+      ]
+    ],
+    "result": "strings",
+    "mutation": "none",
+    "description": "Return every balanced string containing exactly pairs opening parentheses and pairs closing parentheses, exactly once. Output order is unrestricted. A prefix must never contain more closing than opening parentheses.",
+    "constraints": [
+      "0 <= pairs <= 8. Only the two characters ( and ) are used. Return one empty string for zero pairs.",
+      "Every output has length 2*pairs and is properly balanced, and there are no repeated outputs. This is generation of all strings, not a count or validation of one supplied string.",
+      "Return the concrete lists/vectors in the selected callable signature: a List in C#/Java, an Array in JavaScript, a list in Python, or a vector in C++. A generator or iterator alone is not the return value. "
+    ],
+    "why": "Construct only prefixes that can still become balanced. Add an opening parenthesis while some remain; add a closing one only when it closes an already-open unmatched parenthesis. Pruning invalid prefixes prevents generating arbitrary strings just to reject them afterward.",
+    "correctness": "The recursion tracks numbers opened and closed. Its rules maintain 0 <= closed <= opened <= pairs, so no generated prefix is invalid. Reaching 2*pairs characters forces both counts to equal pairs and yields a balanced string. Conversely, every balanced string obeys these same prefix bounds, so its next character is an available branch at every depth. It is therefore generated exactly once along its unique character-choice path.",
+    "walkthrough": "For two pairs, start with (. The next opening choice leads to (( and then (()), while the next closing choice leads to () and then ()(). Starting with ) is never explored because it would close nothing. The two results are (()) and ()().",
+    "example": [
+      [
+        2
+      ],
+      [
+        "(())",
+        "()()"
+      ]
+    ],
+    "time": "O(p*C_p) time including copying outputs, where C_p is the number of balanced strings with p pairs (the pth Catalan number).",
+    "space": "O(p) buffer/recursion workspace, excluding O(p*C_p) returned characters.",
+    "edges": [
+      "Zero and one pair.",
+      "Nesting and adjacent groups must both appear.",
+      "Eight pairs yields 1430 unique balanced strings; prefixes that close too early are invalid."
+    ],
+    "related": "A parentheses validator or a Catalan-number counter does not generate the required collection of strings.",
+    "id": "ctci6_8_9",
+    "title": "Parens",
+    "testCount": 9,
+    "languages": {
+      "csharp": {
+        "signature": "List<string> GenerateParentheses(int pairs)",
+        "starterCode": "public class Solution\n{\n    public List<string> GenerateParentheses(int pairs)\n    {\n        return [];\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public List<string> GenerateParentheses(int pairs)\n    {\n        char[] buffer = new char[2 * pairs];\n        var result = new List<string>();\n        void Visit(int opened, int closed)\n        {\n            int position = opened + closed;\n            if (position == buffer.Length)\n            {\n                result.Add(new string(buffer));\n                return;\n            }\n            if (opened < pairs)\n            {\n                buffer[position] = '(';\n                Visit(opened + 1, closed);\n            }\n            if (closed < opened)\n            {\n                buffer[position] = ')';\n                Visit(opened, closed + 1);\n            }\n        }\n        Visit(0, 0);\n        return result;\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function GenerateParentheses(pairs)",
+        "starterCode": "function GenerateParentheses(pairs) {\n  return [];\n}\n",
+        "solutionCode": "function GenerateParentheses(pairs) {\n  const buffer = Array(2 * pairs),\n    result = [];\n  function visit(opened, closed) {\n    const position = opened + closed;\n    if (position === buffer.length) {\n      result.push(buffer.join(\"\"));\n      return;\n    }\n    if (opened < pairs) {\n      buffer[position] = \"(\";\n      visit(opened + 1, closed);\n    }\n    if (closed < opened) {\n      buffer[position] = \")\";\n      visit(opened, closed + 1);\n    }\n  }\n  visit(0, 0);\n  return result;\n}\n"
+      },
+      "python": {
+        "signature": "def GenerateParentheses(pairs: int) -> list[str]",
+        "starterCode": "def GenerateParentheses(pairs: int) -> list[str]:\n    return []\n",
+        "solutionCode": "def GenerateParentheses(pairs: int) -> list[str]:\n    buffer = [\"\"] * (2 * pairs)\n    result = []\n\n    def visit(opened, closed):\n        position = opened + closed\n        if position == len(buffer):\n            result.append(\"\".join(buffer))\n            return\n        if opened < pairs:\n            buffer[position] = \"(\"\n            visit(opened + 1, closed)\n        if closed < opened:\n            buffer[position] = \")\"\n            visit(opened, closed + 1)\n\n    visit(0, 0)\n    return result\n"
+      },
+      "cpp": {
+        "signature": "std::vector<std::string> GenerateParentheses(int pairs)",
+        "starterCode": "class Solution {\n public:\n  std::vector<std::string> GenerateParentheses(int pairs) {\n    return {};\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  std::vector<std::string> GenerateParentheses(int pairs) {\n    std::string buffer(2 * pairs, ' ');\n    std::vector<std::string> result;\n    std::function<void(int, int)> visit = [&](int opened, int closed) {\n      int position = opened + closed;\n      if (position == static_cast<int>(buffer.size())) {\n        result.push_back(buffer);\n        return;\n      }\n      if (opened < pairs) {\n        buffer[position] = '(';\n        visit(opened + 1, closed);\n      }\n      if (closed < opened) {\n        buffer[position] = ')';\n        visit(opened, closed + 1);\n      }\n    };\n    visit(0, 0);\n    return result;\n  }\n};\n"
+      },
+      "java": {
+        "signature": "List<String> GenerateParentheses(int pairs)",
+        "starterCode": "class Solution {\n  public List<String> GenerateParentheses(int pairs) {\n    return new ArrayList<>();\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public List<String> GenerateParentheses(int pairs) {\n    char[] buffer = new char[2 * pairs];\n    List<String> result = new ArrayList<>();\n    class Search {\n      void Visit(int opened, int closed) {\n        int position = opened + closed;\n        if (position == buffer.length) {\n          result.add(new String(buffer));\n          return;\n        }\n        if (opened < pairs) {\n          buffer[position] = '(';\n          Visit(opened + 1, closed);\n        }\n        if (closed < opened) {\n          buffer[position] = ')';\n          Visit(opened, closed + 1);\n        }\n      }\n    }\n    new Search().Visit(0, 0);\n    return result;\n  }\n}\n"
       }
     }
   },

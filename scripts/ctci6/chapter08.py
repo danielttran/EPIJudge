@@ -74,3 +74,116 @@ SPECS = [
         related="Minimum-coin change and ordered coin-sequence counting have different objectives and recurrences.",
     ),
 ]
+
+SPECS += [
+    dict(
+        ref="8.4",
+        method="PowerSet",
+        params=[("values", "ai")],
+        result="sets",
+        mutation="none",
+        description="Return every subset of the set represented by values, including the empty set and the entire set, exactly once. Return a collection of integer collections. The outer order and the element order inside each subset are unrestricted.",
+        constraints=[
+            "values contains 0..12 distinct signed 32-bit integers. Equal values are not admitted; each input element represents one set member.",
+            "Do not modify the input. Every returned subset must contain only input members, with no repeated member. Different orders of the same members are the same subset, not different answers. For an empty input return one empty subset, not an empty outer collection.",
+            "Examples show one deterministic valid ordering; the judge accepts all valid orders.",
+        ],
+        why="When a new set member arrives, every resulting subset either excludes it or includes it. Keep the existing subsets for the first group and make one independent copy with the new member appended for the second group. Snapshot the old subset count so newly created subsets are not processed again in that same pass.",
+        correctness="Initially the result contains precisely the empty set, all subsets of zero processed members. Inductively, existing subsets are exactly the subsets that exclude the next distinct member. Appending that member to a copy of each old subset gives exactly those that include it. The groups are disjoint, and the copy mapping is one-to-one, so no subset is omitted or repeated. Copying before appending preserves the old subsets and the original input.",
+        walkthrough="Starting with [[]], process 3 to obtain [[],[3]]. Then process 1: keep those two subsets and append independent copies [1] and [3,1]. All four subsets appear once. Appending to the original [3] object instead of a copy would corrupt an already completed subset.",
+        example=([[3, 1]], [[], [3], [1], [3, 1]]),
+        time="O(n*2^n) time to construct the output for n distinct members.",
+        space="O(n*2^n) total returned storage; each copied subset has at most n members. No recursive stack is used.",
+        edges=[
+            "Empty input and one member.",
+            "Negative and extreme signed values; input order need not be sorted.",
+            "All 4096 subsets at the admitted maximum size, without duplicates or input mutation.",
+        ],
+        related="Existing subset algorithms require a domain/order/mutation comparison before aliasing; this reference retains its own explicit set-valued grading contract.",
+    ),
+    dict(
+        ref="8.7",
+        method="PermutationsDistinct",
+        params=[("text", "s")],
+        result="strings",
+        mutation="none",
+        description="Return every permutation of text exactly once. Input characters are all distinct, so different choices of which character occupies a position produce different strings. Output order is unrestricted.",
+        constraints=[
+            "text contains 0..8 distinct lowercase ASCII English letters a..z. It is nonnull. Preserve the input.",
+            "Return one empty string for the empty input. Every result has the same length and characters as text; there must be no repeated result. Examples display one valid ordering, and any output order is accepted.",
+        ],
+        why="Fix one output position at a time. Swap each remaining character into that position, recursively arrange the suffix, then undo the swap. Distinct characters make these branches disjoint, so no deduplication set is needed.",
+        correctness="At recursion depth d, the prefix contains d distinct chosen input characters and the remaining suffix contains exactly the unchosen ones. Swapping each suffix position into d enumerates every possible next character once. Induction on remaining length therefore gives every arrangement of the suffix once for each unique prefix. At full depth, copying the character buffer captures one completed permutation. Restoring the swap preserves the parent state for the next branch.",
+        walkthrough="For ab, fix a first and emit ab; undo that choice, fix b first and emit ba. For abc, the a-first branch emits abc and acb before the b-first and c-first branches. Restoring swaps is what lets each later branch start from the correct unchosen characters.",
+        example=(["ab"], ["ab", "ba"]),
+        time="O(n*n!) time including construction of every length-n output string.",
+        space="O(n) workspace and recursion depth, excluding O(n*n!) returned character storage.",
+        edges=[
+            "Empty text gives one empty permutation.",
+            "One character and unsorted distinct input.",
+            "Length eight produces all 40320 distinct outputs.",
+        ],
+        related="The duplicate-aware permutation exercise has different branching and uniqueness requirements and is retained separately.",
+    ),
+    dict(
+        ref="8.8",
+        method="PermutationsWithDuplicates",
+        params=[("text", "s")],
+        result="strings",
+        mutation="none",
+        description="Return every DISTINCT permutation of text exactly once, even when equal characters occur multiple times. Equal copies of a letter are indistinguishable. Output order is unrestricted.",
+        constraints=[
+            "text contains 0..8 lowercase ASCII English letters a..z and is nonnull. Repeated letters are allowed; all-distinct input is also valid. Preserve the input.",
+            "Every result uses each letter exactly as many times as text. Return one empty string for empty input. Returning duplicate strings and relying on the caller to deduplicate is incorrect.",
+        ],
+        why="Choose the next letter by its remaining frequency, rather than by the identity of one equal input occurrence. This combines equal-occurrence branches before they generate duplicate strings. Decrement before descent and restore afterward so sibling branches see the original remaining counts.",
+        correctness="At depth d, the character counts describe exactly the multiset not yet placed in the output prefix. A branch exists once for each letter with a positive remaining count and consumes exactly one copy. Thus every emitted string has the required multiplicities. Any valid permutation has a unique next letter at each depth, so it follows exactly one branch sequence and is emitted once. Restoring each count maintains the invariant for later choices.",
+        walkthrough="For aab, the first choice is a or b, not first-a versus second-a. Choosing a leaves counts a:1,b:1 and yields aab or aba; choosing b leaves a:2 and yields baa. Three strings are returned, rather than six occurrence-labeled branches containing duplicates.",
+        example=(["aab"], ["aab", "aba", "baa"]),
+        time="O(26*n*U), hence O(n*U) for this fixed alphabet, where U=n! divided by the product of each letter-count factorial. The bound includes prefix traversal and copied output strings.",
+        space="O(n+26) workspace/recursion storage, excluding O(n*U) returned character storage.",
+        edges=[
+            "All letters equal, mixed multiplicities and all-distinct text.",
+            "Empty text and the maximum input length.",
+            "Repeated outputs or missing multiplicities are rejected irrespective of output order.",
+        ],
+        related="The distinct-character permutation exercise cannot simply enumerate occurrence permutations without duplicate-aware branching.",
+    ),
+    dict(
+        ref="8.9",
+        method="GenerateParentheses",
+        params=[("pairs", "i")],
+        result="strings",
+        mutation="none",
+        description="Return every balanced string containing exactly pairs opening parentheses and pairs closing parentheses, exactly once. Output order is unrestricted. A prefix must never contain more closing than opening parentheses.",
+        constraints=[
+            "0 <= pairs <= 8. Only the two characters ( and ) are used. Return one empty string for zero pairs.",
+            "Every output has length 2*pairs and is properly balanced, and there are no repeated outputs. This is generation of all strings, not a count or validation of one supplied string.",
+        ],
+        why="Construct only prefixes that can still become balanced. Add an opening parenthesis while some remain; add a closing one only when it closes an already-open unmatched parenthesis. Pruning invalid prefixes prevents generating arbitrary strings just to reject them afterward.",
+        correctness="The recursion tracks numbers opened and closed. Its rules maintain 0 <= closed <= opened <= pairs, so no generated prefix is invalid. Reaching 2*pairs characters forces both counts to equal pairs and yields a balanced string. Conversely, every balanced string obeys these same prefix bounds, so its next character is an available branch at every depth. It is therefore generated exactly once along its unique character-choice path.",
+        walkthrough="For two pairs, start with (. The next opening choice leads to (( and then (()), while the next closing choice leads to () and then ()(). Starting with ) is never explored because it would close nothing. The two results are (()) and ()().",
+        example=([2], ["(())", "()()"]),
+        time="O(p*C_p) time including copying outputs, where C_p is the number of balanced strings with p pairs (the pth Catalan number).",
+        space="O(p) buffer/recursion workspace, excluding O(p*C_p) returned characters.",
+        edges=[
+            "Zero and one pair.",
+            "Nesting and adjacent groups must both appear.",
+            "Eight pairs yields 1430 unique balanced strings; prefixes that close too early are invalid.",
+        ],
+        related="A parentheses validator or a Catalan-number counter does not generate the required collection of strings.",
+    ),
+]
+SPECS.sort(key=lambda spec: tuple(map(int, spec["ref"].split("."))))
+
+for _spec in SPECS:
+    if _spec["ref"] in ("8.4", "8.7", "8.8", "8.9"):
+        _spec["constraints"].append(
+            "Return the concrete lists/vectors in the selected callable signature: a List in C#/Java, an Array in JavaScript, a list in Python, or a vector in C++. A generator or iterator alone is not the return value. "
+        )
+
+for _spec in SPECS:
+    if _spec["ref"] == "8.4":
+        _spec["constraints"].append(
+            "Each returned subset is a concrete integer list/vector as well; both levels must be materialized."
+        )

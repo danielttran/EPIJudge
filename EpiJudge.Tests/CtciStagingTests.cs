@@ -21,7 +21,7 @@ public sealed class CtciStagingTests
     {
         Assert.DoesNotContain(new ProblemCatalog().Problems, problem => problem.Collection == "ctci6");
         var staged = CtciStagingCatalog.Load(Root);
-        Assert.Equal(33, staged.Count);
+        Assert.Equal(37, staged.Count);
         Assert.All(staged, definition => Assert.Equal(5, definition.Languages.Count));
     }
 
@@ -51,6 +51,39 @@ public sealed class CtciStagingTests
     {
         var entry = Definition("1.1").Callable("csharp") with { Filename = filename };
         Assert.Throws<ArgumentException>(() => CallableCodeCatalog.PrepareCallable(entry, entry.SolutionCode));
+    }
+
+    [Fact]
+    public void PowerSetAcceptsBothKindsOfReorderingButRejectsDuplicateSubsets()
+    {
+        var test = Case([new[] { 3, 1 }], new int[][] { [], [3], [1], [3, 1] });
+        var definition = Definition("8.4");
+        Assert.Null(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new int[][] { [1, 3], [1], [], [3] }, mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new int[][] { [], [3], [1], [3, 1], [1, 3] }, mutationOk = true })));
+    }
+
+    [Theory]
+    [InlineData("8.7")]
+    [InlineData("8.8")]
+    [InlineData("8.9")]
+    public void StringEnumerationsAcceptAnyOrderButRejectRepeatedOrMissingResults(string reference)
+    {
+        var definition = Definition(reference);
+        var test = definition.Tests(Root, true)[0];
+        var values = test.Expected.EnumerateArray().Select(value => value.GetString()!).Reverse().ToArray();
+        Assert.Null(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = values, mutationOk = true })));
+        values[1] = values[0];
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = values, mutationOk = true })));
+    }
+
+    [Fact]
+    public void SetGradingRejectsInputMutationAndBooleanMembers()
+    {
+        var definition = Definition("8.4");
+        var test = Case([new[] { 1 }], new int[][] { [], [1] });
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new int[][] { [], [1] }, mutationOk = false })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new object[][] { [], [true] }, mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new long[][] { [], [long.MaxValue] }, mutationOk = true })));
     }
 
     [Fact]

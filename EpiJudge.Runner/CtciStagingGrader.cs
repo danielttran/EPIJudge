@@ -8,7 +8,8 @@ public static class CtciStagingGrader
 {
     private static bool Equal(JsonElement first, JsonElement second) => JsonElement.DeepEquals(first, second);
     private static JsonElement Encode<T>(T value) => JsonSerializer.SerializeToElement(value);
-    private static int[] Integers(JsonElement value) => value.EnumerateArray().Select(v => v.GetInt32()).ToArray();
+    private static int[] Integers(JsonElement value) => value.EnumerateArray().Select(v =>
+        v.ValueKind == JsonValueKind.Number && v.TryGetInt32(out int number) ? number : throw new ArgumentException("Return signed 32-bit integer members.")).ToArray();
 
     private static int?[][] InputGraph(CtciStagingDefinition definition, TestCase test)
     {
@@ -33,12 +34,39 @@ public static class CtciStagingGrader
         return nodes.ToArray();
     }
 
+    private static string[] CanonicalCollection(string result, JsonElement values)
+    {
+        if (values.ValueKind != JsonValueKind.Array) throw new ArgumentException("Return a collection.");
+        var canonical = new List<string>();
+        foreach (var value in values.EnumerateArray())
+        {
+            if (result == "strings")
+            {
+                if (value.ValueKind != JsonValueKind.String) throw new ArgumentException("Return strings.");
+                canonical.Add(value.GetString()!);
+            }
+            else
+            {
+                var members = Integers(value);
+                if (members.Distinct().Count() != members.Length) throw new ArgumentException("A subset cannot repeat a member.");
+                canonical.Add(JsonSerializer.Serialize(members.Order().ToArray()));
+            }
+        }
+        return canonical.Order(StringComparer.Ordinal).ToArray();
+    }
+
     public static string? FailureReason(CtciStagingDefinition definition, TestCase test, JsonElement observed)
     {
         try
         {
             if (observed.ValueKind != JsonValueKind.Object || observed.TryGetProperty("error", out var error) && error.ValueKind != JsonValueKind.Null)
                 return "Your code did not finish this case successfully.";
+            if (definition.Batch == 8 && definition.Result is "sets" or "strings")
+            {
+                if (observed.GetProperty("mutationOk").ValueKind != JsonValueKind.True) return "Preserve the input and return the collection type in the selected signature.";
+                return CanonicalCollection(definition.Result, observed.GetProperty("actual")).SequenceEqual(CanonicalCollection(definition.Result, test.Expected), StringComparer.Ordinal)
+                    ? null : "Return every required subset or string exactly once. Output order is unrestricted.";
+            }
             if (definition.Batch is 1 or 3 or 5 or 8)
             {
                 if (observed.GetProperty("mutationOk").ValueKind != JsonValueKind.True)

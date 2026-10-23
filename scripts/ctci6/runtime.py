@@ -13,6 +13,7 @@ import harness02
 import harness03
 import harness05
 import harness08
+import models08
 import models03
 from core import HEADERS, LANGUAGES, ROOT
 from models02 import MODELS, header
@@ -103,10 +104,12 @@ return json{{{{"observation",observed}},{{"elapsedMs",elapsed}}}};
     ).replace("int main()", helper + "int main()", 1)
 
 
-def submission_prefix(batch, language):
-    if batch in (1, 5, 8):
+def submission_prefix(batch, language, reference=None):
+    if batch == 8:
+        return models08.header(reference, language)
+    if batch in (1, 5):
         return HEADERS[language] + (
-            "#include <cstdint>\n" if batch in (5, 8) and language == "cpp" else ""
+            "#include <cstdint>\n" if batch == 5 and language == "cpp" else ""
         )
     if batch == 2:
         return header(language)
@@ -130,7 +133,7 @@ def adapter(entry, language, batch):
     if bank.count(declaration) != 1:
         raise ValueError("Judge source does not contain the exact owned declaration")
     bank = bank.replace(declaration, "", 1).replace(name, "Solution")
-    owned_header = submission_prefix(batch, language)
+    owned_header = submission_prefix(batch, language, entry["ref"])
     if owned_header:
         if bank.count(owned_header) != 1:
             raise ValueError("Judge header does not match its recorded owned header")
@@ -205,7 +208,7 @@ def generate_runtime():
             )
             for language in LANGUAGES:
                 code = entry["languages"][language]
-                prefix = submission_prefix(batch, language)
+                prefix = submission_prefix(batch, language, entry["ref"])
                 exports = (
                     ["LinkedListNode"]
                     if batch == 2

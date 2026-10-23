@@ -2759,6 +2759,98 @@
     }
   },
   {
+    "id": "ctci6_8_4",
+    "ref": "8.4",
+    "title": "Power Set",
+    "description": "Return every subset of the set represented by values, including the empty set and the entire set, exactly once. Return a collection of integer collections. The outer order and the element order inside each subset are unrestricted.",
+    "constraints": [
+      "values contains 0..12 distinct signed 32-bit integers. Equal values are not admitted; each input element represents one set member.",
+      "Do not modify the input. Every returned subset must contain only input members, with no repeated member. Different orders of the same members are the same subset, not different answers. For an empty input return one empty subset, not an empty outer collection.",
+      "Examples show one deterministic valid ordering; the judge accepts all valid orders.",
+      "Return the concrete lists/vectors in the selected callable signature: a List in C#/Java, an Array in JavaScript, a list in Python, or a vector in C++. A generator or iterator alone is not the return value. Each subset is likewise a concrete integer list/vector."
+    ],
+    "method": "PowerSet",
+    "params": [
+      [
+        "values",
+        "ai"
+      ]
+    ],
+    "result": "sets",
+    "mutation": "none",
+    "testCount": 34,
+    "batch": 8,
+    "stagingDirectory": "staged08",
+    "example": [
+      [
+        [
+          3,
+          1
+        ]
+      ],
+      [
+        [],
+        [
+          3
+        ],
+        [
+          1
+        ],
+        [
+          3,
+          1
+        ]
+      ]
+    ],
+    "languages": {
+      "csharp": {
+        "signature": "List<List<int>> PowerSet(int[] values)",
+        "starterCode": "public class Solution\n{\n    public List<List<int>> PowerSet(int[] values)\n    {\n        return [];\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public List<List<int>> PowerSet(int[] values)\n    {\n        var result = new List<List<int>> { new() };\n        foreach (int value in values)\n        {\n            int original = result.Count;\n            for (int i = 0; i < original; ++i)\n            {\n                var subset = new List<int>(result[i]);\n                subset.Add(value);\n                result.Add(subset);\n            }\n        }\n        return result;\n    }\n}\n",
+        "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\n",
+        "suffix": "",
+        "harness": "using System;\nusing System.Collections.Generic;\nusing System.Text;\nusing System.IO;\nusing System.Text.Json;\n\nclass Harness {\nstatic object Invoke(JsonElement row){string reference=row.GetProperty(\"ref\").GetString()!;var args=row.GetProperty(\"arguments\");throw new Exception(\"Unknown reference\");}\nstatic object Execute(JsonElement row){if(row.GetProperty(\"ref\").GetString()==\"8.4\"){var values=row.GetProperty(\"arguments\")[0].EnumerateArray().Select(v=>v.GetInt32()).ToArray();var before=values.ToArray();var actual=new Solution().PowerSet(values);return new {actual,mutationOk=values.SequenceEqual(before)};}return new {actual=Invoke(row),mutationOk=true};}\nstatic object TimedExecute(JsonElement row) {\nvar clock=System.Diagnostics.Stopwatch.StartNew();object observed;\ntry { observed=Execute(row); } catch(Exception error) { observed=new {error=error.ToString()}; }\nreturn new {observation=observed,elapsedMs=clock.Elapsed.TotalMilliseconds};\n}\nstatic void Main(){using var document=JsonDocument.Parse(File.ReadAllText(\"cases.json\"));var results=new List<object>();foreach(var row in document.RootElement.EnumerateArray()){try{results.Add(TimedExecute(row));}catch(Exception error){results.Add(new {error=error.ToString()});}}File.WriteAllText(\"results.json\",JsonSerializer.Serialize(results));}\n}\n",
+        "reference": ""
+      },
+      "javascript": {
+        "signature": "function PowerSet(values)",
+        "starterCode": "function PowerSet(values) {\n  return [];\n}\n",
+        "solutionCode": "function PowerSet(values) {\n  const result = [[]];\n  for (const value of values) {\n    const original = result.length;\n    for (let i = 0; i < original; ++i) result.push([...result[i], value]);\n  }\n  return result;\n}\n",
+        "prefix": "'use strict';\n",
+        "suffix": "\nmodule.exports = {PowerSet};\n",
+        "harness": "const user = require('./solution.js');\nconst PowerSet = user.PowerSet;\n\nconst fs=require('node:fs'),kinds={\"8.4\": \"sets\"};\nfunction invoke(row){const ref=row.ref,args=row.arguments;if(ref===\"8.4\")return PowerSet(...args);throw new Error('Unknown reference');}\nfunction execute(row){if(row.ref==='8.4'){const values=row.arguments[0].slice(),before=values.slice(),actual=invoke({ref:row.ref,arguments:[values]});return {actual,mutationOk:values.length===before.length&&values.every((v,i)=>v===before[i])};}\nconst actual=invoke(row);return {actual,mutationOk:kinds[row.ref]==='strings'?Array.isArray(actual)&&actual.every(v=>typeof v==='string'):Number.isInteger(actual)&&actual>=-2147483648&&actual<=2147483647};}\nconst results=JSON.parse(fs.readFileSync('cases.json','utf8')).map(timed(row=>{try{return execute(row);}catch(error){return {error:String(error)};}}));\nfs.writeFileSync('results.json',JSON.stringify(results));\n\nfunction timed(fn) { return row => { const start=performance.now(); let observation; try { observation=fn(row); } catch(error) { observation={error:String(error)}; } return {observation,elapsedMs:performance.now()-start}; }; }\n",
+        "reference": ""
+      },
+      "python": {
+        "signature": "def PowerSet(values: list[int]) -> list[list[int]]",
+        "starterCode": "def PowerSet(values: list[int]) -> list[list[int]]:\n    return []\n",
+        "solutionCode": "def PowerSet(values: list[int]) -> list[list[int]]:\n    result = [[]]\n    for value in values:\n        original = len(result)\n        for index in range(original):\n            result.append(result[index] + [value])\n    return result\n",
+        "prefix": "",
+        "suffix": "",
+        "harness": "import time\nimport solution as user\nPowerSet = user.PowerSet\n\nimport json\nKINDS={'8.4': 'sets'}\ndef invoke(row):\n    ref,args=row['ref'],row['arguments']\n    if ref == '8.4': return PowerSet(*args)\n    raise ValueError('Unknown reference')\ndef execute(row):\n    if row['ref']=='8.4':\n        values=row['arguments'][0].copy();before=values.copy()\n        actual=invoke(dict(ref=row['ref'],arguments=[values]))\n        return dict(actual=actual,mutationOk=len(values)==len(before) and all(type(v) is int and v==before[i] for i,v in enumerate(values)))\n    actual=invoke(row);kind=KINDS[row['ref']]\n    valid=type(actual) is list and all(type(v) is str for v in actual) if kind=='strings' else type(actual) is int and -2147483648<=actual<=2147483647\n    return dict(actual=actual,mutationOk=valid)\nresults=[]\nfor row in json.load(open('cases.json',encoding='utf-8')):\n    clock = time.perf_counter()\n    try:results.append(execute(row))\n    except Exception as error:results.append(dict(error=repr(error)))\n    results[-1] = dict(observation=results[-1], elapsedMs=(time.perf_counter()-clock)*1000)\njson.dump(results,open('results.json','w',encoding='utf-8'))\n",
+        "reference": ""
+      },
+      "cpp": {
+        "signature": "std::vector<std::vector<int>> PowerSet(const std::vector<int>& values)",
+        "starterCode": "class Solution {\n public:\n  std::vector<std::vector<int>> PowerSet(const std::vector<int>& values) {\n    return {};\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  std::vector<std::vector<int>> PowerSet(const std::vector<int>& values) {\n    std::vector<std::vector<int>> result(1);\n    for (int value : values) {\n      auto original = result.size();\n      for (std::size_t i = 0; i < original; ++i) {\n        auto subset = result[i];\n        subset.push_back(value);\n        result.push_back(std::move(subset));\n      }\n    }\n    return result;\n  }\n};\n",
+        "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n",
+        "suffix": "",
+        "harness": "#include <chrono>\n#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include \"solution.cpp\"\n#include <fstream>\n#include \"test_framework/json.h\"\nusing json=nlohmann::json;\n\njson invoke(const json& row){std::string reference=row[\"ref\"].get<std::string>();const auto& args=row[\"arguments\"];throw std::runtime_error(\"Unknown reference\");}\njson execute(const json& row){if(row[\"ref\"]==\"8.4\"){auto values=row[\"arguments\"][0].get<std::vector<int>>();auto before=values;auto actual=Solution().PowerSet(values);return json{{\"actual\",actual},{\"mutationOk\",values==before}};}return json{{\"actual\",invoke(row)},{\"mutationOk\",true}};}\njson timedExecute(const json& row) {\nauto start=std::chrono::steady_clock::now();json observed;\ntry { observed=execute(row); } catch(const std::exception& error) { observed=json{{\"error\",error.what()}}; }\ndouble elapsed=std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-start).count();\nreturn json{{\"observation\",observed},{\"elapsedMs\",elapsed}};\n}\nint main(){std::ifstream input(\"cases.json\");json rows;input>>rows;json results=json::array();for(const auto& row:rows){try{results.push_back(timedExecute(row));}catch(const std::exception& error){results.push_back(json{{\"error\",error.what()}});}}std::ofstream(\"results.json\")<<results;}\n",
+        "reference": ""
+      },
+      "java": {
+        "signature": "List<List<Integer>> PowerSet(int[] values)",
+        "starterCode": "class Solution {\n  public List<List<Integer>> PowerSet(int[] values) {\n    return new ArrayList<>();\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public List<List<Integer>> PowerSet(int[] values) {\n    List<List<Integer>> result = new ArrayList<>();\n    result.add(new ArrayList<>());\n    for (int value : values) {\n      int original = result.size();\n      for (int i = 0; i < original; ++i) {\n        var subset = new ArrayList<>(result.get(i));\n        subset.add(value);\n        result.add(subset);\n      }\n    }\n    return result;\n  }\n}\n",
+        "prefix": "import java.util.*;\n",
+        "suffix": "",
+        "harness": "import java.util.*;\nimport java.nio.file.*;\nimport epi.test_framework.minimal_json.*;\n\npublic class Harness {\nstatic JsonValue invoke(JsonObject row){String reference=row.get(\"ref\").asString();var args=row.get(\"arguments\").asArray();throw new RuntimeException(\"Unknown reference\");}\nstatic JsonValue execute(JsonObject row){if(row.get(\"ref\").asString().equals(\"8.4\")){var raw=row.get(\"arguments\").asArray().get(0).asArray();int[] values=new int[raw.size()];for(int i=0;i<values.length;++i)values[i]=raw.get(i).asInt();int[] before=values.clone();var actual=new Solution().PowerSet(values);var output=new JsonArray();for(var subset:actual){var entry=new JsonArray();for(int value:subset)entry.add(value);output.add(entry);}return new JsonObject().add(\"actual\",output).add(\"mutationOk\",Arrays.equals(values,before));}return new JsonObject().add(\"actual\",invoke(row)).add(\"mutationOk\",true);}\nstatic JsonValue timedExecute(JsonObject row) {\nlong start=System.nanoTime();JsonValue observed;\ntry { observed=execute(row); } catch(Throwable error) { observed=new JsonObject().add(\"error\",error.toString()); }\nreturn new JsonObject().add(\"observation\",observed).add(\"elapsedMs\",(System.nanoTime()-start)/1000000.0);\n}\npublic static void main(String[] ignored)throws Exception{var results=new JsonArray();for(var row:Json.parse(Files.readString(Path.of(\"cases.json\"))).asArray()){try{results.add(timedExecute(row.asObject()));}catch(Throwable error){results.add(new JsonObject().add(\"error\",error.toString()));}}Files.writeString(Path.of(\"results.json\"),results.toString());}\n}\n",
+        "reference": ""
+      }
+    }
+  },
+  {
     "id": "ctci6_8_5",
     "ref": "8.5",
     "title": "Recursive Multiply",
@@ -2834,6 +2926,244 @@
         "prefix": "import java.util.*;\n",
         "suffix": "",
         "harness": "import java.util.*;\nimport java.nio.file.*;\nimport epi.test_framework.minimal_json.*;\n\npublic class Harness {\nstatic JsonValue invoke(JsonObject row){String reference=row.get(\"ref\").asString();var args=row.get(\"arguments\").asArray();if (reference.equals(\"8.5\")) return Json.value(new Solution().RecursiveMultiply(args.get(0).asInt(),args.get(1).asInt()));throw new RuntimeException(\"Unknown reference\");}\nstatic JsonValue execute(JsonObject row){return new JsonObject().add(\"actual\",invoke(row)).add(\"mutationOk\",true);}\nstatic JsonValue timedExecute(JsonObject row) {\nlong start=System.nanoTime();JsonValue observed;\ntry { observed=execute(row); } catch(Throwable error) { observed=new JsonObject().add(\"error\",error.toString()); }\nreturn new JsonObject().add(\"observation\",observed).add(\"elapsedMs\",(System.nanoTime()-start)/1000000.0);\n}\npublic static void main(String[] ignored)throws Exception{var results=new JsonArray();for(var row:Json.parse(Files.readString(Path.of(\"cases.json\"))).asArray()){try{results.add(timedExecute(row.asObject()));}catch(Throwable error){results.add(new JsonObject().add(\"error\",error.toString()));}}Files.writeString(Path.of(\"results.json\"),results.toString());}\n}\n",
+        "reference": ""
+      }
+    }
+  },
+  {
+    "id": "ctci6_8_7",
+    "ref": "8.7",
+    "title": "Permutations Without Dups",
+    "description": "Return every permutation of text exactly once. Input characters are all distinct, so different choices of which character occupies a position produce different strings. Output order is unrestricted.",
+    "constraints": [
+      "text contains 0..8 distinct lowercase ASCII English letters a..z. It is nonnull. Preserve the input.",
+      "Return one empty string for the empty input. Every result has the same length and characters as text; there must be no repeated result. Examples display one valid ordering, and any output order is accepted.",
+      "Return the concrete lists/vectors in the selected callable signature: a List in C#/Java, an Array in JavaScript, a list in Python, or a vector in C++. A generator or iterator alone is not the return value. Each subset is likewise a concrete integer list/vector."
+    ],
+    "method": "PermutationsDistinct",
+    "params": [
+      [
+        "text",
+        "s"
+      ]
+    ],
+    "result": "strings",
+    "mutation": "none",
+    "testCount": 26,
+    "batch": 8,
+    "stagingDirectory": "staged08",
+    "example": [
+      [
+        "ab"
+      ],
+      [
+        "ab",
+        "ba"
+      ]
+    ],
+    "languages": {
+      "csharp": {
+        "signature": "List<string> PermutationsDistinct(string text)",
+        "starterCode": "public class Solution\n{\n    public List<string> PermutationsDistinct(string text)\n    {\n        return [];\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public List<string> PermutationsDistinct(string text)\n    {\n        char[] chars = text.ToCharArray();\n        var result = new List<string>();\n        void Visit(int depth)\n        {\n            if (depth == chars.Length)\n            {\n                result.Add(new string(chars));\n                return;\n            }\n            for (int i = depth; i < chars.Length; ++i)\n            {\n                char temporary = chars[depth];\n                chars[depth] = chars[i];\n                chars[i] = temporary;\n                Visit(depth + 1);\n                temporary = chars[depth];\n                chars[depth] = chars[i];\n                chars[i] = temporary;\n            }\n        }\n        Visit(0);\n        return result;\n    }\n}\n",
+        "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\n",
+        "suffix": "",
+        "harness": "using System;\nusing System.Collections.Generic;\nusing System.Text;\nusing System.IO;\nusing System.Text.Json;\n\nclass Harness {\nstatic object Invoke(JsonElement row){string reference=row.GetProperty(\"ref\").GetString()!;var args=row.GetProperty(\"arguments\");if(reference==\"8.7\")return new Solution().PermutationsDistinct(args[0].GetString()!);throw new Exception(\"Unknown reference\");}\nstatic object Execute(JsonElement row){return new {actual=Invoke(row),mutationOk=true};}\nstatic object TimedExecute(JsonElement row) {\nvar clock=System.Diagnostics.Stopwatch.StartNew();object observed;\ntry { observed=Execute(row); } catch(Exception error) { observed=new {error=error.ToString()}; }\nreturn new {observation=observed,elapsedMs=clock.Elapsed.TotalMilliseconds};\n}\nstatic void Main(){using var document=JsonDocument.Parse(File.ReadAllText(\"cases.json\"));var results=new List<object>();foreach(var row in document.RootElement.EnumerateArray()){try{results.Add(TimedExecute(row));}catch(Exception error){results.Add(new {error=error.ToString()});}}File.WriteAllText(\"results.json\",JsonSerializer.Serialize(results));}\n}\n",
+        "reference": ""
+      },
+      "javascript": {
+        "signature": "function PermutationsDistinct(text)",
+        "starterCode": "function PermutationsDistinct(text) {\n  return [];\n}\n",
+        "solutionCode": "function PermutationsDistinct(text) {\n  const chars = Array.from(text),\n    result = [];\n  function visit(depth) {\n    if (depth === chars.length) {\n      result.push(chars.join(\"\"));\n      return;\n    }\n    for (let i = depth; i < chars.length; ++i) {\n      [chars[depth], chars[i]] = [chars[i], chars[depth]];\n      visit(depth + 1);\n      [chars[depth], chars[i]] = [chars[i], chars[depth]];\n    }\n  }\n  visit(0);\n  return result;\n}\n",
+        "prefix": "'use strict';\n",
+        "suffix": "\nmodule.exports = {PermutationsDistinct};\n",
+        "harness": "const user = require('./solution.js');\nconst PermutationsDistinct = user.PermutationsDistinct;\n\nconst fs=require('node:fs'),kinds={\"8.7\": \"strings\"};\nfunction invoke(row){const ref=row.ref,args=row.arguments;if(ref===\"8.7\")return PermutationsDistinct(...args);throw new Error('Unknown reference');}\nfunction execute(row){if(row.ref==='8.4'){const values=row.arguments[0].slice(),before=values.slice(),actual=invoke({ref:row.ref,arguments:[values]});return {actual,mutationOk:values.length===before.length&&values.every((v,i)=>v===before[i])};}\nconst actual=invoke(row);return {actual,mutationOk:kinds[row.ref]==='strings'?Array.isArray(actual)&&actual.every(v=>typeof v==='string'):Number.isInteger(actual)&&actual>=-2147483648&&actual<=2147483647};}\nconst results=JSON.parse(fs.readFileSync('cases.json','utf8')).map(timed(row=>{try{return execute(row);}catch(error){return {error:String(error)};}}));\nfs.writeFileSync('results.json',JSON.stringify(results));\n\nfunction timed(fn) { return row => { const start=performance.now(); let observation; try { observation=fn(row); } catch(error) { observation={error:String(error)}; } return {observation,elapsedMs:performance.now()-start}; }; }\n",
+        "reference": ""
+      },
+      "python": {
+        "signature": "def PermutationsDistinct(text: str) -> list[str]",
+        "starterCode": "def PermutationsDistinct(text: str) -> list[str]:\n    return []\n",
+        "solutionCode": "def PermutationsDistinct(text: str) -> list[str]:\n    chars = list(text)\n    result = []\n\n    def visit(depth):\n        if depth == len(chars):\n            result.append(\"\".join(chars))\n            return\n        for index in range(depth, len(chars)):\n            chars[depth], chars[index] = chars[index], chars[depth]\n            visit(depth + 1)\n            chars[depth], chars[index] = chars[index], chars[depth]\n\n    visit(0)\n    return result\n",
+        "prefix": "",
+        "suffix": "",
+        "harness": "import time\nimport solution as user\nPermutationsDistinct = user.PermutationsDistinct\n\nimport json\nKINDS={'8.7': 'strings'}\ndef invoke(row):\n    ref,args=row['ref'],row['arguments']\n    if ref == '8.7': return PermutationsDistinct(*args)\n    raise ValueError('Unknown reference')\ndef execute(row):\n    if row['ref']=='8.4':\n        values=row['arguments'][0].copy();before=values.copy()\n        actual=invoke(dict(ref=row['ref'],arguments=[values]))\n        return dict(actual=actual,mutationOk=len(values)==len(before) and all(type(v) is int and v==before[i] for i,v in enumerate(values)))\n    actual=invoke(row);kind=KINDS[row['ref']]\n    valid=type(actual) is list and all(type(v) is str for v in actual) if kind=='strings' else type(actual) is int and -2147483648<=actual<=2147483647\n    return dict(actual=actual,mutationOk=valid)\nresults=[]\nfor row in json.load(open('cases.json',encoding='utf-8')):\n    clock = time.perf_counter()\n    try:results.append(execute(row))\n    except Exception as error:results.append(dict(error=repr(error)))\n    results[-1] = dict(observation=results[-1], elapsedMs=(time.perf_counter()-clock)*1000)\njson.dump(results,open('results.json','w',encoding='utf-8'))\n",
+        "reference": ""
+      },
+      "cpp": {
+        "signature": "std::vector<std::string> PermutationsDistinct(const std::string& text)",
+        "starterCode": "class Solution {\n public:\n  std::vector<std::string> PermutationsDistinct(const std::string& text) {\n    return {};\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  std::vector<std::string> PermutationsDistinct(const std::string& text) {\n    std::string chars = text;\n    std::vector<std::string> result;\n    std::function<void(int)> visit = [&](int depth) {\n      if (depth == static_cast<int>(chars.size())) {\n        result.push_back(chars);\n        return;\n      }\n      for (int i = depth; i < static_cast<int>(chars.size()); ++i) {\n        char temporary = chars[depth];\n        chars[depth] = chars[i];\n        chars[i] = temporary;\n        visit(depth + 1);\n        temporary = chars[depth];\n        chars[depth] = chars[i];\n        chars[i] = temporary;\n      }\n    };\n    visit(0);\n    return result;\n  }\n};\n",
+        "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n",
+        "suffix": "",
+        "harness": "#include <chrono>\n#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include \"solution.cpp\"\n#include <fstream>\n#include \"test_framework/json.h\"\nusing json=nlohmann::json;\n\njson invoke(const json& row){std::string reference=row[\"ref\"].get<std::string>();const auto& args=row[\"arguments\"];if(reference==\"8.7\")return Solution().PermutationsDistinct(args[0].get<std::string>());throw std::runtime_error(\"Unknown reference\");}\njson execute(const json& row){return json{{\"actual\",invoke(row)},{\"mutationOk\",true}};}\njson timedExecute(const json& row) {\nauto start=std::chrono::steady_clock::now();json observed;\ntry { observed=execute(row); } catch(const std::exception& error) { observed=json{{\"error\",error.what()}}; }\ndouble elapsed=std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-start).count();\nreturn json{{\"observation\",observed},{\"elapsedMs\",elapsed}};\n}\nint main(){std::ifstream input(\"cases.json\");json rows;input>>rows;json results=json::array();for(const auto& row:rows){try{results.push_back(timedExecute(row));}catch(const std::exception& error){results.push_back(json{{\"error\",error.what()}});}}std::ofstream(\"results.json\")<<results;}\n",
+        "reference": ""
+      },
+      "java": {
+        "signature": "List<String> PermutationsDistinct(String text)",
+        "starterCode": "class Solution {\n  public List<String> PermutationsDistinct(String text) {\n    return new ArrayList<>();\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public List<String> PermutationsDistinct(String text) {\n    char[] chars = text.toCharArray();\n    List<String> result = new ArrayList<>();\n    class Search {\n      void Visit(int depth) {\n        if (depth == chars.length) {\n          result.add(new String(chars));\n          return;\n        }\n        for (int i = depth; i < chars.length; ++i) {\n          char temporary = chars[depth];\n          chars[depth] = chars[i];\n          chars[i] = temporary;\n          Visit(depth + 1);\n          temporary = chars[depth];\n          chars[depth] = chars[i];\n          chars[i] = temporary;\n        }\n      }\n    }\n    new Search().Visit(0);\n    return result;\n  }\n}\n",
+        "prefix": "import java.util.*;\n",
+        "suffix": "",
+        "harness": "import java.util.*;\nimport java.nio.file.*;\nimport epi.test_framework.minimal_json.*;\n\npublic class Harness {\nstatic JsonValue invoke(JsonObject row){String reference=row.get(\"ref\").asString();var args=row.get(\"arguments\").asArray();if(reference.equals(\"8.7\")){var actual=new Solution().PermutationsDistinct(args.get(0).asString());var output=new JsonArray();for(String value:actual)output.add(value);return output;}throw new RuntimeException(\"Unknown reference\");}\nstatic JsonValue execute(JsonObject row){return new JsonObject().add(\"actual\",invoke(row)).add(\"mutationOk\",true);}\nstatic JsonValue timedExecute(JsonObject row) {\nlong start=System.nanoTime();JsonValue observed;\ntry { observed=execute(row); } catch(Throwable error) { observed=new JsonObject().add(\"error\",error.toString()); }\nreturn new JsonObject().add(\"observation\",observed).add(\"elapsedMs\",(System.nanoTime()-start)/1000000.0);\n}\npublic static void main(String[] ignored)throws Exception{var results=new JsonArray();for(var row:Json.parse(Files.readString(Path.of(\"cases.json\"))).asArray()){try{results.add(timedExecute(row.asObject()));}catch(Throwable error){results.add(new JsonObject().add(\"error\",error.toString()));}}Files.writeString(Path.of(\"results.json\"),results.toString());}\n}\n",
+        "reference": ""
+      }
+    }
+  },
+  {
+    "id": "ctci6_8_8",
+    "ref": "8.8",
+    "title": "Permutations With Dups",
+    "description": "Return every DISTINCT permutation of text exactly once, even when equal characters occur multiple times. Equal copies of a letter are indistinguishable. Output order is unrestricted.",
+    "constraints": [
+      "text contains 0..8 lowercase ASCII English letters a..z and is nonnull. Repeated letters are allowed; all-distinct input is also valid. Preserve the input.",
+      "Every result uses each letter exactly as many times as text. Return one empty string for empty input. Returning duplicate strings and relying on the caller to deduplicate is incorrect.",
+      "Return the concrete lists/vectors in the selected callable signature: a List in C#/Java, an Array in JavaScript, a list in Python, or a vector in C++. A generator or iterator alone is not the return value. Each subset is likewise a concrete integer list/vector."
+    ],
+    "method": "PermutationsWithDuplicates",
+    "params": [
+      [
+        "text",
+        "s"
+      ]
+    ],
+    "result": "strings",
+    "mutation": "none",
+    "testCount": 127,
+    "batch": 8,
+    "stagingDirectory": "staged08",
+    "example": [
+      [
+        "aab"
+      ],
+      [
+        "aab",
+        "aba",
+        "baa"
+      ]
+    ],
+    "languages": {
+      "csharp": {
+        "signature": "List<string> PermutationsWithDuplicates(string text)",
+        "starterCode": "public class Solution\n{\n    public List<string> PermutationsWithDuplicates(string text)\n    {\n        return [];\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public List<string> PermutationsWithDuplicates(string text)\n    {\n        int[] counts = new int[26];\n        foreach (char c in text)\n            ++counts[c - 'a'];\n        char[] buffer = new char[text.Length];\n        var result = new List<string>();\n        void Visit(int depth)\n        {\n            if (depth == buffer.Length)\n            {\n                result.Add(new string(buffer));\n                return;\n            }\n            for (int letter = 0; letter < 26; ++letter)\n            {\n                if (counts[letter] > 0)\n                {\n                    --counts[letter];\n                    buffer[depth] = (char)('a' + letter);\n                    Visit(depth + 1);\n                    ++counts[letter];\n                }\n            }\n        }\n        Visit(0);\n        return result;\n    }\n}\n",
+        "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\n",
+        "suffix": "",
+        "harness": "using System;\nusing System.Collections.Generic;\nusing System.Text;\nusing System.IO;\nusing System.Text.Json;\n\nclass Harness {\nstatic object Invoke(JsonElement row){string reference=row.GetProperty(\"ref\").GetString()!;var args=row.GetProperty(\"arguments\");if(reference==\"8.8\")return new Solution().PermutationsWithDuplicates(args[0].GetString()!);throw new Exception(\"Unknown reference\");}\nstatic object Execute(JsonElement row){return new {actual=Invoke(row),mutationOk=true};}\nstatic object TimedExecute(JsonElement row) {\nvar clock=System.Diagnostics.Stopwatch.StartNew();object observed;\ntry { observed=Execute(row); } catch(Exception error) { observed=new {error=error.ToString()}; }\nreturn new {observation=observed,elapsedMs=clock.Elapsed.TotalMilliseconds};\n}\nstatic void Main(){using var document=JsonDocument.Parse(File.ReadAllText(\"cases.json\"));var results=new List<object>();foreach(var row in document.RootElement.EnumerateArray()){try{results.Add(TimedExecute(row));}catch(Exception error){results.Add(new {error=error.ToString()});}}File.WriteAllText(\"results.json\",JsonSerializer.Serialize(results));}\n}\n",
+        "reference": ""
+      },
+      "javascript": {
+        "signature": "function PermutationsWithDuplicates(text)",
+        "starterCode": "function PermutationsWithDuplicates(text) {\n  return [];\n}\n",
+        "solutionCode": "function PermutationsWithDuplicates(text) {\n  const counts = Array(26).fill(0),\n    buffer = Array(text.length),\n    result = [];\n  for (const char of text) ++counts[char.charCodeAt(0) - 97];\n  function visit(depth) {\n    if (depth === buffer.length) {\n      result.push(buffer.join(\"\"));\n      return;\n    }\n    for (let letter = 0; letter < 26; ++letter) {\n      if (counts[letter] > 0) {\n        --counts[letter];\n        buffer[depth] = String.fromCharCode(97 + letter);\n        visit(depth + 1);\n        ++counts[letter];\n      }\n    }\n  }\n  visit(0);\n  return result;\n}\n",
+        "prefix": "'use strict';\n",
+        "suffix": "\nmodule.exports = {PermutationsWithDuplicates};\n",
+        "harness": "const user = require('./solution.js');\nconst PermutationsWithDuplicates = user.PermutationsWithDuplicates;\n\nconst fs=require('node:fs'),kinds={\"8.8\": \"strings\"};\nfunction invoke(row){const ref=row.ref,args=row.arguments;if(ref===\"8.8\")return PermutationsWithDuplicates(...args);throw new Error('Unknown reference');}\nfunction execute(row){if(row.ref==='8.4'){const values=row.arguments[0].slice(),before=values.slice(),actual=invoke({ref:row.ref,arguments:[values]});return {actual,mutationOk:values.length===before.length&&values.every((v,i)=>v===before[i])};}\nconst actual=invoke(row);return {actual,mutationOk:kinds[row.ref]==='strings'?Array.isArray(actual)&&actual.every(v=>typeof v==='string'):Number.isInteger(actual)&&actual>=-2147483648&&actual<=2147483647};}\nconst results=JSON.parse(fs.readFileSync('cases.json','utf8')).map(timed(row=>{try{return execute(row);}catch(error){return {error:String(error)};}}));\nfs.writeFileSync('results.json',JSON.stringify(results));\n\nfunction timed(fn) { return row => { const start=performance.now(); let observation; try { observation=fn(row); } catch(error) { observation={error:String(error)}; } return {observation,elapsedMs:performance.now()-start}; }; }\n",
+        "reference": ""
+      },
+      "python": {
+        "signature": "def PermutationsWithDuplicates(text: str) -> list[str]",
+        "starterCode": "def PermutationsWithDuplicates(text: str) -> list[str]:\n    return []\n",
+        "solutionCode": "def PermutationsWithDuplicates(text: str) -> list[str]:\n    counts = [0] * 26\n    for char in text:\n        counts[ord(char) - ord(\"a\")] += 1\n    buffer = [\"\"] * len(text)\n    result = []\n\n    def visit(depth):\n        if depth == len(buffer):\n            result.append(\"\".join(buffer))\n            return\n        for letter in range(26):\n            if counts[letter]:\n                counts[letter] -= 1\n                buffer[depth] = chr(ord(\"a\") + letter)\n                visit(depth + 1)\n                counts[letter] += 1\n\n    visit(0)\n    return result\n",
+        "prefix": "",
+        "suffix": "",
+        "harness": "import time\nimport solution as user\nPermutationsWithDuplicates = user.PermutationsWithDuplicates\n\nimport json\nKINDS={'8.8': 'strings'}\ndef invoke(row):\n    ref,args=row['ref'],row['arguments']\n    if ref == '8.8': return PermutationsWithDuplicates(*args)\n    raise ValueError('Unknown reference')\ndef execute(row):\n    if row['ref']=='8.4':\n        values=row['arguments'][0].copy();before=values.copy()\n        actual=invoke(dict(ref=row['ref'],arguments=[values]))\n        return dict(actual=actual,mutationOk=len(values)==len(before) and all(type(v) is int and v==before[i] for i,v in enumerate(values)))\n    actual=invoke(row);kind=KINDS[row['ref']]\n    valid=type(actual) is list and all(type(v) is str for v in actual) if kind=='strings' else type(actual) is int and -2147483648<=actual<=2147483647\n    return dict(actual=actual,mutationOk=valid)\nresults=[]\nfor row in json.load(open('cases.json',encoding='utf-8')):\n    clock = time.perf_counter()\n    try:results.append(execute(row))\n    except Exception as error:results.append(dict(error=repr(error)))\n    results[-1] = dict(observation=results[-1], elapsedMs=(time.perf_counter()-clock)*1000)\njson.dump(results,open('results.json','w',encoding='utf-8'))\n",
+        "reference": ""
+      },
+      "cpp": {
+        "signature": "std::vector<std::string> PermutationsWithDuplicates(const std::string& text)",
+        "starterCode": "class Solution {\n public:\n  std::vector<std::string> PermutationsWithDuplicates(const std::string& text) {\n    return {};\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  std::vector<std::string> PermutationsWithDuplicates(const std::string& text) {\n    std::array<int, 26> counts{};\n    for (char c : text)\n      ++counts[c - 'a'];\n    std::string buffer(text.size(), ' ');\n    std::vector<std::string> result;\n    std::function<void(int)> visit = [&](int depth) {\n      if (depth == static_cast<int>(buffer.size())) {\n        result.push_back(buffer);\n        return;\n      }\n      for (int letter = 0; letter < 26; ++letter) {\n        if (counts[letter] > 0) {\n          --counts[letter];\n          buffer[depth] = static_cast<char>('a' + letter);\n          visit(depth + 1);\n          ++counts[letter];\n        }\n      }\n    };\n    visit(0);\n    return result;\n  }\n};\n",
+        "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n",
+        "suffix": "",
+        "harness": "#include <chrono>\n#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include \"solution.cpp\"\n#include <fstream>\n#include \"test_framework/json.h\"\nusing json=nlohmann::json;\n\njson invoke(const json& row){std::string reference=row[\"ref\"].get<std::string>();const auto& args=row[\"arguments\"];if(reference==\"8.8\")return Solution().PermutationsWithDuplicates(args[0].get<std::string>());throw std::runtime_error(\"Unknown reference\");}\njson execute(const json& row){return json{{\"actual\",invoke(row)},{\"mutationOk\",true}};}\njson timedExecute(const json& row) {\nauto start=std::chrono::steady_clock::now();json observed;\ntry { observed=execute(row); } catch(const std::exception& error) { observed=json{{\"error\",error.what()}}; }\ndouble elapsed=std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-start).count();\nreturn json{{\"observation\",observed},{\"elapsedMs\",elapsed}};\n}\nint main(){std::ifstream input(\"cases.json\");json rows;input>>rows;json results=json::array();for(const auto& row:rows){try{results.push_back(timedExecute(row));}catch(const std::exception& error){results.push_back(json{{\"error\",error.what()}});}}std::ofstream(\"results.json\")<<results;}\n",
+        "reference": ""
+      },
+      "java": {
+        "signature": "List<String> PermutationsWithDuplicates(String text)",
+        "starterCode": "class Solution {\n  public List<String> PermutationsWithDuplicates(String text) {\n    return new ArrayList<>();\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public List<String> PermutationsWithDuplicates(String text) {\n    int[] counts = new int[26];\n    for (char c : text.toCharArray())\n      ++counts[c - 'a'];\n    char[] buffer = new char[text.length()];\n    List<String> result = new ArrayList<>();\n    class Search {\n      void Visit(int depth) {\n        if (depth == buffer.length) {\n          result.add(new String(buffer));\n          return;\n        }\n        for (int letter = 0; letter < 26; ++letter) {\n          if (counts[letter] > 0) {\n            --counts[letter];\n            buffer[depth] = (char) ('a' + letter);\n            Visit(depth + 1);\n            ++counts[letter];\n          }\n        }\n      }\n    }\n    new Search().Visit(0);\n    return result;\n  }\n}\n",
+        "prefix": "import java.util.*;\n",
+        "suffix": "",
+        "harness": "import java.util.*;\nimport java.nio.file.*;\nimport epi.test_framework.minimal_json.*;\n\npublic class Harness {\nstatic JsonValue invoke(JsonObject row){String reference=row.get(\"ref\").asString();var args=row.get(\"arguments\").asArray();if(reference.equals(\"8.8\")){var actual=new Solution().PermutationsWithDuplicates(args.get(0).asString());var output=new JsonArray();for(String value:actual)output.add(value);return output;}throw new RuntimeException(\"Unknown reference\");}\nstatic JsonValue execute(JsonObject row){return new JsonObject().add(\"actual\",invoke(row)).add(\"mutationOk\",true);}\nstatic JsonValue timedExecute(JsonObject row) {\nlong start=System.nanoTime();JsonValue observed;\ntry { observed=execute(row); } catch(Throwable error) { observed=new JsonObject().add(\"error\",error.toString()); }\nreturn new JsonObject().add(\"observation\",observed).add(\"elapsedMs\",(System.nanoTime()-start)/1000000.0);\n}\npublic static void main(String[] ignored)throws Exception{var results=new JsonArray();for(var row:Json.parse(Files.readString(Path.of(\"cases.json\"))).asArray()){try{results.add(timedExecute(row.asObject()));}catch(Throwable error){results.add(new JsonObject().add(\"error\",error.toString()));}}Files.writeString(Path.of(\"results.json\"),results.toString());}\n}\n",
+        "reference": ""
+      }
+    }
+  },
+  {
+    "id": "ctci6_8_9",
+    "ref": "8.9",
+    "title": "Parens",
+    "description": "Return every balanced string containing exactly pairs opening parentheses and pairs closing parentheses, exactly once. Output order is unrestricted. A prefix must never contain more closing than opening parentheses.",
+    "constraints": [
+      "0 <= pairs <= 8. Only the two characters ( and ) are used. Return one empty string for zero pairs.",
+      "Every output has length 2*pairs and is properly balanced, and there are no repeated outputs. This is generation of all strings, not a count or validation of one supplied string.",
+      "Return the concrete lists/vectors in the selected callable signature: a List in C#/Java, an Array in JavaScript, a list in Python, or a vector in C++. A generator or iterator alone is not the return value. Each subset is likewise a concrete integer list/vector."
+    ],
+    "method": "GenerateParentheses",
+    "params": [
+      [
+        "pairs",
+        "i"
+      ]
+    ],
+    "result": "strings",
+    "mutation": "none",
+    "testCount": 9,
+    "batch": 8,
+    "stagingDirectory": "staged08",
+    "example": [
+      [
+        2
+      ],
+      [
+        "(())",
+        "()()"
+      ]
+    ],
+    "languages": {
+      "csharp": {
+        "signature": "List<string> GenerateParentheses(int pairs)",
+        "starterCode": "public class Solution\n{\n    public List<string> GenerateParentheses(int pairs)\n    {\n        return [];\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public List<string> GenerateParentheses(int pairs)\n    {\n        char[] buffer = new char[2 * pairs];\n        var result = new List<string>();\n        void Visit(int opened, int closed)\n        {\n            int position = opened + closed;\n            if (position == buffer.Length)\n            {\n                result.Add(new string(buffer));\n                return;\n            }\n            if (opened < pairs)\n            {\n                buffer[position] = '(';\n                Visit(opened + 1, closed);\n            }\n            if (closed < opened)\n            {\n                buffer[position] = ')';\n                Visit(opened, closed + 1);\n            }\n        }\n        Visit(0, 0);\n        return result;\n    }\n}\n",
+        "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\n",
+        "suffix": "",
+        "harness": "using System;\nusing System.Collections.Generic;\nusing System.Text;\nusing System.IO;\nusing System.Text.Json;\n\nclass Harness {\nstatic object Invoke(JsonElement row){string reference=row.GetProperty(\"ref\").GetString()!;var args=row.GetProperty(\"arguments\");if(reference==\"8.9\")return new Solution().GenerateParentheses(args[0].GetInt32());throw new Exception(\"Unknown reference\");}\nstatic object Execute(JsonElement row){return new {actual=Invoke(row),mutationOk=true};}\nstatic object TimedExecute(JsonElement row) {\nvar clock=System.Diagnostics.Stopwatch.StartNew();object observed;\ntry { observed=Execute(row); } catch(Exception error) { observed=new {error=error.ToString()}; }\nreturn new {observation=observed,elapsedMs=clock.Elapsed.TotalMilliseconds};\n}\nstatic void Main(){using var document=JsonDocument.Parse(File.ReadAllText(\"cases.json\"));var results=new List<object>();foreach(var row in document.RootElement.EnumerateArray()){try{results.Add(TimedExecute(row));}catch(Exception error){results.Add(new {error=error.ToString()});}}File.WriteAllText(\"results.json\",JsonSerializer.Serialize(results));}\n}\n",
+        "reference": ""
+      },
+      "javascript": {
+        "signature": "function GenerateParentheses(pairs)",
+        "starterCode": "function GenerateParentheses(pairs) {\n  return [];\n}\n",
+        "solutionCode": "function GenerateParentheses(pairs) {\n  const buffer = Array(2 * pairs),\n    result = [];\n  function visit(opened, closed) {\n    const position = opened + closed;\n    if (position === buffer.length) {\n      result.push(buffer.join(\"\"));\n      return;\n    }\n    if (opened < pairs) {\n      buffer[position] = \"(\";\n      visit(opened + 1, closed);\n    }\n    if (closed < opened) {\n      buffer[position] = \")\";\n      visit(opened, closed + 1);\n    }\n  }\n  visit(0, 0);\n  return result;\n}\n",
+        "prefix": "'use strict';\n",
+        "suffix": "\nmodule.exports = {GenerateParentheses};\n",
+        "harness": "const user = require('./solution.js');\nconst GenerateParentheses = user.GenerateParentheses;\n\nconst fs=require('node:fs'),kinds={\"8.9\": \"strings\"};\nfunction invoke(row){const ref=row.ref,args=row.arguments;if(ref===\"8.9\")return GenerateParentheses(...args);throw new Error('Unknown reference');}\nfunction execute(row){if(row.ref==='8.4'){const values=row.arguments[0].slice(),before=values.slice(),actual=invoke({ref:row.ref,arguments:[values]});return {actual,mutationOk:values.length===before.length&&values.every((v,i)=>v===before[i])};}\nconst actual=invoke(row);return {actual,mutationOk:kinds[row.ref]==='strings'?Array.isArray(actual)&&actual.every(v=>typeof v==='string'):Number.isInteger(actual)&&actual>=-2147483648&&actual<=2147483647};}\nconst results=JSON.parse(fs.readFileSync('cases.json','utf8')).map(timed(row=>{try{return execute(row);}catch(error){return {error:String(error)};}}));\nfs.writeFileSync('results.json',JSON.stringify(results));\n\nfunction timed(fn) { return row => { const start=performance.now(); let observation; try { observation=fn(row); } catch(error) { observation={error:String(error)}; } return {observation,elapsedMs:performance.now()-start}; }; }\n",
+        "reference": ""
+      },
+      "python": {
+        "signature": "def GenerateParentheses(pairs: int) -> list[str]",
+        "starterCode": "def GenerateParentheses(pairs: int) -> list[str]:\n    return []\n",
+        "solutionCode": "def GenerateParentheses(pairs: int) -> list[str]:\n    buffer = [\"\"] * (2 * pairs)\n    result = []\n\n    def visit(opened, closed):\n        position = opened + closed\n        if position == len(buffer):\n            result.append(\"\".join(buffer))\n            return\n        if opened < pairs:\n            buffer[position] = \"(\"\n            visit(opened + 1, closed)\n        if closed < opened:\n            buffer[position] = \")\"\n            visit(opened, closed + 1)\n\n    visit(0, 0)\n    return result\n",
+        "prefix": "",
+        "suffix": "",
+        "harness": "import time\nimport solution as user\nGenerateParentheses = user.GenerateParentheses\n\nimport json\nKINDS={'8.9': 'strings'}\ndef invoke(row):\n    ref,args=row['ref'],row['arguments']\n    if ref == '8.9': return GenerateParentheses(*args)\n    raise ValueError('Unknown reference')\ndef execute(row):\n    if row['ref']=='8.4':\n        values=row['arguments'][0].copy();before=values.copy()\n        actual=invoke(dict(ref=row['ref'],arguments=[values]))\n        return dict(actual=actual,mutationOk=len(values)==len(before) and all(type(v) is int and v==before[i] for i,v in enumerate(values)))\n    actual=invoke(row);kind=KINDS[row['ref']]\n    valid=type(actual) is list and all(type(v) is str for v in actual) if kind=='strings' else type(actual) is int and -2147483648<=actual<=2147483647\n    return dict(actual=actual,mutationOk=valid)\nresults=[]\nfor row in json.load(open('cases.json',encoding='utf-8')):\n    clock = time.perf_counter()\n    try:results.append(execute(row))\n    except Exception as error:results.append(dict(error=repr(error)))\n    results[-1] = dict(observation=results[-1], elapsedMs=(time.perf_counter()-clock)*1000)\njson.dump(results,open('results.json','w',encoding='utf-8'))\n",
+        "reference": ""
+      },
+      "cpp": {
+        "signature": "std::vector<std::string> GenerateParentheses(int pairs)",
+        "starterCode": "class Solution {\n public:\n  std::vector<std::string> GenerateParentheses(int pairs) {\n    return {};\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  std::vector<std::string> GenerateParentheses(int pairs) {\n    std::string buffer(2 * pairs, ' ');\n    std::vector<std::string> result;\n    std::function<void(int, int)> visit = [&](int opened, int closed) {\n      int position = opened + closed;\n      if (position == static_cast<int>(buffer.size())) {\n        result.push_back(buffer);\n        return;\n      }\n      if (opened < pairs) {\n        buffer[position] = '(';\n        visit(opened + 1, closed);\n      }\n      if (closed < opened) {\n        buffer[position] = ')';\n        visit(opened, closed + 1);\n      }\n    };\n    visit(0, 0);\n    return result;\n  }\n};\n",
+        "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n",
+        "suffix": "",
+        "harness": "#include <chrono>\n#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include \"solution.cpp\"\n#include <fstream>\n#include \"test_framework/json.h\"\nusing json=nlohmann::json;\n\njson invoke(const json& row){std::string reference=row[\"ref\"].get<std::string>();const auto& args=row[\"arguments\"];if(reference==\"8.9\")return Solution().GenerateParentheses(args[0].get<int>());throw std::runtime_error(\"Unknown reference\");}\njson execute(const json& row){return json{{\"actual\",invoke(row)},{\"mutationOk\",true}};}\njson timedExecute(const json& row) {\nauto start=std::chrono::steady_clock::now();json observed;\ntry { observed=execute(row); } catch(const std::exception& error) { observed=json{{\"error\",error.what()}}; }\ndouble elapsed=std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-start).count();\nreturn json{{\"observation\",observed},{\"elapsedMs\",elapsed}};\n}\nint main(){std::ifstream input(\"cases.json\");json rows;input>>rows;json results=json::array();for(const auto& row:rows){try{results.push_back(timedExecute(row));}catch(const std::exception& error){results.push_back(json{{\"error\",error.what()}});}}std::ofstream(\"results.json\")<<results;}\n",
+        "reference": ""
+      },
+      "java": {
+        "signature": "List<String> GenerateParentheses(int pairs)",
+        "starterCode": "class Solution {\n  public List<String> GenerateParentheses(int pairs) {\n    return new ArrayList<>();\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public List<String> GenerateParentheses(int pairs) {\n    char[] buffer = new char[2 * pairs];\n    List<String> result = new ArrayList<>();\n    class Search {\n      void Visit(int opened, int closed) {\n        int position = opened + closed;\n        if (position == buffer.length) {\n          result.add(new String(buffer));\n          return;\n        }\n        if (opened < pairs) {\n          buffer[position] = '(';\n          Visit(opened + 1, closed);\n        }\n        if (closed < opened) {\n          buffer[position] = ')';\n          Visit(opened, closed + 1);\n        }\n      }\n    }\n    new Search().Visit(0, 0);\n    return result;\n  }\n}\n",
+        "prefix": "import java.util.*;\n",
+        "suffix": "",
+        "harness": "import java.util.*;\nimport java.nio.file.*;\nimport epi.test_framework.minimal_json.*;\n\npublic class Harness {\nstatic JsonValue invoke(JsonObject row){String reference=row.get(\"ref\").asString();var args=row.get(\"arguments\").asArray();if(reference.equals(\"8.9\")){var actual=new Solution().GenerateParentheses(args.get(0).asInt());var output=new JsonArray();for(String value:actual)output.add(value);return output;}throw new RuntimeException(\"Unknown reference\");}\nstatic JsonValue execute(JsonObject row){return new JsonObject().add(\"actual\",invoke(row)).add(\"mutationOk\",true);}\nstatic JsonValue timedExecute(JsonObject row) {\nlong start=System.nanoTime();JsonValue observed;\ntry { observed=execute(row); } catch(Throwable error) { observed=new JsonObject().add(\"error\",error.toString()); }\nreturn new JsonObject().add(\"observation\",observed).add(\"elapsedMs\",(System.nanoTime()-start)/1000000.0);\n}\npublic static void main(String[] ignored)throws Exception{var results=new JsonArray();for(var row:Json.parse(Files.readString(Path.of(\"cases.json\"))).asArray()){try{results.add(timedExecute(row.asObject()));}catch(Throwable error){results.add(new JsonObject().add(\"error\",error.toString()));}}Files.writeString(Path.of(\"results.json\"),results.toString());}\n}\n",
         "reference": ""
       }
     }

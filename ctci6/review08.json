@@ -1,23 +1,79 @@
 {
-  "stage":"standalone-authoring-and-separate-module",
-  "liveIntegration":"pending",
-  "reviewScope":"Only Triple Step, Recursive Multiply and Coins: three actual contracts and fifteen language bodies, with independent references and boundary corpora. The other eleven chapter-eight exercises remain pending.",
-  "questions":[
-    {"ref":"8.1","algorithm":"Iterate the three-term last-hop recurrence while retaining only the three preceding counts.","review":"Counts ordered hop sequences, including the empty route for zero. Negative signed inputs return zero before a loop or allocation. Every steps value through 36 is executed, including the largest signed-safe result 2082876103. No two-hop staircase function is substituted.","complexity":"O(steps) time for nonnegative inputs and O(1) space match every rolling-state implementation; no recursive stack or memo array is claimed."},
-    {"ref":"8.5","algorithm":"Recursively multiply the halved smaller operand once, double that partial result by addition, and add the larger operand for an odd smaller operand.","review":"All five actual bodies use no multiplication or division operation. Their recursive call reduces the smaller operand and computes one half only. Zero, odd/even values, swapped arguments, every pair 0..31 and the maximum product are covered. Every intermediate sum stays within the admitted exact signed result range."},
-    {"ref":"8.11","algorithm":"Denomination-first one-dimensional combination DP, increasing amounts within each denomination pass.","review":"The fixed denominations are 1,5,10,25 cents. Empty amount counts once. The loop nesting counts unordered combinations with unlimited reuse, not sequences or minimum coins. The independent oracle enumerates quarter and dime counts and directly counts feasible nickel/penny choices. The admitted maximum is executed in all five languages.","complexity":"O(4*amount) time and O(amount) storage match the actual DP arrays. Counts are exact, not reduced modulo another number."}
+  "stage": "standalone-authoring-and-separate-module",
+  "liveIntegration": "pending",
+  "reviewScope": "Seven chapter-eight coding exercises, thirty-five actual language bodies, typed concrete collection contracts, input preservation and order-insensitive completeness grading. Seven other chapter-eight exercises remain pending.",
+  "questions": [
+    {
+      "ref": "8.1",
+      "algorithm": "Iterate the three-term last-hop recurrence while retaining only the three preceding counts.",
+      "review": "Counts ordered hop sequences, including the empty route for zero. Negative signed inputs return zero before a loop or allocation. Every steps value through 36 is executed, including the largest signed-safe result 2082876103. No two-hop staircase function is substituted.",
+      "complexity": "O(steps) time for nonnegative inputs and O(1) space match every rolling-state implementation; no recursive stack or memo array is claimed."
+    },
+    {
+      "ref": "8.4",
+      "algorithm": "Iteratively double the subset collection by appending independent copies with the next distinct member.",
+      "review": "All languages snapshot the previous subset count, copy each old subset, and preserve the caller input. Both outer ordering and within-subset order are accepted by the independent property grader. Duplicate subsets and duplicate members fail; empty input produces one empty subset. Python mutation observation distinguishes an integer from an equal-valued bool."
+    },
+    {
+      "ref": "8.5",
+      "algorithm": "Recursively multiply the halved smaller operand once, double that partial result by addition, and add the larger operand for an odd smaller operand.",
+      "review": "All five actual bodies use no multiplication or division operation. Their recursive call reduces the smaller operand and computes one half only. Zero, odd/even values, swapped arguments, every pair 0..31 and the maximum product are covered. Every intermediate sum stays within the admitted exact signed result range."
+    },
+    {
+      "ref": "8.7",
+      "algorithm": "Swap each remaining character into the next fixed position, recurse, then restore the swap.",
+      "review": "The ASCII/distinct-character domain makes branches disjoint. Every emitted string copies the current character buffer. The empty permutation and all 40320 outputs at length eight are executed; no sorted output order is required."
+    },
+    {
+      "ref": "8.8",
+      "algorithm": "Backtrack by remaining letter frequencies rather than by equal input occurrences.",
+      "review": "Every language decrements before descent and restores afterward, with a fresh length-n buffer and 26 counters per call. Equal copies never form separate branches. Multiplicities, all-equal input, all-distinct input and empty input are covered, and duplicate returned strings fail."
+    },
+    {
+      "ref": "8.9",
+      "algorithm": "Backtrack only valid prefixes using opened/closed counts.",
+      "review": "Opening is bounded by the requested pair count, and closing is permitted only when it matches an unmatched opening. Complete buffers are copied to returned strings. All pair counts zero through eight are executed and checked against an independent arbitrary-string enumeration oracle, including all 1430 outputs for eight pairs."
+    },
+    {
+      "ref": "8.11",
+      "algorithm": "Denomination-first one-dimensional combination DP, increasing amounts within each denomination pass.",
+      "review": "The fixed denominations are 1,5,10,25 cents. Empty amount counts once. The loop nesting counts unordered combinations with unlimited reuse, not sequences or minimum coins. The independent oracle enumerates quarter and dime counts and directly counts feasible nickel/penny choices. The admitted maximum is executed in all five languages.",
+      "complexity": "O(4*amount) time and O(amount) storage match the actual DP arrays. Counts are exact, not reduced modulo another number."
+    }
   ],
-  "languagesReviewed":["csharp","javascript","python","cpp","java"],
-  "languageBindingReview":{
-    "csharp":"Signed int bounds are justified by the explicit domains and executed endpoints. Arrays are zero-initialized, ways[0] is set before the denomination passes, and recursive multiplication uses ordinary method self-calls without hidden helper state.",
-    "javascript":"All results and intermediate sums stay below signed 32-bit maximum and therefore are exact Numbers. The smaller multiplication operand is below 2^16, making its unsigned right shift well-defined for this domain. Each call creates its own DP array.",
-    "python":"The recursive function's module-global name refers to itself even when invoked through the exported adapter alias. Rolling assignment evaluates previous values before rebinding. Arbitrary-size ints do not mask another language's overflow because shared admitted bounds are verified.",
-    "cpp":"vector<int> zero-initializes the coin counts; std::array enumerates the four denominations. The recursive method calls itself on a strictly smaller nonnegative operand, and all signed additions remain in range. Primitive parameters are passed by value.",
-    "java":"int arithmetic is exact within the admitted count/product bounds. The recurrence and coin arrays are local to each invocation; no static cached result leaks across tests. Recursive multiplication calls the same instance method with reduced arguments."
+  "languagesReviewed": [
+    "csharp",
+    "javascript",
+    "python",
+    "cpp",
+    "java"
+  ],
+  "languageBindingReview": {
+    "csharp": "Signed int bounds are justified by the explicit domains and executed endpoints. Arrays are zero-initialized, ways[0] is set before the denomination passes, and recursive multiplication uses ordinary method self-calls without hidden helper state. Collection outputs use concrete Lists. Local recursive functions copy char buffers into immutable strings; the set grader canonicalizes member/outer ordering and rejects boolean or oversized integer members without an exception.",
+    "javascript": "All results and intermediate sums stay below signed 32-bit maximum and therefore are exact Numbers. The smaller multiplication operand is below 2^16, making its unsigned right shift well-defined for this domain. Each call creates its own DP array. Destructuring swaps restore the exact original character order before siblings. Returned values are real Arrays; input mutation checks use strict scalar equality. Frequency counts and parentheses counters remain local to each invocation.",
+    "python": "The recursive function's module-global name refers to itself even when invoked through the exported adapter alias. Rolling assignment evaluates previous values before rebinding. Arbitrary-size ints do not mask another language's overflow because shared admitted bounds are verified. Subsets and string collections must be concrete lists. Input snapshot checks require exact int elements, catching bool substitution despite Python equality. Every returned string is joined from the full buffer at a leaf.",
+    "cpp": "vector<int> zero-initializes the coin counts; std::array enumerates the four denominations. The recursive method calls itself on a strictly smaller nonnegative operand, and all signed additions remain in range. Primitive parameters are passed by value. const references protect scalar-array and string inputs. std::function recursion captures local buffers/results by reference and is invoked only while they live. Subset copies are moved into the result after construction; outer-vector growth does not invalidate an in-use source reference.",
+    "java": "int arithmetic is exact within the admitted count/product bounds. The recurrence and coin arrays are local to each invocation; no static cached result leaks across tests. Recursive multiplication calls the same instance method with reduced arguments. Local Search classes capture effectively-final buffer/result references. Mutation of array contents is intentional workspace use, while each output string is copied. Boxed integer subset values are encoded by value; input int arrays are compared against untouched snapshots."
   },
-  "executionEvidence":"staged08/validation.json",
-  "submissionEvidence":"runtime/validation.json",
-  "graderRegressions":"scripts/ctci6/test_dp08.py",
-  "remainingChapterReferences":["8.2","8.3","8.4","8.6","8.7","8.8","8.9","8.10","8.12","8.13","8.14"],
-  "remainingAcceptance":["selected application-format checks","remaining collection content and classifications","live integration","final whole-bank execution and browser audit","push and exact-commit CI"]
+  "executionEvidence": "staged08/validation.json",
+  "submissionEvidence": "runtime/validation.json",
+  "graderRegressions": [
+    "scripts/ctci6/test_dp08.py",
+    "scripts/ctci6/test_combinatorial08.py"
+  ],
+  "remainingChapterReferences": [
+    "8.2",
+    "8.3",
+    "8.6",
+    "8.10",
+    "8.12",
+    "8.13",
+    "8.14"
+  ],
+  "remainingAcceptance": [
+    "remaining collection content and classifications",
+    "live integration",
+    "final whole-bank execution and browser audit",
+    "push and exact-commit CI"
+  ]
 }
