@@ -19,6 +19,8 @@ def audit(publication=False):
     if references != sorted(references, key=lambda s: tuple(map(int, s.split(".")))):
         raise ValueError("CtCI inventory order differs from chapter/problem order")
     for row in rows:
+        if row["classification"] not in {"coding", "conceptual", "design", "algorithm-candidate", "coding-candidate", "classification-pending"}:
+            raise ValueError("Unreviewed classification: " + row["ref"])
         if (
             row["ref"] != f"{row['chapter']}.{row['number']}"
             or not row["title"].strip()
@@ -145,6 +147,8 @@ def audit(publication=False):
             if row["variant"] == "starter" and row["outcome"] == "rejected"
         }
         languages = set(review["languagesReviewed"])
+        if languages != {"csharp", "javascript", "python", "cpp", "java"}:
+            raise ValueError("Every coding review must cover the five supported languages")
         expected = {(ref, language) for ref in staged_refs for language in languages}
         if (
             batch_executed != expected
@@ -200,6 +204,29 @@ def audit(publication=False):
         "stagedLanguageSolutions"
     ] != len(executed):
         raise ValueError("Staged scope totals are stale")
+    def current_evidence(filename, status):
+        path = ROOT / "ctci6" / filename
+        if not path.is_file():
+            return False
+        document = json.loads(path.read_text())
+        hashes = document.get("sourceHashes", {})
+        return document.get("status") == status and bool(hashes) and all(
+            (ROOT / name).is_file()
+            and hashlib.sha256((ROOT / name).read_bytes()).hexdigest().lower() == value.lower()
+            for name, value in hashes.items()
+        )
+
+    pending = [row["ref"] for row in rows if row["classification"] in ("algorithm-candidate", "coding-candidate")]
+    bank_current = current_evidence("whole-bank-validation.json", "passed-current-registered-bank")
+    integration_current = current_evidence("integration-validation.json", "passed-current-registered-bank-integration")
+    remaining = []
+    if pending:
+        remaining.append("Verified faithful coding contracts/platform support: " + ", ".join(pending))
+    if not bank_current:
+        remaining.append("Current whole-bank application-callable execution evidence")
+    if not integration_current:
+        remaining.append("Current integration and rendered audit evidence")
+    ready = not remaining and len(rows) == inventory["advertisedQuestions"] and not scope["requiresIndividualClassification"]
     result = dict(
         inventoryIntegrity="passed",
         identifiedReferences=len(rows),
@@ -207,14 +234,18 @@ def audit(publication=False):
         explicitStatementReviews=len(reviewed),
         standaloneValidatedPairs=len(executed),
         liveCtciExercises=scope["liveExercises"],
-        publicationReady=False,
-        pendingCodingReferences=[row["ref"] for row in rows if row["classification"] in ("algorithm-candidate", "coding-candidate")],
-        remaining="Verified detailed specifications/platform support for pending coding references, final whole-bank application execution, final rendered audit, and publication with exact-commit CI.",
+        publicationReady=ready,
+        wholeBankCallableEvidence="passed-current" if bank_current else "missing-or-stale",
+        integrationAndRenderedEvidence="passed-current" if integration_current else "missing-or-stale",
+        pendingCodingReferences=pending,
+        remaining=remaining,
+        publicationStatus="Not pushed; exact-commit CI is checked after an accepted publication.",
     )
     print(json.dumps(result, indent=2))
-    if publication:
+    if publication and not ready:
         raise ValueError(
-            "CtCI publication acceptance is incomplete; structural inventory integrity is not semantic review or live execution coverage."
+            "CtCI publication acceptance is incomplete: " + "; ".join(remaining)
+            + ". Structural inventory integrity is not semantic review or live execution coverage."
         )
 
 

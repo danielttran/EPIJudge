@@ -32,15 +32,24 @@ review. Language-specific algorithms are explained individually. Existing simila
 bank questions retain separate collection references rather than silently replacing
 these tasks.
 
-At the current checkpoint, native standalone and separate-module runs each cover
-**655 solutions / 993,970 solution case executions**, with **655 rejected starters**
-and the same number of starter case observations. This is actual execution.
-Structural inventory/catalog checks do not grant semantic review or execution
-credit. Receipt reuse requires matching submitted source, harness, cases, actual
-grader and toolchain fingerprints. The final application-callable run is tracked
-separately in `.epi-runs/ctci6-callable-final131/`; its results must be reconciled
-against final source before publication. Original-bank receipts are reused only
-where current per-pair fingerprints match; changed cases are reexecuted.
+Native standalone and separate-module runs each cover **655 solutions /
+993,970 solution case executions**, with **655 rejected starters** and the same
+number of starter case observations. Final application-callable acceptance covers
+**all 2,325 solutions and 2,325 rejected starters in the 465-problem bank**, with
+**3,042,305 case observations per role**. `whole-bank-validation.json` joins actual
+receipts to current code, composed source, notes, corpus and harness fingerprints.
+Original unchanged receipts are reused; the changed overlap wrapper/notes and
+corrected boundary fixtures have fresh runs. All 655 CTCI pairs execute through
+application wrappers. Two Tail snippets changed during visual review and have
+fresh replacement receipts rather than restarting unchanged completed work.
+
+All 1,670 original-bank worked examples and 1,670 original-bank boundary groups
+pass separately (3,815 boundary cases). Every CTCI worked example belongs to its
+actually executed complete corpus, which includes its authored boundary coverage.
+The receipt correlator preserves JSON types and input arguments while allowing a
+double output to be displayed as `5` or `5.0`; five regressions protect that check.
+Structural inventory/catalog checks never grant semantic review or execution
+credit. Native/module receipt reuse also binds the actual grader and toolchain.
 
 Last K Lines (12.1) reads an actual native temporary file in every language. Blank
 lines are records, EOF is separate, and the final LF is not an extra blank line.
@@ -50,15 +59,21 @@ come from reviewing actual streaming code, not a claim of measured process heap.
 Other resource, identity, randomness and native-worker observers have separate
 regression receipts and explain their measured scope.
 
-All 329 backend tests pass at this checkpoint. Frontend/build/browser results and
-final whole-bank application runs are tracked in `checkpoint.json` as they finish.
-The Solution tab's independent language dropdown is immediately above the code;
-code, explanation and trace switch together while editable drafts remain intact.
-The existing theme and local formatter features remain integrated.
+All **329 backend tests**, **247 frontend tests**, production frontend and web
+builds pass. The browser audit covers **365 scenes / 929 checks**, both themes,
+all five languages, desktop/mobile and 200% zoom. `integration-validation.json`
+records exact sources and the limited Tail metadata delta reaudited after the
+initial generic run; earlier receipt hashes are retained rather than rewritten.
+Manual visual inspection found and fixed Python's close/materialize explanation,
+then confirmed readable code, focus, scrolling and unclipped controls.
+The independent Solution language dropdown sits immediately above code; code,
+explanation and trace switch together while editable drafts remain intact.
 
 Reproduction uses `scripts/ctci6/audit.py` for evidence integrity,
 `verify_runtime.py --starters` for fingerprinted submitted modules, the chapter
 verifiers for standalone authoring, targeted `test_*` grader regressions, and
 `scripts/SolutionsAudit` for actual displayed application-callable corpus runs.
-The audit's publication gate remains closed while the eight candidate contracts
-and final integrated acceptance are incomplete. No CTCI changes have been pushed.
+The audit's publication gate remains closed for the eight pending candidate
+contracts. Registered-bank execution and rendered acceptance are complete. No
+CTCI changes have been pushed; remote master was verified at
+`65af1869ed4be12f60158668525e7246880c1747`.
