@@ -18,7 +18,7 @@ def callable_entry(row, language):
     source = row["languages"][language]
     names = [
         name
-        for name in ("LinkedListNode", "IntStack", "Animal", "BankError", "Listy", "TreeNode", "DepthLink", "BitArray", "BiNode")
+        for name in ("LinkedListNode", "IntStack", "Animal", "BankError", "Listy", "TreeNode", "DepthLink", "BitArray", "BiNode", "NumberFile")
         if re.search(r"\b" + name + r"\b", source["reference"])
     ]
     references = (

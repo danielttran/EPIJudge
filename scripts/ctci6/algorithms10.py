@@ -210,3 +210,37 @@ return result'''
     if language=='csharp':return 'public class RankTracker {private sealed class Node {public int Value,LeftCount;public Node? Left,Right;public Node(int value){Value=value;}}private Node? root;public RankTracker(){}public void Track(int value){if(root==null){root=new Node(value);return;}Node node=root;while(true){if(value<=node.Value){++node.LeftCount;if(node.Left==null){node.Left=new Node(value);return;}node=node.Left;}else{if(node.Right==null){node.Right=new Node(value);return;}node=node.Right;}}}public int GetRank(int value){Node? node=root;int skipped=0;while(node!=null){if(value==node.Value)return skipped+node.LeftCount;if(value<node.Value)node=node.Left;else{skipped+=node.LeftCount+1;node=node.Right;}}return -1;}}'
     if language=='java':return 'class RankTracker {private static class Node {int value,leftCount;Node left,right;Node(int value){this.value=value;}}private Node root;public RankTracker(){}public void Track(int value){if(root==null){root=new Node(value);return;}Node node=root;while(true){if(value<=node.value){++node.leftCount;if(node.left==null){node.left=new Node(value);return;}node=node.left;}else{if(node.right==null){node.right=new Node(value);return;}node=node.right;}}}public int GetRank(int value){Node node=root;int skipped=0;while(node!=null){if(value==node.value)return skipped+node.leftCount;if(value<node.value)node=node.left;else{skipped+=node.leftCount+1;node=node.right;}}return -1;}}'
     return '#include <memory>\nclass RankTracker {struct Node {int value,leftCount=0;std::unique_ptr<Node> left,right;explicit Node(int value):value(value){}};std::unique_ptr<Node> root;public:RankTracker()=default;void Track(int value){if(!root){root=std::make_unique<Node>(value);return;}Node* node=root.get();while(true){if(value<=node->value){++node->leftCount;if(!node->left){node->left=std::make_unique<Node>(value);return;}node=node->left.get();}else{if(!node->right){node->right=std::make_unique<Node>(value);return;}node=node->right.get();}}}int GetRank(int value){Node* node=root.get();int skipped=0;while(node){if(value==node->value)return skipped+node->leftCount;if(value<node->value)node=node->left.get();else{skipped+=node->leftCount+1;node=node->right.get();}}return -1;}};'
+
+_previous_file_body=body
+
+def body(ref,language):
+    if ref!='10.7':return _previous_file_body(ref,language)
+    if language=='python':return '''block = 0
+if smallMemory:
+    counts = [0]*2048
+    while True:
+        value = file.ReadNext()
+        if value == -1:
+            break
+        counts[value >> 20] += 1
+    while counts[block] == 1 << 20:
+        block += 1
+    file.Reset()
+bitmap = bytearray((1 << 17) if smallMemory else (1 << 28))
+while True:
+    value = file.ReadNext()
+    if value == -1:
+        break
+    if not smallMemory or value >> 20 == block:
+        offset = value & ((1 << 20)-1) if smallMemory else value
+        bitmap[offset >> 3] |= 1 << (offset & 7)
+for index, byte in enumerate(bitmap):
+    if byte != 255:
+        for bit in range(8):
+            if byte & (1 << bit) == 0:
+                return (block << 20) + (index << 3) + bit
+return -1'''
+    if language=='javascript':return 'let block=0;if(smallMemory){const counts=new Uint32Array(2048);for(let value;(value=file.ReadNext())!==-1;)++counts[value>>>20];while(counts[block]===(1<<20))++block;file.Reset();}const bitmap=new Uint8Array(smallMemory?1<<17:1<<28);for(let value;(value=file.ReadNext())!==-1;)if(!smallMemory||(value>>>20)===block){const offset=smallMemory?value&((1<<20)-1):value;bitmap[offset>>>3]|=1<<(offset&7);}for(let index=0;index<bitmap.length;++index)if(bitmap[index]!==255)for(let bit=0;bit<8;++bit)if((bitmap[index]&(1<<bit))===0)return block*1048576+index*8+bit;return -1;'
+    if language=='csharp':return 'int block=0;if(smallMemory){var counts=new int[2048];int value;while((value=file.ReadNext())!=-1)counts[value>>20]++;while(counts[block]==(1<<20))block++;file.Reset();}var bitmap=new byte[smallMemory?1<<17:1<<28];int item;while((item=file.ReadNext())!=-1)if(!smallMemory||(item>>20)==block){int offset=smallMemory?item&((1<<20)-1):item;bitmap[offset>>3]|=(byte)(1<<(offset&7));}for(int index=0;index<bitmap.Length;++index)if(bitmap[index]!=255)for(int bit=0;bit<8;++bit)if((bitmap[index]&(1<<bit))==0)return (block<<20)+(index<<3)+bit;return -1;'
+    if language=='java':return 'int block=0;if(smallMemory){int[] counts=new int[2048];int value;while((value=file.ReadNext())!=-1)counts[value>>>20]++;while(counts[block]==(1<<20))block++;file.Reset();}byte[] bitmap=new byte[smallMemory?1<<17:1<<28];int item;while((item=file.ReadNext())!=-1)if(!smallMemory||(item>>>20)==block){int offset=smallMemory?item&((1<<20)-1):item;bitmap[offset>>>3]|=(byte)(1<<(offset&7));}for(int index=0;index<bitmap.length;++index)if(bitmap[index]!=(byte)255)for(int bit=0;bit<8;++bit)if((bitmap[index]&(1<<bit))==0)return (block<<20)+(index<<3)+bit;return -1;'
+    return 'int block=0;if(smallMemory){std::vector<int> counts(2048);int value;while((value=file.ReadNext())!=-1)++counts[value>>20];while(counts[block]==(1<<20))++block;file.Reset();}std::vector<unsigned char> bitmap(smallMemory?1u<<17:1u<<28);int item;while((item=file.ReadNext())!=-1)if(!smallMemory||(item>>20)==block){int offset=smallMemory?item&((1<<20)-1):item;bitmap[offset>>3]|=static_cast<unsigned char>(1<<(offset&7));}for(size_t index=0;index<bitmap.size();++index)if(bitmap[index]!=255)for(int bit=0;bit<8;++bit)if((bitmap[index]&(1<<bit))==0)return (block<<20)+static_cast<int>(index*8)+bit;return -1;'

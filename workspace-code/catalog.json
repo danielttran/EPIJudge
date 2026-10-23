@@ -21147,6 +21147,176 @@
       }
     },
     {
+      "problemId": "ctci6_10_7",
+      "language": "cpp",
+      "filename": "solution.cpp",
+      "signature": "int FindMissingInt(NumberFile& file, bool smallMemory)",
+      "starterCode": "class Solution {\n public:\n  int FindMissingInt(NumberFile& file, bool smallMemory) {\n    return 0;\n  }\n};\n",
+      "solutionCode": "class Solution {\n public:\n  int FindMissingInt(NumberFile& file, bool smallMemory) {\n    int block = 0;\n    if (smallMemory) {\n      std::vector<int> counts(2048);\n      int value;\n      while ((value = file.ReadNext()) != -1)\n        ++counts[value >> 20];\n      while (counts[block] == (1 << 20))\n        ++block;\n      file.Reset();\n    }\n    std::vector<unsigned char> bitmap(smallMemory ? 1u << 17 : 1u << 28);\n    int item;\n    while ((item = file.ReadNext()) != -1)\n      if (!smallMemory || (item >> 20) == block) {\n        int offset = smallMemory ? item & ((1 << 20) - 1) : item;\n        bitmap[offset >> 3] |= static_cast<unsigned char>(1 << (offset & 7));\n      }\n    for (size_t index = 0; index < bitmap.size(); ++index)\n      if (bitmap[index] != 255)\n        for (int bit = 0; bit < 8; ++bit)\n          if ((bitmap[index] & (1 << bit)) == 0)\n            return (block << 20) + static_cast<int>(index * 8) + bit;\n    return -1;\n  }\n};\n",
+      "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\nclass NumberFile { public: virtual int ReadNext()=0; virtual void Reset()=0; virtual ~NumberFile()=default; };\n",
+      "suffix": "",
+      "references": [
+        {
+          "title": "Required callable model APIs",
+          "code": "class NumberFile {\n public:\n  virtual int ReadNext() = 0;\n  virtual void Reset() = 0;\n  virtual ~NumberFile() = default;\n};\n",
+          "names": [
+            "NumberFile"
+          ]
+        }
+      ],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [
+        "NumberFile"
+      ],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/cpp/ctci6_10_7.cpp"
+      ],
+      "sourceSha256": {
+        "starter": "3f6d8074d23b262884f870658cab1f8522e7c859ad7ccfeb0df308c836921a56",
+        "solution": "62bbd9949ba4e3ef1974b96cb1b0c448c965397bc1244adaa94644e90c245ecc"
+      }
+    },
+    {
+      "problemId": "ctci6_10_7",
+      "language": "csharp",
+      "filename": "Solution.cs",
+      "signature": "int FindMissingInt(NumberFile file, bool smallMemory)",
+      "starterCode": "public class Solution\n{\n    public int FindMissingInt(NumberFile file, bool smallMemory)\n    {\n        return 0;\n    }\n}\n",
+      "solutionCode": "public class Solution\n{\n    public int FindMissingInt(NumberFile file, bool smallMemory)\n    {\n        int block = 0;\n        if (smallMemory)\n        {\n            var counts = new int[2048];\n            int value;\n            while ((value = file.ReadNext()) != -1)\n                counts[value >> 20]++;\n            while (counts[block] == (1 << 20))\n                block++;\n            file.Reset();\n        }\n        var bitmap = new byte[smallMemory ? 1 << 17 : 1 << 28];\n        int item;\n        while ((item = file.ReadNext()) != -1)\n            if (!smallMemory || (item >> 20) == block)\n            {\n                int offset = smallMemory ? item & ((1 << 20) - 1) : item;\n                bitmap[offset >> 3] |= (byte)(1 << (offset & 7));\n            }\n        for (int index = 0; index < bitmap.Length; ++index)\n            if (bitmap[index] != 255)\n                for (int bit = 0; bit < 8; ++bit)\n                    if ((bitmap[index] & (1 << bit)) == 0)\n                        return (block << 20) + (index << 3) + bit;\n        return -1;\n    }\n}\n",
+      "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic abstract class NumberFile { public abstract int ReadNext(); public abstract void Reset(); }\n",
+      "suffix": "",
+      "references": [
+        {
+          "title": "Required callable model APIs",
+          "code": "public abstract class NumberFile\n{\n    public abstract int ReadNext();\n    public abstract void Reset();\n}\n",
+          "names": [
+            "NumberFile"
+          ]
+        }
+      ],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [
+        "NumberFile"
+      ],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/csharp/ctci6_10_7.cs"
+      ],
+      "sourceSha256": {
+        "starter": "1c632e87380a59a9fd871251e692d1e3fef89e3e5fed00909ba44923ddad970d",
+        "solution": "c76ed227bb99f9029780d8e64a4a5e46ffb803aa60e77227fef0d67125a2cc42"
+      }
+    },
+    {
+      "problemId": "ctci6_10_7",
+      "language": "java",
+      "filename": "Solution.java",
+      "signature": "int FindMissingInt(NumberFile file, boolean smallMemory)",
+      "starterCode": "class Solution {\n  public int FindMissingInt(NumberFile file, boolean smallMemory) {\n    return 0;\n  }\n}\n",
+      "solutionCode": "class Solution {\n  public int FindMissingInt(NumberFile file, boolean smallMemory) {\n    int block = 0;\n    if (smallMemory) {\n      int[] counts = new int[2048];\n      int value;\n      while ((value = file.ReadNext()) != -1)\n        counts[value >>> 20]++;\n      while (counts[block] == (1 << 20))\n        block++;\n      file.Reset();\n    }\n    byte[] bitmap = new byte[smallMemory ? 1 << 17 : 1 << 28];\n    int item;\n    while ((item = file.ReadNext()) != -1)\n      if (!smallMemory || (item >>> 20) == block) {\n        int offset = smallMemory ? item & ((1 << 20) - 1) : item;\n        bitmap[offset >>> 3] |= (byte) (1 << (offset & 7));\n      }\n    for (int index = 0; index < bitmap.length; ++index)\n      if (bitmap[index] != (byte) 255)\n        for (int bit = 0; bit < 8; ++bit)\n          if ((bitmap[index] & (1 << bit)) == 0)\n            return (block << 20) + (index << 3) + bit;\n    return -1;\n  }\n}\n",
+      "prefix": "import java.util.*;\nabstract class NumberFile { public abstract int ReadNext(); public abstract void Reset(); }\n",
+      "suffix": "",
+      "references": [
+        {
+          "title": "Required callable model APIs",
+          "code": "abstract class NumberFile {\n  public abstract int ReadNext();\n  public abstract void Reset();\n}\n",
+          "names": [
+            "NumberFile"
+          ]
+        }
+      ],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [
+        "NumberFile"
+      ],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/java/ctci6_10_7.java"
+      ],
+      "sourceSha256": {
+        "starter": "91e7689c5f3a060c17213285cb46d2ac8b020e8e46751d4e57f3054c3caa9227",
+        "solution": "8368cec66aa392915e4fd817625fdcaf44d150f2f8a3317b8e112693e71fe784"
+      }
+    },
+    {
+      "problemId": "ctci6_10_7",
+      "language": "javascript",
+      "filename": "solution.js",
+      "signature": "function FindMissingInt(file, smallMemory)",
+      "starterCode": "function FindMissingInt(file, smallMemory) {\n  return 0;\n}\n",
+      "solutionCode": "function FindMissingInt(file, smallMemory) {\n  let block = 0;\n  if (smallMemory) {\n    const counts = new Uint32Array(2048);\n    for (let value; (value = file.ReadNext()) !== -1; ) ++counts[value >>> 20];\n    while (counts[block] === 1 << 20) ++block;\n    file.Reset();\n  }\n  const bitmap = new Uint8Array(smallMemory ? 1 << 17 : 1 << 28);\n  for (let value; (value = file.ReadNext()) !== -1; )\n    if (!smallMemory || value >>> 20 === block) {\n      const offset = smallMemory ? value & ((1 << 20) - 1) : value;\n      bitmap[offset >>> 3] |= 1 << (offset & 7);\n    }\n  for (let index = 0; index < bitmap.length; ++index)\n    if (bitmap[index] !== 255)\n      for (let bit = 0; bit < 8; ++bit)\n        if ((bitmap[index] & (1 << bit)) === 0) return block * 1048576 + index * 8 + bit;\n  return -1;\n}\n",
+      "prefix": "'use strict';\nclass NumberFile {ReadNext(){throw new Error(\"Provided by the judge\");}Reset(){throw new Error(\"Provided by the judge\");}}\n",
+      "suffix": "\nmodule.exports = {NumberFile,FindMissingInt};\n",
+      "references": [
+        {
+          "title": "Required callable model APIs",
+          "code": "class NumberFile {\n  ReadNext() {\n    throw new Error(\"Provided by the judge\");\n  }\n  Reset() {\n    throw new Error(\"Provided by the judge\");\n  }\n}\n",
+          "names": [
+            "NumberFile"
+          ]
+        }
+      ],
+      "visibleSymbols": [
+        "FindMissingInt"
+      ],
+      "hiddenSymbols": [
+        "NumberFile"
+      ],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/javascript/ctci6_10_7.js"
+      ],
+      "sourceSha256": {
+        "starter": "ed9a8a7863c79433dab54a204a870c2b59cc9d6be3ec6f0848d27cc9a60b1773",
+        "solution": "fabc07801cb269baa492312f653a70dab629cc494649d0909c86194165af7faa"
+      }
+    },
+    {
+      "problemId": "ctci6_10_7",
+      "language": "python",
+      "filename": "solution.py",
+      "signature": "def FindMissingInt(file: NumberFile, smallMemory: bool) -> int",
+      "starterCode": "def FindMissingInt(file: NumberFile, smallMemory: bool) -> int:\n    return 0\n",
+      "solutionCode": "def FindMissingInt(file: NumberFile, smallMemory: bool) -> int:\n    block = 0\n    if smallMemory:\n        counts = [0] * 2048\n        while True:\n            value = file.ReadNext()\n            if value == -1:\n                break\n            counts[value >> 20] += 1\n        while counts[block] == 1 << 20:\n            block += 1\n        file.Reset()\n    bitmap = bytearray((1 << 17) if smallMemory else (1 << 28))\n    while True:\n        value = file.ReadNext()\n        if value == -1:\n            break\n        if not smallMemory or value >> 20 == block:\n            offset = value & ((1 << 20) - 1) if smallMemory else value\n            bitmap[offset >> 3] |= 1 << (offset & 7)\n    for index, byte in enumerate(bitmap):\n        if byte != 255:\n            for bit in range(8):\n                if byte & (1 << bit) == 0:\n                    return (block << 20) + (index << 3) + bit\n    return -1\n",
+      "prefix": "class NumberFile:\n    def ReadNext(self) -> int:\n        raise RuntimeError(\"Provided by the judge\")\n    def Reset(self) -> None:\n        raise RuntimeError(\"Provided by the judge\")\n",
+      "suffix": "",
+      "references": [
+        {
+          "title": "Required callable model APIs",
+          "code": "class NumberFile:\n    def ReadNext(self) -> int:\n        raise RuntimeError(\"Provided by the judge\")\n\n    def Reset(self) -> None:\n        raise RuntimeError(\"Provided by the judge\")\n",
+          "names": [
+            "NumberFile"
+          ]
+        }
+      ],
+      "visibleSymbols": [
+        "FindMissingInt"
+      ],
+      "hiddenSymbols": [
+        "NumberFile"
+      ],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/python/ctci6_10_7.py"
+      ],
+      "sourceSha256": {
+        "starter": "b78cbb23e3e426f7f2b357479b8921150099c9cec48cb7aa95c10b32ff345c15",
+        "solution": "7ca4ea6e8f59f0d693fc6f522e1ea4ce39cbd9116f2f86a7887333a77b8112bc"
+      }
+    },
+    {
       "problemId": "ctci6_10_8",
       "language": "cpp",
       "filename": "solution.cpp",

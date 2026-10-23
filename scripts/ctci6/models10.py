@@ -1,6 +1,7 @@
 """Existing bindings plus the explicit opaque Listy and RankTracker APIs."""
 from models08 import declare as typed_declare,header as base_header,neutral as collection_neutral,TYPES
 from core import starter_body
+from models_file10 import NUMBER_FILE
 
 LISTY={
  'csharp':'public abstract class Listy { public abstract int ElementAt(int index); }\n',
@@ -11,7 +12,7 @@ LISTY={
 for _language in TYPES:TYPES[_language]['listy']='Listy&' if _language=='cpp' else 'Listy'
 
 def header(ref,language):
-    return base_header(ref,language)+(LISTY[language] if ref=='10.4' else '')
+    return base_header(ref,language)+(LISTY[language] if ref=='10.4' else NUMBER_FILE[language] if ref=='10.7' else '')
 
 def declare(spec,language,body,class_name='Solution'):
     if spec['ref']=='10.10':

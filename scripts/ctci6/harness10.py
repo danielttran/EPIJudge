@@ -3,6 +3,7 @@ import json
 from core import ROOT
 from models08 import header as base_header
 from models10 import LISTY
+from harness_file10 import attach as attach_file
 from harness08_typed import source as typed_source
 
 SPECIAL=('10.4','10.10')
@@ -77,7 +78,9 @@ def source(language,starters=False,only_ref=None):
     entries=json.loads((ROOT/'ctci6/staged10/catalog.json').read_text())
     selected=[entry for entry in entries if only_ref is None or entry['ref']==only_ref]
     if not selected:raise ValueError('Unknown sorting reference')
-    value=typed_source(language,starters,only_ref,staging_name='staged10',exclude_refs=SPECIAL,allow_empty=True)
+    value=typed_source(language,starters,only_ref,staging_name='staged10',exclude_refs=SPECIAL+('10.7',),allow_empty=True)
+    for entry in selected:
+        if entry["ref"]=="10.7":value=attach_file(value,language,entry,starters)
     special=[entry for entry in selected if entry['ref'] in SPECIAL]
     if not special:return value
     if any(entry['ref']=='10.4' for entry in special):

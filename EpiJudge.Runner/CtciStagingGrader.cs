@@ -58,6 +58,23 @@ public static class CtciStagingGrader
         return height == minimum ? null : "The returned BST must have the smallest possible height.";
     }
 
+    private static string? MissingFileFailure(TestCase test, JsonElement observed)
+    {
+        if (observed.GetProperty("mutationOk").ValueKind != JsonValueKind.True) return "Use the provided readonly integer stream and return a nonnegative int.";
+        var actual = observed.GetProperty("actual");
+        if (actual.ValueKind != JsonValueKind.Number || !actual.TryGetInt32(out int value) || value < 0) return "Return an absent integer in 0..2147483647.";
+        long length = 0;
+        foreach (var pair in test.Arguments[0].EnumerateArray())
+        {
+            int start = pair[0].GetInt32(), end = pair[1].GetInt32();
+            length += (long)end - start + 1;
+            if (start <= value && value <= end) return "The returned integer is present in the file.";
+        }
+        bool small = test.Arguments[1].GetBoolean();
+        if (!observed.GetProperty("reads").TryGetInt64(out long reads) || reads < 0 || reads > (small ? 2L : 1L) * (length + 1) || !observed.GetProperty("resets").TryGetInt32(out int resets) || resets < 0 || resets > (small ? 1 : 0)) return "Respect the stated stream pass/read/rewind limits.";
+        return null;
+    }
+
     private static string? GeometryFailure(CtciStagingDefinition definition, TestCase test, JsonElement observed)
     {
         const double tolerance = 0.000001;
@@ -315,6 +332,7 @@ public static class CtciStagingGrader
         {
             if (observed.ValueKind != JsonValueKind.Object || observed.TryGetProperty("error", out var error) && error.ValueKind != JsonValueKind.Null)
                 return "Your code did not finish this case successfully.";
+            if (definition.Ref == "10.7") return MissingFileFailure(test, observed);
             if (definition.Ref == "17.4")
             {
                 if (observed.GetProperty("mutationOk").ValueKind != JsonValueKind.True || !observed.GetProperty("probes").TryGetInt32(out int probes) || probes < 0 || probes > 4 * test.Arguments[0].GetArrayLength() + 32) return "Use the provided bit-only API within the linear query budget.";

@@ -661,4 +661,15 @@ public sealed class CtciStagingTests
         Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = expected, mutationOk = false })));
         Assert.Contains(definition.Callable("python").References, reference => reference.Names.Contains("BiNode"));
     }
+    [Fact]
+    public void MissingFileAcceptsAnyAbsentValueAndChecksPassBudgets()
+    {
+        var definition = Definition("10.7");
+        var test = Case([new int[][] { [0, 2], [4, 4] }, true], 3);
+        Assert.Null(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = int.MaxValue, mutationOk = true, reads = 10L, resets = 1 })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = 4, mutationOk = true, reads = 10L, resets = 1 })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = 3, mutationOk = true, reads = 11L, resets = 1 })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = 3, mutationOk = true, reads = 10L, resets = 2 })));
+        Assert.Contains(definition.Callable("python").References, reference => reference.Names.Contains("NumberFile"));
+    }
 }

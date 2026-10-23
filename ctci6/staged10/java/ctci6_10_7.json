@@ -1,0 +1,29 @@
+{
+  "explanation": "For full memory, one bit per possible integer records presence regardless of repetitions. A zero bit identifies an absent value. With only 10 MiB, first count values in each 2^20-sized block. Distinct values make a block count below 2^20 proof that it has a missing member. Rewind and record only that block in a 2^20-bit bitmap, reducing bitmap storage to 131072 bytes.",
+  "correctness": "In full mode, processing v sets exactly its presence bit and never clears a bit. After the pass, a zero bit is therefore equivalent to absence; fewer than 2^31 file entries guarantees one exists. In small mode, every integer belongs to exactly one of 2048 blocks. Since values are distinct, each count equals the number of present values in that block. At least one count is below its capacity, so the selected block contains an absent value. On the second pass only values whose high block bits match the chosen block set local presence bits. A zero local bit therefore denotes a truly absent domain value. The block-index comparison avoids overflowing an exclusive upper endpoint for the highest block. Neither proof applies to a repeated-value bucket count without the distinctness promise.",
+  "walkthrough": "A file represented by [[0,2],[4,4]] streams 0,1,2,4. Full mode sets those four bits and finds missing 3. In small mode block 0 has count 4<1048576; after Reset, its local bitmap again identifies 3. If [[0,1048575]] is the whole file, block 0 is full, so the small-memory search chooses block 1 and returns 1048576. A file containing 2147483647 must not overflow its stream cursor or last bitmap index.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          0,
+          2
+        ],
+        [
+          4,
+          4
+        ]
+      ],
+      true
+    ],
+    "expected": 3
+  },
+  "timeComplexity": "Full mode O(N+U/8) worst-case byte scanning plus fixed eight-bit inspection per nonfull byte; small mode O(N+B+R/8), where U=2^31, B=2048 and R=2^20. The file is streamed once or twice, not expanded into a local array.",
+  "spaceComplexity": "Full mode exactly U/8=268435456 bitmap bytes plus O(1) state. Small mode 131072 bitmap bytes plus 2048 counters and O(1) state; even language object overhead for the counters stays well below 10 MiB. Supplied stream storage is excluded.",
+  "edgeCases": [
+    "Empty file, duplicate values in full mode and arbitrary file order.",
+    "All values of the first block present, a missing interior value, and maximum signed value present.",
+    "No integer overflow at 2^31, sticky EOF, one rewind and the distinctness-only count proof."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 10.7. No affiliation is implied."
+}
