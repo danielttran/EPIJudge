@@ -1,0 +1,53 @@
+{
+  "explanation": "A breadth-first frontier contains exactly one depth in left-to-right order. Build its linked list by appending new links at a tail pointer, and build the next frontier by appending each parent's left child before its right child. Separating frontier references from output links preserves the tree while creating the required linked structure.",
+  "correctness": "Initially the frontier is just root, the complete depth-zero sequence. For each frontier node, appending a link whose Value is that same object preserves its identity and current left-to-right order. Every node at the next depth is exactly one current node's child; appending left then right while visiting parents left to right gives the complete next-depth order without duplicates in a proper tree. Induction therefore builds every depth exactly once. New links leave tree fields unchanged, and a null root produces no frontier or lists.",
+  "walkthrough": "For rows [[7,1,2],[7,3,-1],[7,-1,-1],[7,-1,-1]], the returned heads represent linked lists [node0], [node1 -> node2] and [node3]. The displayed projection is [[0],[1,2],[3]]. Returning [7],[7,7],[7] would lose the required original-node identities.",
+  "walkthroughCase": {
+    "arguments": [
+      {
+        "nodes": [
+          [
+            7,
+            1,
+            2
+          ],
+          [
+            7,
+            3,
+            -1
+          ],
+          [
+            7,
+            -1,
+            -1
+          ],
+          [
+            7,
+            -1,
+            -1
+          ]
+        ],
+        "selected": 0
+      }
+    ],
+    "expected": [
+      [
+        0
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        3
+      ]
+    ]
+  },
+  "timeComplexity": "O(n) time to visit each selected-subtree node and create one output link.",
+  "spaceComplexity": "O(n+h) returned link/head storage for n nodes and h depths, plus O(w) working frontier references for maximum width w.",
+  "edgeCases": [
+    "Empty root, one node and a 1000-node chain with one list per depth.",
+    "Repeated Data, missing children, selected internal roots and shuffled original row IDs."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 4.3. No affiliation is implied."
+}

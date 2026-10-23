@@ -210,3 +210,103 @@ def valid_observation(ref,case,observed):
     if not isinstance(observed,dict) or observed.get('mutationOk') is not True:return False
     actual=observed.get('actual');expected=case['expected']
     return type(actual) is type(expected) and actual==expected
+
+_previous_output_oracle=oracle
+_previous_output_cases=cases
+_previous_output_observation=valid_observation
+
+def canonical_minimal(values):
+    if not values:return dict(root=-1,nodes=[])
+    rows=[];queue=[]
+    def append(lower,upper,parent):
+        if lower>=upper:return -1
+        middle=(lower+upper)//2;index=len(rows);rows.append([values[middle],-1,-1,parent]);queue.append((index,lower,upper,middle));return index
+    append(0,len(values),-1);head=0
+    while head<len(queue):
+        index,lower,upper,middle=queue[head];head+=1
+        rows[index][1]=append(lower,middle,index);rows[index][2]=append(middle+1,upper,index)
+    return dict(root=0,nodes=rows)
+
+def minimal_valid(values,actual):
+    if type(actual) is not dict or type(actual.get('root')) is not int or type(actual.get('nodes')) is not list:return False
+    root,rows=actual['root'],actual['nodes'];n=len(values)
+    if not n:return root==-1 and rows==[]
+    if len(rows)!=n or root<0 or root>=n:return False
+    computed=[-1]*n
+    for index,row in enumerate(rows):
+        if type(row) is not list or len(row)!=4 or any(type(v) is not int for v in row):return False
+        if not -2147483648<=row[0]<=2147483647 or any(v< -1 or v>=n for v in row[1:]):return False
+        for child in row[1:3]:
+            if child!=-1:
+                if computed[child]!=-1:return False
+                computed[child]=index
+    if computed[root]!=-1 or any(computed[i]==-1 for i in range(n) if i!=root):return False
+    if any(row[3]!=computed[i] for i,row in enumerate(rows)):return False
+    seen=set();frontier=[root];height=0
+    while frontier:
+        height+=1;following=[]
+        for node in frontier:
+            if node in seen:return False
+            seen.add(node);following += [v for v in rows[node][1:3] if v!=-1]
+        frontier=following
+    if len(seen)!=n:return False
+    ordered=[];stack=[];node=root
+    while node!=-1 or stack:
+        while node!=-1:stack.append(node);node=rows[node][1]
+        node=stack.pop();ordered.append(rows[node][0]);node=rows[node][2]
+    least=0;capacity=0
+    while capacity<n:least+=1;capacity=2*capacity+1
+    return ordered==values and height==least
+
+def oracle(ref,args):
+    if ref=='4.2':return canonical_minimal(args[0])
+    if ref=='4.3':
+        view=args[0];rows=view['nodes'];result=[];stack=[(view['selected'],0)] if view['selected']!=-1 else []
+        while stack:
+            node,depth=stack.pop()
+            if depth==len(result):result.append([])
+            result[depth].append(node)
+            if rows[node][2]!=-1:stack.append((rows[node][2],depth+1))
+            if rows[node][1]!=-1:stack.append((rows[node][1],depth+1))
+        return result
+    if ref=='4.9':
+        view=args[0];rows=view['nodes'];selected=descendants(rows,view['selected']);parent=parents(rows);result=[]
+        for order in itertools.permutations(selected):
+            positions={node:index for index,node in enumerate(order)}
+            if all(parent[node] not in positions or positions[parent[node]]<positions[node] for node in order):result.append([rows[node][0] for node in order])
+        return sorted(result)
+    return _previous_output_oracle(ref,args)
+
+def cases(spec):
+    ref=spec['ref']
+    if ref not in ('4.2','4.3','4.9'):return _previous_output_cases(spec)
+    rng=random.Random(int(ref.replace('.',''))+4000000);args=[spec['example'][0]]
+    if ref=='4.2':
+        args += [[[value for bit,value in enumerate(range(-3,4)) if mask>>bit&1]] for mask in range(1<<7)]
+        args += [[[-2147483648]],[ [2147483647] ],[[-2147483648,2147483647]],[[-2147483648]+list(range(998))+[2147483647]],[list(range(1000))]]
+        args += [[sorted(rng.sample(range(-1000000,1000001),rng.randrange(1001))) ] for _ in range(40)]
+    elif ref=='4.3':
+        args += [[tree_view(shape)] for n in range(7) for shape in shapes(n)]
+        for n in range(5):
+            for shape in shapes(n):
+                base=tree_view(shape,[7]*n)
+                args += [[dict(base,selected=i)] for i in range(-1,n)]
+        heap=dict(nodes=[[0,2*i+1 if 2*i+1<1000 else -1,2*i+2 if 2*i+2<1000 else -1] for i in range(1000)],selected=0)
+        args += [[chain(1000)],[heap]]
+        for _ in range(50):args.append([shuffled(tree_view(rng.choice(shapes(rng.randrange(1,8)))),rng)])
+    else:
+        args += [[bst_view(shape)] for n in range(7) for shape in shapes(n)]
+        args += [[bst_view(rng.choice(shapes(8)))] for _ in range(7)]
+        args += [[{'nodes':[[0,1,2],[-2147483648,-1,-1],[2147483647,-1,-1]],'selected':0}],[{'nodes':[[0,1,2],[-2147483648,-1,-1],[2147483647,-1,-1]],'selected':1}]]
+    distinct={json.dumps(a):a for a in args}
+    return [dict(arguments=a,expected=oracle(ref,a)) for a in distinct.values()]
+
+def valid_observation(ref,case,observed):
+    if ref not in ('4.2','4.3','4.9'):return _previous_output_observation(ref,case,observed)
+    if not isinstance(observed,dict) or observed.get('mutationOk') is not True:return False
+    actual=observed.get('actual')
+    if ref=='4.2':return minimal_valid(case['arguments'][0],actual)
+    if type(actual) is not list or any(type(row) is not list or any(type(v) is not int for v in row) for row in actual):return False
+    if ref=='4.3':return actual==case['expected']
+    canonical=[tuple(row) for row in actual]
+    return len(canonical)==len(set(canonical)) and set(canonical)=={tuple(row) for row in case['expected']}

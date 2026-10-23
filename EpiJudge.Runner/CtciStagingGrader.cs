@@ -14,6 +14,50 @@ public static class CtciStagingGrader
     private static string[] Strings(JsonElement value) => value.EnumerateArray().Select(v =>
         v.ValueKind == JsonValueKind.String && v.GetString() is string word ? word : throw new ArgumentException("Return nonnull strings.")).ToArray();
 
+    private static string? MinimalTreeFailure(TestCase test, JsonElement observed)
+    {
+        if (observed.GetProperty("mutationOk").ValueKind != JsonValueKind.True) return "Preserve sortedValues and return a finite tree of provided TreeNode objects.";
+        var actual = observed.GetProperty("actual");
+        int root = actual.GetProperty("root").GetInt32();
+        var rows = actual.GetProperty("nodes").EnumerateArray().Select(Integers).ToArray();
+        var values = Integers(test.Arguments[0]);
+        int count = values.Length;
+        if (count == 0) return root == -1 && rows.Length == 0 ? null : "Empty input requires a null root.";
+        if (rows.Length != count || root < 0 || root >= count || rows.Any(row => row.Length != 4 || row.Skip(1).Any(index => index < -1 || index >= count))) return "Return exactly one correctly linked node per input value.";
+        var parents = Enumerable.Repeat(-1, count).ToArray();
+        for (int i = 0; i < count; i++)
+            foreach (int child in rows[i].Skip(1).Take(2))
+                if (child != -1)
+                {
+                    if (parents[child] != -1) return "A child cannot be shared by two links.";
+                    parents[child] = i;
+                }
+        if (parents[root] != -1 || Enumerable.Range(0, count).Any(i => rows[i][3] != parents[i] || i != root && parents[i] == -1)) return "Root.Parent must be null and every child.Parent must identify its actual parent.";
+        var seen = new HashSet<int>();
+        var queue = new List<(int Node, int Height)> { (root, 1) };
+        int height = 0;
+        for (int head = 0; head < queue.Count; head++)
+        {
+            var frame = queue[head];
+            if (!seen.Add(frame.Node)) return "Return a proper tree without cycles or shared children.";
+            height = Math.Max(height, frame.Height);
+            foreach (int child in rows[frame.Node].Skip(1).Take(2)) if (child != -1) queue.Add((child, frame.Height + 1));
+        }
+        if (seen.Count != count) return "Every returned node must belong to the root's tree.";
+        var ordered = new List<int>();
+        var stack = new Stack<int>();
+        int node = root;
+        while (node != -1 || stack.Count > 0)
+        {
+            while (node != -1) { stack.Push(node); node = rows[node][1]; }
+            node = stack.Pop(); ordered.Add(rows[node][0]); node = rows[node][2];
+        }
+        if (!ordered.SequenceEqual(values)) return "Inorder traversal must equal sortedValues exactly.";
+        int minimum = 0, capacity = 0;
+        while (capacity < count) { minimum++; capacity = 2 * capacity + 1; }
+        return height == minimum ? null : "The returned BST must have the smallest possible height.";
+    }
+
     private static string? SortingFailure(CtciStagingDefinition definition, TestCase test, JsonElement observed)
     {
         if (observed.GetProperty("mutationOk").ValueKind != JsonValueKind.True) return "Preserve the required input objects and readonly values, and perform the stated in-place changes.";
@@ -129,6 +173,20 @@ public static class CtciStagingGrader
             if (observed.ValueKind != JsonValueKind.Object || observed.TryGetProperty("error", out var error) && error.ValueKind != JsonValueKind.Null)
                 return "Your code did not finish this case successfully.";
             if (definition.Batch == 10) return SortingFailure(definition, test, observed);
+            if (definition.Batch == 4 && definition.Ref == "4.2") return MinimalTreeFailure(test, observed);
+            if (definition.Batch == 4 && definition.Ref == "4.3")
+            {
+                if (observed.GetProperty("mutationOk").ValueKind != JsonValueKind.True) return "Preserve the input tree and return proper, distinct, null-terminated DepthLink lists.";
+                return Equal(observed.GetProperty("actual"), test.Expected) ? null : "Each depth list must contain the original TreeNode objects in left-to-right order.";
+            }
+            if (definition.Batch == 4 && definition.Ref == "4.9")
+            {
+                if (observed.GetProperty("mutationOk").ValueKind != JsonValueKind.True) return "Preserve the tree and return concrete integer sequences.";
+                var actualRows = observed.GetProperty("actual").EnumerateArray().Select(row => JsonSerializer.Serialize(Integers(row))).ToArray();
+                var expectedRows = test.Expected.EnumerateArray().Select(row => JsonSerializer.Serialize(Integers(row))).Order(StringComparer.Ordinal);
+                if (actualRows.Distinct(StringComparer.Ordinal).Count() != actualRows.Length) return "Return each insertion sequence once.";
+                return actualRows.Order(StringComparer.Ordinal).SequenceEqual(expectedRows, StringComparer.Ordinal) ? null : "Return every valid insertion sequence; preserve the value order inside each row.";
+            }
             if (definition.Batch == 4 && definition.Result == "tree")
             {
                 if (observed.GetProperty("mutationOk").ValueKind != JsonValueKind.True) return "Preserve every original node's Data, Left, Right and Parent fields.";

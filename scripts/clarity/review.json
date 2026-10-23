@@ -10356,6 +10356,66 @@
         "ctci6/runtime/validation.json",
         "ctci6/cases/ctci6_4_12.json"
       ]
+    },
+    "ctci6_4_2": {
+      "collection": "ctci6",
+      "statementSha256": "f4f60cdec1733225f167a89dbfa6edf027266dc47557b8b0711f2c5d51a2f89f",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "inputDomain": "sortedValues is a nonnull strictly increasing array of 0..1000 signed 32-bit integers. Preserve the array and its order. Tree height counts nodes on the longest root-to-leaf path; empty height is zero. For n nodes the minimum height is the least h with 2^h-1 >= n. Use provided TreeNode objects with Data,Left,Right,Parent. Return new nodes, not an array or encoded table. Root.Parent must be null and every child.Parent must point to its actual parent. No cycles/shared children, extra values or missing values are allowed. C++ must allocate returned nodes with new and transfers their ownership to the judge. Displayed outputs encode {\"root\":id,\"nodes\":[[Data,leftId,rightId,parentId],...]}; -1 means null. These IDs are observation labels for the returned objects. Callable code returns the TreeNode root, not this JSON encoding.",
+        "outputAndTies": "Construct and return a new binary search tree containing every value of the sorted input exactly once, with the smallest possible height. Input values are distinct. Empty input returns null. Any minimum-height BST satisfying the node/parent contract is accepted; its exact shape need not match the example.",
+        "mutationAndIdentity": "Read the author library constructor/parent setters and all five independently authored bodies. Recursion halves interval sizes and stays logarithmic for n<=1000. Input arrays remain unchanged and signed endpoints participate only in ordering/index lookup. The child observer serializes returned objects without computing an expected tree; host/C# graders independently check finite proper connectivity, exact parent links, inorder equality and the binary capacity minimum-height bound. Both two-element root choices are accepted. A compiled Python lower-midpoint alternative passes every minimal-tree case, proving reference shape is not a hidden requirement. C++ transfers new-node ownership and the private observer frees collected nodes after projection.",
+        "boundaryBehavior": "Empty input, one/two values and even-length ranges with multiple accepted shapes. Signed endpoints, exact parent links and the 1000-value boundary.",
+        "examples": "The independently checked displayed example and algorithm trace agree with the executed five-language bodies.",
+        "languageContracts": "{\"csharp\": \"Read exact bool/int[] methods. List<int>[] adjacency rows are separately constructed, and List<int> queues use a growing head index. Readonly observation preserves original jagged-array row identities. BuildOrder returns a materialized array only after all projects have been emitted. TreeNode nullable fields are supplied before the solution. Enter/exit tuples carry explicit state; dictionary node keys identify objects. Node returns become original private IDs. All Data/Left/Right/Parent snapshots must remain unchanged. KMP uses nullable traversal entries and invariant integer tokens. Minimal construction uses a nullable local recursive helper and sets Parent on each fresh node. DepthLink heads are concrete List<DepthLink> values containing original nodes. Insertion paths/frontiers use independent List copies, including an empty path snapshot.\", \"javascript\": \"Read exact functions. Array.from allocates independent adjacency lists. Boolean results have exact boolean type; Number integer node IDs and degrees stay well below precision limits. Every returned order is a concrete array; input edges are not sorted or modified. The observer aliases the provided user-module TreeNode class and maps actual objects to private IDs. Deleted/replaced links become unknown IDs and fail snapshots. Number bounds remain exact; Boolean/int results are checked separately. Parent alignment uses strict object equality. Fresh TreeNode/DepthLink constructors use the exact provided module classes. Depth lists retain original object references. Insertion frontiers use slice/concat and completed paths use slice so recursive mutation does not alias saved results.\", \"python\": \"Read exact annotated functions. Independent adjacency-list comprehensions and index-based work queues avoid aliasing and quadratic pop(0). Reachability returns bool, which is validated separately from int. Build-order failure discards partial queue output. The observer maps id(node), not Data equality, and validates bool separately from int. Provided TreeNode annotations match the real user-module class. Explicit stacks support depth 1000; nullable entries are retained for structural KMP tokens. Snapshot checks also reject bool masquerading as Data int. A nested build helper creates fresh nodes and parent links. DepthLink.Value is the original object; projector identities are checked independently of Data. Frontiers and completed paths are copied, and all results are materialized lists.\", \"cpp\": \"Read actual C++17 const vector references, vector<bool> visited flags and indexed vector queues. Dynamic queue growth does not invalidate iteration because the loop stores an index and adjacency traversal belongs to a different vector. Counts/IDs fit signed int; bounds are checked by input preconditions. TreeNode raw input pointers refer to judge-owned unique_ptr objects, whose addresses remain stable across vector growth. Solutions must not delete them. Pointer-key height maps, widened bounds and local value frames are explicit. Original-node returns are looked up by address, and every original field is resnapshotted. Returned minimal TreeNode and DepthLink objects are newly allocated and transferred to the private observer for cleanup. Depth Value pointers stay nonowning originals. Frontier vectors move into recursive calls, and result vectors copy the completed path before pop_back.\", \"java\": \"Read actual methods, List<List<Integer>> adjacency and int[] result conversion. Boolean JSON encoding is explicit for reachability. Enhanced-for traverses adjacency lists while appending only to the separate queue, avoiding concurrent modification. Input row arrays remain unchanged. TreeNode fields/constructor are supplied, and the observer uses IdentityHashMap for original IDs. Traversal records never place null frames in ArrayDeque; KMP uses an ArrayList precisely because its stack contains null nodes. Boolean and Integer results have explicit JSON encoding. Minimal construction uses a local Builder class capturing the readonly array. Depth output is List<DepthLink>, with explicit head/tail assembly. Local Search captures result/path lists and copies each completed sequence so later backtracking cannot erase it.\"}",
+        "judgeAgreement": "Read the author library constructor/parent setters and all five independently authored bodies. Recursion halves interval sizes and stays logarithmic for n<=1000. Input arrays remain unchanged and signed endpoints participate only in ordering/index lookup. The child observer serializes returned objects without computing an expected tree; host/C# graders independently check finite proper connectivity, exact parent links, inorder equality and the binary capacity minimum-height bound. Both two-element root choices are accepted. A compiled Python lower-midpoint alternative passes every minimal-tree case, proving reference shape is not a hidden requirement. C++ transfers new-node ownership and the private observer frees collected nodes after projection."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_2.json"
+      ]
+    },
+    "ctci6_4_3": {
+      "collection": "ctci6",
+      "statementSha256": "81443e01924e302c39612cac8af9e93974492b6ec51a323744451d1f4405bf24",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "inputDomain": "Displayed tree arguments are {\"nodes\":[[Data,leftId,rightId],...],\"selected\":id}. Row indices are distinct node identities; -1 denotes a null link/selection. The table is a valid acyclic binary forest with at most one incoming child link per node. The judge constructs TreeNode objects, connects Left/Right, computes Parent, and passes only the selected TreeNode, not the table. There are 0..1000 rows with signed 32-bit Data, and repeated Data values are allowed unless stated otherwise. Use the provided TreeNode API (Data,Left,Right,Parent). Preserve every original node object, data value and link, including Parent and unselected nodes. A returned node must be an original object; displayed node results are its row ID, or -1 for null. C++ input nodes are judge-owned and must not be deleted. Use provided DepthLink objects, each with Value (an original TreeNode) and Next (another DepthLink or null). Allocate new list links; do not repurpose or mutate TreeNode child/parent fields. Every link belongs to exactly one proper, null-terminated output list. Empty root returns an empty collection of heads. Displayed results project each linked list to its original TreeNode row IDs, so [[0],[1,2]] means heads of two actual linked lists, not nested value arrays. Callable code returns DepthLink heads. C++ allocates new DepthLink objects and transfers ownership of those links only; their TreeNode Value pointers remain judge-owned.",
+        "outputAndTies": "Create one singly linked list for every depth of the selected binary tree. The first list contains root, the next contains its children, and so on. Within a depth, order nodes from left to right. Return a collection of list heads in increasing depth order. List values must reference the original TreeNode objects, including when Data values repeat.",
+        "mutationAndIdentity": "Read all five actual bodies and supplied DepthLink APIs. New links have Value=the original node object; tree fields are never repurposed. A separate preorder-by-depth oracle produces original ID rows, including all small shapes, repeated Data, shuffled row IDs, selected internal roots, 1000-node chains and broad 1000-node trees. Private projection tracks output-link identities and bounds traversal so cycles/shared links cannot hang validation. Five compiled variants with equal-valued cloned Value nodes are rejected, and an actual linked-list cycle is rejected. C++ frees transferred output links only; input node ownership remains with the judge.",
+        "boundaryBehavior": "Empty root, one node and a 1000-node chain with one list per depth. Repeated Data, missing children, selected internal roots and shuffled original row IDs.",
+        "examples": "The independently checked displayed example and algorithm trace agree with the executed five-language bodies.",
+        "languageContracts": "{\"csharp\": \"Read exact bool/int[] methods. List<int>[] adjacency rows are separately constructed, and List<int> queues use a growing head index. Readonly observation preserves original jagged-array row identities. BuildOrder returns a materialized array only after all projects have been emitted. TreeNode nullable fields are supplied before the solution. Enter/exit tuples carry explicit state; dictionary node keys identify objects. Node returns become original private IDs. All Data/Left/Right/Parent snapshots must remain unchanged. KMP uses nullable traversal entries and invariant integer tokens. Minimal construction uses a nullable local recursive helper and sets Parent on each fresh node. DepthLink heads are concrete List<DepthLink> values containing original nodes. Insertion paths/frontiers use independent List copies, including an empty path snapshot.\", \"javascript\": \"Read exact functions. Array.from allocates independent adjacency lists. Boolean results have exact boolean type; Number integer node IDs and degrees stay well below precision limits. Every returned order is a concrete array; input edges are not sorted or modified. The observer aliases the provided user-module TreeNode class and maps actual objects to private IDs. Deleted/replaced links become unknown IDs and fail snapshots. Number bounds remain exact; Boolean/int results are checked separately. Parent alignment uses strict object equality. Fresh TreeNode/DepthLink constructors use the exact provided module classes. Depth lists retain original object references. Insertion frontiers use slice/concat and completed paths use slice so recursive mutation does not alias saved results.\", \"python\": \"Read exact annotated functions. Independent adjacency-list comprehensions and index-based work queues avoid aliasing and quadratic pop(0). Reachability returns bool, which is validated separately from int. Build-order failure discards partial queue output. The observer maps id(node), not Data equality, and validates bool separately from int. Provided TreeNode annotations match the real user-module class. Explicit stacks support depth 1000; nullable entries are retained for structural KMP tokens. Snapshot checks also reject bool masquerading as Data int. A nested build helper creates fresh nodes and parent links. DepthLink.Value is the original object; projector identities are checked independently of Data. Frontiers and completed paths are copied, and all results are materialized lists.\", \"cpp\": \"Read actual C++17 const vector references, vector<bool> visited flags and indexed vector queues. Dynamic queue growth does not invalidate iteration because the loop stores an index and adjacency traversal belongs to a different vector. Counts/IDs fit signed int; bounds are checked by input preconditions. TreeNode raw input pointers refer to judge-owned unique_ptr objects, whose addresses remain stable across vector growth. Solutions must not delete them. Pointer-key height maps, widened bounds and local value frames are explicit. Original-node returns are looked up by address, and every original field is resnapshotted. Returned minimal TreeNode and DepthLink objects are newly allocated and transferred to the private observer for cleanup. Depth Value pointers stay nonowning originals. Frontier vectors move into recursive calls, and result vectors copy the completed path before pop_back.\", \"java\": \"Read actual methods, List<List<Integer>> adjacency and int[] result conversion. Boolean JSON encoding is explicit for reachability. Enhanced-for traverses adjacency lists while appending only to the separate queue, avoiding concurrent modification. Input row arrays remain unchanged. TreeNode fields/constructor are supplied, and the observer uses IdentityHashMap for original IDs. Traversal records never place null frames in ArrayDeque; KMP uses an ArrayList precisely because its stack contains null nodes. Boolean and Integer results have explicit JSON encoding. Minimal construction uses a local Builder class capturing the readonly array. Depth output is List<DepthLink>, with explicit head/tail assembly. Local Search captures result/path lists and copies each completed sequence so later backtracking cannot erase it.\"}",
+        "judgeAgreement": "Read all five actual bodies and supplied DepthLink APIs. New links have Value=the original node object; tree fields are never repurposed. A separate preorder-by-depth oracle produces original ID rows, including all small shapes, repeated Data, shuffled row IDs, selected internal roots, 1000-node chains and broad 1000-node trees. Private projection tracks output-link identities and bounds traversal so cycles/shared links cannot hang validation. Five compiled variants with equal-valued cloned Value nodes are rejected, and an actual linked-list cycle is rejected. C++ frees transferred output links only; input node ownership remains with the judge."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_3.json"
+      ]
+    },
+    "ctci6_4_9": {
+      "collection": "ctci6",
+      "statementSha256": "a5d50a3c0ca66baf214b32378e5e09c8376a897e7355e8158cfdc8d4c18b4d0a",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "inputDomain": "Displayed tree arguments are {\"nodes\":[[Data,leftId,rightId],...],\"selected\":id}. Row indices are distinct node identities; -1 denotes a null link/selection. The table is a valid acyclic binary forest with at most one incoming child link per node. The judge constructs TreeNode objects, connects Left/Right, computes Parent, and passes only the selected TreeNode, not the table. There are 0..1000 rows with signed 32-bit Data, and repeated Data values are allowed unless stated otherwise. Use the provided TreeNode API (Data,Left,Right,Parent). Preserve every original node object, data value and link, including Parent and unselected nodes. A returned node must be an original object; displayed node results are its row ID, or -1 for null. C++ input nodes are judge-owned and must not be deleted. For this exercise the entire displayed table has 0..8 rows and the selected subtree is a strict BST with distinct Data values. Insertion follows the usual smaller-left/larger-right rule without balancing or rotations. Unselected forest nodes are not inserted. Return a concrete nested integer collection, not node references or a generator. The empty tree has exactly one insertion sequence: the empty sequence, so return [[]], not []. Preserve the input tree and Parent links.",
+        "outputAndTies": "Return every distinct sequence of values that, when inserted one at a time into an initially empty ordinary BST, creates exactly the selected input tree. Values are distinct. Each sequence contains every selected-tree value once. Return sequences in any order, without duplicate rows; order inside each sequence matters.",
+        "mutationAndIdentity": "Read all five bodies. Each branch copies its available frontier, appends one distinct Data value, snapshots complete paths and pops afterward. No input TreeNode field is changed. Unique BST values make ancestor-before-descendant orders exactly insertion sequences; empty frontier emits one row, including [[]] for an empty tree. Independent exhaustive node-ID permutations filtered by original parent precedence establish expected sequences for all small shapes and selected eight-node cases. The grader sorts only outer row encodings, rejects duplicate rows and never sorts values inside a row. Actual frontier copying is included in the conservative O(S*(n+1)^2) bound.",
+        "boundaryBehavior": "Empty tree returns [[]], leaf and chain with a single sequence. Balanced branches with many interleavings, arbitrary outer order, duplicate-row rejection and signed endpoints.",
+        "examples": "The independently checked displayed example and algorithm trace agree with the executed five-language bodies.",
+        "languageContracts": "{\"csharp\": \"Read exact bool/int[] methods. List<int>[] adjacency rows are separately constructed, and List<int> queues use a growing head index. Readonly observation preserves original jagged-array row identities. BuildOrder returns a materialized array only after all projects have been emitted. TreeNode nullable fields are supplied before the solution. Enter/exit tuples carry explicit state; dictionary node keys identify objects. Node returns become original private IDs. All Data/Left/Right/Parent snapshots must remain unchanged. KMP uses nullable traversal entries and invariant integer tokens. Minimal construction uses a nullable local recursive helper and sets Parent on each fresh node. DepthLink heads are concrete List<DepthLink> values containing original nodes. Insertion paths/frontiers use independent List copies, including an empty path snapshot.\", \"javascript\": \"Read exact functions. Array.from allocates independent adjacency lists. Boolean results have exact boolean type; Number integer node IDs and degrees stay well below precision limits. Every returned order is a concrete array; input edges are not sorted or modified. The observer aliases the provided user-module TreeNode class and maps actual objects to private IDs. Deleted/replaced links become unknown IDs and fail snapshots. Number bounds remain exact; Boolean/int results are checked separately. Parent alignment uses strict object equality. Fresh TreeNode/DepthLink constructors use the exact provided module classes. Depth lists retain original object references. Insertion frontiers use slice/concat and completed paths use slice so recursive mutation does not alias saved results.\", \"python\": \"Read exact annotated functions. Independent adjacency-list comprehensions and index-based work queues avoid aliasing and quadratic pop(0). Reachability returns bool, which is validated separately from int. Build-order failure discards partial queue output. The observer maps id(node), not Data equality, and validates bool separately from int. Provided TreeNode annotations match the real user-module class. Explicit stacks support depth 1000; nullable entries are retained for structural KMP tokens. Snapshot checks also reject bool masquerading as Data int. A nested build helper creates fresh nodes and parent links. DepthLink.Value is the original object; projector identities are checked independently of Data. Frontiers and completed paths are copied, and all results are materialized lists.\", \"cpp\": \"Read actual C++17 const vector references, vector<bool> visited flags and indexed vector queues. Dynamic queue growth does not invalidate iteration because the loop stores an index and adjacency traversal belongs to a different vector. Counts/IDs fit signed int; bounds are checked by input preconditions. TreeNode raw input pointers refer to judge-owned unique_ptr objects, whose addresses remain stable across vector growth. Solutions must not delete them. Pointer-key height maps, widened bounds and local value frames are explicit. Original-node returns are looked up by address, and every original field is resnapshotted. Returned minimal TreeNode and DepthLink objects are newly allocated and transferred to the private observer for cleanup. Depth Value pointers stay nonowning originals. Frontier vectors move into recursive calls, and result vectors copy the completed path before pop_back.\", \"java\": \"Read actual methods, List<List<Integer>> adjacency and int[] result conversion. Boolean JSON encoding is explicit for reachability. Enhanced-for traverses adjacency lists while appending only to the separate queue, avoiding concurrent modification. Input row arrays remain unchanged. TreeNode fields/constructor are supplied, and the observer uses IdentityHashMap for original IDs. Traversal records never place null frames in ArrayDeque; KMP uses an ArrayList precisely because its stack contains null nodes. Boolean and Integer results have explicit JSON encoding. Minimal construction uses a local Builder class capturing the readonly array. Depth output is List<DepthLink>, with explicit head/tail assembly. Local Search captures result/path lists and copies each completed sequence so later backtracking cannot erase it.\"}",
+        "judgeAgreement": "Read all five bodies. Each branch copies its available frontier, appends one distinct Data value, snapshots complete paths and pops afterward. No input TreeNode field is changed. Unique BST values make ancestor-before-descendant orders exactly insertion sequences; empty frontier emits one row, including [[]] for an empty tree. Independent exhaustive node-ID permutations filtered by original parent precedence establish expected sequences for all small shapes and selected eight-node cases. The grader sorts only outer row encodings, rejects duplicate rows and never sorts values inside a row. Actual frontier copying is included in the conservative O(S*(n+1)^2) bound."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_9.json"
+      ]
     }
   },
   "solutions": {
@@ -60746,6 +60806,351 @@
         "ctci6/cases/ctci6_4_12.json",
         "solutions/java/ctci6_4_12.java",
         "solutions/notes/java/ctci6_4_12.json"
+      ]
+    },
+    "ctci6_4_2/csharp": {
+      "codePath": "solutions/csharp/ctci6_4_2.cs",
+      "notesPath": "solutions/notes/ctci6_4_2.json",
+      "contentSha256": "0b9bbf056a8880f564bdabf253e109100148302370fa217340c22b8308d347b8",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "actualAlgorithm": "Recursively choose a middle value of disjoint half-open sorted ranges, allocate one node and set each child Parent link.",
+        "correctness": "By induction, each recursive call creates exactly the values in its half-open sorted interval. Its chosen middle value exceeds all left values and is below all right values, so attaching the two recursively valid children preserves strict BST ordering. The disjoint ranges ensure every input value occurs once. Their sizes differ by at most one; repeated halving therefore produces height equal to the least h whose full binary-tree capacity 2^h-1 covers n, which is a lower bound for any n-node binary tree. Setting the supplied parent argument on construction makes every Parent link agree with its child link and keeps the root parent null.",
+        "workedTrace": "For [1,2,3], choose 2 as the root, construct leaf 1 from the left range and leaf 3 from the right range. Their Parent links both point to 2. The height is 2, meeting the capacity bound of 3 nodes. For an even-length range either valid middle choice may lead to a different accepted minimum-height shape.",
+        "edgeCases": "Empty input, one/two values and even-length ranges with multiple accepted shapes. Signed endpoints, exact parent links and the 1000-value boundary.",
+        "timeDerivation": "O(n) time: each input position creates one node with constant local work.",
+        "spaceDerivation": "O(n) returned nodes and O(log(n+1)) recursive construction frames; recursion is at most about ten levels for n<=1000.",
+        "callableAgreement": "Read the author library constructor/parent setters and all five independently authored bodies. Recursion halves interval sizes and stays logarithmic for n<=1000. Input arrays remain unchanged and signed endpoints participate only in ordering/index lookup. The child observer serializes returned objects without computing an expected tree; host/C# graders independently check finite proper connectivity, exact parent links, inorder equality and the binary capacity minimum-height bound. Both two-element root choices are accepted. A compiled Python lower-midpoint alternative passes every minimal-tree case, proving reference shape is not a hidden requirement. C++ transfers new-node ownership and the private observer frees collected nodes after projection. Read exact bool/int[] methods. List<int>[] adjacency rows are separately constructed, and List<int> queues use a growing head index. Readonly observation preserves original jagged-array row identities. BuildOrder returns a materialized array only after all projects have been emitted. TreeNode nullable fields are supplied before the solution. Enter/exit tuples carry explicit state; dictionary node keys identify objects. Node returns become original private IDs. All Data/Left/Right/Parent snapshots must remain unchanged. KMP uses nullable traversal entries and invariant integer tokens. Minimal construction uses a nullable local recursive helper and sets Parent on each fresh node. DepthLink heads are concrete List<DepthLink> values containing original nodes. Insertion paths/frontiers use independent List copies, including an empty path snapshot."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_2.json",
+        "solutions/csharp/ctci6_4_2.cs",
+        "solutions/notes/ctci6_4_2.json"
+      ]
+    },
+    "ctci6_4_2/javascript": {
+      "codePath": "solutions/javascript/ctci6_4_2.js",
+      "notesPath": "solutions/notes/javascript/ctci6_4_2.json",
+      "contentSha256": "1e5673f95edcdba76e3072a9b5929d877d1cf3e82ee4c65eb99309ec064feebb",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "actualAlgorithm": "Recursively choose a middle value of disjoint half-open sorted ranges, allocate one node and set each child Parent link.",
+        "correctness": "By induction, each recursive call creates exactly the values in its half-open sorted interval. Its chosen middle value exceeds all left values and is below all right values, so attaching the two recursively valid children preserves strict BST ordering. The disjoint ranges ensure every input value occurs once. Their sizes differ by at most one; repeated halving therefore produces height equal to the least h whose full binary-tree capacity 2^h-1 covers n, which is a lower bound for any n-node binary tree. Setting the supplied parent argument on construction makes every Parent link agree with its child link and keeps the root parent null.",
+        "workedTrace": "For [1,2,3], choose 2 as the root, construct leaf 1 from the left range and leaf 3 from the right range. Their Parent links both point to 2. The height is 2, meeting the capacity bound of 3 nodes. For an even-length range either valid middle choice may lead to a different accepted minimum-height shape.",
+        "edgeCases": "Empty input, one/two values and even-length ranges with multiple accepted shapes. Signed endpoints, exact parent links and the 1000-value boundary.",
+        "timeDerivation": "O(n) time: each input position creates one node with constant local work.",
+        "spaceDerivation": "O(n) returned nodes and O(log(n+1)) recursive construction frames; recursion is at most about ten levels for n<=1000.",
+        "callableAgreement": "Read the author library constructor/parent setters and all five independently authored bodies. Recursion halves interval sizes and stays logarithmic for n<=1000. Input arrays remain unchanged and signed endpoints participate only in ordering/index lookup. The child observer serializes returned objects without computing an expected tree; host/C# graders independently check finite proper connectivity, exact parent links, inorder equality and the binary capacity minimum-height bound. Both two-element root choices are accepted. A compiled Python lower-midpoint alternative passes every minimal-tree case, proving reference shape is not a hidden requirement. C++ transfers new-node ownership and the private observer frees collected nodes after projection. Read exact functions. Array.from allocates independent adjacency lists. Boolean results have exact boolean type; Number integer node IDs and degrees stay well below precision limits. Every returned order is a concrete array; input edges are not sorted or modified. The observer aliases the provided user-module TreeNode class and maps actual objects to private IDs. Deleted/replaced links become unknown IDs and fail snapshots. Number bounds remain exact; Boolean/int results are checked separately. Parent alignment uses strict object equality. Fresh TreeNode/DepthLink constructors use the exact provided module classes. Depth lists retain original object references. Insertion frontiers use slice/concat and completed paths use slice so recursive mutation does not alias saved results."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_2.json",
+        "solutions/javascript/ctci6_4_2.js",
+        "solutions/notes/javascript/ctci6_4_2.json"
+      ]
+    },
+    "ctci6_4_2/python": {
+      "codePath": "solutions/python/ctci6_4_2.py",
+      "notesPath": "solutions/notes/python/ctci6_4_2.json",
+      "contentSha256": "50cf4b3e653b0e5cf13bb3ed2db6205fa4733cd9309898f5474a7aef2c6fe0d0",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "actualAlgorithm": "Recursively choose a middle value of disjoint half-open sorted ranges, allocate one node and set each child Parent link.",
+        "correctness": "By induction, each recursive call creates exactly the values in its half-open sorted interval. Its chosen middle value exceeds all left values and is below all right values, so attaching the two recursively valid children preserves strict BST ordering. The disjoint ranges ensure every input value occurs once. Their sizes differ by at most one; repeated halving therefore produces height equal to the least h whose full binary-tree capacity 2^h-1 covers n, which is a lower bound for any n-node binary tree. Setting the supplied parent argument on construction makes every Parent link agree with its child link and keeps the root parent null.",
+        "workedTrace": "For [1,2,3], choose 2 as the root, construct leaf 1 from the left range and leaf 3 from the right range. Their Parent links both point to 2. The height is 2, meeting the capacity bound of 3 nodes. For an even-length range either valid middle choice may lead to a different accepted minimum-height shape.",
+        "edgeCases": "Empty input, one/two values and even-length ranges with multiple accepted shapes. Signed endpoints, exact parent links and the 1000-value boundary.",
+        "timeDerivation": "O(n) time: each input position creates one node with constant local work.",
+        "spaceDerivation": "O(n) returned nodes and O(log(n+1)) recursive construction frames; recursion is at most about ten levels for n<=1000.",
+        "callableAgreement": "Read the author library constructor/parent setters and all five independently authored bodies. Recursion halves interval sizes and stays logarithmic for n<=1000. Input arrays remain unchanged and signed endpoints participate only in ordering/index lookup. The child observer serializes returned objects without computing an expected tree; host/C# graders independently check finite proper connectivity, exact parent links, inorder equality and the binary capacity minimum-height bound. Both two-element root choices are accepted. A compiled Python lower-midpoint alternative passes every minimal-tree case, proving reference shape is not a hidden requirement. C++ transfers new-node ownership and the private observer frees collected nodes after projection. Read exact annotated functions. Independent adjacency-list comprehensions and index-based work queues avoid aliasing and quadratic pop(0). Reachability returns bool, which is validated separately from int. Build-order failure discards partial queue output. The observer maps id(node), not Data equality, and validates bool separately from int. Provided TreeNode annotations match the real user-module class. Explicit stacks support depth 1000; nullable entries are retained for structural KMP tokens. Snapshot checks also reject bool masquerading as Data int. A nested build helper creates fresh nodes and parent links. DepthLink.Value is the original object; projector identities are checked independently of Data. Frontiers and completed paths are copied, and all results are materialized lists."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_2.json",
+        "solutions/python/ctci6_4_2.py",
+        "solutions/notes/python/ctci6_4_2.json"
+      ]
+    },
+    "ctci6_4_2/cpp": {
+      "codePath": "solutions/cpp/ctci6_4_2.cpp",
+      "notesPath": "solutions/notes/cpp/ctci6_4_2.json",
+      "contentSha256": "e8273b865bfcddd023ec40e8a92ff705b73227756387473bfdd44ba457e94ac3",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "actualAlgorithm": "Recursively choose a middle value of disjoint half-open sorted ranges, allocate one node and set each child Parent link.",
+        "correctness": "By induction, each recursive call creates exactly the values in its half-open sorted interval. Its chosen middle value exceeds all left values and is below all right values, so attaching the two recursively valid children preserves strict BST ordering. The disjoint ranges ensure every input value occurs once. Their sizes differ by at most one; repeated halving therefore produces height equal to the least h whose full binary-tree capacity 2^h-1 covers n, which is a lower bound for any n-node binary tree. Setting the supplied parent argument on construction makes every Parent link agree with its child link and keeps the root parent null.",
+        "workedTrace": "For [1,2,3], choose 2 as the root, construct leaf 1 from the left range and leaf 3 from the right range. Their Parent links both point to 2. The height is 2, meeting the capacity bound of 3 nodes. For an even-length range either valid middle choice may lead to a different accepted minimum-height shape.",
+        "edgeCases": "Empty input, one/two values and even-length ranges with multiple accepted shapes. Signed endpoints, exact parent links and the 1000-value boundary.",
+        "timeDerivation": "O(n) time: each input position creates one node with constant local work.",
+        "spaceDerivation": "O(n) returned nodes and O(log(n+1)) recursive construction frames; recursion is at most about ten levels for n<=1000.",
+        "callableAgreement": "Read the author library constructor/parent setters and all five independently authored bodies. Recursion halves interval sizes and stays logarithmic for n<=1000. Input arrays remain unchanged and signed endpoints participate only in ordering/index lookup. The child observer serializes returned objects without computing an expected tree; host/C# graders independently check finite proper connectivity, exact parent links, inorder equality and the binary capacity minimum-height bound. Both two-element root choices are accepted. A compiled Python lower-midpoint alternative passes every minimal-tree case, proving reference shape is not a hidden requirement. C++ transfers new-node ownership and the private observer frees collected nodes after projection. Read actual C++17 const vector references, vector<bool> visited flags and indexed vector queues. Dynamic queue growth does not invalidate iteration because the loop stores an index and adjacency traversal belongs to a different vector. Counts/IDs fit signed int; bounds are checked by input preconditions. TreeNode raw input pointers refer to judge-owned unique_ptr objects, whose addresses remain stable across vector growth. Solutions must not delete them. Pointer-key height maps, widened bounds and local value frames are explicit. Original-node returns are looked up by address, and every original field is resnapshotted. Returned minimal TreeNode and DepthLink objects are newly allocated and transferred to the private observer for cleanup. Depth Value pointers stay nonowning originals. Frontier vectors move into recursive calls, and result vectors copy the completed path before pop_back."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_2.json",
+        "solutions/cpp/ctci6_4_2.cpp",
+        "solutions/notes/cpp/ctci6_4_2.json"
+      ]
+    },
+    "ctci6_4_2/java": {
+      "codePath": "solutions/java/ctci6_4_2.java",
+      "notesPath": "solutions/notes/java/ctci6_4_2.json",
+      "contentSha256": "16d77d73d8956c23dbfe0176b4d8e0479e683634c9f03b24275a9ae3da182013",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "actualAlgorithm": "Recursively choose a middle value of disjoint half-open sorted ranges, allocate one node and set each child Parent link.",
+        "correctness": "By induction, each recursive call creates exactly the values in its half-open sorted interval. Its chosen middle value exceeds all left values and is below all right values, so attaching the two recursively valid children preserves strict BST ordering. The disjoint ranges ensure every input value occurs once. Their sizes differ by at most one; repeated halving therefore produces height equal to the least h whose full binary-tree capacity 2^h-1 covers n, which is a lower bound for any n-node binary tree. Setting the supplied parent argument on construction makes every Parent link agree with its child link and keeps the root parent null.",
+        "workedTrace": "For [1,2,3], choose 2 as the root, construct leaf 1 from the left range and leaf 3 from the right range. Their Parent links both point to 2. The height is 2, meeting the capacity bound of 3 nodes. For an even-length range either valid middle choice may lead to a different accepted minimum-height shape.",
+        "edgeCases": "Empty input, one/two values and even-length ranges with multiple accepted shapes. Signed endpoints, exact parent links and the 1000-value boundary.",
+        "timeDerivation": "O(n) time: each input position creates one node with constant local work.",
+        "spaceDerivation": "O(n) returned nodes and O(log(n+1)) recursive construction frames; recursion is at most about ten levels for n<=1000.",
+        "callableAgreement": "Read the author library constructor/parent setters and all five independently authored bodies. Recursion halves interval sizes and stays logarithmic for n<=1000. Input arrays remain unchanged and signed endpoints participate only in ordering/index lookup. The child observer serializes returned objects without computing an expected tree; host/C# graders independently check finite proper connectivity, exact parent links, inorder equality and the binary capacity minimum-height bound. Both two-element root choices are accepted. A compiled Python lower-midpoint alternative passes every minimal-tree case, proving reference shape is not a hidden requirement. C++ transfers new-node ownership and the private observer frees collected nodes after projection. Read actual methods, List<List<Integer>> adjacency and int[] result conversion. Boolean JSON encoding is explicit for reachability. Enhanced-for traverses adjacency lists while appending only to the separate queue, avoiding concurrent modification. Input row arrays remain unchanged. TreeNode fields/constructor are supplied, and the observer uses IdentityHashMap for original IDs. Traversal records never place null frames in ArrayDeque; KMP uses an ArrayList precisely because its stack contains null nodes. Boolean and Integer results have explicit JSON encoding. Minimal construction uses a local Builder class capturing the readonly array. Depth output is List<DepthLink>, with explicit head/tail assembly. Local Search captures result/path lists and copies each completed sequence so later backtracking cannot erase it."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_2.json",
+        "solutions/java/ctci6_4_2.java",
+        "solutions/notes/java/ctci6_4_2.json"
+      ]
+    },
+    "ctci6_4_3/csharp": {
+      "codePath": "solutions/csharp/ctci6_4_3.cs",
+      "notesPath": "solutions/notes/ctci6_4_3.json",
+      "contentSha256": "bc1860a66420546c2a5089fe4ae9773b4afac6cf76094a4bc79881458bf2d4e4",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "actualAlgorithm": "Build a fresh singly linked output list for each BFS frontier, storing original TreeNode references and enqueuing children left before right.",
+        "correctness": "Initially the frontier is just root, the complete depth-zero sequence. For each frontier node, appending a link whose Value is that same object preserves its identity and current left-to-right order. Every node at the next depth is exactly one current node's child; appending left then right while visiting parents left to right gives the complete next-depth order without duplicates in a proper tree. Induction therefore builds every depth exactly once. New links leave tree fields unchanged, and a null root produces no frontier or lists.",
+        "workedTrace": "For rows [[7,1,2],[7,3,-1],[7,-1,-1],[7,-1,-1]], the returned heads represent linked lists [node0], [node1 -> node2] and [node3]. The displayed projection is [[0],[1,2],[3]]. Returning [7],[7,7],[7] would lose the required original-node identities.",
+        "edgeCases": "Empty root, one node and a 1000-node chain with one list per depth. Repeated Data, missing children, selected internal roots and shuffled original row IDs.",
+        "timeDerivation": "O(n) time to visit each selected-subtree node and create one output link.",
+        "spaceDerivation": "O(n+h) returned link/head storage for n nodes and h depths, plus O(w) working frontier references for maximum width w.",
+        "callableAgreement": "Read all five actual bodies and supplied DepthLink APIs. New links have Value=the original node object; tree fields are never repurposed. A separate preorder-by-depth oracle produces original ID rows, including all small shapes, repeated Data, shuffled row IDs, selected internal roots, 1000-node chains and broad 1000-node trees. Private projection tracks output-link identities and bounds traversal so cycles/shared links cannot hang validation. Five compiled variants with equal-valued cloned Value nodes are rejected, and an actual linked-list cycle is rejected. C++ frees transferred output links only; input node ownership remains with the judge. Read exact bool/int[] methods. List<int>[] adjacency rows are separately constructed, and List<int> queues use a growing head index. Readonly observation preserves original jagged-array row identities. BuildOrder returns a materialized array only after all projects have been emitted. TreeNode nullable fields are supplied before the solution. Enter/exit tuples carry explicit state; dictionary node keys identify objects. Node returns become original private IDs. All Data/Left/Right/Parent snapshots must remain unchanged. KMP uses nullable traversal entries and invariant integer tokens. Minimal construction uses a nullable local recursive helper and sets Parent on each fresh node. DepthLink heads are concrete List<DepthLink> values containing original nodes. Insertion paths/frontiers use independent List copies, including an empty path snapshot."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_3.json",
+        "solutions/csharp/ctci6_4_3.cs",
+        "solutions/notes/ctci6_4_3.json"
+      ]
+    },
+    "ctci6_4_3/javascript": {
+      "codePath": "solutions/javascript/ctci6_4_3.js",
+      "notesPath": "solutions/notes/javascript/ctci6_4_3.json",
+      "contentSha256": "d875353746134830f57f16a26aec01f7a4867313a8c6d9f8cd67e9717296aba7",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "actualAlgorithm": "Build a fresh singly linked output list for each BFS frontier, storing original TreeNode references and enqueuing children left before right.",
+        "correctness": "Initially the frontier is just root, the complete depth-zero sequence. For each frontier node, appending a link whose Value is that same object preserves its identity and current left-to-right order. Every node at the next depth is exactly one current node's child; appending left then right while visiting parents left to right gives the complete next-depth order without duplicates in a proper tree. Induction therefore builds every depth exactly once. New links leave tree fields unchanged, and a null root produces no frontier or lists.",
+        "workedTrace": "For rows [[7,1,2],[7,3,-1],[7,-1,-1],[7,-1,-1]], the returned heads represent linked lists [node0], [node1 -> node2] and [node3]. The displayed projection is [[0],[1,2],[3]]. Returning [7],[7,7],[7] would lose the required original-node identities.",
+        "edgeCases": "Empty root, one node and a 1000-node chain with one list per depth. Repeated Data, missing children, selected internal roots and shuffled original row IDs.",
+        "timeDerivation": "O(n) time to visit each selected-subtree node and create one output link.",
+        "spaceDerivation": "O(n+h) returned link/head storage for n nodes and h depths, plus O(w) working frontier references for maximum width w.",
+        "callableAgreement": "Read all five actual bodies and supplied DepthLink APIs. New links have Value=the original node object; tree fields are never repurposed. A separate preorder-by-depth oracle produces original ID rows, including all small shapes, repeated Data, shuffled row IDs, selected internal roots, 1000-node chains and broad 1000-node trees. Private projection tracks output-link identities and bounds traversal so cycles/shared links cannot hang validation. Five compiled variants with equal-valued cloned Value nodes are rejected, and an actual linked-list cycle is rejected. C++ frees transferred output links only; input node ownership remains with the judge. Read exact functions. Array.from allocates independent adjacency lists. Boolean results have exact boolean type; Number integer node IDs and degrees stay well below precision limits. Every returned order is a concrete array; input edges are not sorted or modified. The observer aliases the provided user-module TreeNode class and maps actual objects to private IDs. Deleted/replaced links become unknown IDs and fail snapshots. Number bounds remain exact; Boolean/int results are checked separately. Parent alignment uses strict object equality. Fresh TreeNode/DepthLink constructors use the exact provided module classes. Depth lists retain original object references. Insertion frontiers use slice/concat and completed paths use slice so recursive mutation does not alias saved results."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_3.json",
+        "solutions/javascript/ctci6_4_3.js",
+        "solutions/notes/javascript/ctci6_4_3.json"
+      ]
+    },
+    "ctci6_4_3/python": {
+      "codePath": "solutions/python/ctci6_4_3.py",
+      "notesPath": "solutions/notes/python/ctci6_4_3.json",
+      "contentSha256": "c31093ad1492ada8b288b68e9b551340ed25fd1bd59c999db1995b4be8ede274",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "actualAlgorithm": "Build a fresh singly linked output list for each BFS frontier, storing original TreeNode references and enqueuing children left before right.",
+        "correctness": "Initially the frontier is just root, the complete depth-zero sequence. For each frontier node, appending a link whose Value is that same object preserves its identity and current left-to-right order. Every node at the next depth is exactly one current node's child; appending left then right while visiting parents left to right gives the complete next-depth order without duplicates in a proper tree. Induction therefore builds every depth exactly once. New links leave tree fields unchanged, and a null root produces no frontier or lists.",
+        "workedTrace": "For rows [[7,1,2],[7,3,-1],[7,-1,-1],[7,-1,-1]], the returned heads represent linked lists [node0], [node1 -> node2] and [node3]. The displayed projection is [[0],[1,2],[3]]. Returning [7],[7,7],[7] would lose the required original-node identities.",
+        "edgeCases": "Empty root, one node and a 1000-node chain with one list per depth. Repeated Data, missing children, selected internal roots and shuffled original row IDs.",
+        "timeDerivation": "O(n) time to visit each selected-subtree node and create one output link.",
+        "spaceDerivation": "O(n+h) returned link/head storage for n nodes and h depths, plus O(w) working frontier references for maximum width w.",
+        "callableAgreement": "Read all five actual bodies and supplied DepthLink APIs. New links have Value=the original node object; tree fields are never repurposed. A separate preorder-by-depth oracle produces original ID rows, including all small shapes, repeated Data, shuffled row IDs, selected internal roots, 1000-node chains and broad 1000-node trees. Private projection tracks output-link identities and bounds traversal so cycles/shared links cannot hang validation. Five compiled variants with equal-valued cloned Value nodes are rejected, and an actual linked-list cycle is rejected. C++ frees transferred output links only; input node ownership remains with the judge. Read exact annotated functions. Independent adjacency-list comprehensions and index-based work queues avoid aliasing and quadratic pop(0). Reachability returns bool, which is validated separately from int. Build-order failure discards partial queue output. The observer maps id(node), not Data equality, and validates bool separately from int. Provided TreeNode annotations match the real user-module class. Explicit stacks support depth 1000; nullable entries are retained for structural KMP tokens. Snapshot checks also reject bool masquerading as Data int. A nested build helper creates fresh nodes and parent links. DepthLink.Value is the original object; projector identities are checked independently of Data. Frontiers and completed paths are copied, and all results are materialized lists."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_3.json",
+        "solutions/python/ctci6_4_3.py",
+        "solutions/notes/python/ctci6_4_3.json"
+      ]
+    },
+    "ctci6_4_3/cpp": {
+      "codePath": "solutions/cpp/ctci6_4_3.cpp",
+      "notesPath": "solutions/notes/cpp/ctci6_4_3.json",
+      "contentSha256": "c29606990f15a4d99afcf03a87fa40dee5a3730d4ac54b8c8037b496250d9ee5",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "actualAlgorithm": "Build a fresh singly linked output list for each BFS frontier, storing original TreeNode references and enqueuing children left before right.",
+        "correctness": "Initially the frontier is just root, the complete depth-zero sequence. For each frontier node, appending a link whose Value is that same object preserves its identity and current left-to-right order. Every node at the next depth is exactly one current node's child; appending left then right while visiting parents left to right gives the complete next-depth order without duplicates in a proper tree. Induction therefore builds every depth exactly once. New links leave tree fields unchanged, and a null root produces no frontier or lists.",
+        "workedTrace": "For rows [[7,1,2],[7,3,-1],[7,-1,-1],[7,-1,-1]], the returned heads represent linked lists [node0], [node1 -> node2] and [node3]. The displayed projection is [[0],[1,2],[3]]. Returning [7],[7,7],[7] would lose the required original-node identities.",
+        "edgeCases": "Empty root, one node and a 1000-node chain with one list per depth. Repeated Data, missing children, selected internal roots and shuffled original row IDs.",
+        "timeDerivation": "O(n) time to visit each selected-subtree node and create one output link.",
+        "spaceDerivation": "O(n+h) returned link/head storage for n nodes and h depths, plus O(w) working frontier references for maximum width w.",
+        "callableAgreement": "Read all five actual bodies and supplied DepthLink APIs. New links have Value=the original node object; tree fields are never repurposed. A separate preorder-by-depth oracle produces original ID rows, including all small shapes, repeated Data, shuffled row IDs, selected internal roots, 1000-node chains and broad 1000-node trees. Private projection tracks output-link identities and bounds traversal so cycles/shared links cannot hang validation. Five compiled variants with equal-valued cloned Value nodes are rejected, and an actual linked-list cycle is rejected. C++ frees transferred output links only; input node ownership remains with the judge. Read actual C++17 const vector references, vector<bool> visited flags and indexed vector queues. Dynamic queue growth does not invalidate iteration because the loop stores an index and adjacency traversal belongs to a different vector. Counts/IDs fit signed int; bounds are checked by input preconditions. TreeNode raw input pointers refer to judge-owned unique_ptr objects, whose addresses remain stable across vector growth. Solutions must not delete them. Pointer-key height maps, widened bounds and local value frames are explicit. Original-node returns are looked up by address, and every original field is resnapshotted. Returned minimal TreeNode and DepthLink objects are newly allocated and transferred to the private observer for cleanup. Depth Value pointers stay nonowning originals. Frontier vectors move into recursive calls, and result vectors copy the completed path before pop_back."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_3.json",
+        "solutions/cpp/ctci6_4_3.cpp",
+        "solutions/notes/cpp/ctci6_4_3.json"
+      ]
+    },
+    "ctci6_4_3/java": {
+      "codePath": "solutions/java/ctci6_4_3.java",
+      "notesPath": "solutions/notes/java/ctci6_4_3.json",
+      "contentSha256": "93c8a55bf4e0742953b8f8677623b94542226870c372f955c3a915ad58dcbe8d",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "actualAlgorithm": "Build a fresh singly linked output list for each BFS frontier, storing original TreeNode references and enqueuing children left before right.",
+        "correctness": "Initially the frontier is just root, the complete depth-zero sequence. For each frontier node, appending a link whose Value is that same object preserves its identity and current left-to-right order. Every node at the next depth is exactly one current node's child; appending left then right while visiting parents left to right gives the complete next-depth order without duplicates in a proper tree. Induction therefore builds every depth exactly once. New links leave tree fields unchanged, and a null root produces no frontier or lists.",
+        "workedTrace": "For rows [[7,1,2],[7,3,-1],[7,-1,-1],[7,-1,-1]], the returned heads represent linked lists [node0], [node1 -> node2] and [node3]. The displayed projection is [[0],[1,2],[3]]. Returning [7],[7,7],[7] would lose the required original-node identities.",
+        "edgeCases": "Empty root, one node and a 1000-node chain with one list per depth. Repeated Data, missing children, selected internal roots and shuffled original row IDs.",
+        "timeDerivation": "O(n) time to visit each selected-subtree node and create one output link.",
+        "spaceDerivation": "O(n+h) returned link/head storage for n nodes and h depths, plus O(w) working frontier references for maximum width w.",
+        "callableAgreement": "Read all five actual bodies and supplied DepthLink APIs. New links have Value=the original node object; tree fields are never repurposed. A separate preorder-by-depth oracle produces original ID rows, including all small shapes, repeated Data, shuffled row IDs, selected internal roots, 1000-node chains and broad 1000-node trees. Private projection tracks output-link identities and bounds traversal so cycles/shared links cannot hang validation. Five compiled variants with equal-valued cloned Value nodes are rejected, and an actual linked-list cycle is rejected. C++ frees transferred output links only; input node ownership remains with the judge. Read actual methods, List<List<Integer>> adjacency and int[] result conversion. Boolean JSON encoding is explicit for reachability. Enhanced-for traverses adjacency lists while appending only to the separate queue, avoiding concurrent modification. Input row arrays remain unchanged. TreeNode fields/constructor are supplied, and the observer uses IdentityHashMap for original IDs. Traversal records never place null frames in ArrayDeque; KMP uses an ArrayList precisely because its stack contains null nodes. Boolean and Integer results have explicit JSON encoding. Minimal construction uses a local Builder class capturing the readonly array. Depth output is List<DepthLink>, with explicit head/tail assembly. Local Search captures result/path lists and copies each completed sequence so later backtracking cannot erase it."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_3.json",
+        "solutions/java/ctci6_4_3.java",
+        "solutions/notes/java/ctci6_4_3.json"
+      ]
+    },
+    "ctci6_4_9/csharp": {
+      "codePath": "solutions/csharp/ctci6_4_9.cs",
+      "notesPath": "solutions/notes/ctci6_4_9.json",
+      "contentSha256": "075cea4a7749d0ec3da853c60cf2a6622b1faf91275a9a0bd6c57c88aa0fca2a",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "actualAlgorithm": "Backtrack over the frontier of nodes whose parents are already chosen, exposing children only after selecting their parent.",
+        "correctness": "Every generated order begins with root and exposes a child only after its parent is chosen, so every ancestor precedes its descendants. Distinct BST value ranges route each later insertion into the same ancestor-defined subtree, hence any such order recreates the original tree. Conversely, an insertion order creating that tree must place every node after its ancestors; at each step its next node is therefore in the backtracking frontier and that branch is explored. Unique chosen-node sequences cannot repeat because their first differing frontier choice gives a different next distinct value. An empty frontier emits one complete row, including the single empty row for an empty tree.",
+        "workedTrace": "For root 2 with left child 1 and right child 3, root must be first. Both children then become available, yielding [2,1,3] and [2,3,1]. These are the two accepted rows, in either outer order. [1,2,3] instead creates root 1 and is invalid.",
+        "edgeCases": "Empty tree returns [[]], leaf and chain with a single sequence. Balanced branches with many interleavings, arbitrary outer order, duplicate-row rejection and signed endpoints.",
+        "timeDerivation": "O(S*(n+1)^2) conservative time for S returned sequences of n values: copying a frontier of at most n at each of n choices on each complete search path. Output alone needs O(S*n+1).",
+        "spaceDerivation": "O(S*n) returned values plus O(n^2) frontier copies along one recursion path and O(n) value/path frames. n<=8 bounds the combinatorial output.",
+        "callableAgreement": "Read all five bodies. Each branch copies its available frontier, appends one distinct Data value, snapshots complete paths and pops afterward. No input TreeNode field is changed. Unique BST values make ancestor-before-descendant orders exactly insertion sequences; empty frontier emits one row, including [[]] for an empty tree. Independent exhaustive node-ID permutations filtered by original parent precedence establish expected sequences for all small shapes and selected eight-node cases. The grader sorts only outer row encodings, rejects duplicate rows and never sorts values inside a row. Actual frontier copying is included in the conservative O(S*(n+1)^2) bound. Read exact bool/int[] methods. List<int>[] adjacency rows are separately constructed, and List<int> queues use a growing head index. Readonly observation preserves original jagged-array row identities. BuildOrder returns a materialized array only after all projects have been emitted. TreeNode nullable fields are supplied before the solution. Enter/exit tuples carry explicit state; dictionary node keys identify objects. Node returns become original private IDs. All Data/Left/Right/Parent snapshots must remain unchanged. KMP uses nullable traversal entries and invariant integer tokens. Minimal construction uses a nullable local recursive helper and sets Parent on each fresh node. DepthLink heads are concrete List<DepthLink> values containing original nodes. Insertion paths/frontiers use independent List copies, including an empty path snapshot."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_9.json",
+        "solutions/csharp/ctci6_4_9.cs",
+        "solutions/notes/ctci6_4_9.json"
+      ]
+    },
+    "ctci6_4_9/javascript": {
+      "codePath": "solutions/javascript/ctci6_4_9.js",
+      "notesPath": "solutions/notes/javascript/ctci6_4_9.json",
+      "contentSha256": "986e7d8ca4f151f1c330913d561c67fe47f9c7ef6b568862468a7d2c31e5b989",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "actualAlgorithm": "Backtrack over the frontier of nodes whose parents are already chosen, exposing children only after selecting their parent.",
+        "correctness": "Every generated order begins with root and exposes a child only after its parent is chosen, so every ancestor precedes its descendants. Distinct BST value ranges route each later insertion into the same ancestor-defined subtree, hence any such order recreates the original tree. Conversely, an insertion order creating that tree must place every node after its ancestors; at each step its next node is therefore in the backtracking frontier and that branch is explored. Unique chosen-node sequences cannot repeat because their first differing frontier choice gives a different next distinct value. An empty frontier emits one complete row, including the single empty row for an empty tree.",
+        "workedTrace": "For root 2 with left child 1 and right child 3, root must be first. Both children then become available, yielding [2,1,3] and [2,3,1]. These are the two accepted rows, in either outer order. [1,2,3] instead creates root 1 and is invalid.",
+        "edgeCases": "Empty tree returns [[]], leaf and chain with a single sequence. Balanced branches with many interleavings, arbitrary outer order, duplicate-row rejection and signed endpoints.",
+        "timeDerivation": "O(S*(n+1)^2) conservative time for S returned sequences of n values: copying a frontier of at most n at each of n choices on each complete search path. Output alone needs O(S*n+1).",
+        "spaceDerivation": "O(S*n) returned values plus O(n^2) frontier copies along one recursion path and O(n) value/path frames. n<=8 bounds the combinatorial output.",
+        "callableAgreement": "Read all five bodies. Each branch copies its available frontier, appends one distinct Data value, snapshots complete paths and pops afterward. No input TreeNode field is changed. Unique BST values make ancestor-before-descendant orders exactly insertion sequences; empty frontier emits one row, including [[]] for an empty tree. Independent exhaustive node-ID permutations filtered by original parent precedence establish expected sequences for all small shapes and selected eight-node cases. The grader sorts only outer row encodings, rejects duplicate rows and never sorts values inside a row. Actual frontier copying is included in the conservative O(S*(n+1)^2) bound. Read exact functions. Array.from allocates independent adjacency lists. Boolean results have exact boolean type; Number integer node IDs and degrees stay well below precision limits. Every returned order is a concrete array; input edges are not sorted or modified. The observer aliases the provided user-module TreeNode class and maps actual objects to private IDs. Deleted/replaced links become unknown IDs and fail snapshots. Number bounds remain exact; Boolean/int results are checked separately. Parent alignment uses strict object equality. Fresh TreeNode/DepthLink constructors use the exact provided module classes. Depth lists retain original object references. Insertion frontiers use slice/concat and completed paths use slice so recursive mutation does not alias saved results."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_9.json",
+        "solutions/javascript/ctci6_4_9.js",
+        "solutions/notes/javascript/ctci6_4_9.json"
+      ]
+    },
+    "ctci6_4_9/python": {
+      "codePath": "solutions/python/ctci6_4_9.py",
+      "notesPath": "solutions/notes/python/ctci6_4_9.json",
+      "contentSha256": "cf90a2a94a0ebeb86459369cf78c06a10667fe7942d4ff69f2a729a583d8b0df",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "actualAlgorithm": "Backtrack over the frontier of nodes whose parents are already chosen, exposing children only after selecting their parent.",
+        "correctness": "Every generated order begins with root and exposes a child only after its parent is chosen, so every ancestor precedes its descendants. Distinct BST value ranges route each later insertion into the same ancestor-defined subtree, hence any such order recreates the original tree. Conversely, an insertion order creating that tree must place every node after its ancestors; at each step its next node is therefore in the backtracking frontier and that branch is explored. Unique chosen-node sequences cannot repeat because their first differing frontier choice gives a different next distinct value. An empty frontier emits one complete row, including the single empty row for an empty tree.",
+        "workedTrace": "For root 2 with left child 1 and right child 3, root must be first. Both children then become available, yielding [2,1,3] and [2,3,1]. These are the two accepted rows, in either outer order. [1,2,3] instead creates root 1 and is invalid.",
+        "edgeCases": "Empty tree returns [[]], leaf and chain with a single sequence. Balanced branches with many interleavings, arbitrary outer order, duplicate-row rejection and signed endpoints.",
+        "timeDerivation": "O(S*(n+1)^2) conservative time for S returned sequences of n values: copying a frontier of at most n at each of n choices on each complete search path. Output alone needs O(S*n+1).",
+        "spaceDerivation": "O(S*n) returned values plus O(n^2) frontier copies along one recursion path and O(n) value/path frames. n<=8 bounds the combinatorial output.",
+        "callableAgreement": "Read all five bodies. Each branch copies its available frontier, appends one distinct Data value, snapshots complete paths and pops afterward. No input TreeNode field is changed. Unique BST values make ancestor-before-descendant orders exactly insertion sequences; empty frontier emits one row, including [[]] for an empty tree. Independent exhaustive node-ID permutations filtered by original parent precedence establish expected sequences for all small shapes and selected eight-node cases. The grader sorts only outer row encodings, rejects duplicate rows and never sorts values inside a row. Actual frontier copying is included in the conservative O(S*(n+1)^2) bound. Read exact annotated functions. Independent adjacency-list comprehensions and index-based work queues avoid aliasing and quadratic pop(0). Reachability returns bool, which is validated separately from int. Build-order failure discards partial queue output. The observer maps id(node), not Data equality, and validates bool separately from int. Provided TreeNode annotations match the real user-module class. Explicit stacks support depth 1000; nullable entries are retained for structural KMP tokens. Snapshot checks also reject bool masquerading as Data int. A nested build helper creates fresh nodes and parent links. DepthLink.Value is the original object; projector identities are checked independently of Data. Frontiers and completed paths are copied, and all results are materialized lists."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_9.json",
+        "solutions/python/ctci6_4_9.py",
+        "solutions/notes/python/ctci6_4_9.json"
+      ]
+    },
+    "ctci6_4_9/cpp": {
+      "codePath": "solutions/cpp/ctci6_4_9.cpp",
+      "notesPath": "solutions/notes/cpp/ctci6_4_9.json",
+      "contentSha256": "0c49c7266c553f7d23acfe626a819011f05c8bd70fee0bf69a3bfd666fccdb96",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "actualAlgorithm": "Backtrack over the frontier of nodes whose parents are already chosen, exposing children only after selecting their parent.",
+        "correctness": "Every generated order begins with root and exposes a child only after its parent is chosen, so every ancestor precedes its descendants. Distinct BST value ranges route each later insertion into the same ancestor-defined subtree, hence any such order recreates the original tree. Conversely, an insertion order creating that tree must place every node after its ancestors; at each step its next node is therefore in the backtracking frontier and that branch is explored. Unique chosen-node sequences cannot repeat because their first differing frontier choice gives a different next distinct value. An empty frontier emits one complete row, including the single empty row for an empty tree.",
+        "workedTrace": "For root 2 with left child 1 and right child 3, root must be first. Both children then become available, yielding [2,1,3] and [2,3,1]. These are the two accepted rows, in either outer order. [1,2,3] instead creates root 1 and is invalid.",
+        "edgeCases": "Empty tree returns [[]], leaf and chain with a single sequence. Balanced branches with many interleavings, arbitrary outer order, duplicate-row rejection and signed endpoints.",
+        "timeDerivation": "O(S*(n+1)^2) conservative time for S returned sequences of n values: copying a frontier of at most n at each of n choices on each complete search path. Output alone needs O(S*n+1).",
+        "spaceDerivation": "O(S*n) returned values plus O(n^2) frontier copies along one recursion path and O(n) value/path frames. n<=8 bounds the combinatorial output.",
+        "callableAgreement": "Read all five bodies. Each branch copies its available frontier, appends one distinct Data value, snapshots complete paths and pops afterward. No input TreeNode field is changed. Unique BST values make ancestor-before-descendant orders exactly insertion sequences; empty frontier emits one row, including [[]] for an empty tree. Independent exhaustive node-ID permutations filtered by original parent precedence establish expected sequences for all small shapes and selected eight-node cases. The grader sorts only outer row encodings, rejects duplicate rows and never sorts values inside a row. Actual frontier copying is included in the conservative O(S*(n+1)^2) bound. Read actual C++17 const vector references, vector<bool> visited flags and indexed vector queues. Dynamic queue growth does not invalidate iteration because the loop stores an index and adjacency traversal belongs to a different vector. Counts/IDs fit signed int; bounds are checked by input preconditions. TreeNode raw input pointers refer to judge-owned unique_ptr objects, whose addresses remain stable across vector growth. Solutions must not delete them. Pointer-key height maps, widened bounds and local value frames are explicit. Original-node returns are looked up by address, and every original field is resnapshotted. Returned minimal TreeNode and DepthLink objects are newly allocated and transferred to the private observer for cleanup. Depth Value pointers stay nonowning originals. Frontier vectors move into recursive calls, and result vectors copy the completed path before pop_back."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_9.json",
+        "solutions/cpp/ctci6_4_9.cpp",
+        "solutions/notes/cpp/ctci6_4_9.json"
+      ]
+    },
+    "ctci6_4_9/java": {
+      "codePath": "solutions/java/ctci6_4_9.java",
+      "notesPath": "solutions/notes/java/ctci6_4_9.json",
+      "contentSha256": "df745c22e2ac37393ea15a792e7055036dae09cf89e81ca40c886a4f5d1ba3d8",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "actualAlgorithm": "Backtrack over the frontier of nodes whose parents are already chosen, exposing children only after selecting their parent.",
+        "correctness": "Every generated order begins with root and exposes a child only after its parent is chosen, so every ancestor precedes its descendants. Distinct BST value ranges route each later insertion into the same ancestor-defined subtree, hence any such order recreates the original tree. Conversely, an insertion order creating that tree must place every node after its ancestors; at each step its next node is therefore in the backtracking frontier and that branch is explored. Unique chosen-node sequences cannot repeat because their first differing frontier choice gives a different next distinct value. An empty frontier emits one complete row, including the single empty row for an empty tree.",
+        "workedTrace": "For root 2 with left child 1 and right child 3, root must be first. Both children then become available, yielding [2,1,3] and [2,3,1]. These are the two accepted rows, in either outer order. [1,2,3] instead creates root 1 and is invalid.",
+        "edgeCases": "Empty tree returns [[]], leaf and chain with a single sequence. Balanced branches with many interleavings, arbitrary outer order, duplicate-row rejection and signed endpoints.",
+        "timeDerivation": "O(S*(n+1)^2) conservative time for S returned sequences of n values: copying a frontier of at most n at each of n choices on each complete search path. Output alone needs O(S*n+1).",
+        "spaceDerivation": "O(S*n) returned values plus O(n^2) frontier copies along one recursion path and O(n) value/path frames. n<=8 bounds the combinatorial output.",
+        "callableAgreement": "Read all five bodies. Each branch copies its available frontier, appends one distinct Data value, snapshots complete paths and pops afterward. No input TreeNode field is changed. Unique BST values make ancestor-before-descendant orders exactly insertion sequences; empty frontier emits one row, including [[]] for an empty tree. Independent exhaustive node-ID permutations filtered by original parent precedence establish expected sequences for all small shapes and selected eight-node cases. The grader sorts only outer row encodings, rejects duplicate rows and never sorts values inside a row. Actual frontier copying is included in the conservative O(S*(n+1)^2) bound. Read actual methods, List<List<Integer>> adjacency and int[] result conversion. Boolean JSON encoding is explicit for reachability. Enhanced-for traverses adjacency lists while appending only to the separate queue, avoiding concurrent modification. Input row arrays remain unchanged. TreeNode fields/constructor are supplied, and the observer uses IdentityHashMap for original IDs. Traversal records never place null frames in ArrayDeque; KMP uses an ArrayList precisely because its stack contains null nodes. Boolean and Integer results have explicit JSON encoding. Minimal construction uses a local Builder class capturing the readonly array. Depth output is List<DepthLink>, with explicit head/tail assembly. Local Search captures result/path lists and copies each completed sequence so later backtracking cannot erase it."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_9.json",
+        "solutions/java/ctci6_4_9.java",
+        "solutions/notes/java/ctci6_4_9.json"
       ]
     }
   }

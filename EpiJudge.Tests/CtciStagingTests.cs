@@ -222,6 +222,50 @@ public sealed class CtciStagingTests
     }
 
     [Fact]
+    public void MinimalTreeAcceptsDifferentValidMiddleChoices()
+    {
+        var definition = Definition("4.2");
+        var lower = new { root = 0, nodes = new int[][] { [1, -1, 1, -1], [2, -1, -1, 0] } };
+        var upper = new { root = 0, nodes = new int[][] { [2, 1, -1, -1], [1, -1, -1, 0] } };
+        var test = Case([new[] { 1, 2 }], upper);
+        Assert.Null(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = lower, mutationOk = true })));
+        Assert.Null(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = upper, mutationOk = true })));
+    }
+
+    [Fact]
+    public void MinimalTreeRequiresMinimumHeightAndCorrectParents()
+    {
+        var definition = Definition("4.2");
+        var chain = new { root = 0, nodes = new int[][] { [1, -1, 1, -1], [2, -1, 2, 0], [3, -1, -1, 1] } };
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, Case([new[] { 1, 2, 3 }], chain), Json(new { actual = chain, mutationOk = true })));
+        var wrongParent = new { root = 0, nodes = new int[][] { [1, -1, 1, -1], [2, -1, -1, -1] } };
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, Case([new[] { 1, 2 }], wrongParent), Json(new { actual = wrongParent, mutationOk = true })));
+    }
+
+    [Fact]
+    public void DepthListsRequireOriginalNodeIdentitiesInLeftToRightOrder()
+    {
+        var definition = Definition("4.3");
+        var test = Case([new { nodes = new int[][] { [7, 1, 2], [7, -1, -1], [7, -1, -1] }, selected = 0 }], new int[][] { [0], [1, 2] });
+        Assert.Null(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new int[][] { [0], [1, 2] }, mutationOk = true })));
+        foreach (var wrong in new int[][][] { [[7], [7, 7]], [[-2], [-2, -2]], [[0], [2, 1]] })
+            Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = wrong, mutationOk = true })));
+    }
+
+    [Fact]
+    public void BstSequencesAllowOuterReorderingWithoutLosingInnerOrderOrMultiplicity()
+    {
+        var definition = Definition("4.9");
+        var test = Case([new { nodes = new int[][] { [2, 1, 2], [1, -1, -1], [3, -1, -1] }, selected = 0 }], new int[][] { [2, 1, 3], [2, 3, 1] });
+        Assert.Null(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new int[][] { [2, 3, 1], [2, 1, 3] }, mutationOk = true })));
+        foreach (var wrong in new int[][][] { [[2, 1, 3], [2, 1, 3], [2, 3, 1]], [[1, 2, 3], [2, 3, 1]] })
+            Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = wrong, mutationOk = true })));
+        var empty = Case([new { nodes = Array.Empty<int[]>(), selected = -1 }], new int[][] { [] });
+        Assert.Null(CtciStagingGrader.FailureReason(definition, empty, Json(new { actual = new int[][] { [] }, mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, empty, Json(new { actual = Array.Empty<int[]>(), mutationOk = true })));
+    }
+
+    [Fact]
     public void AntRenderingUsesVisitedBoundsAndOverlaysTheFinalDirection()
     {
         var definition = Definition("16.22");

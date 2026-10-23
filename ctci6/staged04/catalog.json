@@ -96,6 +96,196 @@
     }
   },
   {
+    "ref": "4.2",
+    "method": "CreateMinimalBst",
+    "params": [
+      [
+        "sortedValues",
+        "ai"
+      ]
+    ],
+    "result": "newtree",
+    "mutation": "none",
+    "description": "Construct and return a new binary search tree containing every value of the sorted input exactly once, with the smallest possible height. Input values are distinct. Empty input returns null. Any minimum-height BST satisfying the node/parent contract is accepted; its exact shape need not match the example.",
+    "constraints": [
+      "sortedValues is a nonnull strictly increasing array of 0..1000 signed 32-bit integers. Preserve the array and its order. Tree height counts nodes on the longest root-to-leaf path; empty height is zero. For n nodes the minimum height is the least h with 2^h-1 >= n.",
+      "Use provided TreeNode objects with Data,Left,Right,Parent. Return new nodes, not an array or encoded table. Root.Parent must be null and every child.Parent must point to its actual parent. No cycles/shared children, extra values or missing values are allowed. C++ must allocate returned nodes with new and transfers their ownership to the judge.",
+      "Displayed outputs encode {\"root\":id,\"nodes\":[[Data,leftId,rightId,parentId],...]}; -1 means null. These IDs are observation labels for the returned objects. Callable code returns the TreeNode root, not this JSON encoding."
+    ],
+    "why": "The middle value leaves nearly equal-sized sorted ranges on either side. Every left-range value is smaller and every right-range value larger, so recursive middle selection directly builds a BST without repeated insertion. Balanced range sizes keep the tallest branch as short as the binary-tree capacity bound permits.",
+    "correctness": "By induction, each recursive call creates exactly the values in its half-open sorted interval. Its chosen middle value exceeds all left values and is below all right values, so attaching the two recursively valid children preserves strict BST ordering. The disjoint ranges ensure every input value occurs once. Their sizes differ by at most one; repeated halving therefore produces height equal to the least h whose full binary-tree capacity 2^h-1 covers n, which is a lower bound for any n-node binary tree. Setting the supplied parent argument on construction makes every Parent link agree with its child link and keeps the root parent null.",
+    "walkthrough": "For [1,2,3], choose 2 as the root, construct leaf 1 from the left range and leaf 3 from the right range. Their Parent links both point to 2. The height is 2, meeting the capacity bound of 3 nodes. For an even-length range either valid middle choice may lead to a different accepted minimum-height shape.",
+    "example": [
+      [
+        [
+          1,
+          2,
+          3
+        ]
+      ],
+      {
+        "root": 0,
+        "nodes": [
+          [
+            2,
+            1,
+            2,
+            -1
+          ],
+          [
+            1,
+            -1,
+            -1,
+            0
+          ],
+          [
+            3,
+            -1,
+            -1,
+            0
+          ]
+        ]
+      }
+    ],
+    "time": "O(n) time: each input position creates one node with constant local work.",
+    "space": "O(n) returned nodes and O(log(n+1)) recursive construction frames; recursion is at most about ten levels for n<=1000.",
+    "edges": [
+      "Empty input, one/two values and even-length ranges with multiple accepted shapes.",
+      "Signed endpoints, exact parent links and the 1000-value boundary."
+    ],
+    "related": "The author task delegates to the public TreeNode library middle-range constructor. Parent links mirror its setters, but the grader validates every minimum-height BST rather than requiring one midpoint convention.",
+    "id": "ctci6_4_2",
+    "title": "Minimal Tree",
+    "testCount": 173,
+    "languages": {
+      "csharp": {
+        "signature": "TreeNode? CreateMinimalBst(int[] sortedValues)",
+        "starterCode": "public class Solution\n{\n    public TreeNode? CreateMinimalBst(int[] sortedValues)\n    {\n        return null;\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public TreeNode? CreateMinimalBst(int[] sortedValues)\n    {\n        TreeNode ? Build(int lower, int upper, TreeNode ? parent)\n        {\n            if (lower >= upper)\n                return null;\n            int middle = lower + (upper - lower) / 2;\n            var node = new TreeNode(sortedValues[middle]);\n            node.Parent = parent;\n            node.Left = Build(lower, middle, node);\n            node.Right = Build(middle + 1, upper, node);\n            return node;\n        }\n        return Build(0, sortedValues.Length, null);\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function CreateMinimalBst(sortedValues)",
+        "starterCode": "function CreateMinimalBst(sortedValues) {\n  return null;\n}\n",
+        "solutionCode": "function CreateMinimalBst(sortedValues) {\n  function build(lower, upper, parent) {\n    if (lower >= upper) return null;\n    const middle = lower + Math.floor((upper - lower) / 2),\n      node = new TreeNode(sortedValues[middle]);\n    node.Parent = parent;\n    node.Left = build(lower, middle, node);\n    node.Right = build(middle + 1, upper, node);\n    return node;\n  }\n  return build(0, sortedValues.length, null);\n}\n"
+      },
+      "python": {
+        "signature": "def CreateMinimalBst(sortedValues: list[int]) -> TreeNode | None",
+        "starterCode": "def CreateMinimalBst(sortedValues: list[int]) -> TreeNode | None:\n    return None\n",
+        "solutionCode": "def CreateMinimalBst(sortedValues: list[int]) -> TreeNode | None:\n    def build(lower, upper, parent):\n        if lower >= upper:\n            return None\n        middle = lower + (upper - lower) // 2\n        node = TreeNode(sortedValues[middle])\n        node.Parent = parent\n        node.Left = build(lower, middle, node)\n        node.Right = build(middle + 1, upper, node)\n        return node\n\n    return build(0, len(sortedValues), None)\n"
+      },
+      "cpp": {
+        "signature": "TreeNode* CreateMinimalBst(const std::vector<int>& sortedValues)",
+        "starterCode": "class Solution {\n public:\n  TreeNode* CreateMinimalBst(const std::vector<int>& sortedValues) {\n    return nullptr;\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  TreeNode* CreateMinimalBst(const std::vector<int>& sortedValues) {\n    std::function<TreeNode*(int, int, TreeNode*)> build = [&](int lower, int upper,\n                                                              TreeNode* parent) -> TreeNode* {\n      if (lower >= upper)\n        return nullptr;\n      int middle = lower + (upper - lower) / 2;\n      auto node = new TreeNode(sortedValues[middle]);\n      node->Parent = parent;\n      node->Left = build(lower, middle, node);\n      node->Right = build(middle + 1, upper, node);\n      return node;\n    };\n    return build(0, static_cast<int>(sortedValues.size()), nullptr);\n  }\n};\n"
+      },
+      "java": {
+        "signature": "TreeNode CreateMinimalBst(int[] sortedValues)",
+        "starterCode": "class Solution {\n  public TreeNode CreateMinimalBst(int[] sortedValues) {\n    return null;\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public TreeNode CreateMinimalBst(int[] sortedValues) {\n    class Builder {\n      TreeNode build(int lower, int upper, TreeNode parent) {\n        if (lower >= upper)\n          return null;\n        int middle = lower + (upper - lower) / 2;\n        TreeNode node = new TreeNode(sortedValues[middle]);\n        node.Parent = parent;\n        node.Left = build(lower, middle, node);\n        node.Right = build(middle + 1, upper, node);\n        return node;\n      }\n    }\n    return new Builder().build(0, sortedValues.length, null);\n  }\n}\n"
+      }
+    }
+  },
+  {
+    "ref": "4.3",
+    "method": "LinkedListsByDepth",
+    "params": [
+      [
+        "root",
+        "tree"
+      ]
+    ],
+    "result": "depths",
+    "mutation": "none",
+    "description": "Create one singly linked list for every depth of the selected binary tree. The first list contains root, the next contains its children, and so on. Within a depth, order nodes from left to right. Return a collection of list heads in increasing depth order. List values must reference the original TreeNode objects, including when Data values repeat.",
+    "constraints": [
+      "Displayed tree arguments are {\"nodes\":[[Data,leftId,rightId],...],\"selected\":id}. Row indices are distinct node identities; -1 denotes a null link/selection. The table is a valid acyclic binary forest with at most one incoming child link per node. The judge constructs TreeNode objects, connects Left/Right, computes Parent, and passes only the selected TreeNode, not the table. There are 0..1000 rows with signed 32-bit Data, and repeated Data values are allowed unless stated otherwise.",
+      "Use the provided TreeNode API (Data,Left,Right,Parent). Preserve every original node object, data value and link, including Parent and unselected nodes. A returned node must be an original object; displayed node results are its row ID, or -1 for null. C++ input nodes are judge-owned and must not be deleted.",
+      "Use provided DepthLink objects, each with Value (an original TreeNode) and Next (another DepthLink or null). Allocate new list links; do not repurpose or mutate TreeNode child/parent fields. Every link belongs to exactly one proper, null-terminated output list. Empty root returns an empty collection of heads.",
+      "Displayed results project each linked list to its original TreeNode row IDs, so [[0],[1,2]] means heads of two actual linked lists, not nested value arrays. Callable code returns DepthLink heads. C++ allocates new DepthLink objects and transfers ownership of those links only; their TreeNode Value pointers remain judge-owned."
+    ],
+    "why": "A breadth-first frontier contains exactly one depth in left-to-right order. Build its linked list by appending new links at a tail pointer, and build the next frontier by appending each parent's left child before its right child. Separating frontier references from output links preserves the tree while creating the required linked structure.",
+    "correctness": "Initially the frontier is just root, the complete depth-zero sequence. For each frontier node, appending a link whose Value is that same object preserves its identity and current left-to-right order. Every node at the next depth is exactly one current node's child; appending left then right while visiting parents left to right gives the complete next-depth order without duplicates in a proper tree. Induction therefore builds every depth exactly once. New links leave tree fields unchanged, and a null root produces no frontier or lists.",
+    "walkthrough": "For rows [[7,1,2],[7,3,-1],[7,-1,-1],[7,-1,-1]], the returned heads represent linked lists [node0], [node1 -> node2] and [node3]. The displayed projection is [[0],[1,2],[3]]. Returning [7],[7,7],[7] would lose the required original-node identities.",
+    "example": [
+      [
+        {
+          "nodes": [
+            [
+              7,
+              1,
+              2
+            ],
+            [
+              7,
+              3,
+              -1
+            ],
+            [
+              7,
+              -1,
+              -1
+            ],
+            [
+              7,
+              -1,
+              -1
+            ]
+          ],
+          "selected": 0
+        }
+      ],
+      [
+        [
+          0
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          3
+        ]
+      ]
+    ],
+    "time": "O(n) time to visit each selected-subtree node and create one output link.",
+    "space": "O(n+h) returned link/head storage for n nodes and h depths, plus O(w) working frontier references for maximum width w.",
+    "edges": [
+      "Empty root, one node and a 1000-node chain with one list per depth.",
+      "Repeated Data, missing children, selected internal roots and shuffled original row IDs."
+    ],
+    "related": "The author task returns linked lists of TreeNode references. The bank supplies explicit portable singly linked output links rather than replacing that requirement with value arrays.",
+    "id": "ctci6_4_3",
+    "title": "List of Depths",
+    "testCount": 335,
+    "languages": {
+      "csharp": {
+        "signature": "List<DepthLink> LinkedListsByDepth(TreeNode? root)",
+        "starterCode": "public class Solution\n{\n    public List<DepthLink> LinkedListsByDepth(TreeNode? root)\n    {\n        return [];\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public List<DepthLink> LinkedListsByDepth(TreeNode? root)\n    {\n        var heads = new List<DepthLink>();\n        if (root == null)\n            return heads;\n        var current = new List<TreeNode> { root };\n        while (current.Count > 0)\n        {\n            DepthLink? head = null, tail = null;\n            var following = new List<TreeNode>();\n            foreach (var node in current)\n            {\n                var link = new DepthLink(node);\n                if (tail == null)\n                    head = link;\n                else\n                    tail.Next = link;\n                tail = link;\n                if (node.Left != null)\n                    following.Add(node.Left);\n                if (node.Right != null)\n                    following.Add(node.Right);\n            }\n            heads.Add(head!);\n            current = following;\n        }\n        return heads;\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function LinkedListsByDepth(root)",
+        "starterCode": "function LinkedListsByDepth(root) {\n  return [];\n}\n",
+        "solutionCode": "function LinkedListsByDepth(root) {\n  const heads = [];\n  if (root === null) return heads;\n  let current = [root];\n  while (current.length) {\n    let head = null,\n      tail = null;\n    const following = [];\n    for (const node of current) {\n      const link = new DepthLink(node);\n      if (tail === null) head = link;\n      else tail.Next = link;\n      tail = link;\n      if (node.Left !== null) following.push(node.Left);\n      if (node.Right !== null) following.push(node.Right);\n    }\n    heads.push(head);\n    current = following;\n  }\n  return heads;\n}\n"
+      },
+      "python": {
+        "signature": "def LinkedListsByDepth(root: TreeNode | None) -> list[DepthLink]",
+        "starterCode": "def LinkedListsByDepth(root: TreeNode | None) -> list[DepthLink]:\n    return []\n",
+        "solutionCode": "def LinkedListsByDepth(root: TreeNode | None) -> list[DepthLink]:\n    heads = []\n    if root is None:\n        return heads\n    current = [root]\n    while current:\n        head = tail = None\n        following = []\n        for node in current:\n            link = DepthLink(node)\n            if tail is None:\n                head = link\n            else:\n                tail.Next = link\n            tail = link\n            if node.Left is not None:\n                following.append(node.Left)\n            if node.Right is not None:\n                following.append(node.Right)\n        heads.append(head)\n        current = following\n    return heads\n"
+      },
+      "cpp": {
+        "signature": "std::vector<DepthLink*> LinkedListsByDepth(TreeNode* root)",
+        "starterCode": "class Solution {\n public:\n  std::vector<DepthLink*> LinkedListsByDepth(TreeNode* root) {\n    return {};\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  std::vector<DepthLink*> LinkedListsByDepth(TreeNode* root) {\n    std::vector<DepthLink*> heads;\n    if (!root)\n      return heads;\n    std::vector<TreeNode*> current{root};\n    while (!current.empty()) {\n      DepthLink* head = nullptr;\n      DepthLink* tail = nullptr;\n      std::vector<TreeNode*> following;\n      for (auto node : current) {\n        auto link = new DepthLink(node);\n        if (!tail)\n          head = link;\n        else\n          tail->Next = link;\n        tail = link;\n        if (node->Left)\n          following.push_back(node->Left);\n        if (node->Right)\n          following.push_back(node->Right);\n      }\n      heads.push_back(head);\n      current = std::move(following);\n    }\n    return heads;\n  }\n};\n"
+      },
+      "java": {
+        "signature": "List<DepthLink> LinkedListsByDepth(TreeNode root)",
+        "starterCode": "class Solution {\n  public List<DepthLink> LinkedListsByDepth(TreeNode root) {\n    return new ArrayList<>();\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public List<DepthLink> LinkedListsByDepth(TreeNode root) {\n    List<DepthLink> heads = new ArrayList<>();\n    if (root == null)\n      return heads;\n    List<TreeNode> current = new ArrayList<>();\n    current.add(root);\n    while (!current.isEmpty()) {\n      DepthLink head = null, tail = null;\n      List<TreeNode> following = new ArrayList<>();\n      for (TreeNode node : current) {\n        DepthLink link = new DepthLink(node);\n        if (tail == null)\n          head = link;\n        else\n          tail.Next = link;\n        tail = link;\n        if (node.Left != null)\n          following.add(node.Left);\n        if (node.Right != null)\n          following.add(node.Right);\n      }\n      heads.add(head);\n      current = following;\n    }\n    return heads;\n  }\n}\n"
+      }
+    }
+  },
+  {
     "ref": "4.4",
     "method": "IsHeightBalanced",
     "params": [
@@ -525,6 +715,101 @@
         "signature": "TreeNode FirstCommonAncestor(TreeNode first, TreeNode second)",
         "starterCode": "class Solution {\n  public TreeNode FirstCommonAncestor(TreeNode first, TreeNode second) {\n    return null;\n  }\n}\n",
         "solutionCode": "class Solution {\n  public TreeNode FirstCommonAncestor(TreeNode first, TreeNode second) {\n    if (first == null || second == null)\n      return null;\n    int depthFirst = 0, depthSecond = 0;\n    for (TreeNode cursor = first; cursor != null; cursor = cursor.Parent)\n      ++depthFirst;\n    for (TreeNode cursor = second; cursor != null; cursor = cursor.Parent)\n      ++depthSecond;\n    while (depthFirst > depthSecond) {\n      first = first.Parent;\n      --depthFirst;\n    }\n    while (depthSecond > depthFirst) {\n      second = second.Parent;\n      --depthSecond;\n    }\n    while (first != second) {\n      first = first.Parent;\n      second = second.Parent;\n    }\n    return first;\n  }\n}\n"
+      }
+    }
+  },
+  {
+    "ref": "4.9",
+    "method": "BstInsertionSequences",
+    "params": [
+      [
+        "root",
+        "tree"
+      ]
+    ],
+    "result": "sequences",
+    "mutation": "none",
+    "description": "Return every distinct sequence of values that, when inserted one at a time into an initially empty ordinary BST, creates exactly the selected input tree. Values are distinct. Each sequence contains every selected-tree value once. Return sequences in any order, without duplicate rows; order inside each sequence matters.",
+    "constraints": [
+      "Displayed tree arguments are {\"nodes\":[[Data,leftId,rightId],...],\"selected\":id}. Row indices are distinct node identities; -1 denotes a null link/selection. The table is a valid acyclic binary forest with at most one incoming child link per node. The judge constructs TreeNode objects, connects Left/Right, computes Parent, and passes only the selected TreeNode, not the table. There are 0..1000 rows with signed 32-bit Data, and repeated Data values are allowed unless stated otherwise.",
+      "Use the provided TreeNode API (Data,Left,Right,Parent). Preserve every original node object, data value and link, including Parent and unselected nodes. A returned node must be an original object; displayed node results are its row ID, or -1 for null. C++ input nodes are judge-owned and must not be deleted.",
+      "For this exercise the entire displayed table has 0..8 rows and the selected subtree is a strict BST with distinct Data values. Insertion follows the usual smaller-left/larger-right rule without balancing or rotations. Unselected forest nodes are not inserted.",
+      "Return a concrete nested integer collection, not node references or a generator. The empty tree has exactly one insertion sequence: the empty sequence, so return [[]], not []. Preserve the input tree and Parent links."
+    ],
+    "why": "A node can be inserted only after its ancestors, but available nodes from different subtrees may be interleaved freely. Backtrack over a frontier of nodes whose parents are already chosen: select one, append its value, remove it from the frontier and add its children. This enumerates the valid ancestor-before-descendant orders directly.",
+    "correctness": "Every generated order begins with root and exposes a child only after its parent is chosen, so every ancestor precedes its descendants. Distinct BST value ranges route each later insertion into the same ancestor-defined subtree, hence any such order recreates the original tree. Conversely, an insertion order creating that tree must place every node after its ancestors; at each step its next node is therefore in the backtracking frontier and that branch is explored. Unique chosen-node sequences cannot repeat because their first differing frontier choice gives a different next distinct value. An empty frontier emits one complete row, including the single empty row for an empty tree.",
+    "walkthrough": "For root 2 with left child 1 and right child 3, root must be first. Both children then become available, yielding [2,1,3] and [2,3,1]. These are the two accepted rows, in either outer order. [1,2,3] instead creates root 1 and is invalid.",
+    "example": [
+      [
+        {
+          "nodes": [
+            [
+              2,
+              1,
+              2
+            ],
+            [
+              1,
+              -1,
+              -1
+            ],
+            [
+              3,
+              -1,
+              -1
+            ]
+          ],
+          "selected": 0
+        }
+      ],
+      [
+        [
+          2,
+          1,
+          3
+        ],
+        [
+          2,
+          3,
+          1
+        ]
+      ]
+    ],
+    "time": "O(S*(n+1)^2) conservative time for S returned sequences of n values: copying a frontier of at most n at each of n choices on each complete search path. Output alone needs O(S*n+1).",
+    "space": "O(S*n) returned values plus O(n^2) frontier copies along one recursion path and O(n) value/path frames. n<=8 bounds the combinatorial output.",
+    "edges": [
+      "Empty tree returns [[]], leaf and chain with a single sequence.",
+      "Balanced branches with many interleavings, arbitrary outer order, duplicate-row rejection and signed endpoints."
+    ],
+    "related": "The author weave-based task enumerates BST insertion sequences. This independent frontier backtracking enumerates the same ancestor-order choices while preserving the input tree.",
+    "id": "ctci6_4_9",
+    "title": "BST Sequences",
+    "testCount": 207,
+    "languages": {
+      "csharp": {
+        "signature": "List<List<int>> BstInsertionSequences(TreeNode? root)",
+        "starterCode": "public class Solution\n{\n    public List<List<int>> BstInsertionSequences(TreeNode? root)\n    {\n        return [];\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public List<List<int>> BstInsertionSequences(TreeNode? root)\n    {\n        var result = new List<List<int>>();\n        var path = new List<int>();\n        void Visit(List<TreeNode> available)\n        {\n            if (available.Count == 0)\n            {\n                result.Add(new List<int>(path));\n                return;\n            }\n            for (int i = 0; i < available.Count; ++i)\n            {\n                var node = available[i];\n                var following = new List<TreeNode>(available);\n                following.RemoveAt(i);\n                if (node.Left != null)\n                    following.Add(node.Left);\n                if (node.Right != null)\n                    following.Add(node.Right);\n                path.Add(node.Data);\n                Visit(following);\n                path.RemoveAt(path.Count - 1);\n            }\n        }\n        Visit(root == null ? new List<TreeNode>() : new List<TreeNode> { root });\n        return result;\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function BstInsertionSequences(root)",
+        "starterCode": "function BstInsertionSequences(root) {\n  return [];\n}\n",
+        "solutionCode": "function BstInsertionSequences(root) {\n  const result = [],\n    path = [];\n  function visit(available) {\n    if (available.length === 0) {\n      result.push(path.slice());\n      return;\n    }\n    for (let i = 0; i < available.length; ++i) {\n      const node = available[i],\n        following = available.slice(0, i).concat(available.slice(i + 1));\n      if (node.Left !== null) following.push(node.Left);\n      if (node.Right !== null) following.push(node.Right);\n      path.push(node.Data);\n      visit(following);\n      path.pop();\n    }\n  }\n  visit(root === null ? [] : [root]);\n  return result;\n}\n"
+      },
+      "python": {
+        "signature": "def BstInsertionSequences(root: TreeNode | None) -> list[list[int]]",
+        "starterCode": "def BstInsertionSequences(root: TreeNode | None) -> list[list[int]]:\n    return []\n",
+        "solutionCode": "def BstInsertionSequences(root: TreeNode | None) -> list[list[int]]:\n    result = []\n    path = []\n\n    def visit(available):\n        if not available:\n            result.append(path.copy())\n            return\n        for index, node in enumerate(available):\n            following = available[:index] + available[index + 1 :]\n            if node.Left is not None:\n                following.append(node.Left)\n            if node.Right is not None:\n                following.append(node.Right)\n            path.append(node.Data)\n            visit(following)\n            path.pop()\n\n    visit([root] if root is not None else [])\n    return result\n"
+      },
+      "cpp": {
+        "signature": "std::vector<std::vector<int>> BstInsertionSequences(TreeNode* root)",
+        "starterCode": "class Solution {\n public:\n  std::vector<std::vector<int>> BstInsertionSequences(TreeNode* root) {\n    return {};\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  std::vector<std::vector<int>> BstInsertionSequences(TreeNode* root) {\n    std::vector<std::vector<int>> result;\n    std::vector<int> path;\n    std::function<void(std::vector<TreeNode*>)> visit = [&](std::vector<TreeNode*> available) {\n      if (available.empty()) {\n        result.push_back(path);\n        return;\n      }\n      for (size_t i = 0; i < available.size(); ++i) {\n        auto node = available[i];\n        auto following = available;\n        following.erase(following.begin() + i);\n        if (node->Left)\n          following.push_back(node->Left);\n        if (node->Right)\n          following.push_back(node->Right);\n        path.push_back(node->Data);\n        visit(std::move(following));\n        path.pop_back();\n      }\n    };\n    visit(root ? std::vector<TreeNode*>{root} : std::vector<TreeNode*>{});\n    return result;\n  }\n};\n"
+      },
+      "java": {
+        "signature": "List<List<Integer>> BstInsertionSequences(TreeNode root)",
+        "starterCode": "class Solution {\n  public List<List<Integer>> BstInsertionSequences(TreeNode root) {\n    return new ArrayList<>();\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public List<List<Integer>> BstInsertionSequences(TreeNode root) {\n    List<List<Integer>> result = new ArrayList<>();\n    List<Integer> path = new ArrayList<>();\n    class Search {\n      void visit(List<TreeNode> available) {\n        if (available.isEmpty()) {\n          result.add(new ArrayList<>(path));\n          return;\n        }\n        for (int i = 0; i < available.size(); ++i) {\n          TreeNode node = available.get(i);\n          List<TreeNode> following = new ArrayList<>(available);\n          following.remove(i);\n          if (node.Left != null)\n            following.add(node.Left);\n          if (node.Right != null)\n            following.add(node.Right);\n          path.add(node.Data);\n          visit(following);\n          path.remove(path.size() - 1);\n        }\n      }\n    }\n    List<TreeNode> initial = new ArrayList<>();\n    if (root != null)\n      initial.add(root);\n    new Search().visit(initial);\n    return result;\n  }\n}\n"
       }
     }
   },

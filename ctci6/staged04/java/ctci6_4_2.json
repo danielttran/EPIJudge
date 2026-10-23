@@ -1,0 +1,44 @@
+{
+  "explanation": "The middle value leaves nearly equal-sized sorted ranges on either side. Every left-range value is smaller and every right-range value larger, so recursive middle selection directly builds a BST without repeated insertion. Balanced range sizes keep the tallest branch as short as the binary-tree capacity bound permits.",
+  "correctness": "By induction, each recursive call creates exactly the values in its half-open sorted interval. Its chosen middle value exceeds all left values and is below all right values, so attaching the two recursively valid children preserves strict BST ordering. The disjoint ranges ensure every input value occurs once. Their sizes differ by at most one; repeated halving therefore produces height equal to the least h whose full binary-tree capacity 2^h-1 covers n, which is a lower bound for any n-node binary tree. Setting the supplied parent argument on construction makes every Parent link agree with its child link and keeps the root parent null.",
+  "walkthrough": "For [1,2,3], choose 2 as the root, construct leaf 1 from the left range and leaf 3 from the right range. Their Parent links both point to 2. The height is 2, meeting the capacity bound of 3 nodes. For an even-length range either valid middle choice may lead to a different accepted minimum-height shape.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        1,
+        2,
+        3
+      ]
+    ],
+    "expected": {
+      "root": 0,
+      "nodes": [
+        [
+          2,
+          1,
+          2,
+          -1
+        ],
+        [
+          1,
+          -1,
+          -1,
+          0
+        ],
+        [
+          3,
+          -1,
+          -1,
+          0
+        ]
+      ]
+    }
+  },
+  "timeComplexity": "O(n) time: each input position creates one node with constant local work.",
+  "spaceComplexity": "O(n) returned nodes and O(log(n+1)) recursive construction frames; recursion is at most about ten levels for n<=1000.",
+  "edgeCases": [
+    "Empty input, one/two values and even-length ranges with multiple accepted shapes.",
+    "Signed endpoints, exact parent links and the 1000-value boundary."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 4.2. No affiliation is implied."
+}

@@ -1,0 +1,48 @@
+{
+  "explanation": "A node can be inserted only after its ancestors, but available nodes from different subtrees may be interleaved freely. Backtrack over a frontier of nodes whose parents are already chosen: select one, append its value, remove it from the frontier and add its children. This enumerates the valid ancestor-before-descendant orders directly.",
+  "correctness": "Every generated order begins with root and exposes a child only after its parent is chosen, so every ancestor precedes its descendants. Distinct BST value ranges route each later insertion into the same ancestor-defined subtree, hence any such order recreates the original tree. Conversely, an insertion order creating that tree must place every node after its ancestors; at each step its next node is therefore in the backtracking frontier and that branch is explored. Unique chosen-node sequences cannot repeat because their first differing frontier choice gives a different next distinct value. An empty frontier emits one complete row, including the single empty row for an empty tree.",
+  "walkthrough": "For root 2 with left child 1 and right child 3, root must be first. Both children then become available, yielding [2,1,3] and [2,3,1]. These are the two accepted rows, in either outer order. [1,2,3] instead creates root 1 and is invalid.",
+  "walkthroughCase": {
+    "arguments": [
+      {
+        "nodes": [
+          [
+            2,
+            1,
+            2
+          ],
+          [
+            1,
+            -1,
+            -1
+          ],
+          [
+            3,
+            -1,
+            -1
+          ]
+        ],
+        "selected": 0
+      }
+    ],
+    "expected": [
+      [
+        2,
+        1,
+        3
+      ],
+      [
+        2,
+        3,
+        1
+      ]
+    ]
+  },
+  "timeComplexity": "O(S*(n+1)^2) conservative time for S returned sequences of n values: copying a frontier of at most n at each of n choices on each complete search path. Output alone needs O(S*n+1).",
+  "spaceComplexity": "O(S*n) returned values plus O(n^2) frontier copies along one recursion path and O(n) value/path frames. n<=8 bounds the combinatorial output.",
+  "edgeCases": [
+    "Empty tree returns [[]], leaf and chain with a single sequence.",
+    "Balanced branches with many interleavings, arbitrary outer order, duplicate-row rejection and signed endpoints."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 4.9. No affiliation is implied."
+}

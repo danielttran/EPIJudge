@@ -1,8 +1,9 @@
 """Use existing readonly typed-array observations and exact Boolean result types."""
 import json
 from core import ROOT
-from models04 import TREE_REFS
+from models04 import TREE_REFS,TREE_INPUT_REFS,TREE_OUTPUT_REFS
 from harness_tree04 import attach
+from harness_tree_outputs04 import attach as attach_output
 from harness08_typed import source as typed_source
 
 def source(language,starters=False,only_ref=None):
@@ -12,6 +13,8 @@ def source(language,starters=False,only_ref=None):
         if language=='python':value=value.replace('valid=(',"valid=(type(actual) is bool) if kind=='b' else (",1)
         if language=='javascript':value=value.replace('const valid=',"const valid=kind==='b'?typeof actual==='boolean':",1)
         if language=='java':value=value.replace('if(value instanceof String v)','if(value instanceof Boolean v)return Json.value(v);if(value instanceof String v)',1)
-    trees=[e for e in entries if e['ref'] in TREE_REFS and (only_ref is None or e['ref']==only_ref)]
+    trees=[e for e in entries if e['ref'] in TREE_INPUT_REFS and (only_ref is None or e['ref']==only_ref)]
     if trees:value=attach(value,language,trees,starters)
+    outputs=[e for e in entries if e['ref'] in TREE_OUTPUT_REFS and (only_ref is None or e['ref']==only_ref)]
+    if outputs:value=attach_output(value,language,outputs,starters,needs_common=not trees)
     return value

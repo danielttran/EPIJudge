@@ -79,11 +79,22 @@ json executeTree(const json& row){const auto& args=row["arguments"];std::string 
 
 def attach(value,language,entries,starters):
     external,internal=pieces(language,entries,starters)
+    selected_refs=[entry["ref"] for entry in entries]
     plain=base_header(entries[0]['ref'],language)
     owned=header(entries[0]['ref'],language)
     value=value.replace(plain,owned,1) if plain else TREE[language]+value
-    if language=='python':return value.replace('def execute(row):',external+"\ndef execute(row):\n    if row['ref'] in "+repr(list(TREE_REFS))+": return executeTree(row)\n",1)
-    if language=='javascript':return value.replace('function execute(row){',external+'\nfunction execute(row){if('+json.dumps(list(TREE_REFS))+'.includes(row.ref))return executeTree(row);',1)
-    if language=='csharp':return value.replace('class Harness {',external+'\nclass Harness {\n'+internal,1).replace('static object Execute(JsonElement row){','static object Execute(JsonElement row){if('+ '||'.join('row.GetProperty("ref").GetString()=="'+ref+'"' for ref in TREE_REFS)+')return ExecuteTree(row);',1)
-    if language=='java':return value.replace('public class Harness {',external+'\npublic class Harness {\n'+internal,1).replace('static JsonValue execute(JsonObject row){','static JsonValue execute(JsonObject row){if('+ '||'.join('row.get("ref").asString().equals("'+ref+'")' for ref in TREE_REFS)+')return executeTree(row);',1)
-    return value.replace('json execute(const json& row){',external+'\njson execute(const json& row){if('+ '||'.join('row["ref"]=="'+ref+'"' for ref in TREE_REFS)+')return executeTree(row);',1)
+    if language=='python':return value.replace('def execute(row):',external+"\ndef execute(row):\n    if row['ref'] in "+repr(selected_refs)+": return executeTree(row)\n",1)
+    if language=='javascript':return value.replace('function execute(row){',external+'\nfunction execute(row){if('+json.dumps(selected_refs)+'.includes(row.ref))return executeTree(row);',1)
+    if language=='csharp':return value.replace('class Harness {',external+'\nclass Harness {\n'+internal,1).replace('static object Execute(JsonElement row){','static object Execute(JsonElement row){if('+ '||'.join('row.GetProperty("ref").GetString()=="'+ref+'"' for ref in selected_refs)+')return ExecuteTree(row);',1)
+    if language=='java':return value.replace('public class Harness {',external+'\npublic class Harness {\n'+internal,1).replace('static JsonValue execute(JsonObject row){','static JsonValue execute(JsonObject row){if('+ '||'.join('row.get("ref").asString().equals("'+ref+'")' for ref in selected_refs)+')return executeTree(row);',1)
+    return value.replace('json execute(const json& row){',external+'\njson execute(const json& row){if('+ '||'.join('row["ref"]=="'+ref+'"' for ref in selected_refs)+')return executeTree(row);',1)
+
+def common_support(language):
+    # Extract only this bank-owned, expected-answer-free decoder/snapshot template.
+    external,internal=pieces(language,[],False)
+    markers={'python':('\ndef nodeId(', '\ndef executeTree('),'javascript':('\nfunction nodeId(', '\nfunction executeTree('),'cpp':('#include <memory>', '\njson executeTree(')}
+    if language in markers:
+        start,end=markers[language]
+        return external[external.index(start):external.index(end)],''
+    marker='static object ExecuteTree(' if language=='csharp' else 'static JsonValue executeTree('
+    return '',internal[:internal.index(marker)]

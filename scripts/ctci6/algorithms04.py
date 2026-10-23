@@ -192,3 +192,70 @@ return False'''
     if language=='cpp':return 'if(!small)return true;auto encode=[](TreeNode* root){std::vector<std::string> tokens;std::vector<TreeNode*> stack{root};while(!stack.empty()){auto node=stack.back();stack.pop_back();if(!node)tokens.push_back("#");else{tokens.push_back("V"+std::to_string(node->Data));stack.push_back(node->Right);stack.push_back(node->Left);}}return tokens;};auto text=encode(large),pattern=encode(small);std::vector<int> prefix(pattern.size(),0);for(size_t i=1;i<pattern.size();++i){int matched=prefix[i-1];while(matched>0&&pattern[i]!=pattern[matched])matched=prefix[matched-1];if(pattern[i]==pattern[matched])++matched;prefix[i]=matched;}int matched=0;for(const auto& token:text){while(matched>0&&token!=pattern[matched])matched=prefix[matched-1];if(token==pattern[matched])++matched;if(matched==static_cast<int>(pattern.size()))return true;}return false;'
     if language=='csharp':return 'if(small==null)return true;List<string> Encode(TreeNode? root){var tokens=new List<string>();var stack=new Stack<TreeNode?>();stack.Push(root);while(stack.Count>0){var node=stack.Pop();if(node==null)tokens.Add("#");else{tokens.Add("V"+node.Data.ToString(System.Globalization.CultureInfo.InvariantCulture));stack.Push(node.Right);stack.Push(node.Left);}}return tokens;}var text=Encode(large);var pattern=Encode(small);int[] prefix=new int[pattern.Count];for(int i=1;i<pattern.Count;++i){int matched=prefix[i-1];while(matched>0&&pattern[i]!=pattern[matched])matched=prefix[matched-1];if(pattern[i]==pattern[matched])++matched;prefix[i]=matched;}int count=0;foreach(string token in text){while(count>0&&token!=pattern[count])count=prefix[count-1];if(token==pattern[count])++count;if(count==pattern.Count)return true;}return false;'
     return 'if(small==null)return true;class Encoder {List<String> encode(TreeNode root){List<String> tokens=new ArrayList<>();List<TreeNode> stack=new ArrayList<>();stack.add(root);while(!stack.isEmpty()){TreeNode node=stack.remove(stack.size()-1);if(node==null)tokens.add("#");else{tokens.add("V"+Integer.toString(node.Data));stack.add(node.Right);stack.add(node.Left);}}return tokens;}}Encoder encoder=new Encoder();List<String> text=encoder.encode(large),pattern=encoder.encode(small);int[] prefix=new int[pattern.size()];for(int i=1;i<pattern.size();++i){int matched=prefix[i-1];while(matched>0&&!pattern.get(i).equals(pattern.get(matched)))matched=prefix[matched-1];if(pattern.get(i).equals(pattern.get(matched)))++matched;prefix[i]=matched;}int matched=0;for(String token:text){while(matched>0&&!token.equals(pattern.get(matched)))matched=prefix[matched-1];if(token.equals(pattern.get(matched)))++matched;if(matched==pattern.size())return true;}return false;'
+
+_previous_output_body=body
+
+def body(ref,language):
+    if ref=='4.2':
+        if language=='python':return '''def build(lower, upper, parent):
+    if lower >= upper:
+        return None
+    middle = lower + (upper - lower) // 2
+    node = TreeNode(sortedValues[middle])
+    node.Parent = parent
+    node.Left = build(lower, middle, node)
+    node.Right = build(middle + 1, upper, node)
+    return node
+return build(0, len(sortedValues), None)'''
+        if language=='javascript':return 'function build(lower,upper,parent){if(lower>=upper)return null;const middle=lower+Math.floor((upper-lower)/2),node=new TreeNode(sortedValues[middle]);node.Parent=parent;node.Left=build(lower,middle,node);node.Right=build(middle+1,upper,node);return node;}return build(0,sortedValues.length,null);'
+        if language=='cpp':return 'std::function<TreeNode*(int,int,TreeNode*)> build=[&](int lower,int upper,TreeNode* parent)->TreeNode*{if(lower>=upper)return nullptr;int middle=lower+(upper-lower)/2;auto node=new TreeNode(sortedValues[middle]);node->Parent=parent;node->Left=build(lower,middle,node);node->Right=build(middle+1,upper,node);return node;};return build(0,static_cast<int>(sortedValues.size()),nullptr);'
+        if language=='csharp':return 'TreeNode? Build(int lower,int upper,TreeNode? parent){if(lower>=upper)return null;int middle=lower+(upper-lower)/2;var node=new TreeNode(sortedValues[middle]);node.Parent=parent;node.Left=Build(lower,middle,node);node.Right=Build(middle+1,upper,node);return node;}return Build(0,sortedValues.Length,null);'
+        return 'class Builder {TreeNode build(int lower,int upper,TreeNode parent){if(lower>=upper)return null;int middle=lower+(upper-lower)/2;TreeNode node=new TreeNode(sortedValues[middle]);node.Parent=parent;node.Left=build(lower,middle,node);node.Right=build(middle+1,upper,node);return node;}}return new Builder().build(0,sortedValues.length,null);'
+    if ref=='4.3':
+        if language=='python':return '''heads = []
+if root is None:
+    return heads
+current = [root]
+while current:
+    head = tail = None
+    following = []
+    for node in current:
+        link = DepthLink(node)
+        if tail is None:
+            head = link
+        else:
+            tail.Next = link
+        tail = link
+        if node.Left is not None:
+            following.append(node.Left)
+        if node.Right is not None:
+            following.append(node.Right)
+    heads.append(head)
+    current = following
+return heads'''
+        if language=='javascript':return 'const heads=[];if(root===null)return heads;let current=[root];while(current.length){let head=null,tail=null;const following=[];for(const node of current){const link=new DepthLink(node);if(tail===null)head=link;else tail.Next=link;tail=link;if(node.Left!==null)following.push(node.Left);if(node.Right!==null)following.push(node.Right);}heads.push(head);current=following;}return heads;'
+        if language=='cpp':return 'std::vector<DepthLink*> heads;if(!root)return heads;std::vector<TreeNode*> current{root};while(!current.empty()){DepthLink* head=nullptr;DepthLink* tail=nullptr;std::vector<TreeNode*> following;for(auto node:current){auto link=new DepthLink(node);if(!tail)head=link;else tail->Next=link;tail=link;if(node->Left)following.push_back(node->Left);if(node->Right)following.push_back(node->Right);}heads.push_back(head);current=std::move(following);}return heads;'
+        if language=='csharp':return 'var heads=new List<DepthLink>();if(root==null)return heads;var current=new List<TreeNode>{root};while(current.Count>0){DepthLink? head=null,tail=null;var following=new List<TreeNode>();foreach(var node in current){var link=new DepthLink(node);if(tail==null)head=link;else tail.Next=link;tail=link;if(node.Left!=null)following.Add(node.Left);if(node.Right!=null)following.Add(node.Right);}heads.Add(head!);current=following;}return heads;'
+        return 'List<DepthLink> heads=new ArrayList<>();if(root==null)return heads;List<TreeNode> current=new ArrayList<>();current.add(root);while(!current.isEmpty()){DepthLink head=null,tail=null;List<TreeNode> following=new ArrayList<>();for(TreeNode node:current){DepthLink link=new DepthLink(node);if(tail==null)head=link;else tail.Next=link;tail=link;if(node.Left!=null)following.add(node.Left);if(node.Right!=null)following.add(node.Right);}heads.add(head);current=following;}return heads;'
+    if ref!='4.9':return _previous_output_body(ref,language)
+    if language=='python':return '''result = []
+path = []
+def visit(available):
+    if not available:
+        result.append(path.copy())
+        return
+    for index, node in enumerate(available):
+        following = available[:index] + available[index + 1:]
+        if node.Left is not None:
+            following.append(node.Left)
+        if node.Right is not None:
+            following.append(node.Right)
+        path.append(node.Data)
+        visit(following)
+        path.pop()
+visit([root] if root is not None else [])
+return result'''
+    if language=='javascript':return 'const result=[],path=[];function visit(available){if(available.length===0){result.push(path.slice());return;}for(let i=0;i<available.length;++i){const node=available[i],following=available.slice(0,i).concat(available.slice(i+1));if(node.Left!==null)following.push(node.Left);if(node.Right!==null)following.push(node.Right);path.push(node.Data);visit(following);path.pop();}}visit(root===null?[]:[root]);return result;'
+    if language=='cpp':return 'std::vector<std::vector<int>> result;std::vector<int> path;std::function<void(std::vector<TreeNode*>)> visit=[&](std::vector<TreeNode*> available){if(available.empty()){result.push_back(path);return;}for(size_t i=0;i<available.size();++i){auto node=available[i];auto following=available;following.erase(following.begin()+i);if(node->Left)following.push_back(node->Left);if(node->Right)following.push_back(node->Right);path.push_back(node->Data);visit(std::move(following));path.pop_back();}};visit(root?std::vector<TreeNode*>{root}:std::vector<TreeNode*>{});return result;'
+    if language=='csharp':return 'var result=new List<List<int>>();var path=new List<int>();void Visit(List<TreeNode> available){if(available.Count==0){result.Add(new List<int>(path));return;}for(int i=0;i<available.Count;++i){var node=available[i];var following=new List<TreeNode>(available);following.RemoveAt(i);if(node.Left!=null)following.Add(node.Left);if(node.Right!=null)following.Add(node.Right);path.Add(node.Data);Visit(following);path.RemoveAt(path.Count-1);}}Visit(root==null?new List<TreeNode>():new List<TreeNode>{root});return result;'
+    return 'List<List<Integer>> result=new ArrayList<>();List<Integer> path=new ArrayList<>();class Search {void visit(List<TreeNode> available){if(available.isEmpty()){result.add(new ArrayList<>(path));return;}for(int i=0;i<available.size();++i){TreeNode node=available.get(i);List<TreeNode> following=new ArrayList<>(available);following.remove(i);if(node.Left!=null)following.add(node.Left);if(node.Right!=null)following.add(node.Right);path.add(node.Data);visit(following);path.remove(path.size()-1);}}}List<TreeNode> initial=new ArrayList<>();if(root!=null)initial.add(root);new Search().visit(initial);return result;'
