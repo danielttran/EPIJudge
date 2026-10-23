@@ -46,6 +46,7 @@ def export():
         "review05.json",
         "review08.json",
         "review10.json",
+        "review13.json",
         "review16.json",
         "review17.json",
     ):
@@ -74,6 +75,7 @@ def export():
         5: "Bit manipulation",
         8: "Recursion and dynamic programming",
         10: "Sorting and searching",
+        13: "Functional language expressions",
         16: "Moderate interview problems",
         17: "Hard interview problems",
     }

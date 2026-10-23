@@ -515,6 +515,8 @@ def expected_references(entry: dict) -> set[str] | None:
         row = ctci_contracts()[problem_id]
         if row["batch"] == 2:
             return {"LinkedListNode"}
+        if row["batch"] == 13:
+            return {"Country"}
         if row["ref"] == "4.11":
             return {"RandomNode", "RandomSource"}
         if row["batch"] == 4 and row["ref"] not in ("4.1", "4.7"):

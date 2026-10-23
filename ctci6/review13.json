@@ -1,0 +1,37 @@
+{
+  "stage": "standalone-authoring-and-separate-module",
+  "liveIntegration": "pending-local-export",
+  "reviewScope": "Functional population aggregation 13.7, with all five actual language implementations and readonly Country bindings.",
+  "questions": [
+    {
+      "ref": "13.7",
+      "algorithm": "Lambda-based continent filtering and population summation, using a fused conditional accumulate in C++ and the actual language pipeline elsewhere.",
+      "review": "Read pinned Java Country and QuestionA/QuestionB sources, then all five independently authored bodies. Provided Country objects expose actual getters; the private wire-tuple decoder is not passed to candidates. Exact continent contents, not country name or object identity, determine membership. Nonnegative populations and the 1000-by-million bound keep each actual int/Number sum exact. C# lazy Where/Sum, Java sequential filter/mapToInt/sum and Python lazy filter/map/sum do not materialize matching lists. C++ folds with a readonly capturing lambda over a const vector reference. JavaScript filter intentionally allocates matching references before reduce and its O(m) temporary storage is stated. Independent scalar-loop oracle covers exhaustive small occurrence lists, zero/no matches, duplicates, case/space distinctions, composed/decomposed accents, emoji and maximum billion total. Child observations check original array member identity/order and Country getter values; C++ supplied model fields and input reference are readonly. Five actual reordering variants retain the correct sum but fail mutation checks; five unfiltered-total variants fail result semantics. Neutral zero-return starters are executed and rejected, not credited from presence checks."
+    }
+  ],
+  "languagesReviewed": [
+    "csharp",
+    "javascript",
+    "python",
+    "cpp",
+    "java"
+  ],
+  "languageBindingReview": {
+    "csharp": "Read Country[] binding and immutable private Country fields/getters. String operator == compares contents ordinally. Where plus selector Sum is lazy and uses a bounded int accumulator; array elements are snapshotted by reference identity before invocation.",
+    "java": "Read Country[] binding, final model fields and String.equals membership. Sequential Arrays.stream/filter/mapToInt/sum carries primitive int populations without a matching-record array. Input references and getter triples are observed before and after.",
+    "cpp": "Read const vector<Country>& and const string& callable parameters, const getters and the std::accumulate lambda capture. The zero identity is int under the proven total bound, no Country copies are made in the actual fold, and input values/order are independently projected afterward.",
+    "python": "Read list[Country] binding and private getter-backed fields. filter/map are lazy and sum consumes them with zero identity. Observation rejects bool-as-int, input membership/reordering and changed getter values; Unicode matching is exact without normalization.",
+    "javascript": "Read actual Country objects with private # fields and getters. filter creates a fresh array of original matching references; reduce starts at 0 and preserves original input references. Number sums are exact under the admitted bound and strict equality preserves case/Unicode distinctions."
+  },
+  "executionEvidence": "staged13/validation.json",
+  "submissionEvidence": "runtime/validation.json",
+  "graderRegressions": [
+    "scripts/ctci6/test_country_runtime13.py",
+    "EpiJudge.Tests/CtciStagingTests.cs"
+  ],
+  "remainingAcceptance": [
+    "other known candidates and individual classification/source gaps",
+    "final whole-bank execution and rendered checks",
+    "authorized push and exact-commit CI"
+  ]
+}

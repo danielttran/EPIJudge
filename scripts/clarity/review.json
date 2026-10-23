@@ -10796,6 +10796,26 @@
         "ctci6/runtime/validation.json",
         "ctci6/cases/ctci6_4_11.json"
       ]
+    },
+    "ctci6_13_7": {
+      "collection": "ctci6",
+      "statementSha256": "8f020faa89f16b3d506345d3d3cb2d6d5f1c7f5a23b508e7339cbe8a884a8ae8",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review13.json",
+      "checks": {
+        "inputDomain": "countries is a nonnull sequence of 0..1000 nonnull Country objects. Each population is an integer in 0..1000000; the total therefore fits signed 32-bit int. Country name and continent strings, and the target continent, are nonnull Unicode strings of 0..40 characters. Compare strings exactly, case-sensitively, without trimming or normalization. Use the provided Country API; implement only PopulationByContinent. The exercise is the functional filter/map/reduce transformation, so use lambda expressions and the appropriate language collection/stream aggregation facilities. Do not modify or reorder input elements. JSON examples encode each Country as [name,continent,population]; the callable receives actual Country objects rather than mixed-type JSON rows. Returned output is one integer.",
+        "outputAndTies": "Use a lambda-based filter and aggregation to return the total population of countries whose continent exactly equals the requested continent. Each input element is a provided Country object with GetName(), GetContinent() and GetPopulation(). Preserve the input sequence and its objects. No match, including an empty input, returns 0. Names do not determine membership and repeated records contribute separately.",
+        "mutationAndIdentity": "Read pinned Java Country and QuestionA/QuestionB sources, then all five independently authored bodies. Provided Country objects expose actual getters; the private wire-tuple decoder is not passed to candidates. Exact continent contents, not country name or object identity, determine membership. Nonnegative populations and the 1000-by-million bound keep each actual int/Number sum exact. C# lazy Where/Sum, Java sequential filter/mapToInt/sum and Python lazy filter/map/sum do not materialize matching lists. C++ folds with a readonly capturing lambda over a const vector reference. JavaScript filter intentionally allocates matching references before reduce and its O(m) temporary storage is stated. Independent scalar-loop oracle covers exhaustive small occurrence lists, zero/no matches, duplicates, case/space distinctions, composed/decomposed accents, emoji and maximum billion total. Child observations check original array member identity/order and Country getter values; C++ supplied model fields and input reference are readonly. Five actual reordering variants retain the correct sum but fail mutation checks; five unfiltered-total variants fail result semantics. Neutral zero-return starters are executed and rejected, not credited from presence checks.",
+        "boundaryBehavior": "Empty input, no matches, zero populations and repeated country records. Exact case/whitespace/Unicode distinctions; country names are irrelevant. 1000 records and the maximum 1000000000 total without signed overflow.",
+        "examples": "The independently checked displayed example and algorithm trace agree with the executed five-language bodies.",
+        "languageContracts": "{\"csharp\": \"Read Country[] binding and immutable private Country fields/getters. String operator == compares contents ordinally. Where plus selector Sum is lazy and uses a bounded int accumulator; array elements are snapshotted by reference identity before invocation.\", \"java\": \"Read Country[] binding, final model fields and String.equals membership. Sequential Arrays.stream/filter/mapToInt/sum carries primitive int populations without a matching-record array. Input references and getter triples are observed before and after.\", \"cpp\": \"Read const vector<Country>& and const string& callable parameters, const getters and the std::accumulate lambda capture. The zero identity is int under the proven total bound, no Country copies are made in the actual fold, and input values/order are independently projected afterward.\", \"python\": \"Read list[Country] binding and private getter-backed fields. filter/map are lazy and sum consumes them with zero identity. Observation rejects bool-as-int, input membership/reordering and changed getter values; Unicode matching is exact without normalization.\", \"javascript\": \"Read actual Country objects with private # fields and getters. filter creates a fresh array of original matching references; reduce starts at 0 and preserves original input references. Number sums are exact under the admitted bound and strict equality preserves case/Unicode distinctions.\"}",
+        "judgeAgreement": "Read pinned Java Country and QuestionA/QuestionB sources, then all five independently authored bodies. Provided Country objects expose actual getters; the private wire-tuple decoder is not passed to candidates. Exact continent contents, not country name or object identity, determine membership. Nonnegative populations and the 1000-by-million bound keep each actual int/Number sum exact. C# lazy Where/Sum, Java sequential filter/mapToInt/sum and Python lazy filter/map/sum do not materialize matching lists. C++ folds with a readonly capturing lambda over a const vector reference. JavaScript filter intentionally allocates matching references before reduce and its O(m) temporary storage is stated. Independent scalar-loop oracle covers exhaustive small occurrence lists, zero/no matches, duplicates, case/space distinctions, composed/decomposed accents, emoji and maximum billion total. Child observations check original array member identity/order and Country getter values; C++ supplied model fields and input reference are readonly. Five actual reordering variants retain the correct sum but fail mutation checks; five unfiltered-total variants fail result semantics. Neutral zero-return starters are executed and rejected, not credited from presence checks."
+      },
+      "evidence": [
+        "ctci6/review13.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_13_7.json"
+      ]
     }
   },
   "solutions": {
@@ -63716,6 +63736,121 @@
         "ctci6/cases/ctci6_4_11.json",
         "solutions/java/ctci6_4_11.java",
         "solutions/notes/java/ctci6_4_11.json"
+      ]
+    },
+    "ctci6_13_7/csharp": {
+      "codePath": "solutions/csharp/ctci6_13_7.cs",
+      "notesPath": "solutions/notes/ctci6_13_7.json",
+      "contentSha256": "fc0bf8fbd4f44e55caa5c0b4747534c6eb662f4668f21f655e685777c3fe6a93",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review13.json",
+      "checks": {
+        "actualAlgorithm": "Lambda-based continent filtering and population summation, using a fused conditional accumulate in C++ and the actual language pipeline elsewhere.",
+        "correctness": "Filtering keeps each input occurrence exactly when its continent equals the target. Mapping preserves one population for every kept occurrence. The aggregation starts at 0; after any prefix of kept occurrences its sum equals their total population, because the next step adds exactly the next population. Induction gives the required sum after the final occurrence. Repeated countries are separate occurrences, and no mutation is needed. The empty aggregation identity 0 covers empty input and no matching continents.",
+        "workedTrace": "For [[Harbor,West,120],[Ridge,East,80],[Delta,West,30]] and target West, the filter retains Harbor and Delta in that order. Mapping produces populations 120 and 30. The accumulator starts at 0, becomes 120, then 150. Ridge contributes nothing because East does not equal West. Searching for west instead returns 0 because matching is case-sensitive.",
+        "edgeCases": "Empty input, no matches, zero populations and repeated country records. Exact case/whitespace/Unicode distinctions; country names are irrelevant. 1000 records and the maximum 1000000000 total without signed overflow.",
+        "timeDerivation": "O(n + L) time, where n is the number of records and L is the total number of continent characters inspected by exact comparisons. With the admitted bounded string lengths this is O(n).",
+        "spaceDerivation": "C#, Java, C++ and Python use O(1) auxiliary pipeline/accumulator space beyond the input. JavaScript filter materializes m matching object references, requiring O(m) temporary space; reduce itself uses O(1).",
+        "callableAgreement": "Read pinned Java Country and QuestionA/QuestionB sources, then all five independently authored bodies. Provided Country objects expose actual getters; the private wire-tuple decoder is not passed to candidates. Exact continent contents, not country name or object identity, determine membership. Nonnegative populations and the 1000-by-million bound keep each actual int/Number sum exact. C# lazy Where/Sum, Java sequential filter/mapToInt/sum and Python lazy filter/map/sum do not materialize matching lists. C++ folds with a readonly capturing lambda over a const vector reference. JavaScript filter intentionally allocates matching references before reduce and its O(m) temporary storage is stated. Independent scalar-loop oracle covers exhaustive small occurrence lists, zero/no matches, duplicates, case/space distinctions, composed/decomposed accents, emoji and maximum billion total. Child observations check original array member identity/order and Country getter values; C++ supplied model fields and input reference are readonly. Five actual reordering variants retain the correct sum but fail mutation checks; five unfiltered-total variants fail result semantics. Neutral zero-return starters are executed and rejected, not credited from presence checks. Read Country[] binding and immutable private Country fields/getters. String operator == compares contents ordinally. Where plus selector Sum is lazy and uses a bounded int accumulator; array elements are snapshotted by reference identity before invocation."
+      },
+      "evidence": [
+        "ctci6/review13.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_13_7.json",
+        "solutions/csharp/ctci6_13_7.cs",
+        "solutions/notes/ctci6_13_7.json"
+      ]
+    },
+    "ctci6_13_7/javascript": {
+      "codePath": "solutions/javascript/ctci6_13_7.js",
+      "notesPath": "solutions/notes/javascript/ctci6_13_7.json",
+      "contentSha256": "d1a9e318fa25afe830351b2aba5fbd84d2f3e3a15aec3f510d613bec90bda12b",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review13.json",
+      "checks": {
+        "actualAlgorithm": "Lambda-based continent filtering and population summation, using a fused conditional accumulate in C++ and the actual language pipeline elsewhere.",
+        "correctness": "Filtering keeps each input occurrence exactly when its continent equals the target. Mapping preserves one population for every kept occurrence. The aggregation starts at 0; after any prefix of kept occurrences its sum equals their total population, because the next step adds exactly the next population. Induction gives the required sum after the final occurrence. Repeated countries are separate occurrences, and no mutation is needed. The empty aggregation identity 0 covers empty input and no matching continents.",
+        "workedTrace": "For [[Harbor,West,120],[Ridge,East,80],[Delta,West,30]] and target West, the filter retains Harbor and Delta in that order. Mapping produces populations 120 and 30. The accumulator starts at 0, becomes 120, then 150. Ridge contributes nothing because East does not equal West. Searching for west instead returns 0 because matching is case-sensitive.",
+        "edgeCases": "Empty input, no matches, zero populations and repeated country records. Exact case/whitespace/Unicode distinctions; country names are irrelevant. 1000 records and the maximum 1000000000 total without signed overflow.",
+        "timeDerivation": "O(n + L) time, where n is the number of records and L is the total number of continent characters inspected by exact comparisons. With the admitted bounded string lengths this is O(n).",
+        "spaceDerivation": "C#, Java, C++ and Python use O(1) auxiliary pipeline/accumulator space beyond the input. JavaScript filter materializes m matching object references, requiring O(m) temporary space; reduce itself uses O(1).",
+        "callableAgreement": "Read pinned Java Country and QuestionA/QuestionB sources, then all five independently authored bodies. Provided Country objects expose actual getters; the private wire-tuple decoder is not passed to candidates. Exact continent contents, not country name or object identity, determine membership. Nonnegative populations and the 1000-by-million bound keep each actual int/Number sum exact. C# lazy Where/Sum, Java sequential filter/mapToInt/sum and Python lazy filter/map/sum do not materialize matching lists. C++ folds with a readonly capturing lambda over a const vector reference. JavaScript filter intentionally allocates matching references before reduce and its O(m) temporary storage is stated. Independent scalar-loop oracle covers exhaustive small occurrence lists, zero/no matches, duplicates, case/space distinctions, composed/decomposed accents, emoji and maximum billion total. Child observations check original array member identity/order and Country getter values; C++ supplied model fields and input reference are readonly. Five actual reordering variants retain the correct sum but fail mutation checks; five unfiltered-total variants fail result semantics. Neutral zero-return starters are executed and rejected, not credited from presence checks. Read actual Country objects with private # fields and getters. filter creates a fresh array of original matching references; reduce starts at 0 and preserves original input references. Number sums are exact under the admitted bound and strict equality preserves case/Unicode distinctions."
+      },
+      "evidence": [
+        "ctci6/review13.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_13_7.json",
+        "solutions/javascript/ctci6_13_7.js",
+        "solutions/notes/javascript/ctci6_13_7.json"
+      ]
+    },
+    "ctci6_13_7/python": {
+      "codePath": "solutions/python/ctci6_13_7.py",
+      "notesPath": "solutions/notes/python/ctci6_13_7.json",
+      "contentSha256": "7bf08f67283e8148d110b662c4829f5ea5d6a995031b99b0ef9cd5bf22308864",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review13.json",
+      "checks": {
+        "actualAlgorithm": "Lambda-based continent filtering and population summation, using a fused conditional accumulate in C++ and the actual language pipeline elsewhere.",
+        "correctness": "Filtering keeps each input occurrence exactly when its continent equals the target. Mapping preserves one population for every kept occurrence. The aggregation starts at 0; after any prefix of kept occurrences its sum equals their total population, because the next step adds exactly the next population. Induction gives the required sum after the final occurrence. Repeated countries are separate occurrences, and no mutation is needed. The empty aggregation identity 0 covers empty input and no matching continents.",
+        "workedTrace": "For [[Harbor,West,120],[Ridge,East,80],[Delta,West,30]] and target West, the filter retains Harbor and Delta in that order. Mapping produces populations 120 and 30. The accumulator starts at 0, becomes 120, then 150. Ridge contributes nothing because East does not equal West. Searching for west instead returns 0 because matching is case-sensitive.",
+        "edgeCases": "Empty input, no matches, zero populations and repeated country records. Exact case/whitespace/Unicode distinctions; country names are irrelevant. 1000 records and the maximum 1000000000 total without signed overflow.",
+        "timeDerivation": "O(n + L) time, where n is the number of records and L is the total number of continent characters inspected by exact comparisons. With the admitted bounded string lengths this is O(n).",
+        "spaceDerivation": "C#, Java, C++ and Python use O(1) auxiliary pipeline/accumulator space beyond the input. JavaScript filter materializes m matching object references, requiring O(m) temporary space; reduce itself uses O(1).",
+        "callableAgreement": "Read pinned Java Country and QuestionA/QuestionB sources, then all five independently authored bodies. Provided Country objects expose actual getters; the private wire-tuple decoder is not passed to candidates. Exact continent contents, not country name or object identity, determine membership. Nonnegative populations and the 1000-by-million bound keep each actual int/Number sum exact. C# lazy Where/Sum, Java sequential filter/mapToInt/sum and Python lazy filter/map/sum do not materialize matching lists. C++ folds with a readonly capturing lambda over a const vector reference. JavaScript filter intentionally allocates matching references before reduce and its O(m) temporary storage is stated. Independent scalar-loop oracle covers exhaustive small occurrence lists, zero/no matches, duplicates, case/space distinctions, composed/decomposed accents, emoji and maximum billion total. Child observations check original array member identity/order and Country getter values; C++ supplied model fields and input reference are readonly. Five actual reordering variants retain the correct sum but fail mutation checks; five unfiltered-total variants fail result semantics. Neutral zero-return starters are executed and rejected, not credited from presence checks. Read list[Country] binding and private getter-backed fields. filter/map are lazy and sum consumes them with zero identity. Observation rejects bool-as-int, input membership/reordering and changed getter values; Unicode matching is exact without normalization."
+      },
+      "evidence": [
+        "ctci6/review13.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_13_7.json",
+        "solutions/python/ctci6_13_7.py",
+        "solutions/notes/python/ctci6_13_7.json"
+      ]
+    },
+    "ctci6_13_7/cpp": {
+      "codePath": "solutions/cpp/ctci6_13_7.cpp",
+      "notesPath": "solutions/notes/cpp/ctci6_13_7.json",
+      "contentSha256": "c2cd93de22040ada62a1e921426326b8cf699c21e147a7f562fc7835b020110e",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review13.json",
+      "checks": {
+        "actualAlgorithm": "Lambda-based continent filtering and population summation, using a fused conditional accumulate in C++ and the actual language pipeline elsewhere.",
+        "correctness": "Filtering keeps each input occurrence exactly when its continent equals the target. Mapping preserves one population for every kept occurrence. The aggregation starts at 0; after any prefix of kept occurrences its sum equals their total population, because the next step adds exactly the next population. Induction gives the required sum after the final occurrence. Repeated countries are separate occurrences, and no mutation is needed. The empty aggregation identity 0 covers empty input and no matching continents.",
+        "workedTrace": "For [[Harbor,West,120],[Ridge,East,80],[Delta,West,30]] and target West, the filter retains Harbor and Delta in that order. Mapping produces populations 120 and 30. The accumulator starts at 0, becomes 120, then 150. Ridge contributes nothing because East does not equal West. Searching for west instead returns 0 because matching is case-sensitive.",
+        "edgeCases": "Empty input, no matches, zero populations and repeated country records. Exact case/whitespace/Unicode distinctions; country names are irrelevant. 1000 records and the maximum 1000000000 total without signed overflow.",
+        "timeDerivation": "O(n + L) time, where n is the number of records and L is the total number of continent characters inspected by exact comparisons. With the admitted bounded string lengths this is O(n).",
+        "spaceDerivation": "C#, Java, C++ and Python use O(1) auxiliary pipeline/accumulator space beyond the input. JavaScript filter materializes m matching object references, requiring O(m) temporary space; reduce itself uses O(1).",
+        "callableAgreement": "Read pinned Java Country and QuestionA/QuestionB sources, then all five independently authored bodies. Provided Country objects expose actual getters; the private wire-tuple decoder is not passed to candidates. Exact continent contents, not country name or object identity, determine membership. Nonnegative populations and the 1000-by-million bound keep each actual int/Number sum exact. C# lazy Where/Sum, Java sequential filter/mapToInt/sum and Python lazy filter/map/sum do not materialize matching lists. C++ folds with a readonly capturing lambda over a const vector reference. JavaScript filter intentionally allocates matching references before reduce and its O(m) temporary storage is stated. Independent scalar-loop oracle covers exhaustive small occurrence lists, zero/no matches, duplicates, case/space distinctions, composed/decomposed accents, emoji and maximum billion total. Child observations check original array member identity/order and Country getter values; C++ supplied model fields and input reference are readonly. Five actual reordering variants retain the correct sum but fail mutation checks; five unfiltered-total variants fail result semantics. Neutral zero-return starters are executed and rejected, not credited from presence checks. Read const vector<Country>& and const string& callable parameters, const getters and the std::accumulate lambda capture. The zero identity is int under the proven total bound, no Country copies are made in the actual fold, and input values/order are independently projected afterward."
+      },
+      "evidence": [
+        "ctci6/review13.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_13_7.json",
+        "solutions/cpp/ctci6_13_7.cpp",
+        "solutions/notes/cpp/ctci6_13_7.json"
+      ]
+    },
+    "ctci6_13_7/java": {
+      "codePath": "solutions/java/ctci6_13_7.java",
+      "notesPath": "solutions/notes/java/ctci6_13_7.json",
+      "contentSha256": "ee3d75a2e7ddffc9a5f556eec6f1da75761a50c6bf6ac129ef6c6ccefa80f37c",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review13.json",
+      "checks": {
+        "actualAlgorithm": "Lambda-based continent filtering and population summation, using a fused conditional accumulate in C++ and the actual language pipeline elsewhere.",
+        "correctness": "Filtering keeps each input occurrence exactly when its continent equals the target. Mapping preserves one population for every kept occurrence. The aggregation starts at 0; after any prefix of kept occurrences its sum equals their total population, because the next step adds exactly the next population. Induction gives the required sum after the final occurrence. Repeated countries are separate occurrences, and no mutation is needed. The empty aggregation identity 0 covers empty input and no matching continents.",
+        "workedTrace": "For [[Harbor,West,120],[Ridge,East,80],[Delta,West,30]] and target West, the filter retains Harbor and Delta in that order. Mapping produces populations 120 and 30. The accumulator starts at 0, becomes 120, then 150. Ridge contributes nothing because East does not equal West. Searching for west instead returns 0 because matching is case-sensitive.",
+        "edgeCases": "Empty input, no matches, zero populations and repeated country records. Exact case/whitespace/Unicode distinctions; country names are irrelevant. 1000 records and the maximum 1000000000 total without signed overflow.",
+        "timeDerivation": "O(n + L) time, where n is the number of records and L is the total number of continent characters inspected by exact comparisons. With the admitted bounded string lengths this is O(n).",
+        "spaceDerivation": "C#, Java, C++ and Python use O(1) auxiliary pipeline/accumulator space beyond the input. JavaScript filter materializes m matching object references, requiring O(m) temporary space; reduce itself uses O(1).",
+        "callableAgreement": "Read pinned Java Country and QuestionA/QuestionB sources, then all five independently authored bodies. Provided Country objects expose actual getters; the private wire-tuple decoder is not passed to candidates. Exact continent contents, not country name or object identity, determine membership. Nonnegative populations and the 1000-by-million bound keep each actual int/Number sum exact. C# lazy Where/Sum, Java sequential filter/mapToInt/sum and Python lazy filter/map/sum do not materialize matching lists. C++ folds with a readonly capturing lambda over a const vector reference. JavaScript filter intentionally allocates matching references before reduce and its O(m) temporary storage is stated. Independent scalar-loop oracle covers exhaustive small occurrence lists, zero/no matches, duplicates, case/space distinctions, composed/decomposed accents, emoji and maximum billion total. Child observations check original array member identity/order and Country getter values; C++ supplied model fields and input reference are readonly. Five actual reordering variants retain the correct sum but fail mutation checks; five unfiltered-total variants fail result semantics. Neutral zero-return starters are executed and rejected, not credited from presence checks. Read Country[] binding, final model fields and String.equals membership. Sequential Arrays.stream/filter/mapToInt/sum carries primitive int populations without a matching-record array. Input references and getter triples are observed before and after."
+      },
+      "evidence": [
+        "ctci6/review13.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_13_7.json",
+        "solutions/java/ctci6_13_7.java",
+        "solutions/notes/java/ctci6_13_7.json"
       ]
     }
   }

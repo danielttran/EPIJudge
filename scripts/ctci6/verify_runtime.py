@@ -171,6 +171,7 @@ def verify(only_ref=None, only_language=None, starters=False):
                                 4: "graphs",
                                 5: "core",
                                 8: "core",
+                                13: "core",
                                 16: "core",
                                 17: "core",
                             }[entry["batch"]]

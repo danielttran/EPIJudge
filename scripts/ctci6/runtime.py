@@ -15,10 +15,12 @@ import harness04
 import harness05
 import harness08
 import harness10
+import harness13
 import harness16
 import harness17
 import models08
 import models10
+import models13
 import models16
 import models17
 import models_random04
@@ -121,6 +123,8 @@ def submission_prefix(batch, language, reference=None):
         return models10.header(reference, language)
     if batch == 16:
         return models16.header(reference, language)
+    if batch == 13:
+        return models13.header(reference,language)
     if batch == 17:
         return models17.header(reference,language)
     if batch == 8:
@@ -137,7 +141,7 @@ def submission_prefix(batch, language, reference=None):
 
 
 def adapter(entry, language, batch):
-    module = {1: harness01, 2: harness02, 3: harness03, 4: harness04, 5: harness05, 8: harness08, 10: harness10, 16: harness16, 17: harness17}[
+    module = {1: harness01, 2: harness02, 3: harness03, 4: harness04, 5: harness05, 8: harness08, 10: harness10, 13: harness13, 16: harness16, 17: harness17}[
         batch
     ]
     bank = module.source(language, only_ref=entry["ref"])
@@ -166,6 +170,8 @@ def adapter(entry, language, batch):
         )
         if batch == 2:
             imports += "LinkedListNode = user.LinkedListNode\n"
+        elif batch == 13:
+            imports += "Country = user.Country\n"
         elif entry["ref"] == "4.11":
             imports += 'RandomNode = user.RandomNode\nRandomSource = user.RandomSource\n'
         elif batch == 4 and entry["ref"] in models04.TREE_REFS:
@@ -195,6 +201,8 @@ def adapter(entry, language, batch):
         )
         if batch == 2:
             imports += "const LinkedListNode = user.LinkedListNode;\n"
+        elif batch == 13:
+            imports += "const Country = user.Country;\n"
         elif entry["ref"] == "4.11":
             imports += 'const RandomNode = user.RandomNode;\nconst RandomSource = user.RandomSource;\n'
         elif batch == 4 and entry["ref"] in models04.TREE_REFS:
@@ -237,6 +245,7 @@ def generate_runtime():
         (5, "staged05"),
         (8, "staged08"),
         (10, "staged10"),
+        (13, "staged13"),
         (16, "staged16"),
         (17, "staged17"),
     ):
@@ -268,6 +277,7 @@ def generate_runtime():
                 exports = (
                     ["LinkedListNode"]
                     if batch == 2
+                    else ["Country"] if batch == 13
                     else ["RandomNode", "RandomSource"] if entry["ref"] == "4.11"
                     else (["TreeNode", "DepthLink"] if entry["ref"] == "4.3" else ["TreeNode"]) if batch == 4 and entry["ref"] in models04.TREE_REFS
                     else ["BiNode"] if batch == 17 and entry["ref"] == "17.12"
@@ -297,7 +307,7 @@ def generate_runtime():
                             HEADERS[language]
                         )
                         if batch == 3
-                        else models_random04.REFERENCE[language] if entry["ref"] == "4.11" else models17.BINODE[language] if batch == 17 and entry["ref"] == "17.12" else models17.BITS[language] if batch == 17 and entry["ref"] == "17.4" else models04.reference(entry["ref"],language) if batch == 4 and entry["ref"] in models04.TREE_REFS else models_random17.REFERENCE[language] if batch == 17 and entry["ref"] in ("17.2","17.3") else models16.RAND5[language] if batch == 16 and entry["ref"] == "16.23" else models10.NUMBER_FILE[language] if batch == 10 and entry["ref"] == "10.7" else models10.LISTY[language] if batch == 10 and entry["ref"] == "10.4" else ""
+                        else models13.COUNTRY[language] if batch == 13 else models_random04.REFERENCE[language] if entry["ref"] == "4.11" else models17.BINODE[language] if batch == 17 and entry["ref"] == "17.12" else models17.BITS[language] if batch == 17 and entry["ref"] == "17.4" else models04.reference(entry["ref"],language) if batch == 4 and entry["ref"] in models04.TREE_REFS else models_random17.REFERENCE[language] if batch == 17 and entry["ref"] in ("17.2","17.3") else models16.RAND5[language] if batch == 16 and entry["ref"] == "16.23" else models10.NUMBER_FILE[language] if batch == 10 and entry["ref"] == "10.7" else models10.LISTY[language] if batch == 10 and entry["ref"] == "10.4" else ""
                     ),
                 )
             rows.append(item)

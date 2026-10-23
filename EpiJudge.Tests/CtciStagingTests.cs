@@ -725,4 +725,18 @@ public sealed class CtciStagingTests
         Assert.DoesNotContain("Draw", reference.Code);
     }
 
+    [Fact]
+    public void CountryAggregationUsesReadonlyScalarGradingAndDisplaysItsActualTotal()
+    {
+        var definition = Definition("13.7");
+        var test = Case([new object[][] { ["Harbor", "West", 120], ["Ridge", "East", 80], ["Delta", "West", 30] }, "West"], 150);
+        var correct = Json(new { actual = 150, mutationOk = true });
+        Assert.Null(CtciStagingGrader.FailureReason(definition, test, correct));
+        Assert.Equal(150, CtciStagingGrader.Display(definition, test, correct).GetInt32());
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = 150, mutationOk = false })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = 230, mutationOk = true })));
+        var model = Assert.Single(definition.Callable("python").References);
+        Assert.Contains("Country", model.Names);
+    }
+
 }

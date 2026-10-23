@@ -1,0 +1,36 @@
+{
+  "explanation": "Filtering first states the membership rule directly. Mapping a selected Country to its population then discards irrelevant object fields; adding those populations with identity 0 computes exactly the requested total and handles an empty filtered sequence without a special sentinel. Lambda expressions express these small transformations next to the pipeline that uses them. C++ std::accumulate receives an int zero identity and a lambda capturing the readonly target by reference. The lambda adds the population only for an exact std::string match, combining filter and aggregation in one traversal without copying Country objects.",
+  "correctness": "Filtering keeps each input occurrence exactly when its continent equals the target. Mapping preserves one population for every kept occurrence. The aggregation starts at 0; after any prefix of kept occurrences its sum equals their total population, because the next step adds exactly the next population. Induction gives the required sum after the final occurrence. Repeated countries are separate occurrences, and no mutation is needed. The empty aggregation identity 0 covers empty input and no matching continents.",
+  "walkthrough": "For [[Harbor,West,120],[Ridge,East,80],[Delta,West,30]] and target West, the filter retains Harbor and Delta in that order. Mapping produces populations 120 and 30. The accumulator starts at 0, becomes 120, then 150. Ridge contributes nothing because East does not equal West. Searching for west instead returns 0 because matching is case-sensitive.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          "Harbor",
+          "West",
+          120
+        ],
+        [
+          "Ridge",
+          "East",
+          80
+        ],
+        [
+          "Delta",
+          "West",
+          30
+        ]
+      ],
+      "West"
+    ],
+    "expected": 150
+  },
+  "timeComplexity": "O(n + L) time, where n is the number of records and L is the total number of continent characters inspected by exact comparisons. With the admitted bounded string lengths this is O(n).",
+  "spaceComplexity": "C#, Java, C++ and Python use O(1) auxiliary pipeline/accumulator space beyond the input. JavaScript filter materializes m matching object references, requiring O(m) temporary space; reduce itself uses O(1).",
+  "edgeCases": [
+    "Empty input, no matches, zero populations and repeated country records.",
+    "Exact case/whitespace/Unicode distinctions; country names are irrelevant.",
+    "1000 records and the maximum 1000000000 total without signed overflow."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 13.7. No affiliation is implied."
+}
