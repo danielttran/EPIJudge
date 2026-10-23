@@ -268,3 +268,50 @@ def valid_observation(ref,case,observed):
     actual=observed.get('actual')
     expected_type={'16.8':str,'16.18':bool,'16.20':list}[ref]
     return type(actual) is expected_type and (ref!='16.20' or all(type(word) is str for word in actual)) and actual==case['expected']
+
+_previous_simulation_oracle=oracle
+_previous_simulation_cases=cases
+
+def oracle(ref,args):
+    if ref=='16.9':
+        a,b,operation=args
+        if operation=='subtract':return a-b
+        if operation=='multiply':return a*b
+        quotient=abs(a)//abs(b)
+        return -quotient if (a<0)!=(b<0) else quotient
+    if ref=='16.22':
+        n=args[0];width=2*n+1;board=bytearray(width*width)
+        row=column=n;dr,dc=0,1;minr=maxr=minc=maxc=n
+        for _ in range(n):
+            index=row*width+column
+            if board[index]:dr,dc=-dc,dr
+            else:dr,dc=dc,-dr
+            board[index]^=1
+            row+=dr;column+=dc
+            minr,maxr,minc,maxc=min(minr,row),max(maxr,row),min(minc,column),max(maxc,column)
+        marker={(0,1):'R',(1,0):'D',(0,-1):'L',(-1,0):'U'}[dr,dc]
+        return [''.join(marker if (r,c)==(row,column) else '#' if board[r*width+c] else '.' for c in range(minc,maxc+1)) for r in range(minr,maxr+1)]
+    return _previous_simulation_oracle(ref,args)
+
+def cases(spec):
+    ref=spec['ref']
+    if ref not in ('16.9','16.22'):return _previous_simulation_cases(spec)
+    rng=random.Random(int(ref.replace('.',''))+16000000);args=[spec['example'][0]]
+    if ref=='16.9':
+        args += [[a,b,op] for a in range(-12,13) for b in range(-12,13) for op in ('subtract','multiply','divide') if op!='divide' or b!=0]
+        boundary=(-10000,-9999,-1,0,1,9999,10000)
+        args += [[a,b,op] for a in boundary for b in boundary for op in ('subtract','multiply','divide') if op!='divide' or b!=0]
+        for _ in range(100):
+            a,b=rng.randrange(-10001,10001),rng.randrange(-10001,10001)
+            # Keep generated inputs within the stated inclusive domain.
+            a=max(-10000,a);b=max(-10000,b)
+            args += [[a,b,op] for op in ('subtract','multiply','divide') if op!='divide' or b!=0]
+    else:args += [[n] for n in range(101)]+[[200],[500],[1000],[2000]]
+    distinct={json.dumps(a):a for a in args}
+    return [dict(arguments=a,expected=oracle(ref,a)) for a in distinct.values()]
+
+_previous_simulation_observation=valid_observation
+
+def valid_observation(ref,case,observed):
+    if ref!='16.22':return _previous_simulation_observation(ref,case,observed)
+    return isinstance(observed,dict) and observed.get('mutationOk') is True and type(observed.get('actual')) is list and all(type(row) is str for row in observed['actual']) and observed['actual']==case['expected']

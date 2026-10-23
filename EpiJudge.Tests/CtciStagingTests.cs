@@ -146,6 +146,24 @@ public sealed class CtciStagingTests
     }
 
     [Fact]
+    public void AdditionOnlyDivisionTruncatesTowardZero()
+    {
+        var definition = Definition("16.9");
+        var test = Case([-7, 3, "divide"], -2);
+        Assert.Null(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = -2, mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = -3, mutationOk = true })));
+    }
+
+    [Fact]
+    public void AntRenderingUsesVisitedBoundsAndOverlaysTheFinalDirection()
+    {
+        var definition = Definition("16.22");
+        var test = Case([5], new[] { ".U", "#.", "##" });
+        Assert.Null(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new[] { ".U", "#.", "##" }, mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new[] { "#.", "##" }, mutationOk = true })));
+    }
+
+    [Fact]
     public void MultiSearchKeepsOverlapsAndTheLastEmptyPatternBoundary()
     {
         var definition = Definition("17.17");

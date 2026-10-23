@@ -1,0 +1,21 @@
+{
+  "explanation": "Only visited cells can become black, so a sparse set records black coordinates while unlisted positions remain white. Track the extrema of every ant position separately: black-cell extrema alone can shrink incorrectly after flips. Once simulation ends, render that visited rectangle and overlay the final ant marker.",
+  "correctness": "Initially the sparse set is empty and the ant state matches the all-white start. At each step, membership gives the exact current color by induction. The corresponding turn, membership toggle and one-cell movement implement the three required actions in order, preserving the exact state invariant. Updating coordinate extrema after every movement, from the initial zero bounds, records all visited positions including the final destination. Rendering each bounded coordinate therefore produces the required rectangle, cell colors and final orientation marker without losing erased white positions.",
+  "walkthrough": "At zero steps the board is [R]. Step 1 sees white, turns from right to down, colors (0,0) black and moves to (1,0), yielding [\"#\",\"D\"]. Step 2 turns from down to left on white, flips (1,0), and moves to (1,-1). The visited rectangle now has two columns, yielding [\".#\",\"L#\"].",
+  "walkthroughCase": {
+    "arguments": [
+      2
+    ],
+    "expected": [
+      ".#",
+      "L#"
+    ]
+  },
+  "timeComplexity": "Expected O(steps+A) time for sparse-set simulation and rendering A cells of the visited bounding rectangle; A is O((steps+1)^2) in the worst case.",
+  "spaceComplexity": "O(steps+A) storage for black coordinates and returned board characters. The simulation does not allocate an infinite or full worst-case grid.",
+  "edgeCases": [
+    "Zero steps and the first turns before a black cell is revisited.",
+    "A black-cell left turn, erased marks, negative coordinates and the 2000-step boundary."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.22. No affiliation is implied."
+}

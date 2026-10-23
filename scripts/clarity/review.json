@@ -10136,6 +10136,46 @@
         "ctci6/runtime/validation.json",
         "ctci6/cases/ctci6_16_20.json"
       ]
+    },
+    "ctci6_16_9": {
+      "collection": "ctci6",
+      "statementSha256": "247bc65be046b6a82eb80f33c3fb2fd8b29b91bda0c435af68c680cabad433e4",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "inputDomain": "first and second are integers in -10000..10000. operation is exactly subtract, multiply or divide. For divide, second is nonzero. These bounds keep every result in signed 32-bit range and make the repeated-addition baseline runnable. The solution may use addition, assignment, comparisons, Boolean logic, branches and loops. Constants 0, 1 and -1 are allowed. Do not use subtraction, unary negation of a variable, multiplication, division, remainder, bitwise arithmetic, shifts or helpers that perform those operations (including abs). Increment/decrement by addition is allowed. Preserve caller values. The reference implements sign reversal by repeatedly adding 1 or -1. Multiplication adds a signed addend a counted number of times; division counts whole divisor magnitudes without exceeding the dividend magnitude.",
+        "outputAndTies": "Compute subtraction, multiplication or integer division using addition as the only arithmetic operation. operation is subtract, multiply or divide, meaning first-second, first*second or first/second respectively. Division truncates toward zero, including negative operands.",
+        "mutationAndIdentity": "Read all five bodies. No subtraction, variable unary negation, multiplication, division, remainder, bit arithmetic or abs helper performs user arithmetic. Only the allowed negative unit literal and addition are used. Java local Negator, C# local function, C++ lambda and Python/JS nested function implement the same explicit unit invariant. Multiplication chooses its signed addend before looping, avoiding a product-sized sign-reversal loop. Division accumulates signed quotient units and truncates toward zero. Static operator checks are only restriction evidence; actual cases independently execute all small signed pairs, zero factors, negative division and admitted endpoints against ordinary host arithmetic. The bounded repeated-addition domain is explicit, not a claim of efficient full-width integer arithmetic.",
+        "boundaryBehavior": "Zero dividend/factors, same and opposite signs, divisor magnitudes exceeding the dividend. Truncation toward zero and admitted positive/negative endpoints. Division by zero and unsupported operation names are outside the stated input domain.",
+        "examples": "The independently checked displayed example and algorithm trace agree with the executed five-language bodies.",
+        "languageContracts": "{\"csharp\": \"Read all actual signed-int bodies. Array return expressions match int[] signatures. NumberMax uses uint sign extraction and an explicit unchecked difference, then signed masks; no conditional comparison helper. MasterMind IndexOf uses the admitted ASCII alphabet. Mutable array inputs are read only in this batch. New closest-difference results are long; subtraction and pair totals widen before arithmetic. Invariant token keys and private array clones preserve contracts. English magnitude is long before negation; local nonempty word groups join with exact spaces. Nullable mapping strings distinguish unassigned from empty. T9 returns List<string> matching its visible signature. Addition-only arithmetic uses a visible local helper with unit increments. Ant rendering uses HashSet<int> coordinate keys and StringBuilder rows.\", \"javascript\": \"Read all actual functions. Factorial division is floored, NumberMax bit operations coerce the intended signed 32-bit patterns, and bounded ordinary arithmetic stays exactly representable. All array results are materialized, not generators. Inputs remain unchanged. New widened results use Number.isSafeInteger and the admitted exact range. Numeric sort comparators avoid lexical sorting; Map/Set and copied arrays preserve inputs. English magnitude uses exact Number arithmetic with Math.floor divisions. Pattern null differs from empty, matching results require boolean type, and T9 preserves duplicate entries in a concrete array. Addition-only arithmetic uses unit additions rather than Math helpers or bitwise shortcuts. Ant numeric coordinate keys remain exact and output arrays preserve every row.\", \"python\": \"Read all actual function bodies and exact annotations. NumberMax masks the potentially wider difference before extracting its 32-bit sign; the signed selection mask works with arbitrary-width bitwise operations. Arrays are concrete lists and bool is not an integer observation. The admitted numeric bounds remain shared. New closest-difference observations allow the exact widened result without accepting bool; pair observations validate nested integer rows. Sorted copies preserve caller lists. Text/bool observation branches apply only to their actual return kinds, leaving integer strictness intact. English floor division consumes chunks; pattern None differs from empty; T9 yields a concrete list. Addition-only arithmetic does not call abs or built-in arithmetic helpers. Ant positions use tuple-set keys and independent mutable row builders; the result is a concrete string list.\", \"cpp\": \"Read all actual methods with const vector/string references. NumberMax difference is uint32_t and final operand multiplication by 0/1 cannot overflow. No undefined signed subtraction or implementation-defined unsigned narrowing is used. Returned vectors own their values; prefix/suffix scans index only nonempty input. New dictionary/set headers are explicit. long long arithmetic precedes differences/sums and range checks precede narrowing; all original vectors remain const. English magnitude widens before negation and reverse iteration joins groups. Pattern assignment uses separate haveA/haveB flags so empty strings are valid mappings; T9 output strings own their copies. Addition-only arithmetic uses a nonrecursive lambda; bounded sums stay signed-safe. Ant membership uses unordered_set<int>, with declared table headers and owned string rows.\", \"java\": \"Read all actual methods. Integer arithmetic uses justified bounds, except the intentionally wrapping subtraction whose bit pattern is observed with >>>. Returned int[] arrays match declared types, String indexing uses charAt, and the frequency table is local per call. Inputs are unchanged. New closest-difference results are long and the JSON encoder handles Long. Locale.ROOT fixes token normalization; sum candidates are range-checked before int conversion. English magnitude is long, groups reverse locally, and String.join emits no extra spaces. Pattern matching uses String.equals and Boolean encoding; T9 returns materialized List<String>. Addition-only arithmetic uses a local Negator class with no forbidden arithmetic. Ant coordinate keys are collision-free ints; StringBuilder rows retain visited bounds.\"}",
+        "judgeAgreement": "Read all five bodies. No subtraction, variable unary negation, multiplication, division, remainder, bit arithmetic or abs helper performs user arithmetic. Only the allowed negative unit literal and addition are used. Java local Negator, C# local function, C++ lambda and Python/JS nested function implement the same explicit unit invariant. Multiplication chooses its signed addend before looping, avoiding a product-sized sign-reversal loop. Division accumulates signed quotient units and truncates toward zero. Static operator checks are only restriction evidence; actual cases independently execute all small signed pairs, zero factors, negative division and admitted endpoints against ordinary host arithmetic. The bounded repeated-addition domain is explicit, not a claim of efficient full-width integer arithmetic."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_9.json"
+      ]
+    },
+    "ctci6_16_22": {
+      "collection": "ctci6",
+      "statementSha256": "eebf3eb7f937dbb45bc525fd9e896765f36be6356a314e147be5ddaa7121d0d4",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "inputDomain": "0 <= steps <= 2000. Rows increase downward and columns increase rightward. Turning right is clockwise in this coordinate system. A newly entered cell is not inspected/flipped until the next step. Render rows from smallest to largest row, and columns from smallest to largest column. Use . for white and # for black, except render the ant at its final position with R, D, L or U for its direction, hiding the cell color beneath it. Each returned string is one row, with no newline or footer. The rectangle includes visited white cells even if all their black marks were later erased. For zero steps return [\"R\"]. Do not assume a fixed-size board or clip the walk.",
+        "outputAndTies": "Simulate Langton's ant on an infinite initially white grid. The ant starts at row 0, column 0, facing right. On each step, turn right on white or left on black, flip the current cell, then move forward one cell. Return the final board as ASCII rows over the smallest rectangle containing every position the ant has visited, including its initial and final positions.",
+        "mutationAndIdentity": "Read all five bodies. Python stores coordinate tuples; C#/Java/C++/JS encode coordinates within the proven range [-steps,steps] using width 2*steps+1 and an offset, so distinct coordinates cannot collide. The largest key for steps=2000 fits signed 32-bit and JS exact integers. Right/down/left/up direction indices match row-down coordinates. Bounds update after every move and retain erased white positions. The final marker overlays color. An independent dense byte-board oracle rotates a direction vector instead of indexing the reference direction table, checking 0..100 steps and 200/500/1000/2000 bounds. Hand traces through the first black-cell turn disambiguate operation order.",
+        "boundaryBehavior": "Zero steps and the first turns before a black cell is revisited. A black-cell left turn, erased marks, negative coordinates and the 2000-step boundary.",
+        "examples": "The independently checked displayed example and algorithm trace agree with the executed five-language bodies.",
+        "languageContracts": "{\"csharp\": \"Read all actual signed-int bodies. Array return expressions match int[] signatures. NumberMax uses uint sign extraction and an explicit unchecked difference, then signed masks; no conditional comparison helper. MasterMind IndexOf uses the admitted ASCII alphabet. Mutable array inputs are read only in this batch. New closest-difference results are long; subtraction and pair totals widen before arithmetic. Invariant token keys and private array clones preserve contracts. English magnitude is long before negation; local nonempty word groups join with exact spaces. Nullable mapping strings distinguish unassigned from empty. T9 returns List<string> matching its visible signature. Addition-only arithmetic uses a visible local helper with unit increments. Ant rendering uses HashSet<int> coordinate keys and StringBuilder rows.\", \"javascript\": \"Read all actual functions. Factorial division is floored, NumberMax bit operations coerce the intended signed 32-bit patterns, and bounded ordinary arithmetic stays exactly representable. All array results are materialized, not generators. Inputs remain unchanged. New widened results use Number.isSafeInteger and the admitted exact range. Numeric sort comparators avoid lexical sorting; Map/Set and copied arrays preserve inputs. English magnitude uses exact Number arithmetic with Math.floor divisions. Pattern null differs from empty, matching results require boolean type, and T9 preserves duplicate entries in a concrete array. Addition-only arithmetic uses unit additions rather than Math helpers or bitwise shortcuts. Ant numeric coordinate keys remain exact and output arrays preserve every row.\", \"python\": \"Read all actual function bodies and exact annotations. NumberMax masks the potentially wider difference before extracting its 32-bit sign; the signed selection mask works with arbitrary-width bitwise operations. Arrays are concrete lists and bool is not an integer observation. The admitted numeric bounds remain shared. New closest-difference observations allow the exact widened result without accepting bool; pair observations validate nested integer rows. Sorted copies preserve caller lists. Text/bool observation branches apply only to their actual return kinds, leaving integer strictness intact. English floor division consumes chunks; pattern None differs from empty; T9 yields a concrete list. Addition-only arithmetic does not call abs or built-in arithmetic helpers. Ant positions use tuple-set keys and independent mutable row builders; the result is a concrete string list.\", \"cpp\": \"Read all actual methods with const vector/string references. NumberMax difference is uint32_t and final operand multiplication by 0/1 cannot overflow. No undefined signed subtraction or implementation-defined unsigned narrowing is used. Returned vectors own their values; prefix/suffix scans index only nonempty input. New dictionary/set headers are explicit. long long arithmetic precedes differences/sums and range checks precede narrowing; all original vectors remain const. English magnitude widens before negation and reverse iteration joins groups. Pattern assignment uses separate haveA/haveB flags so empty strings are valid mappings; T9 output strings own their copies. Addition-only arithmetic uses a nonrecursive lambda; bounded sums stay signed-safe. Ant membership uses unordered_set<int>, with declared table headers and owned string rows.\", \"java\": \"Read all actual methods. Integer arithmetic uses justified bounds, except the intentionally wrapping subtraction whose bit pattern is observed with >>>. Returned int[] arrays match declared types, String indexing uses charAt, and the frequency table is local per call. Inputs are unchanged. New closest-difference results are long and the JSON encoder handles Long. Locale.ROOT fixes token normalization; sum candidates are range-checked before int conversion. English magnitude is long, groups reverse locally, and String.join emits no extra spaces. Pattern matching uses String.equals and Boolean encoding; T9 returns materialized List<String>. Addition-only arithmetic uses a local Negator class with no forbidden arithmetic. Ant coordinate keys are collision-free ints; StringBuilder rows retain visited bounds.\"}",
+        "judgeAgreement": "Read all five bodies. Python stores coordinate tuples; C#/Java/C++/JS encode coordinates within the proven range [-steps,steps] using width 2*steps+1 and an offset, so distinct coordinates cannot collide. The largest key for steps=2000 fits signed 32-bit and JS exact integers. Right/down/left/up direction indices match row-down coordinates. Bounds update after every move and retain erased white positions. The final marker overlays color. An independent dense byte-board oracle rotates a direction vector instead of indexing the reference direction table, checking 0..100 steps and 200/500/1000/2000 bounds. Hand traces through the first black-cell turn disambiguate operation order."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_22.json"
+      ]
     }
   },
   "solutions": {
@@ -59261,6 +59301,236 @@
         "ctci6/cases/ctci6_16_20.json",
         "solutions/java/ctci6_16_20.java",
         "solutions/notes/java/ctci6_16_20.json"
+      ]
+    },
+    "ctci6_16_9/csharp": {
+      "codePath": "solutions/csharp/ctci6_16_9.cs",
+      "notesPath": "solutions/notes/ctci6_16_9.json",
+      "contentSha256": "143153c687fcb9ca1de0a063225645c0a580371ca6b2322319e1625eb989aa66",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Unit-addition sign reversal; signed repeated-addend multiplication and signed whole-divisor removal.",
+        "correctness": "In sign reversal, current+(-accumulated) remains the original value: each unit added to current is also added to accumulated. Reaching current=0 therefore leaves the exact opposite original operand. Adding that opposite proves subtraction. Multiplication adds the correctly signed first operand exactly abs(second) times, so the result has the required magnitude and sign. Division maintains abs(first)=consumedMagnitude+remaining with remaining nonnegative; each accepted divisor removal adds one correctly signed quotient unit. Termination occurs exactly when another whole divisor would exceed the remainder, proving truncation toward zero. Bounds justify all intermediate sums.",
+        "workedTrace": "For divide(-7,3), obtain magnitude 7 by adding +1 seven times to -7 and accumulating 7. The divisor magnitude is 3 and its additive opposite is -3. Remainders 7->4->1 permit two removals; a third would be negative. The quotient step is -1 because signs differ, so return -2. For multiply(-4,-3), use addend 4 three times, returning 12.",
+        "edgeCases": "Zero dividend/factors, same and opposite signs, divisor magnitudes exceeding the dividend. Truncation toward zero and admitted positive/negative endpoints. Division by zero and unsupported operation names are outside the stated input domain.",
+        "timeDerivation": "O(abs(first)+abs(second)+1) worst-case time on this bounded integer domain: sign reversal and repeated addition/removal use at most proportional unit/count loops. Division has at most abs(first) iterations.",
+        "spaceDerivation": "O(1) auxiliary scalar storage; no lookup table or arithmetic helper bypass is used.",
+        "callableAgreement": "Read all five bodies. No subtraction, variable unary negation, multiplication, division, remainder, bit arithmetic or abs helper performs user arithmetic. Only the allowed negative unit literal and addition are used. Java local Negator, C# local function, C++ lambda and Python/JS nested function implement the same explicit unit invariant. Multiplication chooses its signed addend before looping, avoiding a product-sized sign-reversal loop. Division accumulates signed quotient units and truncates toward zero. Static operator checks are only restriction evidence; actual cases independently execute all small signed pairs, zero factors, negative division and admitted endpoints against ordinary host arithmetic. The bounded repeated-addition domain is explicit, not a claim of efficient full-width integer arithmetic. Read all actual signed-int bodies. Array return expressions match int[] signatures. NumberMax uses uint sign extraction and an explicit unchecked difference, then signed masks; no conditional comparison helper. MasterMind IndexOf uses the admitted ASCII alphabet. Mutable array inputs are read only in this batch. New closest-difference results are long; subtraction and pair totals widen before arithmetic. Invariant token keys and private array clones preserve contracts. English magnitude is long before negation; local nonempty word groups join with exact spaces. Nullable mapping strings distinguish unassigned from empty. T9 returns List<string> matching its visible signature. Addition-only arithmetic uses a visible local helper with unit increments. Ant rendering uses HashSet<int> coordinate keys and StringBuilder rows."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_9.json",
+        "solutions/csharp/ctci6_16_9.cs",
+        "solutions/notes/ctci6_16_9.json"
+      ]
+    },
+    "ctci6_16_9/javascript": {
+      "codePath": "solutions/javascript/ctci6_16_9.js",
+      "notesPath": "solutions/notes/javascript/ctci6_16_9.json",
+      "contentSha256": "d0cc97c9105cbe2ba54c1fbca2631ad7ee45f59b6fd0988f4ad34fd0cd624c16",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Unit-addition sign reversal; signed repeated-addend multiplication and signed whole-divisor removal.",
+        "correctness": "In sign reversal, current+(-accumulated) remains the original value: each unit added to current is also added to accumulated. Reaching current=0 therefore leaves the exact opposite original operand. Adding that opposite proves subtraction. Multiplication adds the correctly signed first operand exactly abs(second) times, so the result has the required magnitude and sign. Division maintains abs(first)=consumedMagnitude+remaining with remaining nonnegative; each accepted divisor removal adds one correctly signed quotient unit. Termination occurs exactly when another whole divisor would exceed the remainder, proving truncation toward zero. Bounds justify all intermediate sums.",
+        "workedTrace": "For divide(-7,3), obtain magnitude 7 by adding +1 seven times to -7 and accumulating 7. The divisor magnitude is 3 and its additive opposite is -3. Remainders 7->4->1 permit two removals; a third would be negative. The quotient step is -1 because signs differ, so return -2. For multiply(-4,-3), use addend 4 three times, returning 12.",
+        "edgeCases": "Zero dividend/factors, same and opposite signs, divisor magnitudes exceeding the dividend. Truncation toward zero and admitted positive/negative endpoints. Division by zero and unsupported operation names are outside the stated input domain.",
+        "timeDerivation": "O(abs(first)+abs(second)+1) worst-case time on this bounded integer domain: sign reversal and repeated addition/removal use at most proportional unit/count loops. Division has at most abs(first) iterations.",
+        "spaceDerivation": "O(1) auxiliary scalar storage; no lookup table or arithmetic helper bypass is used.",
+        "callableAgreement": "Read all five bodies. No subtraction, variable unary negation, multiplication, division, remainder, bit arithmetic or abs helper performs user arithmetic. Only the allowed negative unit literal and addition are used. Java local Negator, C# local function, C++ lambda and Python/JS nested function implement the same explicit unit invariant. Multiplication chooses its signed addend before looping, avoiding a product-sized sign-reversal loop. Division accumulates signed quotient units and truncates toward zero. Static operator checks are only restriction evidence; actual cases independently execute all small signed pairs, zero factors, negative division and admitted endpoints against ordinary host arithmetic. The bounded repeated-addition domain is explicit, not a claim of efficient full-width integer arithmetic. Read all actual functions. Factorial division is floored, NumberMax bit operations coerce the intended signed 32-bit patterns, and bounded ordinary arithmetic stays exactly representable. All array results are materialized, not generators. Inputs remain unchanged. New widened results use Number.isSafeInteger and the admitted exact range. Numeric sort comparators avoid lexical sorting; Map/Set and copied arrays preserve inputs. English magnitude uses exact Number arithmetic with Math.floor divisions. Pattern null differs from empty, matching results require boolean type, and T9 preserves duplicate entries in a concrete array. Addition-only arithmetic uses unit additions rather than Math helpers or bitwise shortcuts. Ant numeric coordinate keys remain exact and output arrays preserve every row."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_9.json",
+        "solutions/javascript/ctci6_16_9.js",
+        "solutions/notes/javascript/ctci6_16_9.json"
+      ]
+    },
+    "ctci6_16_9/python": {
+      "codePath": "solutions/python/ctci6_16_9.py",
+      "notesPath": "solutions/notes/python/ctci6_16_9.json",
+      "contentSha256": "372ef5c0c1dab232d3f5180b63109c0565f06c011111147c9f2f1efa54d32e7e",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Unit-addition sign reversal; signed repeated-addend multiplication and signed whole-divisor removal.",
+        "correctness": "In sign reversal, current+(-accumulated) remains the original value: each unit added to current is also added to accumulated. Reaching current=0 therefore leaves the exact opposite original operand. Adding that opposite proves subtraction. Multiplication adds the correctly signed first operand exactly abs(second) times, so the result has the required magnitude and sign. Division maintains abs(first)=consumedMagnitude+remaining with remaining nonnegative; each accepted divisor removal adds one correctly signed quotient unit. Termination occurs exactly when another whole divisor would exceed the remainder, proving truncation toward zero. Bounds justify all intermediate sums.",
+        "workedTrace": "For divide(-7,3), obtain magnitude 7 by adding +1 seven times to -7 and accumulating 7. The divisor magnitude is 3 and its additive opposite is -3. Remainders 7->4->1 permit two removals; a third would be negative. The quotient step is -1 because signs differ, so return -2. For multiply(-4,-3), use addend 4 three times, returning 12.",
+        "edgeCases": "Zero dividend/factors, same and opposite signs, divisor magnitudes exceeding the dividend. Truncation toward zero and admitted positive/negative endpoints. Division by zero and unsupported operation names are outside the stated input domain.",
+        "timeDerivation": "O(abs(first)+abs(second)+1) worst-case time on this bounded integer domain: sign reversal and repeated addition/removal use at most proportional unit/count loops. Division has at most abs(first) iterations.",
+        "spaceDerivation": "O(1) auxiliary scalar storage; no lookup table or arithmetic helper bypass is used.",
+        "callableAgreement": "Read all five bodies. No subtraction, variable unary negation, multiplication, division, remainder, bit arithmetic or abs helper performs user arithmetic. Only the allowed negative unit literal and addition are used. Java local Negator, C# local function, C++ lambda and Python/JS nested function implement the same explicit unit invariant. Multiplication chooses its signed addend before looping, avoiding a product-sized sign-reversal loop. Division accumulates signed quotient units and truncates toward zero. Static operator checks are only restriction evidence; actual cases independently execute all small signed pairs, zero factors, negative division and admitted endpoints against ordinary host arithmetic. The bounded repeated-addition domain is explicit, not a claim of efficient full-width integer arithmetic. Read all actual function bodies and exact annotations. NumberMax masks the potentially wider difference before extracting its 32-bit sign; the signed selection mask works with arbitrary-width bitwise operations. Arrays are concrete lists and bool is not an integer observation. The admitted numeric bounds remain shared. New closest-difference observations allow the exact widened result without accepting bool; pair observations validate nested integer rows. Sorted copies preserve caller lists. Text/bool observation branches apply only to their actual return kinds, leaving integer strictness intact. English floor division consumes chunks; pattern None differs from empty; T9 yields a concrete list. Addition-only arithmetic does not call abs or built-in arithmetic helpers. Ant positions use tuple-set keys and independent mutable row builders; the result is a concrete string list."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_9.json",
+        "solutions/python/ctci6_16_9.py",
+        "solutions/notes/python/ctci6_16_9.json"
+      ]
+    },
+    "ctci6_16_9/cpp": {
+      "codePath": "solutions/cpp/ctci6_16_9.cpp",
+      "notesPath": "solutions/notes/cpp/ctci6_16_9.json",
+      "contentSha256": "c7f8cf3175d4d739e971be4c2038f1df37a45806017da5eed040e5e50d235531",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Unit-addition sign reversal; signed repeated-addend multiplication and signed whole-divisor removal.",
+        "correctness": "In sign reversal, current+(-accumulated) remains the original value: each unit added to current is also added to accumulated. Reaching current=0 therefore leaves the exact opposite original operand. Adding that opposite proves subtraction. Multiplication adds the correctly signed first operand exactly abs(second) times, so the result has the required magnitude and sign. Division maintains abs(first)=consumedMagnitude+remaining with remaining nonnegative; each accepted divisor removal adds one correctly signed quotient unit. Termination occurs exactly when another whole divisor would exceed the remainder, proving truncation toward zero. Bounds justify all intermediate sums.",
+        "workedTrace": "For divide(-7,3), obtain magnitude 7 by adding +1 seven times to -7 and accumulating 7. The divisor magnitude is 3 and its additive opposite is -3. Remainders 7->4->1 permit two removals; a third would be negative. The quotient step is -1 because signs differ, so return -2. For multiply(-4,-3), use addend 4 three times, returning 12.",
+        "edgeCases": "Zero dividend/factors, same and opposite signs, divisor magnitudes exceeding the dividend. Truncation toward zero and admitted positive/negative endpoints. Division by zero and unsupported operation names are outside the stated input domain.",
+        "timeDerivation": "O(abs(first)+abs(second)+1) worst-case time on this bounded integer domain: sign reversal and repeated addition/removal use at most proportional unit/count loops. Division has at most abs(first) iterations.",
+        "spaceDerivation": "O(1) auxiliary scalar storage; no lookup table or arithmetic helper bypass is used.",
+        "callableAgreement": "Read all five bodies. No subtraction, variable unary negation, multiplication, division, remainder, bit arithmetic or abs helper performs user arithmetic. Only the allowed negative unit literal and addition are used. Java local Negator, C# local function, C++ lambda and Python/JS nested function implement the same explicit unit invariant. Multiplication chooses its signed addend before looping, avoiding a product-sized sign-reversal loop. Division accumulates signed quotient units and truncates toward zero. Static operator checks are only restriction evidence; actual cases independently execute all small signed pairs, zero factors, negative division and admitted endpoints against ordinary host arithmetic. The bounded repeated-addition domain is explicit, not a claim of efficient full-width integer arithmetic. Read all actual methods with const vector/string references. NumberMax difference is uint32_t and final operand multiplication by 0/1 cannot overflow. No undefined signed subtraction or implementation-defined unsigned narrowing is used. Returned vectors own their values; prefix/suffix scans index only nonempty input. New dictionary/set headers are explicit. long long arithmetic precedes differences/sums and range checks precede narrowing; all original vectors remain const. English magnitude widens before negation and reverse iteration joins groups. Pattern assignment uses separate haveA/haveB flags so empty strings are valid mappings; T9 output strings own their copies. Addition-only arithmetic uses a nonrecursive lambda; bounded sums stay signed-safe. Ant membership uses unordered_set<int>, with declared table headers and owned string rows."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_9.json",
+        "solutions/cpp/ctci6_16_9.cpp",
+        "solutions/notes/cpp/ctci6_16_9.json"
+      ]
+    },
+    "ctci6_16_9/java": {
+      "codePath": "solutions/java/ctci6_16_9.java",
+      "notesPath": "solutions/notes/java/ctci6_16_9.json",
+      "contentSha256": "860e87525c7e8b6a392f6d92824a582ee179bf780e3942d5f26eb599e311a7e6",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Unit-addition sign reversal; signed repeated-addend multiplication and signed whole-divisor removal.",
+        "correctness": "In sign reversal, current+(-accumulated) remains the original value: each unit added to current is also added to accumulated. Reaching current=0 therefore leaves the exact opposite original operand. Adding that opposite proves subtraction. Multiplication adds the correctly signed first operand exactly abs(second) times, so the result has the required magnitude and sign. Division maintains abs(first)=consumedMagnitude+remaining with remaining nonnegative; each accepted divisor removal adds one correctly signed quotient unit. Termination occurs exactly when another whole divisor would exceed the remainder, proving truncation toward zero. Bounds justify all intermediate sums.",
+        "workedTrace": "For divide(-7,3), obtain magnitude 7 by adding +1 seven times to -7 and accumulating 7. The divisor magnitude is 3 and its additive opposite is -3. Remainders 7->4->1 permit two removals; a third would be negative. The quotient step is -1 because signs differ, so return -2. For multiply(-4,-3), use addend 4 three times, returning 12.",
+        "edgeCases": "Zero dividend/factors, same and opposite signs, divisor magnitudes exceeding the dividend. Truncation toward zero and admitted positive/negative endpoints. Division by zero and unsupported operation names are outside the stated input domain.",
+        "timeDerivation": "O(abs(first)+abs(second)+1) worst-case time on this bounded integer domain: sign reversal and repeated addition/removal use at most proportional unit/count loops. Division has at most abs(first) iterations.",
+        "spaceDerivation": "O(1) auxiliary scalar storage; no lookup table or arithmetic helper bypass is used.",
+        "callableAgreement": "Read all five bodies. No subtraction, variable unary negation, multiplication, division, remainder, bit arithmetic or abs helper performs user arithmetic. Only the allowed negative unit literal and addition are used. Java local Negator, C# local function, C++ lambda and Python/JS nested function implement the same explicit unit invariant. Multiplication chooses its signed addend before looping, avoiding a product-sized sign-reversal loop. Division accumulates signed quotient units and truncates toward zero. Static operator checks are only restriction evidence; actual cases independently execute all small signed pairs, zero factors, negative division and admitted endpoints against ordinary host arithmetic. The bounded repeated-addition domain is explicit, not a claim of efficient full-width integer arithmetic. Read all actual methods. Integer arithmetic uses justified bounds, except the intentionally wrapping subtraction whose bit pattern is observed with >>>. Returned int[] arrays match declared types, String indexing uses charAt, and the frequency table is local per call. Inputs are unchanged. New closest-difference results are long and the JSON encoder handles Long. Locale.ROOT fixes token normalization; sum candidates are range-checked before int conversion. English magnitude is long, groups reverse locally, and String.join emits no extra spaces. Pattern matching uses String.equals and Boolean encoding; T9 returns materialized List<String>. Addition-only arithmetic uses a local Negator class with no forbidden arithmetic. Ant coordinate keys are collision-free ints; StringBuilder rows retain visited bounds."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_9.json",
+        "solutions/java/ctci6_16_9.java",
+        "solutions/notes/java/ctci6_16_9.json"
+      ]
+    },
+    "ctci6_16_22/csharp": {
+      "codePath": "solutions/csharp/ctci6_16_22.cs",
+      "notesPath": "solutions/notes/ctci6_16_22.json",
+      "contentSha256": "390d2d7b140945298242badbf63e88672729c3d04bf6c06b785a33c3e62485cc",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Sparse black-cell membership, turn/toggle/move simulation, visited extrema and final rectangular rendering.",
+        "correctness": "Initially the sparse set is empty and the ant state matches the all-white start. At each step, membership gives the exact current color by induction. The corresponding turn, membership toggle and one-cell movement implement the three required actions in order, preserving the exact state invariant. Updating coordinate extrema after every movement, from the initial zero bounds, records all visited positions including the final destination. Rendering each bounded coordinate therefore produces the required rectangle, cell colors and final orientation marker without losing erased white positions.",
+        "workedTrace": "At zero steps the board is [R]. Step 1 sees white, turns from right to down, colors (0,0) black and moves to (1,0), yielding [\"#\",\"D\"]. Step 2 turns from down to left on white, flips (1,0), and moves to (1,-1). The visited rectangle now has two columns, yielding [\".#\",\"L#\"].",
+        "edgeCases": "Zero steps and the first turns before a black cell is revisited. A black-cell left turn, erased marks, negative coordinates and the 2000-step boundary.",
+        "timeDerivation": "Expected O(steps+A) time for sparse-set simulation and rendering A cells of the visited bounding rectangle; A is O((steps+1)^2) in the worst case.",
+        "spaceDerivation": "O(steps+A) storage for black coordinates and returned board characters. The simulation does not allocate an infinite or full worst-case grid.",
+        "callableAgreement": "Read all five bodies. Python stores coordinate tuples; C#/Java/C++/JS encode coordinates within the proven range [-steps,steps] using width 2*steps+1 and an offset, so distinct coordinates cannot collide. The largest key for steps=2000 fits signed 32-bit and JS exact integers. Right/down/left/up direction indices match row-down coordinates. Bounds update after every move and retain erased white positions. The final marker overlays color. An independent dense byte-board oracle rotates a direction vector instead of indexing the reference direction table, checking 0..100 steps and 200/500/1000/2000 bounds. Hand traces through the first black-cell turn disambiguate operation order. Read all actual signed-int bodies. Array return expressions match int[] signatures. NumberMax uses uint sign extraction and an explicit unchecked difference, then signed masks; no conditional comparison helper. MasterMind IndexOf uses the admitted ASCII alphabet. Mutable array inputs are read only in this batch. New closest-difference results are long; subtraction and pair totals widen before arithmetic. Invariant token keys and private array clones preserve contracts. English magnitude is long before negation; local nonempty word groups join with exact spaces. Nullable mapping strings distinguish unassigned from empty. T9 returns List<string> matching its visible signature. Addition-only arithmetic uses a visible local helper with unit increments. Ant rendering uses HashSet<int> coordinate keys and StringBuilder rows."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_22.json",
+        "solutions/csharp/ctci6_16_22.cs",
+        "solutions/notes/ctci6_16_22.json"
+      ]
+    },
+    "ctci6_16_22/javascript": {
+      "codePath": "solutions/javascript/ctci6_16_22.js",
+      "notesPath": "solutions/notes/javascript/ctci6_16_22.json",
+      "contentSha256": "dd3ce5e2f0456f7e66fdd59ee1c623ced2a02982053f2e0282cb9326b86b035e",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Sparse black-cell membership, turn/toggle/move simulation, visited extrema and final rectangular rendering.",
+        "correctness": "Initially the sparse set is empty and the ant state matches the all-white start. At each step, membership gives the exact current color by induction. The corresponding turn, membership toggle and one-cell movement implement the three required actions in order, preserving the exact state invariant. Updating coordinate extrema after every movement, from the initial zero bounds, records all visited positions including the final destination. Rendering each bounded coordinate therefore produces the required rectangle, cell colors and final orientation marker without losing erased white positions.",
+        "workedTrace": "At zero steps the board is [R]. Step 1 sees white, turns from right to down, colors (0,0) black and moves to (1,0), yielding [\"#\",\"D\"]. Step 2 turns from down to left on white, flips (1,0), and moves to (1,-1). The visited rectangle now has two columns, yielding [\".#\",\"L#\"].",
+        "edgeCases": "Zero steps and the first turns before a black cell is revisited. A black-cell left turn, erased marks, negative coordinates and the 2000-step boundary.",
+        "timeDerivation": "Expected O(steps+A) time for sparse-set simulation and rendering A cells of the visited bounding rectangle; A is O((steps+1)^2) in the worst case.",
+        "spaceDerivation": "O(steps+A) storage for black coordinates and returned board characters. The simulation does not allocate an infinite or full worst-case grid.",
+        "callableAgreement": "Read all five bodies. Python stores coordinate tuples; C#/Java/C++/JS encode coordinates within the proven range [-steps,steps] using width 2*steps+1 and an offset, so distinct coordinates cannot collide. The largest key for steps=2000 fits signed 32-bit and JS exact integers. Right/down/left/up direction indices match row-down coordinates. Bounds update after every move and retain erased white positions. The final marker overlays color. An independent dense byte-board oracle rotates a direction vector instead of indexing the reference direction table, checking 0..100 steps and 200/500/1000/2000 bounds. Hand traces through the first black-cell turn disambiguate operation order. Read all actual functions. Factorial division is floored, NumberMax bit operations coerce the intended signed 32-bit patterns, and bounded ordinary arithmetic stays exactly representable. All array results are materialized, not generators. Inputs remain unchanged. New widened results use Number.isSafeInteger and the admitted exact range. Numeric sort comparators avoid lexical sorting; Map/Set and copied arrays preserve inputs. English magnitude uses exact Number arithmetic with Math.floor divisions. Pattern null differs from empty, matching results require boolean type, and T9 preserves duplicate entries in a concrete array. Addition-only arithmetic uses unit additions rather than Math helpers or bitwise shortcuts. Ant numeric coordinate keys remain exact and output arrays preserve every row."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_22.json",
+        "solutions/javascript/ctci6_16_22.js",
+        "solutions/notes/javascript/ctci6_16_22.json"
+      ]
+    },
+    "ctci6_16_22/python": {
+      "codePath": "solutions/python/ctci6_16_22.py",
+      "notesPath": "solutions/notes/python/ctci6_16_22.json",
+      "contentSha256": "6f00265db2c0984db22257bdaceeb37b1169e8bee9a56415e575ec4b73fd6a25",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Sparse black-cell membership, turn/toggle/move simulation, visited extrema and final rectangular rendering.",
+        "correctness": "Initially the sparse set is empty and the ant state matches the all-white start. At each step, membership gives the exact current color by induction. The corresponding turn, membership toggle and one-cell movement implement the three required actions in order, preserving the exact state invariant. Updating coordinate extrema after every movement, from the initial zero bounds, records all visited positions including the final destination. Rendering each bounded coordinate therefore produces the required rectangle, cell colors and final orientation marker without losing erased white positions.",
+        "workedTrace": "At zero steps the board is [R]. Step 1 sees white, turns from right to down, colors (0,0) black and moves to (1,0), yielding [\"#\",\"D\"]. Step 2 turns from down to left on white, flips (1,0), and moves to (1,-1). The visited rectangle now has two columns, yielding [\".#\",\"L#\"].",
+        "edgeCases": "Zero steps and the first turns before a black cell is revisited. A black-cell left turn, erased marks, negative coordinates and the 2000-step boundary.",
+        "timeDerivation": "Expected O(steps+A) time for sparse-set simulation and rendering A cells of the visited bounding rectangle; A is O((steps+1)^2) in the worst case.",
+        "spaceDerivation": "O(steps+A) storage for black coordinates and returned board characters. The simulation does not allocate an infinite or full worst-case grid.",
+        "callableAgreement": "Read all five bodies. Python stores coordinate tuples; C#/Java/C++/JS encode coordinates within the proven range [-steps,steps] using width 2*steps+1 and an offset, so distinct coordinates cannot collide. The largest key for steps=2000 fits signed 32-bit and JS exact integers. Right/down/left/up direction indices match row-down coordinates. Bounds update after every move and retain erased white positions. The final marker overlays color. An independent dense byte-board oracle rotates a direction vector instead of indexing the reference direction table, checking 0..100 steps and 200/500/1000/2000 bounds. Hand traces through the first black-cell turn disambiguate operation order. Read all actual function bodies and exact annotations. NumberMax masks the potentially wider difference before extracting its 32-bit sign; the signed selection mask works with arbitrary-width bitwise operations. Arrays are concrete lists and bool is not an integer observation. The admitted numeric bounds remain shared. New closest-difference observations allow the exact widened result without accepting bool; pair observations validate nested integer rows. Sorted copies preserve caller lists. Text/bool observation branches apply only to their actual return kinds, leaving integer strictness intact. English floor division consumes chunks; pattern None differs from empty; T9 yields a concrete list. Addition-only arithmetic does not call abs or built-in arithmetic helpers. Ant positions use tuple-set keys and independent mutable row builders; the result is a concrete string list."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_22.json",
+        "solutions/python/ctci6_16_22.py",
+        "solutions/notes/python/ctci6_16_22.json"
+      ]
+    },
+    "ctci6_16_22/cpp": {
+      "codePath": "solutions/cpp/ctci6_16_22.cpp",
+      "notesPath": "solutions/notes/cpp/ctci6_16_22.json",
+      "contentSha256": "1d955df462e2b3afc7b964ba7521dcd33d500738f880402a80604133a9bf3f9b",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Sparse black-cell membership, turn/toggle/move simulation, visited extrema and final rectangular rendering.",
+        "correctness": "Initially the sparse set is empty and the ant state matches the all-white start. At each step, membership gives the exact current color by induction. The corresponding turn, membership toggle and one-cell movement implement the three required actions in order, preserving the exact state invariant. Updating coordinate extrema after every movement, from the initial zero bounds, records all visited positions including the final destination. Rendering each bounded coordinate therefore produces the required rectangle, cell colors and final orientation marker without losing erased white positions.",
+        "workedTrace": "At zero steps the board is [R]. Step 1 sees white, turns from right to down, colors (0,0) black and moves to (1,0), yielding [\"#\",\"D\"]. Step 2 turns from down to left on white, flips (1,0), and moves to (1,-1). The visited rectangle now has two columns, yielding [\".#\",\"L#\"].",
+        "edgeCases": "Zero steps and the first turns before a black cell is revisited. A black-cell left turn, erased marks, negative coordinates and the 2000-step boundary.",
+        "timeDerivation": "Expected O(steps+A) time for sparse-set simulation and rendering A cells of the visited bounding rectangle; A is O((steps+1)^2) in the worst case.",
+        "spaceDerivation": "O(steps+A) storage for black coordinates and returned board characters. The simulation does not allocate an infinite or full worst-case grid.",
+        "callableAgreement": "Read all five bodies. Python stores coordinate tuples; C#/Java/C++/JS encode coordinates within the proven range [-steps,steps] using width 2*steps+1 and an offset, so distinct coordinates cannot collide. The largest key for steps=2000 fits signed 32-bit and JS exact integers. Right/down/left/up direction indices match row-down coordinates. Bounds update after every move and retain erased white positions. The final marker overlays color. An independent dense byte-board oracle rotates a direction vector instead of indexing the reference direction table, checking 0..100 steps and 200/500/1000/2000 bounds. Hand traces through the first black-cell turn disambiguate operation order. Read all actual methods with const vector/string references. NumberMax difference is uint32_t and final operand multiplication by 0/1 cannot overflow. No undefined signed subtraction or implementation-defined unsigned narrowing is used. Returned vectors own their values; prefix/suffix scans index only nonempty input. New dictionary/set headers are explicit. long long arithmetic precedes differences/sums and range checks precede narrowing; all original vectors remain const. English magnitude widens before negation and reverse iteration joins groups. Pattern assignment uses separate haveA/haveB flags so empty strings are valid mappings; T9 output strings own their copies. Addition-only arithmetic uses a nonrecursive lambda; bounded sums stay signed-safe. Ant membership uses unordered_set<int>, with declared table headers and owned string rows."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_22.json",
+        "solutions/cpp/ctci6_16_22.cpp",
+        "solutions/notes/cpp/ctci6_16_22.json"
+      ]
+    },
+    "ctci6_16_22/java": {
+      "codePath": "solutions/java/ctci6_16_22.java",
+      "notesPath": "solutions/notes/java/ctci6_16_22.json",
+      "contentSha256": "cc8284d4feddc612c4ece4d3230bde5d9c3bc484e242b63b1e54183f1e741410",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Sparse black-cell membership, turn/toggle/move simulation, visited extrema and final rectangular rendering.",
+        "correctness": "Initially the sparse set is empty and the ant state matches the all-white start. At each step, membership gives the exact current color by induction. The corresponding turn, membership toggle and one-cell movement implement the three required actions in order, preserving the exact state invariant. Updating coordinate extrema after every movement, from the initial zero bounds, records all visited positions including the final destination. Rendering each bounded coordinate therefore produces the required rectangle, cell colors and final orientation marker without losing erased white positions.",
+        "workedTrace": "At zero steps the board is [R]. Step 1 sees white, turns from right to down, colors (0,0) black and moves to (1,0), yielding [\"#\",\"D\"]. Step 2 turns from down to left on white, flips (1,0), and moves to (1,-1). The visited rectangle now has two columns, yielding [\".#\",\"L#\"].",
+        "edgeCases": "Zero steps and the first turns before a black cell is revisited. A black-cell left turn, erased marks, negative coordinates and the 2000-step boundary.",
+        "timeDerivation": "Expected O(steps+A) time for sparse-set simulation and rendering A cells of the visited bounding rectangle; A is O((steps+1)^2) in the worst case.",
+        "spaceDerivation": "O(steps+A) storage for black coordinates and returned board characters. The simulation does not allocate an infinite or full worst-case grid.",
+        "callableAgreement": "Read all five bodies. Python stores coordinate tuples; C#/Java/C++/JS encode coordinates within the proven range [-steps,steps] using width 2*steps+1 and an offset, so distinct coordinates cannot collide. The largest key for steps=2000 fits signed 32-bit and JS exact integers. Right/down/left/up direction indices match row-down coordinates. Bounds update after every move and retain erased white positions. The final marker overlays color. An independent dense byte-board oracle rotates a direction vector instead of indexing the reference direction table, checking 0..100 steps and 200/500/1000/2000 bounds. Hand traces through the first black-cell turn disambiguate operation order. Read all actual methods. Integer arithmetic uses justified bounds, except the intentionally wrapping subtraction whose bit pattern is observed with >>>. Returned int[] arrays match declared types, String indexing uses charAt, and the frequency table is local per call. Inputs are unchanged. New closest-difference results are long and the JSON encoder handles Long. Locale.ROOT fixes token normalization; sum candidates are range-checked before int conversion. English magnitude is long, groups reverse locally, and String.join emits no extra spaces. Pattern matching uses String.equals and Boolean encoding; T9 returns materialized List<String>. Addition-only arithmetic uses a local Negator class with no forbidden arithmetic. Ant coordinate keys are collision-free ints; StringBuilder rows retain visited bounds."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_22.json",
+        "solutions/java/ctci6_16_22.java",
+        "solutions/notes/java/ctci6_16_22.json"
       ]
     }
   }

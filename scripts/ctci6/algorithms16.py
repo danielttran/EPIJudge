@@ -325,3 +325,67 @@ return result'''
         if language=='csharp':return f'const string mapping="{mapping}";var result=new List<string>();foreach(string word in dictionary){{if(word.Length!=digits.Length)continue;bool valid=true;for(int i=0;i<word.Length;++i)if(mapping[word[i]-\'a\']!=digits[i]){{valid=false;break;}}if(valid)result.Add(word);}}return result;'
         return f'String mapping="{mapping}";List<String> result=new ArrayList<>();for(String word:dictionary){{if(word.length()!=digits.length())continue;boolean valid=true;for(int i=0;i<word.length();++i)if(mapping.charAt(word.charAt(i)-\'a\')!=digits.charAt(i)){{valid=false;break;}}if(valid)result.add(word);}}return result;'
     return _previous_language_body(ref,language)
+
+_previous_simulation_body=body
+
+def body(ref,language):
+    if ref=='16.9':
+        if language=='python':return '''def opposite(value):
+    step = 1 if value < 0 else -1
+    result = 0
+    while value != 0:
+        value += step
+        result += step
+    return result
+if operation == "subtract":
+    return first + opposite(second)
+if operation == "multiply":
+    count = opposite(second) if second < 0 else second
+    addend = opposite(first) if second < 0 else first
+    result = 0
+    while count > 0:
+        result += addend
+        count += -1
+    return result
+remaining = opposite(first) if first < 0 else first
+divisor = opposite(second) if second < 0 else second
+remove = opposite(divisor)
+step = 1 if (first < 0) == (second < 0) else -1
+result = 0
+while remaining + remove >= 0:
+    remaining += remove
+    result += step
+return result'''
+        if language=='javascript':return 'function opposite(value){const step=value<0?1:-1;let result=0;while(value!==0){value+=step;result+=step;}return result;}if(operation==="subtract")return first+opposite(second);if(operation==="multiply"){let count=second<0?opposite(second):second;const addend=second<0?opposite(first):first;let result=0;while(count>0){result+=addend;count+=-1;}return result;}let remaining=first<0?opposite(first):first;const divisor=second<0?opposite(second):second,remove=opposite(divisor),step=(first<0)===(second<0)?1:-1;let result=0;while(remaining+remove>=0){remaining+=remove;result+=step;}return result;'
+        helper='int Opposite(int value){int step=value<0?1:-1,result=0;while(value!=0){value+=step;result+=step;}return result;}' if language=='csharp' else 'auto opposite=[](int value){int step=value<0?1:-1,result=0;while(value!=0){value+=step;result+=step;}return result;};' if language=='cpp' else 'class Negator {int opposite(int value){int step=value<0?1:-1,result=0;while(value!=0){value+=step;result+=step;}return result;}}Negator negator=new Negator();'
+        call='Opposite' if language=='csharp' else 'opposite' if language=='cpp' else 'negator.opposite';eq=lambda operation:'operation.equals("'+operation+'")' if language=='java' else 'operation=="'+operation+'"'
+        return helper+f'if({eq("subtract")})return first+{call}(second);if({eq("multiply")}){{int count=second<0?{call}(second):second,addend=second<0?{call}(first):first,result=0;while(count>0){{result+=addend;count+=-1;}}return result;}}int remaining=first<0?{call}(first):first,divisor=second<0?{call}(second):second,remove={call}(divisor),step=(first<0)==(second<0)?1:-1,quotient=0;while(remaining+remove>=0){{remaining+=remove;quotient+=step;}}return quotient;'
+    if ref=='16.22':
+        if language=='python':return '''black = set()
+row = column = direction = 0
+min_row = max_row = min_column = max_column = 0
+dr, dc = [0, 1, 0, -1], [1, 0, -1, 0]
+for _ in range(steps):
+    position = (row, column)
+    if position in black:
+        direction = (direction + 3) % 4
+        black.remove(position)
+    else:
+        direction = (direction + 1) % 4
+        black.add(position)
+    row += dr[direction]
+    column += dc[direction]
+    min_row, max_row = min(min_row, row), max(max_row, row)
+    min_column, max_column = min(min_column, column), max(max_column, column)
+result = []
+for r in range(min_row, max_row + 1):
+    line = []
+    for c in range(min_column, max_column + 1):
+        line.append("RDLU"[direction] if (r, c) == (row, column) else "#" if (r, c) in black else ".")
+    result.append("".join(line))
+return result'''
+        if language=='javascript':return 'const width=2*steps+1,black=new Set(),dr=[0,1,0,-1],dc=[1,0,-1,0];let row=0,column=0,direction=0,minRow=0,maxRow=0,minColumn=0,maxColumn=0;for(let turn=0;turn<steps;++turn){const key=(row+steps)*width+column+steps;if(black.has(key)){direction=(direction+3)%4;black.delete(key);}else{direction=(direction+1)%4;black.add(key);}row+=dr[direction];column+=dc[direction];minRow=Math.min(minRow,row);maxRow=Math.max(maxRow,row);minColumn=Math.min(minColumn,column);maxColumn=Math.max(maxColumn,column);}const result=[];for(let r=minRow;r<=maxRow;++r){const line=[];for(let c=minColumn;c<=maxColumn;++c)line.push(r===row&&c===column?"RDLU"[direction]:black.has((r+steps)*width+c+steps)?"#":".");result.push(line.join(""));}return result;'
+        if language=='cpp':return 'int width=2*steps+1,row=0,column=0,direction=0,minRow=0,maxRow=0,minColumn=0,maxColumn=0;std::unordered_set<int> black;const std::array<int,4> dr={0,1,0,-1},dc={1,0,-1,0};for(int turn=0;turn<steps;++turn){int key=(row+steps)*width+column+steps;if(black.count(key)){direction=(direction+3)%4;black.erase(key);}else{direction=(direction+1)%4;black.insert(key);}row+=dr[direction];column+=dc[direction];minRow=std::min(minRow,row);maxRow=std::max(maxRow,row);minColumn=std::min(minColumn,column);maxColumn=std::max(maxColumn,column);}std::vector<std::string> result;for(int r=minRow;r<=maxRow;++r){std::string line;for(int c=minColumn;c<=maxColumn;++c)line+=r==row&&c==column?std::string("RDLU")[direction]:black.count((r+steps)*width+c+steps)?\'#\':\'.\';result.push_back(line);}return result;'
+        cs=language=='csharp';setup='var black=new HashSet<int>();' if cs else 'Set<Integer> black=new HashSet<>();';contains='black.Contains' if cs else 'black.contains';remove='black.Remove' if cs else 'black.remove';add='black.Add' if cs else 'black.add';minimum='Math.Min' if cs else 'Math.min';maximum='Math.Max' if cs else 'Math.max';result='var result=new List<string>();' if cs else 'List<String> result=new ArrayList<>();';append='Append' if cs else 'append';finish='result.Add(line.ToString());' if cs else 'result.add(line.toString());';marker='"RDLU"[direction]' if cs else '"RDLU".charAt(direction)'
+        return f'int width=2*steps+1,row=0,column=0,direction=0,minRow=0,maxRow=0,minColumn=0,maxColumn=0;{setup}int[] dr={{0,1,0,-1}},dc={{1,0,-1,0}};for(int turn=0;turn<steps;++turn){{int key=(row+steps)*width+column+steps;if({contains}(key)){{direction=(direction+3)%4;{remove}(key);}}else{{direction=(direction+1)%4;{add}(key);}}row+=dr[direction];column+=dc[direction];minRow={minimum}(minRow,row);maxRow={maximum}(maxRow,row);minColumn={minimum}(minColumn,column);maxColumn={maximum}(maxColumn,column);}}{result}for(int r=minRow;r<=maxRow;++r){{var line=new StringBuilder();for(int c=minColumn;c<=maxColumn;++c)line.{append}(r==row&&c==column?{marker}:{contains}((r+steps)*width+c+steps)?\'#\':\'.\');{finish}}}return result;'
+    return _previous_simulation_body(ref,language)

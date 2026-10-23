@@ -1,0 +1,21 @@
+{
+  "explanation": "Subtraction is addition of the opposite value. Build that opposite by moving the operand toward zero one unit at a time while accumulating the same movement. Multiplication is repeated addition, and division counts how many whole positive divisor magnitudes fit. Choose the signed addend or quotient step up front so no large product needs a second unit-by-unit sign reversal.",
+  "correctness": "In sign reversal, current+(-accumulated) remains the original value: each unit added to current is also added to accumulated. Reaching current=0 therefore leaves the exact opposite original operand. Adding that opposite proves subtraction. Multiplication adds the correctly signed first operand exactly abs(second) times, so the result has the required magnitude and sign. Division maintains abs(first)=consumedMagnitude+remaining with remaining nonnegative; each accepted divisor removal adds one correctly signed quotient unit. Termination occurs exactly when another whole divisor would exceed the remainder, proving truncation toward zero. Bounds justify all intermediate sums.",
+  "walkthrough": "For divide(-7,3), obtain magnitude 7 by adding +1 seven times to -7 and accumulating 7. The divisor magnitude is 3 and its additive opposite is -3. Remainders 7->4->1 permit two removals; a third would be negative. The quotient step is -1 because signs differ, so return -2. For multiply(-4,-3), use addend 4 three times, returning 12.",
+  "walkthroughCase": {
+    "arguments": [
+      -7,
+      3,
+      "divide"
+    ],
+    "expected": -2
+  },
+  "timeComplexity": "O(abs(first)+abs(second)+1) worst-case time on this bounded integer domain: sign reversal and repeated addition/removal use at most proportional unit/count loops. Division has at most abs(first) iterations.",
+  "spaceComplexity": "O(1) auxiliary scalar storage; no lookup table or arithmetic helper bypass is used.",
+  "edgeCases": [
+    "Zero dividend/factors, same and opposite signs, divisor magnitudes exceeding the dividend.",
+    "Truncation toward zero and admitted positive/negative endpoints.",
+    "Division by zero and unsupported operation names are outside the stated input domain."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.9. No affiliation is implied."
+}

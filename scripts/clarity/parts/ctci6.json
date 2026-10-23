@@ -4753,6 +4753,63 @@
         ]
       }
     },
+    "ctci6_16_9": {
+      "description": "Compute subtraction, multiplication or integer division using addition as the only arithmetic operation. operation is subtract, multiply or divide, meaning first-second, first*second or first/second respectively. Division truncates toward zero, including negative operands.",
+      "constraints": [
+        "first and second are integers in -10000..10000. operation is exactly subtract, multiply or divide. For divide, second is nonzero. These bounds keep every result in signed 32-bit range and make the repeated-addition baseline runnable.",
+        "The solution may use addition, assignment, comparisons, Boolean logic, branches and loops. Constants 0, 1 and -1 are allowed. Do not use subtraction, unary negation of a variable, multiplication, division, remainder, bitwise arithmetic, shifts or helpers that perform those operations (including abs). Increment/decrement by addition is allowed. Preserve caller values.",
+        "The reference implements sign reversal by repeatedly adding 1 or -1. Multiplication adds a signed addend a counted number of times; division counts whole divisor magnitudes without exceeding the dividend magnitude."
+      ],
+      "examples": [
+        {
+          "input": "[-7, 3, \"divide\"]",
+          "output": "-2",
+          "explanation": "For divide(-7,3), obtain magnitude 7 by adding +1 seven times to -7 and accumulating 7. The divisor magnitude is 3 and its additive opposite is -3. Remainders 7->4->1 permit two removals; a third would be negative. The quotient step is -1 because signs differ, so return -2. For multiply(-4,-3), use addend 4 three times, returning 12."
+        }
+      ],
+      "exampleCases": [
+        {
+          "arguments": [
+            -7,
+            3,
+            "divide"
+          ],
+          "expected": -2
+        }
+      ],
+      "contracts": {
+        "csharp": [
+          "Callable: int AdditionOnlyArithmetic(int first, int second, string operation)",
+          "first and second are integers in -10000..10000. operation is exactly subtract, multiply or divide. For divide, second is nonzero. These bounds keep every result in signed 32-bit range and make the repeated-addition baseline runnable.",
+          "The solution may use addition, assignment, comparisons, Boolean logic, branches and loops. Constants 0, 1 and -1 are allowed. Do not use subtraction, unary negation of a variable, multiplication, division, remainder, bitwise arithmetic, shifts or helpers that perform those operations (including abs). Increment/decrement by addition is allowed. Preserve caller values.",
+          "The reference implements sign reversal by repeatedly adding 1 or -1. Multiplication adds a signed addend a counted number of times; division counts whole divisor magnitudes without exceeding the dividend magnitude."
+        ],
+        "javascript": [
+          "Callable: function AdditionOnlyArithmetic(first, second, operation)",
+          "first and second are integers in -10000..10000. operation is exactly subtract, multiply or divide. For divide, second is nonzero. These bounds keep every result in signed 32-bit range and make the repeated-addition baseline runnable.",
+          "The solution may use addition, assignment, comparisons, Boolean logic, branches and loops. Constants 0, 1 and -1 are allowed. Do not use subtraction, unary negation of a variable, multiplication, division, remainder, bitwise arithmetic, shifts or helpers that perform those operations (including abs). Increment/decrement by addition is allowed. Preserve caller values.",
+          "The reference implements sign reversal by repeatedly adding 1 or -1. Multiplication adds a signed addend a counted number of times; division counts whole divisor magnitudes without exceeding the dividend magnitude."
+        ],
+        "python": [
+          "Callable: def AdditionOnlyArithmetic(first: int, second: int, operation: str) -> int",
+          "first and second are integers in -10000..10000. operation is exactly subtract, multiply or divide. For divide, second is nonzero. These bounds keep every result in signed 32-bit range and make the repeated-addition baseline runnable.",
+          "The solution may use addition, assignment, comparisons, Boolean logic, branches and loops. Constants 0, 1 and -1 are allowed. Do not use subtraction, unary negation of a variable, multiplication, division, remainder, bitwise arithmetic, shifts or helpers that perform those operations (including abs). Increment/decrement by addition is allowed. Preserve caller values.",
+          "The reference implements sign reversal by repeatedly adding 1 or -1. Multiplication adds a signed addend a counted number of times; division counts whole divisor magnitudes without exceeding the dividend magnitude."
+        ],
+        "cpp": [
+          "Callable: int AdditionOnlyArithmetic(int first, int second, const std::string& operation)",
+          "first and second are integers in -10000..10000. operation is exactly subtract, multiply or divide. For divide, second is nonzero. These bounds keep every result in signed 32-bit range and make the repeated-addition baseline runnable.",
+          "The solution may use addition, assignment, comparisons, Boolean logic, branches and loops. Constants 0, 1 and -1 are allowed. Do not use subtraction, unary negation of a variable, multiplication, division, remainder, bitwise arithmetic, shifts or helpers that perform those operations (including abs). Increment/decrement by addition is allowed. Preserve caller values.",
+          "The reference implements sign reversal by repeatedly adding 1 or -1. Multiplication adds a signed addend a counted number of times; division counts whole divisor magnitudes without exceeding the dividend magnitude."
+        ],
+        "java": [
+          "Callable: int AdditionOnlyArithmetic(int first, int second, String operation)",
+          "first and second are integers in -10000..10000. operation is exactly subtract, multiply or divide. For divide, second is nonzero. These bounds keep every result in signed 32-bit range and make the repeated-addition baseline runnable.",
+          "The solution may use addition, assignment, comparisons, Boolean logic, branches and loops. Constants 0, 1 and -1 are allowed. Do not use subtraction, unary negation of a variable, multiplication, division, remainder, bitwise arithmetic, shifts or helpers that perform those operations (including abs). Increment/decrement by addition is allowed. Preserve caller values.",
+          "The reference implements sign reversal by repeatedly adding 1 or -1. Multiplication adds a signed addend a counted number of times; division counts whole divisor magnitudes without exceeding the dividend magnitude."
+        ]
+      }
+    },
     "ctci6_16_10": {
       "description": "Return the earliest year from 1900 through 2000, inclusive, in which the greatest number of the supplied people were alive. Each row is [birthYear,deathYear], and a person counts in both their birth and death years. Rows describe distinct people even if their dates agree.",
       "constraints": [
@@ -5277,6 +5334,64 @@
           "Callable: int[] SumSwap(int[] first, int[] second)",
           "Each input is a nonnull array of 0..1000 signed 32-bit integers. Values may repeat. Both chosen values must actually occur in their respective arrays. An empty array cannot supply an exchange, even when both sums are equal.",
           "Preserve both arrays and their order. Compute sums and candidate differences in signed 64-bit arithmetic (or Python int / exact JavaScript Number); the admitted maximum absolute total difference is below 2^53. A candidate outside signed 32-bit range is not an array value and must not be narrowed with wraparound."
+        ]
+      }
+    },
+    "ctci6_16_22": {
+      "description": "Simulate Langton's ant on an infinite initially white grid. The ant starts at row 0, column 0, facing right. On each step, turn right on white or left on black, flip the current cell, then move forward one cell. Return the final board as ASCII rows over the smallest rectangle containing every position the ant has visited, including its initial and final positions.",
+      "constraints": [
+        "0 <= steps <= 2000. Rows increase downward and columns increase rightward. Turning right is clockwise in this coordinate system. A newly entered cell is not inspected/flipped until the next step.",
+        "Render rows from smallest to largest row, and columns from smallest to largest column. Use . for white and # for black, except render the ant at its final position with R, D, L or U for its direction, hiding the cell color beneath it. Each returned string is one row, with no newline or footer.",
+        "The rectangle includes visited white cells even if all their black marks were later erased. For zero steps return [\"R\"]. Do not assume a fixed-size board or clip the walk."
+      ],
+      "examples": [
+        {
+          "input": "[2]",
+          "output": "[\".#\", \"L#\"]",
+          "explanation": "At zero steps the board is [R]. Step 1 sees white, turns from right to down, colors (0,0) black and moves to (1,0), yielding [\"#\",\"D\"]. Step 2 turns from down to left on white, flips (1,0), and moves to (1,-1). The visited rectangle now has two columns, yielding [\".#\",\"L#\"]."
+        }
+      ],
+      "exampleCases": [
+        {
+          "arguments": [
+            2
+          ],
+          "expected": [
+            ".#",
+            "L#"
+          ]
+        }
+      ],
+      "contracts": {
+        "csharp": [
+          "Callable: List<string> LangtonBoard(int steps)",
+          "0 <= steps <= 2000. Rows increase downward and columns increase rightward. Turning right is clockwise in this coordinate system. A newly entered cell is not inspected/flipped until the next step.",
+          "Render rows from smallest to largest row, and columns from smallest to largest column. Use . for white and # for black, except render the ant at its final position with R, D, L or U for its direction, hiding the cell color beneath it. Each returned string is one row, with no newline or footer.",
+          "The rectangle includes visited white cells even if all their black marks were later erased. For zero steps return [\"R\"]. Do not assume a fixed-size board or clip the walk."
+        ],
+        "javascript": [
+          "Callable: function LangtonBoard(steps)",
+          "0 <= steps <= 2000. Rows increase downward and columns increase rightward. Turning right is clockwise in this coordinate system. A newly entered cell is not inspected/flipped until the next step.",
+          "Render rows from smallest to largest row, and columns from smallest to largest column. Use . for white and # for black, except render the ant at its final position with R, D, L or U for its direction, hiding the cell color beneath it. Each returned string is one row, with no newline or footer.",
+          "The rectangle includes visited white cells even if all their black marks were later erased. For zero steps return [\"R\"]. Do not assume a fixed-size board or clip the walk."
+        ],
+        "python": [
+          "Callable: def LangtonBoard(steps: int) -> list[str]",
+          "0 <= steps <= 2000. Rows increase downward and columns increase rightward. Turning right is clockwise in this coordinate system. A newly entered cell is not inspected/flipped until the next step.",
+          "Render rows from smallest to largest row, and columns from smallest to largest column. Use . for white and # for black, except render the ant at its final position with R, D, L or U for its direction, hiding the cell color beneath it. Each returned string is one row, with no newline or footer.",
+          "The rectangle includes visited white cells even if all their black marks were later erased. For zero steps return [\"R\"]. Do not assume a fixed-size board or clip the walk."
+        ],
+        "cpp": [
+          "Callable: std::vector<std::string> LangtonBoard(int steps)",
+          "0 <= steps <= 2000. Rows increase downward and columns increase rightward. Turning right is clockwise in this coordinate system. A newly entered cell is not inspected/flipped until the next step.",
+          "Render rows from smallest to largest row, and columns from smallest to largest column. Use . for white and # for black, except render the ant at its final position with R, D, L or U for its direction, hiding the cell color beneath it. Each returned string is one row, with no newline or footer.",
+          "The rectangle includes visited white cells even if all their black marks were later erased. For zero steps return [\"R\"]. Do not assume a fixed-size board or clip the walk."
+        ],
+        "java": [
+          "Callable: List<String> LangtonBoard(int steps)",
+          "0 <= steps <= 2000. Rows increase downward and columns increase rightward. Turning right is clockwise in this coordinate system. A newly entered cell is not inspected/flipped until the next step.",
+          "Render rows from smallest to largest row, and columns from smallest to largest column. Use . for white and # for black, except render the ant at its final position with R, D, L or U for its direction, hiding the cell color beneath it. Each returned string is one row, with no newline or footer.",
+          "The rectangle includes visited white cells even if all their black marks were later erased. For zero steps return [\"R\"]. Do not assume a fixed-size board or clip the walk."
         ]
       }
     },
