@@ -1,96 +1,64 @@
 # Cracking the Coding Interview, sixth edition
 
-This collection is being authored. **130 verified coding exercises are registered in the local website; the collection has not been pushed.**
-The advertised 189 is a book question count, not a count of executable exercises.
+All **189 numbered references** are accounted for in `inventory.json` and
+`inventory-reconciliation.json`. They are not 189 runnable exercises:
 
-`inventory.json` records numbered references established from the author's public
-solution repository and its linked community repositories. Source paths and
-commits are provenance, not permission to reuse source code. No reuse license was
-established for the examined repositories. Statements, examples, implementations,
-tests, and explanations must therefore be independently authored. No book PDF or
-translated book transcription is used as an authoring source.
+- **131 independently authored coding exercises** are registered locally, with
+  **655 language solutions** and starters (C#, JavaScript, Python, C++, Java).
+- **33 conceptual** and **17 design** references remain outside callable practice.
+  Individual classification evidence is in `classification-review.json`.
+- **8 coding candidates** remain outside practice: **12.2, 12.8, 12.9, 12.10,
+  12.11, 14.1, 14.2, 14.3**. Their numbered titles are established, but a title
+  does not establish detailed input/output, ownership, schema or error contracts.
+  Native allocation/lifetime tasks and SQL queries must retain their actual
+  technical task; managed simulations or array-processing substitutes would
+  not complete those exercises. These are explicit remaining work, not excluded
+  conceptual questions or completed implementations.
 
-The Java inventory contains 145 numbered directories. The author-linked JavaScript
-inventory establishes 160 distinct references after reconciliation. In particular,
-Java's `Q6_05_Egg_Drop` conflicts with the JavaScript inventory: Egg Drop is 6.8,
-and Jugs of Water is 6.5. Both sources are retained rather than silently assigning
-two different exercises to 6.5. Twenty-nine advertised references remain
-unlocated in these sources; their titles and specifications must not be invented.
+The author repository and official contents page are the primary references.
+Pinned author-linked language ports support implementation-interface research.
+The remaining numbering was reconciled with a pinned independently authored
+Java checklist and the independent SDE Skills practice course index. Provenance,
+source scope and licensing observations are recorded per reference. Supplemental
+indexes establish titles/numbering, not full executable specifications.
+No book PDF, statement transcription or third-party solution is copied.
+Statements, code, examples, explanations and tests here are independently authored.
 
-The author's linked full table-of-contents image could not be fetched: the
-executor request to `https://i.imgur.com/3afl3Kl.png` was rejected by the network
-tunnel with HTTP 403. No alternate proxy, permission change, or unofficial book
-download is used to bypass that result. Public repository research can continue.
+Each registered problem has explicit callable contracts, a concrete example,
+mutation/identity rules, admitted bounds, five actual language implementations,
+WHY-focused explanation, correctness argument, worked trace and justified time
+and space costs. `review*.json` records per-question and per-language semantic
+review. Language-specific algorithms are explained individually. Existing similar
+bank questions retain separate collection references rather than silently replacing
+these tasks.
 
-For each exercise, publication requires a source-established technical task, an
-explicit callable contract, independent wording and examples, applicable language
-starters and implementations, algorithm-specific explanations and worked traces,
-and executions against independent positive, boundary, and negative checks.
-Thread, memory-management, SQL, Java-specific, design, and conceptual exercises
-need individual classification. They must not be relabeled as generic algorithm
-functions merely to produce five language rows. Noncoding exercises remain out
-of the callable collection.
+At the current checkpoint, native standalone and separate-module runs each cover
+**655 solutions / 993,970 solution case executions**, with **655 rejected starters**
+and the same number of starter case observations. This is actual execution.
+Structural inventory/catalog checks do not grant semantic review or execution
+credit. Receipt reuse requires matching submitted source, harness, cases, actual
+grader and toolchain fingerprints. The final application-callable run is tracked
+separately in `.epi-runs/ctci6-callable-final131/`; its results must be reconciled
+against final source before publication. Original-bank receipts are reused only
+where current per-pair fingerprints match; changed cases are reexecuted.
 
-Existing problems may be linked only after comparing domain, return values,
-mutation and identity requirements, empty cases, tie handling, and restrictions.
-A shared title or familiar algorithm is insufficient evidence of equivalence.
-Existing problem IDs, progress, and drafts must be preserved.
+Last K Lines (12.1) reads an actual native temporary file in every language. Blank
+lines are records, EOF is separate, and the final LF is not an extra blank line.
+Fifteen compiled regressions reject blank-line sentinels, reversed suffixes and
+file mutation; all five HTTP submissions pass 537 cases each. Tail memory bounds
+come from reviewing actual streaming code, not a claim of measured process heap.
+Other resource, identity, randomness and native-worker observers have separate
+regression receipts and explain their measured scope.
 
-Structural inventory validation proves numbering and source-record consistency.
-It does **not** prove statement clarity, solution correctness, test adequacy, or
-completed semantic review. Those are separately recorded and executed before the
-collection is published.
+All 329 backend tests pass at this checkpoint. Frontend/build/browser results and
+final whole-bank application runs are tracked in `checkpoint.json` as they finish.
+The Solution tab's independent language dropdown is immediately above the code;
+code, explanation and trace switch together while editable drafts remain intact.
+The existing theme and local formatter features remain integrated.
 
-The current local checkpoint stages 130 coding exercises: all references in
-chapters 1–4, seven coding tasks from chapter 5, generic Circular Array/Hash Table 7.9/7.12, all fourteen chapter-8 tasks,
-all eleven chapter-10 tasks, both functional tasks 13.7–13.8, and all twenty-six tasks in each of chapters 16 and 17.
-Their 650 actual language solutions pass standalone and separate-submission runs,
-with 991,285 solution case executions per layer and the same number of starter
-observations. Each starter is rejected by at least one case; it need not fail
-every case. Random Node additionally has fifteen compiled alternative/negative
-programs covering twenty-five fixtures, including physical duplicate identities,
-clone returns, missing mutations and the generic random source's signed bounds.
-All five current Random Node HTTP submissions pass all 1,604 cases, and the
-current backend suite passes 328 tests.
-
-The 160 located references currently comprise 130 coding exercises, with no remaining identified coding candidate, fifteen
-conceptual references and fifteen design references. The ten chapter-6
-reasoning puzzles now have explicit individual classification and source-clarity
-findings. Another twenty-nine advertised references remain unlocated; neither
-unresolved group is counted as completed. Noncoding material is not added to the
-callable product UI. The new aggregation also passes all five HTTP submissions (577 cases each), and ten compiled wrong-result/mutation regressions are rejected. The variable-size subset also passes all five HTTP submissions (145 cases each). Its separate audit records twenty-five compiled programs and fifty fixture executions with final source/model/harness fingerprints: biased/shared decisions, deduplication and mutation are rejected; inverted coins and longer two-coin XOR filters are accepted. Circular Array also passes all five HTTP submissions (1,535 integer/string trace cases each). Its twenty distinct compiled variant implementations exercise forty typed fixtures: caller aliasing, skipped negative bounds and shared iterator cursors are rejected; inverse-offset storage is accepted. Hash Table passes all five HTTP submissions (5,035 cases each); twenty compiled audit programs batch forty generic fixtures, rejecting key-match/duplicate-entry/removal bugs and accepting tail insertion. Final whole-bank and rendered checks remain pending.
-
-The `review*.json` files record actual algorithms, bindings and semantic review
-scope. Independent case oracles live under `scripts/ctci6/corpus*.py`.
-`classification-review.json` records the evidence for noncallable classifications.
-Inventory/evidence integrity is checked by `python3 scripts/ctci6/audit.py`;
-`--publication` intentionally fails while full acceptance remains incomplete.
-Structural checks are not semantic review or execution credit.
-
-Application evidence is preserved in separate source/build scopes: the first 23
-exercises, three initial bit exercises, four further bit exercises, three initial
-recursion/DP exercises, and four combinatorial generation exercises. Each batch passed both submission formats. The individual
-reports under `runtime/application-validation*.json` and `checkpoint.json` retain
-these scopes. They are not one final combined current-build acceptance run.
-The verified 104-exercise subset is integrated locally into a 438-problem bank.
-Remaining known content/classifications, final whole-bank runs and publication
-remain pending. Local integration preserves existing progress and drafts.
-See `workflow-review.md` for the measured workflow diagnosis and next batch gates.
-
-External-file checkpoint: 10.6 now executes genuine disk-backed external merging through opaque leased-record/file APIs in all five languages. All 615 staged solutions passed 975,120 cases per layer; 615 starters were rejected. Fifty compiled resource/ownership and valid-alternative programs passed sixty audit fixtures. All 323 backend tests pass; five HTTP submissions each passed 298 external-sort cases. These are local results, not publication or whole-bank final acceptance.
-
-Jigsaw 7.6 checkpoint: all five HTTP submissions pass 318 fixtures each. A property grader accepts any valid assembly without forcing original hidden coordinates; fifteen compiled negative/alternative programs pass. Current source-bound receipts cover 620 solutions and 976,710 cases per layer, with all starters rejected. This remains local and does not complete the outstanding inventory or final whole-bank gates.
-
-Minesweeper 7.10 checkpoint: deterministic full reveal/flag/flood/win/loss engine, with 1780 fixtures per implementation and all five HTTP submissions accepted. Ten compiled flag/diagonal regressions are rejected. Current local acceptance is 625 solutions / 985,610 case executions per layer, all starters rejected, 324 backend tests passed. Final collection and publication gates remain pending.
-
-Othello 7.8 checkpoint: all eight capture directions, atomic move rejection, turns, scores, automatic passes and terminal behavior execute in five languages. Each HTTP submission passes 948 fixtures; ten compiled diagonal/pass regressions are rejected. Current acceptance is 630 solutions / 990,350 case executions per layer, all starters rejected, 324 backend tests passed. Four concurrency references and 29 source gaps remain; final whole-bank/browser acceptance and publishing are pending.
-
-The four chapter-15 concurrency references are now individually source-reviewed coding candidates (15.3, 15.4, 15.5, 15.7), with pending native-worker acceptance recorded in concurrency-review.json. They are not excluded as conceptual, replaced with sequential algorithms, or counted as implemented. The independent official contents/errata review established no additional numbered specifications; 29 advertised source gaps remain.
-
-Call in Order 15.5 checkpoint: three real native workers in all five languages, including Node worker_threads with shared-memory Atomics. All 24 launch/delay fixtures pass per solution and HTTP submission. Fifteen compiled worker variants reject missing synchronization/wrong gates and accept surplus permits. Current acceptance is 635 solutions / 990,470 cases per layer, 635 rejected starters and 325 backend tests passed. Three concurrency exercises, 29 source gaps and final whole-bank/visual/publishing gates remain.
-
-Concurrent FizzBuzz 15.7 checkpoint: four real workers, role-bound nonoverlapping actual print callbacks and semaphore handoffs in all five languages. All five HTTP submissions pass 51 fixtures each. Twenty compiled worker programs reject missing synchronization, incorrect multiple-of-15 ownership and handoff bugs while accepting strided per-role loops. Current local acceptance is 640 solutions / 990,725 cases per layer, all starters rejected and 326 backend tests passed. Dining Philosophers, Deadlock Free Class, source gaps and final acceptance remain.
-
-Dining Philosophers 15.3 checkpoint: all five native workers/HTTP submissions pass 47 fixtures per language, including real exclusive fork ownership and complete release. A controlled first-acquisition schedule exposes a circular wait without guessed sleeps; twenty compiled variants reject circular wait, missing ownership and leaks while accepting descending global acquisition. Current local acceptance is 645 solutions / 990,960 cases per layer, all starters rejected and 327 backend tests passed. Deadlock Free Class, source gaps, documented pending audit findings and final gates remain.
-
-Deadlock Free Class 15.4 checkpoint: the full factory class executes in five languages with transactional DAG admission, copied orders, cursor enforcement, exact native lock identities and real concurrent clients. All five HTTP submissions pass 65 fixtures each. Twenty compiled class variants pass rejection/alternative checks. Final worker return/type checks and actual-matcher fingerprints are repaired and reexecuted: 75 worker/client variant programs pass, and 16 return-contract attempts comprise seven intended compile rejections and nine executed rejections. Current local acceptance is 650 solutions / 991,285 cases per layer, all starters rejected, 328 backend tests and 247 frontend tests passed, production frontend build passed. All 160 located references are individually classified (130 coding, 15 conceptual, 15 design); 29 advertised references remain unlocated. This is not a claim of complete 189-question coverage. Whole-bank/rendered acceptance and publication remain pending.
+Reproduction uses `scripts/ctci6/audit.py` for evidence integrity,
+`verify_runtime.py --starters` for fingerprinted submitted modules, the chapter
+verifiers for standalone authoring, targeted `test_*` grader regressions, and
+`scripts/SolutionsAudit` for actual displayed application-callable corpus runs.
+The audit's publication gate remains closed while the eight candidate contracts
+and final integrated acceptance are incomplete. No CTCI changes have been pushed.

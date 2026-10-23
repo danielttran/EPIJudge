@@ -78,8 +78,11 @@ def source(language,starters=False,only_ref=None):
     entries=json.loads((ROOT/'ctci6/staged10/catalog.json').read_text())
     selected=[entry for entry in entries if only_ref is None or entry['ref']==only_ref]
     if not selected:raise ValueError('Unknown sorting reference')
-    value=typed_source(language,starters,only_ref,staging_name='staged10',exclude_refs=SPECIAL+('10.6','10.7'),allow_empty=True)
+    value=typed_source(language,starters,only_ref,staging_name='staged10',exclude_refs=SPECIAL+('10.6','10.7','12.1'),allow_empty=True)
     for entry in selected:
+        if entry["ref"]=="12.1":
+            from harness_tail12 import attach as attach_tail
+            value=attach_tail(value,language,entry,starters)
         if entry["ref"]=="10.6":
             from harness_external10 import attach as attach_external
             value=attach_external(value,language,entry,starters)

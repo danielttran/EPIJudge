@@ -787,6 +787,18 @@ public sealed class CtciStagingTests
     }
 
     [Fact]
+    public void FileTailRequiresChronologicalBlankLinesAndPreservedFile()
+    {
+        var definition = Definition("12.1");
+        var test = new TestCase([Json(new[] {"a", "", "b"}), Json(2)], Json(new[] {"", "b"}));
+        Assert.Null(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new[] {"", "b"}, mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new[] {"b", ""}, mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new[] {"b"}, mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new[] {"", "b"}, mutationOk = false })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new[] {0, 1}, mutationOk = true })));
+    }
+
+    [Fact]
     public void ExternalSortEnforcesOwnershipResourceBoundsAndExactLines()
     {
         var definition = Definition("10.6");

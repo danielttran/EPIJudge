@@ -105,3 +105,7 @@ SPECS += [dict(ref='10.6',method='SortExternalFile',params=[('inputFile','textfi
  'python':'Python cmp_to_key wraps the provided comparator for a bounded record list. is None identifies EOF without confusing it with an empty line. The list contains record handles, and appending each record consumes its lease before the next phase; only run-file metadata survives the chunk phase.',
  'javascript':'JavaScript sorts each bounded array with the provided CompareTo comparator rather than default object-string sorting. Explicit null checks implement EOF. Each append consumes one head before replacing it, while closing writers/readers keeps disk handles bounded.'})]
 SPECS.sort(key=lambda spec:tuple(map(int,spec['ref'].split('.'))))
+
+# File-tail shares the established file-I/O authoring batch, retaining ref 12.1.
+from tail12 import SPEC as TAIL12_SPEC
+SPECS.append(TAIL12_SPEC)

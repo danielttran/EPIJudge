@@ -1,6 +1,9 @@
 """Independent sorting/searching algorithms with explicit mutation targets."""
 
 def body(ref,language):
+    if ref=='12.1':
+        from tail12 import BODIES
+        return BODIES[language]
     if ref=='10.1':
         if language=='python':return '''a, b, write = realCount - 1, len(second) - 1, len(first) - 1
 while b >= 0:

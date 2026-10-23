@@ -25,12 +25,26 @@ def audit(publication=False):
         ):
             raise ValueError("Invalid reference metadata")
         for source in row["sources"]:
+            if source.get("provider") == "SDE Skills":
+                if (
+                    source.get("url") != "https://www.sdeskills.com/ctci"
+                    or row["chapter"] != 12
+                    or source.get("evidenceType") != "independent-course-numbered-index"
+                    or (row["classification"] == "coding" and not any(s.get("repository", "").startswith("careercup/") for s in row["sources"]))
+                ):
+                    raise ValueError("Course index cannot establish executable specifications")
+                continue
             if (
                 not re.fullmatch(r"[0-9a-f]{40}", source["commit"])
                 or source["commit"] not in source["url"]
             ):
                 raise ValueError("Source provenance is not pinned: " + row["ref"])
-            if not source["repository"].startswith("careercup/"):
+            if not source["repository"].startswith("careercup/") and not (
+                source["repository"] == "satheeshaGowda/Cracking-The-Coding-Interview"
+                and source["commit"] == "8d40586f0f7498bd6568e9f3c6da2a2d6b21603b"
+                and row["chapter"] in (11, 13, 14, 15)
+                and row["classification"] != "coding"
+            ):
                 raise ValueError("Unreviewed inventory source: " + source["repository"])
         if not row["sources"]:
             raise ValueError("Unestablished reference: " + row["ref"])
@@ -45,7 +59,7 @@ def audit(publication=False):
     ] != inventory["advertisedQuestions"] - len(rows):
         raise ValueError("Advertised and located totals differ")
     if scope["algorithmCandidates"] != sum(
-        row["classification"] == "algorithm-candidate" for row in rows
+        row["classification"] in ("algorithm-candidate", "coding-candidate") for row in rows
     ):
         raise ValueError("Candidate count is stale")
     if scope["requiresIndividualClassification"] != sum(
@@ -73,8 +87,13 @@ def audit(publication=False):
         if metadata[review["ref"]]["classification"] != review["classification"]:
             raise ValueError("Classification differs from its reviewed category")
         if not any(
-            source["repository"] == review["repository"]
-            and source["commit"] == review["commit"]
+            (
+                source.get("repository") == review.get("repository")
+                and source.get("commit") == review.get("commit")
+                if "repository" in review
+                else source.get("provider") == review.get("provider")
+                and source.get("url") == review.get("url")
+            )
             and review["path"] in source["files"]
             for source in metadata[review["ref"]]["sources"]
         ):
@@ -189,7 +208,8 @@ def audit(publication=False):
         standaloneValidatedPairs=len(executed),
         liveCtciExercises=scope["liveExercises"],
         publicationReady=False,
-        remaining="Unresolved references, remaining eligible content and language reviews, live callable integration, whole-bank execution, browser audit and exact-commit CI.",
+        pendingCodingReferences=[row["ref"] for row in rows if row["classification"] in ("algorithm-candidate", "coding-candidate")],
+        remaining="Verified detailed specifications/platform support for pending coding references, final whole-bank application execution, final rendered audit, and publication with exact-commit CI.",
     )
     print(json.dumps(result, indent=2))
     if publication:

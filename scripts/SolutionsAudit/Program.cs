@@ -87,6 +87,19 @@ string VisibleCode(Problem problem,string language)
     return starters?entry.StarterCode:entry.SolutionCode;
 }
 PreparedCode PrepareCode(Problem problem,string language,string code)=>CallableCodeCatalog.Prepare(problem.Id,language,code,callable?CallableCodeCatalog.CallableFormat:CallableCodeCatalog.LegacyFormat);
+if(args.Contains("fingerprints"))
+{
+    if(!callable)throw new ArgumentException("Fingerprint reconciliation requires the displayed callable contract.");
+    var fingerprints=catalog.Problems.Where(p=>chosen is null||chosen.Contains(p.Id)).SelectMany(problem=>languages.Where(language=>selectedLanguage is null||language==selectedLanguage).Select(language=>
+    {
+        var code=VisibleCode(problem,language);
+        var notesPath=Path.Combine(root,"solutions","notes",language=="csharp"?"":language,problem.Id+".json");
+        var corpus=problem.Collection is "blind75" or "interviewcake" or "ctci6"?Path.Combine(root,problem.Collection,"cases",problem.Id+".json"):Path.Combine(root,"test_data",problem.Id+".tsv");
+        return new {problemId=problem.Id,collection=problem.Collection,language,role=starters?"starter":"solution",codeSha256=Sha(code),composedCodeSha256=Sha(PrepareCode(problem,language,code).Code),notesSha256=File.Exists(notesPath)?FileSha(notesPath):null,corpusSha256=FileSha(corpus),harnessSha256=Sha(Harness(problem,language))};
+    })).ToArray();
+    File.WriteAllText(Path.Combine(artifactRoot,"solutions-fingerprints-"+(starters?"starters":"correct")+".json"),JsonSerializer.Serialize(new{sourceHashes,fingerprints},json)+"\n");
+    Console.WriteLine($"Recorded {fingerprints.Length} displayed callable source/composition/corpus/harness fingerprints; no execution credit claimed.");return 0;
+}
 var failures=0;
 var rows=new List<object>();
 var walkthroughs=args.Contains("walkthroughs");
@@ -104,6 +117,7 @@ if(args.Contains("boundaries")||walkthroughs)
         return new Boundary(p.Id,example.GetProperty("arguments").EnumerateArray().Select(a=>a.Clone()).ToArray(),example.GetProperty("expected").Clone(),"Original solution walkthrough");
     }).ToArray():paths.SelectMany(path=>JsonSerializer.Deserialize<Boundary[]>(File.ReadAllText(path),json)!).ToArray();
     var diagnosticLabel=(callable?"callable-":"")+(walkthroughs?"walkthroughs":"boundaries");
+    var diagnosticSuffix=args.Any(a=>a.StartsWith("--report="))?"-"+reportName:(selectedLanguage is null?"":"-"+selectedLanguage);
     var temporaryRoot=Path.Combine(artifactRoot,"solutions-boundaries-"+Guid.NewGuid().ToString("N"));
     Directory.CreateDirectory(Path.Combine(temporaryRoot,"test_data"));Directory.CreateDirectory(Path.Combine(temporaryRoot,"blind75","cases"));Directory.CreateDirectory(Path.Combine(temporaryRoot,"interviewcake","cases"));Directory.CreateDirectory(Path.Combine(temporaryRoot,"ctci6","cases"));
     void CopyDirectory(string source,string destination)
@@ -135,7 +149,7 @@ if(args.Contains("boundaries")||walkthroughs)
                 rows.Add(new{problemId=problem.Id,language,success,codeFormat=callable?CallableCodeCatalog.CallableFormat:CallableCodeCatalog.LegacyFormat,codeSha256=Sha(code),composedCodeSha256=Sha(PrepareCode(problem,language,code).Code),cases=subset,result=outcome,failure=error});
                 Console.WriteLine($"{(success?"PASS":"FAIL")} {diagnosticLabel} {language} {problem.Id} {outcome?.Status} {outcome?.Passed}/{subset.Length}");
                 if(!success)Console.WriteLine(error??JsonSerializer.Serialize(outcome,json));
-                File.WriteAllText(Path.Combine(artifactRoot,"solutions-"+diagnosticLabel+(selectedLanguage is null?"":"-"+selectedLanguage)+".json"),JsonSerializer.Serialize(new{sourceHashes,fixtureHashes=paths.ToDictionary(p=>Path.GetRelativePath(root,p).Replace('\\','/'),FileSha),executions=rows,totalCases=cases.Count(c=>chosen is null||chosen.Contains(c.ProblemId))*languages.Count(l=>selectedLanguage is null?(!walkthroughs||l=="csharp"):l==selectedLanguage),failures},json)+"\n");
+                File.WriteAllText(Path.Combine(artifactRoot,"solutions-"+diagnosticLabel+diagnosticSuffix+".json"),JsonSerializer.Serialize(new{sourceHashes,fixtureHashes=paths.ToDictionary(p=>Path.GetRelativePath(root,p).Replace('\\','/'),FileSha),executions=rows,totalCases=cases.Count(c=>chosen is null||chosen.Contains(c.ProblemId))*languages.Count(l=>selectedLanguage is null?(!walkthroughs||l=="csharp"):l==selectedLanguage),failures},json)+"\n");
             }
         }
     }

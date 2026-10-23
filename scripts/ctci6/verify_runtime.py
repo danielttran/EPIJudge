@@ -169,6 +169,7 @@ def verify(only_ref=None, only_language=None, starters=False):
                         grader=grader_hashes[
                             "dining" if entry["ref"]=="15.3" else "jigsaw" if entry["ref"]=="7.6" else "external" if entry["ref"]=="10.6" else "subset" if entry["ref"]=="13.8" else "random_bst" if entry["ref"]=="4.11" else "random" if entry["ref"] in ("17.2","17.3") else "rand" if entry["ref"]=="16.23" else "file" if entry["ref"]=="10.7" else "bits" if entry["ref"]=="17.4" else "geometry" if entry["ref"] in ("16.3","16.13") else "numeric" if entry["ref"] in ("16.26","17.20") else "line" if entry["ref"] == "16.14" else "names" if entry["ref"] == "17.7" else
                             "hard" if entry["batch"] == 17 and entry["ref"] in STRUCTURED_REFS else
+                            "core" if entry["ref"] == "12.1" else
                             "searching" if entry["batch"] == 10 else
                             "combinatorial"
                             if entry["batch"] == 8
@@ -241,6 +242,7 @@ def verify(only_ref=None, only_language=None, starters=False):
                 elapsed += value["elapsedMs"]
                 try:
                     accepted = (
+                        core_match(case, observed) if entry["ref"]=="12.1" else
                         dining_match(entry["ref"], case, observed) if entry["ref"]=="15.3" else
                         jigsaw_match(entry["ref"], case, observed) if entry["ref"]=="7.6" else
                         external_match(entry["ref"], case, observed) if entry["ref"]=="10.6" else

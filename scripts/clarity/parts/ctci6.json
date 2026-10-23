@@ -6186,6 +6186,72 @@
         ]
       }
     },
+    "ctci6_12_1": {
+      "description": "Read the text file at filePath and return its last k lines in their original order. If it contains fewer than k lines, return every line. Return line contents without their line terminators; an empty line is a real line, not end of file. Preserve the file. This callable returns the lines instead of printing them so the judge can compare the requested output.",
+      "constraints": [
+        "k is an integer in 1..1000. The judge supplies an existing readable file containing 0..20000 lines. Each line contains 0..128 printable ASCII characters (codes 32..126), followed by LF. The empty file contains zero lines. The final LF terminates the last line; it does not create an additional empty line. File opening and reading succeed for admitted inputs.",
+        "The first JSON argument is an array of line contents. The judge writes those lines to an actual temporary file and passes its path to LastKLines; your callable receives a path string, not that array. The second argument is k. Do not change or remove the file, and close any stream you open before returning.",
+        "Process the file sequentially, retaining at most k complete lines plus bounded read buffers and one current line. Do not load the entire file. Return a concrete sequence of strings. The return sequence may use O(k) references; returned character storage depends on the retained line lengths."
+      ],
+      "examples": [
+        {
+          "input": "[[\"north\", \"\", \"east\", \"west\", \"south\"], 3]",
+          "output": "[\"east\", \"west\", \"south\"]",
+          "explanation": "For a file with lines [north,\"\",east,west,south] and k=3, the queue evolves [north], [north,\"\"], [north,\"\",east], [\"\",east,west], then [east,west,south]. The fourth and fifth reads discard only the oldest retained line. The output is [east,west,south]. For a file containing one blank line, the result is [\"\"]; an empty file returns []."
+        }
+      ],
+      "exampleCases": [
+        {
+          "arguments": [
+            [
+              "north",
+              "",
+              "east",
+              "west",
+              "south"
+            ],
+            3
+          ],
+          "expected": [
+            "east",
+            "west",
+            "south"
+          ]
+        }
+      ],
+      "contracts": {
+        "csharp": [
+          "Callable: List<string> LastKLines(string filePath, int k)",
+          "k is an integer in 1..1000. The judge supplies an existing readable file containing 0..20000 lines. Each line contains 0..128 printable ASCII characters (codes 32..126), followed by LF. The empty file contains zero lines. The final LF terminates the last line; it does not create an additional empty line. File opening and reading succeed for admitted inputs.",
+          "The first JSON argument is an array of line contents. The judge writes those lines to an actual temporary file and passes its path to LastKLines; your callable receives a path string, not that array. The second argument is k. Do not change or remove the file, and close any stream you open before returning.",
+          "Process the file sequentially, retaining at most k complete lines plus bounded read buffers and one current line. Do not load the entire file. Return a concrete sequence of strings. The return sequence may use O(k) references; returned character storage depends on the retained line lengths."
+        ],
+        "javascript": [
+          "Callable: function LastKLines(filePath, k)",
+          "k is an integer in 1..1000. The judge supplies an existing readable file containing 0..20000 lines. Each line contains 0..128 printable ASCII characters (codes 32..126), followed by LF. The empty file contains zero lines. The final LF terminates the last line; it does not create an additional empty line. File opening and reading succeed for admitted inputs.",
+          "The first JSON argument is an array of line contents. The judge writes those lines to an actual temporary file and passes its path to LastKLines; your callable receives a path string, not that array. The second argument is k. Do not change or remove the file, and close any stream you open before returning.",
+          "Process the file sequentially, retaining at most k complete lines plus bounded read buffers and one current line. Do not load the entire file. Return a concrete sequence of strings. The return sequence may use O(k) references; returned character storage depends on the retained line lengths."
+        ],
+        "python": [
+          "Callable: def LastKLines(filePath: str, k: int) -> list[str]",
+          "k is an integer in 1..1000. The judge supplies an existing readable file containing 0..20000 lines. Each line contains 0..128 printable ASCII characters (codes 32..126), followed by LF. The empty file contains zero lines. The final LF terminates the last line; it does not create an additional empty line. File opening and reading succeed for admitted inputs.",
+          "The first JSON argument is an array of line contents. The judge writes those lines to an actual temporary file and passes its path to LastKLines; your callable receives a path string, not that array. The second argument is k. Do not change or remove the file, and close any stream you open before returning.",
+          "Process the file sequentially, retaining at most k complete lines plus bounded read buffers and one current line. Do not load the entire file. Return a concrete sequence of strings. The return sequence may use O(k) references; returned character storage depends on the retained line lengths."
+        ],
+        "cpp": [
+          "Callable: std::vector<std::string> LastKLines(const std::string& filePath, int k)",
+          "k is an integer in 1..1000. The judge supplies an existing readable file containing 0..20000 lines. Each line contains 0..128 printable ASCII characters (codes 32..126), followed by LF. The empty file contains zero lines. The final LF terminates the last line; it does not create an additional empty line. File opening and reading succeed for admitted inputs.",
+          "The first JSON argument is an array of line contents. The judge writes those lines to an actual temporary file and passes its path to LastKLines; your callable receives a path string, not that array. The second argument is k. Do not change or remove the file, and close any stream you open before returning.",
+          "Process the file sequentially, retaining at most k complete lines plus bounded read buffers and one current line. Do not load the entire file. Return a concrete sequence of strings. The return sequence may use O(k) references; returned character storage depends on the retained line lengths."
+        ],
+        "java": [
+          "Callable: List<String> LastKLines(String filePath, int k)",
+          "k is an integer in 1..1000. The judge supplies an existing readable file containing 0..20000 lines. Each line contains 0..128 printable ASCII characters (codes 32..126), followed by LF. The empty file contains zero lines. The final LF terminates the last line; it does not create an additional empty line. File opening and reading succeed for admitted inputs.",
+          "The first JSON argument is an array of line contents. The judge writes those lines to an actual temporary file and passes its path to LastKLines; your callable receives a path string, not that array. The second argument is k. Do not change or remove the file, and close any stream you open before returning.",
+          "Process the file sequentially, retaining at most k complete lines plus bounded read buffers and one current line. Do not load the entire file. Return a concrete sequence of strings. The return sequence may use O(k) references; returned character storage depends on the retained line lengths."
+        ]
+      }
+    },
     "ctci6_13_7": {
       "description": "Use a lambda-based filter and aggregation to return the total population of countries whose continent exactly equals the requested continent. Each input element is a provided Country object with GetName(), GetContinent() and GetPopulation(). Preserve the input sequence and its objects. No match, including an empty input, returns 0. Names do not determine membership and repeated records contribute separately.",
       "constraints": [

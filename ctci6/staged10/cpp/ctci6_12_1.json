@@ -1,0 +1,30 @@
+{
+  "explanation": "A line can only belong to the final answer until k later lines arrive. Keeping a bounded queue therefore discards exactly the lines that have become too old. It avoids reading the whole file into memory and handles files shorter than k without padding. The final queue already has the required chronological order. C++ std::getline distinguishes a successfully read empty line from EOF. std::deque supports constant-time removal at the front; the local ifstream closes through RAII when the method returns.",
+  "correctness": "After processing t lines, the queue contains exactly the last min(t,k) processed lines in their original order. Initially this is true for the empty queue. Append the next line; if there are now k+1 entries, removing the oldest leaves exactly the most recent k. Otherwise all processed lines still fit. This proves the invariant by induction. At end of file, the queue is the required suffix. Testing the read operation for EOF rather than testing whether its string is empty preserves empty lines. No write operation is performed on the input file.",
+  "walkthrough": "For a file with lines [north,\"\",east,west,south] and k=3, the queue evolves [north], [north,\"\"], [north,\"\",east], [\"\",east,west], then [east,west,south]. The fourth and fifth reads discard only the oldest retained line. The output is [east,west,south]. For a file containing one blank line, the result is [\"\"]; an empty file returns [].",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        "north",
+        "",
+        "east",
+        "west",
+        "south"
+      ],
+      3
+    ],
+    "expected": [
+      "east",
+      "west",
+      "south"
+    ]
+  },
+  "timeComplexity": "O(N + C) time, where N is the number of lines and C is the number of file characters read. Each line enters and leaves the bounded queue at most once; constructing the result touches at most k entries.",
+  "spaceComplexity": "O(k + S + B) space, where S is the total character storage of the retained lines and B is the fixed read buffer plus one line being assembled. With the admitted 128-character line limit this is O(k) auxiliary/output storage. The entire file is never retained.",
+  "edgeCases": [
+    "Empty file, one blank line, blank lines within the final suffix, and whitespace-only lines.",
+    "k=1, k larger than the line count, exactly k lines, and multiple circular-buffer wraps.",
+    "20000 lines, maximum line length, punctuation and case preserved exactly; file contents preserved."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 12.1. No affiliation is implied."
+}

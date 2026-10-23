@@ -40,3 +40,8 @@ def header(ref,language):
 def neutral(spec,language):
     if spec['ref']=='10.6':return 'return &inputFile;' if language=='cpp' else 'return inputFile' if language=='python' else 'return inputFile;'
     return _previous_external_neutral(spec,language)
+
+_previous_tail_header=header
+def header(ref,language):
+    from tail12 import EXTRA
+    return _previous_tail_header(ref,language)+(EXTRA[language] if ref=="12.1" else "")

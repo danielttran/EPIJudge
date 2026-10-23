@@ -222,6 +222,7 @@ public static class CtciStagingGrader
     {
         if (observed.GetProperty("mutationOk").ValueKind != JsonValueKind.True) return "Preserve the required input objects and readonly values, and perform the stated in-place changes.";
         var actual = observed.GetProperty("actual");
+        if (definition.Ref == "12.1") return Equal(actual, test.Expected) ? null : "Return the final k file lines in their original order, preserving blank lines and the input file.";
         if (definition.Ref == "10.4")
         {
             int probes = observed.GetProperty("probes").GetInt32();

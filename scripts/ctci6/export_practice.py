@@ -78,6 +78,7 @@ def export():
         7: "Generic data structures",
         8: "Recursion and dynamic programming",
         10: "Sorting and searching",
+        12: "File processing and native programming",
         13: "Functional language expressions",
         15: "Threads and synchronization",
         16: "Moderate interview problems",
@@ -122,6 +123,7 @@ def export():
                 and (row["result"] in ("sets", "strings", "arrangements") or ref in ("8.2", "8.3"))
                 else digest(inspect.getsource(core_match))
             )
+            if ref=="12.1": grader=digest(inspect.getsource(core_match))
             if row["batch"] in (7,13,15) and ref not in ("7.6","13.8","15.3"):
                 grader = digest(inspect.getsource(state_match))
             for variant, field, outcome in (

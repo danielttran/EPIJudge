@@ -35150,6 +35150,91 @@
     ]
   },
   {
+    "problemId": "ctci6_12_1",
+    "collection": "ctci6",
+    "language": "csharp",
+    "code": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic class Solution\n{\n    public List<string> LastKLines(string filePath, int k)\n    {\n        var suffix = new Queue<string>();\n        foreach (string line in System.IO.File.ReadLines(filePath))\n        {\n            suffix.Enqueue(line);\n            if (suffix.Count > k)\n                suffix.Dequeue();\n        }\n        return new List<string>(suffix);\n    }\n}\n",
+    "explanation": "A line can only belong to the final answer until k later lines arrive. Keeping a bounded queue therefore discards exactly the lines that have become too old. It avoids reading the whole file into memory and handles files shorter than k without padding. The final queue already has the required chronological order. C# File.ReadLines reads lazily. Queue<string> retains the suffix, and foreach disposes its enumerator, closing the file before ToList returns the concrete result.",
+    "timeComplexity": "O(N + C) time, where N is the number of lines and C is the number of file characters read. Each line enters and leaves the bounded queue at most once; constructing the result touches at most k entries.",
+    "spaceComplexity": "O(k + S + B) space, where S is the total character storage of the retained lines and B is the fixed read buffer plus one line being assembled. With the admitted 128-character line limit this is O(k) auxiliary/output storage. The entire file is never retained.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 12.1. No affiliation is implied.",
+    "correctness": "After processing t lines, the queue contains exactly the last min(t,k) processed lines in their original order. Initially this is true for the empty queue. Append the next line; if there are now k+1 entries, removing the oldest leaves exactly the most recent k. Otherwise all processed lines still fit. This proves the invariant by induction. At end of file, the queue is the required suffix. Testing the read operation for EOF rather than testing whether its string is empty preserves empty lines. No write operation is performed on the input file.",
+    "walkthrough": "For a file with lines [north,\"\",east,west,south] and k=3, the queue evolves [north], [north,\"\"], [north,\"\",east], [\"\",east,west], then [east,west,south]. The fourth and fifth reads discard only the oldest retained line. The output is [east,west,south]. For a file containing one blank line, the result is [\"\"]; an empty file returns [].",
+    "edgeCases": [
+      "Empty file, one blank line, blank lines within the final suffix, and whitespace-only lines.",
+      "k=1, k larger than the line count, exactly k lines, and multiple circular-buffer wraps.",
+      "20000 lines, maximum line length, punctuation and case preserved exactly; file contents preserved."
+    ]
+  },
+  {
+    "problemId": "ctci6_12_1",
+    "collection": "ctci6",
+    "language": "javascript",
+    "code": "'use strict';\nconst tailFs = require('node:fs');\nfunction LastKLines(filePath, k) {\n  const descriptor = tailFs.openSync(filePath, \"r\");\n  const chunk = Buffer.alloc(4096),\n    ring = new Array(k);\n  let used = 0,\n    next = 0,\n    current = \"\";\n  try {\n    for (;;) {\n      const count = tailFs.readSync(descriptor, chunk, 0, chunk.length, null);\n      if (count === 0) break;\n      for (let i = 0; i < count; ++i) {\n        if (chunk[i] === 10) {\n          ring[next] = current;\n          next = (next + 1) % k;\n          used = Math.min(used + 1, k);\n          current = \"\";\n        } else current += String.fromCharCode(chunk[i]);\n      }\n    }\n  } finally {\n    tailFs.closeSync(descriptor);\n  }\n  const result = [];\n  for (let i = 0; i < used; ++i) result.push(ring[(next - used + k + i) % k]);\n  return result;\n}\n\nmodule.exports = {LastKLines};\n",
+    "explanation": "A line can only belong to the final answer until k later lines arrive. Keeping a bounded queue therefore discards exactly the lines that have become too old. It avoids reading the whole file into memory and handles files shorter than k without padding. The final queue already has the required chronological order. JavaScript uses synchronous readSync with a fixed 4096-byte buffer, not readFileSync. Printable ASCII makes byte-to-character decoding unambiguous. A k-slot circular array overwrites the oldest line; the output starts at the oldest retained slot. finally closes the descriptor, including unexpected failures.",
+    "timeComplexity": "O(N + C) time, where N is the number of lines and C is the number of file characters read. Each line enters and leaves the bounded queue at most once; constructing the result touches at most k entries.",
+    "spaceComplexity": "O(k + S + B) space, where S is the total character storage of the retained lines and B is the fixed read buffer plus one line being assembled. With the admitted 128-character line limit this is O(k) auxiliary/output storage. The entire file is never retained.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 12.1. No affiliation is implied.",
+    "correctness": "After processing t lines, the queue contains exactly the last min(t,k) processed lines in their original order. Initially this is true for the empty queue. Append the next line; if there are now k+1 entries, removing the oldest leaves exactly the most recent k. Otherwise all processed lines still fit. This proves the invariant by induction. At end of file, the queue is the required suffix. Testing the read operation for EOF rather than testing whether its string is empty preserves empty lines. No write operation is performed on the input file.",
+    "walkthrough": "For a file with lines [north,\"\",east,west,south] and k=3, the queue evolves [north], [north,\"\"], [north,\"\",east], [\"\",east,west], then [east,west,south]. The fourth and fifth reads discard only the oldest retained line. The output is [east,west,south]. For a file containing one blank line, the result is [\"\"]; an empty file returns [].",
+    "edgeCases": [
+      "Empty file, one blank line, blank lines within the final suffix, and whitespace-only lines.",
+      "k=1, k larger than the line count, exactly k lines, and multiple circular-buffer wraps.",
+      "20000 lines, maximum line length, punctuation and case preserved exactly; file contents preserved."
+    ]
+  },
+  {
+    "problemId": "ctci6_12_1",
+    "collection": "ctci6",
+    "language": "python",
+    "code": "from collections import deque\ndef LastKLines(filePath: str, k: int) -> list[str]:\n    suffix = deque(maxlen=k)\n    with open(filePath, \"r\", encoding=\"ascii\", newline=\"\") as source:\n        for line in source:\n            suffix.append(line[:-1])\n    return list(suffix)\n",
+    "explanation": "A line can only belong to the final answer until k later lines arrive. Keeping a bounded queue therefore discards exactly the lines that have become too old. It avoids reading the whole file into memory and handles files shorter than k without padding. The final queue already has the required chronological order. Python iterates an open file inside a with block and strips exactly the terminating LF from each admitted line. deque(maxlen=k) automatically discards the oldest entry. list materializes the final suffix before the context closes.",
+    "timeComplexity": "O(N + C) time, where N is the number of lines and C is the number of file characters read. Each line enters and leaves the bounded queue at most once; constructing the result touches at most k entries.",
+    "spaceComplexity": "O(k + S + B) space, where S is the total character storage of the retained lines and B is the fixed read buffer plus one line being assembled. With the admitted 128-character line limit this is O(k) auxiliary/output storage. The entire file is never retained.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 12.1. No affiliation is implied.",
+    "correctness": "After processing t lines, the queue contains exactly the last min(t,k) processed lines in their original order. Initially this is true for the empty queue. Append the next line; if there are now k+1 entries, removing the oldest leaves exactly the most recent k. Otherwise all processed lines still fit. This proves the invariant by induction. At end of file, the queue is the required suffix. Testing the read operation for EOF rather than testing whether its string is empty preserves empty lines. No write operation is performed on the input file.",
+    "walkthrough": "For a file with lines [north,\"\",east,west,south] and k=3, the queue evolves [north], [north,\"\"], [north,\"\",east], [\"\",east,west], then [east,west,south]. The fourth and fifth reads discard only the oldest retained line. The output is [east,west,south]. For a file containing one blank line, the result is [\"\"]; an empty file returns [].",
+    "edgeCases": [
+      "Empty file, one blank line, blank lines within the final suffix, and whitespace-only lines.",
+      "k=1, k larger than the line count, exactly k lines, and multiple circular-buffer wraps.",
+      "20000 lines, maximum line length, punctuation and case preserved exactly; file contents preserved."
+    ]
+  },
+  {
+    "problemId": "ctci6_12_1",
+    "collection": "ctci6",
+    "language": "cpp",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n#include <fstream>\n#include <deque>\n#include <filesystem>\nclass Solution {\n public:\n  std::vector<std::string> LastKLines(const std::string& filePath, int k) {\n    std::ifstream input(filePath);\n    if (!input)\n      throw std::runtime_error(\"Could not open input file\");\n    std::deque<std::string> suffix;\n    std::string line;\n    while (std::getline(input, line)) {\n      suffix.push_back(line);\n      if (suffix.size() > static_cast<std::size_t>(k))\n        suffix.pop_front();\n    }\n    if (input.bad())\n      throw std::runtime_error(\"Could not read input file\");\n    return std::vector<std::string>(suffix.begin(), suffix.end());\n  }\n};\n",
+    "explanation": "A line can only belong to the final answer until k later lines arrive. Keeping a bounded queue therefore discards exactly the lines that have become too old. It avoids reading the whole file into memory and handles files shorter than k without padding. The final queue already has the required chronological order. C++ std::getline distinguishes a successfully read empty line from EOF. std::deque supports constant-time removal at the front; the local ifstream closes through RAII when the method returns.",
+    "timeComplexity": "O(N + C) time, where N is the number of lines and C is the number of file characters read. Each line enters and leaves the bounded queue at most once; constructing the result touches at most k entries.",
+    "spaceComplexity": "O(k + S + B) space, where S is the total character storage of the retained lines and B is the fixed read buffer plus one line being assembled. With the admitted 128-character line limit this is O(k) auxiliary/output storage. The entire file is never retained.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 12.1. No affiliation is implied.",
+    "correctness": "After processing t lines, the queue contains exactly the last min(t,k) processed lines in their original order. Initially this is true for the empty queue. Append the next line; if there are now k+1 entries, removing the oldest leaves exactly the most recent k. Otherwise all processed lines still fit. This proves the invariant by induction. At end of file, the queue is the required suffix. Testing the read operation for EOF rather than testing whether its string is empty preserves empty lines. No write operation is performed on the input file.",
+    "walkthrough": "For a file with lines [north,\"\",east,west,south] and k=3, the queue evolves [north], [north,\"\"], [north,\"\",east], [\"\",east,west], then [east,west,south]. The fourth and fifth reads discard only the oldest retained line. The output is [east,west,south]. For a file containing one blank line, the result is [\"\"]; an empty file returns [].",
+    "edgeCases": [
+      "Empty file, one blank line, blank lines within the final suffix, and whitespace-only lines.",
+      "k=1, k larger than the line count, exactly k lines, and multiple circular-buffer wraps.",
+      "20000 lines, maximum line length, punctuation and case preserved exactly; file contents preserved."
+    ]
+  },
+  {
+    "problemId": "ctci6_12_1",
+    "collection": "ctci6",
+    "language": "java",
+    "code": "import java.util.*;\nclass Solution {\n  public List<String> LastKLines(String filePath, int k) {\n    var suffix = new ArrayDeque<String>();\n    try (var reader = new java.io.BufferedReader(new java.io.InputStreamReader(\n             new java.io.FileInputStream(filePath), java.nio.charset.StandardCharsets.US_ASCII))) {\n      String line;\n      while ((line = reader.readLine()) != null) {\n        suffix.addLast(line);\n        if (suffix.size() > k)\n          suffix.removeFirst();\n      }\n    } catch (java.io.IOException error) {\n      throw new java.io.UncheckedIOException(error);\n    }\n    return new ArrayList<>(suffix);\n  }\n}\n",
+    "explanation": "A line can only belong to the final answer until k later lines arrive. Keeping a bounded queue therefore discards exactly the lines that have become too old. It avoids reading the whole file into memory and handles files shorter than k without padding. The final queue already has the required chronological order. Java BufferedReader reads one line at a time. ArrayDeque removes its oldest entry in constant amortized time; try-with-resources closes the reader even if a read fails. The admitted inputs guarantee successful I/O; an unexpected IOException is reported rather than silently returning a partial suffix.",
+    "timeComplexity": "O(N + C) time, where N is the number of lines and C is the number of file characters read. Each line enters and leaves the bounded queue at most once; constructing the result touches at most k entries.",
+    "spaceComplexity": "O(k + S + B) space, where S is the total character storage of the retained lines and B is the fixed read buffer plus one line being assembled. With the admitted 128-character line limit this is O(k) auxiliary/output storage. The entire file is never retained.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 12.1. No affiliation is implied.",
+    "correctness": "After processing t lines, the queue contains exactly the last min(t,k) processed lines in their original order. Initially this is true for the empty queue. Append the next line; if there are now k+1 entries, removing the oldest leaves exactly the most recent k. Otherwise all processed lines still fit. This proves the invariant by induction. At end of file, the queue is the required suffix. Testing the read operation for EOF rather than testing whether its string is empty preserves empty lines. No write operation is performed on the input file.",
+    "walkthrough": "For a file with lines [north,\"\",east,west,south] and k=3, the queue evolves [north], [north,\"\"], [north,\"\",east], [\"\",east,west], then [east,west,south]. The fourth and fifth reads discard only the oldest retained line. The output is [east,west,south]. For a file containing one blank line, the result is [\"\"]; an empty file returns [].",
+    "edgeCases": [
+      "Empty file, one blank line, blank lines within the final suffix, and whitespace-only lines.",
+      "k=1, k larger than the line count, exactly k lines, and multiple circular-buffer wraps.",
+      "20000 lines, maximum line length, punctuation and case preserved exactly; file contents preserved."
+    ]
+  },
+  {
     "problemId": "ctci6_13_7",
     "collection": "ctci6",
     "language": "csharp",
