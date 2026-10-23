@@ -1,6 +1,6 @@
 # Cracking the Coding Interview, sixth edition
 
-This collection is being authored. **127 verified coding exercises are registered in the local website; the collection has not been pushed.**
+This collection is being authored. **128 verified coding exercises are registered in the local website; the collection has not been pushed.**
 The advertised 189 is a book question count, not a count of executable exercises.
 
 `inventory.json` records numbered references established from the author's public
@@ -41,19 +41,19 @@ It does **not** prove statement clarity, solution correctness, test adequacy, or
 completed semantic review. Those are separately recorded and executed before the
 collection is published.
 
-The current local checkpoint stages 127 coding exercises: all references in
+The current local checkpoint stages 128 coding exercises: all references in
 chapters 1–4, seven coding tasks from chapter 5, generic Circular Array/Hash Table 7.9/7.12, all fourteen chapter-8 tasks,
 all eleven chapter-10 tasks, both functional tasks 13.7–13.8, and all twenty-six tasks in each of chapters 16 and 17.
-Their 635 actual language solutions pass standalone and separate-submission runs,
-with 990,470 solution case executions per layer and the same number of starter
+Their 640 actual language solutions pass standalone and separate-submission runs,
+with 990,725 solution case executions per layer and the same number of starter
 observations. Each starter is rejected by at least one case; it need not fail
 every case. Random Node additionally has fifteen compiled alternative/negative
 programs covering twenty-five fixtures, including physical duplicate identities,
 clone returns, missing mutations and the generic random source's signed bounds.
 All five current Random Node HTTP submissions pass all 1,604 cases, and the
-current backend suite passes 325 tests.
+current backend suite passes 326 tests.
 
-The 160 located references currently comprise 127 coding exercises and three reviewed concurrency coding candidates awaiting implementation, fifteen
+The 160 located references currently comprise 128 coding exercises and two reviewed concurrency coding candidates awaiting implementation, fifteen
 conceptual references and fifteen design references. The ten chapter-6
 reasoning puzzles now have explicit individual classification and source-clarity
 findings. Another twenty-nine advertised references remain unlocated; neither
@@ -88,3 +88,5 @@ Othello 7.8 checkpoint: all eight capture directions, atomic move rejection, tur
 The four chapter-15 concurrency references are now individually source-reviewed coding candidates (15.3, 15.4, 15.5, 15.7), with pending native-worker acceptance recorded in concurrency-review.json. They are not excluded as conceptual, replaced with sequential algorithms, or counted as implemented. The independent official contents/errata review established no additional numbered specifications; 29 advertised source gaps remain.
 
 Call in Order 15.5 checkpoint: three real native workers in all five languages, including Node worker_threads with shared-memory Atomics. All 24 launch/delay fixtures pass per solution and HTTP submission. Fifteen compiled worker variants reject missing synchronization/wrong gates and accept surplus permits. Current acceptance is 635 solutions / 990,470 cases per layer, 635 rejected starters and 325 backend tests passed. Three concurrency exercises, 29 source gaps and final whole-bank/visual/publishing gates remain.
+
+Concurrent FizzBuzz 15.7 checkpoint: four real workers, role-bound nonoverlapping actual print callbacks and semaphore handoffs in all five languages. All five HTTP submissions pass 51 fixtures each. Twenty compiled worker programs reject missing synchronization, incorrect multiple-of-15 ownership and handoff bugs while accepting strided per-role loops. Current local acceptance is 640 solutions / 990,725 cases per layer, all starters rejected and 326 backend tests passed. Dining Philosophers, Deadlock Free Class, source gaps and final acceptance remain.

@@ -91,5 +91,106 @@
         "solutionCode": "class Solution {\n  public void RunOrdered(int role, SyncContext context) {\n    if (role > 0)\n      context.Wait(role - 1);\n    context.Work();\n    if (role < 2)\n      context.Signal(role);\n  }\n}\n"
       }
     }
+  },
+  {
+    "ref": "15.7",
+    "method": "RunFizzBuzz",
+    "params": [
+      [
+        "limit",
+        "i"
+      ],
+      [
+        "launchOrder",
+        "ai"
+      ],
+      [
+        "delayMask",
+        "i"
+      ],
+      [
+        "context",
+        "fizzsync"
+      ]
+    ],
+    "result": "strings",
+    "mutation": "none",
+    "description": "Coordinate four independently running FizzBuzz workers to print exactly the values for 1 through limit, in increasing numeric order. Role 0 prints ordinary numbers, role 1 prints Fizz for multiples of 3 only, role 2 prints Buzz for multiples of 5 only, and role 3 prints FizzBuzz for multiples of both. Implement RunFizzBuzz(role,limit,context), called once by each actual worker. Use context.Print(value) for that worker assigned items; do not return an output array or run every role from one worker.",
+    "constraints": [
+      "limit is 0..100. Four real native threads (Node worker_threads in JavaScript) call the implementation with distinct roles 0..3, sharing a supplied FizzContext coordination state. Each call returns void/None/undefined. The judge chooses launch order and independent entry delays. Assume eventually scheduled runnable workers, not a particular order or maximum scheduling latency.",
+      "context.Wait(gate) consumes one counting-semaphore permit from gate 0..3, blocking if empty; Signal(gate) adds one permit. Initially only gate 0 has one permit, all other gates have zero. Gates belong to this case, never previous cases. Use only these supplied primitives and Print for coordination; no extra threads, sleeps or polling. Each worker may make at most 4*(limit+1) total API calls; invalid gates and foreign-worker contexts fail.",
+      "context.Print(value) performs the current worker actual output work and may take time before returning. It accepts only the next integer in 1..limit and only from the assigned role: both-divisible first, then only-3, only-5 or ordinary-number role. Calls must not overlap or duplicate an item. It emits the corresponding Fizz/Buzz/FizzBuzz token or invariant decimal number; its output is observed privately, not built by your return value.",
+      "A JSON fixture contains limit, a permutation launchOrder of [0,1,2,3], scheduling delayMask in 0..15, and [] for the context. These are private scheduling inputs; the callable receives role, limit and an opaque context, not a launch-order array. Do not inspect context internals or underlying shared memory. Contexts and permits are isolated across cases.",
+      "Displayed output is the private printed-token transcript. For limit=0, no worker prints and all four return. Every value 1..limit must be printed exactly once in order, including limit when it is divisible by 3, 5 or both. A bounded runtime timeout rejects noncompletion; sampled schedules supplement the synchronization proof, not a universal scheduler guarantee."
+    ],
+    "why": "The roles can determine their own values from divisibility; only the order between roles needs coordination. Keep one permit as a baton for the next value. A worker waits on its role gate before printing its value, then signals the role responsible for the next integer after printing finishes. Consecutive ordinary numbers can pass the baton back to the same gate, whose permit persists until the next wait.",
+    "correctness": "Initially value 1 belongs to ordinary role 0, which alone has a permit. Assume exactly values 1 through v-1 have completed and the sole permit belongs to the role for v. Other roles wait without printing. The owner eventually consumes its permit, prints v from its own worker, and only after Print returns signals the owner of v+1 when one exists. This preserves increasing, nonoverlapping, exactly-once output and the baton invariant. Each role scans values increasingly, so it reaches each of its required waits in order and cannot skip an owned item. The final value needs no successor signal, and all remaining role iterations perform no work; all workers return. For limit=0 all loops are empty. Both-divisible ownership is tested first, preventing duplicate Fizz/Buzz output at multiples of 15.",
+    "walkthrough": "For limit 5, role 0 consumes its initial permit and prints 1, then signals gate 0 for 2. After printing 2 it signals gate 1, so the Fizz worker prints value 3 as Fizz. That worker signals gate 0 for 4; after 4, role 0 signals gate 2 so Buzz prints value 5. No successor signal is needed. The private transcript is [\"1\",\"2\",\"Fizz\",\"4\",\"Buzz\"], regardless of worker launch order.",
+    "example": [
+      [
+        5,
+        [
+          3,
+          2,
+          1,
+          0
+        ],
+        1,
+        []
+      ],
+      [
+        "1",
+        "2",
+        "Fizz",
+        "4",
+        "Buzz"
+      ]
+    ],
+    "time": "O(limit) total scanning work across four fixed workers and O(limit) synchronization/output calls. Required output work is sequential by specification; elapsed time also includes unbounded scheduler waiting, so no real-time bound is claimed.",
+    "space": "O(1) algorithmic shared gate state and scalar local state per worker, excluding judge-owned thread stacks, print callback and observed output transcript.",
+    "edges": [
+      "limit 0/1 and endpoints divisible by 3, 5 or both.",
+      "All 24 launch orders, delayed owning worker and consecutive ordinary values.",
+      "Wrong printing role, duplicate/omitted output and overlapping calls are invalid.",
+      "Independent repeated cases must not inherit permits or static counters."
+    ],
+    "related": "The primary QuestionB/FizzBuzzThread/NumberThread variant runs four real workers. QuestionA sequential FizzBuzz is not substituted. This independent solution uses explicit counting-permit handoffs instead of the public busy-polling shared-counter implementation.",
+    "languageWhy": {
+      "csharp": "C# local Owner maps a value to exactly one role, with divisibility by 15 first. Synchronous Wait/Print/Signal calls execute inside real managed workers; signaling the current role handles successive ordinary integers without special casing.",
+      "java": "Java IntUnaryOperator owner is a local pure predicate mapping; four real Threads run the same method for their distinct roles. The last printed value does not signal an unneeded next worker, and no static current counter is shared between instances.",
+      "cpp": "C++ takes a borrowed FizzContext& and uses a local value-to-role lambda. The fixed upper bound prevents loop increment overflow; blocking condition-variable permits and ordered callback completion establish handoffs across native std::threads.",
+      "python": "Python owner handles multiples of both before the individual divisibility cases. Four threading.Thread workers explicitly block on supplied semaphores; the GIL is not relied on for output order. The method returns None and never builds a token list.",
+      "javascript": "JavaScript runs four real Node worker_threads with shared-memory Atomics gates supplied by FizzContext. The pure owner arrow function is local to each isolate; permits, not shared ordinary JS object fields or one-event-loop callbacks, order output."
+    },
+    "id": "ctci6_15_7",
+    "title": "FizzBuzz",
+    "testCount": 51,
+    "languages": {
+      "csharp": {
+        "signature": "void RunFizzBuzz(int role, int limit, FizzContext context)",
+        "starterCode": "public class Solution\n{\n    public void RunFizzBuzz(int role, int limit, FizzContext context)\n    {\n        return;\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public void RunFizzBuzz(int role, int limit, FizzContext context)\n    {\n        int Owner(int value) => value % 15 == 0 ? 3 : value % 3 == 0 ? 1 : value % 5 == 0 ? 2 : 0;\n        for (int value = 1; value <= limit; ++value)\n        {\n            if (Owner(value) != role)\n                continue;\n            context.Wait(role);\n            context.Print(value);\n            if (value < limit)\n                context.Signal(Owner(value + 1));\n        }\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function RunFizzBuzz(role, limit, context)",
+        "starterCode": "function RunFizzBuzz(role, limit, context) {\n  return;\n}\n",
+        "solutionCode": "function RunFizzBuzz(role, limit, context) {\n  const owner = (value) => (value % 15 === 0 ? 3 : value % 3 === 0 ? 1 : value % 5 === 0 ? 2 : 0);\n  for (let value = 1; value <= limit; ++value) {\n    if (owner(value) !== role) continue;\n    context.Wait(role);\n    context.Print(value);\n    if (value < limit) context.Signal(owner(value + 1));\n  }\n}\n"
+      },
+      "python": {
+        "signature": "def RunFizzBuzz(role: int, limit: int, context: FizzContext) -> None",
+        "starterCode": "def RunFizzBuzz(role: int, limit: int, context: FizzContext) -> None:\n    return\n",
+        "solutionCode": "def RunFizzBuzz(role: int, limit: int, context: FizzContext) -> None:\n    def owner(value):\n        return 3 if value % 15 == 0 else 1 if value % 3 == 0 else 2 if value % 5 == 0 else 0\n\n    for value in range(1, limit + 1):\n        if owner(value) != role:\n            continue\n        context.Wait(role)\n        context.Print(value)\n        if value < limit:\n            context.Signal(owner(value + 1))\n"
+      },
+      "cpp": {
+        "signature": "void RunFizzBuzz(int role, int limit, FizzContext& context)",
+        "starterCode": "class Solution {\n public:\n  void RunFizzBuzz(int role, int limit, FizzContext& context) {\n    return;\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  void RunFizzBuzz(int role, int limit, FizzContext& context) {\n    auto owner = [](int value) {\n      return value % 15 == 0 ? 3 : value % 3 == 0 ? 1 : value % 5 == 0 ? 2 : 0;\n    };\n    for (int value = 1; value <= limit; ++value) {\n      if (owner(value) != role)\n        continue;\n      context.Wait(role);\n      context.Print(value);\n      if (value < limit)\n        context.Signal(owner(value + 1));\n    }\n  }\n};\n"
+      },
+      "java": {
+        "signature": "void RunFizzBuzz(int role, int limit, FizzContext context)",
+        "starterCode": "class Solution {\n  public void RunFizzBuzz(int role, int limit, FizzContext context) {\n    return;\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public void RunFizzBuzz(int role, int limit, FizzContext context) {\n    java.util.function.IntUnaryOperator owner = value\n        -> value % 15 == 0 ? 3\n        : value % 3 == 0   ? 1\n        : value % 5 == 0   ? 2\n                           : 0;\n    for (int value = 1; value <= limit; ++value) {\n      if (owner.applyAsInt(value) != role)\n        continue;\n      context.Wait(role);\n      context.Print(value);\n      if (value < limit)\n        context.Signal(owner.applyAsInt(value + 1));\n    }\n  }\n}\n"
+      }
+    }
   }
 ]

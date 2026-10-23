@@ -9,3 +9,10 @@ if role<2:
     op='->' if language=='cpp' else '.'
     if language=='cpp':op='.'
     return 'if(role>0)context'+op+'Wait(role-1);\ncontext'+op+'Work();\nif(role<2)context'+op+'Signal(role);'
+
+_order_body=body
+def body(ref,language):
+    if ref=='15.7':
+        from algorithms_fizz15 import body as run
+        return run(language)
+    return _order_body(ref,language)

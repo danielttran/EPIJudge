@@ -6398,6 +6398,87 @@
         ]
       }
     },
+    "ctci6_15_7": {
+      "description": "Coordinate four independently running FizzBuzz workers to print exactly the values for 1 through limit, in increasing numeric order. Role 0 prints ordinary numbers, role 1 prints Fizz for multiples of 3 only, role 2 prints Buzz for multiples of 5 only, and role 3 prints FizzBuzz for multiples of both. Implement RunFizzBuzz(role,limit,context), called once by each actual worker. Use context.Print(value) for that worker assigned items; do not return an output array or run every role from one worker.",
+      "constraints": [
+        "limit is 0..100. Four real native threads (Node worker_threads in JavaScript) call the implementation with distinct roles 0..3, sharing a supplied FizzContext coordination state. Each call returns void/None/undefined. The judge chooses launch order and independent entry delays. Assume eventually scheduled runnable workers, not a particular order or maximum scheduling latency.",
+        "context.Wait(gate) consumes one counting-semaphore permit from gate 0..3, blocking if empty; Signal(gate) adds one permit. Initially only gate 0 has one permit, all other gates have zero. Gates belong to this case, never previous cases. Use only these supplied primitives and Print for coordination; no extra threads, sleeps or polling. Each worker may make at most 4*(limit+1) total API calls; invalid gates and foreign-worker contexts fail.",
+        "context.Print(value) performs the current worker actual output work and may take time before returning. It accepts only the next integer in 1..limit and only from the assigned role: both-divisible first, then only-3, only-5 or ordinary-number role. Calls must not overlap or duplicate an item. It emits the corresponding Fizz/Buzz/FizzBuzz token or invariant decimal number; its output is observed privately, not built by your return value.",
+        "A JSON fixture contains limit, a permutation launchOrder of [0,1,2,3], scheduling delayMask in 0..15, and [] for the context. These are private scheduling inputs; the callable receives role, limit and an opaque context, not a launch-order array. Do not inspect context internals or underlying shared memory. Contexts and permits are isolated across cases.",
+        "Displayed output is the private printed-token transcript. For limit=0, no worker prints and all four return. Every value 1..limit must be printed exactly once in order, including limit when it is divisible by 3, 5 or both. A bounded runtime timeout rejects noncompletion; sampled schedules supplement the synchronization proof, not a universal scheduler guarantee."
+      ],
+      "examples": [
+        {
+          "input": "[5, [3, 2, 1, 0], 1, []]",
+          "output": "[\"1\", \"2\", \"Fizz\", \"4\", \"Buzz\"]",
+          "explanation": "For limit 5, role 0 consumes its initial permit and prints 1, then signals gate 0 for 2. After printing 2 it signals gate 1, so the Fizz worker prints value 3 as Fizz. That worker signals gate 0 for 4; after 4, role 0 signals gate 2 so Buzz prints value 5. No successor signal is needed. The private transcript is [\"1\",\"2\",\"Fizz\",\"4\",\"Buzz\"], regardless of worker launch order."
+        }
+      ],
+      "exampleCases": [
+        {
+          "arguments": [
+            5,
+            [
+              3,
+              2,
+              1,
+              0
+            ],
+            1,
+            []
+          ],
+          "expected": [
+            "1",
+            "2",
+            "Fizz",
+            "4",
+            "Buzz"
+          ]
+        }
+      ],
+      "contracts": {
+        "csharp": [
+          "Callable: void RunFizzBuzz(int role, int limit, FizzContext context)",
+          "limit is 0..100. Four real native threads (Node worker_threads in JavaScript) call the implementation with distinct roles 0..3, sharing a supplied FizzContext coordination state. Each call returns void/None/undefined. The judge chooses launch order and independent entry delays. Assume eventually scheduled runnable workers, not a particular order or maximum scheduling latency.",
+          "context.Wait(gate) consumes one counting-semaphore permit from gate 0..3, blocking if empty; Signal(gate) adds one permit. Initially only gate 0 has one permit, all other gates have zero. Gates belong to this case, never previous cases. Use only these supplied primitives and Print for coordination; no extra threads, sleeps or polling. Each worker may make at most 4*(limit+1) total API calls; invalid gates and foreign-worker contexts fail.",
+          "context.Print(value) performs the current worker actual output work and may take time before returning. It accepts only the next integer in 1..limit and only from the assigned role: both-divisible first, then only-3, only-5 or ordinary-number role. Calls must not overlap or duplicate an item. It emits the corresponding Fizz/Buzz/FizzBuzz token or invariant decimal number; its output is observed privately, not built by your return value.",
+          "A JSON fixture contains limit, a permutation launchOrder of [0,1,2,3], scheduling delayMask in 0..15, and [] for the context. These are private scheduling inputs; the callable receives role, limit and an opaque context, not a launch-order array. Do not inspect context internals or underlying shared memory. Contexts and permits are isolated across cases.",
+          "Displayed output is the private printed-token transcript. For limit=0, no worker prints and all four return. Every value 1..limit must be printed exactly once in order, including limit when it is divisible by 3, 5 or both. A bounded runtime timeout rejects noncompletion; sampled schedules supplement the synchronization proof, not a universal scheduler guarantee."
+        ],
+        "javascript": [
+          "Callable: function RunFizzBuzz(role, limit, context)",
+          "limit is 0..100. Four real native threads (Node worker_threads in JavaScript) call the implementation with distinct roles 0..3, sharing a supplied FizzContext coordination state. Each call returns void/None/undefined. The judge chooses launch order and independent entry delays. Assume eventually scheduled runnable workers, not a particular order or maximum scheduling latency.",
+          "context.Wait(gate) consumes one counting-semaphore permit from gate 0..3, blocking if empty; Signal(gate) adds one permit. Initially only gate 0 has one permit, all other gates have zero. Gates belong to this case, never previous cases. Use only these supplied primitives and Print for coordination; no extra threads, sleeps or polling. Each worker may make at most 4*(limit+1) total API calls; invalid gates and foreign-worker contexts fail.",
+          "context.Print(value) performs the current worker actual output work and may take time before returning. It accepts only the next integer in 1..limit and only from the assigned role: both-divisible first, then only-3, only-5 or ordinary-number role. Calls must not overlap or duplicate an item. It emits the corresponding Fizz/Buzz/FizzBuzz token or invariant decimal number; its output is observed privately, not built by your return value.",
+          "A JSON fixture contains limit, a permutation launchOrder of [0,1,2,3], scheduling delayMask in 0..15, and [] for the context. These are private scheduling inputs; the callable receives role, limit and an opaque context, not a launch-order array. Do not inspect context internals or underlying shared memory. Contexts and permits are isolated across cases.",
+          "Displayed output is the private printed-token transcript. For limit=0, no worker prints and all four return. Every value 1..limit must be printed exactly once in order, including limit when it is divisible by 3, 5 or both. A bounded runtime timeout rejects noncompletion; sampled schedules supplement the synchronization proof, not a universal scheduler guarantee."
+        ],
+        "python": [
+          "Callable: def RunFizzBuzz(role: int, limit: int, context: FizzContext) -> None",
+          "limit is 0..100. Four real native threads (Node worker_threads in JavaScript) call the implementation with distinct roles 0..3, sharing a supplied FizzContext coordination state. Each call returns void/None/undefined. The judge chooses launch order and independent entry delays. Assume eventually scheduled runnable workers, not a particular order or maximum scheduling latency.",
+          "context.Wait(gate) consumes one counting-semaphore permit from gate 0..3, blocking if empty; Signal(gate) adds one permit. Initially only gate 0 has one permit, all other gates have zero. Gates belong to this case, never previous cases. Use only these supplied primitives and Print for coordination; no extra threads, sleeps or polling. Each worker may make at most 4*(limit+1) total API calls; invalid gates and foreign-worker contexts fail.",
+          "context.Print(value) performs the current worker actual output work and may take time before returning. It accepts only the next integer in 1..limit and only from the assigned role: both-divisible first, then only-3, only-5 or ordinary-number role. Calls must not overlap or duplicate an item. It emits the corresponding Fizz/Buzz/FizzBuzz token or invariant decimal number; its output is observed privately, not built by your return value.",
+          "A JSON fixture contains limit, a permutation launchOrder of [0,1,2,3], scheduling delayMask in 0..15, and [] for the context. These are private scheduling inputs; the callable receives role, limit and an opaque context, not a launch-order array. Do not inspect context internals or underlying shared memory. Contexts and permits are isolated across cases.",
+          "Displayed output is the private printed-token transcript. For limit=0, no worker prints and all four return. Every value 1..limit must be printed exactly once in order, including limit when it is divisible by 3, 5 or both. A bounded runtime timeout rejects noncompletion; sampled schedules supplement the synchronization proof, not a universal scheduler guarantee."
+        ],
+        "cpp": [
+          "Callable: void RunFizzBuzz(int role, int limit, FizzContext& context)",
+          "limit is 0..100. Four real native threads (Node worker_threads in JavaScript) call the implementation with distinct roles 0..3, sharing a supplied FizzContext coordination state. Each call returns void/None/undefined. The judge chooses launch order and independent entry delays. Assume eventually scheduled runnable workers, not a particular order or maximum scheduling latency.",
+          "context.Wait(gate) consumes one counting-semaphore permit from gate 0..3, blocking if empty; Signal(gate) adds one permit. Initially only gate 0 has one permit, all other gates have zero. Gates belong to this case, never previous cases. Use only these supplied primitives and Print for coordination; no extra threads, sleeps or polling. Each worker may make at most 4*(limit+1) total API calls; invalid gates and foreign-worker contexts fail.",
+          "context.Print(value) performs the current worker actual output work and may take time before returning. It accepts only the next integer in 1..limit and only from the assigned role: both-divisible first, then only-3, only-5 or ordinary-number role. Calls must not overlap or duplicate an item. It emits the corresponding Fizz/Buzz/FizzBuzz token or invariant decimal number; its output is observed privately, not built by your return value.",
+          "A JSON fixture contains limit, a permutation launchOrder of [0,1,2,3], scheduling delayMask in 0..15, and [] for the context. These are private scheduling inputs; the callable receives role, limit and an opaque context, not a launch-order array. Do not inspect context internals or underlying shared memory. Contexts and permits are isolated across cases.",
+          "Displayed output is the private printed-token transcript. For limit=0, no worker prints and all four return. Every value 1..limit must be printed exactly once in order, including limit when it is divisible by 3, 5 or both. A bounded runtime timeout rejects noncompletion; sampled schedules supplement the synchronization proof, not a universal scheduler guarantee."
+        ],
+        "java": [
+          "Callable: void RunFizzBuzz(int role, int limit, FizzContext context)",
+          "limit is 0..100. Four real native threads (Node worker_threads in JavaScript) call the implementation with distinct roles 0..3, sharing a supplied FizzContext coordination state. Each call returns void/None/undefined. The judge chooses launch order and independent entry delays. Assume eventually scheduled runnable workers, not a particular order or maximum scheduling latency.",
+          "context.Wait(gate) consumes one counting-semaphore permit from gate 0..3, blocking if empty; Signal(gate) adds one permit. Initially only gate 0 has one permit, all other gates have zero. Gates belong to this case, never previous cases. Use only these supplied primitives and Print for coordination; no extra threads, sleeps or polling. Each worker may make at most 4*(limit+1) total API calls; invalid gates and foreign-worker contexts fail.",
+          "context.Print(value) performs the current worker actual output work and may take time before returning. It accepts only the next integer in 1..limit and only from the assigned role: both-divisible first, then only-3, only-5 or ordinary-number role. Calls must not overlap or duplicate an item. It emits the corresponding Fizz/Buzz/FizzBuzz token or invariant decimal number; its output is observed privately, not built by your return value.",
+          "A JSON fixture contains limit, a permutation launchOrder of [0,1,2,3], scheduling delayMask in 0..15, and [] for the context. These are private scheduling inputs; the callable receives role, limit and an opaque context, not a launch-order array. Do not inspect context internals or underlying shared memory. Contexts and permits are isolated across cases.",
+          "Displayed output is the private printed-token transcript. For limit=0, no worker prints and all four return. Every value 1..limit must be printed exactly once in order, including limit when it is divisible by 3, 5 or both. A bounded runtime timeout rejects noncompletion; sampled schedules supplement the synchronization proof, not a universal scheduler guarantee."
+        ]
+      }
+    },
     "ctci6_16_1": {
       "description": "Exchange the values of two independent local integer variables without a third temporary variable, then return their final values as [first,second]. Perform the exchange using arithmetic or bit operations on those two variables; do not merely construct the reversed result directly.",
       "constraints": [

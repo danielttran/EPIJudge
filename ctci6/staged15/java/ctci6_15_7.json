@@ -1,0 +1,34 @@
+{
+  "explanation": "The roles can determine their own values from divisibility; only the order between roles needs coordination. Keep one permit as a baton for the next value. A worker waits on its role gate before printing its value, then signals the role responsible for the next integer after printing finishes. Consecutive ordinary numbers can pass the baton back to the same gate, whose permit persists until the next wait. Java IntUnaryOperator owner is a local pure predicate mapping; four real Threads run the same method for their distinct roles. The last printed value does not signal an unneeded next worker, and no static current counter is shared between instances.",
+  "correctness": "Initially value 1 belongs to ordinary role 0, which alone has a permit. Assume exactly values 1 through v-1 have completed and the sole permit belongs to the role for v. Other roles wait without printing. The owner eventually consumes its permit, prints v from its own worker, and only after Print returns signals the owner of v+1 when one exists. This preserves increasing, nonoverlapping, exactly-once output and the baton invariant. Each role scans values increasingly, so it reaches each of its required waits in order and cannot skip an owned item. The final value needs no successor signal, and all remaining role iterations perform no work; all workers return. For limit=0 all loops are empty. Both-divisible ownership is tested first, preventing duplicate Fizz/Buzz output at multiples of 15.",
+  "walkthrough": "For limit 5, role 0 consumes its initial permit and prints 1, then signals gate 0 for 2. After printing 2 it signals gate 1, so the Fizz worker prints value 3 as Fizz. That worker signals gate 0 for 4; after 4, role 0 signals gate 2 so Buzz prints value 5. No successor signal is needed. The private transcript is [\"1\",\"2\",\"Fizz\",\"4\",\"Buzz\"], regardless of worker launch order.",
+  "walkthroughCase": {
+    "arguments": [
+      5,
+      [
+        3,
+        2,
+        1,
+        0
+      ],
+      1,
+      []
+    ],
+    "expected": [
+      "1",
+      "2",
+      "Fizz",
+      "4",
+      "Buzz"
+    ]
+  },
+  "timeComplexity": "O(limit) total scanning work across four fixed workers and O(limit) synchronization/output calls. Required output work is sequential by specification; elapsed time also includes unbounded scheduler waiting, so no real-time bound is claimed.",
+  "spaceComplexity": "O(1) algorithmic shared gate state and scalar local state per worker, excluding judge-owned thread stacks, print callback and observed output transcript.",
+  "edgeCases": [
+    "limit 0/1 and endpoints divisible by 3, 5 or both.",
+    "All 24 launch orders, delayed owning worker and consecutive ordinary values.",
+    "Wrong printing role, duplicate/omitted output and overlapping calls are invalid.",
+    "Independent repeated cases must not inherit permits or static counters."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 15.7. No affiliation is implied."
+}

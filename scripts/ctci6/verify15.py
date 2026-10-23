@@ -11,4 +11,8 @@ if __name__=='__main__':
  p=ROOT/'ctci6/staged15/validation.json';report=json.loads(p.read_text())
  for language in LANGUAGES:
   f=ROOT/'scripts/ctci6'/('harness_order15_'+language+'.py');report['sourceHashes'][str(f.relative_to(ROOT))]=hashlib.sha256(f.read_bytes()).hexdigest()
+ for name in ('models_fizz15.py','algorithms_fizz15.py','corpus_fizz15.py'):
+  f=ROOT/'scripts/ctci6'/name;report['sourceHashes'][str(f.relative_to(ROOT))]=hashlib.sha256(f.read_bytes()).hexdigest()
+ for language in LANGUAGES:
+  f=ROOT/'scripts/ctci6'/('harness_fizz15_'+language+'.py');report['sourceHashes'][str(f.relative_to(ROOT))]=hashlib.sha256(f.read_bytes()).hexdigest()
  p.write_text(json.dumps(report,indent=2)+'\n')

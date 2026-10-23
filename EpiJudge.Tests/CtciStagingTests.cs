@@ -831,4 +831,16 @@ public sealed class CtciStagingTests
         }
     }
 
+    [Fact]
+    public void ConcurrentFizzBuzzExposesRoleBoundPrinterAndRejectsUnverifiedOutput()
+    {
+        var definition = Definition("15.7");
+        var test = new TestCase(definition.Example[0].EnumerateArray().Select(value => value.Clone()).ToArray(), definition.Example[1].Clone());
+        Assert.Null(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = test.Expected, mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = test.Expected, mutationOk = false })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new[] {"1","2","Fizz","4","5"}, mutationOk = true })));
+        foreach (string language in SolutionCatalog.Languages)
+            Assert.Equal(new[] {"FizzContext"}, Assert.Single(definition.Callable(language).References).Names);
+    }
+
 }

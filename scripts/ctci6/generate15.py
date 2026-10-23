@@ -8,7 +8,11 @@ from generate import generate
 from models15 import declare,header,neutral
 
 def generate15():
- generate(specs=SPECS,algorithm=body,corpus=cases,reference=oracle,declare=declare,headers={language:header('15.5',language) for language in LANGUAGES},neutral=neutral,staging_name='staged15')
+ rows=[]
+ for spec in SPECS:
+  generate(specs=[spec],algorithm=body,corpus=cases,reference=oracle,declare=declare,headers={language:header(spec['ref'],language) for language in LANGUAGES},neutral=neutral,staging_name='staged15')
+  rows.extend(json.loads((ROOT/'ctci6/staged15/catalog.json').read_text()))
+ (ROOT/'ctci6/staged15/catalog.json').write_text(json.dumps(rows,indent=2)+'\n')
  for spec in SPECS:
   for language,detail in spec['languageWhy'].items():
    p=ROOT/'ctci6/staged15'/language/('ctci6_'+spec['ref'].replace('.','_')+'.json');notes=json.loads(p.read_text());notes['explanation']+=' '+detail;p.write_text(json.dumps(notes,indent=2)+'\n')
