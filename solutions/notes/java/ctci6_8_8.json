@@ -1,0 +1,23 @@
+{
+  "explanation": "Choose the next letter by its remaining frequency, rather than by the identity of one equal input occurrence. This combines equal-occurrence branches before they generate duplicate strings. Decrement before descent and restore afterward so sibling branches see the original remaining counts.",
+  "correctness": "At depth d, the character counts describe exactly the multiset not yet placed in the output prefix. A branch exists once for each letter with a positive remaining count and consumes exactly one copy. Thus every emitted string has the required multiplicities. Any valid permutation has a unique next letter at each depth, so it follows exactly one branch sequence and is emitted once. Restoring each count maintains the invariant for later choices.",
+  "walkthrough": "For aab, the first choice is a or b, not first-a versus second-a. Choosing a leaves counts a:1,b:1 and yields aab or aba; choosing b leaves a:2 and yields baa. Three strings are returned, rather than six occurrence-labeled branches containing duplicates.",
+  "walkthroughCase": {
+    "arguments": [
+      "aab"
+    ],
+    "expected": [
+      "aab",
+      "aba",
+      "baa"
+    ]
+  },
+  "timeComplexity": "O(26*n*U), hence O(n*U) for this fixed alphabet, where U=n! divided by the product of each letter-count factorial. The bound includes prefix traversal and copied output strings.",
+  "spaceComplexity": "O(n+26) workspace/recursion storage, excluding O(n*U) returned character storage.",
+  "edgeCases": [
+    "All letters equal, mixed multiplicities and all-distinct text.",
+    "Empty text and the maximum input length.",
+    "Repeated outputs or missing multiplicities are rejected irrespective of output order."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 8.8. No affiliation is implied."
+}

@@ -187,3 +187,112 @@ for _spec in SPECS:
         _spec["constraints"].append(
             "Each returned subset is a concrete integer list/vector as well; both levels must be materialized."
         )
+
+from itertools import permutations as _permutations
+
+_queen_boards = [
+    list(columns)
+    for columns in _permutations(range(8))
+    if len({row - columns[row] for row in range(8)}) == 8
+    and len({row + columns[row] for row in range(8)}) == 8
+]
+SPECS += [
+    dict(
+        ref="8.3",
+        method="FindMagicIndex",
+        params=[("values", "ai"), ("distinctValues", "b")],
+        result="i",
+        mutation="none",
+        description="Return any zero-based index i for which values[i] equals i, or -1 if none exists. The array is sorted. The distinctValues flag selects the original distinct-value case or the duplicate-allowed follow-up, allowing the promised distinct case to use logarithmic search.",
+        constraints=[
+            "values has 0..10000 signed 32-bit integers in nondecreasing order. If distinctValues is true, the values are guaranteed strictly increasing; otherwise duplicates may occur. The flag is an input promise, not a request to scan and verify distinctness.",
+            "Preserve the input array and its ordering. If several indices qualify, any one is valid; do not assume the smallest index is required. Empty input returns -1.",
+        ],
+        why="With strictly increasing integers, values[i]-i is nondecreasing, so the sign at the middle identifies a side that cannot contain a match. With duplicates that sign rule fails. The sorted middle value still bounds which indices in each half might equal their values, so search only those surviving ranges.",
+        correctness="In the distinct case, values[mid]>mid implies every later value exceeds its index, while values[mid]<mid implies every earlier value is below its index; discarding that half is safe. In the duplicate case, a left index greater than values[mid] has value at most values[mid] and cannot match, so the left range ends at min(mid-1,values[mid]). Similarly a right index below values[mid] cannot match, so the right range starts at max(mid+1,values[mid]). Test mid, then search both safe ranges. Each recursive range is smaller, and only impossible indices are omitted. A returned index is tested directly; -1 is returned only when every remaining range is exhausted.",
+        walkthrough="For [-2,0,2,5] with distinctValues=true, middle index 1 contains 0, so discard indices 0..1. Index 2 contains 2 and is returned. For [0,1,1,3] with the flag false, indices 0,1 and 3 all qualify; returning any of them is correct. A distinct-only sign rule would be unsafe on arbitrary duplicate input.",
+        example=([[-2, 0, 2, 5], True], 2),
+        time="O(log n) time with the distinct-value promise. The duplicate-aware search is O(n) worst case; pruning does not justify a logarithmic bound for all repeated-value arrays.",
+        space="O(1) auxiliary space for the iterative distinct branch; O(log n) recursion depth for the duplicate branch because each surviving child lies in a half interval.",
+        edges=[
+            "Empty input and no qualifying index.",
+            "Several valid indices and duplicate blocks around the middle.",
+            "Minimum/maximum signed values must not overflow pruning bounds; both flags on valid strictly increasing arrays.",
+        ],
+        related="A fixed-point search with distinct-value assumptions alone does not cover the repeated-value follow-up.",
+    ),
+    dict(
+        ref="8.12",
+        method="EightQueens",
+        params=[],
+        result="arrangements",
+        mutation="none",
+        description="Return every way to place eight nonattacking queens on a fixed 8 by 8 board, exactly once. Represent a board as eight column indices: entry r is the column of the queen in row r, with both indices zero-based. Board order is unrestricted, but the order of entries inside each board is meaningful.",
+        constraints=[
+            "There is no board-size parameter: this is the eight-queens task. Each board is a concrete eight-integer list/vector with entries 0..7. No two queens share a column or diagonal.",
+            "Return all 92 boards. Rotations and reflections count as different boards unless their eight-entry representations are identical. Do not collapse symmetric boards into representatives. The input argument list is empty; examples show the complete returned collection.",
+        ],
+        why="Place one queen per row, which removes row conflicts by construction. A column number and the two diagonal identifiers row-column+7 and row+column identify every remaining conflict. Carry their used-bit masks into the next row to reject an attacking placement immediately.",
+        correctness="At depth r, exactly the first r rows have queens, and the three masks mark precisely their occupied columns and diagonals. A candidate with any marked identifier would attack an earlier queen and is skipped. An unmarked candidate extends the invariant. At row eight, all queens are nonattacking and the board is copied. Every valid board has one allowed column choice at every row, so it follows one unique recursion path and is emitted exactly once. No symmetry filtering removes other valid boards.",
+        walkthrough="One complete returned board is [0,4,7,5,2,6,1,3]. For row 1, column 0 is already occupied and column 1 shares the diagonal of the queen at (0,0), so both are rejected. Every subsequent placement checks its column and both diagonals in the same way. A dead-end prefix is abandoned; the search continues rather than returning just the first completed board.",
+        example=([], _queen_boards),
+        time="O(8*8!) as a loose search/output upper bound for this fixed board: one queen per row, column conflicts prune repeated columns, and each visited prefix checks at most eight candidates. The fixed-size API has a bounded search, but its backtracking work is not a linear board scan.",
+        space="O(8) buffer and search depth, excluding the returned 92 boards of eight entries each.",
+        edges=[
+            "All 92 distinct boards, including reflected and rotated solutions.",
+            "Within-board row order must not be sorted or ignored.",
+            "Repeated invocations must each return a complete valid collection without accumulating duplicates.",
+        ],
+        related="An N-queens counter or one-solution finder does not satisfy this fixed-eight complete-enumeration contract.",
+    ),
+    dict(
+        ref="8.13",
+        method="MaximumBoxStackHeight",
+        params=[("boxes", "aai")],
+        result="i",
+        mutation="none",
+        description="Return the greatest total height of a stack formed from the supplied boxes. Each row is [width,height,depth]. A box may sit above another only when ALL THREE of its dimensions are strictly smaller. Do not rotate boxes, and use each supplied box at most once.",
+        constraints=[
+            "There are 0..12 boxes. Every row has exactly three integer dimensions in 1..1000. Equal dimensions do not fit; identical boxes cannot stack on one another. Empty input returns zero.",
+            "Preserve the input outer array, row objects, row contents and input order. The height is always row[1]; changing orientation is not permitted. Return a height, not a count of boxes.",
+        ],
+        why="A smaller box always has smaller width, so width gives an acyclic processing order. Sort only an auxiliary index list. For each possible bottom box, combine its height with the best already-computed stack whose bottom fits above it; choosing the widest or tallest box greedily would miss valid alternatives.",
+        correctness="Process boxes by increasing width. Any box that can sit above the current box has smaller width and was processed earlier. By induction its stored value is the best stack with that box at the bottom. Taking the maximum over all earlier boxes strictly smaller in width, height and depth therefore finds the best possible top stack for the current bottom. Adding the current height yields its optimal total. Every nonempty feasible stack has some bottom box, so the maximum stored value is globally optimal. Strict decreases prevent reuse or cycles, and the original input is never reordered.",
+        walkthrough="For [[5,5,5],[4,3,4],[3,2,3],[6,1,6]], the first three boxes form a stack of height 5+3+2=10. The last box is wider and deeper but only height 1, so it cannot serve as the bottom beneath those taller boxes. Sorting by width provides a processing order, not a greedy choice of the answer.",
+        example=([[[5, 5, 5], [4, 3, 4], [3, 2, 3], [6, 1, 6]]], 10),
+        time="O(n^2) time for pairwise fit checks after O(n log n) sorting of indices.",
+        space="O(n) auxiliary storage for sorted indices and best heights; input boxes are not copied into reordered rows.",
+        edges=[
+            "Empty input, one box and identical boxes.",
+            "Equality in any one dimension prevents stacking.",
+            "A tall narrow box versus a wide short box; shuffled input and a full strict chain.",
+        ],
+        related="Rotatable-box stacking and maximum chain length omit this fixed-orientation height objective and are not exact substitutes.",
+    ),
+    dict(
+        ref="8.14",
+        method="CountBooleanParenthesizations",
+        params=[("expression", "s"), ("desired", "b")],
+        result="i",
+        mutation="none",
+        description="Count the full binary parenthesizations of expression that evaluate to desired. Preserve the order of literals and operators. Operators are Boolean AND (&), OR (|) and XOR (^); ignore ordinary operator precedence because each parenthesization determines evaluation order.",
+        constraints=[
+            "The expression is empty, or alternates single literals 0/1 and operators &/|/^ with no whitespace or existing parentheses. There are at most 13 literals. desired is a boolean. Return the exact integer count.",
+            "An empty expression has zero parenthesizations for either desired value. A single literal has one when it matches desired and zero otherwise. Count different binary grouping structures separately, even if their evaluations agree.",
+            "The limit gives at most Catalan(12)=208012 groupings, so all counts fit signed 32-bit integers. Do not reorder symbols or count short-circuit execution paths. Preserve inputs.",
+        ],
+        why="Every full grouping has a unique outermost operator split. Count true and false possibilities for both sides of each split, then combine them with that operator's truth table. Computing all intervals once prevents repeated evaluation of the same substring and accounts for every grouping rather than applying standard precedence.",
+        correctness="A single-literal interval has exactly its literal value. For a longer interval, every parenthesization selects one unique outer split and one grouping for each side. By induction the four combinations of left/right truth counts count exactly those paired choices. AND is true only for true/true, OR is false only for false/false, and XOR is true exactly when sides differ. Adding these disjoint possibilities over all splits yields the exact true/false counts for the interval. Increasing interval length ensures both sides are already known; the full interval count for desired is the answer.",
+        walkthrough="For 1^0|1, the two groupings are (1^0)|1, which is true, and 1^(0|1), which is false. Thus desired=true returns 1 and desired=false also returns 1. The split at | and the split at ^ each describe one distinct outermost grouping; normal operator precedence must not discard either.",
+        example=(["1^0|1", True], 1),
+        time="O(n^3) time for n literals: O(n^2) intervals and at most n outer split positions each.",
+        space="O(n^2) auxiliary storage for separate true and false interval tables.",
+        edges=[
+            "Empty expression and single true/false literals.",
+            "Different groupings of the same symbols can have different values.",
+            "All-one OR chains at 13 literals hit the maximum grouping count; both desired values are tested.",
+        ],
+        related="Evaluating one Boolean expression or counting logical assignments is a different task from counting its grouping structures.",
+    ),
+]
+SPECS.sort(key=lambda spec: tuple(map(int, spec["ref"].split("."))))

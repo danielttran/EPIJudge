@@ -3,8 +3,8 @@ using System.Text.Json;
 
 namespace EpiJudge.Runner;
 
-// Explicit staging execution. This never registers partially authored questions
-// in the website or changes the existing collection runners.
+// Shared execution for explicit CtCI definitions. Only CtciCatalog registers the
+// reviewed practice snapshot; authoring definitions also use this runner.
 public static class CtciStagingRunner
 {
     public static async Task<SubmissionResult> RunAsync(string root, string parentDirectory, string id,

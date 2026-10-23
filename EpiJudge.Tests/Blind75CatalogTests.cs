@@ -16,7 +16,7 @@ public sealed class Blind75CatalogTests
         Assert.Equal(titles, Blind75Catalog.Definitions.Select(d => d.Title));
         Assert.Equal(75, titles.Length);
         Assert.Equal(218, catalog.Problems.Count(p => p.Collection == "epi"));
-        Assert.Equal(334, catalog.Problems.Select(p => p.Id).Distinct().Count());
+        Assert.Equal(334 + CtciCatalog.Problems.Count, catalog.Problems.Select(p => p.Id).Distinct().Count());
         Assert.Equal(Enumerable.Range(1, 75), Blind75Catalog.Problems.Select(p => p.Position));
         Assert.Contains("Combination Sum", titles);
         Assert.Contains("Combination Sum IV", titles);

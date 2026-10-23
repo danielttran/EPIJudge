@@ -1,0 +1,29 @@
+{
+  "explanation": "A pointer traversing first then second and another traversing second then first cover the same combined length. Switching heads after reaching null cancels any difference in private-prefix lengths without measuring them or changing a link.",
+  "correctness": "Let private-prefix lengths be a and b and shared-suffix length c. If the pointers have not already met, their two-list routes reach the shared entry after the same a+b+c link advances and one head-switch step, so they meet at that entry, not merely an equal-valued node. Equal private-prefix lengths may make them meet earlier at that same entry. With no shared suffix, both routes have equal total length and end at null. Comparisons use object identity and the algorithm only reads links, so it returns exactly the first common node and preserves the lists.",
+  "walkthrough": "For private prefixes [4,4] and [4], followed by the one shared suffix [9,2], the lists have lengths 4 and 3. Their first three 4-valued objects are separate. Head switching aligns the pointers at the shared 9 node, whose index in the first list is 2. Return that object, not either private 4 node.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        4,
+        4
+      ],
+      [
+        4
+      ],
+      [
+        9,
+        2
+      ]
+    ],
+    "expected": 2
+  },
+  "timeComplexity": "O(n + m) time for list lengths n and m.",
+  "spaceComplexity": "O(1) auxiliary space.",
+  "edgeCases": [
+    "Disjoint equal-valued lists must return null.",
+    "One or both null heads; identical heads; one head already inside the other list's suffix.",
+    "A one-node shared suffix and very unequal private-prefix lengths."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 2.7. No affiliation is implied."
+}

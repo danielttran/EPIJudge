@@ -8,8 +8,8 @@ public sealed class CallableCodeCatalogTests
     public void EveryRunnableQuestionHasBothVisibleArtifactsInEveryLanguage()
     {
         var problems = new ProblemCatalog().Problems;
-        Assert.Equal(334, problems.Count);
-        Assert.Equal(1670, CallableCodeCatalog.All.Count);
+        Assert.Equal(334 + CtciCatalog.Problems.Count, problems.Count);
+        Assert.Equal((334 + CtciCatalog.Problems.Count)*5, CallableCodeCatalog.All.Count);
         foreach (var problem in problems)
             foreach (var language in SolutionCatalog.Languages)
             {

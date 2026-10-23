@@ -1,0 +1,56 @@
+{
+  "explanation": "The minimum after popping a value is the minimum of the prefix that existed before that push. Store that prefix minimum beside each entry, so removing the top automatically restores the earlier minimum without rescanning.",
+  "correctness": "Each entry stores its own value and the minimum over that entry and every entry below it. A push computes the new minimum from the new value and the old top's stored minimum. A pop exposes the preceding entry, whose minimum already describes exactly the remaining stack. Therefore Peek, Pop and GetMin return the specified values, including repeated minima. An empty check precedes each access.",
+  "walkthrough": "Push 9, then 4, then another 4. The stored prefix minima are 9,4,4. Popping one 4 leaves the previous entry's minimum 4; popping the second leaves 9. Keeping only a single uncounted minimum would lose that distinction.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        "MinStack",
+        "Push",
+        "Push",
+        "Push",
+        "GetMin",
+        "Pop",
+        "GetMin",
+        "Pop",
+        "GetMin"
+      ],
+      [
+        [],
+        [
+          9
+        ],
+        [
+          4
+        ],
+        [
+          4
+        ],
+        [],
+        [],
+        [],
+        [],
+        []
+      ]
+    ],
+    "expected": [
+      null,
+      null,
+      null,
+      null,
+      4,
+      4,
+      4,
+      4,
+      9
+    ]
+  },
+  "timeComplexity": "O(1) algorithmic time per operation under the usual constant-time node-allocation model. Destruction/garbage collection is separate from these stack operations.",
+  "spaceComplexity": "O(n) live storage for n stack entries, each holding a value, prefix minimum and next link.",
+  "edgeCases": [
+    "Repeated minima must survive removal of only one copy.",
+    "Empty-stack failures do not change state.",
+    "All-negative values and both signed 32-bit endpoints."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 3.2. No affiliation is implied."
+}

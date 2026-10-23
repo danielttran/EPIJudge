@@ -501,8 +501,29 @@ def isolated_contracts():
     return catalogs, specs
 
 
+@lru_cache(maxsize=1)
+def ctci_contracts():
+    return {
+        row["id"]: row
+        for row in json.loads((ROOT / "ctci6/practice/catalog.json").read_text())
+    }
+
+
 def expected_references(entry: dict) -> set[str] | None:
     problem_id = entry["problemId"]
+    if problem_id.startswith("ctci6_"):
+        row = ctci_contracts()[problem_id]
+        if row["batch"] == 2:
+            return {"LinkedListNode"}
+        if row["batch"] == 3:
+            return {"BankError"} | (
+                {"IntStack"}
+                if row["ref"] == "3.5"
+                else {"Animal"}
+                if row["ref"] == "3.6"
+                else set()
+            )
+        return set()
     if not problem_id.startswith(("blind75_", "interviewcake_")):
         return None
     _, specs = isolated_contracts()
@@ -537,6 +558,13 @@ def expected_references(entry: dict) -> set[str] | None:
 
 def isolated_roots(entry: dict) -> set[str] | None:
     problem_id, language = entry["problemId"], entry["language"]
+    if problem_id.startswith("ctci6_"):
+        row = ctci_contracts()[problem_id]
+        return {
+            row["method"]
+            if row["result"] == "state" or language in ("python", "javascript")
+            else "Solution"
+        }
     if not problem_id.startswith(("blind75_", "interviewcake_")):
         return None
     spec = isolated_contracts()[1][problem_id]
@@ -679,6 +707,9 @@ def original_code(entry: dict, role: str) -> str:
         )
         return (ROOT / path).read_text(encoding="utf-8")
     problem_id, language = entry["problemId"], entry["language"]
+    if problem_id.startswith("ctci6_"):
+        source = ctci_contracts()[problem_id]["languages"][language]
+        return source["prefix"] + source["starterCode"] + source["suffix"]
     if problem_id.startswith(("blind75_", "interviewcake_")):
         return isolated_contracts()[0][problem_id]["starters"][language]["starterCode"]
     if language in {"cpp", "java"}:
@@ -726,6 +757,8 @@ def audit_artifact(
             if entry["problemId"].startswith("blind75_")
             else CAKE_MODELS
             if entry["problemId"].startswith("interviewcake_")
+            else {"LinkedListNode", "IntStack", "Animal", "BankError"}
+            if entry["problemId"].startswith("ctci6_")
             else set()
         )
         duplicated_models = sorted(information["topTypes"] & supplied)
@@ -965,6 +998,7 @@ def regeneration_checks(parts: dict) -> list[dict]:
         ("epi-native", "native"),
         ("epi-managed", "managed"),
         ("isolated", "isolated"),
+        *([("ctci6", "ctci")] if "ctci6" in parts else []),
     ]:
         module = importlib.import_module(module_name)
         generated = module.build_entries()
@@ -1015,6 +1049,12 @@ def main():
         input_paths += sorted((ROOT / "workspace-code/parts").glob("*.json"))
         input_paths += sorted((ROOT / "scripts/code_workspace").glob("*.py"))
         input_paths += sorted((ROOT / "scripts/code_workspace").glob("*.json"))
+        if (ROOT / "ctci6/practice/catalog.json").exists():
+            input_paths += [
+                ROOT / "ctci6/catalog.json",
+                ROOT / "ctci6/practice/catalog.json",
+                ROOT / "ctci6/practice/coverage.json",
+            ]
         input_paths.append(ROOT / "scripts/code_workspace/requirements.txt")
         source_hashes = {
             str(path.relative_to(ROOT)): hashlib.sha256(path.read_bytes()).hexdigest()
@@ -1042,7 +1082,8 @@ def main():
                     encoding="utf-8"
                 )
             )
-            for name in PARTS
+            for name in list(PARTS)
+            + (["ctci6"] if "ctci6" in coverage["collections"] else [])
         }
         entries = document["entries"]
         tasks = []
@@ -1069,7 +1110,7 @@ def main():
             report["references"] = [row for group in references for row in group]
             report["envelopes"] = list(pool.map(audit_envelope, entries))
         print(
-            "Completed every syntax, visibility, dependency, reference and formatting check; regenerating all three source parts.",
+            "Completed every syntax, visibility, dependency, reference and formatting check; regenerating every registered source part.",
             flush=True,
         )
         report["generators"] = (

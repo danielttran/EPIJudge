@@ -1,0 +1,19 @@
+{
+  "explanation": "Process denominations one at a time so each combination acquires one canonical construction order. When adding a denomination, reusing the newly updated smaller amount permits any number of that coin. Reversing the nesting to process amounts before coins would count multiple orders of the same collection.",
+  "correctness": "Before processing a coin c, ways[a] counts combinations of a using only earlier denominations. During the increasing amount pass, the old ways[a] counts combinations using no c, while ways[a-c] already counts combinations using earlier coins and any number of c. Appending one c bijectively produces the combinations of a using at least one c. These two groups are disjoint and exhaustive. Initial ways[0]=1 gives the empty combination, and all other entries start at zero. After all four denominations, ways[amount] is the requested count.",
+  "walkthrough": "For 10 cents there are four combinations: ten pennies; one nickel and five pennies; two nickels; or one dime. The nickel pass extends ways[5] into ways[10], allowing two nickels. Neither the order of the pennies nor placing a nickel before versus after them creates another combination.",
+  "walkthroughCase": {
+    "arguments": [
+      10
+    ],
+    "expected": 4
+  },
+  "timeComplexity": "O(d*amount) time for d=4 fixed denominations, hence O(amount).",
+  "spaceComplexity": "O(amount) auxiliary storage for the amount-indexed count array.",
+  "edgeCases": [
+    "Zero and amounts below the smallest non-penny denomination.",
+    "Exact denomination boundaries and combinations using repeated coins.",
+    "The upper amount bound; exact counts remain within signed 32-bit range."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 8.11. No affiliation is implied."
+}

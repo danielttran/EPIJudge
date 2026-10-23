@@ -3,7 +3,7 @@
 from textwrap import indent
 from core import HEADERS, declaration, starter_body
 
-COMBINATORIAL = ("8.4", "8.7", "8.8", "8.9")
+BASICS = ("8.1", "8.5", "8.11")
 TYPES = {
     "csharp": dict(
         i="int", s="string", ai="int[]", sets="List<List<int>>", strings="List<string>"
@@ -27,22 +27,33 @@ TYPES = {
     ),
 }
 
+for _language in TYPES:
+    TYPES[_language]["arrangements"] = TYPES[_language]["sets"]
+    TYPES[_language]["b"] = {
+        "csharp": "bool",
+        "java": "boolean",
+        "cpp": "bool",
+        "python": "bool",
+    }[_language]
+    TYPES[_language]["aai"] = {
+        "csharp": "int[][]",
+        "java": "int[][]",
+        "cpp": "std::vector<std::vector<int>>",
+        "python": "list[list[int]]",
+    }[_language]
+
 
 def header(ref, language):
     return HEADERS[language] + (
         "#include <cstdint>\n"
-        + (
-            "#include <functional>\n#include <utility>\n"
-            if ref in COMBINATORIAL
-            else ""
-        )
+        + ("#include <functional>\n#include <utility>\n" if ref not in BASICS else "")
         if language == "cpp"
         else ""
     )
 
 
 def declare(spec, language, body, class_name="Solution"):
-    if spec["ref"] not in COMBINATORIAL or language == "javascript":
+    if spec["ref"] in BASICS or language == "javascript":
         return declaration(spec, language, body, class_name)
     types = TYPES[language]
     if language == "python":
@@ -61,9 +72,9 @@ def declare(spec, language, body, class_name="Solution"):
         + spec["method"]
         + "("
         + ", ".join(
-            ("const " if language == "cpp" and t in ("s", "ai") else "")
+            ("const " if language == "cpp" and t in ("s", "ai", "aai") else "")
             + types[t]
-            + ("&" if language == "cpp" and t in ("s", "ai") else "")
+            + ("&" if language == "cpp" and t in ("s", "ai", "aai") else "")
             + " "
             + n
             for n, t in spec["params"]
@@ -85,7 +96,7 @@ def declare(spec, language, body, class_name="Solution"):
 
 
 def neutral(spec, language):
-    if spec["ref"] not in COMBINATORIAL:
+    if spec["result"] not in ("sets", "strings", "arrangements"):
         return starter_body(spec, language)
     return {
         "csharp": "return [];",

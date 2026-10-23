@@ -20,7 +20,7 @@ public sealed class InterviewCakeCatalogTests
     public void FrozenInventoryContainsOnlyTheFortyOneVerifiedCodingTasks()
     {
         var all=new ProblemCatalog();Assert.Equal(218,all.Problems.Count(p=>p.Collection=="epi"));Assert.Equal(75,all.Problems.Count(p=>p.Collection=="blind75"));
-        Assert.Equal(41,InterviewCakeCatalog.Problems.Count);Assert.Equal(334,all.Problems.Count);
+        Assert.Equal(41,InterviewCakeCatalog.Problems.Count);Assert.Equal(334 + CtciCatalog.Problems.Count,all.Problems.Count);
         Assert.Equal(Enumerable.Range(1,41),InterviewCakeCatalog.Problems.Select(p=>p.Position));
         foreach(var omitted in new[]{"js-scope","js-whats-wrong","ticket-sales-site","url-shortener","two-egg-problem"})Assert.Null(InterviewCakeCatalog.Find("interviewcake_"+omitted));
         Assert.NotEqual(all.Find("blind75_best_time_to_buy_and_sell_stock")!.Id,all.Find("interviewcake_stock-price")!.Id);

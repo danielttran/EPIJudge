@@ -1556,7 +1556,7 @@
         "reference": "class BankError extends Error { constructor(code) { super(code); this.Code=code; } }\n"
       },
       "python": {
-        "signature": "ThreeStacks(capacity: i); def Push(self, stack: int, value: int) -> None:; def Pop(self, stack: int) -> int:; def Peek(self, stack: int) -> int:; def IsEmpty(self, stack: int) -> bool:; def IsFull(self, stack: int) -> bool:",
+        "signature": "ThreeStacks(capacity: int); def Push(self, stack: int, value: int) -> None:; def Pop(self, stack: int) -> int:; def Peek(self, stack: int) -> int:; def IsEmpty(self, stack: int) -> bool:; def IsFull(self, stack: int) -> bool:",
         "starterCode": "class ThreeStacks:\n    def __init__(self, capacity):\n        pass\n\n    def Push(self, stack: int, value: int) -> None:\n        pass\n\n    def Pop(self, stack: int) -> int:\n        return 0\n\n    def Peek(self, stack: int) -> int:\n        return 0\n\n    def IsEmpty(self, stack: int) -> bool:\n        return False\n\n    def IsFull(self, stack: int) -> bool:\n        return False\n",
         "solutionCode": "class ThreeStacks:\n    def __init__(self, capacity: int):\n        if not 1 <= capacity <= 256:\n            raise BankError(\"capacity\")\n        self._capacity = capacity\n        self._values = [0] * (3 * capacity)\n        self._sizes = [0, 0, 0]\n\n    def _check(self, stack: int):\n        if not 0 <= stack < 3:\n            raise BankError(\"index\")\n\n    def Push(self, stack: int, value: int):\n        self._check(stack)\n        if self._sizes[stack] == self._capacity:\n            raise BankError(\"full\")\n        self._values[stack * self._capacity + self._sizes[stack]] = value\n        self._sizes[stack] += 1\n\n    def Pop(self, stack: int) -> int:\n        self._check(stack)\n        if self._sizes[stack] == 0:\n            raise BankError(\"empty\")\n        self._sizes[stack] -= 1\n        return self._values[stack * self._capacity + self._sizes[stack]]\n\n    def Peek(self, stack: int) -> int:\n        self._check(stack)\n        if self._sizes[stack] == 0:\n            raise BankError(\"empty\")\n        return self._values[stack * self._capacity + self._sizes[stack] - 1]\n\n    def IsEmpty(self, stack: int) -> bool:\n        self._check(stack)\n        return self._sizes[stack] == 0\n\n    def IsFull(self, stack: int) -> bool:\n        self._check(stack)\n        return self._sizes[stack] == self._capacity\n",
         "prefix": "class BankError(Exception):\n    def __init__(self, code: str):\n        super().__init__(code)\n        self.Code = code\nclass IntStack:\n    def __init__(self):\n        self._values = []\n    def Push(self, value: int):\n        self._values.append(value)\n    def Pop(self) -> int:\n        if not self._values:\n            raise BankError('empty')\n        return self._values.pop()\n    def Peek(self) -> int:\n        if not self._values:\n            raise BankError('empty')\n        return self._values[-1]\n    def IsEmpty(self) -> bool:\n        return not self._values\nclass Animal:\n    def __init__(self, id: int, species: str):\n        self._id, self._species = id, species\n    @property\n    def Id(self) -> int:\n        return self._id\n    @property\n    def Species(self) -> str:\n        return self._species\n",
@@ -1780,7 +1780,7 @@
         "reference": "class BankError extends Error { constructor(code) { super(code); this.Code=code; } }\n"
       },
       "python": {
-        "signature": "SetOfStacks(capacity: i); def Push(self, value: int) -> None:; def Pop(self) -> int:; def PopAt(self, index: int) -> int:; def IsEmpty(self) -> bool:",
+        "signature": "SetOfStacks(capacity: int); def Push(self, value: int) -> None:; def Pop(self) -> int:; def PopAt(self, index: int) -> int:; def IsEmpty(self) -> bool:",
         "starterCode": "class SetOfStacks:\n    def __init__(self, capacity):\n        pass\n\n    def Push(self, value: int) -> None:\n        pass\n\n    def Pop(self) -> int:\n        return 0\n\n    def PopAt(self, index: int) -> int:\n        return 0\n\n    def IsEmpty(self) -> bool:\n        return False\n",
         "solutionCode": "class SetOfStacks:\n    def __init__(self, capacity: int):\n        if not 1 <= capacity <= 256:\n            raise BankError(\"capacity\")\n        self._capacity, self._stacks = capacity, []\n\n    def Push(self, value: int):\n        if not self._stacks or len(self._stacks[-1]) == self._capacity:\n            self._stacks.append([])\n        self._stacks[-1].append(value)\n\n    def Pop(self) -> int:\n        if not self._stacks:\n            raise BankError(\"empty\")\n        value = self._stacks[-1].pop()\n        if not self._stacks[-1]:\n            self._stacks.pop()\n        return value\n\n    def PopAt(self, index: int) -> int:\n        if not 0 <= index < len(self._stacks):\n            raise BankError(\"index\")\n        value = self._stacks[index].pop()\n        for i in range(index, len(self._stacks) - 1):\n            self._stacks[i].append(self._stacks[i + 1].pop(0))\n        if not self._stacks[-1]:\n            self._stacks.pop()\n        return value\n\n    def IsEmpty(self) -> bool:\n        return not self._stacks\n",
         "prefix": "class BankError(Exception):\n    def __init__(self, code: str):\n        super().__init__(code)\n        self.Code = code\nclass IntStack:\n    def __init__(self):\n        self._values = []\n    def Push(self, value: int):\n        self._values.append(value)\n    def Pop(self) -> int:\n        if not self._values:\n            raise BankError('empty')\n        return self._values.pop()\n    def Peek(self) -> int:\n        if not self._values:\n            raise BankError('empty')\n        return self._values[-1]\n    def IsEmpty(self) -> bool:\n        return not self._values\nclass Animal:\n    def __init__(self, id: int, species: str):\n        self._id, self._species = id, species\n    @property\n    def Id(self) -> int:\n        return self._id\n    @property\n    def Species(self) -> str:\n        return self._species\n",
@@ -2767,7 +2767,8 @@
       "values contains 0..12 distinct signed 32-bit integers. Equal values are not admitted; each input element represents one set member.",
       "Do not modify the input. Every returned subset must contain only input members, with no repeated member. Different orders of the same members are the same subset, not different answers. For an empty input return one empty subset, not an empty outer collection.",
       "Examples show one deterministic valid ordering; the judge accepts all valid orders.",
-      "Return the concrete lists/vectors in the selected callable signature: a List in C#/Java, an Array in JavaScript, a list in Python, or a vector in C++. A generator or iterator alone is not the return value. Each subset is likewise a concrete integer list/vector."
+      "Return the concrete lists/vectors in the selected callable signature: a List in C#/Java, an Array in JavaScript, a list in Python, or a vector in C++. A generator or iterator alone is not the return value. ",
+      "Each returned subset is a concrete integer list/vector as well; both levels must be materialized."
     ],
     "method": "PowerSet",
     "params": [
@@ -2938,7 +2939,7 @@
     "constraints": [
       "text contains 0..8 distinct lowercase ASCII English letters a..z. It is nonnull. Preserve the input.",
       "Return one empty string for the empty input. Every result has the same length and characters as text; there must be no repeated result. Examples display one valid ordering, and any output order is accepted.",
-      "Return the concrete lists/vectors in the selected callable signature: a List in C#/Java, an Array in JavaScript, a list in Python, or a vector in C++. A generator or iterator alone is not the return value. Each subset is likewise a concrete integer list/vector."
+      "Return the concrete lists/vectors in the selected callable signature: a List in C#/Java, an Array in JavaScript, a list in Python, or a vector in C++. A generator or iterator alone is not the return value. "
     ],
     "method": "PermutationsDistinct",
     "params": [
@@ -3017,7 +3018,7 @@
     "constraints": [
       "text contains 0..8 lowercase ASCII English letters a..z and is nonnull. Repeated letters are allowed; all-distinct input is also valid. Preserve the input.",
       "Every result uses each letter exactly as many times as text. Return one empty string for empty input. Returning duplicate strings and relying on the caller to deduplicate is incorrect.",
-      "Return the concrete lists/vectors in the selected callable signature: a List in C#/Java, an Array in JavaScript, a list in Python, or a vector in C++. A generator or iterator alone is not the return value. Each subset is likewise a concrete integer list/vector."
+      "Return the concrete lists/vectors in the selected callable signature: a List in C#/Java, an Array in JavaScript, a list in Python, or a vector in C++. A generator or iterator alone is not the return value. "
     ],
     "method": "PermutationsWithDuplicates",
     "params": [
@@ -3097,7 +3098,7 @@
     "constraints": [
       "0 <= pairs <= 8. Only the two characters ( and ) are used. Return one empty string for zero pairs.",
       "Every output has length 2*pairs and is properly balanced, and there are no repeated outputs. This is generation of all strings, not a count or validation of one supplied string.",
-      "Return the concrete lists/vectors in the selected callable signature: a List in C#/Java, an Array in JavaScript, a list in Python, or a vector in C++. A generator or iterator alone is not the return value. Each subset is likewise a concrete integer list/vector."
+      "Return the concrete lists/vectors in the selected callable signature: a List in C#/Java, an Array in JavaScript, a list in Python, or a vector in C++. A generator or iterator alone is not the return value. "
     ],
     "method": "GenerateParentheses",
     "params": [

@@ -11,6 +11,7 @@ import argparse
 import base64
 import hashlib
 import json
+import re
 import unicodedata
 from collections import Counter, defaultdict
 from collections.abc import Callable
@@ -123,6 +124,14 @@ def runtime_hashes(root: Path) -> dict[str, str]:
             path for path in (root / collection / "runtime").iterdir() if path.is_file()
         ]
         paths.append(root / collection / "catalog.json")
+    if (root / "ctci6/catalog.json").exists():
+        paths.extend(
+            [
+                root / "ctci6/catalog.json",
+                root / "ctci6/practice/catalog.json",
+                root / "ctci6/practice/coverage.json",
+            ]
+        )
     paths.append(root / "workspace-code/catalog.json")
     return path_hashes(root, paths)
 
@@ -135,6 +144,14 @@ def content_hashes(root: Path) -> dict[str, str]:
     paths += list((root / "workspace-code/parts").glob("*.json"))
     paths += list((root / "scripts/code_workspace").glob("*.py"))
     paths += list((root / "scripts/code_workspace").glob("*.json"))
+    if (root / "ctci6/practice/catalog.json").exists():
+        paths.extend(
+            [
+                root / "ctci6/catalog.json",
+                root / "ctci6/practice/catalog.json",
+                root / "ctci6/practice/coverage.json",
+            ]
+        )
     paths.append(root / "scripts/code_workspace/requirements.txt")
     return path_hashes(root, paths)
 
@@ -371,10 +388,34 @@ def collect_current_rows(
     return accepted, stale_reports
 
 
+def expected_collections(root: Path):
+    result = dict(COLLECTIONS)
+    path = root / "ctci6/catalog.json"
+    if path.exists():
+        rows = read_json(path)
+        require(
+            bool(rows)
+            and all(
+                row.get("collection") == "ctci6"
+                and re.fullmatch(r"ctci6_[1-9]\d*_[1-9]\d*", row["id"])
+                for row in rows
+            )
+            and len({row["id"] for row in rows}) == len(rows),
+            "Invalid reviewed CtCI catalog",
+        )
+        result["ctci6"] = len(rows)
+    return result
+
+
 def inventory(root: Path):
     legacy = read_json(root / "solutions/coverage.json")
+    collections = expected_collections(root)
+    question_count = sum(collections.values())
+    pair_count = question_count * len(LANGUAGES)
+    artifact_count = pair_count * len(ROLES)
     require(
-        legacy.get("questionCount") == 334 and legacy.get("collections") == COLLECTIONS,
+        legacy.get("questionCount") == question_count
+        and legacy.get("collections") == collections,
         "Live inventory must preserve EPI218 + Blind75 75 + InterviewCake41",
     )
     require(
@@ -383,12 +424,12 @@ def inventory(root: Path):
     )
     live = {(row["problemId"], row["language"]): row for row in legacy["entries"]}
     require(
-        len(live) == len(legacy["entries"]) == 1670,
-        "Live inventory must enumerate1670 unique pairs",
+        len(live) == len(legacy["entries"]) == pair_count,
+        "Live inventory must enumerate all registered unique pairs",
     )
     questions = {key[0] for key in live}
     require(
-        len(questions) == 334
+        len(questions) == question_count
         and set(live) == {(pid, lang) for pid in questions for lang in LANGUAGES},
         "Live question/language product is incomplete",
     )
@@ -397,7 +438,7 @@ def inventory(root: Path):
         collections = {live[(pid, lang)]["collection"] for lang in LANGUAGES}
         require(len(collections) == 1, f"Conflicting collection for {pid}")
         counts[next(iter(collections))] += 1
-    require(dict(counts) == COLLECTIONS, "Collection membership differs")
+    require(dict(counts) == collections, "Collection membership differs")
     document = read_json(root / "workspace-code/catalog.json")
     require(
         document.get("schemaVersion") == 1 and document.get("codeFormat") == FORMAT,
@@ -405,16 +446,16 @@ def inventory(root: Path):
     )
     entries = {(row["problemId"], row["language"]): row for row in document["entries"]}
     require(
-        len(entries) == len(document["entries"]) == 1670
+        len(entries) == len(document["entries"]) == pair_count
         and entries.keys() == live.keys(),
         "Callable catalog does not cover every live pair",
     )
     coverage = read_json(root / "workspace-code/coverage.json")
     require(
-        coverage.get("questions") == 334
-        and coverage.get("questionLanguagePairs") == 1670
-        and coverage.get("visibleArtifacts") == 3340
-        and coverage.get("collections") == COLLECTIONS
+        coverage.get("questions") == question_count
+        and coverage.get("questionLanguagePairs") == pair_count
+        and coverage.get("visibleArtifacts") == artifact_count
+        and coverage.get("collections") == collections
         and set(coverage.get("roles", [])) == set(ROLES),
         "Callable coverage totals are incomplete",
     )
@@ -424,9 +465,9 @@ def inventory(root: Path):
     }
     expected = {(pid, lang, role) for pid, lang in entries for role in ROLES}
     require(
-        len(artifacts) == len(coverage["artifacts"]) == 3340
+        len(artifacts) == len(coverage["artifacts"]) == artifact_count
         and artifacts.keys() == expected,
-        "Coverage must enumerate all3340 visible artifacts exactly once",
+        "Coverage must enumerate all registered visible artifacts exactly once",
     )
     for key, artifact in artifacts.items():
         entry = entries[key[:2]]
@@ -498,7 +539,7 @@ def content_evidence(root: Path, entries: dict, artifacts: dict):
         for r in report.get("artifacts", [])
     }
     require(
-        len(rows) == len(report.get("artifacts", [])) == 3340
+        len(rows) == len(report.get("artifacts", [])) == len(artifacts)
         and rows.keys() == artifacts.keys(),
         "Content audit omitted/duplicated a visible artifact",
     )
@@ -551,8 +592,9 @@ def harness_inventory(root: Path, entries: dict):
         for row in report["harnesses"]
     }
     require(
-        len(rows) == len(report["harnesses"]) == 1670 and rows.keys() == entries.keys(),
-        "Compiled harness inventory must contain all1670 current pairs",
+        len(rows) == len(report["harnesses"]) == len(entries)
+        and rows.keys() == entries.keys(),
+        "Compiled harness inventory must contain every registered current pair",
     )
     return (
         sources,
@@ -934,13 +976,13 @@ def accept(root: Path):
         root, live, entries, expected, harnesses
     )
     summary = {
-        "questions": 334,
-        "questionLanguagePairs": 1670,
-        "solutionLanguagePairs": 1670,
-        "starterLanguagePairs": 1670,
-        "visibleArtifacts": 3340,
+        "questions": len({key[0] for key in entries}),
+        "questionLanguagePairs": len(entries),
+        "solutionLanguagePairs": len(entries),
+        "starterLanguagePairs": len(entries),
+        "visibleArtifacts": len(artifacts),
         "languages": list(LANGUAGES),
-        "collections": COLLECTIONS,
+        "collections": expected_collections(root),
         "acceptedCaseEvaluations": sum(
             record["row"]["result"]["Total"]
             for key, record in matrix.items()
@@ -956,12 +998,15 @@ def accept(root: Path):
         "failures": 0,
     }
     require(
-        summary["acceptedCaseEvaluations"] == 2048335,
-        "Full-corpus acceptance count differs from2048335",
+        sum(row["testCount"] for row in live.values() if row["collection"] != "ctci6")
+        == 2048335
+        and summary["acceptedCaseEvaluations"]
+        == sum(row["testCount"] for row in live.values()),
+        "Original corpus must retain 2048335 evaluations and every new collection case must also pass",
     )
     require(
         boundary_summary["acceptedCaseEvaluations"] == len(cases) * len(LANGUAGES)
-        and walkthrough_summary["acceptedCaseEvaluations"] == 1670,
+        and walkthrough_summary["acceptedCaseEvaluations"] == len(entries),
         "Boundary/walkthrough acceptance totals are incomplete",
     )
     require(

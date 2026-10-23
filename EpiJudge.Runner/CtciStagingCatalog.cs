@@ -17,7 +17,7 @@ public sealed record CtciStagingDefinition(string Id, string Ref, string Title, 
     {
         var source = Languages[language];
         var extension = language switch { "csharp" => "cs", "javascript" => "js", "python" => "py", "cpp" => "cpp", _ => "java" };
-        var filename = (language is "csharp" or "java" ? "Solution." : "solution.") + extension;
+        var filename = language == "java" && Result == "state" ? Method + ".java" : (language is "csharp" or "java" ? "Solution." : "solution.") + extension;
         CodeReference[] references = string.IsNullOrWhiteSpace(source.Reference) ? [] :
             [new(Batch == 2 ? "Required linked-list node API" : "Required state and error APIs", source.Reference, Batch == 2 ? ["LinkedListNode"] : [Method, "BankError", "Animal", "IntStack"])];
         return new(Id, language, filename, source.Signature, source.StarterCode,

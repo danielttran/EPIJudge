@@ -1,0 +1,20 @@
+{
+  "explanation": "A differing position must be flipped at least once, while an equal position needs no flip. XOR marks exactly the differing positions, so counting its set bits attains that lower bound. Clearing its lowest set bit counts one difference per iteration without scanning equal positions.",
+  "correctness": "Each XOR bit is one exactly when the two input bits differ. Every such position needs a flip, and flipping exactly those positions transforms the first word into the second. For a nonzero pattern d, d AND (d-1) clears exactly its lowest set bit and leaves every higher set bit unchanged. Thus the loop performs one iteration per required flip and stops after counting them all.",
+  "walkthrough": "For 29 (11101) and 15 (01111), XOR is 10010. Clearing the lowest one changes it to 10000; clearing again yields zero. Two flips suffice and both differing positions necessarily need a flip.",
+  "walkthroughCase": {
+    "arguments": [
+      29,
+      15
+    ],
+    "expected": 2
+  },
+  "timeComplexity": "O(k) bit operations for k differing bits, with k <= 32; O(1) for the fixed 32-bit domain. The loop clears a set bit rather than shifting through all positions.",
+  "spaceComplexity": "O(1) auxiliary space.",
+  "edgeCases": [
+    "Equal inputs require zero flips.",
+    "Zero and -1 differ at all 32 positions.",
+    "The sign bit alone differs between 0 and the minimum signed integer."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 5.6. No affiliation is implied."
+}

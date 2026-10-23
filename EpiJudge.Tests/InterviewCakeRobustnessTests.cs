@@ -14,11 +14,11 @@ public sealed class InterviewCakeRobustnessTests
     public void CollectionInventoryKeepsEveryExistingQuestionAndAllFiveInterfaces()
     {
         var problems = new ProblemCatalog().Problems;
-        Assert.Equal(334, problems.Count);
+        Assert.Equal(334 + CtciCatalog.Problems.Count, problems.Count);
         Assert.Equal(218, problems.Count(problem => problem.Collection == "epi"));
         Assert.Equal(75, problems.Count(problem => problem.Collection == "blind75"));
         Assert.Equal(41, problems.Count(problem => problem.Collection == "interviewcake"));
-        Assert.Equal(334, problems.Select(problem => problem.Id).Distinct().Count());
+        Assert.Equal(334 + CtciCatalog.Problems.Count, problems.Select(problem => problem.Id).Distinct().Count());
         foreach (var definition in InterviewCakeCatalog.Definitions)
         {
             Assert.Equal(new[] { "cpp", "csharp", "java", "javascript", "python" }, definition.Starters.Keys.Order().ToArray());

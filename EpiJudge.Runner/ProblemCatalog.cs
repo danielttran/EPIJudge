@@ -22,7 +22,7 @@ public sealed class ProblemCatalog
 
     public ProblemCatalog()
     {
-        Problems = Curated.Concat(Additional).Concat(Blind75Catalog.Problems).Concat(InterviewCakeCatalog.Problems).ToArray();
+        Problems = Curated.Concat(Additional).Concat(Blind75Catalog.Problems).Concat(InterviewCakeCatalog.Problems).Concat(CtciCatalog.Problems).ToArray();
     }
 
     private static readonly Problem[] Curated =
@@ -97,6 +97,8 @@ public sealed class ProblemCatalog
             return Blind75Catalog.LoadTests(repositoryRoot, problemId, examplesOnly);
         if (InterviewCakeCatalog.Find(problemId) is not null)
             return InterviewCakeCatalog.LoadTests(repositoryRoot, problemId, examplesOnly);
+        if (CtciCatalog.Find(problemId) is not null)
+            return CtciCatalog.LoadTests(repositoryRoot, problemId, examplesOnly);
         var problem = Curated.Concat(Additional).First(p => p.Id == problemId);
         var lines = File.ReadLines(Path.Combine(repositoryRoot, "test_data", problemId + ".tsv")).Skip(1);
         // Run uses a small visible slice of the real corpus. Submit uses every row.

@@ -56,14 +56,14 @@ def judge(base,s,lang,code,mode='submit'):
     return request(base,'/api/submissions','POST',dict(problemId=s['id'],language=lang,code=code,mode=mode))
 def main():
     parser=argparse.ArgumentParser();parser.add_argument('--dll',type=Path,required=True);parser.add_argument('--browser',action='store_true');parser.add_argument('--no-timeouts',action='store_true');args=parser.parse_args()
-    catalog=json.loads((ROOT/'blind75/catalog.json').read_text());by_id={p['id']:p for p in catalog};number=by_id['blind75_number_of_1_bits'];two=by_id['blind75_two_sum']
+    expected_questions=json.loads((ROOT/'solutions/coverage.json').read_text())['questionCount'];catalog=json.loads((ROOT/'blind75/catalog.json').read_text());by_id={p['id']:p for p in catalog};number=by_id['blind75_number_of_1_bits'];two=by_id['blind75_two_sum']
     run_dir=create_run_directory(ROOT)
     with ExitStack() as stack:
         server=Server(args.dll.resolve(),run_dir);stack.callback(server.close);base=server.base
-        problems=api(base,'/api/problems');check(len(problems)==334,'API retains 218 EPI plus 75 Blind and 41 Interview Cake entries');check(sum(p['collection']=='epi' for p in problems)==218,'EPI identity count remains 218')
+        problems=api(base,'/api/problems');check(len(problems)==expected_questions,'API retains 218 EPI plus 75 Blind and 41 Interview Cake entries');check(sum(p['collection']=='epi' for p in problems)==218,'EPI identity count remains 218')
         check([p['title'] for p in problems if p['collection']=='blind75']==(ROOT/'blind75/source-order.txt').read_text().splitlines(),'HTTP catalog has exact Crackr ordering')
-        check(all(set(p['starters'])==set(LANGUAGES) for p in problems),'all 334 API entries expose five starters');check(all('invocation' not in p and 'harnessConfigs' not in p for p in problems),'API omits internal grading configuration')
-        for lang in LANGUAGES:check(len(api(base,'/api/problems?lang='+lang))==334,lang+' catalog query remains supported')
+        check(all(set(p['starters'])==set(LANGUAGES) for p in problems),'all registered API entries expose five starters');check(all('invocation' not in p and 'harnessConfigs' not in p for p in problems),'API omits internal grading configuration')
+        for lang in LANGUAGES:check(len(api(base,'/api/problems?lang='+lang))==expected_questions,lang+' catalog query remains supported')
         for asset in json.loads((ROOT/'blind75/diagrams.json').read_text()):
             status,data,headers=request(base,asset['path']);check(status==200 and data==(ROOT/'EpiJudge.Web/wwwroot'/asset['path'].lstrip('/')).read_bytes(),asset['id']+' local SVG served byte-for-byte')
             check(headers.get('Content-Type','').startswith('image/svg+xml'),'SVG has correct media type')

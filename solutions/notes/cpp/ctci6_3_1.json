@@ -1,0 +1,66 @@
+{
+  "explanation": "Giving stack s the disjoint interval starting at s*capacity makes its next free cell depend only on its size. Separate counters let a pop on one stack leave the other two stacks' payloads and tops unchanged.",
+  "correctness": "For each stack s, its occupied prefix of its reserved interval contains exactly its current bottom-to-top sequence, and size[s] is its length. Push writes at the next free offset and increases only that size. Pop reads the last occupied offset and decreases only that size; Peek reads without changing it. The intervals are disjoint, so these changes cannot affect another stack. Checks occur before writes, preserving state on every error.",
+  "walkthrough": "With capacity 2, push 8 then 3 onto stack 0 and push 7 onto stack 2. Stack 0 is full and its Peek returns 3; stack 2's Peek returns 7. Popping stack 0 returns 3 and leaves 8 at its top. A push to a full stack fails even if stack 1 is empty, because this variant reserves fixed slots.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        "ThreeStacks",
+        "Push",
+        "Push",
+        "Push",
+        "IsFull",
+        "Peek",
+        "Pop",
+        "Peek"
+      ],
+      [
+        [
+          2
+        ],
+        [
+          0,
+          8
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          2,
+          7
+        ],
+        [
+          0
+        ],
+        [
+          2
+        ],
+        [
+          0
+        ],
+        [
+          0
+        ]
+      ]
+    ],
+    "expected": [
+      null,
+      null,
+      null,
+      null,
+      true,
+      7,
+      3,
+      8
+    ]
+  },
+  "timeComplexity": "O(1) time per stack operation; construction takes O(capacity) time to initialize storage.",
+  "spaceComplexity": "O(capacity) storage for the single 3*capacity payload array and constant-sized counters.",
+  "edgeCases": [
+    "Capacity one; all three stacks used in interleaved order.",
+    "Full/empty errors followed by successful operations proving unchanged state.",
+    "Negative/too-large stack numbers; minimum and maximum integer payloads."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 3.1. No affiliation is implied."
+}

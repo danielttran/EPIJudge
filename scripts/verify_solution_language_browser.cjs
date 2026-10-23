@@ -13,7 +13,8 @@ const {
 } = require("./verify_theme_browser.cjs");
 const base = process.argv[2];
 if (!base) throw new Error("Pass an isolated local server URL.");
-const output = path.resolve(__dirname, "../.epi-runs/solution-language");
+const problemId = process.argv[3] || "count_bits";
+const output = path.resolve(__dirname, "../.epi-runs/solution-language" + (process.argv[3] ? "-" + problemId : ""));
 fs.mkdirSync(output, { recursive: true });
 const ownHash = () =>
   crypto.createHash("sha256").update(fs.readFileSync(__filename)).digest("hex");
@@ -64,7 +65,16 @@ async function main() {
       });
       const page = await context.newPage();
       page.on("pageerror", (error) => report.errors.push(String(error)));
-      await page.goto(base + "/practice?problem=count_bits");
+      await page.goto(base + "/practice?problem=" + problemId);
+      if (problemId.startsWith("ctci6_")) {
+        await page.getByRole("button", { name: "Toggle problem list" }).click();
+        await page.getByRole("combobox", { name: "Filter by topic or study plan" }).selectOption("collection:ctci6");
+        const expected = (await (await page.request.get(base + "/api/problems")).json()).filter(p => p.collection === "ctci6");
+        check(await page.locator("#problem-library .problem-link").count() === expected.length, profile.id + " CtCI registered count");
+        await page.getByRole("button", { name: /^C8\.11\. Coins/ }).scrollIntoViewIfNeeded();
+        await inspect(page, "ctci-library-" + profile.id, true);
+        await page.getByRole("button", { name: "Close problem list" }).click();
+      }
       await page
         .getByRole("combobox", { name: "Select programming language" })
         .selectOption("csharp");
@@ -80,7 +90,7 @@ async function main() {
       const saved = page.waitForResponse(
         (response) =>
           response.request().method() === "PUT" &&
-          response.url().includes("/count_bits/csharp"),
+          response.url().includes("/" + problemId + "/csharp"),
       );
       await page.keyboard.press("Control+V");
       await saved;
@@ -118,7 +128,7 @@ async function main() {
           await code.waitFor();
           const solution = await (
             await page.request.get(
-              base + "/api/problems/count_bits/solution?language=" + language,
+              base + "/api/problems/" + problemId + "/solution?language=" + language,
             )
           ).json();
           assert.equal(
@@ -128,6 +138,7 @@ async function main() {
           );
           if (solution.walkthrough)
             await page
+              .getByRole("region", { name: "Walkthrough", exact: true })
               .getByText(solution.walkthrough, { exact: true })
               .waitFor({ state: "attached" });
           check(
@@ -143,8 +154,17 @@ async function main() {
           await selector.scrollIntoViewIfNeeded();
           await inspect(
             page,
-            "solution-picker-" + profile.id + "-" + theme + "-" + language,
+            "solution-picker-" + problemId + "-" + profile.id + "-" + theme + "-" + language,
           );
+          if (problemId.startsWith("ctci6_")) {
+            const reference=page.locator("#solution-panel .provided-code-reference");
+            if (await reference.count()) {
+              await reference.locator("summary").click();
+              await reference.locator(".provided-reference-code").first().scrollIntoViewIfNeeded();
+              await inspect(page, "ctci-provided-"+profile.id+"-"+theme+"-"+language);
+              await reference.locator("summary").click();
+            }
+          }
         }
       }
       await selector.focus();

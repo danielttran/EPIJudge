@@ -1,0 +1,32 @@
+{
+  "explanation": "Carry propagation starts at the units column. Reverse-order lists already expose that column first. Forward-order lists require access from their tails, so stacks of digits provide the same units-first processing without modifying the inputs. Each column contributes sum % 10 and a carry sum / 10 to the next column.",
+  "correctness": "After processing k low-order columns, the emitted digits equal the low k decimal digits of the operand sum, and the carry is exactly the amount owed to the next column. Adding the next available digits (or zero for an exhausted operand) preserves this invariant by quotient/remainder division by ten. Processing a final carry completes the sum. Appending in reverse-order mode or prepending in forward-order mode places each generated digit in the declared output order. Every output node is newly allocated and input links are only read.",
+  "walkthrough": "For forward-order [4,9] and [5,8], the operands are 49 and 58. The units column gives 9+8=17, so emit 7 with carry 1. The tens column gives 4+5+1=10, so emit 0 and carry 1. Prepending the final carry gives [1,0,7]. The same sum in reverse order uses [9,4] and [8,5] and returns [7,0,1].",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        4,
+        9
+      ],
+      [
+        5,
+        8
+      ],
+      true
+    ],
+    "expected": [
+      1,
+      0,
+      7
+    ]
+  },
+  "timeComplexity": "O(n + m) time for operand lengths n and m, including a possible final carry.",
+  "spaceComplexity": "O(1) auxiliary space in reverse-order mode, excluding the new result; O(n + m) auxiliary space for digit stacks in forward-order mode. The result has at most max(n,m)+1 nodes.",
+  "edgeCases": [
+    "Both empty; one empty; single-digit zero.",
+    "A carry propagating through all columns adds a leading digit.",
+    "Unequal lengths and both digit orders.",
+    "Input identity and disjoint newly allocated result nodes."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 2.5. No affiliation is implied."
+}

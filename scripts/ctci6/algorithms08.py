@@ -69,7 +69,7 @@ return ways[amount]"""
     raise ValueError(ref)
 
 
-def body(ref, language):
+def previous(ref, language):
     if ref in ("8.1", "8.5", "8.11"):
         return basic(ref, language)
     if ref == "8.4":
@@ -235,3 +235,200 @@ return result"""
         else f"std::function<void({'int,int' if ref == '8.9' else 'int'})> visit=[&]({signature}){{{logic}}};visit({call});"
     )
     return setup + result + helper + "return result;"
+
+
+def body(ref, language):
+    if ref not in ("8.3", "8.12", "8.13", "8.14"):
+        return previous(ref, language)
+    if ref == "8.3":
+        if language == "python":
+            return """if distinctValues:
+    low, high = 0, len(values) - 1
+    while low <= high:
+        middle = low + (high - low) // 2
+        if values[middle] == middle:
+            return middle
+        if values[middle] > middle:
+            high = middle - 1
+        else:
+            low = middle + 1
+    return -1
+def search(low, high):
+    if low > high:
+        return -1
+    middle = low + (high - low) // 2
+    value = values[middle]
+    if value == middle:
+        return middle
+    left = search(low, min(middle - 1, value))
+    return left if left != -1 else search(max(middle + 1, value), high)
+return search(0, len(values) - 1)"""
+        if language == "javascript":
+            return "if(distinctValues){let low=0,high=values.length-1;while(low<=high){const middle=low+Math.floor((high-low)/2);if(values[middle]===middle)return middle;if(values[middle]>middle)high=middle-1;else low=middle+1;}return -1;}function search(low,high){if(low>high)return -1;const middle=low+Math.floor((high-low)/2),value=values[middle];if(value===middle)return middle;const left=search(low,Math.min(middle-1,value));return left!==-1?left:search(Math.max(middle+1,value),high);}return search(0,values.length-1);"
+        size = (
+            "values.Length"
+            if language == "csharp"
+            else "values.length"
+            if language == "java"
+            else "static_cast<int>(values.size())"
+        )
+        minimum = (
+            "Math.Min"
+            if language == "csharp"
+            else "Math.min"
+            if language == "java"
+            else "std::min"
+        )
+        maximum = (
+            "Math.Max"
+            if language == "csharp"
+            else "Math.max"
+            if language == "java"
+            else "std::max"
+        )
+        binary = f"if(distinctValues){{int low=0,high={size}-1;while(low<=high){{int middle=low+(high-low)/2;if(values[middle]==middle)return middle;if(values[middle]>middle)high=middle-1;else low=middle+1;}}return -1;}}"
+        name = "search" if language == "cpp" else "Search"
+        logic = f"if(low>high)return -1;int middle=low+(high-low)/2,value=values[middle];if(value==middle)return middle;int left={name}(low,{minimum}(middle-1,value));return left!=-1?left:{name}({maximum}(middle+1,value),high);"
+        helper = (
+            f"int Search(int low,int high){{{logic}}}return Search(0,{size}-1);"
+            if language == "csharp"
+            else f"class Finder {{int Search(int low,int high){{{logic}}}}}return new Finder().Search(0,{size}-1);"
+            if language == "java"
+            else f"std::function<int(int,int)> search=[&](int low,int high){{{logic}}};return search(0,{size}-1);"
+        )
+        return binary + helper
+    if ref == "8.12":
+        if language == "python":
+            return """board = [0] * 8
+result = []
+def visit(row, used_columns, used_down, used_up):
+    if row == 8:
+        result.append(board.copy())
+        return
+    for column in range(8):
+        col_bit = 1 << column
+        down_bit = 1 << (row - column + 7)
+        up_bit = 1 << (row + column)
+        if used_columns & col_bit or used_down & down_bit or used_up & up_bit:
+            continue
+        board[row] = column
+        visit(row + 1, used_columns | col_bit, used_down | down_bit, used_up | up_bit)
+visit(0, 0, 0, 0)
+return result"""
+        if language == "javascript":
+            return "const board=Array(8).fill(0),result=[];function visit(row,usedColumns,usedDown,usedUp){if(row===8){result.push(board.slice());return;}for(let column=0;column<8;++column){const colBit=1<<column,downBit=1<<(row-column+7),upBit=1<<(row+column);if((usedColumns&colBit)||(usedDown&downBit)||(usedUp&upBit))continue;board[row]=column;visit(row+1,usedColumns|colBit,usedDown|downBit,usedUp|upBit);}}visit(0,0,0,0);return result;"
+        setup = (
+            "int[] board=new int[8];var result=new List<List<int>>();"
+            if language == "csharp"
+            else "int[] board=new int[8];List<List<Integer>> result=new ArrayList<>();"
+            if language == "java"
+            else "std::vector<int> board(8);std::vector<std::vector<int>> result;"
+        )
+        emit = (
+            "result.Add(new List<int>(board));"
+            if language == "csharp"
+            else "var copy=new ArrayList<Integer>();for(int column:board)copy.add(column);result.add(copy);"
+            if language == "java"
+            else "result.push_back(board);"
+        )
+        name = "visit" if language == "cpp" else "Visit"
+        logic = f"if(row==8){{{emit}return;}}for(int column=0;column<8;++column){{int colBit=1<<column,downBit=1<<(row-column+7),upBit=1<<(row+column);if((usedColumns&colBit)!=0 || (usedDown&downBit)!=0 || (usedUp&upBit)!=0)continue;board[row]=column;{name}(row+1,usedColumns|colBit,usedDown|downBit,usedUp|upBit);}}"
+        signature = "int row,int usedColumns,int usedDown,int usedUp"
+        helper = (
+            f"void Visit({signature}){{{logic}}}Visit(0,0,0,0);"
+            if language == "csharp"
+            else f"class Search {{void Visit({signature}){{{logic}}}}}new Search().Visit(0,0,0,0);"
+            if language == "java"
+            else f"std::function<void(int,int,int,int)> visit=[&]({signature}){{{logic}}};visit(0,0,0,0);"
+        )
+        return setup + helper + "return result;"
+    if ref == "8.13":
+        if language == "python":
+            return """order = sorted(range(len(boxes)), key=lambda index: boxes[index][0])
+heights = [0] * len(order)
+best = 0
+for position, current in enumerate(order):
+    heights[position] = boxes[current][1]
+    for earlier in range(position):
+        top = order[earlier]
+        if all(boxes[top][dimension] < boxes[current][dimension] for dimension in range(3)):
+            heights[position] = max(heights[position], boxes[current][1] + heights[earlier])
+    best = max(best, heights[position])
+return best"""
+        if language == "javascript":
+            return "const order=Array.from({length:boxes.length},(_,i)=>i).sort((a,b)=>boxes[a][0]-boxes[b][0]),heights=Array(boxes.length).fill(0);let best=0;for(let i=0;i<order.length;++i){const current=order[i];heights[i]=boxes[current][1];for(let j=0;j<i;++j){const top=order[j];if(boxes[top][0]<boxes[current][0]&&boxes[top][1]<boxes[current][1]&&boxes[top][2]<boxes[current][2])heights[i]=Math.max(heights[i],boxes[current][1]+heights[j]);}best=Math.max(best,heights[i]);}return best;"
+        size = (
+            "boxes.Length"
+            if language == "csharp"
+            else "boxes.length"
+            if language == "java"
+            else "static_cast<int>(boxes.size())"
+        )
+        setup = (
+            "int[] order=new int[n],heights=new int[n];for(int i=0;i<n;++i)order[i]=i;Array.Sort(order,(a,b)=>boxes[a][0].CompareTo(boxes[b][0]));"
+            if language == "csharp"
+            else "Integer[] order=new Integer[n];int[] heights=new int[n];for(int i=0;i<n;++i)order[i]=i;Arrays.sort(order,(a,b)->Integer.compare(boxes[a][0],boxes[b][0]));"
+            if language == "java"
+            else "std::vector<int> order(n),heights(n);for(int i=0;i<n;++i)order[i]=i;std::sort(order.begin(),order.end(),[&](int a,int b){return boxes[a][0]<boxes[b][0];});"
+        )
+        maximum = (
+            "Math.Max"
+            if language == "csharp"
+            else "Math.max"
+            if language == "java"
+            else "std::max"
+        )
+        return f"int n={size};{setup}int best=0;for(int i=0;i<n;++i){{int current=order[i];heights[i]=boxes[current][1];for(int j=0;j<i;++j){{int top=order[j];if(boxes[top][0]<boxes[current][0] && boxes[top][1]<boxes[current][1] && boxes[top][2]<boxes[current][2])heights[i]={maximum}(heights[i],boxes[current][1]+heights[j]);}}best={maximum}(best,heights[i]);}}return best;"
+    if ref == "8.14":
+        if language == "python":
+            return """if not expression:
+    return 0
+count = (len(expression) + 1) // 2
+truth = [[0] * count for _ in range(count)]
+falsity = [[0] * count for _ in range(count)]
+for index in range(count):
+    truth[index][index] = 1 if expression[2 * index] == '1' else 0
+    falsity[index][index] = 1 - truth[index][index]
+for length in range(2, count + 1):
+    for low in range(count - length + 1):
+        high = low + length - 1
+        for split in range(low, high):
+            lt, lf = truth[low][split], falsity[low][split]
+            rt, rf = truth[split + 1][high], falsity[split + 1][high]
+            total = (lt + lf) * (rt + rf)
+            operation = expression[2 * split + 1]
+            true_count = lt * rt if operation == '&' else total - lf * rf if operation == '|' else lt * rf + lf * rt
+            truth[low][high] += true_count
+            falsity[low][high] += total - true_count
+return truth[0][count - 1] if desired else falsity[0][count - 1]"""
+        if language == "javascript":
+            return 'if(expression.length===0)return 0;const count=(expression.length+1)/2,truth=Array.from({length:count},()=>Array(count).fill(0)),falsity=Array.from({length:count},()=>Array(count).fill(0));for(let i=0;i<count;++i){truth[i][i]=expression[2*i]==="1"?1:0;falsity[i][i]=1-truth[i][i];}for(let length=2;length<=count;++length){for(let low=0;low+length<=count;++low){const high=low+length-1;for(let split=low;split<high;++split){const lt=truth[low][split],lf=falsity[low][split],rt=truth[split+1][high],rf=falsity[split+1][high],total=(lt+lf)*(rt+rf),operation=expression[2*split+1],trueCount=operation==="&"?lt*rt:operation==="|"?total-lf*rf:lt*rf+lf*rt;truth[low][high]+=trueCount;falsity[low][high]+=total-trueCount;}}}return desired?truth[0][count-1]:falsity[0][count-1];'
+        size = (
+            "expression.Length"
+            if language == "csharp"
+            else "expression.length()"
+            if language == "java"
+            else "static_cast<int>(expression.size())"
+        )
+        tables = (
+            "int[,] truth=new int[count,count],falsity=new int[count,count];"
+            if language == "csharp"
+            else "int[][] truth=new int[count][count],falsity=new int[count][count];"
+            if language == "java"
+            else "std::vector<std::vector<int>> truth(count,std::vector<int>(count)),falsity(count,std::vector<int>(count));"
+        )
+        at = lambda table, i, j: (
+            table + "[" + i + "," + j + "]"
+            if language == "csharp"
+            else table + "[" + i + "][" + j + "]"
+        )
+        char = lambda index: (
+            "expression.charAt(" + index + ")"
+            if language == "java"
+            else "expression[" + index + "]"
+        )
+        return f"""if({size}==0)return 0;int count=({size}+1)/2;{tables}
+for(int i=0;i<count;++i){{{at("truth", "i", "i")}={char("2*i")}=='1'?1:0;{at("falsity", "i", "i")}=1-{at("truth", "i", "i")};}}
+for(int length=2;length<=count;++length){{for(int low=0;low+length<=count;++low){{int high=low+length-1;for(int split=low;split<high;++split){{int lt={at("truth", "low", "split")},lf={at("falsity", "low", "split")},rt={at("truth", "split+1", "high")},rf={at("falsity", "split+1", "high")},total=(lt+lf)*(rt+rf);char operation={char("2*split+1")};int trueCount=operation=='&'?lt*rt:operation=='|'?total-lf*rf:lt*rf+lf*rt;{at("truth", "low", "high")}+=trueCount;{at("falsity", "low", "high")}+=total-trueCount;}}}}}}
+return desired?{at("truth", "0", "count-1")}:{at("falsity", "0", "count-1")};"""
+    raise ValueError(ref)

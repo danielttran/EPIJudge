@@ -35,3 +35,11 @@ it('keeps unknown registered collection names distinct from EPI', () => {
   ]);
   expect(problemNumber(problem('custom'), 11)).toBe('12');
 });
+
+it('uses CtCI chapter references and counts only registered coding entries', () => {
+  const ctci = { ...problem('ctci6', 37), id: 'ctci6_8_11' } as Problem;
+  expect(collectionName('ctci6')).toBe('CtCI 6th Edition');
+  expect(problemNumber(ctci, 370, true)).toBe('C8.11');
+  expect(problemNumber({ ...ctci, id: 'ctci6_1_2' }, 10)).toBe('C1.2');
+  expect(availableCollections([ctci])).toEqual([{ id: 'ctci6', name: 'CtCI 6th Edition', count: 1 }]);
+});

@@ -1,0 +1,19 @@
+{
+  "explanation": "A run's contribution is determined when its right boundary is reached. Collecting each contribution once preserves order and avoids repeatedly rescanning earlier characters. Comparing the final lengths prevents compression from expanding short runs.",
+  "correctness": "At each run boundary the scan has found exactly one maximal contiguous block of the current letter. Appending its letter and length represents precisely that block; blocks partition the input, so concatenating their encodings produces the required candidate. Returning that candidate only for a strict length reduction implements the final selection rule, including ties.",
+  "walkthrough": "For 'zzzzQQQQQx', the runs are z:4, Q:5, x:1. Their encodings form 'z4Q5x1', length 6 instead of 10, so it is returned. For 'zz', the candidate 'z2' ties length 2, so the original 'zz' is returned.",
+  "walkthroughCase": {
+    "arguments": [
+      "zzzzQQQQQx"
+    ],
+    "expected": "z4Q5x1"
+  },
+  "timeComplexity": "O(n) time to scan and build the candidate, where n is the input length. Counts have at most five digits under this bank's bound.",
+  "spaceComplexity": "O(n) auxiliary/output-building space for the candidate.",
+  "edgeCases": [
+    "Empty string and one-letter input.",
+    "A length tie preserves the original.",
+    "Runs longer than nine need multidigit counts; uppercase and lowercase form separate runs."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 1.6. No affiliation is implied."
+}

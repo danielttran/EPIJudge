@@ -45,8 +45,8 @@ public static class CallableCodeCatalog
             new JsonSerializerOptions { PropertyNameCaseInsensitive = true })
             ?? throw new InvalidOperationException("The callable code catalog is invalid.");
         if (document.SchemaVersion != 1 || document.CodeFormat != CallableFormat ||
-            document.Entries.Length != 334 * 5)
-            throw new InvalidOperationException("Callable code must cover all 334 questions in all five languages.");
+            document.Entries.Length != new ProblemCatalog().Problems.Count * SolutionCatalog.Languages.Length)
+            throw new InvalidOperationException("Callable code must cover every registered question in all five languages.");
         var result = new Dictionary<(string, string), CallableCodeDefinition>();
         foreach (var item in document.Entries)
         {
@@ -58,7 +58,7 @@ public static class CallableCodeCatalog
                 !result.TryAdd((item.ProblemId, item.Language), item))
                 throw new InvalidOperationException("Invalid callable code metadata: " + item.ProblemId + "/" + item.Language);
         }
-        if (result.Keys.Select(key => key.Item1).Distinct().Count() != 334 ||
+        if (!result.Keys.Select(key => key.Item1).ToHashSet().SetEquals(new ProblemCatalog().Problems.Select(problem => problem.Id)) ||
             result.Keys.GroupBy(key => key.Item1).Any(group => group.Count() != 5))
             throw new InvalidOperationException("Incomplete callable code coverage.");
         return result;

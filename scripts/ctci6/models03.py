@@ -151,7 +151,7 @@ def declare(spec, language, code, class_name="Solution"):
         cls
         + "("
         + ", ".join(
-            n + ": " + t
+            n + ": " + type_name(t, language)
             if language == "python"
             else n
             if language == "javascript"

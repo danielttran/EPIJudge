@@ -60,6 +60,9 @@ def main():
     parser.add_argument("--dll", type=Path, required=True)
     parser.add_argument("--browser", action="store_true")
     args = parser.parse_args()
+    manifest = json.loads((ROOT / "solutions/coverage.json").read_text())
+    question_count = manifest["questionCount"]
+    pair_count = question_count * len(LANGUAGES)
     artifacts = ROOT / ".epi-runs"
     artifacts.mkdir(parents=True, exist_ok=True)
     directory = Path(tempfile.mkdtemp(prefix="solutions-http-", dir=artifacts))
@@ -86,8 +89,8 @@ def main():
         }
         check(
             callable_document["codeFormat"] == "callable-v1"
-            and len(callable_entries) == len(callable_by_scope) == 1670,
-            "callable inventory has 1670 unique reviewed question/language pairs",
+            and len(callable_entries) == len(callable_by_scope) == pair_count,
+            f"callable inventory has {pair_count} unique reviewed question/language pairs",
         )
         by_scope = {
             (entry["problemId"], entry["language"]): {
@@ -103,15 +106,18 @@ def main():
             for entry in entries
         }
         check(
-            len(entries) == len(by_scope) == 1670,
-            "displayed inventory has 1670 unique question/language solutions",
+            len(entries) == len(by_scope) == pair_count,
+            f"displayed inventory has {pair_count} unique question/language solutions",
         )
         with ExitStack() as stack:
             server = Server(args.dll.resolve(), directory)
             stack.callback(server.close)
             base = server.base
             problems = get(base, "/api/problems")
-            check(len(problems) == 334, "API exposes all 334 coding questions")
+            check(
+                len(problems) == question_count,
+                f"API exposes all {question_count} coding questions",
+            )
             check(
                 sum(p["collection"] == "epi" for p in problems) == 218,
                 "all 218 EPI questions remain",
@@ -222,7 +228,7 @@ def main():
             after = get(base, "/api/practice/export")
             check(
                 before == after,
-                "reading all 1670 solutions creates no drafts, attempts or progress",
+                f"reading all {pair_count} solutions creates no drafts, attempts or progress",
             )
             for problem_id in [
                 "not-a-question",

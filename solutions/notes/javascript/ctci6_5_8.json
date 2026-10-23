@@ -1,0 +1,29 @@
+{
+  "explanation": "Whole interior bytes correspond to eight pixels to set, while only the first and last bytes need partial masks. Intersecting the start and end masks also handles a line contained in one byte. OR preserves every preexisting one outside and inside the line.",
+  "correctness": "For each affected byte, the start bound is x1 mod 8 only at the first byte and zero otherwise; the end bound is x2 mod 8 only at the last byte and seven otherwise. The two masks have ones from the start rightward and from the end leftward. Their intersection therefore selects exactly the line pixels within that byte, including when both endpoints share it. OR sets these bits without clearing any original bit. Only bytes on row y between the endpoint bytes are written, so all other pixels and buffer length remain unchanged.",
+  "walkthrough": "On a two-byte row initially [128,1], draw x=3 through x=10. The first-byte mask is 00011111 and the last-byte mask is 11100000. OR gives [159,225]. The old pixel at x=0 and the old pixel at x=15 remain set. A line x=3..5 in one byte uses the intersection 00011100, not the union of the two partial masks.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        128,
+        1
+      ],
+      16,
+      3,
+      10,
+      0
+    ],
+    "expected": [
+      159,
+      225
+    ]
+  },
+  "timeComplexity": "O(1+floor(x2/8)-floor(x1/8)) time, one write per affected byte; independent of the rest of the screen size.",
+  "spaceComplexity": "O(1) auxiliary space. The judge display copies the final buffer for reporting, which is not storage used by the submitted algorithm.",
+  "edgeCases": [
+    "One pixel and both endpoints in a single byte.",
+    "Exact whole-byte endpoints and partial edges across multiple bytes.",
+    "Nonzero initial screen, repeated drawing, first/last rows and pixels."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 5.8. No affiliation is implied."
+}

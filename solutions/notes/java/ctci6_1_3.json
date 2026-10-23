@@ -1,0 +1,34 @@
+{
+  "explanation": "Each replacement expands one cell to three. Filling from the right keeps writes at or beyond the next unread character, so expansion cannot destroy text that still needs processing.",
+  "correctness": "Initially the write position is the last cell of the required output. Before each backward step, the completed output suffix is correct and all unread original characters remain intact. Copying a nonspace consumes one input and one output cell; encoding a space consumes one input and three output cells. The remaining output length equals the remaining input length plus twice its space count, so writes never overwrite an earlier unread cell. Exhaustion produces exactly the encoded buffer.",
+  "walkthrough": "For buffer ['g','o',' ','!','?','?'] and trueLength=4, write ! into cell 5, then write %,2,0 into cells 2..4, then copy o and g into cells 1 and 0. The final buffer is ['g','o','%','2','0','!']. Spare '?' values never become text.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        "g",
+        "o",
+        " ",
+        "!",
+        "?",
+        "?"
+      ],
+      4
+    ],
+    "expected": [
+      "g",
+      "o",
+      "%",
+      "2",
+      "0",
+      "!"
+    ]
+  },
+  "timeComplexity": "O(n) time for the original prefix length n: one backward pass writes n + 2*s cells, where s <= n is the number of spaces. Exact capacity supplies the initial write position without a counting pass.",
+  "spaceComplexity": "O(1) auxiliary space; the provided buffer is modified in place.",
+  "edgeCases": [
+    "Empty and space-free buffers.",
+    "Leading, trailing, adjacent, and all-space text.",
+    "Spare cells are not necessarily spaces; trueLength is authoritative."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 1.3. No affiliation is implied."
+}

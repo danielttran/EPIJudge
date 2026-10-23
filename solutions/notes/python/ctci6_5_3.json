@@ -1,0 +1,19 @@
+{
+  "explanation": "A bit interval can become all ones with at most one flip exactly when it contains at most one zero. Maintaining the longest valid window ending at each bit therefore examines every candidate without constructing 32 modified words.",
+  "correctness": "Before recording each window length, remove leftmost bits until the window contains at most one zero. Its left boundary is the earliest boundary that makes this window valid: an earlier discarded boundary would retain two zeros. Thus it is the longest valid interval ending at that right boundary. Every obtainable run is such a valid interval and has some right endpoint, so taking the maximum over all 32 endpoints gives exactly the best run. Negative numbers are read through their fixed 32-bit patterns, with logical bit extraction.",
+  "walkthrough": "The low pattern 11011101111 contains two zeros separating runs of lengths 2,3,4. Flipping the zero between the final runs joins 3+1+4=8 ones. Joining the first two gives only 6. The sliding window discards enough of the first run when the second zero arrives, rather than allowing both zeros to be flipped.",
+  "walkthroughCase": {
+    "arguments": [
+      1775
+    ],
+    "expected": 8
+  },
+  "timeComplexity": "O(w) time for word width w=32: each boundary advances at most w times, hence O(1) in this fixed-width domain.",
+  "spaceComplexity": "O(1) auxiliary space for two boundaries, zero count and maximum.",
+  "edgeCases": [
+    "Zero gives one; minus one gives 32.",
+    "Two adjacent zeros cannot both be flipped.",
+    "The sign bit and runs touching either word boundary."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 5.3. No affiliation is implied."
+}

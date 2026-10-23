@@ -308,19 +308,25 @@ def main():
         document = json.loads(
             (ROOT / "workspace-code/catalog.json").read_text(encoding="utf-8")
         )
+        manifest = json.loads((ROOT / "solutions/coverage.json").read_text())
+        expected_questions = manifest["questionCount"]
+        expected_pairs = expected_questions * len(LANGUAGES)
         entries = document["entries"]
         by_scope = {(entry["problemId"], entry["language"]): entry for entry in entries}
         check(
             document["codeFormat"] == "callable-v1"
-            and len(entries) == len(by_scope) == 1670,
-            "catalog enumerates all 1670 callable contracts",
+            and len(entries) == len(by_scope) == expected_pairs,
+            f"catalog enumerates all {expected_pairs} callable contracts",
         )
         with ExitStack() as stack:
             server = Server(args.dll.resolve(), directory)
             stack.callback(server.close)
             base = server.base
             problems, _ = api(base, "/api/problems")
-            check(len(problems) == 334, "all 334 runnable questions remain")
+            check(
+                len(problems) == expected_questions,
+                f"all {expected_questions} runnable questions remain",
+            )
             check(
                 {
                     collection: sum(p["collection"] == collection for p in problems)
@@ -418,20 +424,23 @@ def main():
                             }
                         )
             check(
-                len(report["artifacts"]) == 3340,
-                "all 3340 visible code payloads checked without sampling",
+                len(report["artifacts"]) == expected_pairs * 2,
+                f"all {expected_pairs * 2} visible code payloads checked without sampling",
             )
             after, _ = api(base, "/api/practice/export")
             check(
                 before == after,
                 "reading all clean starters and solutions does not write drafts or history",
             )
-            print("PASS callable HTTP all 3340 visible source payloads", flush=True)
+            print(
+                f"PASS callable HTTP all {expected_pairs * 2} visible source payloads",
+                flush=True,
+            )
 
             for language in LANGUAGES:
                 language_catalog, _ = api(base, "/api/problems?lang=" + language)
                 check(
-                    len(language_catalog) == 334,
+                    len(language_catalog) == expected_questions,
                     language + " legacy language query remains supported",
                 )
                 check(
@@ -882,7 +891,7 @@ def main():
             json.dumps(report, indent=2) + "\n", encoding="utf-8", newline="\n"
         )
     print(
-        f"PASS callable HTTP {len(checks)} checks; all 3340 payloads; browser={args.browser}; timeoutsSkipped={args.no_timeouts}",
+        f"PASS callable HTTP {len(checks)} checks; all {expected_pairs * 2} payloads; browser={args.browser}; timeoutsSkipped={args.no_timeouts}",
         flush=True,
     )
 

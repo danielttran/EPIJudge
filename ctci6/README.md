@@ -1,6 +1,6 @@
 # Cracking the Coding Interview, sixth edition
 
-This collection is being authored. **It is not yet part of the runnable website.**
+This collection is being authored. **37 verified coding exercises are registered in the local website; the collection has not been pushed.**
 The advertised 189 is a book question count, not a count of executable exercises.
 
 `inventory.json` records numbered references established from the author's public
@@ -61,6 +61,7 @@ exercises, three initial bit exercises, four further bit exercises, three initia
 recursion/DP exercises, and four combinatorial generation exercises. Each batch passed both submission formats. The individual
 reports under `runtime/application-validation*.json` and `checkpoint.json` retain
 these scopes. They are not one final combined current-build acceptance run.
-Final collection integration, remaining known content/classifications, whole-bank
-runs, rendered checks and publication remain pending. Staging does not change the
-live library, progress or drafts.
+The verified 37-exercise subset is integrated locally into a 371-problem bank.
+Remaining known content/classifications, final whole-bank runs and publication
+remain pending. Local integration preserves existing progress and drafts.
+See `workflow-review.md` for the measured workflow diagnosis and next batch gates.

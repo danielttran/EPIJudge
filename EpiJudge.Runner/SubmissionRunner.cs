@@ -37,6 +37,8 @@ public sealed class SubmissionRunner(string repositoryRoot) : ISubmissionRunner
                 return await Blind75SubmissionRunner.RunAsync(repositoryRoot, directory, id, problem, blind, code, examplesOnly, language, cancellation);
             if (InterviewCakeCatalog.Find(problem.Id) is { } cake)
                 return await InterviewCakeSubmissionRunner.RunAsync(repositoryRoot, directory, id, problem, cake, code, examplesOnly, language, cancellation);
+            if (CtciCatalog.Find(problem.Id) is { } ctci)
+                return await CtciStagingRunner.RunAsync(repositoryRoot, directory, id, ctci with { TestCount = problem.TestCount }, code, examplesOnly, language, cancellation, CallableCodeCatalog.LegacyFormat);
             if (language is "cpp" or "java")
                 return await NativeSubmissionRunner.RunAsync(repositoryRoot, directory, id, problem, code, examplesOnly, language, cancellation);
             if (language is not ("csharp" or "javascript" or "js" or "python" or "py"))

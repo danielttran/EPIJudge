@@ -50,13 +50,15 @@ var sourcePaths=Directory.GetFiles(Path.Combine(root,"EpiJudge.Runner"),"*",Sear
     .Where(p=>!p.Split(Path.DirectorySeparatorChar).Any(s=>s is "obj" or "bin")&&Path.GetExtension(p) is ".cs" or ".csproj" or ".json" or ".js" or ".h" or ".txt")
     .Concat(Directory.GetFiles(Path.Combine(root,"EpiJudge.TestFramework"),"*.cs",SearchOption.AllDirectories).Where(p=>!p.Split(Path.DirectorySeparatorChar).Any(s=>s is "obj" or "bin")))
     .Concat(Directory.GetFiles(Path.Combine(root,"blind75","runtime"))).Append(Path.Combine(root,"blind75","catalog.json"))
-    .Concat(Directory.GetFiles(Path.Combine(root,"interviewcake","runtime"))).Append(Path.Combine(root,"interviewcake","catalog.json"));
+    .Concat(Directory.GetFiles(Path.Combine(root,"interviewcake","runtime"))).Append(Path.Combine(root,"interviewcake","catalog.json"))
+    .Append(Path.Combine(root,"ctci6","catalog.json")).Append(Path.Combine(root,"ctci6","practice","catalog.json")).Append(Path.Combine(root,"ctci6","practice","coverage.json"));
 if(callable)sourcePaths=sourcePaths.Append(Path.Combine(root,"workspace-code","catalog.json"));
 var sourceHashes=sourcePaths.Distinct().Order().ToDictionary(p=>Path.GetRelativePath(root,p).Replace('\\','/'),FileSha);
 string Harness(Problem p,string language)
 {
     if(Blind75Catalog.Find(p.Id) is {} blind)return (string)typeof(Blind75Catalog).GetMethod("Harness",BindingFlags.NonPublic|BindingFlags.Static)!.Invoke(null,[blind,language])!;
     if(InterviewCakeCatalog.Find(p.Id) is {} cake)return (string)typeof(InterviewCakeCatalog).GetMethod("Harness",BindingFlags.NonPublic|BindingFlags.Static)!.Invoke(null,[cake,language])!;
+    if(CtciCatalog.Find(p.Id) is {} ctci)return ctci.Languages[language].Harness;
     if(language is "cpp" or "java")
     {
         var name=language=="cpp"?"web_test.h":"java_run_tests.txt";
@@ -103,7 +105,7 @@ if(args.Contains("boundaries")||walkthroughs)
     }).ToArray():paths.SelectMany(path=>JsonSerializer.Deserialize<Boundary[]>(File.ReadAllText(path),json)!).ToArray();
     var diagnosticLabel=(callable?"callable-":"")+(walkthroughs?"walkthroughs":"boundaries");
     var temporaryRoot=Path.Combine(artifactRoot,"solutions-boundaries-"+Guid.NewGuid().ToString("N"));
-    Directory.CreateDirectory(Path.Combine(temporaryRoot,"test_data"));Directory.CreateDirectory(Path.Combine(temporaryRoot,"blind75","cases"));Directory.CreateDirectory(Path.Combine(temporaryRoot,"interviewcake","cases"));
+    Directory.CreateDirectory(Path.Combine(temporaryRoot,"test_data"));Directory.CreateDirectory(Path.Combine(temporaryRoot,"blind75","cases"));Directory.CreateDirectory(Path.Combine(temporaryRoot,"interviewcake","cases"));Directory.CreateDirectory(Path.Combine(temporaryRoot,"ctci6","cases"));
     void CopyDirectory(string source,string destination)
     {
         Directory.CreateDirectory(destination);
@@ -117,7 +119,7 @@ if(args.Contains("boundaries")||walkthroughs)
         foreach(var group in cases.Where(c=>chosen is null||chosen.Contains(c.ProblemId)).GroupBy(c=>c.ProblemId))
         {
             var problem=catalog.Find(group.Key)??throw new InvalidOperationException("Unknown boundary ID.");var subset=group.ToArray();
-            if(problem.Collection is "blind75" or "interviewcake")
+            if(problem.Collection is "blind75" or "interviewcake" or "ctci6")
                 File.WriteAllText(Path.Combine(temporaryRoot,problem.Collection,"cases",problem.Id+".json"),JsonSerializer.Serialize(subset.Select(c=>new{arguments=c.Arguments,expected=c.Expected}),json));
             else
             {
@@ -173,7 +175,7 @@ foreach(var language in languages.Where(l=>selectedLanguage is null||l==selected
     }
     catch(Exception ex){failure=ex.ToString();}
     var success=failure is null;if(!success)failures++;
-    var corpus=problem.Collection is "blind75" or "interviewcake"?Path.Combine(root,problem.Collection,"cases",problem.Id+".json"):Path.Combine(root,"test_data",problem.Id+".tsv");
+    var corpus=problem.Collection is "blind75" or "interviewcake" or "ctci6"?Path.Combine(root,problem.Collection,"cases",problem.Id+".json"):Path.Combine(root,"test_data",problem.Id+".tsv");
     rows.Add(new{problemId=problem.Id,collection=problem.Collection,language,success,displayedEmbeddedCode=!files,codeFormat=callable?CallableCodeCatalog.CallableFormat:CallableCodeCatalog.LegacyFormat,role=starters?"starter":"solution",codeSha256=Sha(code),composedCodeSha256=Sha(PrepareCode(problem,language,code).Code),notesSha256=File.Exists(notesPath)?FileSha(notesPath):null,corpusSha256=FileSha(corpus),harnessSha256=Sha(Harness(problem,language)),result,failure});
     File.WriteAllText(Path.Combine(artifactRoot,"solutions-audit-"+reportName+".json"),JsonSerializer.Serialize(new{schemaVersion=2,sourceHashes,executions=rows},json)+"\n");
     Console.WriteLine($"{(success?"PASS":"FAIL")} {language} {problem.Id} {result?.Status} {result?.Passed}/{result?.Total}");if(failure is not null)Console.WriteLine(failure);

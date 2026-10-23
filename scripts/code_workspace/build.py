@@ -20,8 +20,17 @@ def build():
         (ROOT / "solutions/coverage.json").read_text(encoding="utf-8")
     )
     scopes = {(row["problemId"], row["language"]) for row in expected["entries"]}
+    if any(
+        expected["collections"].get(key) != count
+        for key, count in {"epi": 218, "blind75": 75, "interviewcake": 41}.items()
+    ):
+        raise ValueError("Existing collection coverage changed")
+    parts = dict(PARTS)
+    if expected["collections"].get("ctci6", 0):
+        parts["ctci6"] = expected["collections"]["ctci6"] * len(LANGUAGES)
+    expected_pairs = expected["questionCount"] * len(LANGUAGES)
     entries = []
-    for name, count in PARTS.items():
+    for name, count in parts.items():
         path = ROOT / "workspace-code/parts" / (name + ".json")
         part = json.loads(path.read_text(encoding="utf-8"))
         if (
@@ -34,7 +43,11 @@ def build():
             )
         entries.extend(part["entries"])
     by_scope = {(row["problemId"], row["language"]): row for row in entries}
-    if len(entries) != len(by_scope) or set(by_scope) != scopes or len(scopes) != 1670:
+    if (
+        len(entries) != len(by_scope)
+        or set(by_scope) != scopes
+        or len(scopes) != expected_pairs
+    ):
         raise ValueError(
             "Callable coverage must match every live question/language pair exactly"
         )
@@ -90,14 +103,14 @@ def build():
     }
     coverage = {
         "schemaVersion": 1,
-        "questions": 334,
-        "questionLanguagePairs": 1670,
+        "questions": expected["questionCount"],
+        "questionLanguagePairs": expected_pairs,
         "visibleArtifacts": len(artifacts),
         "roles": ["starter", "solution"],
         "collections": expected["collections"],
         "artifacts": artifacts,
     }
-    if len(artifacts) != 3340:
+    if len(artifacts) != expected_pairs * 2:
         raise ValueError(
             "Every starter and solution must appear in the visible-code coverage manifest"
         )
@@ -121,7 +134,7 @@ def main():
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text(text, encoding="utf-8", newline="\n")
     print(
-        "Verified 334 questions, 1670 callable contracts and all 3340 visible code artifacts."
+        f"Verified {coverage['questions']} questions, {coverage['questionLanguagePairs']} callable contracts and {coverage['visibleArtifacts']} visible code artifacts."
     )
 
 

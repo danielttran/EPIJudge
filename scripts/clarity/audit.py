@@ -53,6 +53,7 @@ def inputs():
         "EpiJudge.Runner/catalog.json",
         "blind75/catalog.json",
         "interviewcake/catalog.json",
+        "ctci6/catalog.json",
     ):
         for p in json.loads((ROOT / filename).read_text()):
             normalized = {k.lower(): v for k, v in p.items()}

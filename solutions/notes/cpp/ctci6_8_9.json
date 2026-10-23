@@ -1,0 +1,22 @@
+{
+  "explanation": "Construct only prefixes that can still become balanced. Add an opening parenthesis while some remain; add a closing one only when it closes an already-open unmatched parenthesis. Pruning invalid prefixes prevents generating arbitrary strings just to reject them afterward.",
+  "correctness": "The recursion tracks numbers opened and closed. Its rules maintain 0 <= closed <= opened <= pairs, so no generated prefix is invalid. Reaching 2*pairs characters forces both counts to equal pairs and yields a balanced string. Conversely, every balanced string obeys these same prefix bounds, so its next character is an available branch at every depth. It is therefore generated exactly once along its unique character-choice path.",
+  "walkthrough": "For two pairs, start with (. The next opening choice leads to (( and then (()), while the next closing choice leads to () and then ()(). Starting with ) is never explored because it would close nothing. The two results are (()) and ()().",
+  "walkthroughCase": {
+    "arguments": [
+      2
+    ],
+    "expected": [
+      "(())",
+      "()()"
+    ]
+  },
+  "timeComplexity": "O(p*C_p) time including copying outputs, where C_p is the number of balanced strings with p pairs (the pth Catalan number).",
+  "spaceComplexity": "O(p) buffer/recursion workspace, excluding O(p*C_p) returned characters.",
+  "edgeCases": [
+    "Zero and one pair.",
+    "Nesting and adjacent groups must both appear.",
+    "Eight pairs yields 1430 unique balanced strings; prefixes that close too early are invalid."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 8.9. No affiliation is implied."
+}

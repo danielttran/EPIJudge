@@ -17,11 +17,17 @@ public sealed class CtciStagingTests
         });
 
     [Fact]
-    public void UnpublishedEntriesDoNotChangeTheLiveLibrary()
+    public void OnlyTheReviewedSnapshotEntersTheLibrary()
     {
-        Assert.DoesNotContain(new ProblemCatalog().Problems, problem => problem.Collection == "ctci6");
+        using var inventory = JsonDocument.Parse(File.ReadAllText(Path.Combine(Root, "ctci6", "inventory.json")));
+        var approved = inventory.RootElement.GetProperty("questions").EnumerateArray()
+            .Where(row => row.GetProperty("classification").GetString() == "coding")
+            .Select(row => "ctci6_" + row.GetProperty("ref").GetString()!.Replace('.', '_')).ToHashSet();
+        Assert.True(approved.SetEquals(CtciCatalog.Problems.Select(problem => problem.Id)));
+        Assert.Equal(218, new ProblemCatalog().Problems.Count(problem => problem.Collection == "epi"));
+        Assert.DoesNotContain(CtciCatalog.Problems, problem => problem.Id == "ctci6_5_5");
         var staged = CtciStagingCatalog.Load(Root);
-        Assert.Equal(37, staged.Count);
+        Assert.True(staged.Count >= CtciCatalog.Problems.Count);
         Assert.All(staged, definition => Assert.Equal(5, definition.Languages.Count));
     }
 
@@ -34,7 +40,7 @@ public sealed class CtciStagingTests
     public void SuppliedEntriesUseTheExistingCallablePreparationWithoutRegistration(string language)
     {
         int livePairs = CallableCodeCatalog.All.Count;
-        var definition = Definition("2.2").Callable(language);
+        var definition = Definition("2.2").Callable(language) with { ProblemId = "ctci6_unpublished" };
         var prepared = CallableCodeCatalog.PrepareCallable(definition, definition.SolutionCode);
         Assert.Equal(definition.Filename, prepared.Filename);
         Assert.Equal(CallableCodeCatalog.CallableFormat, prepared.CodeFormat);
@@ -51,6 +57,20 @@ public sealed class CtciStagingTests
     {
         var entry = Definition("1.1").Callable("csharp") with { Filename = filename };
         Assert.Throws<ArgumentException>(() => CallableCodeCatalog.PrepareCallable(entry, entry.SolutionCode));
+    }
+
+    [Theory]
+    [InlineData("3.1")]
+    [InlineData("3.2")]
+    [InlineData("3.3")]
+    [InlineData("3.4")]
+    [InlineData("3.6")]
+    public void JavaStateClassUsesItsOwnMatchingFilename(string reference)
+    {
+        var definition = Definition(reference);
+        Assert.Equal(definition.Method + ".java", definition.Callable("java").Filename);
+        Assert.Equal(definition.Callable("java").Filename, CallableCodeCatalog.Find(definition.Id, "java")!.Filename);
+        if (reference == "3.1") Assert.Contains("capacity: int", definition.Languages["python"].Signature);
     }
 
     [Fact]

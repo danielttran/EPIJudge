@@ -487,3 +487,32 @@ class JudgeContractTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class CtciInventoryExtensionTests(unittest.TestCase):
+    def test_original_counts_remain_required_without_ctci_snapshot(self):
+        with tempfile.TemporaryDirectory() as directory:
+            self.assertEqual(
+                {"epi": 218, "blind75": 75, "interviewcake": 41},
+                evidence.expected_collections(Path(directory)),
+            )
+
+    def test_ctci_count_comes_from_unique_valid_reviewed_snapshot_ids(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "ctci6").mkdir()
+            rows = [
+                dict(id="ctci6_1_1", collection="ctci6"),
+                dict(id="ctci6_8_11", collection="ctci6"),
+            ]
+            (root / "ctci6/catalog.json").write_text(json.dumps(rows))
+            self.assertEqual(2, evidence.expected_collections(root)["ctci6"])
+            for invalid in (
+                rows + [rows[0]],
+                [dict(id="ctci6_bad", collection="ctci6")],
+                [dict(id="ctci6_1_1", collection="epi")],
+                [],
+            ):
+                (root / "ctci6/catalog.json").write_text(json.dumps(invalid))
+                with self.assertRaises(evidence.EvidenceError):
+                    evidence.expected_collections(root)

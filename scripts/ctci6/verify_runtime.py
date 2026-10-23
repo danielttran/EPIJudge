@@ -173,6 +173,7 @@ def verify(only_ref=None, only_language=None, starters=False):
             else "solution." + EXT[language]
         )
         wire = [dict(ref=entry["ref"], arguments=case["arguments"]) for case in cases]
+        packet_started = time.monotonic()
         try:
             values = execute(
                 language,
@@ -235,6 +236,7 @@ def verify(only_ref=None, only_language=None, starters=False):
                 fingerprint=fingerprint,
                 cases=len(cases),
                 measuredCaseMilliseconds=round(elapsed, 3),
+                compileAndExecuteSeconds=round(time.monotonic() - packet_started, 3),
                 outcome="passed" if variant == "solution" else "rejected",
             )
             save("running")

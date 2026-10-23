@@ -4,6 +4,7 @@ const PRESENTATION: Record<string, { name: string; prefix: string }> = {
   epi: { name: 'EPI', prefix: '' },
   blind75: { name: 'Blind 75', prefix: 'B' },
   interviewcake: { name: 'Interview Cake', prefix: 'IC' },
+  ctci6: { name: 'CtCI 6th Edition', prefix: 'C' },
 };
 
 export function collectionName(collection = 'epi') {
@@ -20,6 +21,10 @@ export function availableCollections(problems: Problem[]) {
 }
 
 export function problemNumber(problem: Problem, index: number, padded = false) {
+  if (problem.collection === 'ctci6') {
+    const reference = /^ctci6_(\d+)_(\d+)$/.exec(problem.id);
+    if (reference) return `C${reference[1]}.${reference[2]}`;
+  }
   const prefix = PRESENTATION[problem.collection ?? 'epi']?.prefix;
   if (prefix) {
     const position = problem.position && problem.position > 0 ? problem.position : index + 1;

@@ -10,6 +10,12 @@ import json
 
 
 def generate08():
+    # Validate every reference before replacing any passing staged artifacts.
+    # A newly drafted unsupported oracle must not leave a partial catalog.
+    for spec in SPECS:
+        if oracle(spec["ref"], spec["example"][0]) != spec["example"][1]:
+            raise ValueError("Incorrect worked example: " + spec["ref"])
+        cases(spec)
     rows = []
     for spec in SPECS:
         generate(
