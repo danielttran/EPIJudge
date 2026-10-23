@@ -1,0 +1,18 @@
+{
+  "explanation": "At one decimal place of weight p, the digit pattern repeats every 10p numbers. Every complete block contributes p twos in that place. The final partial block contributes zero, a partial run, or a full p depending on whether the current digit is below, equal to, or above two. Add the independent counts for all places.",
+  "correctness": "Write n as high*(10p)+digit*p+low with 0<=low<p. The high complete blocks contribute high*p. If digit<2, the final block has not reached its run of twos. If digit=2, that run includes low+1 numbers; if digit>2, it includes all p. Thus the formula counts precisely all occurrences at that position among 0..n. Summing over positions counts every occurrence once, including both positions in 22. Higher leading positions contribute nothing. Wide intermediates prevent overflow of 10p at the billions place.",
+  "walkthrough": "Through 25, the ones place contributes 3 occurrences, in 2,12,22. The tens place contributes 6, in 20..25. The total is 9; 22 intentionally contributes to both place counts. Through 1 the answer is zero.",
+  "walkthroughCase": {
+    "arguments": [
+      25
+    ],
+    "expected": 9
+  },
+  "timeComplexity": "O(log_10(n+1)) decimal places; zero takes constant time.",
+  "spaceComplexity": "O(1) auxiliary scalar storage.",
+  "edgeCases": [
+    "Zero, 2, 12, 22, and boundaries around powers of ten.",
+    "Current digit below/equal/above two; the largest signed input needs wide place intermediates."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.6. No affiliation is implied."
+}

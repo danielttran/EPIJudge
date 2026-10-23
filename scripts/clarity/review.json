@@ -9516,6 +9516,126 @@
         "ctci6/runtime/validation.json",
         "ctci6/cases/ctci6_16_19.json"
       ]
+    },
+    "ctci6_17_1": {
+      "collection": "ctci6",
+      "statementSha256": "a995ad9486d9a90e814b61c9d0f2875df0ead94a05c381abec479bfc38725d55",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "inputDomain": "Both inputs may be any signed 32-bit integer. Preserve their caller values. For example 2147483647 plus 1 returns -2147483648, not an exception or a wider positive result. Do not use addition, subtraction, multiplication, division, remainder, increment/decrement, sum helpers or conversion to a representation that delegates addition. Bitwise operations, masks, shifts, comparisons, assignment and loops/recursion are allowed. C++ fixed-width bit reinterpretation is allowed; it performs no arithmetic.",
+        "outputAndTies": "Add two signed 32-bit integers without using arithmetic operators or an arithmetic helper. Return the signed 32-bit two's-complement sum: overflow wraps modulo 2^32, exactly as ordinary Java int addition. Use bit operations to combine sum bits and carries.",
+        "mutationAndIdentity": "Read all five bodies and operation restrictions: no arithmetic operator or arithmetic helper is used. C#/C++ shift unsigned 32-bit patterns; C++17 memcpy into int32_t reinterprets the final bits without signed overflow. Java/JS use native 32-bit bitwise operations. Python masks operands/carry and reconstructs the signed result using complement. Long carry chains, both signed endpoints and wrapping sums are executed against independent modular mathematical addition.",
+        "boundaryBehavior": "Zero, equal values, negative values and long carry chains. Both signed endpoints and sums that wrap across either endpoint.",
+        "examples": "The independently checked displayed example and algorithm trace agree with the executed five-language bodies.",
+        "languageContracts": "{\"csharp\": \"Read exact bodies: AddWithoutArithmetic uses unsigned carry shifts and explicit unchecked signed conversions. CountDigitTwos uses long before multiplying place blocks. Array-return expressions match int[]; bounded sums and candidate products stay within int. All arrays supplied to algorithms remain unchanged.\", \"javascript\": \"Read exact functions: addition relies on signed 32-bit bitwise coercion, while decimal division uses Math.floor. All ordinary counts/products are safely exact Numbers under shared bounds. Zero/one majority output is an Array; the rolling DP and water scan use local scalars and never rewrite input elements.\", \"python\": \"Read exact functions: masked 32-bit addition terminates on negative inputs and complement reconstructs signed output without arithmetic. Majority verification uses a fresh scalar count, not a misleading sentinel. All collection results are concrete lists, and observation rejects bool-as-int. Recursion is absent in all six bodies.\", \"cpp\": \"Read exact C++17 methods: uint32_t carry shifts are defined; the visible <cstring> include supports memcpy of the final int32_t bits. Digit counting widens place arithmetic to int64_t. Const vector references preserve inputs; by-value returned vectors own optional majority results. All index arithmetic handles emptiness before access.\", \"java\": \"Read exact methods: int carry shifts deliberately discard overflow bits; digit counting uses long intermediates before the justified final cast. int[] and ArrayList-free optional results match signatures. Bit/loop state is per invocation, and bounded DP/water totals fit int; no static state or mutable input side effects.\"}",
+        "judgeAgreement": "Read all five bodies and operation restrictions: no arithmetic operator or arithmetic helper is used. C#/C++ shift unsigned 32-bit patterns; C++17 memcpy into int32_t reinterprets the final bits without signed overflow. Java/JS use native 32-bit bitwise operations. Python masks operands/carry and reconstructs the signed result using complement. Long carry chains, both signed endpoints and wrapping sums are executed against independent modular mathematical addition."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_1.json"
+      ]
+    },
+    "ctci6_17_6": {
+      "collection": "ctci6",
+      "statementSha256": "6c26fbd724a2c05b986b3f5037e62e931db66d51e447e278a8ab70609bf88b34",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "inputDomain": "0 <= n <= 2147483647. Return the exact signed 32-bit count and preserve inputs. At the largest admitted n the count is 2071027783, so the return type is sufficient. Do not construct every number in a huge range. Use integer decimal-place counting; intermediate place/block values may exceed signed 32-bit range even though the result fits.",
+        "outputAndTies": "Count all occurrences of the decimal digit 2 in the ordinary decimal representations of integers from 0 through n, inclusive. Count occurrences rather than the number of integers containing a 2: the integer 22 contributes two occurrences. Do not count leading zeros.",
+        "mutationAndIdentity": "All five actual loops use high/current/low decomposition. C#/Java/C++ use 64-bit intermediates so 10^10 place blocks do not overflow; Python uses exact integers and JS floors exact bounded Number quotients. Output 2071027783 at int.MaxValue is verified by independent digit DP, whose small answers are separately checked against direct decimal enumeration. Occurrences in 22 count twice.",
+        "boundaryBehavior": "Zero, 2, 12, 22, and boundaries around powers of ten. Current digit below/equal/above two; the largest signed input needs wide place intermediates.",
+        "examples": "The independently checked displayed example and algorithm trace agree with the executed five-language bodies.",
+        "languageContracts": "{\"csharp\": \"Read exact bodies: AddWithoutArithmetic uses unsigned carry shifts and explicit unchecked signed conversions. CountDigitTwos uses long before multiplying place blocks. Array-return expressions match int[]; bounded sums and candidate products stay within int. All arrays supplied to algorithms remain unchanged.\", \"javascript\": \"Read exact functions: addition relies on signed 32-bit bitwise coercion, while decimal division uses Math.floor. All ordinary counts/products are safely exact Numbers under shared bounds. Zero/one majority output is an Array; the rolling DP and water scan use local scalars and never rewrite input elements.\", \"python\": \"Read exact functions: masked 32-bit addition terminates on negative inputs and complement reconstructs signed output without arithmetic. Majority verification uses a fresh scalar count, not a misleading sentinel. All collection results are concrete lists, and observation rejects bool-as-int. Recursion is absent in all six bodies.\", \"cpp\": \"Read exact C++17 methods: uint32_t carry shifts are defined; the visible <cstring> include supports memcpy of the final int32_t bits. Digit counting widens place arithmetic to int64_t. Const vector references preserve inputs; by-value returned vectors own optional majority results. All index arithmetic handles emptiness before access.\", \"java\": \"Read exact methods: int carry shifts deliberately discard overflow bits; digit counting uses long intermediates before the justified final cast. int[] and ArrayList-free optional results match signatures. Bit/loop state is per invocation, and bounded DP/water totals fit int; no static state or mutable input side effects.\"}",
+        "judgeAgreement": "All five actual loops use high/current/low decomposition. C#/Java/C++ use 64-bit intermediates so 10^10 place blocks do not overflow; Python uses exact integers and JS floors exact bounded Number quotients. Output 2071027783 at int.MaxValue is verified by independent digit DP, whose small answers are separately checked against direct decimal enumeration. Occurrences in 22 count twice."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_6.json"
+      ]
+    },
+    "ctci6_17_9": {
+      "collection": "ctci6",
+      "statementSha256": "9bbbea5a36793134c28f6f30710eb8bc5e52f7b4cb63c9021f3752c23e4865c7",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "inputDomain": "0 <= k <= 500. The sequence starts 1,3,5,7,9,15,21,25,27. Preserve inputs. The index is zero-based, matching the author public implementation, not a one-based rank. At index 500 the result is 284765625. Even seven times that value fits signed 32-bit range, so every candidate computed under this bound is safe. Do not include factors 2 or any other prime.",
+        "outputAndTies": "Return the zero-indexed kth number in the increasing sequence of positive integers whose only prime factors are 3,5 and 7. Include 1 as the empty product at index zero. Each distinct value appears once even if several multiplication histories produce it.",
+        "mutationAndIdentity": "Zero-based k=0 includes the empty product 1, as established by the author source. All indices through 500 execute in all five languages. Independent heap/set generation checks sorted distinct values, factor restrictions and upper-bound safety: result 284765625 and every candidate at most seven times that value fit signed int. Three independent if statements prevent duplicate histories.",
+        "boundaryBehavior": "Index zero, first few values, and duplicate-producing products such as 15 and 105. Largest admitted index with no signed multiplication overflow.",
+        "examples": "The independently checked displayed example and algorithm trace agree with the executed five-language bodies.",
+        "languageContracts": "{\"csharp\": \"Read exact bodies: AddWithoutArithmetic uses unsigned carry shifts and explicit unchecked signed conversions. CountDigitTwos uses long before multiplying place blocks. Array-return expressions match int[]; bounded sums and candidate products stay within int. All arrays supplied to algorithms remain unchanged.\", \"javascript\": \"Read exact functions: addition relies on signed 32-bit bitwise coercion, while decimal division uses Math.floor. All ordinary counts/products are safely exact Numbers under shared bounds. Zero/one majority output is an Array; the rolling DP and water scan use local scalars and never rewrite input elements.\", \"python\": \"Read exact functions: masked 32-bit addition terminates on negative inputs and complement reconstructs signed output without arithmetic. Majority verification uses a fresh scalar count, not a misleading sentinel. All collection results are concrete lists, and observation rejects bool-as-int. Recursion is absent in all six bodies.\", \"cpp\": \"Read exact C++17 methods: uint32_t carry shifts are defined; the visible <cstring> include supports memcpy of the final int32_t bits. Digit counting widens place arithmetic to int64_t. Const vector references preserve inputs; by-value returned vectors own optional majority results. All index arithmetic handles emptiness before access.\", \"java\": \"Read exact methods: int carry shifts deliberately discard overflow bits; digit counting uses long intermediates before the justified final cast. int[] and ArrayList-free optional results match signatures. Bit/loop state is per invocation, and bounded DP/water totals fit int; no static state or mutable input side effects.\"}",
+        "judgeAgreement": "Zero-based k=0 includes the empty product 1, as established by the author source. All indices through 500 execute in all five languages. Independent heap/set generation checks sorted distinct values, factor restrictions and upper-bound safety: result 284765625 and every candidate at most seven times that value fit signed int. Three independent if statements prevent duplicate histories."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_9.json"
+      ]
+    },
+    "ctci6_17_10": {
+      "collection": "ctci6",
+      "statementSha256": "69eaa29a2c3a62719b8befd98bb52525834394cea6950493facdee9a6cdc6742",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "inputDomain": "values contains 0..10000 signed 32-bit integers, including -1 and both signed endpoints. The optional result is a concrete zero- or one-element integer array/list/vector. The collection wrapper distinguishes no majority from a legitimate majority whose value is -1. Empty input has no majority. At most one value can occur strictly more than half the time.",
+        "outputAndTies": "Find a value occurring strictly more than half the time in values. Return [value] if such a majority exists, otherwise return an empty integer collection. A value appearing exactly half the time is not a majority. Preserve the input.",
+        "mutationAndIdentity": "The optional zero/one integer collection avoids conflating a true -1 majority with absence. Both passes preserve inputs; empty arrays, exact-half counts and nonmajority surviving candidates are tested. C#/Java/C++ use exact int arrays/vectors and bounded balances; Python/JS concrete arrays are type-checked. Independent Counter results cover all small ternary arrays and 10000-element boundaries.",
+        "boundaryBehavior": "Empty input, a singleton, exactly-half frequency, no majority. A genuine -1 majority, signed endpoints, and a candidate requiring second-pass rejection.",
+        "examples": "The independently checked displayed example and algorithm trace agree with the executed five-language bodies.",
+        "languageContracts": "{\"csharp\": \"Read exact bodies: AddWithoutArithmetic uses unsigned carry shifts and explicit unchecked signed conversions. CountDigitTwos uses long before multiplying place blocks. Array-return expressions match int[]; bounded sums and candidate products stay within int. All arrays supplied to algorithms remain unchanged.\", \"javascript\": \"Read exact functions: addition relies on signed 32-bit bitwise coercion, while decimal division uses Math.floor. All ordinary counts/products are safely exact Numbers under shared bounds. Zero/one majority output is an Array; the rolling DP and water scan use local scalars and never rewrite input elements.\", \"python\": \"Read exact functions: masked 32-bit addition terminates on negative inputs and complement reconstructs signed output without arithmetic. Majority verification uses a fresh scalar count, not a misleading sentinel. All collection results are concrete lists, and observation rejects bool-as-int. Recursion is absent in all six bodies.\", \"cpp\": \"Read exact C++17 methods: uint32_t carry shifts are defined; the visible <cstring> include supports memcpy of the final int32_t bits. Digit counting widens place arithmetic to int64_t. Const vector references preserve inputs; by-value returned vectors own optional majority results. All index arithmetic handles emptiness before access.\", \"java\": \"Read exact methods: int carry shifts deliberately discard overflow bits; digit counting uses long intermediates before the justified final cast. int[] and ArrayList-free optional results match signatures. Bit/loop state is per invocation, and bounded DP/water totals fit int; no static state or mutable input side effects.\"}",
+        "judgeAgreement": "The optional zero/one integer collection avoids conflating a true -1 majority with absence. Both passes preserve inputs; empty arrays, exact-half counts and nonmajority surviving candidates are tested. C#/Java/C++ use exact int arrays/vectors and bounded balances; Python/JS concrete arrays are type-checked. Independent Counter results cover all small ternary arrays and 10000-element boundaries."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_10.json"
+      ]
+    },
+    "ctci6_17_16": {
+      "collection": "ctci6",
+      "statementSha256": "6303a872719ea6c894c0b3823539fdcdc8cd30add67f08808450b48f7096cdec",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "inputDomain": "appointments contains 0..1000 nonnegative integer durations in 0..1000000 minutes. All totals fit signed 32-bit range. Preserve the original array and ordering. Adjacency refers to neighboring input positions. Accepting index i forbids i-1 and i+1, regardless of their durations. An empty input returns zero.",
+        "outputAndTies": "Choose appointments from their given sequence to maximize total massage minutes, with the restriction that no two adjacent appointments may both be accepted. Return the maximum total minutes. The empty choice is allowed; do not reorder appointments or split an appointment.",
+        "mutationAndIdentity": "All actual implementations keep prefix optima one and two positions back, compute before shifting and permit an empty choice. The public suffix-direction code is not copied into the explanation. Small independent exhaustive valid masks and a larger independent suffix table cover every small duration pattern and maximum admitted totals. No sorting, appointment splitting or cross-pair greedy shortcut occurs.",
+        "boundaryBehavior": "Empty input, zero durations, one appointment. Two adjacent large appointments; a best choice mixing early and late positions.",
+        "examples": "The independently checked displayed example and algorithm trace agree with the executed five-language bodies.",
+        "languageContracts": "{\"csharp\": \"Read exact bodies: AddWithoutArithmetic uses unsigned carry shifts and explicit unchecked signed conversions. CountDigitTwos uses long before multiplying place blocks. Array-return expressions match int[]; bounded sums and candidate products stay within int. All arrays supplied to algorithms remain unchanged.\", \"javascript\": \"Read exact functions: addition relies on signed 32-bit bitwise coercion, while decimal division uses Math.floor. All ordinary counts/products are safely exact Numbers under shared bounds. Zero/one majority output is an Array; the rolling DP and water scan use local scalars and never rewrite input elements.\", \"python\": \"Read exact functions: masked 32-bit addition terminates on negative inputs and complement reconstructs signed output without arithmetic. Majority verification uses a fresh scalar count, not a misleading sentinel. All collection results are concrete lists, and observation rejects bool-as-int. Recursion is absent in all six bodies.\", \"cpp\": \"Read exact C++17 methods: uint32_t carry shifts are defined; the visible <cstring> include supports memcpy of the final int32_t bits. Digit counting widens place arithmetic to int64_t. Const vector references preserve inputs; by-value returned vectors own optional majority results. All index arithmetic handles emptiness before access.\", \"java\": \"Read exact methods: int carry shifts deliberately discard overflow bits; digit counting uses long intermediates before the justified final cast. int[] and ArrayList-free optional results match signatures. Bit/loop state is per invocation, and bounded DP/water totals fit int; no static state or mutable input side effects.\"}",
+        "judgeAgreement": "All actual implementations keep prefix optima one and two positions back, compute before shifting and permit an empty choice. The public suffix-direction code is not copied into the explanation. Small independent exhaustive valid masks and a larger independent suffix table cover every small duration pattern and maximum admitted totals. No sorting, appointment splitting or cross-pair greedy shortcut occurs."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_16.json"
+      ]
+    },
+    "ctci6_17_21": {
+      "collection": "ctci6",
+      "statementSha256": "0c5ec2637c344ee9439fc3835dc290d8a0ac97705b5c9944c822c0d770097c9b",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "inputDomain": "heights contains 0..10000 integers in 0..100000. The total volume is at most 1000000000 and fits signed 32-bit range. Preserve the array. Empty input and fewer than three bars trap no water. Water above a bar is limited by the lower of the tallest barriers on its left and right, and cannot be negative.",
+        "outputAndTies": "Return the total units of water trapped above a histogram after rainfall. Bars have width one, their nonnegative heights are given left to right, and water may escape past either end. Sum water above every position; do not return the area of one container formed by two chosen bars.",
+        "mutationAndIdentity": "All five use the same constant-space boundary invariant and leave heights unchanged. Empty input stops before indexing. Independent prefix/suffix maxima count per-position water and cover all small histograms, monotone arrays and the maximum 999800000 basin. This is total rainwater volume, not two-line container area; fixed bounded sums avoid language-specific overflow.",
+        "boundaryBehavior": "Empty, short, monotone and all-zero histograms. Several basins, equal end barriers, interior peaks, and maximum bounded volume.",
+        "examples": "The independently checked displayed example and algorithm trace agree with the executed five-language bodies.",
+        "languageContracts": "{\"csharp\": \"Read exact bodies: AddWithoutArithmetic uses unsigned carry shifts and explicit unchecked signed conversions. CountDigitTwos uses long before multiplying place blocks. Array-return expressions match int[]; bounded sums and candidate products stay within int. All arrays supplied to algorithms remain unchanged.\", \"javascript\": \"Read exact functions: addition relies on signed 32-bit bitwise coercion, while decimal division uses Math.floor. All ordinary counts/products are safely exact Numbers under shared bounds. Zero/one majority output is an Array; the rolling DP and water scan use local scalars and never rewrite input elements.\", \"python\": \"Read exact functions: masked 32-bit addition terminates on negative inputs and complement reconstructs signed output without arithmetic. Majority verification uses a fresh scalar count, not a misleading sentinel. All collection results are concrete lists, and observation rejects bool-as-int. Recursion is absent in all six bodies.\", \"cpp\": \"Read exact C++17 methods: uint32_t carry shifts are defined; the visible <cstring> include supports memcpy of the final int32_t bits. Digit counting widens place arithmetic to int64_t. Const vector references preserve inputs; by-value returned vectors own optional majority results. All index arithmetic handles emptiness before access.\", \"java\": \"Read exact methods: int carry shifts deliberately discard overflow bits; digit counting uses long intermediates before the justified final cast. int[] and ArrayList-free optional results match signatures. Bit/loop state is per invocation, and bounded DP/water totals fit int; no static state or mutable input side effects.\"}",
+        "judgeAgreement": "All five use the same constant-space boundary invariant and leave heights unchanged. Empty input stops before indexing. Independent prefix/suffix maxima count per-position water and cover all small histograms, monotone arrays and the maximum 999800000 basin. This is total rainwater volume, not two-line container area; fixed bounded sums avoid language-specific overflow."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_21.json"
+      ]
     }
   },
   "solutions": {
@@ -55076,6 +55196,696 @@
         "ctci6/cases/ctci6_16_19.json",
         "solutions/java/ctci6_16_19.java",
         "solutions/notes/java/ctci6_16_19.json"
+      ]
+    },
+    "ctci6_17_1/csharp": {
+      "codePath": "solutions/csharp/ctci6_17_1.cs",
+      "notesPath": "solutions/notes/ctci6_17_1.json",
+      "contentSha256": "f49153237b6a4789b72a24b0b61b390b59a09a7fea5eda7a4c94c58c31e1a4c6",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "Iterative fixed-width XOR sum and shifted-AND carries.",
+        "correctness": "For each bit position, XOR contributes the low sum bit and the shifted AND contributes its carry into the next position. Replacing the operands by those two patterns preserves their total modulo 2^32. Each pending carry moves left, so after at most 32 rounds none remains within the word. The remaining pattern is therefore the required modular sum. C#/Java/JavaScript naturally observe the fixed-width pattern; Python masks each carry and reinterprets the final sign. C++ uses unsigned shifts and a fixed-width byte copy for the signed result, avoiding undefined signed left shift or narrowing.",
+        "workedTrace": "For 5 and 3, the first XOR is 6 and the pending carry is 2. Next they become 4 and 4, then 0 and 8, then 8 and 0. The returned result is 8. For -1 and 1, the carry propagates through the whole word and is discarded above bit 31, leaving zero.",
+        "edgeCases": "Zero, equal values, negative values and long carry chains. Both signed endpoints and sums that wrap across either endpoint.",
+        "timeDerivation": "O(w) bit-operation rounds for a w-bit word, at most 32 here; therefore bounded O(1) for this fixed-width callable.",
+        "spaceDerivation": "O(1) auxiliary scalar storage; iterative implementations use no recursion stack.",
+        "callableAgreement": "Read all five bodies and operation restrictions: no arithmetic operator or arithmetic helper is used. C#/C++ shift unsigned 32-bit patterns; C++17 memcpy into int32_t reinterprets the final bits without signed overflow. Java/JS use native 32-bit bitwise operations. Python masks operands/carry and reconstructs the signed result using complement. Long carry chains, both signed endpoints and wrapping sums are executed against independent modular mathematical addition. Read exact bodies: AddWithoutArithmetic uses unsigned carry shifts and explicit unchecked signed conversions. CountDigitTwos uses long before multiplying place blocks. Array-return expressions match int[]; bounded sums and candidate products stay within int. All arrays supplied to algorithms remain unchanged."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_1.json",
+        "solutions/csharp/ctci6_17_1.cs",
+        "solutions/notes/ctci6_17_1.json"
+      ]
+    },
+    "ctci6_17_1/javascript": {
+      "codePath": "solutions/javascript/ctci6_17_1.js",
+      "notesPath": "solutions/notes/javascript/ctci6_17_1.json",
+      "contentSha256": "0cae5b5e0393f9f1572a29b4fdddc47aaf4cc6ff64e93e9ac11d46c5d2da8ef7",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "Iterative fixed-width XOR sum and shifted-AND carries.",
+        "correctness": "For each bit position, XOR contributes the low sum bit and the shifted AND contributes its carry into the next position. Replacing the operands by those two patterns preserves their total modulo 2^32. Each pending carry moves left, so after at most 32 rounds none remains within the word. The remaining pattern is therefore the required modular sum. C#/Java/JavaScript naturally observe the fixed-width pattern; Python masks each carry and reinterprets the final sign. C++ uses unsigned shifts and a fixed-width byte copy for the signed result, avoiding undefined signed left shift or narrowing.",
+        "workedTrace": "For 5 and 3, the first XOR is 6 and the pending carry is 2. Next they become 4 and 4, then 0 and 8, then 8 and 0. The returned result is 8. For -1 and 1, the carry propagates through the whole word and is discarded above bit 31, leaving zero.",
+        "edgeCases": "Zero, equal values, negative values and long carry chains. Both signed endpoints and sums that wrap across either endpoint.",
+        "timeDerivation": "O(w) bit-operation rounds for a w-bit word, at most 32 here; therefore bounded O(1) for this fixed-width callable.",
+        "spaceDerivation": "O(1) auxiliary scalar storage; iterative implementations use no recursion stack.",
+        "callableAgreement": "Read all five bodies and operation restrictions: no arithmetic operator or arithmetic helper is used. C#/C++ shift unsigned 32-bit patterns; C++17 memcpy into int32_t reinterprets the final bits without signed overflow. Java/JS use native 32-bit bitwise operations. Python masks operands/carry and reconstructs the signed result using complement. Long carry chains, both signed endpoints and wrapping sums are executed against independent modular mathematical addition. Read exact functions: addition relies on signed 32-bit bitwise coercion, while decimal division uses Math.floor. All ordinary counts/products are safely exact Numbers under shared bounds. Zero/one majority output is an Array; the rolling DP and water scan use local scalars and never rewrite input elements."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_1.json",
+        "solutions/javascript/ctci6_17_1.js",
+        "solutions/notes/javascript/ctci6_17_1.json"
+      ]
+    },
+    "ctci6_17_1/python": {
+      "codePath": "solutions/python/ctci6_17_1.py",
+      "notesPath": "solutions/notes/python/ctci6_17_1.json",
+      "contentSha256": "3251a6e6f660a2732af2289c2e8799ea817342d055d1f0dda3123b1a78180089",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "Iterative fixed-width XOR sum and shifted-AND carries.",
+        "correctness": "For each bit position, XOR contributes the low sum bit and the shifted AND contributes its carry into the next position. Replacing the operands by those two patterns preserves their total modulo 2^32. Each pending carry moves left, so after at most 32 rounds none remains within the word. The remaining pattern is therefore the required modular sum. C#/Java/JavaScript naturally observe the fixed-width pattern; Python masks each carry and reinterprets the final sign. C++ uses unsigned shifts and a fixed-width byte copy for the signed result, avoiding undefined signed left shift or narrowing.",
+        "workedTrace": "For 5 and 3, the first XOR is 6 and the pending carry is 2. Next they become 4 and 4, then 0 and 8, then 8 and 0. The returned result is 8. For -1 and 1, the carry propagates through the whole word and is discarded above bit 31, leaving zero.",
+        "edgeCases": "Zero, equal values, negative values and long carry chains. Both signed endpoints and sums that wrap across either endpoint.",
+        "timeDerivation": "O(w) bit-operation rounds for a w-bit word, at most 32 here; therefore bounded O(1) for this fixed-width callable.",
+        "spaceDerivation": "O(1) auxiliary scalar storage; iterative implementations use no recursion stack.",
+        "callableAgreement": "Read all five bodies and operation restrictions: no arithmetic operator or arithmetic helper is used. C#/C++ shift unsigned 32-bit patterns; C++17 memcpy into int32_t reinterprets the final bits without signed overflow. Java/JS use native 32-bit bitwise operations. Python masks operands/carry and reconstructs the signed result using complement. Long carry chains, both signed endpoints and wrapping sums are executed against independent modular mathematical addition. Read exact functions: masked 32-bit addition terminates on negative inputs and complement reconstructs signed output without arithmetic. Majority verification uses a fresh scalar count, not a misleading sentinel. All collection results are concrete lists, and observation rejects bool-as-int. Recursion is absent in all six bodies."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_1.json",
+        "solutions/python/ctci6_17_1.py",
+        "solutions/notes/python/ctci6_17_1.json"
+      ]
+    },
+    "ctci6_17_1/cpp": {
+      "codePath": "solutions/cpp/ctci6_17_1.cpp",
+      "notesPath": "solutions/notes/cpp/ctci6_17_1.json",
+      "contentSha256": "d2dd94220bcc2a224980b60286f19289ddb9dd9f10ac5a0444cbb80649f2c3eb",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "Iterative fixed-width XOR sum and shifted-AND carries.",
+        "correctness": "For each bit position, XOR contributes the low sum bit and the shifted AND contributes its carry into the next position. Replacing the operands by those two patterns preserves their total modulo 2^32. Each pending carry moves left, so after at most 32 rounds none remains within the word. The remaining pattern is therefore the required modular sum. C#/Java/JavaScript naturally observe the fixed-width pattern; Python masks each carry and reinterprets the final sign. C++ uses unsigned shifts and a fixed-width byte copy for the signed result, avoiding undefined signed left shift or narrowing.",
+        "workedTrace": "For 5 and 3, the first XOR is 6 and the pending carry is 2. Next they become 4 and 4, then 0 and 8, then 8 and 0. The returned result is 8. For -1 and 1, the carry propagates through the whole word and is discarded above bit 31, leaving zero.",
+        "edgeCases": "Zero, equal values, negative values and long carry chains. Both signed endpoints and sums that wrap across either endpoint.",
+        "timeDerivation": "O(w) bit-operation rounds for a w-bit word, at most 32 here; therefore bounded O(1) for this fixed-width callable.",
+        "spaceDerivation": "O(1) auxiliary scalar storage; iterative implementations use no recursion stack.",
+        "callableAgreement": "Read all five bodies and operation restrictions: no arithmetic operator or arithmetic helper is used. C#/C++ shift unsigned 32-bit patterns; C++17 memcpy into int32_t reinterprets the final bits without signed overflow. Java/JS use native 32-bit bitwise operations. Python masks operands/carry and reconstructs the signed result using complement. Long carry chains, both signed endpoints and wrapping sums are executed against independent modular mathematical addition. Read exact C++17 methods: uint32_t carry shifts are defined; the visible <cstring> include supports memcpy of the final int32_t bits. Digit counting widens place arithmetic to int64_t. Const vector references preserve inputs; by-value returned vectors own optional majority results. All index arithmetic handles emptiness before access."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_1.json",
+        "solutions/cpp/ctci6_17_1.cpp",
+        "solutions/notes/cpp/ctci6_17_1.json"
+      ]
+    },
+    "ctci6_17_1/java": {
+      "codePath": "solutions/java/ctci6_17_1.java",
+      "notesPath": "solutions/notes/java/ctci6_17_1.json",
+      "contentSha256": "04d2c74de186630914437ad5be97526330200e0a68d2b4751ebf56b3b9a0f471",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "Iterative fixed-width XOR sum and shifted-AND carries.",
+        "correctness": "For each bit position, XOR contributes the low sum bit and the shifted AND contributes its carry into the next position. Replacing the operands by those two patterns preserves their total modulo 2^32. Each pending carry moves left, so after at most 32 rounds none remains within the word. The remaining pattern is therefore the required modular sum. C#/Java/JavaScript naturally observe the fixed-width pattern; Python masks each carry and reinterprets the final sign. C++ uses unsigned shifts and a fixed-width byte copy for the signed result, avoiding undefined signed left shift or narrowing.",
+        "workedTrace": "For 5 and 3, the first XOR is 6 and the pending carry is 2. Next they become 4 and 4, then 0 and 8, then 8 and 0. The returned result is 8. For -1 and 1, the carry propagates through the whole word and is discarded above bit 31, leaving zero.",
+        "edgeCases": "Zero, equal values, negative values and long carry chains. Both signed endpoints and sums that wrap across either endpoint.",
+        "timeDerivation": "O(w) bit-operation rounds for a w-bit word, at most 32 here; therefore bounded O(1) for this fixed-width callable.",
+        "spaceDerivation": "O(1) auxiliary scalar storage; iterative implementations use no recursion stack.",
+        "callableAgreement": "Read all five bodies and operation restrictions: no arithmetic operator or arithmetic helper is used. C#/C++ shift unsigned 32-bit patterns; C++17 memcpy into int32_t reinterprets the final bits without signed overflow. Java/JS use native 32-bit bitwise operations. Python masks operands/carry and reconstructs the signed result using complement. Long carry chains, both signed endpoints and wrapping sums are executed against independent modular mathematical addition. Read exact methods: int carry shifts deliberately discard overflow bits; digit counting uses long intermediates before the justified final cast. int[] and ArrayList-free optional results match signatures. Bit/loop state is per invocation, and bounded DP/water totals fit int; no static state or mutable input side effects."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_1.json",
+        "solutions/java/ctci6_17_1.java",
+        "solutions/notes/java/ctci6_17_1.json"
+      ]
+    },
+    "ctci6_17_6/csharp": {
+      "codePath": "solutions/csharp/ctci6_17_6.cs",
+      "notesPath": "solutions/notes/ctci6_17_6.json",
+      "contentSha256": "e85ce363407c93d15a49499f2a63c1325c0cf7cc8d416fcad6cecf19480db418",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "Sum complete/partial digit-two runs for each decimal place.",
+        "correctness": "Write n as high*(10p)+digit*p+low with 0<=low<p. The high complete blocks contribute high*p. If digit<2, the final block has not reached its run of twos. If digit=2, that run includes low+1 numbers; if digit>2, it includes all p. Thus the formula counts precisely all occurrences at that position among 0..n. Summing over positions counts every occurrence once, including both positions in 22. Higher leading positions contribute nothing. Wide intermediates prevent overflow of 10p at the billions place.",
+        "workedTrace": "Through 25, the ones place contributes 3 occurrences, in 2,12,22. The tens place contributes 6, in 20..25. The total is 9; 22 intentionally contributes to both place counts. Through 1 the answer is zero.",
+        "edgeCases": "Zero, 2, 12, 22, and boundaries around powers of ten. Current digit below/equal/above two; the largest signed input needs wide place intermediates.",
+        "timeDerivation": "O(log_10(n+1)) decimal places; zero takes constant time.",
+        "spaceDerivation": "O(1) auxiliary scalar storage.",
+        "callableAgreement": "All five actual loops use high/current/low decomposition. C#/Java/C++ use 64-bit intermediates so 10^10 place blocks do not overflow; Python uses exact integers and JS floors exact bounded Number quotients. Output 2071027783 at int.MaxValue is verified by independent digit DP, whose small answers are separately checked against direct decimal enumeration. Occurrences in 22 count twice. Read exact bodies: AddWithoutArithmetic uses unsigned carry shifts and explicit unchecked signed conversions. CountDigitTwos uses long before multiplying place blocks. Array-return expressions match int[]; bounded sums and candidate products stay within int. All arrays supplied to algorithms remain unchanged."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_6.json",
+        "solutions/csharp/ctci6_17_6.cs",
+        "solutions/notes/ctci6_17_6.json"
+      ]
+    },
+    "ctci6_17_6/javascript": {
+      "codePath": "solutions/javascript/ctci6_17_6.js",
+      "notesPath": "solutions/notes/javascript/ctci6_17_6.json",
+      "contentSha256": "d56e19a1f15cc4cc33677ef68f4008f44b1c0840c77389b909898dde3ee5dea0",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "Sum complete/partial digit-two runs for each decimal place.",
+        "correctness": "Write n as high*(10p)+digit*p+low with 0<=low<p. The high complete blocks contribute high*p. If digit<2, the final block has not reached its run of twos. If digit=2, that run includes low+1 numbers; if digit>2, it includes all p. Thus the formula counts precisely all occurrences at that position among 0..n. Summing over positions counts every occurrence once, including both positions in 22. Higher leading positions contribute nothing. Wide intermediates prevent overflow of 10p at the billions place.",
+        "workedTrace": "Through 25, the ones place contributes 3 occurrences, in 2,12,22. The tens place contributes 6, in 20..25. The total is 9; 22 intentionally contributes to both place counts. Through 1 the answer is zero.",
+        "edgeCases": "Zero, 2, 12, 22, and boundaries around powers of ten. Current digit below/equal/above two; the largest signed input needs wide place intermediates.",
+        "timeDerivation": "O(log_10(n+1)) decimal places; zero takes constant time.",
+        "spaceDerivation": "O(1) auxiliary scalar storage.",
+        "callableAgreement": "All five actual loops use high/current/low decomposition. C#/Java/C++ use 64-bit intermediates so 10^10 place blocks do not overflow; Python uses exact integers and JS floors exact bounded Number quotients. Output 2071027783 at int.MaxValue is verified by independent digit DP, whose small answers are separately checked against direct decimal enumeration. Occurrences in 22 count twice. Read exact functions: addition relies on signed 32-bit bitwise coercion, while decimal division uses Math.floor. All ordinary counts/products are safely exact Numbers under shared bounds. Zero/one majority output is an Array; the rolling DP and water scan use local scalars and never rewrite input elements."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_6.json",
+        "solutions/javascript/ctci6_17_6.js",
+        "solutions/notes/javascript/ctci6_17_6.json"
+      ]
+    },
+    "ctci6_17_6/python": {
+      "codePath": "solutions/python/ctci6_17_6.py",
+      "notesPath": "solutions/notes/python/ctci6_17_6.json",
+      "contentSha256": "e2f63401b5ee67eff6becca899b373cc26548005b6cd3d177d0aa0c673eaecb0",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "Sum complete/partial digit-two runs for each decimal place.",
+        "correctness": "Write n as high*(10p)+digit*p+low with 0<=low<p. The high complete blocks contribute high*p. If digit<2, the final block has not reached its run of twos. If digit=2, that run includes low+1 numbers; if digit>2, it includes all p. Thus the formula counts precisely all occurrences at that position among 0..n. Summing over positions counts every occurrence once, including both positions in 22. Higher leading positions contribute nothing. Wide intermediates prevent overflow of 10p at the billions place.",
+        "workedTrace": "Through 25, the ones place contributes 3 occurrences, in 2,12,22. The tens place contributes 6, in 20..25. The total is 9; 22 intentionally contributes to both place counts. Through 1 the answer is zero.",
+        "edgeCases": "Zero, 2, 12, 22, and boundaries around powers of ten. Current digit below/equal/above two; the largest signed input needs wide place intermediates.",
+        "timeDerivation": "O(log_10(n+1)) decimal places; zero takes constant time.",
+        "spaceDerivation": "O(1) auxiliary scalar storage.",
+        "callableAgreement": "All five actual loops use high/current/low decomposition. C#/Java/C++ use 64-bit intermediates so 10^10 place blocks do not overflow; Python uses exact integers and JS floors exact bounded Number quotients. Output 2071027783 at int.MaxValue is verified by independent digit DP, whose small answers are separately checked against direct decimal enumeration. Occurrences in 22 count twice. Read exact functions: masked 32-bit addition terminates on negative inputs and complement reconstructs signed output without arithmetic. Majority verification uses a fresh scalar count, not a misleading sentinel. All collection results are concrete lists, and observation rejects bool-as-int. Recursion is absent in all six bodies."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_6.json",
+        "solutions/python/ctci6_17_6.py",
+        "solutions/notes/python/ctci6_17_6.json"
+      ]
+    },
+    "ctci6_17_6/cpp": {
+      "codePath": "solutions/cpp/ctci6_17_6.cpp",
+      "notesPath": "solutions/notes/cpp/ctci6_17_6.json",
+      "contentSha256": "51e87bf340a3ec0d4c5397a7502b0a15c0a737e3d5b2195e22db058199baf5c8",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "Sum complete/partial digit-two runs for each decimal place.",
+        "correctness": "Write n as high*(10p)+digit*p+low with 0<=low<p. The high complete blocks contribute high*p. If digit<2, the final block has not reached its run of twos. If digit=2, that run includes low+1 numbers; if digit>2, it includes all p. Thus the formula counts precisely all occurrences at that position among 0..n. Summing over positions counts every occurrence once, including both positions in 22. Higher leading positions contribute nothing. Wide intermediates prevent overflow of 10p at the billions place.",
+        "workedTrace": "Through 25, the ones place contributes 3 occurrences, in 2,12,22. The tens place contributes 6, in 20..25. The total is 9; 22 intentionally contributes to both place counts. Through 1 the answer is zero.",
+        "edgeCases": "Zero, 2, 12, 22, and boundaries around powers of ten. Current digit below/equal/above two; the largest signed input needs wide place intermediates.",
+        "timeDerivation": "O(log_10(n+1)) decimal places; zero takes constant time.",
+        "spaceDerivation": "O(1) auxiliary scalar storage.",
+        "callableAgreement": "All five actual loops use high/current/low decomposition. C#/Java/C++ use 64-bit intermediates so 10^10 place blocks do not overflow; Python uses exact integers and JS floors exact bounded Number quotients. Output 2071027783 at int.MaxValue is verified by independent digit DP, whose small answers are separately checked against direct decimal enumeration. Occurrences in 22 count twice. Read exact C++17 methods: uint32_t carry shifts are defined; the visible <cstring> include supports memcpy of the final int32_t bits. Digit counting widens place arithmetic to int64_t. Const vector references preserve inputs; by-value returned vectors own optional majority results. All index arithmetic handles emptiness before access."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_6.json",
+        "solutions/cpp/ctci6_17_6.cpp",
+        "solutions/notes/cpp/ctci6_17_6.json"
+      ]
+    },
+    "ctci6_17_6/java": {
+      "codePath": "solutions/java/ctci6_17_6.java",
+      "notesPath": "solutions/notes/java/ctci6_17_6.json",
+      "contentSha256": "cfa9f53d96886a0c25f7b9c8557ac92b3eb675a63229be32a381cbbeabc8db25",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "Sum complete/partial digit-two runs for each decimal place.",
+        "correctness": "Write n as high*(10p)+digit*p+low with 0<=low<p. The high complete blocks contribute high*p. If digit<2, the final block has not reached its run of twos. If digit=2, that run includes low+1 numbers; if digit>2, it includes all p. Thus the formula counts precisely all occurrences at that position among 0..n. Summing over positions counts every occurrence once, including both positions in 22. Higher leading positions contribute nothing. Wide intermediates prevent overflow of 10p at the billions place.",
+        "workedTrace": "Through 25, the ones place contributes 3 occurrences, in 2,12,22. The tens place contributes 6, in 20..25. The total is 9; 22 intentionally contributes to both place counts. Through 1 the answer is zero.",
+        "edgeCases": "Zero, 2, 12, 22, and boundaries around powers of ten. Current digit below/equal/above two; the largest signed input needs wide place intermediates.",
+        "timeDerivation": "O(log_10(n+1)) decimal places; zero takes constant time.",
+        "spaceDerivation": "O(1) auxiliary scalar storage.",
+        "callableAgreement": "All five actual loops use high/current/low decomposition. C#/Java/C++ use 64-bit intermediates so 10^10 place blocks do not overflow; Python uses exact integers and JS floors exact bounded Number quotients. Output 2071027783 at int.MaxValue is verified by independent digit DP, whose small answers are separately checked against direct decimal enumeration. Occurrences in 22 count twice. Read exact methods: int carry shifts deliberately discard overflow bits; digit counting uses long intermediates before the justified final cast. int[] and ArrayList-free optional results match signatures. Bit/loop state is per invocation, and bounded DP/water totals fit int; no static state or mutable input side effects."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_6.json",
+        "solutions/java/ctci6_17_6.java",
+        "solutions/notes/java/ctci6_17_6.json"
+      ]
+    },
+    "ctci6_17_9/csharp": {
+      "codePath": "solutions/csharp/ctci6_17_9.cs",
+      "notesPath": "solutions/notes/ctci6_17_9.json",
+      "contentSha256": "5e87ead707ff40399f60a1f5c3fa253596ac6a5de6bec0dcca3b5cc0620023cc",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "Merge 3x,5x,7x generated sequences with three monotone pointers, advancing all matching producers.",
+        "correctness": "Initially the generated list contains only 1. Every other permitted number is a smaller permitted number times at least one of 3,5,7. Each pointer skips exactly candidates already emitted; hence the minimum of their next candidates is the smallest permitted value still missing. Appending it maintains increasing complete order. Advancing all equal producers removes duplicate histories without removing a distinct value. By induction list[k] is exactly the requested zero-indexed value.",
+        "workedTrace": "After 1, candidates 3,5,7 give 3, then 5, then 7, then 9. The value 15 is produced both as 3*5 and 5*3. Both responsible pointers advance when 15 is appended, so the next output is 21 rather than another 15. Therefore index 5 returns 15.",
+        "edgeCases": "Index zero, first few values, and duplicate-producing products such as 15 and 105. Largest admitted index with no signed multiplication overflow.",
+        "timeDerivation": "O(k+1) time: one constant-size minimum and three possible pointer advances per generated value.",
+        "spaceDerivation": "O(k+1) stored sequence values and three pointers.",
+        "callableAgreement": "Zero-based k=0 includes the empty product 1, as established by the author source. All indices through 500 execute in all five languages. Independent heap/set generation checks sorted distinct values, factor restrictions and upper-bound safety: result 284765625 and every candidate at most seven times that value fit signed int. Three independent if statements prevent duplicate histories. Read exact bodies: AddWithoutArithmetic uses unsigned carry shifts and explicit unchecked signed conversions. CountDigitTwos uses long before multiplying place blocks. Array-return expressions match int[]; bounded sums and candidate products stay within int. All arrays supplied to algorithms remain unchanged."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_9.json",
+        "solutions/csharp/ctci6_17_9.cs",
+        "solutions/notes/ctci6_17_9.json"
+      ]
+    },
+    "ctci6_17_9/javascript": {
+      "codePath": "solutions/javascript/ctci6_17_9.js",
+      "notesPath": "solutions/notes/javascript/ctci6_17_9.json",
+      "contentSha256": "74ac2e65609a5a2e1ff13679acc65b90dc68a54d29e6dc22679cd8d0833850c3",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "Merge 3x,5x,7x generated sequences with three monotone pointers, advancing all matching producers.",
+        "correctness": "Initially the generated list contains only 1. Every other permitted number is a smaller permitted number times at least one of 3,5,7. Each pointer skips exactly candidates already emitted; hence the minimum of their next candidates is the smallest permitted value still missing. Appending it maintains increasing complete order. Advancing all equal producers removes duplicate histories without removing a distinct value. By induction list[k] is exactly the requested zero-indexed value.",
+        "workedTrace": "After 1, candidates 3,5,7 give 3, then 5, then 7, then 9. The value 15 is produced both as 3*5 and 5*3. Both responsible pointers advance when 15 is appended, so the next output is 21 rather than another 15. Therefore index 5 returns 15.",
+        "edgeCases": "Index zero, first few values, and duplicate-producing products such as 15 and 105. Largest admitted index with no signed multiplication overflow.",
+        "timeDerivation": "O(k+1) time: one constant-size minimum and three possible pointer advances per generated value.",
+        "spaceDerivation": "O(k+1) stored sequence values and three pointers.",
+        "callableAgreement": "Zero-based k=0 includes the empty product 1, as established by the author source. All indices through 500 execute in all five languages. Independent heap/set generation checks sorted distinct values, factor restrictions and upper-bound safety: result 284765625 and every candidate at most seven times that value fit signed int. Three independent if statements prevent duplicate histories. Read exact functions: addition relies on signed 32-bit bitwise coercion, while decimal division uses Math.floor. All ordinary counts/products are safely exact Numbers under shared bounds. Zero/one majority output is an Array; the rolling DP and water scan use local scalars and never rewrite input elements."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_9.json",
+        "solutions/javascript/ctci6_17_9.js",
+        "solutions/notes/javascript/ctci6_17_9.json"
+      ]
+    },
+    "ctci6_17_9/python": {
+      "codePath": "solutions/python/ctci6_17_9.py",
+      "notesPath": "solutions/notes/python/ctci6_17_9.json",
+      "contentSha256": "86c8da8104b2bed92da174f2baec852f36edd6f2befa1d895ca6ce4f83928af0",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "Merge 3x,5x,7x generated sequences with three monotone pointers, advancing all matching producers.",
+        "correctness": "Initially the generated list contains only 1. Every other permitted number is a smaller permitted number times at least one of 3,5,7. Each pointer skips exactly candidates already emitted; hence the minimum of their next candidates is the smallest permitted value still missing. Appending it maintains increasing complete order. Advancing all equal producers removes duplicate histories without removing a distinct value. By induction list[k] is exactly the requested zero-indexed value.",
+        "workedTrace": "After 1, candidates 3,5,7 give 3, then 5, then 7, then 9. The value 15 is produced both as 3*5 and 5*3. Both responsible pointers advance when 15 is appended, so the next output is 21 rather than another 15. Therefore index 5 returns 15.",
+        "edgeCases": "Index zero, first few values, and duplicate-producing products such as 15 and 105. Largest admitted index with no signed multiplication overflow.",
+        "timeDerivation": "O(k+1) time: one constant-size minimum and three possible pointer advances per generated value.",
+        "spaceDerivation": "O(k+1) stored sequence values and three pointers.",
+        "callableAgreement": "Zero-based k=0 includes the empty product 1, as established by the author source. All indices through 500 execute in all five languages. Independent heap/set generation checks sorted distinct values, factor restrictions and upper-bound safety: result 284765625 and every candidate at most seven times that value fit signed int. Three independent if statements prevent duplicate histories. Read exact functions: masked 32-bit addition terminates on negative inputs and complement reconstructs signed output without arithmetic. Majority verification uses a fresh scalar count, not a misleading sentinel. All collection results are concrete lists, and observation rejects bool-as-int. Recursion is absent in all six bodies."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_9.json",
+        "solutions/python/ctci6_17_9.py",
+        "solutions/notes/python/ctci6_17_9.json"
+      ]
+    },
+    "ctci6_17_9/cpp": {
+      "codePath": "solutions/cpp/ctci6_17_9.cpp",
+      "notesPath": "solutions/notes/cpp/ctci6_17_9.json",
+      "contentSha256": "cf18d58cef099cffa8565531a2e95e46c5900624864f2f0c3b81070655175b45",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "Merge 3x,5x,7x generated sequences with three monotone pointers, advancing all matching producers.",
+        "correctness": "Initially the generated list contains only 1. Every other permitted number is a smaller permitted number times at least one of 3,5,7. Each pointer skips exactly candidates already emitted; hence the minimum of their next candidates is the smallest permitted value still missing. Appending it maintains increasing complete order. Advancing all equal producers removes duplicate histories without removing a distinct value. By induction list[k] is exactly the requested zero-indexed value.",
+        "workedTrace": "After 1, candidates 3,5,7 give 3, then 5, then 7, then 9. The value 15 is produced both as 3*5 and 5*3. Both responsible pointers advance when 15 is appended, so the next output is 21 rather than another 15. Therefore index 5 returns 15.",
+        "edgeCases": "Index zero, first few values, and duplicate-producing products such as 15 and 105. Largest admitted index with no signed multiplication overflow.",
+        "timeDerivation": "O(k+1) time: one constant-size minimum and three possible pointer advances per generated value.",
+        "spaceDerivation": "O(k+1) stored sequence values and three pointers.",
+        "callableAgreement": "Zero-based k=0 includes the empty product 1, as established by the author source. All indices through 500 execute in all five languages. Independent heap/set generation checks sorted distinct values, factor restrictions and upper-bound safety: result 284765625 and every candidate at most seven times that value fit signed int. Three independent if statements prevent duplicate histories. Read exact C++17 methods: uint32_t carry shifts are defined; the visible <cstring> include supports memcpy of the final int32_t bits. Digit counting widens place arithmetic to int64_t. Const vector references preserve inputs; by-value returned vectors own optional majority results. All index arithmetic handles emptiness before access."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_9.json",
+        "solutions/cpp/ctci6_17_9.cpp",
+        "solutions/notes/cpp/ctci6_17_9.json"
+      ]
+    },
+    "ctci6_17_9/java": {
+      "codePath": "solutions/java/ctci6_17_9.java",
+      "notesPath": "solutions/notes/java/ctci6_17_9.json",
+      "contentSha256": "e8346633e42043bd4c5220ed05e698b6dd38773b6a7febd9285a130002f0f40b",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "Merge 3x,5x,7x generated sequences with three monotone pointers, advancing all matching producers.",
+        "correctness": "Initially the generated list contains only 1. Every other permitted number is a smaller permitted number times at least one of 3,5,7. Each pointer skips exactly candidates already emitted; hence the minimum of their next candidates is the smallest permitted value still missing. Appending it maintains increasing complete order. Advancing all equal producers removes duplicate histories without removing a distinct value. By induction list[k] is exactly the requested zero-indexed value.",
+        "workedTrace": "After 1, candidates 3,5,7 give 3, then 5, then 7, then 9. The value 15 is produced both as 3*5 and 5*3. Both responsible pointers advance when 15 is appended, so the next output is 21 rather than another 15. Therefore index 5 returns 15.",
+        "edgeCases": "Index zero, first few values, and duplicate-producing products such as 15 and 105. Largest admitted index with no signed multiplication overflow.",
+        "timeDerivation": "O(k+1) time: one constant-size minimum and three possible pointer advances per generated value.",
+        "spaceDerivation": "O(k+1) stored sequence values and three pointers.",
+        "callableAgreement": "Zero-based k=0 includes the empty product 1, as established by the author source. All indices through 500 execute in all five languages. Independent heap/set generation checks sorted distinct values, factor restrictions and upper-bound safety: result 284765625 and every candidate at most seven times that value fit signed int. Three independent if statements prevent duplicate histories. Read exact methods: int carry shifts deliberately discard overflow bits; digit counting uses long intermediates before the justified final cast. int[] and ArrayList-free optional results match signatures. Bit/loop state is per invocation, and bounded DP/water totals fit int; no static state or mutable input side effects."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_9.json",
+        "solutions/java/ctci6_17_9.java",
+        "solutions/notes/java/ctci6_17_9.json"
+      ]
+    },
+    "ctci6_17_10/csharp": {
+      "codePath": "solutions/csharp/ctci6_17_10.cs",
+      "notesPath": "solutions/notes/ctci6_17_10.json",
+      "contentSha256": "c8dfef23515b972e6c4d7cebf2d9f4e5aba1f2883e74f130b71b7f45a02da399",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "Boyer-Moore cancellation followed by strict-majority verification.",
+        "correctness": "When the balance reaches zero, all processed values can be partitioned into unlike canceled pairs. A positive balance represents that many uncanceled copies of the candidate. Removing unlike pairs preserves the identity of any strict majority, so if one exists it is the final candidate. The second pass counts that candidate in the original array and returns it only if its count exceeds floor(n/2), proving both soundness and completeness. With no majority, including empty input, verification returns the empty collection.",
+        "workedTrace": "For [2,1,2,3,2], cancellation leaves candidate 2. Verification finds three copies among five values, so return [2]. For [1,2,3], a candidate still survives the first pass, but its single occurrence is not a majority, so return [].",
+        "edgeCases": "Empty input, a singleton, exactly-half frequency, no majority. A genuine -1 majority, signed endpoints, and a candidate requiring second-pass rejection.",
+        "timeDerivation": "O(n) time for cancellation and verification scans.",
+        "spaceDerivation": "O(1) auxiliary scalar storage plus a result containing at most one integer.",
+        "callableAgreement": "The optional zero/one integer collection avoids conflating a true -1 majority with absence. Both passes preserve inputs; empty arrays, exact-half counts and nonmajority surviving candidates are tested. C#/Java/C++ use exact int arrays/vectors and bounded balances; Python/JS concrete arrays are type-checked. Independent Counter results cover all small ternary arrays and 10000-element boundaries. Read exact bodies: AddWithoutArithmetic uses unsigned carry shifts and explicit unchecked signed conversions. CountDigitTwos uses long before multiplying place blocks. Array-return expressions match int[]; bounded sums and candidate products stay within int. All arrays supplied to algorithms remain unchanged."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_10.json",
+        "solutions/csharp/ctci6_17_10.cs",
+        "solutions/notes/ctci6_17_10.json"
+      ]
+    },
+    "ctci6_17_10/javascript": {
+      "codePath": "solutions/javascript/ctci6_17_10.js",
+      "notesPath": "solutions/notes/javascript/ctci6_17_10.json",
+      "contentSha256": "bbd75d5483c12d43e45a34c1259793fd4f1f39019b54a924fa6e544a3a9707b0",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "Boyer-Moore cancellation followed by strict-majority verification.",
+        "correctness": "When the balance reaches zero, all processed values can be partitioned into unlike canceled pairs. A positive balance represents that many uncanceled copies of the candidate. Removing unlike pairs preserves the identity of any strict majority, so if one exists it is the final candidate. The second pass counts that candidate in the original array and returns it only if its count exceeds floor(n/2), proving both soundness and completeness. With no majority, including empty input, verification returns the empty collection.",
+        "workedTrace": "For [2,1,2,3,2], cancellation leaves candidate 2. Verification finds three copies among five values, so return [2]. For [1,2,3], a candidate still survives the first pass, but its single occurrence is not a majority, so return [].",
+        "edgeCases": "Empty input, a singleton, exactly-half frequency, no majority. A genuine -1 majority, signed endpoints, and a candidate requiring second-pass rejection.",
+        "timeDerivation": "O(n) time for cancellation and verification scans.",
+        "spaceDerivation": "O(1) auxiliary scalar storage plus a result containing at most one integer.",
+        "callableAgreement": "The optional zero/one integer collection avoids conflating a true -1 majority with absence. Both passes preserve inputs; empty arrays, exact-half counts and nonmajority surviving candidates are tested. C#/Java/C++ use exact int arrays/vectors and bounded balances; Python/JS concrete arrays are type-checked. Independent Counter results cover all small ternary arrays and 10000-element boundaries. Read exact functions: addition relies on signed 32-bit bitwise coercion, while decimal division uses Math.floor. All ordinary counts/products are safely exact Numbers under shared bounds. Zero/one majority output is an Array; the rolling DP and water scan use local scalars and never rewrite input elements."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_10.json",
+        "solutions/javascript/ctci6_17_10.js",
+        "solutions/notes/javascript/ctci6_17_10.json"
+      ]
+    },
+    "ctci6_17_10/python": {
+      "codePath": "solutions/python/ctci6_17_10.py",
+      "notesPath": "solutions/notes/python/ctci6_17_10.json",
+      "contentSha256": "7f9f43271e27b55ae59895966ec7f7be0c52252a39bec2812c26696d2db9249c",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "Boyer-Moore cancellation followed by strict-majority verification.",
+        "correctness": "When the balance reaches zero, all processed values can be partitioned into unlike canceled pairs. A positive balance represents that many uncanceled copies of the candidate. Removing unlike pairs preserves the identity of any strict majority, so if one exists it is the final candidate. The second pass counts that candidate in the original array and returns it only if its count exceeds floor(n/2), proving both soundness and completeness. With no majority, including empty input, verification returns the empty collection.",
+        "workedTrace": "For [2,1,2,3,2], cancellation leaves candidate 2. Verification finds three copies among five values, so return [2]. For [1,2,3], a candidate still survives the first pass, but its single occurrence is not a majority, so return [].",
+        "edgeCases": "Empty input, a singleton, exactly-half frequency, no majority. A genuine -1 majority, signed endpoints, and a candidate requiring second-pass rejection.",
+        "timeDerivation": "O(n) time for cancellation and verification scans.",
+        "spaceDerivation": "O(1) auxiliary scalar storage plus a result containing at most one integer.",
+        "callableAgreement": "The optional zero/one integer collection avoids conflating a true -1 majority with absence. Both passes preserve inputs; empty arrays, exact-half counts and nonmajority surviving candidates are tested. C#/Java/C++ use exact int arrays/vectors and bounded balances; Python/JS concrete arrays are type-checked. Independent Counter results cover all small ternary arrays and 10000-element boundaries. Read exact functions: masked 32-bit addition terminates on negative inputs and complement reconstructs signed output without arithmetic. Majority verification uses a fresh scalar count, not a misleading sentinel. All collection results are concrete lists, and observation rejects bool-as-int. Recursion is absent in all six bodies."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_10.json",
+        "solutions/python/ctci6_17_10.py",
+        "solutions/notes/python/ctci6_17_10.json"
+      ]
+    },
+    "ctci6_17_10/cpp": {
+      "codePath": "solutions/cpp/ctci6_17_10.cpp",
+      "notesPath": "solutions/notes/cpp/ctci6_17_10.json",
+      "contentSha256": "bf58be8841fe1a0c659331cbf5bd48e0754c60724c956352fc7f6c748aac9b73",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "Boyer-Moore cancellation followed by strict-majority verification.",
+        "correctness": "When the balance reaches zero, all processed values can be partitioned into unlike canceled pairs. A positive balance represents that many uncanceled copies of the candidate. Removing unlike pairs preserves the identity of any strict majority, so if one exists it is the final candidate. The second pass counts that candidate in the original array and returns it only if its count exceeds floor(n/2), proving both soundness and completeness. With no majority, including empty input, verification returns the empty collection.",
+        "workedTrace": "For [2,1,2,3,2], cancellation leaves candidate 2. Verification finds three copies among five values, so return [2]. For [1,2,3], a candidate still survives the first pass, but its single occurrence is not a majority, so return [].",
+        "edgeCases": "Empty input, a singleton, exactly-half frequency, no majority. A genuine -1 majority, signed endpoints, and a candidate requiring second-pass rejection.",
+        "timeDerivation": "O(n) time for cancellation and verification scans.",
+        "spaceDerivation": "O(1) auxiliary scalar storage plus a result containing at most one integer.",
+        "callableAgreement": "The optional zero/one integer collection avoids conflating a true -1 majority with absence. Both passes preserve inputs; empty arrays, exact-half counts and nonmajority surviving candidates are tested. C#/Java/C++ use exact int arrays/vectors and bounded balances; Python/JS concrete arrays are type-checked. Independent Counter results cover all small ternary arrays and 10000-element boundaries. Read exact C++17 methods: uint32_t carry shifts are defined; the visible <cstring> include supports memcpy of the final int32_t bits. Digit counting widens place arithmetic to int64_t. Const vector references preserve inputs; by-value returned vectors own optional majority results. All index arithmetic handles emptiness before access."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_10.json",
+        "solutions/cpp/ctci6_17_10.cpp",
+        "solutions/notes/cpp/ctci6_17_10.json"
+      ]
+    },
+    "ctci6_17_10/java": {
+      "codePath": "solutions/java/ctci6_17_10.java",
+      "notesPath": "solutions/notes/java/ctci6_17_10.json",
+      "contentSha256": "4c9e140aa9bfd2da30989ed01d6eb6bf372385b4ab1ae814c55a2682699e92c4",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "Boyer-Moore cancellation followed by strict-majority verification.",
+        "correctness": "When the balance reaches zero, all processed values can be partitioned into unlike canceled pairs. A positive balance represents that many uncanceled copies of the candidate. Removing unlike pairs preserves the identity of any strict majority, so if one exists it is the final candidate. The second pass counts that candidate in the original array and returns it only if its count exceeds floor(n/2), proving both soundness and completeness. With no majority, including empty input, verification returns the empty collection.",
+        "workedTrace": "For [2,1,2,3,2], cancellation leaves candidate 2. Verification finds three copies among five values, so return [2]. For [1,2,3], a candidate still survives the first pass, but its single occurrence is not a majority, so return [].",
+        "edgeCases": "Empty input, a singleton, exactly-half frequency, no majority. A genuine -1 majority, signed endpoints, and a candidate requiring second-pass rejection.",
+        "timeDerivation": "O(n) time for cancellation and verification scans.",
+        "spaceDerivation": "O(1) auxiliary scalar storage plus a result containing at most one integer.",
+        "callableAgreement": "The optional zero/one integer collection avoids conflating a true -1 majority with absence. Both passes preserve inputs; empty arrays, exact-half counts and nonmajority surviving candidates are tested. C#/Java/C++ use exact int arrays/vectors and bounded balances; Python/JS concrete arrays are type-checked. Independent Counter results cover all small ternary arrays and 10000-element boundaries. Read exact methods: int carry shifts deliberately discard overflow bits; digit counting uses long intermediates before the justified final cast. int[] and ArrayList-free optional results match signatures. Bit/loop state is per invocation, and bounded DP/water totals fit int; no static state or mutable input side effects."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_10.json",
+        "solutions/java/ctci6_17_10.java",
+        "solutions/notes/java/ctci6_17_10.json"
+      ]
+    },
+    "ctci6_17_16/csharp": {
+      "codePath": "solutions/csharp/ctci6_17_16.cs",
+      "notesPath": "solutions/notes/ctci6_17_16.json",
+      "contentSha256": "6a553ee7b892b198623253beb538b7b5849eba6a70fde769c3dc4485de90cc6d",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "Rolling-prefix include/skip dynamic programming for nonadjacent duration choices.",
+        "correctness": "Let B(i) be the best total using the first i appointments, with B(0)=0. If appointment i-1 is skipped, the optimum is B(i-1). If accepted, the remaining choices are exactly a valid optimum for the first i-2 appointments, giving duration[i-1]+B(i-2). These cases are exhaustive, and their maximum is B(i). The two rolling variables hold those earlier prefix optima before each step; updating after computing the maximum maintains the invariant and returns the full-sequence optimum.",
+        "workedTrace": "For [30,15,60,75,45,15,15,45], prefix optima are 30,30,90,105,135,135,150,180. One optimal choice takes indices 0,2,4,7, totaling 30+60+45+45=180. Choosing the larger appointment from each adjacent pair independently would not enforce constraints across pair boundaries.",
+        "edgeCases": "Empty input, zero durations, one appointment. Two adjacent large appointments; a best choice mixing early and late positions.",
+        "timeDerivation": "O(n) time in one prefix scan.",
+        "spaceDerivation": "O(1) auxiliary storage for two preceding optima and a temporary update.",
+        "callableAgreement": "All actual implementations keep prefix optima one and two positions back, compute before shifting and permit an empty choice. The public suffix-direction code is not copied into the explanation. Small independent exhaustive valid masks and a larger independent suffix table cover every small duration pattern and maximum admitted totals. No sorting, appointment splitting or cross-pair greedy shortcut occurs. Read exact bodies: AddWithoutArithmetic uses unsigned carry shifts and explicit unchecked signed conversions. CountDigitTwos uses long before multiplying place blocks. Array-return expressions match int[]; bounded sums and candidate products stay within int. All arrays supplied to algorithms remain unchanged."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_16.json",
+        "solutions/csharp/ctci6_17_16.cs",
+        "solutions/notes/ctci6_17_16.json"
+      ]
+    },
+    "ctci6_17_16/javascript": {
+      "codePath": "solutions/javascript/ctci6_17_16.js",
+      "notesPath": "solutions/notes/javascript/ctci6_17_16.json",
+      "contentSha256": "d98f38b1f2795b4e1ac0ed53ee15cb243990459568901ab70b86198f920b7ebf",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "Rolling-prefix include/skip dynamic programming for nonadjacent duration choices.",
+        "correctness": "Let B(i) be the best total using the first i appointments, with B(0)=0. If appointment i-1 is skipped, the optimum is B(i-1). If accepted, the remaining choices are exactly a valid optimum for the first i-2 appointments, giving duration[i-1]+B(i-2). These cases are exhaustive, and their maximum is B(i). The two rolling variables hold those earlier prefix optima before each step; updating after computing the maximum maintains the invariant and returns the full-sequence optimum.",
+        "workedTrace": "For [30,15,60,75,45,15,15,45], prefix optima are 30,30,90,105,135,135,150,180. One optimal choice takes indices 0,2,4,7, totaling 30+60+45+45=180. Choosing the larger appointment from each adjacent pair independently would not enforce constraints across pair boundaries.",
+        "edgeCases": "Empty input, zero durations, one appointment. Two adjacent large appointments; a best choice mixing early and late positions.",
+        "timeDerivation": "O(n) time in one prefix scan.",
+        "spaceDerivation": "O(1) auxiliary storage for two preceding optima and a temporary update.",
+        "callableAgreement": "All actual implementations keep prefix optima one and two positions back, compute before shifting and permit an empty choice. The public suffix-direction code is not copied into the explanation. Small independent exhaustive valid masks and a larger independent suffix table cover every small duration pattern and maximum admitted totals. No sorting, appointment splitting or cross-pair greedy shortcut occurs. Read exact functions: addition relies on signed 32-bit bitwise coercion, while decimal division uses Math.floor. All ordinary counts/products are safely exact Numbers under shared bounds. Zero/one majority output is an Array; the rolling DP and water scan use local scalars and never rewrite input elements."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_16.json",
+        "solutions/javascript/ctci6_17_16.js",
+        "solutions/notes/javascript/ctci6_17_16.json"
+      ]
+    },
+    "ctci6_17_16/python": {
+      "codePath": "solutions/python/ctci6_17_16.py",
+      "notesPath": "solutions/notes/python/ctci6_17_16.json",
+      "contentSha256": "a068f3e82642791fae2fb8886875c56ebd89bb994d46a921c8b1d6f93e1dc6f5",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "Rolling-prefix include/skip dynamic programming for nonadjacent duration choices.",
+        "correctness": "Let B(i) be the best total using the first i appointments, with B(0)=0. If appointment i-1 is skipped, the optimum is B(i-1). If accepted, the remaining choices are exactly a valid optimum for the first i-2 appointments, giving duration[i-1]+B(i-2). These cases are exhaustive, and their maximum is B(i). The two rolling variables hold those earlier prefix optima before each step; updating after computing the maximum maintains the invariant and returns the full-sequence optimum.",
+        "workedTrace": "For [30,15,60,75,45,15,15,45], prefix optima are 30,30,90,105,135,135,150,180. One optimal choice takes indices 0,2,4,7, totaling 30+60+45+45=180. Choosing the larger appointment from each adjacent pair independently would not enforce constraints across pair boundaries.",
+        "edgeCases": "Empty input, zero durations, one appointment. Two adjacent large appointments; a best choice mixing early and late positions.",
+        "timeDerivation": "O(n) time in one prefix scan.",
+        "spaceDerivation": "O(1) auxiliary storage for two preceding optima and a temporary update.",
+        "callableAgreement": "All actual implementations keep prefix optima one and two positions back, compute before shifting and permit an empty choice. The public suffix-direction code is not copied into the explanation. Small independent exhaustive valid masks and a larger independent suffix table cover every small duration pattern and maximum admitted totals. No sorting, appointment splitting or cross-pair greedy shortcut occurs. Read exact functions: masked 32-bit addition terminates on negative inputs and complement reconstructs signed output without arithmetic. Majority verification uses a fresh scalar count, not a misleading sentinel. All collection results are concrete lists, and observation rejects bool-as-int. Recursion is absent in all six bodies."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_16.json",
+        "solutions/python/ctci6_17_16.py",
+        "solutions/notes/python/ctci6_17_16.json"
+      ]
+    },
+    "ctci6_17_16/cpp": {
+      "codePath": "solutions/cpp/ctci6_17_16.cpp",
+      "notesPath": "solutions/notes/cpp/ctci6_17_16.json",
+      "contentSha256": "d35203b96a74ea24265b901a48b469100153c8a494a2444f2c0353abb66e949a",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "Rolling-prefix include/skip dynamic programming for nonadjacent duration choices.",
+        "correctness": "Let B(i) be the best total using the first i appointments, with B(0)=0. If appointment i-1 is skipped, the optimum is B(i-1). If accepted, the remaining choices are exactly a valid optimum for the first i-2 appointments, giving duration[i-1]+B(i-2). These cases are exhaustive, and their maximum is B(i). The two rolling variables hold those earlier prefix optima before each step; updating after computing the maximum maintains the invariant and returns the full-sequence optimum.",
+        "workedTrace": "For [30,15,60,75,45,15,15,45], prefix optima are 30,30,90,105,135,135,150,180. One optimal choice takes indices 0,2,4,7, totaling 30+60+45+45=180. Choosing the larger appointment from each adjacent pair independently would not enforce constraints across pair boundaries.",
+        "edgeCases": "Empty input, zero durations, one appointment. Two adjacent large appointments; a best choice mixing early and late positions.",
+        "timeDerivation": "O(n) time in one prefix scan.",
+        "spaceDerivation": "O(1) auxiliary storage for two preceding optima and a temporary update.",
+        "callableAgreement": "All actual implementations keep prefix optima one and two positions back, compute before shifting and permit an empty choice. The public suffix-direction code is not copied into the explanation. Small independent exhaustive valid masks and a larger independent suffix table cover every small duration pattern and maximum admitted totals. No sorting, appointment splitting or cross-pair greedy shortcut occurs. Read exact C++17 methods: uint32_t carry shifts are defined; the visible <cstring> include supports memcpy of the final int32_t bits. Digit counting widens place arithmetic to int64_t. Const vector references preserve inputs; by-value returned vectors own optional majority results. All index arithmetic handles emptiness before access."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_16.json",
+        "solutions/cpp/ctci6_17_16.cpp",
+        "solutions/notes/cpp/ctci6_17_16.json"
+      ]
+    },
+    "ctci6_17_16/java": {
+      "codePath": "solutions/java/ctci6_17_16.java",
+      "notesPath": "solutions/notes/java/ctci6_17_16.json",
+      "contentSha256": "64c2c806b082d00bf413b87a90048b17dc03c1d85fc1e6a768eedfaa99d8b843",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "Rolling-prefix include/skip dynamic programming for nonadjacent duration choices.",
+        "correctness": "Let B(i) be the best total using the first i appointments, with B(0)=0. If appointment i-1 is skipped, the optimum is B(i-1). If accepted, the remaining choices are exactly a valid optimum for the first i-2 appointments, giving duration[i-1]+B(i-2). These cases are exhaustive, and their maximum is B(i). The two rolling variables hold those earlier prefix optima before each step; updating after computing the maximum maintains the invariant and returns the full-sequence optimum.",
+        "workedTrace": "For [30,15,60,75,45,15,15,45], prefix optima are 30,30,90,105,135,135,150,180. One optimal choice takes indices 0,2,4,7, totaling 30+60+45+45=180. Choosing the larger appointment from each adjacent pair independently would not enforce constraints across pair boundaries.",
+        "edgeCases": "Empty input, zero durations, one appointment. Two adjacent large appointments; a best choice mixing early and late positions.",
+        "timeDerivation": "O(n) time in one prefix scan.",
+        "spaceDerivation": "O(1) auxiliary storage for two preceding optima and a temporary update.",
+        "callableAgreement": "All actual implementations keep prefix optima one and two positions back, compute before shifting and permit an empty choice. The public suffix-direction code is not copied into the explanation. Small independent exhaustive valid masks and a larger independent suffix table cover every small duration pattern and maximum admitted totals. No sorting, appointment splitting or cross-pair greedy shortcut occurs. Read exact methods: int carry shifts deliberately discard overflow bits; digit counting uses long intermediates before the justified final cast. int[] and ArrayList-free optional results match signatures. Bit/loop state is per invocation, and bounded DP/water totals fit int; no static state or mutable input side effects."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_16.json",
+        "solutions/java/ctci6_17_16.java",
+        "solutions/notes/java/ctci6_17_16.json"
+      ]
+    },
+    "ctci6_17_21/csharp": {
+      "codePath": "solutions/csharp/ctci6_17_21.cs",
+      "notesPath": "solutions/notes/ctci6_17_21.json",
+      "contentSha256": "f4e5c98cf0159c5acb839a9620daf8f0a572196d22934f381258ba8901f6deff",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "Two inward pointers settle the position adjacent to the lower established barrier.",
+        "correctness": "All positions outside the two pointers have been settled correctly. The two maxima record barriers already encountered on each side. If the left maximum is no greater than the right maximum, a left bar below that left maximum has exactly that water level: a left barrier establishes it, and the right barrier is high enough. A taller left bar raises the maximum and holds zero water. The symmetric argument settles a right position when the right maximum is smaller. Each step settles one position and preserves the invariant, so the accumulated deficits give the complete volume when the pointers cross.",
+        "workedTrace": "For [3,0,2,0,4], the water above positions is [0,3,1,3,0], totaling 7. The interior height-2 bar reduces water at its own position by two units; using just the distance and end heights would overcount.",
+        "edgeCases": "Empty, short, monotone and all-zero histograms. Several basins, equal end barriers, interior peaks, and maximum bounded volume.",
+        "timeDerivation": "O(n) time: one pointer moves inward per iteration.",
+        "spaceDerivation": "O(1) auxiliary scalar storage; no height-sized or input-sized arrays.",
+        "callableAgreement": "All five use the same constant-space boundary invariant and leave heights unchanged. Empty input stops before indexing. Independent prefix/suffix maxima count per-position water and cover all small histograms, monotone arrays and the maximum 999800000 basin. This is total rainwater volume, not two-line container area; fixed bounded sums avoid language-specific overflow. Read exact bodies: AddWithoutArithmetic uses unsigned carry shifts and explicit unchecked signed conversions. CountDigitTwos uses long before multiplying place blocks. Array-return expressions match int[]; bounded sums and candidate products stay within int. All arrays supplied to algorithms remain unchanged."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_21.json",
+        "solutions/csharp/ctci6_17_21.cs",
+        "solutions/notes/ctci6_17_21.json"
+      ]
+    },
+    "ctci6_17_21/javascript": {
+      "codePath": "solutions/javascript/ctci6_17_21.js",
+      "notesPath": "solutions/notes/javascript/ctci6_17_21.json",
+      "contentSha256": "976bd9620e361a8ab93ac5f65bf5fff3db31de261ee5719695bb081337bd1bcd",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "Two inward pointers settle the position adjacent to the lower established barrier.",
+        "correctness": "All positions outside the two pointers have been settled correctly. The two maxima record barriers already encountered on each side. If the left maximum is no greater than the right maximum, a left bar below that left maximum has exactly that water level: a left barrier establishes it, and the right barrier is high enough. A taller left bar raises the maximum and holds zero water. The symmetric argument settles a right position when the right maximum is smaller. Each step settles one position and preserves the invariant, so the accumulated deficits give the complete volume when the pointers cross.",
+        "workedTrace": "For [3,0,2,0,4], the water above positions is [0,3,1,3,0], totaling 7. The interior height-2 bar reduces water at its own position by two units; using just the distance and end heights would overcount.",
+        "edgeCases": "Empty, short, monotone and all-zero histograms. Several basins, equal end barriers, interior peaks, and maximum bounded volume.",
+        "timeDerivation": "O(n) time: one pointer moves inward per iteration.",
+        "spaceDerivation": "O(1) auxiliary scalar storage; no height-sized or input-sized arrays.",
+        "callableAgreement": "All five use the same constant-space boundary invariant and leave heights unchanged. Empty input stops before indexing. Independent prefix/suffix maxima count per-position water and cover all small histograms, monotone arrays and the maximum 999800000 basin. This is total rainwater volume, not two-line container area; fixed bounded sums avoid language-specific overflow. Read exact functions: addition relies on signed 32-bit bitwise coercion, while decimal division uses Math.floor. All ordinary counts/products are safely exact Numbers under shared bounds. Zero/one majority output is an Array; the rolling DP and water scan use local scalars and never rewrite input elements."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_21.json",
+        "solutions/javascript/ctci6_17_21.js",
+        "solutions/notes/javascript/ctci6_17_21.json"
+      ]
+    },
+    "ctci6_17_21/python": {
+      "codePath": "solutions/python/ctci6_17_21.py",
+      "notesPath": "solutions/notes/python/ctci6_17_21.json",
+      "contentSha256": "fc040eb013afde4e94ad77f0569d7fb84ce97ea16bff04b6d0c5da8063eeb101",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "Two inward pointers settle the position adjacent to the lower established barrier.",
+        "correctness": "All positions outside the two pointers have been settled correctly. The two maxima record barriers already encountered on each side. If the left maximum is no greater than the right maximum, a left bar below that left maximum has exactly that water level: a left barrier establishes it, and the right barrier is high enough. A taller left bar raises the maximum and holds zero water. The symmetric argument settles a right position when the right maximum is smaller. Each step settles one position and preserves the invariant, so the accumulated deficits give the complete volume when the pointers cross.",
+        "workedTrace": "For [3,0,2,0,4], the water above positions is [0,3,1,3,0], totaling 7. The interior height-2 bar reduces water at its own position by two units; using just the distance and end heights would overcount.",
+        "edgeCases": "Empty, short, monotone and all-zero histograms. Several basins, equal end barriers, interior peaks, and maximum bounded volume.",
+        "timeDerivation": "O(n) time: one pointer moves inward per iteration.",
+        "spaceDerivation": "O(1) auxiliary scalar storage; no height-sized or input-sized arrays.",
+        "callableAgreement": "All five use the same constant-space boundary invariant and leave heights unchanged. Empty input stops before indexing. Independent prefix/suffix maxima count per-position water and cover all small histograms, monotone arrays and the maximum 999800000 basin. This is total rainwater volume, not two-line container area; fixed bounded sums avoid language-specific overflow. Read exact functions: masked 32-bit addition terminates on negative inputs and complement reconstructs signed output without arithmetic. Majority verification uses a fresh scalar count, not a misleading sentinel. All collection results are concrete lists, and observation rejects bool-as-int. Recursion is absent in all six bodies."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_21.json",
+        "solutions/python/ctci6_17_21.py",
+        "solutions/notes/python/ctci6_17_21.json"
+      ]
+    },
+    "ctci6_17_21/cpp": {
+      "codePath": "solutions/cpp/ctci6_17_21.cpp",
+      "notesPath": "solutions/notes/cpp/ctci6_17_21.json",
+      "contentSha256": "daf7c2afafc21da0b263689750935f836f9f2a1ccc18e9a9530cabb4c6ef709b",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "Two inward pointers settle the position adjacent to the lower established barrier.",
+        "correctness": "All positions outside the two pointers have been settled correctly. The two maxima record barriers already encountered on each side. If the left maximum is no greater than the right maximum, a left bar below that left maximum has exactly that water level: a left barrier establishes it, and the right barrier is high enough. A taller left bar raises the maximum and holds zero water. The symmetric argument settles a right position when the right maximum is smaller. Each step settles one position and preserves the invariant, so the accumulated deficits give the complete volume when the pointers cross.",
+        "workedTrace": "For [3,0,2,0,4], the water above positions is [0,3,1,3,0], totaling 7. The interior height-2 bar reduces water at its own position by two units; using just the distance and end heights would overcount.",
+        "edgeCases": "Empty, short, monotone and all-zero histograms. Several basins, equal end barriers, interior peaks, and maximum bounded volume.",
+        "timeDerivation": "O(n) time: one pointer moves inward per iteration.",
+        "spaceDerivation": "O(1) auxiliary scalar storage; no height-sized or input-sized arrays.",
+        "callableAgreement": "All five use the same constant-space boundary invariant and leave heights unchanged. Empty input stops before indexing. Independent prefix/suffix maxima count per-position water and cover all small histograms, monotone arrays and the maximum 999800000 basin. This is total rainwater volume, not two-line container area; fixed bounded sums avoid language-specific overflow. Read exact C++17 methods: uint32_t carry shifts are defined; the visible <cstring> include supports memcpy of the final int32_t bits. Digit counting widens place arithmetic to int64_t. Const vector references preserve inputs; by-value returned vectors own optional majority results. All index arithmetic handles emptiness before access."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_21.json",
+        "solutions/cpp/ctci6_17_21.cpp",
+        "solutions/notes/cpp/ctci6_17_21.json"
+      ]
+    },
+    "ctci6_17_21/java": {
+      "codePath": "solutions/java/ctci6_17_21.java",
+      "notesPath": "solutions/notes/java/ctci6_17_21.json",
+      "contentSha256": "18bbe49d6bbecf9c022a029d213f1fe5befa6b65e85397ca6ee31fdabef0da7c",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "Two inward pointers settle the position adjacent to the lower established barrier.",
+        "correctness": "All positions outside the two pointers have been settled correctly. The two maxima record barriers already encountered on each side. If the left maximum is no greater than the right maximum, a left bar below that left maximum has exactly that water level: a left barrier establishes it, and the right barrier is high enough. A taller left bar raises the maximum and holds zero water. The symmetric argument settles a right position when the right maximum is smaller. Each step settles one position and preserves the invariant, so the accumulated deficits give the complete volume when the pointers cross.",
+        "workedTrace": "For [3,0,2,0,4], the water above positions is [0,3,1,3,0], totaling 7. The interior height-2 bar reduces water at its own position by two units; using just the distance and end heights would overcount.",
+        "edgeCases": "Empty, short, monotone and all-zero histograms. Several basins, equal end barriers, interior peaks, and maximum bounded volume.",
+        "timeDerivation": "O(n) time: one pointer moves inward per iteration.",
+        "spaceDerivation": "O(1) auxiliary scalar storage; no height-sized or input-sized arrays.",
+        "callableAgreement": "All five use the same constant-space boundary invariant and leave heights unchanged. Empty input stops before indexing. Independent prefix/suffix maxima count per-position water and cover all small histograms, monotone arrays and the maximum 999800000 basin. This is total rainwater volume, not two-line container area; fixed bounded sums avoid language-specific overflow. Read exact methods: int carry shifts deliberately discard overflow bits; digit counting uses long intermediates before the justified final cast. int[] and ArrayList-free optional results match signatures. Bit/loop state is per invocation, and bounded DP/water totals fit int; no static state or mutable input side effects."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_21.json",
+        "solutions/java/ctci6_17_21.java",
+        "solutions/notes/java/ctci6_17_21.json"
       ]
     }
   }

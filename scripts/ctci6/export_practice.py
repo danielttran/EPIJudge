@@ -44,6 +44,7 @@ def export():
         "review05.json",
         "review08.json",
         "review16.json",
+        "review17.json",
     ):
         review = json.loads((ROOT / "ctci6" / filename).read_text())
         if set(review["languagesReviewed"]) != set(LANGUAGES):
@@ -69,6 +70,7 @@ def export():
         5: "Bit manipulation",
         8: "Recursion and dynamic programming",
         16: "Moderate interview problems",
+        17: "Hard interview problems",
     }
     source_report = []
     for position, ref in enumerate(

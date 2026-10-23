@@ -1,0 +1,26 @@
+{
+  "explanation": "Cancel pairs of different values: a strict majority cannot be eliminated by these cancellations, because each canceled majority occurrence removes a nonmajority occurrence too. Keep a candidate and an unmatched balance instead of storing all counts. Cancellation produces only a candidate, so a second pass must verify that it actually exceeds half the original length.",
+  "correctness": "When the balance reaches zero, all processed values can be partitioned into unlike canceled pairs. A positive balance represents that many uncanceled copies of the candidate. Removing unlike pairs preserves the identity of any strict majority, so if one exists it is the final candidate. The second pass counts that candidate in the original array and returns it only if its count exceeds floor(n/2), proving both soundness and completeness. With no majority, including empty input, verification returns the empty collection.",
+  "walkthrough": "For [2,1,2,3,2], cancellation leaves candidate 2. Verification finds three copies among five values, so return [2]. For [1,2,3], a candidate still survives the first pass, but its single occurrence is not a majority, so return [].",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        2,
+        1,
+        2,
+        3,
+        2
+      ]
+    ],
+    "expected": [
+      2
+    ]
+  },
+  "timeComplexity": "O(n) time for cancellation and verification scans.",
+  "spaceComplexity": "O(1) auxiliary scalar storage plus a result containing at most one integer.",
+  "edgeCases": [
+    "Empty input, a singleton, exactly-half frequency, no majority.",
+    "A genuine -1 majority, signed endpoints, and a candidate requiring second-pass rejection."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.10. No affiliation is implied."
+}

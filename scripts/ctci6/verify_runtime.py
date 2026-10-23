@@ -144,6 +144,7 @@ def verify(only_ref=None, only_language=None, starters=False):
                                 5: "core",
                                 8: "core",
                                 16: "core",
+                                17: "core",
                             }[entry["batch"]]
                         ],
                     )
@@ -204,7 +205,7 @@ def verify(only_ref=None, only_language=None, starters=False):
                         if entry["batch"] == 8
                         and (entry["result"] in ("sets", "strings", "arrangements") or entry["ref"] in ("8.2", "8.3"))
                         else core_match(case, observed)
-                        if entry["batch"] in (1, 5, 8, 16)
+                        if entry["batch"] in (1, 5, 8, 16, 17)
                         else valid_observation(entry["ref"], case, observed)
                         if entry["batch"] == 2
                         else state_match(case, observed)

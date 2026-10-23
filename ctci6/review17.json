@@ -1,0 +1,62 @@
+{
+  "stage": "standalone-authoring-and-separate-module",
+  "liveIntegration": "pending-current-module-receipts",
+  "reviewScope": "Six hard coding tasks and thirty actual language bodies, with separately reviewed operation restrictions, index conventions, signed overflow, optional outputs, DP direction and water-volume objective.",
+  "questions": [
+    {
+      "ref": "17.1",
+      "algorithm": "Iterative fixed-width XOR sum and shifted-AND carries.",
+      "review": "Read all five bodies and operation restrictions: no arithmetic operator or arithmetic helper is used. C#/C++ shift unsigned 32-bit patterns; C++17 memcpy into int32_t reinterprets the final bits without signed overflow. Java/JS use native 32-bit bitwise operations. Python masks operands/carry and reconstructs the signed result using complement. Long carry chains, both signed endpoints and wrapping sums are executed against independent modular mathematical addition."
+    },
+    {
+      "ref": "17.6",
+      "algorithm": "Sum complete/partial digit-two runs for each decimal place.",
+      "review": "All five actual loops use high/current/low decomposition. C#/Java/C++ use 64-bit intermediates so 10^10 place blocks do not overflow; Python uses exact integers and JS floors exact bounded Number quotients. Output 2071027783 at int.MaxValue is verified by independent digit DP, whose small answers are separately checked against direct decimal enumeration. Occurrences in 22 count twice."
+    },
+    {
+      "ref": "17.9",
+      "algorithm": "Merge 3x,5x,7x generated sequences with three monotone pointers, advancing all matching producers.",
+      "review": "Zero-based k=0 includes the empty product 1, as established by the author source. All indices through 500 execute in all five languages. Independent heap/set generation checks sorted distinct values, factor restrictions and upper-bound safety: result 284765625 and every candidate at most seven times that value fit signed int. Three independent if statements prevent duplicate histories."
+    },
+    {
+      "ref": "17.10",
+      "algorithm": "Boyer-Moore cancellation followed by strict-majority verification.",
+      "review": "The optional zero/one integer collection avoids conflating a true -1 majority with absence. Both passes preserve inputs; empty arrays, exact-half counts and nonmajority surviving candidates are tested. C#/Java/C++ use exact int arrays/vectors and bounded balances; Python/JS concrete arrays are type-checked. Independent Counter results cover all small ternary arrays and 10000-element boundaries."
+    },
+    {
+      "ref": "17.16",
+      "algorithm": "Rolling-prefix include/skip dynamic programming for nonadjacent duration choices.",
+      "review": "All actual implementations keep prefix optima one and two positions back, compute before shifting and permit an empty choice. The public suffix-direction code is not copied into the explanation. Small independent exhaustive valid masks and a larger independent suffix table cover every small duration pattern and maximum admitted totals. No sorting, appointment splitting or cross-pair greedy shortcut occurs."
+    },
+    {
+      "ref": "17.21",
+      "algorithm": "Two inward pointers settle the position adjacent to the lower established barrier.",
+      "review": "All five use the same constant-space boundary invariant and leave heights unchanged. Empty input stops before indexing. Independent prefix/suffix maxima count per-position water and cover all small histograms, monotone arrays and the maximum 999800000 basin. This is total rainwater volume, not two-line container area; fixed bounded sums avoid language-specific overflow."
+    }
+  ],
+  "languagesReviewed": [
+    "csharp",
+    "javascript",
+    "python",
+    "cpp",
+    "java"
+  ],
+  "languageBindingReview": {
+    "csharp": "Read exact bodies: AddWithoutArithmetic uses unsigned carry shifts and explicit unchecked signed conversions. CountDigitTwos uses long before multiplying place blocks. Array-return expressions match int[]; bounded sums and candidate products stay within int. All arrays supplied to algorithms remain unchanged.",
+    "javascript": "Read exact functions: addition relies on signed 32-bit bitwise coercion, while decimal division uses Math.floor. All ordinary counts/products are safely exact Numbers under shared bounds. Zero/one majority output is an Array; the rolling DP and water scan use local scalars and never rewrite input elements.",
+    "python": "Read exact functions: masked 32-bit addition terminates on negative inputs and complement reconstructs signed output without arithmetic. Majority verification uses a fresh scalar count, not a misleading sentinel. All collection results are concrete lists, and observation rejects bool-as-int. Recursion is absent in all six bodies.",
+    "cpp": "Read exact C++17 methods: uint32_t carry shifts are defined; the visible <cstring> include supports memcpy of the final int32_t bits. Digit counting widens place arithmetic to int64_t. Const vector references preserve inputs; by-value returned vectors own optional majority results. All index arithmetic handles emptiness before access.",
+    "java": "Read exact methods: int carry shifts deliberately discard overflow bits; digit counting uses long intermediates before the justified final cast. int[] and ArrayList-free optional results match signatures. Bit/loop state is per invocation, and bounded DP/water totals fit int; no static state or mutable input side effects."
+  },
+  "executionEvidence": "staged17/validation.json",
+  "submissionEvidence": "runtime/validation.json",
+  "graderRegressions": [
+    "scripts/ctci6/test_hard17.py"
+  ],
+  "remainingAcceptance": [
+    "remaining known content and classifications",
+    "final whole-bank executable acceptance",
+    "final rendered/integration audits",
+    "authorized push and exact-commit CI"
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "explanation": "Merge the increasing sequences obtained by multiplying already generated values by 3,5 and 7. One pointer per factor identifies its smallest candidate not yet emitted. Pick the minimum candidate, then advance EVERY pointer that produced it so a value such as 15 is not emitted twice.",
+  "correctness": "Initially the generated list contains only 1. Every other permitted number is a smaller permitted number times at least one of 3,5,7. Each pointer skips exactly candidates already emitted; hence the minimum of their next candidates is the smallest permitted value still missing. Appending it maintains increasing complete order. Advancing all equal producers removes duplicate histories without removing a distinct value. By induction list[k] is exactly the requested zero-indexed value.",
+  "walkthrough": "After 1, candidates 3,5,7 give 3, then 5, then 7, then 9. The value 15 is produced both as 3*5 and 5*3. Both responsible pointers advance when 15 is appended, so the next output is 21 rather than another 15. Therefore index 5 returns 15.",
+  "walkthroughCase": {
+    "arguments": [
+      5
+    ],
+    "expected": 15
+  },
+  "timeComplexity": "O(k+1) time: one constant-size minimum and three possible pointer advances per generated value.",
+  "spaceComplexity": "O(k+1) stored sequence values and three pointers.",
+  "edgeCases": [
+    "Index zero, first few values, and duplicate-producing products such as 15 and 105.",
+    "Largest admitted index with no signed multiplication overflow."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.9. No affiliation is implied."
+}

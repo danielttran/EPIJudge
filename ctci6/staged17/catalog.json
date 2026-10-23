@@ -1,0 +1,408 @@
+[
+  {
+    "ref": "17.1",
+    "method": "AddWithoutArithmetic",
+    "params": [
+      [
+        "first",
+        "i"
+      ],
+      [
+        "second",
+        "i"
+      ]
+    ],
+    "result": "i",
+    "mutation": "none",
+    "description": "Add two signed 32-bit integers without using arithmetic operators or an arithmetic helper. Return the signed 32-bit two's-complement sum: overflow wraps modulo 2^32, exactly as ordinary Java int addition. Use bit operations to combine sum bits and carries.",
+    "constraints": [
+      "Both inputs may be any signed 32-bit integer. Preserve their caller values. For example 2147483647 plus 1 returns -2147483648, not an exception or a wider positive result.",
+      "Do not use addition, subtraction, multiplication, division, remainder, increment/decrement, sum helpers or conversion to a representation that delegates addition. Bitwise operations, masks, shifts, comparisons, assignment and loops/recursion are allowed. C++ fixed-width bit reinterpretation is allowed; it performs no arithmetic."
+    ],
+    "why": "XOR gives the sum bits that need no carry. AND identifies positions where both operands contain a one, and shifting those positions left produces pending carries. Repeat with the carry-free result and pending carries until no carries remain. Fixed-width masking is essential in Python, where negative integers do not automatically have 32-bit width.",
+    "correctness": "For each bit position, XOR contributes the low sum bit and the shifted AND contributes its carry into the next position. Replacing the operands by those two patterns preserves their total modulo 2^32. Each pending carry moves left, so after at most 32 rounds none remains within the word. The remaining pattern is therefore the required modular sum. C#/Java/JavaScript naturally observe the fixed-width pattern; Python masks each carry and reinterprets the final sign. C++ uses unsigned shifts and a fixed-width byte copy for the signed result, avoiding undefined signed left shift or narrowing.",
+    "walkthrough": "For 5 and 3, the first XOR is 6 and the pending carry is 2. Next they become 4 and 4, then 0 and 8, then 8 and 0. The returned result is 8. For -1 and 1, the carry propagates through the whole word and is discarded above bit 31, leaving zero.",
+    "example": [
+      [
+        5,
+        3
+      ],
+      8
+    ],
+    "time": "O(w) bit-operation rounds for a w-bit word, at most 32 here; therefore bounded O(1) for this fixed-width callable.",
+    "space": "O(1) auxiliary scalar storage; iterative implementations use no recursion stack.",
+    "edges": [
+      "Zero, equal values, negative values and long carry chains.",
+      "Both signed endpoints and sums that wrap across either endpoint."
+    ],
+    "related": "The author public test intentionally includes overflowing addition; an unbounded mathematical-sum contract would differ.",
+    "id": "ctci6_17_1",
+    "title": "Add Without Plus",
+    "testCount": 2079,
+    "languages": {
+      "csharp": {
+        "signature": "int AddWithoutArithmetic(int first, int second)",
+        "starterCode": "public class Solution\n{\n    public int AddWithoutArithmetic(int first, int second)\n    {\n        return 0;\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public int AddWithoutArithmetic(int first, int second)\n    {\n        uint a = unchecked((uint)first), b = unchecked((uint)second);\n        while (b != 0)\n        {\n            uint carry = (a & b) << 1;\n            a ^= b;\n            b = carry;\n        }\n        return unchecked((int)a);\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function AddWithoutArithmetic(first, second)",
+        "starterCode": "function AddWithoutArithmetic(first, second) {\n  return 0;\n}\n",
+        "solutionCode": "function AddWithoutArithmetic(first, second) {\n  while (second !== 0) {\n    const carry = (first & second) << 1;\n    first ^= second;\n    second = carry;\n  }\n  return first;\n}\n"
+      },
+      "python": {
+        "signature": "def AddWithoutArithmetic(first: int, second: int) -> int",
+        "starterCode": "def AddWithoutArithmetic(first: int, second: int) -> int:\n    return 0\n",
+        "solutionCode": "def AddWithoutArithmetic(first: int, second: int) -> int:\n    mask = 0xFFFFFFFF\n    first &= mask\n    second &= mask\n    while second:\n        carry = ((first & second) << 1) & mask\n        first ^= second\n        second = carry\n    return first if first < 0x80000000 else ~(first ^ mask)\n"
+      },
+      "cpp": {
+        "signature": "int AddWithoutArithmetic(int first, int second)",
+        "starterCode": "#include <cstring>\nclass Solution {\n public:\n  int AddWithoutArithmetic(int first, int second) {\n    return 0;\n  }\n};\n",
+        "solutionCode": "#include <cstring>\nclass Solution {\n public:\n  int AddWithoutArithmetic(int first, int second) {\n    auto a = static_cast<std::uint32_t>(first), b = static_cast<std::uint32_t>(second);\n    while (b != 0) {\n      std::uint32_t carry = (a & b) << 1;\n      a ^= b;\n      b = carry;\n    }\n    std::int32_t result;\n    std::memcpy(&result, &a, sizeof(result));\n    return result;\n  }\n};\n"
+      },
+      "java": {
+        "signature": "int AddWithoutArithmetic(int first, int second)",
+        "starterCode": "class Solution {\n  public int AddWithoutArithmetic(int first, int second) {\n    return 0;\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public int AddWithoutArithmetic(int first, int second) {\n    while (second != 0) {\n      int carry = (first & second) << 1;\n      first ^= second;\n      second = carry;\n    }\n    return first;\n  }\n}\n"
+      }
+    }
+  },
+  {
+    "ref": "17.6",
+    "method": "CountDigitTwos",
+    "params": [
+      [
+        "n",
+        "i"
+      ]
+    ],
+    "result": "i",
+    "mutation": "none",
+    "description": "Count all occurrences of the decimal digit 2 in the ordinary decimal representations of integers from 0 through n, inclusive. Count occurrences rather than the number of integers containing a 2: the integer 22 contributes two occurrences. Do not count leading zeros.",
+    "constraints": [
+      "0 <= n <= 2147483647. Return the exact signed 32-bit count and preserve inputs. At the largest admitted n the count is 2071027783, so the return type is sufficient.",
+      "Do not construct every number in a huge range. Use integer decimal-place counting; intermediate place/block values may exceed signed 32-bit range even though the result fits."
+    ],
+    "why": "At one decimal place of weight p, the digit pattern repeats every 10p numbers. Every complete block contributes p twos in that place. The final partial block contributes zero, a partial run, or a full p depending on whether the current digit is below, equal to, or above two. Add the independent counts for all places.",
+    "correctness": "Write n as high*(10p)+digit*p+low with 0<=low<p. The high complete blocks contribute high*p. If digit<2, the final block has not reached its run of twos. If digit=2, that run includes low+1 numbers; if digit>2, it includes all p. Thus the formula counts precisely all occurrences at that position among 0..n. Summing over positions counts every occurrence once, including both positions in 22. Higher leading positions contribute nothing. Wide intermediates prevent overflow of 10p at the billions place.",
+    "walkthrough": "Through 25, the ones place contributes 3 occurrences, in 2,12,22. The tens place contributes 6, in 20..25. The total is 9; 22 intentionally contributes to both place counts. Through 1 the answer is zero.",
+    "example": [
+      [
+        25
+      ],
+      9
+    ],
+    "time": "O(log_10(n+1)) decimal places; zero takes constant time.",
+    "space": "O(1) auxiliary scalar storage.",
+    "edges": [
+      "Zero, 2, 12, 22, and boundaries around powers of ten.",
+      "Current digit below/equal/above two; the largest signed input needs wide place intermediates."
+    ],
+    "related": "Counting numbers containing a 2 is a different task; the public source counts each digit occurrence.",
+    "id": "ctci6_17_6",
+    "title": "Count of 2s",
+    "testCount": 664,
+    "languages": {
+      "csharp": {
+        "signature": "int CountDigitTwos(int n)",
+        "starterCode": "public class Solution\n{\n    public int CountDigitTwos(int n)\n    {\n        return 0;\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public int CountDigitTwos(int n)\n    {\n        long total = 0;\n        for (long place = 1; place <= n; place *= 10)\n        {\n            long high = n / (place * 10), digit = (n / place) % 10, low = n % place;\n            total += high * place;\n            if (digit == 2)\n                total += low + 1;\n            else if (digit > 2)\n                total += place;\n        }\n        return (int)total;\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function CountDigitTwos(n)",
+        "starterCode": "function CountDigitTwos(n) {\n  return 0;\n}\n",
+        "solutionCode": "function CountDigitTwos(n) {\n  let total = 0;\n  for (let place = 1; place <= n; place *= 10) {\n    const high = Math.floor(n / (place * 10)),\n      digit = Math.floor(n / place) % 10,\n      low = n % place;\n    total += high * place;\n    if (digit === 2) total += low + 1;\n    else if (digit > 2) total += place;\n  }\n  return total;\n}\n"
+      },
+      "python": {
+        "signature": "def CountDigitTwos(n: int) -> int",
+        "starterCode": "def CountDigitTwos(n: int) -> int:\n    return 0\n",
+        "solutionCode": "def CountDigitTwos(n: int) -> int:\n    total = 0\n    place = 1\n    while place <= n:\n        high = n // (place * 10)\n        digit = (n // place) % 10\n        low = n % place\n        total += high * place\n        if digit == 2:\n            total += low + 1\n        elif digit > 2:\n            total += place\n        place *= 10\n    return total\n"
+      },
+      "cpp": {
+        "signature": "int CountDigitTwos(int n)",
+        "starterCode": "class Solution {\n public:\n  int CountDigitTwos(int n) {\n    return 0;\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  int CountDigitTwos(int n) {\n    std::int64_t total = 0;\n    for (std::int64_t place = 1; place <= n; place *= 10) {\n      std::int64_t high = n / (place * 10), digit = (n / place) % 10, low = n % place;\n      total += high * place;\n      if (digit == 2)\n        total += low + 1;\n      else if (digit > 2)\n        total += place;\n    }\n    return static_cast<int>(total);\n  }\n};\n"
+      },
+      "java": {
+        "signature": "int CountDigitTwos(int n)",
+        "starterCode": "class Solution {\n  public int CountDigitTwos(int n) {\n    return 0;\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public int CountDigitTwos(int n) {\n    long total = 0;\n    for (long place = 1; place <= n; place *= 10) {\n      long high = n / (place * 10), digit = (n / place) % 10, low = n % place;\n      total += high * place;\n      if (digit == 2)\n        total += low + 1;\n      else if (digit > 2)\n        total += place;\n    }\n    return (int) total;\n  }\n}\n"
+      }
+    }
+  },
+  {
+    "ref": "17.9",
+    "method": "KthMultiple357",
+    "params": [
+      [
+        "k",
+        "i"
+      ]
+    ],
+    "result": "i",
+    "mutation": "none",
+    "description": "Return the zero-indexed kth number in the increasing sequence of positive integers whose only prime factors are 3,5 and 7. Include 1 as the empty product at index zero. Each distinct value appears once even if several multiplication histories produce it.",
+    "constraints": [
+      "0 <= k <= 500. The sequence starts 1,3,5,7,9,15,21,25,27. Preserve inputs. The index is zero-based, matching the author public implementation, not a one-based rank.",
+      "At index 500 the result is 284765625. Even seven times that value fits signed 32-bit range, so every candidate computed under this bound is safe. Do not include factors 2 or any other prime."
+    ],
+    "why": "Merge the increasing sequences obtained by multiplying already generated values by 3,5 and 7. One pointer per factor identifies its smallest candidate not yet emitted. Pick the minimum candidate, then advance EVERY pointer that produced it so a value such as 15 is not emitted twice.",
+    "correctness": "Initially the generated list contains only 1. Every other permitted number is a smaller permitted number times at least one of 3,5,7. Each pointer skips exactly candidates already emitted; hence the minimum of their next candidates is the smallest permitted value still missing. Appending it maintains increasing complete order. Advancing all equal producers removes duplicate histories without removing a distinct value. By induction list[k] is exactly the requested zero-indexed value.",
+    "walkthrough": "After 1, candidates 3,5,7 give 3, then 5, then 7, then 9. The value 15 is produced both as 3*5 and 5*3. Both responsible pointers advance when 15 is appended, so the next output is 21 rather than another 15. Therefore index 5 returns 15.",
+    "example": [
+      [
+        5
+      ],
+      15
+    ],
+    "time": "O(k+1) time: one constant-size minimum and three possible pointer advances per generated value.",
+    "space": "O(k+1) stored sequence values and three pointers.",
+    "edges": [
+      "Index zero, first few values, and duplicate-producing products such as 15 and 105.",
+      "Largest admitted index with no signed multiplication overflow."
+    ],
+    "related": "An ugly-number sequence allowing prime factor 2 is not an exact replacement.",
+    "id": "ctci6_17_9",
+    "title": "Kth Multiple",
+    "testCount": 501,
+    "languages": {
+      "csharp": {
+        "signature": "int KthMultiple357(int k)",
+        "starterCode": "public class Solution\n{\n    public int KthMultiple357(int k)\n    {\n        return 0;\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public int KthMultiple357(int k)\n    {\n        int[] values = new int[k + 1];\n        values[0] = 1;\n        int third = 0, fifth = 0, seventh = 0;\n        for (int i = 1; i <= k; ++i)\n        {\n            int a = values[third] * 3, b = values[fifth] * 5, c = values[seventh] * 7,\n                value = Math.Min(a, Math.Min(b, c));\n            values[i] = value;\n            if (value == a)\n                ++third;\n            if (value == b)\n                ++fifth;\n            if (value == c)\n                ++seventh;\n        }\n        return values[k];\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function KthMultiple357(k)",
+        "starterCode": "function KthMultiple357(k) {\n  return 0;\n}\n",
+        "solutionCode": "function KthMultiple357(k) {\n  const values = [1];\n  let third = 0,\n    fifth = 0,\n    seventh = 0;\n  for (let i = 0; i < k; ++i) {\n    const a = values[third] * 3,\n      b = values[fifth] * 5,\n      c = values[seventh] * 7,\n      value = Math.min(a, b, c);\n    values.push(value);\n    if (value === a) ++third;\n    if (value === b) ++fifth;\n    if (value === c) ++seventh;\n  }\n  return values[k];\n}\n"
+      },
+      "python": {
+        "signature": "def KthMultiple357(k: int) -> int",
+        "starterCode": "def KthMultiple357(k: int) -> int:\n    return 0\n",
+        "solutionCode": "def KthMultiple357(k: int) -> int:\n    values = [1]\n    third = fifth = seventh = 0\n    for _ in range(k):\n        next_three = values[third] * 3\n        next_five = values[fifth] * 5\n        next_seven = values[seventh] * 7\n        value = min(next_three, next_five, next_seven)\n        values.append(value)\n        if value == next_three:\n            third += 1\n        if value == next_five:\n            fifth += 1\n        if value == next_seven:\n            seventh += 1\n    return values[k]\n"
+      },
+      "cpp": {
+        "signature": "int KthMultiple357(int k)",
+        "starterCode": "class Solution {\n public:\n  int KthMultiple357(int k) {\n    return 0;\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  int KthMultiple357(int k) {\n    std::vector<int> values(k + 1);\n    values[0] = 1;\n    int third = 0, fifth = 0, seventh = 0;\n    for (int i = 1; i <= k; ++i) {\n      int a = values[third] * 3, b = values[fifth] * 5, c = values[seventh] * 7,\n          value = std::min(a, std::min(b, c));\n      values[i] = value;\n      if (value == a)\n        ++third;\n      if (value == b)\n        ++fifth;\n      if (value == c)\n        ++seventh;\n    }\n    return values[k];\n  }\n};\n"
+      },
+      "java": {
+        "signature": "int KthMultiple357(int k)",
+        "starterCode": "class Solution {\n  public int KthMultiple357(int k) {\n    return 0;\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public int KthMultiple357(int k) {\n    int[] values = new int[k + 1];\n    values[0] = 1;\n    int third = 0, fifth = 0, seventh = 0;\n    for (int i = 1; i <= k; ++i) {\n      int a = values[third] * 3, b = values[fifth] * 5, c = values[seventh] * 7,\n          value = Math.min(a, Math.min(b, c));\n      values[i] = value;\n      if (value == a)\n        ++third;\n      if (value == b)\n        ++fifth;\n      if (value == c)\n        ++seventh;\n    }\n    return values[k];\n  }\n}\n"
+      }
+    }
+  },
+  {
+    "ref": "17.10",
+    "method": "MajorityElement",
+    "params": [
+      [
+        "values",
+        "ai"
+      ]
+    ],
+    "result": "ai",
+    "mutation": "none",
+    "description": "Find a value occurring strictly more than half the time in values. Return [value] if such a majority exists, otherwise return an empty integer collection. A value appearing exactly half the time is not a majority. Preserve the input.",
+    "constraints": [
+      "values contains 0..10000 signed 32-bit integers, including -1 and both signed endpoints. The optional result is a concrete zero- or one-element integer array/list/vector.",
+      "The collection wrapper distinguishes no majority from a legitimate majority whose value is -1. Empty input has no majority. At most one value can occur strictly more than half the time."
+    ],
+    "why": "Cancel pairs of different values: a strict majority cannot be eliminated by these cancellations, because each canceled majority occurrence removes a nonmajority occurrence too. Keep a candidate and an unmatched balance instead of storing all counts. Cancellation produces only a candidate, so a second pass must verify that it actually exceeds half the original length.",
+    "correctness": "When the balance reaches zero, all processed values can be partitioned into unlike canceled pairs. A positive balance represents that many uncanceled copies of the candidate. Removing unlike pairs preserves the identity of any strict majority, so if one exists it is the final candidate. The second pass counts that candidate in the original array and returns it only if its count exceeds floor(n/2), proving both soundness and completeness. With no majority, including empty input, verification returns the empty collection.",
+    "walkthrough": "For [2,1,2,3,2], cancellation leaves candidate 2. Verification finds three copies among five values, so return [2]. For [1,2,3], a candidate still survives the first pass, but its single occurrence is not a majority, so return [].",
+    "example": [
+      [
+        [
+          2,
+          1,
+          2,
+          3,
+          2
+        ]
+      ],
+      [
+        2
+      ]
+    ],
+    "time": "O(n) time for cancellation and verification scans.",
+    "space": "O(1) auxiliary scalar storage plus a result containing at most one integer.",
+    "edges": [
+      "Empty input, a singleton, exactly-half frequency, no majority.",
+      "A genuine -1 majority, signed endpoints, and a candidate requiring second-pass rejection."
+    ],
+    "related": "The public -1 absence sentinel is ambiguous for signed inputs; the explicit optional-value wrapper preserves the task without restricting its values.",
+    "id": "ctci6_17_10",
+    "title": "Majority Element",
+    "testCount": 3383,
+    "languages": {
+      "csharp": {
+        "signature": "int[] MajorityElement(int[] values)",
+        "starterCode": "public class Solution\n{\n    public int[] MajorityElement(int[] values)\n    {\n        return [];\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public int[] MajorityElement(int[] values)\n    {\n        int candidate = 0, balance = 0;\n        foreach (int value in values)\n        {\n            if (balance == 0)\n                candidate = value;\n            balance += value == candidate ? 1 : -1;\n        }\n        int count = 0;\n        foreach (int value in values)\n        {\n            if (value == candidate)\n                ++count;\n        }\n        if (count > values.Length / 2)\n            return [candidate];\n        return [];\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function MajorityElement(values)",
+        "starterCode": "function MajorityElement(values) {\n  return [];\n}\n",
+        "solutionCode": "function MajorityElement(values) {\n  let candidate = 0,\n    balance = 0;\n  for (const value of values) {\n    if (balance === 0) candidate = value;\n    balance += value === candidate ? 1 : -1;\n  }\n  let count = 0;\n  for (const value of values) if (value === candidate) ++count;\n  return count > Math.floor(values.length / 2) ? [candidate] : [];\n}\n"
+      },
+      "python": {
+        "signature": "def MajorityElement(values: list[int]) -> list[int]",
+        "starterCode": "def MajorityElement(values: list[int]) -> list[int]:\n    return []\n",
+        "solutionCode": "def MajorityElement(values: list[int]) -> list[int]:\n    candidate = 0\n    balance = 0\n    for value in values:\n        if balance == 0:\n            candidate = value\n        balance += 1 if value == candidate else -1\n    count = sum(value == candidate for value in values)\n    return [candidate] if count > len(values) // 2 else []\n"
+      },
+      "cpp": {
+        "signature": "std::vector<int> MajorityElement(const std::vector<int>& values)",
+        "starterCode": "class Solution {\n public:\n  std::vector<int> MajorityElement(const std::vector<int>& values) {\n    return {};\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  std::vector<int> MajorityElement(const std::vector<int>& values) {\n    int candidate = 0, balance = 0;\n    for (int value : values) {\n      if (balance == 0)\n        candidate = value;\n      balance += value == candidate ? 1 : -1;\n    }\n    int count = 0;\n    for (int value : values) {\n      if (value == candidate)\n        ++count;\n    }\n    if (count > static_cast<int>(values.size()) / 2)\n      return {candidate};\n    return {};\n  }\n};\n"
+      },
+      "java": {
+        "signature": "int[] MajorityElement(int[] values)",
+        "starterCode": "class Solution {\n  public int[] MajorityElement(int[] values) {\n    return new int[0];\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public int[] MajorityElement(int[] values) {\n    int candidate = 0, balance = 0;\n    for (int value : values) {\n      if (balance == 0)\n        candidate = value;\n      balance += value == candidate ? 1 : -1;\n    }\n    int count = 0;\n    for (int value : values) {\n      if (value == candidate)\n        ++count;\n    }\n    if (count > values.length / 2)\n      return new int[] {candidate};\n    return new int[0];\n  }\n}\n"
+      }
+    }
+  },
+  {
+    "ref": "17.16",
+    "method": "MaximumMassageMinutes",
+    "params": [
+      [
+        "appointments",
+        "ai"
+      ]
+    ],
+    "result": "i",
+    "mutation": "none",
+    "description": "Choose appointments from their given sequence to maximize total massage minutes, with the restriction that no two adjacent appointments may both be accepted. Return the maximum total minutes. The empty choice is allowed; do not reorder appointments or split an appointment.",
+    "constraints": [
+      "appointments contains 0..1000 nonnegative integer durations in 0..1000000 minutes. All totals fit signed 32-bit range. Preserve the original array and ordering.",
+      "Adjacency refers to neighboring input positions. Accepting index i forbids i-1 and i+1, regardless of their durations. An empty input returns zero."
+    ],
+    "why": "For each prefix, an optimal choice either skips its final appointment or accepts it and therefore skips its neighbor. Only the best totals for the preceding one and two prefixes are needed. Rolling those two totals gives the full optimum without storing a table or enumerating all subsets.",
+    "correctness": "Let B(i) be the best total using the first i appointments, with B(0)=0. If appointment i-1 is skipped, the optimum is B(i-1). If accepted, the remaining choices are exactly a valid optimum for the first i-2 appointments, giving duration[i-1]+B(i-2). These cases are exhaustive, and their maximum is B(i). The two rolling variables hold those earlier prefix optima before each step; updating after computing the maximum maintains the invariant and returns the full-sequence optimum.",
+    "walkthrough": "For [30,15,60,75,45,15,15,45], prefix optima are 30,30,90,105,135,135,150,180. One optimal choice takes indices 0,2,4,7, totaling 30+60+45+45=180. Choosing the larger appointment from each adjacent pair independently would not enforce constraints across pair boundaries.",
+    "example": [
+      [
+        [
+          30,
+          15,
+          60,
+          75,
+          45,
+          15,
+          15,
+          45
+        ]
+      ],
+      180
+    ],
+    "time": "O(n) time in one prefix scan.",
+    "space": "O(1) auxiliary storage for two preceding optima and a temporary update.",
+    "edges": [
+      "Empty input, zero durations, one appointment.",
+      "Two adjacent large appointments; a best choice mixing early and late positions."
+    ],
+    "related": "This is sequence adjacency optimization, not arbitrary time-interval scheduling.",
+    "id": "ctci6_17_16",
+    "title": "The Masseuse",
+    "testCount": 3352,
+    "languages": {
+      "csharp": {
+        "signature": "int MaximumMassageMinutes(int[] appointments)",
+        "starterCode": "public class Solution\n{\n    public int MaximumMassageMinutes(int[] appointments)\n    {\n        return 0;\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public int MaximumMassageMinutes(int[] appointments)\n    {\n        int oneBack = 0, twoBack = 0;\n        foreach (int duration in appointments)\n        {\n            int current = Math.Max(oneBack, duration + twoBack);\n            twoBack = oneBack;\n            oneBack = current;\n        }\n        return oneBack;\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function MaximumMassageMinutes(appointments)",
+        "starterCode": "function MaximumMassageMinutes(appointments) {\n  return 0;\n}\n",
+        "solutionCode": "function MaximumMassageMinutes(appointments) {\n  let oneBack = 0,\n    twoBack = 0;\n  for (const duration of appointments) {\n    const current = Math.max(oneBack, duration + twoBack);\n    twoBack = oneBack;\n    oneBack = current;\n  }\n  return oneBack;\n}\n"
+      },
+      "python": {
+        "signature": "def MaximumMassageMinutes(appointments: list[int]) -> int",
+        "starterCode": "def MaximumMassageMinutes(appointments: list[int]) -> int:\n    return 0\n",
+        "solutionCode": "def MaximumMassageMinutes(appointments: list[int]) -> int:\n    one_back = two_back = 0\n    for duration in appointments:\n        current = max(one_back, duration + two_back)\n        two_back = one_back\n        one_back = current\n    return one_back\n"
+      },
+      "cpp": {
+        "signature": "int MaximumMassageMinutes(const std::vector<int>& appointments)",
+        "starterCode": "class Solution {\n public:\n  int MaximumMassageMinutes(const std::vector<int>& appointments) {\n    return 0;\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  int MaximumMassageMinutes(const std::vector<int>& appointments) {\n    int oneBack = 0, twoBack = 0;\n    for (int duration : appointments) {\n      int current = std::max(oneBack, duration + twoBack);\n      twoBack = oneBack;\n      oneBack = current;\n    }\n    return oneBack;\n  }\n};\n"
+      },
+      "java": {
+        "signature": "int MaximumMassageMinutes(int[] appointments)",
+        "starterCode": "class Solution {\n  public int MaximumMassageMinutes(int[] appointments) {\n    return 0;\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public int MaximumMassageMinutes(int[] appointments) {\n    int oneBack = 0, twoBack = 0;\n    for (int duration : appointments) {\n      int current = Math.max(oneBack, duration + twoBack);\n      twoBack = oneBack;\n      oneBack = current;\n    }\n    return oneBack;\n  }\n}\n"
+      }
+    }
+  },
+  {
+    "ref": "17.21",
+    "method": "HistogramWaterVolume",
+    "params": [
+      [
+        "heights",
+        "ai"
+      ]
+    ],
+    "result": "i",
+    "mutation": "none",
+    "description": "Return the total units of water trapped above a histogram after rainfall. Bars have width one, their nonnegative heights are given left to right, and water may escape past either end. Sum water above every position; do not return the area of one container formed by two chosen bars.",
+    "constraints": [
+      "heights contains 0..10000 integers in 0..100000. The total volume is at most 1000000000 and fits signed 32-bit range. Preserve the array.",
+      "Empty input and fewer than three bars trap no water. Water above a bar is limited by the lower of the tallest barriers on its left and right, and cannot be negative."
+    ],
+    "why": "Keep the tallest barrier seen from each end. The side with the lower established barrier can be settled now: the opposite barrier is already high enough to support that level. If the current bar raises its own barrier, it holds no water; otherwise its deficit is final. Move inward without allocating prefix/suffix arrays.",
+    "correctness": "All positions outside the two pointers have been settled correctly. The two maxima record barriers already encountered on each side. If the left maximum is no greater than the right maximum, a left bar below that left maximum has exactly that water level: a left barrier establishes it, and the right barrier is high enough. A taller left bar raises the maximum and holds zero water. The symmetric argument settles a right position when the right maximum is smaller. Each step settles one position and preserves the invariant, so the accumulated deficits give the complete volume when the pointers cross.",
+    "walkthrough": "For [3,0,2,0,4], the water above positions is [0,3,1,3,0], totaling 7. The interior height-2 bar reduces water at its own position by two units; using just the distance and end heights would overcount.",
+    "example": [
+      [
+        [
+          3,
+          0,
+          2,
+          0,
+          4
+        ]
+      ],
+      7
+    ],
+    "time": "O(n) time: one pointer moves inward per iteration.",
+    "space": "O(1) auxiliary scalar storage; no height-sized or input-sized arrays.",
+    "edges": [
+      "Empty, short, monotone and all-zero histograms.",
+      "Several basins, equal end barriers, interior peaks, and maximum bounded volume."
+    ],
+    "related": "Maximum two-line container area has a different objective and is not substituted for trapped histogram volume.",
+    "id": "ctci6_17_21",
+    "title": "Volume of Histogram",
+    "testCount": 3382,
+    "languages": {
+      "csharp": {
+        "signature": "int HistogramWaterVolume(int[] heights)",
+        "starterCode": "public class Solution\n{\n    public int HistogramWaterVolume(int[] heights)\n    {\n        return 0;\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public int HistogramWaterVolume(int[] heights)\n    {\n        int left = 0, right = heights.Length - 1, leftMax = 0, rightMax = 0, volume = 0;\n        while (left <= right)\n        {\n            if (leftMax <= rightMax)\n            {\n                leftMax = Math.Max(leftMax, heights[left]);\n                volume += leftMax - heights[left];\n                ++left;\n            }\n            else\n            {\n                rightMax = Math.Max(rightMax, heights[right]);\n                volume += rightMax - heights[right];\n                --right;\n            }\n        }\n        return volume;\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function HistogramWaterVolume(heights)",
+        "starterCode": "function HistogramWaterVolume(heights) {\n  return 0;\n}\n",
+        "solutionCode": "function HistogramWaterVolume(heights) {\n  let left = 0,\n    right = heights.length - 1,\n    leftMax = 0,\n    rightMax = 0,\n    volume = 0;\n  while (left <= right) {\n    if (leftMax <= rightMax) {\n      leftMax = Math.max(leftMax, heights[left]);\n      volume += leftMax - heights[left];\n      ++left;\n    } else {\n      rightMax = Math.max(rightMax, heights[right]);\n      volume += rightMax - heights[right];\n      --right;\n    }\n  }\n  return volume;\n}\n"
+      },
+      "python": {
+        "signature": "def HistogramWaterVolume(heights: list[int]) -> int",
+        "starterCode": "def HistogramWaterVolume(heights: list[int]) -> int:\n    return 0\n",
+        "solutionCode": "def HistogramWaterVolume(heights: list[int]) -> int:\n    left, right = 0, len(heights) - 1\n    left_max = right_max = volume = 0\n    while left <= right:\n        if left_max <= right_max:\n            left_max = max(left_max, heights[left])\n            volume += left_max - heights[left]\n            left += 1\n        else:\n            right_max = max(right_max, heights[right])\n            volume += right_max - heights[right]\n            right -= 1\n    return volume\n"
+      },
+      "cpp": {
+        "signature": "int HistogramWaterVolume(const std::vector<int>& heights)",
+        "starterCode": "class Solution {\n public:\n  int HistogramWaterVolume(const std::vector<int>& heights) {\n    return 0;\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  int HistogramWaterVolume(const std::vector<int>& heights) {\n    int left = 0, right = static_cast<int>(heights.size()) - 1, leftMax = 0, rightMax = 0,\n        volume = 0;\n    while (left <= right) {\n      if (leftMax <= rightMax) {\n        leftMax = std::max(leftMax, heights[left]);\n        volume += leftMax - heights[left];\n        ++left;\n      } else {\n        rightMax = std::max(rightMax, heights[right]);\n        volume += rightMax - heights[right];\n        --right;\n      }\n    }\n    return volume;\n  }\n};\n"
+      },
+      "java": {
+        "signature": "int HistogramWaterVolume(int[] heights)",
+        "starterCode": "class Solution {\n  public int HistogramWaterVolume(int[] heights) {\n    return 0;\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public int HistogramWaterVolume(int[] heights) {\n    int left = 0, right = heights.length - 1, leftMax = 0, rightMax = 0, volume = 0;\n    while (left <= right) {\n      if (leftMax <= rightMax) {\n        leftMax = Math.max(leftMax, heights[left]);\n        volume += leftMax - heights[left];\n        ++left;\n      } else {\n        rightMax = Math.max(rightMax, heights[right]);\n        volume += rightMax - heights[right];\n        --right;\n      }\n    }\n    return volume;\n  }\n}\n"
+      }
+    }
+  }
+]

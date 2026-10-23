@@ -1,0 +1,24 @@
+{
+  "explanation": "Keep the tallest barrier seen from each end. The side with the lower established barrier can be settled now: the opposite barrier is already high enough to support that level. If the current bar raises its own barrier, it holds no water; otherwise its deficit is final. Move inward without allocating prefix/suffix arrays.",
+  "correctness": "All positions outside the two pointers have been settled correctly. The two maxima record barriers already encountered on each side. If the left maximum is no greater than the right maximum, a left bar below that left maximum has exactly that water level: a left barrier establishes it, and the right barrier is high enough. A taller left bar raises the maximum and holds zero water. The symmetric argument settles a right position when the right maximum is smaller. Each step settles one position and preserves the invariant, so the accumulated deficits give the complete volume when the pointers cross.",
+  "walkthrough": "For [3,0,2,0,4], the water above positions is [0,3,1,3,0], totaling 7. The interior height-2 bar reduces water at its own position by two units; using just the distance and end heights would overcount.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        3,
+        0,
+        2,
+        0,
+        4
+      ]
+    ],
+    "expected": 7
+  },
+  "timeComplexity": "O(n) time: one pointer moves inward per iteration.",
+  "spaceComplexity": "O(1) auxiliary scalar storage; no height-sized or input-sized arrays.",
+  "edgeCases": [
+    "Empty, short, monotone and all-zero histograms.",
+    "Several basins, equal end barriers, interior peaks, and maximum bounded volume."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.21. No affiliation is implied."
+}

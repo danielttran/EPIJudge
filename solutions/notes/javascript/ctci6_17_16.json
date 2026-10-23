@@ -1,0 +1,27 @@
+{
+  "explanation": "For each prefix, an optimal choice either skips its final appointment or accepts it and therefore skips its neighbor. Only the best totals for the preceding one and two prefixes are needed. Rolling those two totals gives the full optimum without storing a table or enumerating all subsets.",
+  "correctness": "Let B(i) be the best total using the first i appointments, with B(0)=0. If appointment i-1 is skipped, the optimum is B(i-1). If accepted, the remaining choices are exactly a valid optimum for the first i-2 appointments, giving duration[i-1]+B(i-2). These cases are exhaustive, and their maximum is B(i). The two rolling variables hold those earlier prefix optima before each step; updating after computing the maximum maintains the invariant and returns the full-sequence optimum.",
+  "walkthrough": "For [30,15,60,75,45,15,15,45], prefix optima are 30,30,90,105,135,135,150,180. One optimal choice takes indices 0,2,4,7, totaling 30+60+45+45=180. Choosing the larger appointment from each adjacent pair independently would not enforce constraints across pair boundaries.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        30,
+        15,
+        60,
+        75,
+        45,
+        15,
+        15,
+        45
+      ]
+    ],
+    "expected": 180
+  },
+  "timeComplexity": "O(n) time in one prefix scan.",
+  "spaceComplexity": "O(1) auxiliary storage for two preceding optima and a temporary update.",
+  "edgeCases": [
+    "Empty input, zero durations, one appointment.",
+    "Two adjacent large appointments; a best choice mixing early and late positions."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.16. No affiliation is implied."
+}

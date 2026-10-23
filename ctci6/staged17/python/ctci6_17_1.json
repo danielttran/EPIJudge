@@ -1,0 +1,19 @@
+{
+  "explanation": "XOR gives the sum bits that need no carry. AND identifies positions where both operands contain a one, and shifting those positions left produces pending carries. Repeat with the carry-free result and pending carries until no carries remain. Fixed-width masking is essential in Python, where negative integers do not automatically have 32-bit width.",
+  "correctness": "For each bit position, XOR contributes the low sum bit and the shifted AND contributes its carry into the next position. Replacing the operands by those two patterns preserves their total modulo 2^32. Each pending carry moves left, so after at most 32 rounds none remains within the word. The remaining pattern is therefore the required modular sum. C#/Java/JavaScript naturally observe the fixed-width pattern; Python masks each carry and reinterprets the final sign. C++ uses unsigned shifts and a fixed-width byte copy for the signed result, avoiding undefined signed left shift or narrowing.",
+  "walkthrough": "For 5 and 3, the first XOR is 6 and the pending carry is 2. Next they become 4 and 4, then 0 and 8, then 8 and 0. The returned result is 8. For -1 and 1, the carry propagates through the whole word and is discarded above bit 31, leaving zero.",
+  "walkthroughCase": {
+    "arguments": [
+      5,
+      3
+    ],
+    "expected": 8
+  },
+  "timeComplexity": "O(w) bit-operation rounds for a w-bit word, at most 32 here; therefore bounded O(1) for this fixed-width callable.",
+  "spaceComplexity": "O(1) auxiliary scalar storage; iterative implementations use no recursion stack.",
+  "edgeCases": [
+    "Zero, equal values, negative values and long carry chains.",
+    "Both signed endpoints and sums that wrap across either endpoint."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.1. No affiliation is implied."
+}
