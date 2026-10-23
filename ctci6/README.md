@@ -1,6 +1,6 @@
 # Cracking the Coding Interview, sixth edition
 
-This collection is being authored. **117 verified coding exercises are registered in the local website; the collection has not been pushed.**
+This collection is being authored. **118 verified coding exercises are registered in the local website; the collection has not been pushed.**
 The advertised 189 is a book question count, not a count of executable exercises.
 
 `inventory.json` records numbered references established from the author's public
@@ -41,13 +41,25 @@ It does **not** prove statement clarity, solution correctness, test adequacy, or
 completed semantic review. Those are separately recorded and executed before the
 collection is published.
 
-The current local checkpoint stages 104 coding exercises: chapters 1–3, eleven graph/tree tasks from chapter 4, all seven
-coding tasks of chapter 5, all fourteen tasks from chapter 8, and nine sorting/searching tasks, twenty tasks from chapter 16, and twenty from chapter 17. Their 520 language implementations
-pass standalone and separate-submission runs with 816,635 positive cases per stage
-and the same number of starter observations. A starter passes its negative check
-only when at least one case rejects it; this does not mean every starter fails
-every case. Five conceptual and eight system-design references are explicitly
-classified outside callable practice. No noncoding product UI is being added.
+The current local checkpoint stages 118 coding exercises: all references in
+chapters 1–4, seven coding tasks from chapter 5, all fourteen chapter-8 tasks,
+ten chapter-10 tasks and all twenty-six tasks in each of chapters 16 and 17.
+Their 590 actual language solutions pass standalone and separate-submission runs,
+with 937,170 solution case executions per layer and the same number of starter
+observations. Each starter is rejected by at least one case; it need not fail
+every case. Random Node additionally has fifteen compiled alternative/negative
+programs covering twenty-five fixtures, including physical duplicate identities,
+clone returns, missing mutations and the generic random source's signed bounds.
+All five current Random Node HTTP submissions pass all 1,604 cases, and the
+current backend suite passes 318 tests.
+
+The 160 located references currently comprise 118 coding exercises, five known
+coding candidates, fourteen awaiting individual classification, fifteen
+conceptual references and eight system-design references. The ten chapter-6
+reasoning puzzles now have explicit individual classification and source-clarity
+findings. Another twenty-nine advertised references remain unlocated; neither
+unresolved group is counted as completed. Noncoding material is not added to the
+callable product UI. Final whole-bank and rendered checks remain pending.
 
 The `review*.json` files record actual algorithms, bindings and semantic review
 scope. Independent case oracles live under `scripts/ctci6/corpus*.py`.
