@@ -53,7 +53,7 @@ clone returns, missing mutations and the generic random source's signed bounds.
 All five current Random Node HTTP submissions pass all 1,604 cases, and the
 current backend suite passes 324 tests.
 
-The 160 located references currently comprise 126 coding exercises and four concurrency references awaiting individual classification, fifteen
+The 160 located references currently comprise 126 coding exercises and four reviewed concurrency coding candidates awaiting implementation, fifteen
 conceptual references and fifteen design references. The ten chapter-6
 reasoning puzzles now have explicit individual classification and source-clarity
 findings. Another twenty-nine advertised references remain unlocated; neither
@@ -84,3 +84,5 @@ Jigsaw 7.6 checkpoint: all five HTTP submissions pass 318 fixtures each. A prope
 Minesweeper 7.10 checkpoint: deterministic full reveal/flag/flood/win/loss engine, with 1780 fixtures per implementation and all five HTTP submissions accepted. Ten compiled flag/diagonal regressions are rejected. Current local acceptance is 625 solutions / 985,610 case executions per layer, all starters rejected, 324 backend tests passed. Final collection and publication gates remain pending.
 
 Othello 7.8 checkpoint: all eight capture directions, atomic move rejection, turns, scores, automatic passes and terminal behavior execute in five languages. Each HTTP submission passes 948 fixtures; ten compiled diagonal/pass regressions are rejected. Current acceptance is 630 solutions / 990,350 case executions per layer, all starters rejected, 324 backend tests passed. Four concurrency references and 29 source gaps remain; final whole-bank/browser acceptance and publishing are pending.
+
+The four chapter-15 concurrency references are now individually source-reviewed coding candidates (15.3, 15.4, 15.5, 15.7), with pending native-worker acceptance recorded in concurrency-review.json. They are not excluded as conceptual, replaced with sequential algorithms, or counted as implemented. The independent official contents/errata review established no additional numbered specifications; 29 advertised source gaps remain.
