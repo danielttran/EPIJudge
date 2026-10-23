@@ -1,0 +1,30 @@
+{
+  "explanation": "Create one synchronization edge after each predecessor finishes its Work. Role 0 signals gate 0 only after returning from Work; role 1 must consume that permit before entering Work, then signals gate 1 afterward. Role 2 consumes gate 1 before entering Work. Semaphore permits persist when a signal happens before the corresponding wait, so neither launch order nor a guessed delay matters. C++ receives SyncContext by reference, borrowing judge-owned shared coordination state. Wait/Signal block and signal native condition-variable semaphore permits; the method owns no thread or context lifetime.",
+  "correctness": "Gate 0 initially has no permit and only role 0 signals it, after its Work returns. Therefore role 1 cannot pass its Wait until role 0 completes. Similarly gate 1 is signaled only after role 1 Work returns, so role 2 starts only after role 1 completes. Each worker calls Work exactly once and each required signal/wait occurs once. There is no wait in role 0, so it eventually finishes and enables role 1, which eventually enables role 2 under eventual scheduling. Signals before waits remain available and do not create lost wakeups. Both required completion dependencies and termination follow without relying on timing.",
+  "walkthrough": "Suppose workers start in order [2,1,0]. Role 2 blocks on gate 1; role 1 blocks on gate 0. Role 0 performs its Work and then signals gate 0. Role 1 consumes that permit, performs its Work and signals gate 1. Role 2 now performs its Work. If role 0 instead finishes before role 1 starts, gate 0 retains its permit and the same order follows.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        2,
+        1,
+        0
+      ],
+      1,
+      []
+    ],
+    "expected": [
+      0,
+      1,
+      2
+    ]
+  },
+  "timeComplexity": "O(1) synchronization operations per worker and O(W0+W1+W2) required sequential work duration, excluding unbounded scheduler waiting; no spin loop is used.",
+  "spaceComplexity": "O(1) shared semaphore state and O(1) local storage per worker, excluding the judge worker stacks and opaque work.",
+  "edgeCases": [
+    "All six thread launch orders, signals before waits and predecessor entry delays.",
+    "Work completion rather than only start order; guessed sleeps are insufficient.",
+    "Repeated independent cases must not reuse stale permits or static work state.",
+    "Missing work, duplicate work, wrong gate and deadlock must fail."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 15.5. No affiliation is implied."
+}

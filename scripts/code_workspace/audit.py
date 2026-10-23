@@ -517,6 +517,8 @@ def expected_references(entry: dict) -> set[str] | None:
             return {"LinkedListNode"}
         if row["ref"]=="10.6":
             return {"LineRecord", "TextFile", "TextWorkspace"}
+        if row["batch"] == 15:
+            return {"SyncContext"}
         if row["batch"] == 13:
             return {"FairCoinSource"} if row["ref"]=="13.8" else {"Country"}
         if row["ref"] == "4.11":

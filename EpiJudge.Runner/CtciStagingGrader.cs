@@ -524,7 +524,7 @@ public static class CtciStagingGrader
                 return CanonicalCollection(definition.Result, observed.GetProperty("actual")).SequenceEqual(CanonicalCollection(definition.Result, test.Expected), StringComparer.Ordinal)
                     ? null : "Return every required subset or string exactly once. Output order is unrestricted.";
             }
-            if (definition.Batch is 1 or 3 or 4 or 5 or 7 or 8 or 13 or 16 or 17)
+            if (definition.Batch is 1 or 3 or 4 or 5 or 7 or 8 or 13 or 15 or 16 or 17)
             {
                 if (observed.GetProperty("mutationOk").ValueKind != JsonValueKind.True)
                     return definition.Batch == 3 ? "Preserve the required stack and original Animal identities, fields and return types." : "Preserve the required input, row, or buffer identities.";
@@ -613,7 +613,7 @@ public static class CtciStagingGrader
     {
         try
         {
-            if (definition.Batch is 1 or 3 or 4 or 5 or 7 or 8 or 10 or 13 or 16 or 17) return observed.GetProperty("actual").Clone();
+            if (definition.Batch is 1 or 3 or 4 or 5 or 7 or 8 or 10 or 13 or 15 or 16 or 17) return observed.GetProperty("actual").Clone();
             if (definition.Ref is "2.1" or "2.4" or "2.5") return observed.GetProperty("reachableValues").Clone();
             if (definition.Ref == "2.3") return Encode(new { success = observed.GetProperty("returnedBool"), values = observed.GetProperty("reachableValues") });
             if (definition.Ref == "2.6") return observed.GetProperty("returnedBool").Clone();

@@ -10956,6 +10956,26 @@
         "ctci6/runtime/validation.json",
         "ctci6/cases/ctci6_7_8.json"
       ]
+    },
+    "ctci6_15_5": {
+      "collection": "ctci6",
+      "statementSha256": "949d5506a890d3de2e6e13d66d21ef7f8cadc4b51ff5c6493d298ea1e9429422",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review15.json",
+      "checks": {
+        "inputDomain": "The judge starts three real threads (Node worker_threads for JavaScript), each calling the same implementation independently with role 0, 1 or 2. Each worker receives its own wrapper around one shared SyncContext state. Use only the provided context API for coordination and work. Return void/None/undefined. Do not launch extra threads or use sleeps, delays or polling as a substitute for synchronization. context.Wait(gate) atomically consumes a permit from gate 0 or 1, blocking until one exists. context.Signal(gate) adds one permit and wakes a waiter. Both counting-semaphore gates start with zero permits and belong to this one case. Calls on an invalid gate, more than 20 total Wait/Signal/Work calls per worker or a context from another worker fail the case. Wait/Signal are thread-safe; caller work is not automatically ordered. context.Work() invokes opaque actual work owned by that worker; it may take time before returning. It must execute exactly once in each worker, and no dependent worker may begin its Work until its predecessor Work returns. Primitive calls may synchronize the workers but must not run another role work on their behalf. Contexts are opaque supplied objects; their fields/underlying shared storage must not be inspected or altered. JSON launchOrder is a permutation of [0,1,2]; delayMask is a test scheduling input in 0..3; the context wire placeholder is []. These are private judge inputs, not the callable parameters: the callable receives role and its provided context. The judge varies launch order and independent entry delays without revealing a required sleep duration. A bounded execution timeout rejects noncompletion; passing sampled schedules alone is not a proof for every scheduler. The displayed result is a private completion-order observation [0,1,2], never a return value to construct. Instances have independent gates and work state. No fairness bound or real-time latency guarantee is required; assume runnable threads are eventually scheduled.",
+        "outputAndTies": "Coordinate three independently running workers so their work completes in role order 0, 1, 2, regardless of thread launch or scheduling order. Implement RunOrdered(role,context), called once by each worker with its role. Call that worker context.Work() exactly once. Work for role 1 must not begin until role 0 work finishes; role 2 must wait for role 1 work to finish. Returning or sorting a list does not perform the work.",
+        "mutationAndIdentity": "Read primary Foo and startup example and all five independent bodies. Each calls owned Work once; role 0 never waits, role 1 waits gate 0 and signals gate 1 after Work return, role 2 waits gate 1. Native managed/Java/std/Python threads and Node worker_threads actually execute, with readiness barriers, launch permutations and delayed entries. Private Work rejects overlap with predecessor work and duplicate calls; work completion is not synthesized from a sorted answer. Initially empty counting permits handle both signal-before-wait and wait-before-signal schedules. A lost-wakeup risk in the JavaScript parent observation loop was corrected by passing its single observed counter value into Atomics.wait. All 24 launch/delay fixtures run in every language; fifteen compiled native-worker programs reject no-wait/wrong-gate bodies and accept valid surplus signals, proving the observer does not demand an exact reference API call trace. Context ownership, finite API-call caps, independent case gates and blocking rather than busy polling are reviewed. Bounded observed runs complement the handoff correctness proof; they do not claim proof of every scheduler or arbitrary realtime fairness.",
+        "boundaryBehavior": "All six thread launch orders, signals before waits and predecessor entry delays. Work completion rather than only start order; guessed sleeps are insufficient. Repeated independent cases must not reuse stale permits or static work state. Missing work, duplicate work, wrong gate and deadlock must fail.",
+        "examples": "The independently checked displayed example and algorithm trace agree with the executed five-language bodies.",
+        "languageContracts": "{\"csharp\": \"RunOrdered borrows abstract SyncContext and synchronously hands off permits around Work. Actual managed Thread callbacks receive per-worker wrappers sharing native SemaphoreSlim gates; private completion state is locked. Background threads and bounded waits prevent a deadlock mutant from retaining the test process indefinitely.\", \"java\": \"RunOrdered uses synchronous Wait/Signal around Work. Three real Thread instances share native Semaphore gates; synchronized private state records work completion and independent case ownership. Interrupted waits preserve interrupt status and fail instead of silently performing work.\", \"cpp\": \"RunOrdered takes SyncContext&; its protected abstract destructor prevents direct deletion of provided state. Native std::thread workers own local wrappers sharing mutex/condition_variable permit state through shared_ptr. Work and permit predicates are locked; join completes before case state release.\", \"python\": \"RunOrdered returns None and uses explicit provided semaphores; the GIL is not treated as ordering. Actual threading.Thread workers own wrappers sharing two Semaphore objects. Private flags/events use a Lock, API gate booleans are rejected as noninteger, and a Barrier starts ready workers.\", \"javascript\": \"RunOrdered returns undefined and runs inside three distinct Node worker_threads. SharedArrayBuffer/Atomics implement counting permits and exact private work-completion checks. Compare/exchange consumes permits without lost signals. Parent readiness/completion waits reuse their observed counter value to avoid a lost notification race; no external service or Promise-only simulation is used.\"}",
+        "judgeAgreement": "Read primary Foo and startup example and all five independent bodies. Each calls owned Work once; role 0 never waits, role 1 waits gate 0 and signals gate 1 after Work return, role 2 waits gate 1. Native managed/Java/std/Python threads and Node worker_threads actually execute, with readiness barriers, launch permutations and delayed entries. Private Work rejects overlap with predecessor work and duplicate calls; work completion is not synthesized from a sorted answer. Initially empty counting permits handle both signal-before-wait and wait-before-signal schedules. A lost-wakeup risk in the JavaScript parent observation loop was corrected by passing its single observed counter value into Atomics.wait. All 24 launch/delay fixtures run in every language; fifteen compiled native-worker programs reject no-wait/wrong-gate bodies and accept valid surplus signals, proving the observer does not demand an exact reference API call trace. Context ownership, finite API-call caps, independent case gates and blocking rather than busy polling are reviewed. Bounded observed runs complement the handoff correctness proof; they do not claim proof of every scheduler or arbitrary realtime fairness."
+      },
+      "evidence": [
+        "ctci6/review15.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_15_5.json"
+      ]
     }
   },
   "solutions": {
@@ -64796,6 +64816,121 @@
         "ctci6/cases/ctci6_7_8.json",
         "solutions/java/ctci6_7_8.java",
         "solutions/notes/java/ctci6_7_8.json"
+      ]
+    },
+    "ctci6_15_5/csharp": {
+      "codePath": "solutions/csharp/ctci6_15_5.cs",
+      "notesPath": "solutions/notes/ctci6_15_5.json",
+      "contentSha256": "1376a2937a7d746991253edb9cf72a15e0c5092a4dce6c797c153ad9904cf54a",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review15.json",
+      "checks": {
+        "actualAlgorithm": "Wait on the predecessor semaphore, perform private worker work, then signal the successor semaphore.",
+        "correctness": "Gate 0 initially has no permit and only role 0 signals it, after its Work returns. Therefore role 1 cannot pass its Wait until role 0 completes. Similarly gate 1 is signaled only after role 1 Work returns, so role 2 starts only after role 1 completes. Each worker calls Work exactly once and each required signal/wait occurs once. There is no wait in role 0, so it eventually finishes and enables role 1, which eventually enables role 2 under eventual scheduling. Signals before waits remain available and do not create lost wakeups. Both required completion dependencies and termination follow without relying on timing.",
+        "workedTrace": "Suppose workers start in order [2,1,0]. Role 2 blocks on gate 1; role 1 blocks on gate 0. Role 0 performs its Work and then signals gate 0. Role 1 consumes that permit, performs its Work and signals gate 1. Role 2 now performs its Work. If role 0 instead finishes before role 1 starts, gate 0 retains its permit and the same order follows.",
+        "edgeCases": "All six thread launch orders, signals before waits and predecessor entry delays. Work completion rather than only start order; guessed sleeps are insufficient. Repeated independent cases must not reuse stale permits or static work state. Missing work, duplicate work, wrong gate and deadlock must fail.",
+        "timeDerivation": "O(1) synchronization operations per worker and O(W0+W1+W2) required sequential work duration, excluding unbounded scheduler waiting; no spin loop is used.",
+        "spaceDerivation": "O(1) shared semaphore state and O(1) local storage per worker, excluding the judge worker stacks and opaque work.",
+        "callableAgreement": "Read primary Foo and startup example and all five independent bodies. Each calls owned Work once; role 0 never waits, role 1 waits gate 0 and signals gate 1 after Work return, role 2 waits gate 1. Native managed/Java/std/Python threads and Node worker_threads actually execute, with readiness barriers, launch permutations and delayed entries. Private Work rejects overlap with predecessor work and duplicate calls; work completion is not synthesized from a sorted answer. Initially empty counting permits handle both signal-before-wait and wait-before-signal schedules. A lost-wakeup risk in the JavaScript parent observation loop was corrected by passing its single observed counter value into Atomics.wait. All 24 launch/delay fixtures run in every language; fifteen compiled native-worker programs reject no-wait/wrong-gate bodies and accept valid surplus signals, proving the observer does not demand an exact reference API call trace. Context ownership, finite API-call caps, independent case gates and blocking rather than busy polling are reviewed. Bounded observed runs complement the handoff correctness proof; they do not claim proof of every scheduler or arbitrary realtime fairness. RunOrdered borrows abstract SyncContext and synchronously hands off permits around Work. Actual managed Thread callbacks receive per-worker wrappers sharing native SemaphoreSlim gates; private completion state is locked. Background threads and bounded waits prevent a deadlock mutant from retaining the test process indefinitely."
+      },
+      "evidence": [
+        "ctci6/review15.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_15_5.json",
+        "solutions/csharp/ctci6_15_5.cs",
+        "solutions/notes/ctci6_15_5.json"
+      ]
+    },
+    "ctci6_15_5/javascript": {
+      "codePath": "solutions/javascript/ctci6_15_5.js",
+      "notesPath": "solutions/notes/javascript/ctci6_15_5.json",
+      "contentSha256": "9b12b6c046536b8a7bb2aa38a1d2d72aa5641e6fb36e6ce99f49e3bc511bb0ed",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review15.json",
+      "checks": {
+        "actualAlgorithm": "Wait on the predecessor semaphore, perform private worker work, then signal the successor semaphore.",
+        "correctness": "Gate 0 initially has no permit and only role 0 signals it, after its Work returns. Therefore role 1 cannot pass its Wait until role 0 completes. Similarly gate 1 is signaled only after role 1 Work returns, so role 2 starts only after role 1 completes. Each worker calls Work exactly once and each required signal/wait occurs once. There is no wait in role 0, so it eventually finishes and enables role 1, which eventually enables role 2 under eventual scheduling. Signals before waits remain available and do not create lost wakeups. Both required completion dependencies and termination follow without relying on timing.",
+        "workedTrace": "Suppose workers start in order [2,1,0]. Role 2 blocks on gate 1; role 1 blocks on gate 0. Role 0 performs its Work and then signals gate 0. Role 1 consumes that permit, performs its Work and signals gate 1. Role 2 now performs its Work. If role 0 instead finishes before role 1 starts, gate 0 retains its permit and the same order follows.",
+        "edgeCases": "All six thread launch orders, signals before waits and predecessor entry delays. Work completion rather than only start order; guessed sleeps are insufficient. Repeated independent cases must not reuse stale permits or static work state. Missing work, duplicate work, wrong gate and deadlock must fail.",
+        "timeDerivation": "O(1) synchronization operations per worker and O(W0+W1+W2) required sequential work duration, excluding unbounded scheduler waiting; no spin loop is used.",
+        "spaceDerivation": "O(1) shared semaphore state and O(1) local storage per worker, excluding the judge worker stacks and opaque work.",
+        "callableAgreement": "Read primary Foo and startup example and all five independent bodies. Each calls owned Work once; role 0 never waits, role 1 waits gate 0 and signals gate 1 after Work return, role 2 waits gate 1. Native managed/Java/std/Python threads and Node worker_threads actually execute, with readiness barriers, launch permutations and delayed entries. Private Work rejects overlap with predecessor work and duplicate calls; work completion is not synthesized from a sorted answer. Initially empty counting permits handle both signal-before-wait and wait-before-signal schedules. A lost-wakeup risk in the JavaScript parent observation loop was corrected by passing its single observed counter value into Atomics.wait. All 24 launch/delay fixtures run in every language; fifteen compiled native-worker programs reject no-wait/wrong-gate bodies and accept valid surplus signals, proving the observer does not demand an exact reference API call trace. Context ownership, finite API-call caps, independent case gates and blocking rather than busy polling are reviewed. Bounded observed runs complement the handoff correctness proof; they do not claim proof of every scheduler or arbitrary realtime fairness. RunOrdered returns undefined and runs inside three distinct Node worker_threads. SharedArrayBuffer/Atomics implement counting permits and exact private work-completion checks. Compare/exchange consumes permits without lost signals. Parent readiness/completion waits reuse their observed counter value to avoid a lost notification race; no external service or Promise-only simulation is used."
+      },
+      "evidence": [
+        "ctci6/review15.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_15_5.json",
+        "solutions/javascript/ctci6_15_5.js",
+        "solutions/notes/javascript/ctci6_15_5.json"
+      ]
+    },
+    "ctci6_15_5/python": {
+      "codePath": "solutions/python/ctci6_15_5.py",
+      "notesPath": "solutions/notes/python/ctci6_15_5.json",
+      "contentSha256": "67f39bdcc5274c483ad411934bd313d36a689bb2269b97ee854e8ade8ee47d24",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review15.json",
+      "checks": {
+        "actualAlgorithm": "Wait on the predecessor semaphore, perform private worker work, then signal the successor semaphore.",
+        "correctness": "Gate 0 initially has no permit and only role 0 signals it, after its Work returns. Therefore role 1 cannot pass its Wait until role 0 completes. Similarly gate 1 is signaled only after role 1 Work returns, so role 2 starts only after role 1 completes. Each worker calls Work exactly once and each required signal/wait occurs once. There is no wait in role 0, so it eventually finishes and enables role 1, which eventually enables role 2 under eventual scheduling. Signals before waits remain available and do not create lost wakeups. Both required completion dependencies and termination follow without relying on timing.",
+        "workedTrace": "Suppose workers start in order [2,1,0]. Role 2 blocks on gate 1; role 1 blocks on gate 0. Role 0 performs its Work and then signals gate 0. Role 1 consumes that permit, performs its Work and signals gate 1. Role 2 now performs its Work. If role 0 instead finishes before role 1 starts, gate 0 retains its permit and the same order follows.",
+        "edgeCases": "All six thread launch orders, signals before waits and predecessor entry delays. Work completion rather than only start order; guessed sleeps are insufficient. Repeated independent cases must not reuse stale permits or static work state. Missing work, duplicate work, wrong gate and deadlock must fail.",
+        "timeDerivation": "O(1) synchronization operations per worker and O(W0+W1+W2) required sequential work duration, excluding unbounded scheduler waiting; no spin loop is used.",
+        "spaceDerivation": "O(1) shared semaphore state and O(1) local storage per worker, excluding the judge worker stacks and opaque work.",
+        "callableAgreement": "Read primary Foo and startup example and all five independent bodies. Each calls owned Work once; role 0 never waits, role 1 waits gate 0 and signals gate 1 after Work return, role 2 waits gate 1. Native managed/Java/std/Python threads and Node worker_threads actually execute, with readiness barriers, launch permutations and delayed entries. Private Work rejects overlap with predecessor work and duplicate calls; work completion is not synthesized from a sorted answer. Initially empty counting permits handle both signal-before-wait and wait-before-signal schedules. A lost-wakeup risk in the JavaScript parent observation loop was corrected by passing its single observed counter value into Atomics.wait. All 24 launch/delay fixtures run in every language; fifteen compiled native-worker programs reject no-wait/wrong-gate bodies and accept valid surplus signals, proving the observer does not demand an exact reference API call trace. Context ownership, finite API-call caps, independent case gates and blocking rather than busy polling are reviewed. Bounded observed runs complement the handoff correctness proof; they do not claim proof of every scheduler or arbitrary realtime fairness. RunOrdered returns None and uses explicit provided semaphores; the GIL is not treated as ordering. Actual threading.Thread workers own wrappers sharing two Semaphore objects. Private flags/events use a Lock, API gate booleans are rejected as noninteger, and a Barrier starts ready workers."
+      },
+      "evidence": [
+        "ctci6/review15.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_15_5.json",
+        "solutions/python/ctci6_15_5.py",
+        "solutions/notes/python/ctci6_15_5.json"
+      ]
+    },
+    "ctci6_15_5/cpp": {
+      "codePath": "solutions/cpp/ctci6_15_5.cpp",
+      "notesPath": "solutions/notes/cpp/ctci6_15_5.json",
+      "contentSha256": "ab5ae66b7b75a7c860790ab7d0a7c90fa2295e286b4e20996c09dd67d29b4ea8",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review15.json",
+      "checks": {
+        "actualAlgorithm": "Wait on the predecessor semaphore, perform private worker work, then signal the successor semaphore.",
+        "correctness": "Gate 0 initially has no permit and only role 0 signals it, after its Work returns. Therefore role 1 cannot pass its Wait until role 0 completes. Similarly gate 1 is signaled only after role 1 Work returns, so role 2 starts only after role 1 completes. Each worker calls Work exactly once and each required signal/wait occurs once. There is no wait in role 0, so it eventually finishes and enables role 1, which eventually enables role 2 under eventual scheduling. Signals before waits remain available and do not create lost wakeups. Both required completion dependencies and termination follow without relying on timing.",
+        "workedTrace": "Suppose workers start in order [2,1,0]. Role 2 blocks on gate 1; role 1 blocks on gate 0. Role 0 performs its Work and then signals gate 0. Role 1 consumes that permit, performs its Work and signals gate 1. Role 2 now performs its Work. If role 0 instead finishes before role 1 starts, gate 0 retains its permit and the same order follows.",
+        "edgeCases": "All six thread launch orders, signals before waits and predecessor entry delays. Work completion rather than only start order; guessed sleeps are insufficient. Repeated independent cases must not reuse stale permits or static work state. Missing work, duplicate work, wrong gate and deadlock must fail.",
+        "timeDerivation": "O(1) synchronization operations per worker and O(W0+W1+W2) required sequential work duration, excluding unbounded scheduler waiting; no spin loop is used.",
+        "spaceDerivation": "O(1) shared semaphore state and O(1) local storage per worker, excluding the judge worker stacks and opaque work.",
+        "callableAgreement": "Read primary Foo and startup example and all five independent bodies. Each calls owned Work once; role 0 never waits, role 1 waits gate 0 and signals gate 1 after Work return, role 2 waits gate 1. Native managed/Java/std/Python threads and Node worker_threads actually execute, with readiness barriers, launch permutations and delayed entries. Private Work rejects overlap with predecessor work and duplicate calls; work completion is not synthesized from a sorted answer. Initially empty counting permits handle both signal-before-wait and wait-before-signal schedules. A lost-wakeup risk in the JavaScript parent observation loop was corrected by passing its single observed counter value into Atomics.wait. All 24 launch/delay fixtures run in every language; fifteen compiled native-worker programs reject no-wait/wrong-gate bodies and accept valid surplus signals, proving the observer does not demand an exact reference API call trace. Context ownership, finite API-call caps, independent case gates and blocking rather than busy polling are reviewed. Bounded observed runs complement the handoff correctness proof; they do not claim proof of every scheduler or arbitrary realtime fairness. RunOrdered takes SyncContext&; its protected abstract destructor prevents direct deletion of provided state. Native std::thread workers own local wrappers sharing mutex/condition_variable permit state through shared_ptr. Work and permit predicates are locked; join completes before case state release."
+      },
+      "evidence": [
+        "ctci6/review15.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_15_5.json",
+        "solutions/cpp/ctci6_15_5.cpp",
+        "solutions/notes/cpp/ctci6_15_5.json"
+      ]
+    },
+    "ctci6_15_5/java": {
+      "codePath": "solutions/java/ctci6_15_5.java",
+      "notesPath": "solutions/notes/java/ctci6_15_5.json",
+      "contentSha256": "bf84bb2557dd436f00849fbacda74be8c46ba56a845fefb7ad28fd8e0be2d243",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review15.json",
+      "checks": {
+        "actualAlgorithm": "Wait on the predecessor semaphore, perform private worker work, then signal the successor semaphore.",
+        "correctness": "Gate 0 initially has no permit and only role 0 signals it, after its Work returns. Therefore role 1 cannot pass its Wait until role 0 completes. Similarly gate 1 is signaled only after role 1 Work returns, so role 2 starts only after role 1 completes. Each worker calls Work exactly once and each required signal/wait occurs once. There is no wait in role 0, so it eventually finishes and enables role 1, which eventually enables role 2 under eventual scheduling. Signals before waits remain available and do not create lost wakeups. Both required completion dependencies and termination follow without relying on timing.",
+        "workedTrace": "Suppose workers start in order [2,1,0]. Role 2 blocks on gate 1; role 1 blocks on gate 0. Role 0 performs its Work and then signals gate 0. Role 1 consumes that permit, performs its Work and signals gate 1. Role 2 now performs its Work. If role 0 instead finishes before role 1 starts, gate 0 retains its permit and the same order follows.",
+        "edgeCases": "All six thread launch orders, signals before waits and predecessor entry delays. Work completion rather than only start order; guessed sleeps are insufficient. Repeated independent cases must not reuse stale permits or static work state. Missing work, duplicate work, wrong gate and deadlock must fail.",
+        "timeDerivation": "O(1) synchronization operations per worker and O(W0+W1+W2) required sequential work duration, excluding unbounded scheduler waiting; no spin loop is used.",
+        "spaceDerivation": "O(1) shared semaphore state and O(1) local storage per worker, excluding the judge worker stacks and opaque work.",
+        "callableAgreement": "Read primary Foo and startup example and all five independent bodies. Each calls owned Work once; role 0 never waits, role 1 waits gate 0 and signals gate 1 after Work return, role 2 waits gate 1. Native managed/Java/std/Python threads and Node worker_threads actually execute, with readiness barriers, launch permutations and delayed entries. Private Work rejects overlap with predecessor work and duplicate calls; work completion is not synthesized from a sorted answer. Initially empty counting permits handle both signal-before-wait and wait-before-signal schedules. A lost-wakeup risk in the JavaScript parent observation loop was corrected by passing its single observed counter value into Atomics.wait. All 24 launch/delay fixtures run in every language; fifteen compiled native-worker programs reject no-wait/wrong-gate bodies and accept valid surplus signals, proving the observer does not demand an exact reference API call trace. Context ownership, finite API-call caps, independent case gates and blocking rather than busy polling are reviewed. Bounded observed runs complement the handoff correctness proof; they do not claim proof of every scheduler or arbitrary realtime fairness. RunOrdered uses synchronous Wait/Signal around Work. Three real Thread instances share native Semaphore gates; synchronized private state records work completion and independent case ownership. Interrupted waits preserve interrupt status and fail instead of silently performing work."
+      },
+      "evidence": [
+        "ctci6/review15.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_15_5.json",
+        "solutions/java/ctci6_15_5.java",
+        "solutions/notes/java/ctci6_15_5.json"
       ]
     }
   }

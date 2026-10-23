@@ -815,4 +815,20 @@ public sealed class CtciStagingTests
         Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = rotated, mutationOk = false })));
     }
 
+    [Fact]
+    public void OrderedWorkersExposeOnlySynchronizationApiAndRequireActualWorkValidity()
+    {
+        var definition = Definition("15.5");
+        var test = new TestCase(definition.Example[0].EnumerateArray().Select(value => value.Clone()).ToArray(), definition.Example[1].Clone());
+        Assert.Null(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new[] {0,1,2}, mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new[] {0,1,2}, mutationOk = false })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new[] {2,1,0}, mutationOk = true })));
+        foreach (string language in SolutionCatalog.Languages)
+        {
+            var callable = definition.Callable(language);
+            Assert.Contains("RunOrdered", callable.Signature);
+            Assert.Equal(new[] {"SyncContext"}, Assert.Single(callable.References).Names);
+        }
+    }
+
 }

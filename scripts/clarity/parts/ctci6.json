@@ -6321,6 +6321,83 @@
         ]
       }
     },
+    "ctci6_15_5": {
+      "description": "Coordinate three independently running workers so their work completes in role order 0, 1, 2, regardless of thread launch or scheduling order. Implement RunOrdered(role,context), called once by each worker with its role. Call that worker context.Work() exactly once. Work for role 1 must not begin until role 0 work finishes; role 2 must wait for role 1 work to finish. Returning or sorting a list does not perform the work.",
+      "constraints": [
+        "The judge starts three real threads (Node worker_threads for JavaScript), each calling the same implementation independently with role 0, 1 or 2. Each worker receives its own wrapper around one shared SyncContext state. Use only the provided context API for coordination and work. Return void/None/undefined. Do not launch extra threads or use sleeps, delays or polling as a substitute for synchronization.",
+        "context.Wait(gate) atomically consumes a permit from gate 0 or 1, blocking until one exists. context.Signal(gate) adds one permit and wakes a waiter. Both counting-semaphore gates start with zero permits and belong to this one case. Calls on an invalid gate, more than 20 total Wait/Signal/Work calls per worker or a context from another worker fail the case. Wait/Signal are thread-safe; caller work is not automatically ordered.",
+        "context.Work() invokes opaque actual work owned by that worker; it may take time before returning. It must execute exactly once in each worker, and no dependent worker may begin its Work until its predecessor Work returns. Primitive calls may synchronize the workers but must not run another role work on their behalf. Contexts are opaque supplied objects; their fields/underlying shared storage must not be inspected or altered.",
+        "JSON launchOrder is a permutation of [0,1,2]; delayMask is a test scheduling input in 0..3; the context wire placeholder is []. These are private judge inputs, not the callable parameters: the callable receives role and its provided context. The judge varies launch order and independent entry delays without revealing a required sleep duration. A bounded execution timeout rejects noncompletion; passing sampled schedules alone is not a proof for every scheduler.",
+        "The displayed result is a private completion-order observation [0,1,2], never a return value to construct. Instances have independent gates and work state. No fairness bound or real-time latency guarantee is required; assume runnable threads are eventually scheduled."
+      ],
+      "examples": [
+        {
+          "input": "[[2, 1, 0], 1, []]",
+          "output": "[0, 1, 2]",
+          "explanation": "Suppose workers start in order [2,1,0]. Role 2 blocks on gate 1; role 1 blocks on gate 0. Role 0 performs its Work and then signals gate 0. Role 1 consumes that permit, performs its Work and signals gate 1. Role 2 now performs its Work. If role 0 instead finishes before role 1 starts, gate 0 retains its permit and the same order follows."
+        }
+      ],
+      "exampleCases": [
+        {
+          "arguments": [
+            [
+              2,
+              1,
+              0
+            ],
+            1,
+            []
+          ],
+          "expected": [
+            0,
+            1,
+            2
+          ]
+        }
+      ],
+      "contracts": {
+        "csharp": [
+          "Callable: void RunOrdered(int role, SyncContext context)",
+          "The judge starts three real threads (Node worker_threads for JavaScript), each calling the same implementation independently with role 0, 1 or 2. Each worker receives its own wrapper around one shared SyncContext state. Use only the provided context API for coordination and work. Return void/None/undefined. Do not launch extra threads or use sleeps, delays or polling as a substitute for synchronization.",
+          "context.Wait(gate) atomically consumes a permit from gate 0 or 1, blocking until one exists. context.Signal(gate) adds one permit and wakes a waiter. Both counting-semaphore gates start with zero permits and belong to this one case. Calls on an invalid gate, more than 20 total Wait/Signal/Work calls per worker or a context from another worker fail the case. Wait/Signal are thread-safe; caller work is not automatically ordered.",
+          "context.Work() invokes opaque actual work owned by that worker; it may take time before returning. It must execute exactly once in each worker, and no dependent worker may begin its Work until its predecessor Work returns. Primitive calls may synchronize the workers but must not run another role work on their behalf. Contexts are opaque supplied objects; their fields/underlying shared storage must not be inspected or altered.",
+          "JSON launchOrder is a permutation of [0,1,2]; delayMask is a test scheduling input in 0..3; the context wire placeholder is []. These are private judge inputs, not the callable parameters: the callable receives role and its provided context. The judge varies launch order and independent entry delays without revealing a required sleep duration. A bounded execution timeout rejects noncompletion; passing sampled schedules alone is not a proof for every scheduler.",
+          "The displayed result is a private completion-order observation [0,1,2], never a return value to construct. Instances have independent gates and work state. No fairness bound or real-time latency guarantee is required; assume runnable threads are eventually scheduled."
+        ],
+        "javascript": [
+          "Callable: function RunOrdered(role, context)",
+          "The judge starts three real threads (Node worker_threads for JavaScript), each calling the same implementation independently with role 0, 1 or 2. Each worker receives its own wrapper around one shared SyncContext state. Use only the provided context API for coordination and work. Return void/None/undefined. Do not launch extra threads or use sleeps, delays or polling as a substitute for synchronization.",
+          "context.Wait(gate) atomically consumes a permit from gate 0 or 1, blocking until one exists. context.Signal(gate) adds one permit and wakes a waiter. Both counting-semaphore gates start with zero permits and belong to this one case. Calls on an invalid gate, more than 20 total Wait/Signal/Work calls per worker or a context from another worker fail the case. Wait/Signal are thread-safe; caller work is not automatically ordered.",
+          "context.Work() invokes opaque actual work owned by that worker; it may take time before returning. It must execute exactly once in each worker, and no dependent worker may begin its Work until its predecessor Work returns. Primitive calls may synchronize the workers but must not run another role work on their behalf. Contexts are opaque supplied objects; their fields/underlying shared storage must not be inspected or altered.",
+          "JSON launchOrder is a permutation of [0,1,2]; delayMask is a test scheduling input in 0..3; the context wire placeholder is []. These are private judge inputs, not the callable parameters: the callable receives role and its provided context. The judge varies launch order and independent entry delays without revealing a required sleep duration. A bounded execution timeout rejects noncompletion; passing sampled schedules alone is not a proof for every scheduler.",
+          "The displayed result is a private completion-order observation [0,1,2], never a return value to construct. Instances have independent gates and work state. No fairness bound or real-time latency guarantee is required; assume runnable threads are eventually scheduled."
+        ],
+        "python": [
+          "Callable: def RunOrdered(role: int, context: SyncContext) -> None",
+          "The judge starts three real threads (Node worker_threads for JavaScript), each calling the same implementation independently with role 0, 1 or 2. Each worker receives its own wrapper around one shared SyncContext state. Use only the provided context API for coordination and work. Return void/None/undefined. Do not launch extra threads or use sleeps, delays or polling as a substitute for synchronization.",
+          "context.Wait(gate) atomically consumes a permit from gate 0 or 1, blocking until one exists. context.Signal(gate) adds one permit and wakes a waiter. Both counting-semaphore gates start with zero permits and belong to this one case. Calls on an invalid gate, more than 20 total Wait/Signal/Work calls per worker or a context from another worker fail the case. Wait/Signal are thread-safe; caller work is not automatically ordered.",
+          "context.Work() invokes opaque actual work owned by that worker; it may take time before returning. It must execute exactly once in each worker, and no dependent worker may begin its Work until its predecessor Work returns. Primitive calls may synchronize the workers but must not run another role work on their behalf. Contexts are opaque supplied objects; their fields/underlying shared storage must not be inspected or altered.",
+          "JSON launchOrder is a permutation of [0,1,2]; delayMask is a test scheduling input in 0..3; the context wire placeholder is []. These are private judge inputs, not the callable parameters: the callable receives role and its provided context. The judge varies launch order and independent entry delays without revealing a required sleep duration. A bounded execution timeout rejects noncompletion; passing sampled schedules alone is not a proof for every scheduler.",
+          "The displayed result is a private completion-order observation [0,1,2], never a return value to construct. Instances have independent gates and work state. No fairness bound or real-time latency guarantee is required; assume runnable threads are eventually scheduled."
+        ],
+        "cpp": [
+          "Callable: void RunOrdered(int role, SyncContext& context)",
+          "The judge starts three real threads (Node worker_threads for JavaScript), each calling the same implementation independently with role 0, 1 or 2. Each worker receives its own wrapper around one shared SyncContext state. Use only the provided context API for coordination and work. Return void/None/undefined. Do not launch extra threads or use sleeps, delays or polling as a substitute for synchronization.",
+          "context.Wait(gate) atomically consumes a permit from gate 0 or 1, blocking until one exists. context.Signal(gate) adds one permit and wakes a waiter. Both counting-semaphore gates start with zero permits and belong to this one case. Calls on an invalid gate, more than 20 total Wait/Signal/Work calls per worker or a context from another worker fail the case. Wait/Signal are thread-safe; caller work is not automatically ordered.",
+          "context.Work() invokes opaque actual work owned by that worker; it may take time before returning. It must execute exactly once in each worker, and no dependent worker may begin its Work until its predecessor Work returns. Primitive calls may synchronize the workers but must not run another role work on their behalf. Contexts are opaque supplied objects; their fields/underlying shared storage must not be inspected or altered.",
+          "JSON launchOrder is a permutation of [0,1,2]; delayMask is a test scheduling input in 0..3; the context wire placeholder is []. These are private judge inputs, not the callable parameters: the callable receives role and its provided context. The judge varies launch order and independent entry delays without revealing a required sleep duration. A bounded execution timeout rejects noncompletion; passing sampled schedules alone is not a proof for every scheduler.",
+          "The displayed result is a private completion-order observation [0,1,2], never a return value to construct. Instances have independent gates and work state. No fairness bound or real-time latency guarantee is required; assume runnable threads are eventually scheduled."
+        ],
+        "java": [
+          "Callable: void RunOrdered(int role, SyncContext context)",
+          "The judge starts three real threads (Node worker_threads for JavaScript), each calling the same implementation independently with role 0, 1 or 2. Each worker receives its own wrapper around one shared SyncContext state. Use only the provided context API for coordination and work. Return void/None/undefined. Do not launch extra threads or use sleeps, delays or polling as a substitute for synchronization.",
+          "context.Wait(gate) atomically consumes a permit from gate 0 or 1, blocking until one exists. context.Signal(gate) adds one permit and wakes a waiter. Both counting-semaphore gates start with zero permits and belong to this one case. Calls on an invalid gate, more than 20 total Wait/Signal/Work calls per worker or a context from another worker fail the case. Wait/Signal are thread-safe; caller work is not automatically ordered.",
+          "context.Work() invokes opaque actual work owned by that worker; it may take time before returning. It must execute exactly once in each worker, and no dependent worker may begin its Work until its predecessor Work returns. Primitive calls may synchronize the workers but must not run another role work on their behalf. Contexts are opaque supplied objects; their fields/underlying shared storage must not be inspected or altered.",
+          "JSON launchOrder is a permutation of [0,1,2]; delayMask is a test scheduling input in 0..3; the context wire placeholder is []. These are private judge inputs, not the callable parameters: the callable receives role and its provided context. The judge varies launch order and independent entry delays without revealing a required sleep duration. A bounded execution timeout rejects noncompletion; passing sampled schedules alone is not a proof for every scheduler.",
+          "The displayed result is a private completion-order observation [0,1,2], never a return value to construct. Instances have independent gates and work state. No fairness bound or real-time latency guarantee is required; assume runnable threads are eventually scheduled."
+        ]
+      }
+    },
     "ctci6_16_1": {
       "description": "Exchange the values of two independent local integer variables without a third temporary variable, then return their final values as [first,second]. Perform the exchange using arithmetic or bit operations on those two variables; do not merely construct the reversed result directly.",
       "constraints": [
