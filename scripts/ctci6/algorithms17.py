@@ -523,3 +523,27 @@ for (const value of values) {
   medians.push(lower.data.length > upper.data.length ? lower.data[0] : (lower.data[0] + upper.data[0]) / 2);
 }
 return medians;'''
+
+_previous_bits_body=body
+
+def body(ref,language):
+    if ref!='17.4':return _previous_bits_body(ref,language)
+    if language=='python':return '''current = list(range(numbers.Size()))
+answer = 0
+column = 0
+while current and column < 32:
+    zeros = []
+    ones = []
+    for index in current:
+        (zeros if numbers.FetchBit(index,column) == 0 else ones).append(index)
+    if len(zeros) <= len(ones):
+        current = zeros
+    else:
+        answer |= 1 << column
+        current = ones
+    column += 1
+return answer'''
+    if language=='javascript':return 'let current=Array.from({length:numbers.Size()},(_,i)=>i),answer=0,column=0;while(current.length&&column<32){const zeros=[],ones=[];for(const index of current)(numbers.FetchBit(index,column)===0?zeros:ones).push(index);if(zeros.length<=ones.length)current=zeros;else{answer|=1<<column;current=ones;}++column;}return answer;'
+    if language=='csharp':return 'var current=new List<int>();for(int i=0;i<numbers.Size();++i)current.Add(i);int answer=0,column=0;while(current.Count>0&&column<32){var zeros=new List<int>();var ones=new List<int>();foreach(int index in current)(numbers.FetchBit(index,column)==0?zeros:ones).Add(index);if(zeros.Count<=ones.Count)current=zeros;else{answer|=1<<column;current=ones;}column++;}return answer;'
+    if language=='java':return 'var current=new ArrayList<Integer>();for(int i=0;i<numbers.Size();++i)current.add(i);int answer=0,column=0;while(!current.isEmpty()&&column<32){var zeros=new ArrayList<Integer>();var ones=new ArrayList<Integer>();for(int index:current)(numbers.FetchBit(index,column)==0?zeros:ones).add(index);if(zeros.size()<=ones.size())current=zeros;else{answer|=1<<column;current=ones;}column++;}return answer;'
+    return 'std::vector<int> current;for(int i=0;i<numbers.Size();++i)current.push_back(i);int answer=0,column=0;while(!current.empty()&&column<32){std::vector<int> zeros,ones;for(int index:current)(numbers.FetchBit(index,column)==0?zeros:ones).push_back(index);if(zeros.size()<=ones.size())current=std::move(zeros);else{answer|=1<<column;current=std::move(ones);}++column;}return answer;'

@@ -12033,6 +12033,176 @@
       }
     },
     {
+      "problemId": "ctci6_17_4",
+      "language": "csharp",
+      "filename": "Solution.cs",
+      "signature": "int MissingNumberBits(BitArray numbers)",
+      "starterCode": "public class Solution\n{\n    public int MissingNumberBits(BitArray numbers)\n    {\n        return 0;\n    }\n}\n",
+      "solutionCode": "public class Solution\n{\n    public int MissingNumberBits(BitArray numbers)\n    {\n        var current = new List<int>();\n        for (int i = 0; i < numbers.Size(); ++i)\n            current.Add(i);\n        int answer = 0, column = 0;\n        while (current.Count > 0 && column < 32)\n        {\n            var zeros = new List<int>();\n            var ones = new List<int>();\n            foreach (int index in current)\n                (numbers.FetchBit(index, column) == 0 ? zeros : ones).Add(index);\n            if (zeros.Count <= ones.Count)\n                current = zeros;\n            else\n            {\n                answer |= 1 << column;\n                current = ones;\n            }\n            column++;\n        }\n        return answer;\n    }\n}\n",
+      "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic abstract class BitArray { public abstract int Size(); public abstract int FetchBit(int index,int column); }\n",
+      "suffix": "",
+      "references": [
+        {
+          "title": "Required callable model APIs",
+          "code": "public abstract class BitArray\n{\n    public abstract int Size();\n    public abstract int FetchBit(int index, int column);\n}\n",
+          "names": [
+            "BitArray"
+          ]
+        }
+      ],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [
+        "BitArray"
+      ],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/csharp/ctci6_17_4.cs"
+      ],
+      "sourceSha256": {
+        "starter": "feff397e22db8bc151d6ae1c79dd9e002ad6694dac83127b9f79ea70f4c6ec5b",
+        "solution": "ba59ad4cbb8eb351e6e09329fa7776a33db39c906fa23847423efc48288928ff"
+      }
+    },
+    {
+      "problemId": "ctci6_17_4",
+      "language": "javascript",
+      "filename": "solution.js",
+      "signature": "function MissingNumberBits(numbers)",
+      "starterCode": "function MissingNumberBits(numbers) {\n  return 0;\n}\n",
+      "solutionCode": "function MissingNumberBits(numbers) {\n  let current = Array.from({ length: numbers.Size() }, (_, i) => i),\n    answer = 0,\n    column = 0;\n  while (current.length && column < 32) {\n    const zeros = [],\n      ones = [];\n    for (const index of current) (numbers.FetchBit(index, column) === 0 ? zeros : ones).push(index);\n    if (zeros.length <= ones.length) current = zeros;\n    else {\n      answer |= 1 << column;\n      current = ones;\n    }\n    ++column;\n  }\n  return answer;\n}\n",
+      "prefix": "'use strict';\nclass BitArray { Size(){throw new Error(\"Provided by the judge\");} FetchBit(index,column){throw new Error(\"Provided by the judge\");} }\n",
+      "suffix": "\nmodule.exports = {BitArray,MissingNumberBits};\n",
+      "references": [
+        {
+          "title": "Required callable model APIs",
+          "code": "class BitArray {\n  Size() {\n    throw new Error(\"Provided by the judge\");\n  }\n  FetchBit(index, column) {\n    throw new Error(\"Provided by the judge\");\n  }\n}\n",
+          "names": [
+            "BitArray"
+          ]
+        }
+      ],
+      "visibleSymbols": [
+        "MissingNumberBits"
+      ],
+      "hiddenSymbols": [
+        "BitArray"
+      ],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/javascript/ctci6_17_4.js"
+      ],
+      "sourceSha256": {
+        "starter": "417c0d93f86daf0baf8d5c985eb1828ab80f6c8a53b3e0775ece52346609b142",
+        "solution": "046b28ae306b5b8073c31f97b4c9a79330840cac65aa9401d3f50f3234d3a1ff"
+      }
+    },
+    {
+      "problemId": "ctci6_17_4",
+      "language": "python",
+      "filename": "solution.py",
+      "signature": "def MissingNumberBits(numbers: BitArray) -> int",
+      "starterCode": "def MissingNumberBits(numbers: BitArray) -> int:\n    return 0\n",
+      "solutionCode": "def MissingNumberBits(numbers: BitArray) -> int:\n    current = list(range(numbers.Size()))\n    answer = 0\n    column = 0\n    while current and column < 32:\n        zeros = []\n        ones = []\n        for index in current:\n            (zeros if numbers.FetchBit(index, column) == 0 else ones).append(index)\n        if len(zeros) <= len(ones):\n            current = zeros\n        else:\n            answer |= 1 << column\n            current = ones\n        column += 1\n    return answer\n",
+      "prefix": "class BitArray:\n    def Size(self) -> int:\n        raise RuntimeError(\"Provided by the judge\")\n    def FetchBit(self,index: int,column: int) -> int:\n        raise RuntimeError(\"Provided by the judge\")\n",
+      "suffix": "",
+      "references": [
+        {
+          "title": "Required callable model APIs",
+          "code": "class BitArray:\n    def Size(self) -> int:\n        raise RuntimeError(\"Provided by the judge\")\n\n    def FetchBit(self, index: int, column: int) -> int:\n        raise RuntimeError(\"Provided by the judge\")\n",
+          "names": [
+            "BitArray"
+          ]
+        }
+      ],
+      "visibleSymbols": [
+        "MissingNumberBits"
+      ],
+      "hiddenSymbols": [
+        "BitArray"
+      ],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/python/ctci6_17_4.py"
+      ],
+      "sourceSha256": {
+        "starter": "75294b3be8be91c8253afad7b2d2f8cfa8e69aad6d2373bc20ca75accbc8dc21",
+        "solution": "f628009a11627d884d5827d88bbc64b785c4ba532e4b3e2d29d0b51a0392fa8b"
+      }
+    },
+    {
+      "problemId": "ctci6_17_4",
+      "language": "cpp",
+      "filename": "solution.cpp",
+      "signature": "int MissingNumberBits(BitArray& numbers)",
+      "starterCode": "class Solution {\n public:\n  int MissingNumberBits(BitArray& numbers) {\n    return 0;\n  }\n};\n",
+      "solutionCode": "class Solution {\n public:\n  int MissingNumberBits(BitArray& numbers) {\n    std::vector<int> current;\n    for (int i = 0; i < numbers.Size(); ++i)\n      current.push_back(i);\n    int answer = 0, column = 0;\n    while (!current.empty() && column < 32) {\n      std::vector<int> zeros, ones;\n      for (int index : current)\n        (numbers.FetchBit(index, column) == 0 ? zeros : ones).push_back(index);\n      if (zeros.size() <= ones.size())\n        current = std::move(zeros);\n      else {\n        answer |= 1 << column;\n        current = std::move(ones);\n      }\n      ++column;\n    }\n    return answer;\n  }\n};\n",
+      "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\nclass BitArray { public: virtual int Size()=0; virtual int FetchBit(int index,int column)=0; virtual ~BitArray()=default; };\n",
+      "suffix": "",
+      "references": [
+        {
+          "title": "Required callable model APIs",
+          "code": "class BitArray {\n public:\n  virtual int Size() = 0;\n  virtual int FetchBit(int index, int column) = 0;\n  virtual ~BitArray() = default;\n};\n",
+          "names": [
+            "BitArray"
+          ]
+        }
+      ],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [
+        "BitArray"
+      ],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/cpp/ctci6_17_4.cpp"
+      ],
+      "sourceSha256": {
+        "starter": "a306ae778c437f53247d683d35e96085b546506e34d49dfe827411e614a817a3",
+        "solution": "e1ead10357d91069b890020b861fa76872549506301731be53136e3a6deef178"
+      }
+    },
+    {
+      "problemId": "ctci6_17_4",
+      "language": "java",
+      "filename": "Solution.java",
+      "signature": "int MissingNumberBits(BitArray numbers)",
+      "starterCode": "class Solution {\n  public int MissingNumberBits(BitArray numbers) {\n    return 0;\n  }\n}\n",
+      "solutionCode": "class Solution {\n  public int MissingNumberBits(BitArray numbers) {\n    var current = new ArrayList<Integer>();\n    for (int i = 0; i < numbers.Size(); ++i)\n      current.add(i);\n    int answer = 0, column = 0;\n    while (!current.isEmpty() && column < 32) {\n      var zeros = new ArrayList<Integer>();\n      var ones = new ArrayList<Integer>();\n      for (int index : current)\n        (numbers.FetchBit(index, column) == 0 ? zeros : ones).add(index);\n      if (zeros.size() <= ones.size())\n        current = zeros;\n      else {\n        answer |= 1 << column;\n        current = ones;\n      }\n      column++;\n    }\n    return answer;\n  }\n}\n",
+      "prefix": "import java.util.*;\nabstract class BitArray { public abstract int Size(); public abstract int FetchBit(int index,int column); }\n",
+      "suffix": "",
+      "references": [
+        {
+          "title": "Required callable model APIs",
+          "code": "abstract class BitArray {\n  public abstract int Size();\n  public abstract int FetchBit(int index, int column);\n}\n",
+          "names": [
+            "BitArray"
+          ]
+        }
+      ],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [
+        "BitArray"
+      ],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/java/ctci6_17_4.java"
+      ],
+      "sourceSha256": {
+        "starter": "f646ce1b4a09d55bc94e4573498e24df007acd2efa04850db8a70db296e366a5",
+        "solution": "035cdd88e682ca5517d7085d0c648aba4d8908b501cf55b153e0c54cfff9c2a7"
+      }
+    },
+    {
       "problemId": "ctci6_17_5",
       "language": "csharp",
       "filename": "Solution.cs",

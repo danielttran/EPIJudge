@@ -68,6 +68,76 @@
     }
   },
   {
+    "ref": "17.4",
+    "method": "MissingNumberBits",
+    "params": [
+      [
+        "numbers",
+        "bits"
+      ]
+    ],
+    "result": "i",
+    "mutation": "none",
+    "description": "The hidden array contains every integer from 0 through n except one, in arbitrary order, where n=numbers.Size(). Find the missing integer using only individual-bit queries. The judge provides BitArray with Size() and FetchBit(index,column). Column 0 is the least significant bit; column 31 is the most significant bit of the nonnegative 32-bit value. Each FetchBit returns exactly 0 or 1.",
+    "constraints": [
+      "The hidden array has n in 0..10000 entries, all distinct, and is exactly {0,..,n} with one member omitted. You may read Size() and call FetchBit at index 0..n-1 and column 0..31. Empty input therefore has missing value 0.",
+      "The numeric array shown in examples/test fixtures is only a wire representation. Your callable receives BitArray, never an integer array. No full-integer accessor, mutable element, enumeration or private-state inspection is permitted. Use at most 4*n+32 FetchBit calls. Arithmetic on array indices, counts and the constructed missing answer is allowed; reconstructing every hidden integer is outside the bit-only linear-query task.",
+      "The provided hidden values and order are readonly. Local lists of original indices may be allocated and partitioned. Do not redeclare or replace the bank-provided BitArray API."
+    ],
+    "why": "At the least significant bit, a complete consecutive range has as many zeros as ones or one extra zero. Removing a zero leaves zero-count no larger than one-count; removing a one leaves more zeros. This identifies the missing low bit without reconstructing any number. Retain only indices with that bit, discard the known low bit conceptually, and repeat. Each retained set shrinks by roughly half.",
+    "correctness": "At each stage the candidate values share the already determined low-bit prefix. Shifting away that prefix gives a consecutive range starting at zero with exactly the shifted missing value absent. Its even positions are either equal in count to its odd positions or one greater before removal. Therefore observed zeroCount<=oneCount identifies a missing zero bit, and the opposite inequality identifies a missing one bit. Keeping the selected partition preserves the consecutive-range-with-one-missing invariant for the next higher bit. When no candidates remain, the shifted complete range is {0}, so all remaining missing bits are zero. Accumulating the selected bits returns exactly the omitted integer. The geometric partition sizes give linear total bit queries, within the stated budget.",
+    "walkthrough": "For hidden [0,1,3,4], n=4 and 2 is missing. At column 0, indices for values 0 and 4 have zero bits, while 1 and 3 have one bits. A tie selects missing bit 0 and keeps [0,4]. At column 1 both retained values have zero, so zeroCount>oneCount selects bit 1; the selected one partition is empty. Higher bits are zero, yielding binary 10 = 2.",
+    "example": [
+      [
+        [
+          0,
+          1,
+          3,
+          4
+        ]
+      ],
+      2
+    ],
+    "time": "O(n) individual-bit queries and index-partition work across geometrically shrinking candidate sets; at most 32 bit positions in the fixed-width model.",
+    "space": "O(n) auxiliary original-index lists; hidden integers are never reconstructed or copied into local numeric values.",
+    "edges": [
+      "Empty input, missing zero and missing n.",
+      "Shuffled values, boundaries around powers of two and n=10000.",
+      "Single-bit API index/column limits and the linear query budget."
+    ],
+    "related": "The public exercise permits querying one bit of a hidden integer at a time. A BitArray wrapper retains that restriction while specifying a conventional least-significant-first column numbering explicitly, instead of exposing the fixture integers as ordinary callable arguments.",
+    "id": "ctci6_17_4",
+    "title": "Missing Number",
+    "testCount": 5973,
+    "languages": {
+      "csharp": {
+        "signature": "int MissingNumberBits(BitArray numbers)",
+        "starterCode": "public class Solution\n{\n    public int MissingNumberBits(BitArray numbers)\n    {\n        return 0;\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public int MissingNumberBits(BitArray numbers)\n    {\n        var current = new List<int>();\n        for (int i = 0; i < numbers.Size(); ++i)\n            current.Add(i);\n        int answer = 0, column = 0;\n        while (current.Count > 0 && column < 32)\n        {\n            var zeros = new List<int>();\n            var ones = new List<int>();\n            foreach (int index in current)\n                (numbers.FetchBit(index, column) == 0 ? zeros : ones).Add(index);\n            if (zeros.Count <= ones.Count)\n                current = zeros;\n            else\n            {\n                answer |= 1 << column;\n                current = ones;\n            }\n            column++;\n        }\n        return answer;\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function MissingNumberBits(numbers)",
+        "starterCode": "function MissingNumberBits(numbers) {\n  return 0;\n}\n",
+        "solutionCode": "function MissingNumberBits(numbers) {\n  let current = Array.from({ length: numbers.Size() }, (_, i) => i),\n    answer = 0,\n    column = 0;\n  while (current.length && column < 32) {\n    const zeros = [],\n      ones = [];\n    for (const index of current) (numbers.FetchBit(index, column) === 0 ? zeros : ones).push(index);\n    if (zeros.length <= ones.length) current = zeros;\n    else {\n      answer |= 1 << column;\n      current = ones;\n    }\n    ++column;\n  }\n  return answer;\n}\n"
+      },
+      "python": {
+        "signature": "def MissingNumberBits(numbers: BitArray) -> int",
+        "starterCode": "def MissingNumberBits(numbers: BitArray) -> int:\n    return 0\n",
+        "solutionCode": "def MissingNumberBits(numbers: BitArray) -> int:\n    current = list(range(numbers.Size()))\n    answer = 0\n    column = 0\n    while current and column < 32:\n        zeros = []\n        ones = []\n        for index in current:\n            (zeros if numbers.FetchBit(index, column) == 0 else ones).append(index)\n        if len(zeros) <= len(ones):\n            current = zeros\n        else:\n            answer |= 1 << column\n            current = ones\n        column += 1\n    return answer\n"
+      },
+      "cpp": {
+        "signature": "int MissingNumberBits(BitArray& numbers)",
+        "starterCode": "class Solution {\n public:\n  int MissingNumberBits(BitArray& numbers) {\n    return 0;\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  int MissingNumberBits(BitArray& numbers) {\n    std::vector<int> current;\n    for (int i = 0; i < numbers.Size(); ++i)\n      current.push_back(i);\n    int answer = 0, column = 0;\n    while (!current.empty() && column < 32) {\n      std::vector<int> zeros, ones;\n      for (int index : current)\n        (numbers.FetchBit(index, column) == 0 ? zeros : ones).push_back(index);\n      if (zeros.size() <= ones.size())\n        current = std::move(zeros);\n      else {\n        answer |= 1 << column;\n        current = std::move(ones);\n      }\n      ++column;\n    }\n    return answer;\n  }\n};\n"
+      },
+      "java": {
+        "signature": "int MissingNumberBits(BitArray numbers)",
+        "starterCode": "class Solution {\n  public int MissingNumberBits(BitArray numbers) {\n    return 0;\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public int MissingNumberBits(BitArray numbers) {\n    var current = new ArrayList<Integer>();\n    for (int i = 0; i < numbers.Size(); ++i)\n      current.add(i);\n    int answer = 0, column = 0;\n    while (!current.isEmpty() && column < 32) {\n      var zeros = new ArrayList<Integer>();\n      var ones = new ArrayList<Integer>();\n      for (int index : current)\n        (numbers.FetchBit(index, column) == 0 ? zeros : ones).add(index);\n      if (zeros.size() <= ones.size())\n        current = zeros;\n      else {\n        answer |= 1 << column;\n        current = ones;\n      }\n      column++;\n    }\n    return answer;\n  }\n}\n"
+      }
+    }
+  },
+  {
     "ref": "17.5",
     "method": "LongestLettersDigits",
     "params": [

@@ -1,7 +1,10 @@
 """Reuse established primitive/array bindings with a visible C++17 byte-copy include."""
-from models08 import declare as typed_declare,header
+from models08 import declare as typed_declare,header as base_header
 import numeric
 from core import starter_body
+from models_bits17 import BITS
+
+def header(ref,language):return base_header(ref,language)+(BITS[language] if ref=="17.4" else "")
 from models08 import neutral as collection_neutral
 
 def neutral(spec,language):

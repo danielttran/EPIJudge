@@ -20,6 +20,7 @@ import harness17
 import models08
 import models10
 import models16
+import models17
 import models03
 import models04
 from core import HEADERS, LANGUAGES, ROOT
@@ -118,7 +119,9 @@ def submission_prefix(batch, language, reference=None):
         return models10.header(reference, language)
     if batch == 16:
         return models16.header(reference, language)
-    if batch in (8, 17):
+    if batch == 17:
+        return models17.header(reference,language)
+    if batch == 8:
         return models08.header(reference, language)
     if batch in (1, 5):
         return HEADERS[language] + (
@@ -164,6 +167,8 @@ def adapter(entry, language, batch):
         elif batch == 4 and entry["ref"] in models04.TREE_REFS:
             imports += "TreeNode = user.TreeNode\n"
             if entry["ref"] == "4.3": imports += "DepthLink = user.DepthLink\n"
+        elif batch == 17 and entry["ref"] == "17.4":
+            imports += "BitArray = user.BitArray\n"
         elif batch == 10 and entry["ref"] == "10.4":
             imports += "Listy = user.Listy\n"
         elif batch == 3:
@@ -181,6 +186,8 @@ def adapter(entry, language, batch):
         elif batch == 4 and entry["ref"] in models04.TREE_REFS:
             imports += "const TreeNode = user.TreeNode;\n"
             if entry["ref"] == "4.3": imports += "const DepthLink = user.DepthLink;\n"
+        elif batch == 17 and entry["ref"] == "17.4":
+            imports += "const BitArray = user.BitArray;\n"
         elif batch == 10 and entry["ref"] == "10.4":
             imports += "const Listy = user.Listy;\n"
         elif batch == 3:
@@ -240,6 +247,7 @@ def generate_runtime():
                     ["LinkedListNode"]
                     if batch == 2
                     else (["TreeNode", "DepthLink"] if entry["ref"] == "4.3" else ["TreeNode"]) if batch == 4 and entry["ref"] in models04.TREE_REFS
+                    else ["BitArray"] if batch == 17 and entry["ref"] == "17.4"
                     else ["Listy"] if batch == 10 and entry["ref"] == "10.4"
                     else ["BankError", "IntStack", "Animal"]
                     if batch == 3
@@ -262,7 +270,7 @@ def generate_runtime():
                             HEADERS[language]
                         )
                         if batch == 3
-                        else models04.reference(entry["ref"],language) if batch == 4 and entry["ref"] in models04.TREE_REFS else models10.LISTY[language] if batch == 10 and entry["ref"] == "10.4" else ""
+                        else models17.BITS[language] if batch == 17 and entry["ref"] == "17.4" else models04.reference(entry["ref"],language) if batch == 4 and entry["ref"] in models04.TREE_REFS else models10.LISTY[language] if batch == 10 and entry["ref"] == "10.4" else ""
                     ),
                 )
             rows.append(item)

@@ -639,4 +639,14 @@ public sealed class CtciStagingTests
         Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new[] { "7", "2", "A", "B", "0", "Text", "0" }, mutationOk = true })));
         Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new[] { "7", "2", "A B", "0", "Text" }, mutationOk = true })));
     }
+    [Fact]
+    public void MissingNumberRequiresBitQueryEvidenceWithinItsLinearBudget()
+    {
+        var definition = Definition("17.4");
+        var test = Case([new[] { 0, 1, 3 }], 2);
+        Assert.Null(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = 2, mutationOk = true, probes = 5 })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = 2, mutationOk = true, probes = 45 })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = true, mutationOk = true, probes = 5 })));
+        Assert.Contains(definition.Callable("python").References, reference => reference.Names.Contains("BitArray"));
+    }
 }

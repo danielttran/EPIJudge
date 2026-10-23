@@ -1,6 +1,6 @@
 # Cracking the Coding Interview, sixth edition
 
-This collection is being authored. **111 verified coding exercises are registered in the local website; the collection has not been pushed.**
+This collection is being authored. **112 verified coding exercises are registered in the local website; the collection has not been pushed.**
 The advertised 189 is a book question count, not a count of executable exercises.
 
 `inventory.json` records numbered references established from the author's public

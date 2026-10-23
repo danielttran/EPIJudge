@@ -8,9 +8,10 @@ from corpus17 import cases as base_cases,oracle as base_oracle
 import corpus_names17
 
 import corpus_numeric
+import corpus_bits17
 
-def cases(spec):return corpus_numeric.cases(spec) if spec["ref"]=="17.20" else corpus_names17.cases(spec) if spec["ref"]=="17.7" else base_cases(spec)
-def oracle(reference,args):return corpus_numeric.oracle(reference,args) if reference=="17.20" else corpus_names17.oracle(reference,args) if reference=="17.7" else base_oracle(reference,args)
+def cases(spec):return corpus_bits17.cases(spec) if spec["ref"]=="17.4" else corpus_numeric.cases(spec) if spec["ref"]=="17.20" else corpus_names17.cases(spec) if spec["ref"]=="17.7" else base_cases(spec)
+def oracle(reference,args):return corpus_bits17.oracle(reference,args) if reference=="17.4" else corpus_numeric.oracle(reference,args) if reference=="17.20" else corpus_names17.oracle(reference,args) if reference=="17.7" else base_oracle(reference,args)
 from generate import generate
 from models17 import declare,header,neutral
 
@@ -18,7 +19,11 @@ def generate17():
     for spec in SPECS:
         if oracle(spec['ref'],spec['example'][0])!=spec['example'][1]:raise ValueError('Incorrect example '+spec['ref'])
         cases(spec)
-    generate(specs=SPECS,algorithm=body,corpus=cases,reference=oracle,headers={language:header('17',language) for language in LANGUAGES},declare=declare,neutral=neutral,staging_name='staged17')
+    rows=[]
+    for spec in SPECS:
+        generate(specs=[spec],algorithm=body,corpus=cases,reference=oracle,headers={language:header(spec['ref'],language) for language in LANGUAGES},declare=declare,neutral=neutral,staging_name='staged17')
+        rows.extend(json.loads((ROOT/'ctci6/staged17/catalog.json').read_text()))
+    (ROOT/'ctci6/staged17/catalog.json').write_text(json.dumps(rows,indent=2)+'\n')
     for spec in SPECS:
         for language, detail in spec.get('languageWhy', {}).items():
             path = ROOT / 'ctci6/staged17' / language / ('ctci6_' + spec['ref'].replace('.', '_') + '.json')

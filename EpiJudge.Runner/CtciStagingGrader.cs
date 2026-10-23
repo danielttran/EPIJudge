@@ -315,6 +315,12 @@ public static class CtciStagingGrader
         {
             if (observed.ValueKind != JsonValueKind.Object || observed.TryGetProperty("error", out var error) && error.ValueKind != JsonValueKind.Null)
                 return "Your code did not finish this case successfully.";
+            if (definition.Ref == "17.4")
+            {
+                if (observed.GetProperty("mutationOk").ValueKind != JsonValueKind.True || !observed.GetProperty("probes").TryGetInt32(out int probes) || probes < 0 || probes > 4 * test.Arguments[0].GetArrayLength() + 32) return "Use the provided bit-only API within the linear query budget.";
+                var actual = observed.GetProperty("actual");
+                return actual.ValueKind == JsonValueKind.Number && actual.TryGetInt32(out int result) && result == test.Expected.GetInt32() ? null : "Return the omitted value from the hidden consecutive range.";
+            }
             if (definition.Ref is "16.3" or "16.13") return GeometryFailure(definition, test, observed);
             if (definition.Ref is "16.26" or "17.20") return NumericFailure(definition, test, observed);
             if (definition.Ref is "16.14" or "17.7") return GroupOrLineFailure(definition, test, observed);

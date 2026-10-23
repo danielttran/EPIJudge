@@ -1,12 +1,17 @@
 {
   "stage": "standalone-authoring-and-separate-module",
   "liveIntegration": "pending-current-module-receipts",
-  "reviewScope": "Twenty-two chapter-17 tasks and 110 actual language bodies, with real numeric result contracts.",
+  "reviewScope": "Twenty-three hard tasks and 115 actual language bodies, including genuinely opaque single-bit array access.",
   "questions": [
     {
       "ref": "17.1",
       "algorithm": "Iterative fixed-width XOR sum and shifted-AND carries.",
       "review": "Read all five bodies and operation restrictions: no arithmetic operator or arithmetic helper is used. C#/C++ shift unsigned 32-bit patterns; C++17 memcpy into int32_t reinterprets the final bits without signed overflow. Java/JS use native 32-bit bitwise operations. Python masks operands/carry and reconstructs the signed result using complement. Long carry chains, both signed endpoints and wrapping sums are executed against independent modular mathematical addition."
+    },
+    {
+      "ref": "17.4",
+      "algorithm": "Repeated least-significant-bit partitions of original indices; retain the partition missing one occurrence and set that answer bit.",
+      "review": "Read all five actual bodies and bank/private API declarations. Only Size and one FetchBit call per retained index are used; no hidden input integer is reconstructed or enumerated. Every local list stores indices, and candidate size shrinks geometrically. LSB-first columns are explicitly different from the public sample MSB-oriented storage indexing, while preserving the exercise single-bit restriction. C# and Java typed index lists, C++ moved vectors, Python tuple-owned private data and JS private fields retain opaque readonly backing values. Counts and output bit shifts stay in range because n<=10000. The independent set-difference oracle executes every small permutation and power-of-two/10000 bounds. Five actually compiled negative programs each verify rejection of invalid columns, invalid indices and excessive queries. Separate-module testing found missing Python/JS bank-type imports, which were fixed and rerun; visible API references now export the same BitArray type used by the private decoder. Existing full-integer missing-value exercises are not treated as semantic duplicates."
     },
     {
       "ref": "17.5",
@@ -136,7 +141,9 @@
     "scripts/ctci6/test_structured17.py",
     "EpiJudge.Tests/CtciStagingTests.cs",
     "scripts/ctci6/test_groups_line.py",
-    "scripts/ctci6/test_numeric.py"
+    "scripts/ctci6/test_numeric.py",
+    "scripts/ctci6/test_bits17.py",
+    "scripts/ctci6/test_bits_runtime17.py"
   ],
   "remainingAcceptance": [
     "remaining known content and classifications",

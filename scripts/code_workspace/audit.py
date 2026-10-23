@@ -517,6 +517,8 @@ def expected_references(entry: dict) -> set[str] | None:
             return {"LinkedListNode"}
         if row["batch"] == 4 and row["ref"] not in ("4.1", "4.7"):
             return {"TreeNode", "DepthLink"} if row["ref"]=="4.3" else {"TreeNode"}
+        if row["ref"] == "17.4":
+            return {"BitArray"}
         if row["ref"] == "10.4":
             return {"Listy"}
         if row["batch"] == 3:
@@ -761,7 +763,7 @@ def audit_artifact(
             if entry["problemId"].startswith("blind75_")
             else CAKE_MODELS
             if entry["problemId"].startswith("interviewcake_")
-            else {"LinkedListNode", "IntStack", "Animal", "BankError", "Listy", "TreeNode", "DepthLink"}
+            else {"LinkedListNode", "IntStack", "Animal", "BankError", "Listy", "TreeNode", "DepthLink", "BitArray"}
             if entry["problemId"].startswith("ctci6_")
             else set()
         )
