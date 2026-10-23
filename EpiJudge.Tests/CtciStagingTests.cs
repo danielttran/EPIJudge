@@ -758,4 +758,18 @@ public sealed class CtciStagingTests
         Assert.DoesNotContain("Country", model.Names);
     }
 
+    [Fact]
+    public void GenericCircularCollectionUsesStateGradingAndMatchingJavaFilename()
+    {
+        var definition = Definition("7.9");
+        var test = new TestCase(definition.Example[0].EnumerateArray().Select(value => value.Clone()).ToArray(), definition.Example[1].Clone());
+        var observed = Json(new { actual = test.Expected, mutationOk = true });
+        Assert.Null(CtciStagingGrader.FailureReason(definition, test, observed));
+        Assert.True(JsonElement.DeepEquals(test.Expected, CtciStagingGrader.Display(definition, test, observed)));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = test.Expected, mutationOk = false })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new { results = new object[0], finalValues = new object[0] }, mutationOk = true })));
+        Assert.Equal("CircularArray.java", definition.Callable("java").Filename);
+        Assert.Contains("from typing import", definition.Callable("python").StarterCode);
+    }
+
 }

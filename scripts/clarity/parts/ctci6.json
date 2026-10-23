@@ -2978,6 +2978,129 @@
         ]
       }
     },
+    "ctci6_7_9": {
+      "description": "Implement a fixed-length generic CircularArray with indexed Get/Set, logical rotation and native read-only iteration. A positive Rotate(s) moves the logical front s positions toward the current end: rotating [a,b,c] by 1 yields [b,c,a]. Negative shifts rotate in the opposite direction; reduce any signed shift modulo the length. Rotation must update an offset rather than physically reorder all elements. Empty rotation is a no-op.",
+      "constraints": [
+        "The callable is a generic class (parametric/dynamic in Python and JavaScript), not a function returning simulated operation results. Construct it from an initial sequence of 0..1000 elements, copying the sequence storage. Element objects need not be deep-copied. The judge instantiates both signed 32-bit integers and Unicode strings of 0..40 characters.",
+        "Get(index) and Set(index,value) use logical zero-based indices. Any index below 0 or at least the fixed length raises the selected language standard index/range exception, without changing the stored sequence. Accepted exceptions are C# ArgumentOutOfRangeException or IndexOutOfRangeException, Java IndexOutOfBoundsException, C++ std::out_of_range, Python IndexError and JavaScript RangeError. Set/Rotate return void/None/undefined. Rotation shifts are arbitrary signed 32-bit integers; negative indices never mean indexing from the end.",
+        "Use native iteration: C# IEnumerable<T>, Java Iterable<T>, C++ begin/end range iterators, Python __iter__, JavaScript Symbol.iterator. Each iterator starts at the logical front and yields exactly the fixed number of elements in order. Multiple independent iterators may be interleaved. No mutation occurs from iterator creation until its consumption finishes.",
+        "JSON wire arguments are kind (number or text), initialValues, operations, operands, newValues. Both value arrays contain the selected primitive element type. The operation/operand/newValue arrays have equal length 1..1000; the first operation is CircularArray and its operand/value are ignored. Get/Set use operand as index; Set uses newValue. Rotate uses operand as signed shift. Iterate and IterateTwice are judge commands for one iterator or two interleaved iterators, not methods to implement. Other unused operands/values are ignored.",
+        "Displayed output is {results:[one observation per operation],finalValues:[final logical order]}. Construction/Set/Rotate display null; Get displays its actual element; an invalid Get/Set displays {\"error\":\"index\"}; Iterate displays one value array; IterateTwice displays the two complete value arrays. Preserve the caller initial array throughout later updates."
+      ],
+      "examples": [
+        {
+          "input": "[\"text\", [\"elm\", \"fir\", \"oak\"], [\"CircularArray\", \"Rotate\", \"Get\", \"Set\", \"IterateTwice\", \"Get\"], [0, 1, 0, 1, 0, -1], [\"\", \"\", \"\", \"ash\", \"\", \"\"]]",
+          "output": "{\"results\": [null, null, \"fir\", null, [[\"fir\", \"ash\", \"elm\"], [\"fir\", \"ash\", \"elm\"]], {\"error\": \"index\"}], \"finalValues\": [\"fir\", \"ash\", \"elm\"]}",
+          "explanation": "Start with [elm,fir,oak] and head 0. Rotate(1) sets head to 1, giving logical order [fir,oak,elm]; Get(0) returns fir. Set(1,ash) changes physical slot (1+1)%3=2, so the order becomes [fir,ash,elm]. Two interleaved iterators each start with cursor 0 and independently produce that complete order. Get(-1) raises the standard index exception and leaves the order unchanged."
+        }
+      ],
+      "exampleCases": [
+        {
+          "arguments": [
+            "text",
+            [
+              "elm",
+              "fir",
+              "oak"
+            ],
+            [
+              "CircularArray",
+              "Rotate",
+              "Get",
+              "Set",
+              "IterateTwice",
+              "Get"
+            ],
+            [
+              0,
+              1,
+              0,
+              1,
+              0,
+              -1
+            ],
+            [
+              "",
+              "",
+              "",
+              "ash",
+              "",
+              ""
+            ]
+          ],
+          "expected": {
+            "results": [
+              null,
+              null,
+              "fir",
+              null,
+              [
+                [
+                  "fir",
+                  "ash",
+                  "elm"
+                ],
+                [
+                  "fir",
+                  "ash",
+                  "elm"
+                ]
+              ],
+              {
+                "error": "index"
+              }
+            ],
+            "finalValues": [
+              "fir",
+              "ash",
+              "elm"
+            ]
+          }
+        }
+      ],
+      "contracts": {
+        "csharp": [
+          "Callable: CircularArray<T>(T[] initialValues); T Get(int index); void Set(int index,T value); void Rotate(int shift); IEnumerable<T>",
+          "The callable is a generic class (parametric/dynamic in Python and JavaScript), not a function returning simulated operation results. Construct it from an initial sequence of 0..1000 elements, copying the sequence storage. Element objects need not be deep-copied. The judge instantiates both signed 32-bit integers and Unicode strings of 0..40 characters.",
+          "Get(index) and Set(index,value) use logical zero-based indices. Any index below 0 or at least the fixed length raises the selected language standard index/range exception, without changing the stored sequence. Accepted exceptions are C# ArgumentOutOfRangeException or IndexOutOfRangeException, Java IndexOutOfBoundsException, C++ std::out_of_range, Python IndexError and JavaScript RangeError. Set/Rotate return void/None/undefined. Rotation shifts are arbitrary signed 32-bit integers; negative indices never mean indexing from the end.",
+          "Use native iteration: C# IEnumerable<T>, Java Iterable<T>, C++ begin/end range iterators, Python __iter__, JavaScript Symbol.iterator. Each iterator starts at the logical front and yields exactly the fixed number of elements in order. Multiple independent iterators may be interleaved. No mutation occurs from iterator creation until its consumption finishes.",
+          "JSON wire arguments are kind (number or text), initialValues, operations, operands, newValues. Both value arrays contain the selected primitive element type. The operation/operand/newValue arrays have equal length 1..1000; the first operation is CircularArray and its operand/value are ignored. Get/Set use operand as index; Set uses newValue. Rotate uses operand as signed shift. Iterate and IterateTwice are judge commands for one iterator or two interleaved iterators, not methods to implement. Other unused operands/values are ignored.",
+          "Displayed output is {results:[one observation per operation],finalValues:[final logical order]}. Construction/Set/Rotate display null; Get displays its actual element; an invalid Get/Set displays {\"error\":\"index\"}; Iterate displays one value array; IterateTwice displays the two complete value arrays. Preserve the caller initial array throughout later updates."
+        ],
+        "javascript": [
+          "Callable: new CircularArray(initialValues); Get(index); Set(index,value); Rotate(shift); [Symbol.iterator]()",
+          "The callable is a generic class (parametric/dynamic in Python and JavaScript), not a function returning simulated operation results. Construct it from an initial sequence of 0..1000 elements, copying the sequence storage. Element objects need not be deep-copied. The judge instantiates both signed 32-bit integers and Unicode strings of 0..40 characters.",
+          "Get(index) and Set(index,value) use logical zero-based indices. Any index below 0 or at least the fixed length raises the selected language standard index/range exception, without changing the stored sequence. Accepted exceptions are C# ArgumentOutOfRangeException or IndexOutOfRangeException, Java IndexOutOfBoundsException, C++ std::out_of_range, Python IndexError and JavaScript RangeError. Set/Rotate return void/None/undefined. Rotation shifts are arbitrary signed 32-bit integers; negative indices never mean indexing from the end.",
+          "Use native iteration: C# IEnumerable<T>, Java Iterable<T>, C++ begin/end range iterators, Python __iter__, JavaScript Symbol.iterator. Each iterator starts at the logical front and yields exactly the fixed number of elements in order. Multiple independent iterators may be interleaved. No mutation occurs from iterator creation until its consumption finishes.",
+          "JSON wire arguments are kind (number or text), initialValues, operations, operands, newValues. Both value arrays contain the selected primitive element type. The operation/operand/newValue arrays have equal length 1..1000; the first operation is CircularArray and its operand/value are ignored. Get/Set use operand as index; Set uses newValue. Rotate uses operand as signed shift. Iterate and IterateTwice are judge commands for one iterator or two interleaved iterators, not methods to implement. Other unused operands/values are ignored.",
+          "Displayed output is {results:[one observation per operation],finalValues:[final logical order]}. Construction/Set/Rotate display null; Get displays its actual element; an invalid Get/Set displays {\"error\":\"index\"}; Iterate displays one value array; IterateTwice displays the two complete value arrays. Preserve the caller initial array throughout later updates."
+        ],
+        "python": [
+          "Callable: CircularArray(initialValues: list[T]); Get(index: int) -> T; Set(index: int,value: T) -> None; Rotate(shift: int) -> None; __iter__() -> Iterator[T]",
+          "The callable is a generic class (parametric/dynamic in Python and JavaScript), not a function returning simulated operation results. Construct it from an initial sequence of 0..1000 elements, copying the sequence storage. Element objects need not be deep-copied. The judge instantiates both signed 32-bit integers and Unicode strings of 0..40 characters.",
+          "Get(index) and Set(index,value) use logical zero-based indices. Any index below 0 or at least the fixed length raises the selected language standard index/range exception, without changing the stored sequence. Accepted exceptions are C# ArgumentOutOfRangeException or IndexOutOfRangeException, Java IndexOutOfBoundsException, C++ std::out_of_range, Python IndexError and JavaScript RangeError. Set/Rotate return void/None/undefined. Rotation shifts are arbitrary signed 32-bit integers; negative indices never mean indexing from the end.",
+          "Use native iteration: C# IEnumerable<T>, Java Iterable<T>, C++ begin/end range iterators, Python __iter__, JavaScript Symbol.iterator. Each iterator starts at the logical front and yields exactly the fixed number of elements in order. Multiple independent iterators may be interleaved. No mutation occurs from iterator creation until its consumption finishes.",
+          "JSON wire arguments are kind (number or text), initialValues, operations, operands, newValues. Both value arrays contain the selected primitive element type. The operation/operand/newValue arrays have equal length 1..1000; the first operation is CircularArray and its operand/value are ignored. Get/Set use operand as index; Set uses newValue. Rotate uses operand as signed shift. Iterate and IterateTwice are judge commands for one iterator or two interleaved iterators, not methods to implement. Other unused operands/values are ignored.",
+          "Displayed output is {results:[one observation per operation],finalValues:[final logical order]}. Construction/Set/Rotate display null; Get displays its actual element; an invalid Get/Set displays {\"error\":\"index\"}; Iterate displays one value array; IterateTwice displays the two complete value arrays. Preserve the caller initial array throughout later updates."
+        ],
+        "cpp": [
+          "Callable: template<class T> CircularArray<T>(const std::vector<T>& initialValues); T Get(int index) const; void Set(int index,const T& value); void Rotate(int shift); begin() const; end() const",
+          "The callable is a generic class (parametric/dynamic in Python and JavaScript), not a function returning simulated operation results. Construct it from an initial sequence of 0..1000 elements, copying the sequence storage. Element objects need not be deep-copied. The judge instantiates both signed 32-bit integers and Unicode strings of 0..40 characters.",
+          "Get(index) and Set(index,value) use logical zero-based indices. Any index below 0 or at least the fixed length raises the selected language standard index/range exception, without changing the stored sequence. Accepted exceptions are C# ArgumentOutOfRangeException or IndexOutOfRangeException, Java IndexOutOfBoundsException, C++ std::out_of_range, Python IndexError and JavaScript RangeError. Set/Rotate return void/None/undefined. Rotation shifts are arbitrary signed 32-bit integers; negative indices never mean indexing from the end.",
+          "Use native iteration: C# IEnumerable<T>, Java Iterable<T>, C++ begin/end range iterators, Python __iter__, JavaScript Symbol.iterator. Each iterator starts at the logical front and yields exactly the fixed number of elements in order. Multiple independent iterators may be interleaved. No mutation occurs from iterator creation until its consumption finishes.",
+          "JSON wire arguments are kind (number or text), initialValues, operations, operands, newValues. Both value arrays contain the selected primitive element type. The operation/operand/newValue arrays have equal length 1..1000; the first operation is CircularArray and its operand/value are ignored. Get/Set use operand as index; Set uses newValue. Rotate uses operand as signed shift. Iterate and IterateTwice are judge commands for one iterator or two interleaved iterators, not methods to implement. Other unused operands/values are ignored.",
+          "Displayed output is {results:[one observation per operation],finalValues:[final logical order]}. Construction/Set/Rotate display null; Get displays its actual element; an invalid Get/Set displays {\"error\":\"index\"}; Iterate displays one value array; IterateTwice displays the two complete value arrays. Preserve the caller initial array throughout later updates."
+        ],
+        "java": [
+          "Callable: CircularArray<T>(List<T> initialValues); T Get(int index); void Set(int index,T value); void Rotate(int shift); Iterable<T>",
+          "The callable is a generic class (parametric/dynamic in Python and JavaScript), not a function returning simulated operation results. Construct it from an initial sequence of 0..1000 elements, copying the sequence storage. Element objects need not be deep-copied. The judge instantiates both signed 32-bit integers and Unicode strings of 0..40 characters.",
+          "Get(index) and Set(index,value) use logical zero-based indices. Any index below 0 or at least the fixed length raises the selected language standard index/range exception, without changing the stored sequence. Accepted exceptions are C# ArgumentOutOfRangeException or IndexOutOfRangeException, Java IndexOutOfBoundsException, C++ std::out_of_range, Python IndexError and JavaScript RangeError. Set/Rotate return void/None/undefined. Rotation shifts are arbitrary signed 32-bit integers; negative indices never mean indexing from the end.",
+          "Use native iteration: C# IEnumerable<T>, Java Iterable<T>, C++ begin/end range iterators, Python __iter__, JavaScript Symbol.iterator. Each iterator starts at the logical front and yields exactly the fixed number of elements in order. Multiple independent iterators may be interleaved. No mutation occurs from iterator creation until its consumption finishes.",
+          "JSON wire arguments are kind (number or text), initialValues, operations, operands, newValues. Both value arrays contain the selected primitive element type. The operation/operand/newValue arrays have equal length 1..1000; the first operation is CircularArray and its operand/value are ignored. Get/Set use operand as index; Set uses newValue. Rotate uses operand as signed shift. Iterate and IterateTwice are judge commands for one iterator or two interleaved iterators, not methods to implement. Other unused operands/values are ignored.",
+          "Displayed output is {results:[one observation per operation],finalValues:[final logical order]}. Construction/Set/Rotate display null; Get displays its actual element; an invalid Get/Set displays {\"error\":\"index\"}; Iterate displays one value array; IterateTwice displays the two complete value arrays. Preserve the caller initial array throughout later updates."
+        ]
+      }
+    },
     "ctci6_8_1": {
       "description": "Count the ordered sequences of hops that climb exactly steps stairs when each hop has size 1, 2 or 3. Sequences with the same hop sizes in different orders count separately. Return the exact integer count.",
       "constraints": [

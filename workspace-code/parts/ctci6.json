@@ -6283,6 +6283,126 @@
       }
     },
     {
+      "problemId": "ctci6_7_9",
+      "language": "csharp",
+      "filename": "Solution.cs",
+      "signature": "CircularArray<T>(T[] initialValues); T Get(int index); void Set(int index,T value); void Rotate(int shift); IEnumerable<T>",
+      "starterCode": "public class CircularArray<T> : IEnumerable<T>\n{\n    public CircularArray(T[] initialValues)\n    {\n    }\n    public T Get(int index) => throw new ArgumentOutOfRangeException(nameof(index));\n    public void Set(int index, T value)\n    {\n        throw new ArgumentOutOfRangeException(nameof(index));\n    }\n    public void Rotate(int shift)\n    {\n    }\n    public IEnumerator<T> GetEnumerator() => Enumerable.Empty<T>().GetEnumerator();\n    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() =>\n        GetEnumerator();\n}\n",
+      "solutionCode": "public class CircularArray<T> : IEnumerable<T>\n{\n    private readonly T[] items;\n    private int head;\n    public CircularArray(T[] initialValues)\n    {\n        items = initialValues.ToArray();\n    }\n    private void CheckIndex(int index)\n    {\n        if (index < 0 || index >= items.Length)\n            throw new ArgumentOutOfRangeException(nameof(index));\n    }\n    public T Get(int index)\n    {\n        CheckIndex(index);\n        return items[(head + index) % items.Length];\n    }\n    public void Set(int index, T value)\n    {\n        CheckIndex(index);\n        items[(head + index) % items.Length] = value;\n    }\n    public void Rotate(int shift)\n    {\n        if (items.Length == 0)\n            return;\n        int step = shift % items.Length;\n        if (step < 0)\n            step += items.Length;\n        head = (head + step) % items.Length;\n    }\n    public IEnumerator<T> GetEnumerator()\n    {\n        for (int index = 0; index < items.Length; ++index)\n            yield return items[(head + index) % items.Length];\n    }\n    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() =>\n        GetEnumerator();\n}\n",
+      "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "CircularArray"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/csharp/ctci6_7_9.cs"
+      ],
+      "sourceSha256": {
+        "starter": "535b8cda7d0bc9924da8ca8c0011d0e7859a8f6600368542f5b642868a87ce98",
+        "solution": "de25d9bca04aa51718ffeaf7e20aee63d6bae5222611ec38b2de6d8eb7141b70"
+      }
+    },
+    {
+      "problemId": "ctci6_7_9",
+      "language": "javascript",
+      "filename": "solution.js",
+      "signature": "new CircularArray(initialValues); Get(index); Set(index,value); Rotate(shift); [Symbol.iterator]()",
+      "starterCode": "class CircularArray {\n  constructor(initialValues) {}\n  Get(index) {\n    throw new RangeError(\"index\");\n  }\n  Set(index, value) {\n    throw new RangeError(\"index\");\n  }\n  Rotate(shift) {}\n  *[Symbol.iterator]() {}\n}\n",
+      "solutionCode": "class CircularArray {\n  constructor(initialValues) {\n    this.items = initialValues.slice();\n    this.head = 0;\n  }\n  checkIndex(index) {\n    if (index < 0 || index >= this.items.length) throw new RangeError(\"index\");\n  }\n  Get(index) {\n    this.checkIndex(index);\n    return this.items[(this.head + index) % this.items.length];\n  }\n  Set(index, value) {\n    this.checkIndex(index);\n    this.items[(this.head + index) % this.items.length] = value;\n  }\n  Rotate(shift) {\n    const size = this.items.length;\n    if (size === 0) return;\n    const step = ((shift % size) + size) % size;\n    this.head = (this.head + step) % size;\n  }\n  *[Symbol.iterator]() {\n    for (let index = 0; index < this.items.length; ++index)\n      yield this.items[(this.head + index) % this.items.length];\n  }\n}\n",
+      "prefix": "'use strict';\n",
+      "suffix": "\nmodule.exports = {CircularArray};\n",
+      "references": [],
+      "visibleSymbols": [
+        "CircularArray"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/javascript/ctci6_7_9.js"
+      ],
+      "sourceSha256": {
+        "starter": "fc6d1fe4597eeea4ad1f80397e30679e70ae304a79f3c34faf84d2d43ab792da",
+        "solution": "9a1f73afc5fc64f38a3efbd2f89f0319f913d1c4a330e791c9842c600e750fd6"
+      }
+    },
+    {
+      "problemId": "ctci6_7_9",
+      "language": "python",
+      "filename": "solution.py",
+      "signature": "CircularArray(initialValues: list[T]); Get(index: int) -> T; Set(index: int,value: T) -> None; Rotate(shift: int) -> None; __iter__() -> Iterator[T]",
+      "starterCode": "from typing import Generic, TypeVar, Iterator\n\n_T = TypeVar(\"_T\")\n\n\nclass CircularArray(Generic[_T]):\n    def __init__(self, initialValues: list[_T]):\n        pass\n\n    def Get(self, index: int) -> _T:\n        raise IndexError(index)\n\n    def Set(self, index: int, value: _T) -> None:\n        raise IndexError(index)\n\n    def Rotate(self, shift: int) -> None:\n        pass\n\n    def __iter__(self) -> Iterator[_T]:\n        return iter([])\n",
+      "solutionCode": "from typing import Generic, TypeVar, Iterator\n\n_T = TypeVar(\"_T\")\n\n\nclass CircularArray(Generic[_T]):\n    def __init__(self, initialValues: list[_T]):\n        self._items = initialValues.copy()\n        self._head = 0\n\n    def _check_index(self, index: int) -> None:\n        if index < 0 or index >= len(self._items):\n            raise IndexError(index)\n\n    def Get(self, index: int) -> _T:\n        self._check_index(index)\n        return self._items[(self._head + index) % len(self._items)]\n\n    def Set(self, index: int, value: _T) -> None:\n        self._check_index(index)\n        self._items[(self._head + index) % len(self._items)] = value\n\n    def Rotate(self, shift: int) -> None:\n        if self._items:\n            self._head = (self._head + shift) % len(self._items)\n\n    def __iter__(self) -> Iterator[_T]:\n        for index in range(len(self._items)):\n            yield self._items[(self._head + index) % len(self._items)]\n",
+      "prefix": "",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "CircularArray"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/python/ctci6_7_9.py"
+      ],
+      "sourceSha256": {
+        "starter": "dfa7146b5359abaf392700ac7e1a058175341e80cfe5d5b9518198c63b9cd2e0",
+        "solution": "aa3582203c72a0879edb73e0b8d43cb471cdbfa595b14bba4ae15762b4c773a2"
+      }
+    },
+    {
+      "problemId": "ctci6_7_9",
+      "language": "cpp",
+      "filename": "solution.cpp",
+      "signature": "template<class T> CircularArray<T>(const std::vector<T>& initialValues); T Get(int index) const; void Set(int index,const T& value); void Rotate(int shift); begin() const; end() const",
+      "starterCode": "template <class T>\nclass CircularArray {\n  std::vector<T> empty;\n\n public:\n  explicit CircularArray(const std::vector<T>& initialValues) {\n  }\n  T Get(int index) const {\n    throw std::out_of_range(\"index\");\n  }\n  void Set(int index, const T& value) {\n    throw std::out_of_range(\"index\");\n  }\n  void Rotate(int shift) {\n  }\n  auto begin() const {\n    return empty.begin();\n  }\n  auto end() const {\n    return empty.end();\n  }\n};\n",
+      "solutionCode": "template <class T>\nclass CircularArray {\n  std::vector<T> items;\n  int head = 0;\n  void checkIndex(int index) const {\n    if (index < 0 || index >= static_cast<int>(items.size()))\n      throw std::out_of_range(\"index\");\n  }\n\n public:\n  explicit CircularArray(const std::vector<T>& initialValues) : items(initialValues) {\n  }\n  T Get(int index) const {\n    checkIndex(index);\n    return items[(head + index) % items.size()];\n  }\n  void Set(int index, const T& value) {\n    checkIndex(index);\n    items[(head + index) % items.size()] = value;\n  }\n  void Rotate(int shift) {\n    if (items.empty())\n      return;\n    int size = static_cast<int>(items.size()), step = shift % size;\n    if (step < 0)\n      step += size;\n    head = (head + step) % size;\n  }\n  class const_iterator {\n    const CircularArray* owner = nullptr;\n    std::size_t cursor = 0;\n\n   public:\n    using value_type = T;\n    using difference_type = std::ptrdiff_t;\n    using reference = typename std::vector<T>::const_reference;\n    using pointer = void;\n    using iterator_category = std::input_iterator_tag;\n    const_iterator() = default;\n    const_iterator(const CircularArray* owner, std::size_t cursor) : owner(owner), cursor(cursor) {\n    }\n    reference operator*() const {\n      return owner->items[(owner->head + cursor) % owner->items.size()];\n    }\n    const_iterator& operator++() {\n      ++cursor;\n      return *this;\n    }\n    const_iterator operator++(int) {\n      auto previous = *this;\n      ++*this;\n      return previous;\n    }\n    bool operator==(const const_iterator& other) const {\n      return owner == other.owner && cursor == other.cursor;\n    }\n    bool operator!=(const const_iterator& other) const {\n      return !(*this == other);\n    }\n  };\n  const_iterator begin() const {\n    return const_iterator(this, 0);\n  }\n  const_iterator end() const {\n    return const_iterator(this, items.size());\n  }\n};\n",
+      "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n#include <iterator>\n#include <stdexcept>\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "CircularArray"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/cpp/ctci6_7_9.cpp"
+      ],
+      "sourceSha256": {
+        "starter": "91f41e6f471e24b85ed66f06e414637ce762e1a192692c7898663bbb2f1b58b3",
+        "solution": "1ff4183af7d574f094efb29319bdc7dd20d8cf8667b138a9a41d547960d387f9"
+      }
+    },
+    {
+      "problemId": "ctci6_7_9",
+      "language": "java",
+      "filename": "CircularArray.java",
+      "signature": "CircularArray<T>(List<T> initialValues); T Get(int index); void Set(int index,T value); void Rotate(int shift); Iterable<T>",
+      "starterCode": "class CircularArray<T> implements Iterable<T> {\n  public CircularArray(List<T> initialValues) {\n  }\n  public T Get(int index) {\n    throw new IndexOutOfBoundsException();\n  }\n  public void Set(int index, T value) {\n    throw new IndexOutOfBoundsException();\n  }\n  public void Rotate(int shift) {\n  }\n  public Iterator<T> iterator() {\n    return Collections.emptyIterator();\n  }\n}\n",
+      "solutionCode": "class CircularArray<T> implements Iterable<T> {\n  private final ArrayList<T> items;\n  private int head;\n  public CircularArray(List<T> initialValues) {\n    items = new ArrayList<>(initialValues);\n  }\n  private void checkIndex(int index) {\n    if (index < 0 || index >= items.size())\n      throw new IndexOutOfBoundsException(\"index\");\n  }\n  public T Get(int index) {\n    checkIndex(index);\n    return items.get((head + index) % items.size());\n  }\n  public void Set(int index, T value) {\n    checkIndex(index);\n    items.set((head + index) % items.size(), value);\n  }\n  public void Rotate(int shift) {\n    if (items.isEmpty())\n      return;\n    head = (head + Math.floorMod(shift, items.size())) % items.size();\n  }\n  public Iterator<T> iterator() {\n    return new Iterator<T>() {\n      private int cursor;\n      public boolean hasNext() {\n        return cursor < items.size();\n      }\n      public T next() {\n        if (!hasNext())\n          throw new NoSuchElementException();\n        return Get(cursor++);\n      }\n    };\n  }\n}\n",
+      "prefix": "import java.util.*;\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "CircularArray"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/java/ctci6_7_9.java"
+      ],
+      "sourceSha256": {
+        "starter": "dfe9809336777e26eed0f67a6d6f1a7662b2fc06ca3971d01fa7890dba52db59",
+        "solution": "7a5289c5c7b8b45b26f164288bf72138e06186da10fb72f5837c194a032a47a7"
+      }
+    },
+    {
       "problemId": "ctci6_8_1",
       "language": "csharp",
       "filename": "Solution.cs",

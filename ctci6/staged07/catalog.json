@@ -1,0 +1,149 @@
+[
+  {
+    "ref": "7.9",
+    "method": "CircularArray",
+    "params": [
+      [
+        "kind",
+        "s"
+      ],
+      [
+        "initialValues",
+        "items"
+      ],
+      [
+        "operations",
+        "as"
+      ],
+      [
+        "operands",
+        "ai"
+      ],
+      [
+        "newValues",
+        "items"
+      ]
+    ],
+    "result": "state",
+    "mutation": "state",
+    "description": "Implement a fixed-length generic CircularArray with indexed Get/Set, logical rotation and native read-only iteration. A positive Rotate(s) moves the logical front s positions toward the current end: rotating [a,b,c] by 1 yields [b,c,a]. Negative shifts rotate in the opposite direction; reduce any signed shift modulo the length. Rotation must update an offset rather than physically reorder all elements. Empty rotation is a no-op.",
+    "constraints": [
+      "The callable is a generic class (parametric/dynamic in Python and JavaScript), not a function returning simulated operation results. Construct it from an initial sequence of 0..1000 elements, copying the sequence storage. Element objects need not be deep-copied. The judge instantiates both signed 32-bit integers and Unicode strings of 0..40 characters.",
+      "Get(index) and Set(index,value) use logical zero-based indices. Any index below 0 or at least the fixed length raises the selected language standard index/range exception, without changing the stored sequence. Accepted exceptions are C# ArgumentOutOfRangeException or IndexOutOfRangeException, Java IndexOutOfBoundsException, C++ std::out_of_range, Python IndexError and JavaScript RangeError. Set/Rotate return void/None/undefined. Rotation shifts are arbitrary signed 32-bit integers; negative indices never mean indexing from the end.",
+      "Use native iteration: C# IEnumerable<T>, Java Iterable<T>, C++ begin/end range iterators, Python __iter__, JavaScript Symbol.iterator. Each iterator starts at the logical front and yields exactly the fixed number of elements in order. Multiple independent iterators may be interleaved. No mutation occurs from iterator creation until its consumption finishes.",
+      "JSON wire arguments are kind (number or text), initialValues, operations, operands, newValues. Both value arrays contain the selected primitive element type. The operation/operand/newValue arrays have equal length 1..1000; the first operation is CircularArray and its operand/value are ignored. Get/Set use operand as index; Set uses newValue. Rotate uses operand as signed shift. Iterate and IterateTwice are judge commands for one iterator or two interleaved iterators, not methods to implement. Other unused operands/values are ignored.",
+      "Displayed output is {results:[one observation per operation],finalValues:[final logical order]}. Construction/Set/Rotate display null; Get displays its actual element; an invalid Get/Set displays {\"error\":\"index\"}; Iterate displays one value array; IterateTwice displays the two complete value arrays. Preserve the caller initial array throughout later updates."
+    ],
+    "why": "Store the elements once and keep the physical index of the logical front. Logical index i then names physical slot (head+i) modulo n. Rotating changes only head; indexing and iteration share the same mapping, so they agree after any sequence of rotations and updates. Normalize the shift before adding it to head to avoid signed overflow in fixed-width languages.",
+    "correctness": "Initially head=0, so logical and physical orders agree and copying storage isolates later updates from the caller. Assuming logical i maps to (head+i) mod n, advancing head by s mod n makes new logical i name old logical (i+s) mod n, exactly the required rotation. Set modifies precisely the mapped slot, preserving all other logical values. Get returns that slot. An iterator with its own cursor visits i=0..n-1 once through the same mapping; independent cursors do not consume each other. Bounds checks happen before indexing or mutation, so invalid accesses preserve state. Empty rotation avoids division by zero and empty iterators immediately finish.",
+    "walkthrough": "Start with [elm,fir,oak] and head 0. Rotate(1) sets head to 1, giving logical order [fir,oak,elm]; Get(0) returns fir. Set(1,ash) changes physical slot (1+1)%3=2, so the order becomes [fir,ash,elm]. Two interleaved iterators each start with cursor 0 and independently produce that complete order. Get(-1) raises the standard index exception and leaves the order unchanged.",
+    "example": [
+      [
+        "text",
+        [
+          "elm",
+          "fir",
+          "oak"
+        ],
+        [
+          "CircularArray",
+          "Rotate",
+          "Get",
+          "Set",
+          "IterateTwice",
+          "Get"
+        ],
+        [
+          0,
+          1,
+          0,
+          1,
+          0,
+          -1
+        ],
+        [
+          "",
+          "",
+          "",
+          "ash",
+          "",
+          ""
+        ]
+      ],
+      {
+        "results": [
+          null,
+          null,
+          "fir",
+          null,
+          [
+            [
+              "fir",
+              "ash",
+              "elm"
+            ],
+            [
+              "fir",
+              "ash",
+              "elm"
+            ]
+          ],
+          {
+            "error": "index"
+          }
+        ],
+        "finalValues": [
+          "fir",
+          "ash",
+          "elm"
+        ]
+      }
+    ],
+    "time": "Constructor O(n) element copies; Rotate O(1); Get/Set O(1) index arithmetic plus element-copy/assignment cost; iterating all elements O(n) visits. C++ Get returns T by value and can incur O(length(T)) for strings; the admitted string length is bounded. Iteration uses references where the language/container permits.",
+    "space": "O(n) owned sequence storage. Each iterator and rotation/access use O(1) auxiliary state. C++ owns copies of T values, while managed/dynamic containers copy element references or primitive values; no deep-copy guarantee is made.",
+    "edges": [
+      "Empty/singleton arrays, shifts larger than the length, negative shifts and both signed shift endpoints.",
+      "Get/Set indices -1 and n, preserving state after exceptions.",
+      "Integer versus string instantiations, repeated/empty/Unicode strings and preserved caller storage.",
+      "Independent interleaved iterators, successive rotations/updates and the 1000-element boundary."
+    ],
+    "related": "Primary Java CircularArray<T> establishes a fixed generic collection, offset rotation, indexing and Iterable traversal. This binding initializes from values rather than a size with uninitialized slots. Positive rotation follows the actual head advance, regardless of the source parameter name shiftRight. The source single-add negative normalization and unchecked set indices are corrected explicitly; the JavaScript push/pop sketch is not substituted for the iterable task.",
+    "languageWhy": {
+      "csharp": "C# clones the T[] storage and uses a yield iterator with a local index. Each enumerator therefore has its own cursor. Normalizing shift % length before adding head avoids overflow for int.MinValue and int.MaxValue; the non-generic IEnumerable entry delegates to the same enumeration.",
+      "java": "Java copies initial List<T> elements into a private ArrayList<T>. Math.floorMod normalizes negative shifts before head addition, avoiding overflow. Each iterator object owns a separate cursor and next() raises NoSuchElementException after exhaustion.",
+      "cpp": "C++ owns a vector<T> copy and uses a const range iterator with its own owner/cursor pair. Get returns a T value; dereference uses vector<T>::const_reference so even proxy-specialized containers do not return a dangling T reference. Shift is reduced before bounded head addition.",
+      "python": "Python copies the input list and uses modulo with a positive length, which already normalizes negative shifts. Bounds checks explicitly reject negative indices before Python list indexing could wrap. Each __iter__ generator owns its cursor and yields original stored values without coercion.",
+      "javascript": "JavaScript slice isolates the storage. Its remainder operator can be negative, so rotation normalizes the remainder before head addition. The Symbol.iterator generator creates independent cursors and retains element types rather than converting numbers to text."
+    },
+    "id": "ctci6_7_9",
+    "title": "Circular Array",
+    "testCount": 1535,
+    "languages": {
+      "csharp": {
+        "signature": "CircularArray<T>(T[] initialValues); T Get(int index); void Set(int index,T value); void Rotate(int shift); IEnumerable<T>",
+        "starterCode": "public class CircularArray<T> : IEnumerable<T>\n{\n    public CircularArray(T[] initialValues)\n    {\n    }\n    public T Get(int index) => throw new ArgumentOutOfRangeException(nameof(index));\n    public void Set(int index, T value)\n    {\n        throw new ArgumentOutOfRangeException(nameof(index));\n    }\n    public void Rotate(int shift)\n    {\n    }\n    public IEnumerator<T> GetEnumerator() => Enumerable.Empty<T>().GetEnumerator();\n    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() =>\n        GetEnumerator();\n}\n",
+        "solutionCode": "public class CircularArray<T> : IEnumerable<T>\n{\n    private readonly T[] items;\n    private int head;\n    public CircularArray(T[] initialValues)\n    {\n        items = initialValues.ToArray();\n    }\n    private void CheckIndex(int index)\n    {\n        if (index < 0 || index >= items.Length)\n            throw new ArgumentOutOfRangeException(nameof(index));\n    }\n    public T Get(int index)\n    {\n        CheckIndex(index);\n        return items[(head + index) % items.Length];\n    }\n    public void Set(int index, T value)\n    {\n        CheckIndex(index);\n        items[(head + index) % items.Length] = value;\n    }\n    public void Rotate(int shift)\n    {\n        if (items.Length == 0)\n            return;\n        int step = shift % items.Length;\n        if (step < 0)\n            step += items.Length;\n        head = (head + step) % items.Length;\n    }\n    public IEnumerator<T> GetEnumerator()\n    {\n        for (int index = 0; index < items.Length; ++index)\n            yield return items[(head + index) % items.Length];\n    }\n    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() =>\n        GetEnumerator();\n}\n"
+      },
+      "javascript": {
+        "signature": "new CircularArray(initialValues); Get(index); Set(index,value); Rotate(shift); [Symbol.iterator]()",
+        "starterCode": "class CircularArray {\n  constructor(initialValues) {}\n  Get(index) {\n    throw new RangeError(\"index\");\n  }\n  Set(index, value) {\n    throw new RangeError(\"index\");\n  }\n  Rotate(shift) {}\n  *[Symbol.iterator]() {}\n}\n",
+        "solutionCode": "class CircularArray {\n  constructor(initialValues) {\n    this.items = initialValues.slice();\n    this.head = 0;\n  }\n  checkIndex(index) {\n    if (index < 0 || index >= this.items.length) throw new RangeError(\"index\");\n  }\n  Get(index) {\n    this.checkIndex(index);\n    return this.items[(this.head + index) % this.items.length];\n  }\n  Set(index, value) {\n    this.checkIndex(index);\n    this.items[(this.head + index) % this.items.length] = value;\n  }\n  Rotate(shift) {\n    const size = this.items.length;\n    if (size === 0) return;\n    const step = ((shift % size) + size) % size;\n    this.head = (this.head + step) % size;\n  }\n  *[Symbol.iterator]() {\n    for (let index = 0; index < this.items.length; ++index)\n      yield this.items[(this.head + index) % this.items.length];\n  }\n}\n"
+      },
+      "python": {
+        "signature": "CircularArray(initialValues: list[T]); Get(index: int) -> T; Set(index: int,value: T) -> None; Rotate(shift: int) -> None; __iter__() -> Iterator[T]",
+        "starterCode": "from typing import Generic, TypeVar, Iterator\n\n_T = TypeVar(\"_T\")\n\n\nclass CircularArray(Generic[_T]):\n    def __init__(self, initialValues: list[_T]):\n        pass\n\n    def Get(self, index: int) -> _T:\n        raise IndexError(index)\n\n    def Set(self, index: int, value: _T) -> None:\n        raise IndexError(index)\n\n    def Rotate(self, shift: int) -> None:\n        pass\n\n    def __iter__(self) -> Iterator[_T]:\n        return iter([])\n",
+        "solutionCode": "from typing import Generic, TypeVar, Iterator\n\n_T = TypeVar(\"_T\")\n\n\nclass CircularArray(Generic[_T]):\n    def __init__(self, initialValues: list[_T]):\n        self._items = initialValues.copy()\n        self._head = 0\n\n    def _check_index(self, index: int) -> None:\n        if index < 0 or index >= len(self._items):\n            raise IndexError(index)\n\n    def Get(self, index: int) -> _T:\n        self._check_index(index)\n        return self._items[(self._head + index) % len(self._items)]\n\n    def Set(self, index: int, value: _T) -> None:\n        self._check_index(index)\n        self._items[(self._head + index) % len(self._items)] = value\n\n    def Rotate(self, shift: int) -> None:\n        if self._items:\n            self._head = (self._head + shift) % len(self._items)\n\n    def __iter__(self) -> Iterator[_T]:\n        for index in range(len(self._items)):\n            yield self._items[(self._head + index) % len(self._items)]\n"
+      },
+      "cpp": {
+        "signature": "template<class T> CircularArray<T>(const std::vector<T>& initialValues); T Get(int index) const; void Set(int index,const T& value); void Rotate(int shift); begin() const; end() const",
+        "starterCode": "template <class T>\nclass CircularArray {\n  std::vector<T> empty;\n\n public:\n  explicit CircularArray(const std::vector<T>& initialValues) {\n  }\n  T Get(int index) const {\n    throw std::out_of_range(\"index\");\n  }\n  void Set(int index, const T& value) {\n    throw std::out_of_range(\"index\");\n  }\n  void Rotate(int shift) {\n  }\n  auto begin() const {\n    return empty.begin();\n  }\n  auto end() const {\n    return empty.end();\n  }\n};\n",
+        "solutionCode": "template <class T>\nclass CircularArray {\n  std::vector<T> items;\n  int head = 0;\n  void checkIndex(int index) const {\n    if (index < 0 || index >= static_cast<int>(items.size()))\n      throw std::out_of_range(\"index\");\n  }\n\n public:\n  explicit CircularArray(const std::vector<T>& initialValues) : items(initialValues) {\n  }\n  T Get(int index) const {\n    checkIndex(index);\n    return items[(head + index) % items.size()];\n  }\n  void Set(int index, const T& value) {\n    checkIndex(index);\n    items[(head + index) % items.size()] = value;\n  }\n  void Rotate(int shift) {\n    if (items.empty())\n      return;\n    int size = static_cast<int>(items.size()), step = shift % size;\n    if (step < 0)\n      step += size;\n    head = (head + step) % size;\n  }\n  class const_iterator {\n    const CircularArray* owner = nullptr;\n    std::size_t cursor = 0;\n\n   public:\n    using value_type = T;\n    using difference_type = std::ptrdiff_t;\n    using reference = typename std::vector<T>::const_reference;\n    using pointer = void;\n    using iterator_category = std::input_iterator_tag;\n    const_iterator() = default;\n    const_iterator(const CircularArray* owner, std::size_t cursor) : owner(owner), cursor(cursor) {\n    }\n    reference operator*() const {\n      return owner->items[(owner->head + cursor) % owner->items.size()];\n    }\n    const_iterator& operator++() {\n      ++cursor;\n      return *this;\n    }\n    const_iterator operator++(int) {\n      auto previous = *this;\n      ++*this;\n      return previous;\n    }\n    bool operator==(const const_iterator& other) const {\n      return owner == other.owner && cursor == other.cursor;\n    }\n    bool operator!=(const const_iterator& other) const {\n      return !(*this == other);\n    }\n  };\n  const_iterator begin() const {\n    return const_iterator(this, 0);\n  }\n  const_iterator end() const {\n    return const_iterator(this, items.size());\n  }\n};\n"
+      },
+      "java": {
+        "signature": "CircularArray<T>(List<T> initialValues); T Get(int index); void Set(int index,T value); void Rotate(int shift); Iterable<T>",
+        "starterCode": "class CircularArray<T> implements Iterable<T> {\n  public CircularArray(List<T> initialValues) {\n  }\n  public T Get(int index) {\n    throw new IndexOutOfBoundsException();\n  }\n  public void Set(int index, T value) {\n    throw new IndexOutOfBoundsException();\n  }\n  public void Rotate(int shift) {\n  }\n  public Iterator<T> iterator() {\n    return Collections.emptyIterator();\n  }\n}\n",
+        "solutionCode": "class CircularArray<T> implements Iterable<T> {\n  private final ArrayList<T> items;\n  private int head;\n  public CircularArray(List<T> initialValues) {\n    items = new ArrayList<>(initialValues);\n  }\n  private void checkIndex(int index) {\n    if (index < 0 || index >= items.size())\n      throw new IndexOutOfBoundsException(\"index\");\n  }\n  public T Get(int index) {\n    checkIndex(index);\n    return items.get((head + index) % items.size());\n  }\n  public void Set(int index, T value) {\n    checkIndex(index);\n    items.set((head + index) % items.size(), value);\n  }\n  public void Rotate(int shift) {\n    if (items.isEmpty())\n      return;\n    head = (head + Math.floorMod(shift, items.size())) % items.size();\n  }\n  public Iterator<T> iterator() {\n    return new Iterator<T>() {\n      private int cursor;\n      public boolean hasNext() {\n        return cursor < items.size();\n      }\n      public T next() {\n        if (!hasNext())\n          throw new NoSuchElementException();\n        return Get(cursor++);\n      }\n    };\n  }\n}\n"
+      }
+    }
+  }
+]

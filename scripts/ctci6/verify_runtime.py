@@ -172,6 +172,7 @@ def verify(only_ref=None, only_language=None, starters=False):
                                 3: "state",
                                 4: "graphs",
                                 5: "core",
+                                7: "core",
                                 8: "core",
                                 13: "core",
                                 16: "core",

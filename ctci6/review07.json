@@ -1,0 +1,38 @@
+{
+  "stage": "standalone-authoring-and-separate-module",
+  "liveIntegration": "pending-local-export",
+  "reviewScope": "Generic Circular Array 7.9 with actual native iteration and all five language bodies, each exercised with both integer and string instantiations.",
+  "questions": [
+    {
+      "ref": "7.9",
+      "algorithm": "Copy fixed storage and map logical indices through a normalized offset; each native iterator has an independent cursor.",
+      "review": "Read pinned Java CircularArray<T> and its test driver; the JavaScript push/pop sketch is not substituted for the iterable generic task. The independent binding starts from initial values instead of uninitialized size-only slots, with that adaptation explicit in the statement. Read all five actual class bodies. Positive rotation advances the logical front; modulo normalization occurs before bounded head addition in fixed-width languages, and empty rotation exits before division. Bounds checks precede Get/Set mapping so Python negative indexing and wrapped indices are not silently accepted. Native C#/Java generic classes, C++ template and Python Generic class preserve integer/string types; JavaScript preserves primitive types dynamically. The private harness invokes actual methods and native iteration protocols, never a user function that simulates transcript results. Independent physical list-slicing oracles cover exhaustive short operation pairs, both signed shift endpoints, invalid -1/n indices, random longer mixed traces, repeated/Unicode strings and 1000-element arrays. Separate interleaved iterators and exhaustion are exercised. Caller input storage is snapshotted throughout later updates. Twenty distinct compiled variant implementations across five languages exercise forty typed fixtures: aliasing storage, skipped negative bounds and shared cursors are rejected; inverse-offset representations remain O(1) and are accepted. The private observer never reads head/items fields or forces an offset convention. C++ value-copy Get cost and const iterator reference/proxy behavior are described accurately."
+    }
+  ],
+  "languagesReviewed": [
+    "csharp",
+    "javascript",
+    "python",
+    "cpp",
+    "java"
+  ],
+  "languageBindingReview": {
+    "csharp": "Read actual CircularArray<T>:IEnumerable<T>, cloned T[] storage, independent yield-enumerator cursor, both explicit index checks and remainder normalization before head addition. Get/Set/Rotate delegates enforce the declared generic result and void methods. Both integer and string instantiations compile and execute.",
+    "java": "Read actual generic List<T> constructor, private ArrayList<T> copy, Math.floorMod normalization and per-iterator cursor. next() enforces NoSuchElementException after exhaustion. The compiled harness exercises Integer/String instantiations and checks void Set/Rotate methods through their erased public signatures.",
+    "cpp": "Read actual template class and vector<T> ownership. Get returns T by value, Set borrows const T&, rotation avoids signed overflow, and const range iteration owns cursor/owner values. vector<T>::const_reference avoids dangling references for proxy specializations. The harness compiles integer/string instantiations and invokes const indexing/iteration; deep copying arbitrary element objects is not promised.",
+    "python": "Read the actual Generic/TypeVar class and visible typing imports, input list copy, explicit negative-index rejection and positive-divisor modulo. Each generator owns a local cursor. Primitive type observations reject bool-as-int/string coercions and both integer/string traces execute against the same generic class.",
+    "javascript": "Read actual slice-based storage isolation, normalized negative remainder and Symbol.iterator generator. Independent generator cursors are interleaved with native next() calls. Result values retain their original number/string type and caller input values remain unchanged after Set/Rotate."
+  },
+  "executionEvidence": "staged07/validation.json",
+  "submissionEvidence": "runtime/validation.json",
+  "graderRegressions": [
+    "scripts/ctci6/test_circular_runtime07.py",
+    "EpiJudge.Tests/CtciStagingTests.cs"
+  ],
+  "remainingAcceptance": [
+    "Hash Table/external sorting and individually pending reference classifications",
+    "source gaps",
+    "final whole-bank execution and rendered checks",
+    "authorized push and exact-commit CI"
+  ]
+}

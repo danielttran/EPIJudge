@@ -1,0 +1,76 @@
+{
+  "explanation": "Store the elements once and keep the physical index of the logical front. Logical index i then names physical slot (head+i) modulo n. Rotating changes only head; indexing and iteration share the same mapping, so they agree after any sequence of rotations and updates. Normalize the shift before adding it to head to avoid signed overflow in fixed-width languages. JavaScript slice isolates the storage. Its remainder operator can be negative, so rotation normalizes the remainder before head addition. The Symbol.iterator generator creates independent cursors and retains element types rather than converting numbers to text.",
+  "correctness": "Initially head=0, so logical and physical orders agree and copying storage isolates later updates from the caller. Assuming logical i maps to (head+i) mod n, advancing head by s mod n makes new logical i name old logical (i+s) mod n, exactly the required rotation. Set modifies precisely the mapped slot, preserving all other logical values. Get returns that slot. An iterator with its own cursor visits i=0..n-1 once through the same mapping; independent cursors do not consume each other. Bounds checks happen before indexing or mutation, so invalid accesses preserve state. Empty rotation avoids division by zero and empty iterators immediately finish.",
+  "walkthrough": "Start with [elm,fir,oak] and head 0. Rotate(1) sets head to 1, giving logical order [fir,oak,elm]; Get(0) returns fir. Set(1,ash) changes physical slot (1+1)%3=2, so the order becomes [fir,ash,elm]. Two interleaved iterators each start with cursor 0 and independently produce that complete order. Get(-1) raises the standard index exception and leaves the order unchanged.",
+  "walkthroughCase": {
+    "arguments": [
+      "text",
+      [
+        "elm",
+        "fir",
+        "oak"
+      ],
+      [
+        "CircularArray",
+        "Rotate",
+        "Get",
+        "Set",
+        "IterateTwice",
+        "Get"
+      ],
+      [
+        0,
+        1,
+        0,
+        1,
+        0,
+        -1
+      ],
+      [
+        "",
+        "",
+        "",
+        "ash",
+        "",
+        ""
+      ]
+    ],
+    "expected": {
+      "results": [
+        null,
+        null,
+        "fir",
+        null,
+        [
+          [
+            "fir",
+            "ash",
+            "elm"
+          ],
+          [
+            "fir",
+            "ash",
+            "elm"
+          ]
+        ],
+        {
+          "error": "index"
+        }
+      ],
+      "finalValues": [
+        "fir",
+        "ash",
+        "elm"
+      ]
+    }
+  },
+  "timeComplexity": "Constructor O(n) element copies; Rotate O(1); Get/Set O(1) index arithmetic plus element-copy/assignment cost; iterating all elements O(n) visits. C++ Get returns T by value and can incur O(length(T)) for strings; the admitted string length is bounded. Iteration uses references where the language/container permits.",
+  "spaceComplexity": "O(n) owned sequence storage. Each iterator and rotation/access use O(1) auxiliary state. C++ owns copies of T values, while managed/dynamic containers copy element references or primitive values; no deep-copy guarantee is made.",
+  "edgeCases": [
+    "Empty/singleton arrays, shifts larger than the length, negative shifts and both signed shift endpoints.",
+    "Get/Set indices -1 and n, preserving state after exceptions.",
+    "Integer versus string instantiations, repeated/empty/Unicode strings and preserved caller storage.",
+    "Independent interleaved iterators, successive rotations/updates and the 1000-element boundary."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 7.9. No affiliation is implied."
+}

@@ -1,6 +1,6 @@
 # Cracking the Coding Interview, sixth edition
 
-This collection is being authored. **120 verified coding exercises are registered in the local website; the collection has not been pushed.**
+This collection is being authored. **121 verified coding exercises are registered in the local website; the collection has not been pushed.**
 The advertised 189 is a book question count, not a count of executable exercises.
 
 `inventory.json` records numbered references established from the author's public
@@ -41,25 +41,25 @@ It does **not** prove statement clarity, solution correctness, test adequacy, or
 completed semantic review. Those are separately recorded and executed before the
 collection is published.
 
-The current local checkpoint stages 120 coding exercises: all references in
-chapters 1–4, seven coding tasks from chapter 5, all fourteen chapter-8 tasks,
+The current local checkpoint stages 121 coding exercises: all references in
+chapters 1–4, seven coding tasks from chapter 5, generic Circular Array 7.9, all fourteen chapter-8 tasks,
 ten chapter-10 tasks, both functional tasks 13.7–13.8, and all twenty-six tasks in each of chapters 16 and 17.
-Their 600 actual language solutions pass standalone and separate-submission runs,
-with 940,780 solution case executions per layer and the same number of starter
+Their 605 actual language solutions pass standalone and separate-submission runs,
+with 948,455 solution case executions per layer and the same number of starter
 observations. Each starter is rejected by at least one case; it need not fail
 every case. Random Node additionally has fifteen compiled alternative/negative
 programs covering twenty-five fixtures, including physical duplicate identities,
 clone returns, missing mutations and the generic random source's signed bounds.
 All five current Random Node HTTP submissions pass all 1,604 cases, and the
-current backend suite passes 320 tests.
+current backend suite passes 321 tests.
 
-The 160 located references currently comprise 120 coding exercises, three known
+The 160 located references currently comprise 121 coding exercises, two known
 coding candidates, fourteen awaiting individual classification, fifteen
 conceptual references and eight system-design references. The ten chapter-6
 reasoning puzzles now have explicit individual classification and source-clarity
 findings. Another twenty-nine advertised references remain unlocated; neither
 unresolved group is counted as completed. Noncoding material is not added to the
-callable product UI. The new aggregation also passes all five HTTP submissions (577 cases each), and ten compiled wrong-result/mutation regressions are rejected. The variable-size subset also passes all five HTTP submissions (145 cases each). Its separate audit records twenty-five compiled programs and fifty fixture executions with final source/model/harness fingerprints: biased/shared decisions, deduplication and mutation are rejected; inverted coins and longer two-coin XOR filters are accepted. Final whole-bank and rendered checks remain pending.
+callable product UI. The new aggregation also passes all five HTTP submissions (577 cases each), and ten compiled wrong-result/mutation regressions are rejected. The variable-size subset also passes all five HTTP submissions (145 cases each). Its separate audit records twenty-five compiled programs and fifty fixture executions with final source/model/harness fingerprints: biased/shared decisions, deduplication and mutation are rejected; inverted coins and longer two-coin XOR filters are accepted. Circular Array also passes all five HTTP submissions (1,535 integer/string trace cases each). Its twenty distinct compiled variant implementations exercise forty typed fixtures: caller aliasing, skipped negative bounds and shared iterator cursors are rejected; inverse-offset storage is accepted. Final whole-bank and rendered checks remain pending.
 
 The `review*.json` files record actual algorithms, bindings and semantic review
 scope. Independent case oracles live under `scripts/ctci6/corpus*.py`.
