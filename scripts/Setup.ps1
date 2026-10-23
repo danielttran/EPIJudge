@@ -70,6 +70,9 @@ if (!$cpp -and (!$vcvars -or !(Test-Path -LiteralPath $vcvars))) { $missing.Add(
 else { Write-Output 'PASS C++ compiler'; if ($vcvars) { $env:EPI_VCVARS64 = $vcvars } }
 if ($missing.Count) { throw ("Install these prerequisites, then rerun scripts/Setup.ps1:`n - " + ($missing -join "`n - ")) }
 if ($CheckOnly) { return }
+# Local formatting and syntax validation; user code is never sent to a service.
+& $python -m pip install -r (Join-Path $root 'scripts/code_workspace/requirements.txt')
+if ($LASTEXITCODE -ne 0) { throw 'Could not install the pinned local formatting tools.' }
 Push-Location (Join-Path $root 'epijudge.client')
 try {
     $npm = Find-Tool 'npm.cmd' ''; if (!$npm) { $npm = Find-Tool 'npm' '' }

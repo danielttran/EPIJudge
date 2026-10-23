@@ -5,6 +5,7 @@ import { LearnArticle } from './reading/LearnArticle';
 import { learnArticleById, learnHref, practiceHref, relatedArticles } from './reading/learnCatalog';
 import { AppLink, appRoute, navigateApp, useAppRoute } from './appNavigation';
 import CodeEditor from './Editor';
+import { setTheme, useTheme } from './theme';
 import { ProblemLibrary } from './ProblemLibrary';
 import { HistoryPanel } from './HistoryPanel';
 import { EmptyState } from './EmptyState';
@@ -13,6 +14,8 @@ import { libraryEntries } from './studyPlans';
 import { collectionName, problemNumber } from './collections';
 import {
   Braces,
+  Sun,
+  Moon,
   Code2,
   Check,
   CheckCircle2,
@@ -64,6 +67,7 @@ function save(key: string, value: unknown) {
 }
 
 export default function App() {
+  const theme = useTheme();
   const route = useAppRoute();
   const isLearn = route.section === 'learn';
   const [libraryOpen, setLibraryOpen] = useState(false);
@@ -242,6 +246,16 @@ export default function App() {
   return (
     <div className="app-shell">
       <header className="topbar">
+        <button
+          className="theme-toggle"
+          type="button"
+          aria-label="Dark mode"
+          aria-pressed={theme === 'dark'}
+          title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+          onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+        >
+          {theme === 'dark' ? <Moon size={18} /> : <Sun size={18} />}
+        </button>
         <AppLink
           className="brand"
           href="/practice"
@@ -749,7 +763,7 @@ export default function App() {
                         className="editor-loading"
                         style={{ flexDirection: 'column', gap: '12px' }}
                       >
-                        <p style={{ color: '#fca5a5', margin: 0 }}>
+                        <p style={{ color: 'var(--danger)', margin: 0 }}>
                           Couldn’t open the editor. Your saved code is safe.
                         </p>
                         <small>{err.message}</small>
@@ -760,6 +774,8 @@ export default function App() {
                     )}
                   >
                     <CodeEditor
+                      scope={problem?.id}
+                      codeFormat={codeFormat}
                       code={code}
                       onChange={changeCode}
                       onRun={runCommand}

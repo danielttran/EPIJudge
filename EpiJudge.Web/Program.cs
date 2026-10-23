@@ -24,6 +24,7 @@ builder.Services.AddSingleton<ProblemCatalog>();
 builder.Services.AddSingleton<SolutionCatalog>();
 builder.Services.AddSingleton(new NativeProblemCatalog(repositoryRoot));
 builder.Services.AddSingleton(new SubmissionRunner(repositoryRoot));
+builder.Services.AddSingleton(new CodeFormatter(repositoryRoot));
 builder.Services.AddSingleton<PracticeDatabase>();
 builder.Services.AddSingleton<PracticeStore>();
 builder.Services.AddSingleton<IAttemptStore>(services => services.GetRequiredService<PracticeStore>());
@@ -73,6 +74,21 @@ if (hasBuiltClient && (!Directory.Exists(app.Environment.WebRootPath) || !File.E
         FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(clientDist)
     });
 }
+
+app.MapPost("/api/code/format", async (HttpContext http, FormatRequest request, CodeFormatter formatter) =>
+{
+    http.Response.Headers.CacheControl = "no-store";
+    if (http.Request.Headers["X-EpiJudge-Client"] != "local-editor") return Results.StatusCode(403);
+    var result = await formatter.FormatAsync(request.Language ?? "", request.Code ?? "", request.CodeFormat ?? "", http.RequestAborted);
+    return result.Error switch
+    {
+        null => Results.Ok(new { code = result.Code }),
+        "invalid" => Results.BadRequest(new { message = result.Message }),
+        "busy" => Results.Json(new { message = result.Message }, statusCode: 429),
+        "timeout" => Results.Json(new { message = result.Message }, statusCode: 504),
+        _ => Results.Json(new { message = result.Message }, statusCode: 503)
+    };
+});
 
 app.MapGet("/api/languages", () => new[]
 {
@@ -193,3 +209,5 @@ app.Run();
 
 public sealed record SubmissionRequest(string? ProblemId, string? Code, string? Mode, string? Language = "csharp",
     string? CodeFormat = "legacy-v1");
+
+public sealed record FormatRequest(string? Language, string? Code, string? CodeFormat);

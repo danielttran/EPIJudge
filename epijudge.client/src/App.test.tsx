@@ -709,3 +709,26 @@ it('renders independent Interview Cake attribution and a safe explicit source re
   expect(screen.getByText(/Independently authored exercise/)).toBeTruthy();
   expect(screen.getByRole('heading', { name: 'IC02. Apple Stocks' })).toBeTruthy();
 });
+
+it('keeps the theme control first, persists switching, and preserves drafts across Learn navigation', async () => {
+  const editor = (await loaded()) as HTMLTextAreaElement;
+  fireEvent.change(editor, { target: { value: 'draft retained across themes Ω' } });
+  const toggle = screen.getByRole('button', { name: 'Dark mode' });
+  expect(document.querySelector('.topbar')?.firstElementChild).toBe(toggle);
+  const wasDark = toggle.getAttribute('aria-pressed') === 'true';
+  fireEvent.click(toggle);
+  const chosen = wasDark ? 'light' : 'dark';
+  expect(document.documentElement.dataset.theme).toBe(chosen);
+  expect(localStorage.getItem('epi:theme')).toBe(chosen);
+  expect(editor.value).toBe('draft retained across themes Ω');
+  fireEvent.click(screen.getByRole('link', { name: 'Learn' }));
+  expect(screen.getByRole('button', { name: 'Dark mode' }).getAttribute('aria-pressed')).toBe(
+    String(!wasDark),
+  );
+  fireEvent.click(screen.getByRole('link', { name: 'Practice' }));
+  expect(
+    ((await screen.findByRole('textbox', { name: 'Test code editor' })) as HTMLTextAreaElement)
+      .value,
+  ).toBe('draft retained across themes Ω');
+  await waitFor(() => expect(screen.getByText('Saved')).toBeTruthy(), { timeout: 3000 });
+});

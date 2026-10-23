@@ -1,4 +1,8 @@
 import { useLayoutEffect, useRef } from 'react';
+import { useTheme } from './theme';
+import { useCodeFormatter } from './useCodeFormatter';
+import type { CodeFormat } from './practiceModels';
+import { AlignLeft, LoaderCircle } from 'lucide-react';
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
 import * as csharp from 'monaco-editor/esm/vs/basic-languages/csharp/csharp';
 import * as javascript from 'monaco-editor/esm/vs/basic-languages/javascript/javascript';
@@ -19,20 +23,72 @@ monaco.editor.defineTheme('epi-dark', {
   base: 'vs-dark',
   inherit: true,
   rules: [
-    { token: 'comment', foreground: '6f7d8e', fontStyle: 'italic' },
+    { token: 'comment', foreground: '9aa6b8', fontStyle: 'italic' },
     { token: 'keyword', foreground: 'c5a6f7' },
+    { token: 'string', foreground: 'dfac95' },
+    { token: 'invalid', foreground: 'ff9595' },
   ],
   colors: {
     'editor.background': '#262626',
-    'editorLineNumber.foreground': '#4b5462',
+    'editorLineNumber.foreground': '#a0a0a0',
+    'editorLineNumber.dimmedForeground': '#a0a0a0',
+    'editorError.foreground': '#ff9595',
+    'editorWidget.background': '#262626',
     'editor.lineHighlightBackground': '#2b2b2b',
-    'editor.selectionBackground': '#354057',
+    'editor.selectionBackground': '#30384a',
+    'editor.inactiveSelectionBackground': '#30384a',
     'editorCursor.foreground': '#f6ad55',
+    'editorBracketHighlight.foreground1': '#ffd700',
+    'editorBracketHighlight.foreground2': '#e79ae6',
+    'editorBracketHighlight.foreground3': '#8cbcff',
+    'editorBracketHighlight.foreground4': '#c4b5fd',
+    'editorBracketHighlight.foreground5': '#65d69a',
+    'editorBracketHighlight.foreground6': '#ffb875',
   },
 });
 
+monaco.editor.defineTheme('epi-light', {
+  base: 'vs',
+  inherit: true,
+  rules: [
+    { token: 'comment', foreground: '52634c', fontStyle: 'italic' },
+    { token: 'keyword', foreground: '7030a0' },
+    { token: 'number', foreground: '0b6b4b' },
+    { token: 'string', foreground: '9b302c' },
+    { token: 'type.identifier', foreground: '125a75' },
+    { token: 'invalid', foreground: 'ac253b' },
+  ],
+  colors: {
+    'editor.background': '#ffffff',
+    'editor.foreground': '#202733',
+    'editorLineNumber.foreground': '#626b78',
+    'editorLineNumber.dimmedForeground': '#626b78',
+    'editorError.foreground': '#ac253b',
+    'editorWidget.background': '#ffffff',
+    'editor.lineHighlightBackground': '#f0f3f7',
+    'editor.selectionBackground': '#edf3ff',
+    'editor.inactiveSelectionBackground': '#edf3ff',
+    'editorCursor.foreground': '#965000',
+    'editorBracketHighlight.foreground1': '#1257b8',
+    'editorBracketHighlight.foreground2': '#14633b',
+    'editorBracketHighlight.foreground3': '#8a4900',
+    'editorBracketHighlight.foreground4': '#7030a0',
+    'editorBracketHighlight.foreground5': '#125a75',
+    'editorBracketHighlight.foreground6': '#9b302c',
+  },
+});
+function useEditorTheme() {
+  const theme = useTheme();
+  useLayoutEffect(() => {
+    monaco.editor.setTheme('epi-' + theme);
+  }, [theme]);
+  return 'epi-' + theme;
+}
+
 type Props = {
   code: string;
+  scope?: string;
+  codeFormat?: CodeFormat;
   language?: string;
   onChange: (value: string) => void;
   onRun: () => void;
@@ -43,22 +99,55 @@ type Props = {
 export default function CodeEditor({
   code,
   language = 'csharp',
+  scope = language,
+  codeFormat = 'callable-v1',
   onChange,
   onRun,
   onSubmit,
   busy,
 }: Props) {
+  const editorTheme = useEditorTheme();
   const container = useRef<HTMLDivElement>(null);
   const instance = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
   const callbacks = useRef({ onChange, onRun, onSubmit });
   callbacks.current = { onChange, onRun, onSubmit };
   const updating = useRef(false);
 
+  const formatter = useCodeFormatter({
+    scope: `${scope}:${language}:${codeFormat}`,
+    language,
+    codeFormat,
+    busy,
+    read: () => {
+      const editor = instance.current;
+      const model = editor?.getModel();
+      return editor && model ? { code: editor.getValue(), version: model.getVersionId() } : null;
+    },
+    apply: (formatted, original) => {
+      const editor = instance.current;
+      const model = editor?.getModel();
+      if (
+        !editor ||
+        !model ||
+        model.getVersionId() !== original.version ||
+        editor.getValue() !== original.code
+      )
+        return;
+      const view = editor.saveViewState();
+      editor.pushUndoStop();
+      editor.executeEdits('format-code', [
+        { range: model.getFullModelRange(), text: formatted, forceMoveMarkers: true },
+      ]);
+      editor.pushUndoStop();
+      if (view) editor.restoreViewState(view);
+    },
+  });
+
   useLayoutEffect(() => {
     const model = monaco.editor.createModel('', 'csharp');
     const editor = monaco.editor.create(container.current!, {
       model,
-      theme: 'epi-dark',
+      theme: editorTheme,
       ariaLabel: 'Editor content',
       fontSize: 14,
       fontFamily: "'Cascadia Code', Consolas, monospace",
@@ -77,7 +166,10 @@ export default function CodeEditor({
     instance.current = editor;
     const subscription = editor.onDidChangeModelContent(() => {
       // Programmatic switches must not overwrite another problem's saved code.
-      if (!updating.current) callbacks.current.onChange(editor.getValue());
+      if (!updating.current) {
+        formatter.clearMessage();
+        callbacks.current.onChange(editor.getValue());
+      }
     });
     editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () =>
       callbacks.current.onRun(),
@@ -107,7 +199,30 @@ export default function CodeEditor({
     }
   }, [code, language, busy]);
 
-  return <div ref={container} style={{ height: '100%', width: '100%' }} />;
+  return (
+    <div className="editable-code">
+      <div className="format-toolbar">
+        <button
+          type="button"
+          className="format-code-button"
+          disabled={busy || formatter.pending}
+          aria-busy={formatter.pending}
+          onClick={() => void formatter.format()}
+        >
+          {formatter.pending ? (
+            <LoaderCircle size={14} className="spin" />
+          ) : (
+            <AlignLeft size={14} />
+          )}
+          {formatter.pending ? 'Formatting…' : 'Format code'}
+        </button>
+        <span role="status" className="format-message">
+          {formatter.message}
+        </span>
+      </div>
+      <div ref={container} className="monaco-surface" />
+    </div>
+  );
 }
 
 // Each reference view owns a separate, read-only model. It has no change,
@@ -123,6 +238,7 @@ export function ReadOnlyCode({
   label: string;
   className?: string;
 }) {
+  const editorTheme = useEditorTheme();
   const container = useRef<HTMLDivElement>(null);
   const instance = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
   const height = Math.min(480, Math.max(160, code.split('\n').length * 20 + 28));
@@ -131,7 +247,7 @@ export function ReadOnlyCode({
     const model = monaco.editor.createModel('', 'csharp');
     const editor = monaco.editor.create(container.current!, {
       model,
-      theme: 'epi-dark',
+      theme: editorTheme,
       readOnly: true,
       domReadOnly: true,
       ariaLabel: label,

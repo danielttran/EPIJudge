@@ -42,8 +42,8 @@ export class ErrorBoundary extends Component<Props, State> {
             justifyContent: 'center',
             minHeight: '100vh',
             padding: '24px',
-            backgroundColor: '#101216',
-            color: '#dde1e8',
+            backgroundColor: 'var(--page)',
+            color: 'var(--text)',
             fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
           }}
         >
@@ -51,18 +51,30 @@ export class ErrorBoundary extends Component<Props, State> {
             style={{
               maxWidth: '600px',
               width: '100%',
-              backgroundColor: '#15181e',
-              border: '1px solid #2d3340',
+              backgroundColor: 'var(--surface)',
+              border: '1px solid var(--border)',
               borderRadius: '8px',
               padding: '28px',
               boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
             }}
           >
-            <h2 style={{ color: '#f87171', marginTop: 0, marginBottom: '12px', fontSize: '20px' }}>
+            <h2
+              style={{
+                color: 'var(--danger)',
+                marginTop: 0,
+                marginBottom: '12px',
+                fontSize: '20px',
+              }}
+            >
               Something went wrong loading EPI Practice
             </h2>
             <p
-              style={{ color: '#8e9aa8', fontSize: '14px', lineHeight: 1.5, marginBottom: '16px' }}
+              style={{
+                color: 'var(--muted)',
+                fontSize: '14px',
+                lineHeight: 1.5,
+                marginBottom: '16px',
+              }}
             >
               An unexpected client-side error occurred. Reload the page to try again. Your saved
               answers and browser recovery copies are retained.
@@ -70,11 +82,11 @@ export class ErrorBoundary extends Component<Props, State> {
             {this.state.error && (
               <pre
                 style={{
-                  background: '#0c0e12',
-                  border: '1px solid #222733',
+                  background: 'var(--raised)',
+                  border: '1px solid var(--border)',
                   padding: '12px',
                   borderRadius: '6px',
-                  color: '#fca5a5',
+                  color: 'var(--danger)',
                   fontSize: '12px',
                   overflowX: 'auto',
                   whiteSpace: 'pre-wrap',
@@ -90,8 +102,8 @@ export class ErrorBoundary extends Component<Props, State> {
                 type="button"
                 onClick={() => window.location.reload()}
                 style={{
-                  backgroundColor: '#3b82f6',
-                  color: '#ffffff',
+                  backgroundColor: 'var(--link)',
+                  color: 'var(--surface)',
                   border: 'none',
                   borderRadius: '6px',
                   padding: '8px 16px',
