@@ -1,0 +1,40 @@
+{
+  "explanation": "A smaller box always has smaller width, so width gives an acyclic processing order. Sort only an auxiliary index list. For each possible bottom box, combine its height with the best already-computed stack whose bottom fits above it; choosing the widest or tallest box greedily would miss valid alternatives.",
+  "correctness": "Process boxes by increasing width. Any box that can sit above the current box has smaller width and was processed earlier. By induction its stored value is the best stack with that box at the bottom. Taking the maximum over all earlier boxes strictly smaller in width, height and depth therefore finds the best possible top stack for the current bottom. Adding the current height yields its optimal total. Every nonempty feasible stack has some bottom box, so the maximum stored value is globally optimal. Strict decreases prevent reuse or cycles, and the original input is never reordered.",
+  "walkthrough": "For [[5,5,5],[4,3,4],[3,2,3],[6,1,6]], the first three boxes form a stack of height 5+3+2=10. The last box is wider and deeper but only height 1, so it cannot serve as the bottom beneath those taller boxes. Sorting by width provides a processing order, not a greedy choice of the answer.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          5,
+          5,
+          5
+        ],
+        [
+          4,
+          3,
+          4
+        ],
+        [
+          3,
+          2,
+          3
+        ],
+        [
+          6,
+          1,
+          6
+        ]
+      ]
+    ],
+    "expected": 10
+  },
+  "timeComplexity": "O(n^2) time for pairwise fit checks after O(n log n) sorting of indices.",
+  "spaceComplexity": "O(n) auxiliary storage for sorted indices and best heights; input boxes are not copied into reordered rows.",
+  "edgeCases": [
+    "Empty input, one box and identical boxes.",
+    "Equality in any one dimension prevents stacking.",
+    "A tall narrow box versus a wide short box; shuffled input and a full strict chain."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 8.13. No affiliation is implied."
+}

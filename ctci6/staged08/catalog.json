@@ -64,6 +64,80 @@
     }
   },
   {
+    "ref": "8.3",
+    "method": "FindMagicIndex",
+    "params": [
+      [
+        "values",
+        "ai"
+      ],
+      [
+        "distinctValues",
+        "b"
+      ]
+    ],
+    "result": "i",
+    "mutation": "none",
+    "description": "Return any zero-based index i for which values[i] equals i, or -1 if none exists. The array is sorted. The distinctValues flag selects the original distinct-value case or the duplicate-allowed follow-up, allowing the promised distinct case to use logarithmic search.",
+    "constraints": [
+      "values has 0..10000 signed 32-bit integers in nondecreasing order. If distinctValues is true, the values are guaranteed strictly increasing; otherwise duplicates may occur. The flag is an input promise, not a request to scan and verify distinctness.",
+      "Preserve the input array and its ordering. If several indices qualify, any one is valid; do not assume the smallest index is required. Empty input returns -1."
+    ],
+    "why": "With strictly increasing integers, values[i]-i is nondecreasing, so the sign at the middle identifies a side that cannot contain a match. With duplicates that sign rule fails. The sorted middle value still bounds which indices in each half might equal their values, so search only those surviving ranges.",
+    "correctness": "In the distinct case, values[mid]>mid implies every later value exceeds its index, while values[mid]<mid implies every earlier value is below its index; discarding that half is safe. In the duplicate case, a left index greater than values[mid] has value at most values[mid] and cannot match, so the left range ends at min(mid-1,values[mid]). Similarly a right index below values[mid] cannot match, so the right range starts at max(mid+1,values[mid]). Test mid, then search both safe ranges. Each recursive range is smaller, and only impossible indices are omitted. A returned index is tested directly; -1 is returned only when every remaining range is exhausted.",
+    "walkthrough": "For [-2,0,2,5] with distinctValues=true, middle index 1 contains 0, so discard indices 0..1. Index 2 contains 2 and is returned. For [0,1,1,3] with the flag false, indices 0,1 and 3 all qualify; returning any of them is correct. A distinct-only sign rule would be unsafe on arbitrary duplicate input.",
+    "example": [
+      [
+        [
+          -2,
+          0,
+          2,
+          5
+        ],
+        true
+      ],
+      2
+    ],
+    "time": "O(log n) time with the distinct-value promise. The duplicate-aware search is O(n) worst case; pruning does not justify a logarithmic bound for all repeated-value arrays.",
+    "space": "O(1) auxiliary space for the iterative distinct branch; O(log n) recursion depth for the duplicate branch because each surviving child lies in a half interval.",
+    "edges": [
+      "Empty input and no qualifying index.",
+      "Several valid indices and duplicate blocks around the middle.",
+      "Minimum/maximum signed values must not overflow pruning bounds; both flags on valid strictly increasing arrays."
+    ],
+    "related": "A fixed-point search with distinct-value assumptions alone does not cover the repeated-value follow-up.",
+    "id": "ctci6_8_3",
+    "title": "Magic Index",
+    "testCount": 2288,
+    "languages": {
+      "csharp": {
+        "signature": "int FindMagicIndex(int[] values, bool distinctValues)",
+        "starterCode": "public class Solution\n{\n    public int FindMagicIndex(int[] values, bool distinctValues)\n    {\n        return 0;\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public int FindMagicIndex(int[] values, bool distinctValues)\n    {\n        if (distinctValues)\n        {\n            int low = 0, high = values.Length - 1;\n            while (low <= high)\n            {\n                int middle = low + (high - low) / 2;\n                if (values[middle] == middle)\n                    return middle;\n                if (values[middle] > middle)\n                    high = middle - 1;\n                else\n                    low = middle + 1;\n            }\n            return -1;\n        }\n        int Search(int low, int high)\n        {\n            if (low > high)\n                return -1;\n            int middle = low + (high - low) / 2, value = values[middle];\n            if (value == middle)\n                return middle;\n            int left = Search(low, Math.Min(middle - 1, value));\n            return left != -1 ? left : Search(Math.Max(middle + 1, value), high);\n        }\n        return Search(0, values.Length - 1);\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function FindMagicIndex(values, distinctValues)",
+        "starterCode": "function FindMagicIndex(values, distinctValues) {\n  return 0;\n}\n",
+        "solutionCode": "function FindMagicIndex(values, distinctValues) {\n  if (distinctValues) {\n    let low = 0,\n      high = values.length - 1;\n    while (low <= high) {\n      const middle = low + Math.floor((high - low) / 2);\n      if (values[middle] === middle) return middle;\n      if (values[middle] > middle) high = middle - 1;\n      else low = middle + 1;\n    }\n    return -1;\n  }\n  function search(low, high) {\n    if (low > high) return -1;\n    const middle = low + Math.floor((high - low) / 2),\n      value = values[middle];\n    if (value === middle) return middle;\n    const left = search(low, Math.min(middle - 1, value));\n    return left !== -1 ? left : search(Math.max(middle + 1, value), high);\n  }\n  return search(0, values.length - 1);\n}\n"
+      },
+      "python": {
+        "signature": "def FindMagicIndex(values: list[int], distinctValues: bool) -> int",
+        "starterCode": "def FindMagicIndex(values: list[int], distinctValues: bool) -> int:\n    return 0\n",
+        "solutionCode": "def FindMagicIndex(values: list[int], distinctValues: bool) -> int:\n    if distinctValues:\n        low, high = 0, len(values) - 1\n        while low <= high:\n            middle = low + (high - low) // 2\n            if values[middle] == middle:\n                return middle\n            if values[middle] > middle:\n                high = middle - 1\n            else:\n                low = middle + 1\n        return -1\n\n    def search(low, high):\n        if low > high:\n            return -1\n        middle = low + (high - low) // 2\n        value = values[middle]\n        if value == middle:\n            return middle\n        left = search(low, min(middle - 1, value))\n        return left if left != -1 else search(max(middle + 1, value), high)\n\n    return search(0, len(values) - 1)\n"
+      },
+      "cpp": {
+        "signature": "int FindMagicIndex(const std::vector<int>& values, bool distinctValues)",
+        "starterCode": "class Solution {\n public:\n  int FindMagicIndex(const std::vector<int>& values, bool distinctValues) {\n    return 0;\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  int FindMagicIndex(const std::vector<int>& values, bool distinctValues) {\n    if (distinctValues) {\n      int low = 0, high = static_cast<int>(values.size()) - 1;\n      while (low <= high) {\n        int middle = low + (high - low) / 2;\n        if (values[middle] == middle)\n          return middle;\n        if (values[middle] > middle)\n          high = middle - 1;\n        else\n          low = middle + 1;\n      }\n      return -1;\n    }\n    std::function<int(int, int)> search = [&](int low, int high) {\n      if (low > high)\n        return -1;\n      int middle = low + (high - low) / 2, value = values[middle];\n      if (value == middle)\n        return middle;\n      int left = search(low, std::min(middle - 1, value));\n      return left != -1 ? left : search(std::max(middle + 1, value), high);\n    };\n    return search(0, static_cast<int>(values.size()) - 1);\n  }\n};\n"
+      },
+      "java": {
+        "signature": "int FindMagicIndex(int[] values, boolean distinctValues)",
+        "starterCode": "class Solution {\n  public int FindMagicIndex(int[] values, boolean distinctValues) {\n    return 0;\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public int FindMagicIndex(int[] values, boolean distinctValues) {\n    if (distinctValues) {\n      int low = 0, high = values.length - 1;\n      while (low <= high) {\n        int middle = low + (high - low) / 2;\n        if (values[middle] == middle)\n          return middle;\n        if (values[middle] > middle)\n          high = middle - 1;\n        else\n          low = middle + 1;\n      }\n      return -1;\n    }\n    class Finder {\n      int Search(int low, int high) {\n        if (low > high)\n          return -1;\n        int middle = low + (high - low) / 2, value = values[middle];\n        if (value == middle)\n          return middle;\n        int left = Search(low, Math.min(middle - 1, value));\n        return left != -1 ? left : Search(Math.max(middle + 1, value), high);\n      }\n    }\n    return new Finder().Search(0, values.length - 1);\n  }\n}\n"
+      }
+    }
+  },
+  {
     "ref": "8.4",
     "method": "PowerSet",
     "params": [
@@ -480,6 +554,1139 @@
         "signature": "int CountCoinCombinations(int amount)",
         "starterCode": "class Solution {\n  public int CountCoinCombinations(int amount) {\n    return 0;\n  }\n}\n",
         "solutionCode": "class Solution {\n  public int CountCoinCombinations(int amount) {\n    int[] ways = new int[amount + 1];\n    ways[0] = 1;\n    for (int coin : new int[] {1, 5, 10, 25}) {\n      for (int value = coin; value <= amount; ++value)\n        ways[value] += ways[value - coin];\n    }\n    return ways[amount];\n  }\n}\n"
+      }
+    }
+  },
+  {
+    "ref": "8.12",
+    "method": "EightQueens",
+    "params": [],
+    "result": "arrangements",
+    "mutation": "none",
+    "description": "Return every way to place eight nonattacking queens on a fixed 8 by 8 board, exactly once. Represent a board as eight column indices: entry r is the column of the queen in row r, with both indices zero-based. Board order is unrestricted, but the order of entries inside each board is meaningful.",
+    "constraints": [
+      "There is no board-size parameter: this is the eight-queens task. Each board is a concrete eight-integer list/vector with entries 0..7. No two queens share a column or diagonal.",
+      "Return all 92 boards. Rotations and reflections count as different boards unless their eight-entry representations are identical. Do not collapse symmetric boards into representatives. The input argument list is empty; examples show the complete returned collection."
+    ],
+    "why": "Place one queen per row, which removes row conflicts by construction. A column number and the two diagonal identifiers row-column+7 and row+column identify every remaining conflict. Carry their used-bit masks into the next row to reject an attacking placement immediately.",
+    "correctness": "At depth r, exactly the first r rows have queens, and the three masks mark precisely their occupied columns and diagonals. A candidate with any marked identifier would attack an earlier queen and is skipped. An unmarked candidate extends the invariant. At row eight, all queens are nonattacking and the board is copied. Every valid board has one allowed column choice at every row, so it follows one unique recursion path and is emitted exactly once. No symmetry filtering removes other valid boards.",
+    "walkthrough": "One complete returned board is [0,4,7,5,2,6,1,3]. For row 1, column 0 is already occupied and column 1 shares the diagonal of the queen at (0,0), so both are rejected. Every subsequent placement checks its column and both diagonals in the same way. A dead-end prefix is abandoned; the search continues rather than returning just the first completed board.",
+    "example": [
+      [],
+      [
+        [
+          0,
+          4,
+          7,
+          5,
+          2,
+          6,
+          1,
+          3
+        ],
+        [
+          0,
+          5,
+          7,
+          2,
+          6,
+          3,
+          1,
+          4
+        ],
+        [
+          0,
+          6,
+          3,
+          5,
+          7,
+          1,
+          4,
+          2
+        ],
+        [
+          0,
+          6,
+          4,
+          7,
+          1,
+          3,
+          5,
+          2
+        ],
+        [
+          1,
+          3,
+          5,
+          7,
+          2,
+          0,
+          6,
+          4
+        ],
+        [
+          1,
+          4,
+          6,
+          0,
+          2,
+          7,
+          5,
+          3
+        ],
+        [
+          1,
+          4,
+          6,
+          3,
+          0,
+          7,
+          5,
+          2
+        ],
+        [
+          1,
+          5,
+          0,
+          6,
+          3,
+          7,
+          2,
+          4
+        ],
+        [
+          1,
+          5,
+          7,
+          2,
+          0,
+          3,
+          6,
+          4
+        ],
+        [
+          1,
+          6,
+          2,
+          5,
+          7,
+          4,
+          0,
+          3
+        ],
+        [
+          1,
+          6,
+          4,
+          7,
+          0,
+          3,
+          5,
+          2
+        ],
+        [
+          1,
+          7,
+          5,
+          0,
+          2,
+          4,
+          6,
+          3
+        ],
+        [
+          2,
+          0,
+          6,
+          4,
+          7,
+          1,
+          3,
+          5
+        ],
+        [
+          2,
+          4,
+          1,
+          7,
+          0,
+          6,
+          3,
+          5
+        ],
+        [
+          2,
+          4,
+          1,
+          7,
+          5,
+          3,
+          6,
+          0
+        ],
+        [
+          2,
+          4,
+          6,
+          0,
+          3,
+          1,
+          7,
+          5
+        ],
+        [
+          2,
+          4,
+          7,
+          3,
+          0,
+          6,
+          1,
+          5
+        ],
+        [
+          2,
+          5,
+          1,
+          4,
+          7,
+          0,
+          6,
+          3
+        ],
+        [
+          2,
+          5,
+          1,
+          6,
+          0,
+          3,
+          7,
+          4
+        ],
+        [
+          2,
+          5,
+          1,
+          6,
+          4,
+          0,
+          7,
+          3
+        ],
+        [
+          2,
+          5,
+          3,
+          0,
+          7,
+          4,
+          6,
+          1
+        ],
+        [
+          2,
+          5,
+          3,
+          1,
+          7,
+          4,
+          6,
+          0
+        ],
+        [
+          2,
+          5,
+          7,
+          0,
+          3,
+          6,
+          4,
+          1
+        ],
+        [
+          2,
+          5,
+          7,
+          0,
+          4,
+          6,
+          1,
+          3
+        ],
+        [
+          2,
+          5,
+          7,
+          1,
+          3,
+          0,
+          6,
+          4
+        ],
+        [
+          2,
+          6,
+          1,
+          7,
+          4,
+          0,
+          3,
+          5
+        ],
+        [
+          2,
+          6,
+          1,
+          7,
+          5,
+          3,
+          0,
+          4
+        ],
+        [
+          2,
+          7,
+          3,
+          6,
+          0,
+          5,
+          1,
+          4
+        ],
+        [
+          3,
+          0,
+          4,
+          7,
+          1,
+          6,
+          2,
+          5
+        ],
+        [
+          3,
+          0,
+          4,
+          7,
+          5,
+          2,
+          6,
+          1
+        ],
+        [
+          3,
+          1,
+          4,
+          7,
+          5,
+          0,
+          2,
+          6
+        ],
+        [
+          3,
+          1,
+          6,
+          2,
+          5,
+          7,
+          0,
+          4
+        ],
+        [
+          3,
+          1,
+          6,
+          2,
+          5,
+          7,
+          4,
+          0
+        ],
+        [
+          3,
+          1,
+          6,
+          4,
+          0,
+          7,
+          5,
+          2
+        ],
+        [
+          3,
+          1,
+          7,
+          4,
+          6,
+          0,
+          2,
+          5
+        ],
+        [
+          3,
+          1,
+          7,
+          5,
+          0,
+          2,
+          4,
+          6
+        ],
+        [
+          3,
+          5,
+          0,
+          4,
+          1,
+          7,
+          2,
+          6
+        ],
+        [
+          3,
+          5,
+          7,
+          1,
+          6,
+          0,
+          2,
+          4
+        ],
+        [
+          3,
+          5,
+          7,
+          2,
+          0,
+          6,
+          4,
+          1
+        ],
+        [
+          3,
+          6,
+          0,
+          7,
+          4,
+          1,
+          5,
+          2
+        ],
+        [
+          3,
+          6,
+          2,
+          7,
+          1,
+          4,
+          0,
+          5
+        ],
+        [
+          3,
+          6,
+          4,
+          1,
+          5,
+          0,
+          2,
+          7
+        ],
+        [
+          3,
+          6,
+          4,
+          2,
+          0,
+          5,
+          7,
+          1
+        ],
+        [
+          3,
+          7,
+          0,
+          2,
+          5,
+          1,
+          6,
+          4
+        ],
+        [
+          3,
+          7,
+          0,
+          4,
+          6,
+          1,
+          5,
+          2
+        ],
+        [
+          3,
+          7,
+          4,
+          2,
+          0,
+          6,
+          1,
+          5
+        ],
+        [
+          4,
+          0,
+          3,
+          5,
+          7,
+          1,
+          6,
+          2
+        ],
+        [
+          4,
+          0,
+          7,
+          3,
+          1,
+          6,
+          2,
+          5
+        ],
+        [
+          4,
+          0,
+          7,
+          5,
+          2,
+          6,
+          1,
+          3
+        ],
+        [
+          4,
+          1,
+          3,
+          5,
+          7,
+          2,
+          0,
+          6
+        ],
+        [
+          4,
+          1,
+          3,
+          6,
+          2,
+          7,
+          5,
+          0
+        ],
+        [
+          4,
+          1,
+          5,
+          0,
+          6,
+          3,
+          7,
+          2
+        ],
+        [
+          4,
+          1,
+          7,
+          0,
+          3,
+          6,
+          2,
+          5
+        ],
+        [
+          4,
+          2,
+          0,
+          5,
+          7,
+          1,
+          3,
+          6
+        ],
+        [
+          4,
+          2,
+          0,
+          6,
+          1,
+          7,
+          5,
+          3
+        ],
+        [
+          4,
+          2,
+          7,
+          3,
+          6,
+          0,
+          5,
+          1
+        ],
+        [
+          4,
+          6,
+          0,
+          2,
+          7,
+          5,
+          3,
+          1
+        ],
+        [
+          4,
+          6,
+          0,
+          3,
+          1,
+          7,
+          5,
+          2
+        ],
+        [
+          4,
+          6,
+          1,
+          3,
+          7,
+          0,
+          2,
+          5
+        ],
+        [
+          4,
+          6,
+          1,
+          5,
+          2,
+          0,
+          3,
+          7
+        ],
+        [
+          4,
+          6,
+          1,
+          5,
+          2,
+          0,
+          7,
+          3
+        ],
+        [
+          4,
+          6,
+          3,
+          0,
+          2,
+          7,
+          5,
+          1
+        ],
+        [
+          4,
+          7,
+          3,
+          0,
+          2,
+          5,
+          1,
+          6
+        ],
+        [
+          4,
+          7,
+          3,
+          0,
+          6,
+          1,
+          5,
+          2
+        ],
+        [
+          5,
+          0,
+          4,
+          1,
+          7,
+          2,
+          6,
+          3
+        ],
+        [
+          5,
+          1,
+          6,
+          0,
+          2,
+          4,
+          7,
+          3
+        ],
+        [
+          5,
+          1,
+          6,
+          0,
+          3,
+          7,
+          4,
+          2
+        ],
+        [
+          5,
+          2,
+          0,
+          6,
+          4,
+          7,
+          1,
+          3
+        ],
+        [
+          5,
+          2,
+          0,
+          7,
+          3,
+          1,
+          6,
+          4
+        ],
+        [
+          5,
+          2,
+          0,
+          7,
+          4,
+          1,
+          3,
+          6
+        ],
+        [
+          5,
+          2,
+          4,
+          6,
+          0,
+          3,
+          1,
+          7
+        ],
+        [
+          5,
+          2,
+          4,
+          7,
+          0,
+          3,
+          1,
+          6
+        ],
+        [
+          5,
+          2,
+          6,
+          1,
+          3,
+          7,
+          0,
+          4
+        ],
+        [
+          5,
+          2,
+          6,
+          1,
+          7,
+          4,
+          0,
+          3
+        ],
+        [
+          5,
+          2,
+          6,
+          3,
+          0,
+          7,
+          1,
+          4
+        ],
+        [
+          5,
+          3,
+          0,
+          4,
+          7,
+          1,
+          6,
+          2
+        ],
+        [
+          5,
+          3,
+          1,
+          7,
+          4,
+          6,
+          0,
+          2
+        ],
+        [
+          5,
+          3,
+          6,
+          0,
+          2,
+          4,
+          1,
+          7
+        ],
+        [
+          5,
+          3,
+          6,
+          0,
+          7,
+          1,
+          4,
+          2
+        ],
+        [
+          5,
+          7,
+          1,
+          3,
+          0,
+          6,
+          4,
+          2
+        ],
+        [
+          6,
+          0,
+          2,
+          7,
+          5,
+          3,
+          1,
+          4
+        ],
+        [
+          6,
+          1,
+          3,
+          0,
+          7,
+          4,
+          2,
+          5
+        ],
+        [
+          6,
+          1,
+          5,
+          2,
+          0,
+          3,
+          7,
+          4
+        ],
+        [
+          6,
+          2,
+          0,
+          5,
+          7,
+          4,
+          1,
+          3
+        ],
+        [
+          6,
+          2,
+          7,
+          1,
+          4,
+          0,
+          5,
+          3
+        ],
+        [
+          6,
+          3,
+          1,
+          4,
+          7,
+          0,
+          2,
+          5
+        ],
+        [
+          6,
+          3,
+          1,
+          7,
+          5,
+          0,
+          2,
+          4
+        ],
+        [
+          6,
+          4,
+          2,
+          0,
+          5,
+          7,
+          1,
+          3
+        ],
+        [
+          7,
+          1,
+          3,
+          0,
+          6,
+          4,
+          2,
+          5
+        ],
+        [
+          7,
+          1,
+          4,
+          2,
+          0,
+          6,
+          3,
+          5
+        ],
+        [
+          7,
+          2,
+          0,
+          5,
+          1,
+          4,
+          6,
+          3
+        ],
+        [
+          7,
+          3,
+          0,
+          2,
+          5,
+          1,
+          6,
+          4
+        ]
+      ]
+    ],
+    "time": "O(8*8!) as a loose search/output upper bound for this fixed board: one queen per row, column conflicts prune repeated columns, and each visited prefix checks at most eight candidates. The fixed-size API has a bounded search, but its backtracking work is not a linear board scan.",
+    "space": "O(8) buffer and search depth, excluding the returned 92 boards of eight entries each.",
+    "edges": [
+      "All 92 distinct boards, including reflected and rotated solutions.",
+      "Within-board row order must not be sorted or ignored.",
+      "Repeated invocations must each return a complete valid collection without accumulating duplicates."
+    ],
+    "related": "An N-queens counter or one-solution finder does not satisfy this fixed-eight complete-enumeration contract.",
+    "id": "ctci6_8_12",
+    "title": "Eight Queens",
+    "testCount": 3,
+    "languages": {
+      "csharp": {
+        "signature": "List<List<int>> EightQueens()",
+        "starterCode": "public class Solution\n{\n    public List<List<int>> EightQueens()\n    {\n        return [];\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public List<List<int>> EightQueens()\n    {\n        int[] board = new int[8];\n        var result = new List<List<int>>();\n        void Visit(int row, int usedColumns, int usedDown, int usedUp)\n        {\n            if (row == 8)\n            {\n                result.Add(new List<int>(board));\n                return;\n            }\n            for (int column = 0; column < 8; ++column)\n            {\n                int colBit = 1 << column, downBit = 1 << (row - column + 7),\n                    upBit = 1 << (row + column);\n                if ((usedColumns & colBit) != 0 || (usedDown & downBit) != 0 ||\n                    (usedUp & upBit) != 0)\n                    continue;\n                board[row] = column;\n                Visit(row + 1, usedColumns | colBit, usedDown | downBit, usedUp | upBit);\n            }\n        }\n        Visit(0, 0, 0, 0);\n        return result;\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function EightQueens()",
+        "starterCode": "function EightQueens() {\n  return [];\n}\n",
+        "solutionCode": "function EightQueens() {\n  const board = Array(8).fill(0),\n    result = [];\n  function visit(row, usedColumns, usedDown, usedUp) {\n    if (row === 8) {\n      result.push(board.slice());\n      return;\n    }\n    for (let column = 0; column < 8; ++column) {\n      const colBit = 1 << column,\n        downBit = 1 << (row - column + 7),\n        upBit = 1 << (row + column);\n      if (usedColumns & colBit || usedDown & downBit || usedUp & upBit) continue;\n      board[row] = column;\n      visit(row + 1, usedColumns | colBit, usedDown | downBit, usedUp | upBit);\n    }\n  }\n  visit(0, 0, 0, 0);\n  return result;\n}\n"
+      },
+      "python": {
+        "signature": "def EightQueens() -> list[list[int]]",
+        "starterCode": "def EightQueens() -> list[list[int]]:\n    return []\n",
+        "solutionCode": "def EightQueens() -> list[list[int]]:\n    board = [0] * 8\n    result = []\n\n    def visit(row, used_columns, used_down, used_up):\n        if row == 8:\n            result.append(board.copy())\n            return\n        for column in range(8):\n            col_bit = 1 << column\n            down_bit = 1 << (row - column + 7)\n            up_bit = 1 << (row + column)\n            if used_columns & col_bit or used_down & down_bit or used_up & up_bit:\n                continue\n            board[row] = column\n            visit(row + 1, used_columns | col_bit, used_down | down_bit, used_up | up_bit)\n\n    visit(0, 0, 0, 0)\n    return result\n"
+      },
+      "cpp": {
+        "signature": "std::vector<std::vector<int>> EightQueens()",
+        "starterCode": "class Solution {\n public:\n  std::vector<std::vector<int>> EightQueens() {\n    return {};\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  std::vector<std::vector<int>> EightQueens() {\n    std::vector<int> board(8);\n    std::vector<std::vector<int>> result;\n    std::function<void(int, int, int, int)> visit = [&](int row, int usedColumns, int usedDown,\n                                                        int usedUp) {\n      if (row == 8) {\n        result.push_back(board);\n        return;\n      }\n      for (int column = 0; column < 8; ++column) {\n        int colBit = 1 << column, downBit = 1 << (row - column + 7), upBit = 1 << (row + column);\n        if ((usedColumns & colBit) != 0 || (usedDown & downBit) != 0 || (usedUp & upBit) != 0)\n          continue;\n        board[row] = column;\n        visit(row + 1, usedColumns | colBit, usedDown | downBit, usedUp | upBit);\n      }\n    };\n    visit(0, 0, 0, 0);\n    return result;\n  }\n};\n"
+      },
+      "java": {
+        "signature": "List<List<Integer>> EightQueens()",
+        "starterCode": "class Solution {\n  public List<List<Integer>> EightQueens() {\n    return new ArrayList<>();\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public List<List<Integer>> EightQueens() {\n    int[] board = new int[8];\n    List<List<Integer>> result = new ArrayList<>();\n    class Search {\n      void Visit(int row, int usedColumns, int usedDown, int usedUp) {\n        if (row == 8) {\n          var copy = new ArrayList<Integer>();\n          for (int column : board)\n            copy.add(column);\n          result.add(copy);\n          return;\n        }\n        for (int column = 0; column < 8; ++column) {\n          int colBit = 1 << column, downBit = 1 << (row - column + 7), upBit = 1 << (row + column);\n          if ((usedColumns & colBit) != 0 || (usedDown & downBit) != 0 || (usedUp & upBit) != 0)\n            continue;\n          board[row] = column;\n          Visit(row + 1, usedColumns | colBit, usedDown | downBit, usedUp | upBit);\n        }\n      }\n    }\n    new Search().Visit(0, 0, 0, 0);\n    return result;\n  }\n}\n"
+      }
+    }
+  },
+  {
+    "ref": "8.13",
+    "method": "MaximumBoxStackHeight",
+    "params": [
+      [
+        "boxes",
+        "aai"
+      ]
+    ],
+    "result": "i",
+    "mutation": "none",
+    "description": "Return the greatest total height of a stack formed from the supplied boxes. Each row is [width,height,depth]. A box may sit above another only when ALL THREE of its dimensions are strictly smaller. Do not rotate boxes, and use each supplied box at most once.",
+    "constraints": [
+      "There are 0..12 boxes. Every row has exactly three integer dimensions in 1..1000. Equal dimensions do not fit; identical boxes cannot stack on one another. Empty input returns zero.",
+      "Preserve the input outer array, row objects, row contents and input order. The height is always row[1]; changing orientation is not permitted. Return a height, not a count of boxes."
+    ],
+    "why": "A smaller box always has smaller width, so width gives an acyclic processing order. Sort only an auxiliary index list. For each possible bottom box, combine its height with the best already-computed stack whose bottom fits above it; choosing the widest or tallest box greedily would miss valid alternatives.",
+    "correctness": "Process boxes by increasing width. Any box that can sit above the current box has smaller width and was processed earlier. By induction its stored value is the best stack with that box at the bottom. Taking the maximum over all earlier boxes strictly smaller in width, height and depth therefore finds the best possible top stack for the current bottom. Adding the current height yields its optimal total. Every nonempty feasible stack has some bottom box, so the maximum stored value is globally optimal. Strict decreases prevent reuse or cycles, and the original input is never reordered.",
+    "walkthrough": "For [[5,5,5],[4,3,4],[3,2,3],[6,1,6]], the first three boxes form a stack of height 5+3+2=10. The last box is wider and deeper but only height 1, so it cannot serve as the bottom beneath those taller boxes. Sorting by width provides a processing order, not a greedy choice of the answer.",
+    "example": [
+      [
+        [
+          [
+            5,
+            5,
+            5
+          ],
+          [
+            4,
+            3,
+            4
+          ],
+          [
+            3,
+            2,
+            3
+          ],
+          [
+            6,
+            1,
+            6
+          ]
+        ]
+      ],
+      10
+    ],
+    "time": "O(n^2) time for pairwise fit checks after O(n log n) sorting of indices.",
+    "space": "O(n) auxiliary storage for sorted indices and best heights; input boxes are not copied into reordered rows.",
+    "edges": [
+      "Empty input, one box and identical boxes.",
+      "Equality in any one dimension prevents stacking.",
+      "A tall narrow box versus a wide short box; shuffled input and a full strict chain."
+    ],
+    "related": "Rotatable-box stacking and maximum chain length omit this fixed-orientation height objective and are not exact substitutes.",
+    "id": "ctci6_8_13",
+    "title": "Stack of Boxes",
+    "testCount": 181,
+    "languages": {
+      "csharp": {
+        "signature": "int MaximumBoxStackHeight(int[][] boxes)",
+        "starterCode": "public class Solution\n{\n    public int MaximumBoxStackHeight(int[][] boxes)\n    {\n        return 0;\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public int MaximumBoxStackHeight(int[][] boxes)\n    {\n        int n = boxes.Length;\n        int[] order = new int[n], heights = new int[n];\n        for (int i = 0; i < n; ++i)\n            order[i] = i;\n        Array.Sort(order, (a, b) => boxes[a][0].CompareTo(boxes[b][0]));\n        int best = 0;\n        for (int i = 0; i < n; ++i)\n        {\n            int current = order[i];\n            heights[i] = boxes[current][1];\n            for (int j = 0; j < i; ++j)\n            {\n                int top = order[j];\n                if (boxes[top][0] < boxes[current][0] && boxes[top][1] < boxes[current][1] &&\n                    boxes[top][2] < boxes[current][2])\n                    heights[i] = Math.Max(heights[i], boxes[current][1] + heights[j]);\n            }\n            best = Math.Max(best, heights[i]);\n        }\n        return best;\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function MaximumBoxStackHeight(boxes)",
+        "starterCode": "function MaximumBoxStackHeight(boxes) {\n  return 0;\n}\n",
+        "solutionCode": "function MaximumBoxStackHeight(boxes) {\n  const order = Array.from({ length: boxes.length }, (_, i) => i).sort(\n      (a, b) => boxes[a][0] - boxes[b][0],\n    ),\n    heights = Array(boxes.length).fill(0);\n  let best = 0;\n  for (let i = 0; i < order.length; ++i) {\n    const current = order[i];\n    heights[i] = boxes[current][1];\n    for (let j = 0; j < i; ++j) {\n      const top = order[j];\n      if (\n        boxes[top][0] < boxes[current][0] &&\n        boxes[top][1] < boxes[current][1] &&\n        boxes[top][2] < boxes[current][2]\n      )\n        heights[i] = Math.max(heights[i], boxes[current][1] + heights[j]);\n    }\n    best = Math.max(best, heights[i]);\n  }\n  return best;\n}\n"
+      },
+      "python": {
+        "signature": "def MaximumBoxStackHeight(boxes: list[list[int]]) -> int",
+        "starterCode": "def MaximumBoxStackHeight(boxes: list[list[int]]) -> int:\n    return 0\n",
+        "solutionCode": "def MaximumBoxStackHeight(boxes: list[list[int]]) -> int:\n    order = sorted(range(len(boxes)), key=lambda index: boxes[index][0])\n    heights = [0] * len(order)\n    best = 0\n    for position, current in enumerate(order):\n        heights[position] = boxes[current][1]\n        for earlier in range(position):\n            top = order[earlier]\n            if all(boxes[top][dimension] < boxes[current][dimension] for dimension in range(3)):\n                heights[position] = max(heights[position], boxes[current][1] + heights[earlier])\n        best = max(best, heights[position])\n    return best\n"
+      },
+      "cpp": {
+        "signature": "int MaximumBoxStackHeight(const std::vector<std::vector<int>>& boxes)",
+        "starterCode": "class Solution {\n public:\n  int MaximumBoxStackHeight(const std::vector<std::vector<int>>& boxes) {\n    return 0;\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  int MaximumBoxStackHeight(const std::vector<std::vector<int>>& boxes) {\n    int n = static_cast<int>(boxes.size());\n    std::vector<int> order(n), heights(n);\n    for (int i = 0; i < n; ++i)\n      order[i] = i;\n    std::sort(order.begin(), order.end(), [&](int a, int b) { return boxes[a][0] < boxes[b][0]; });\n    int best = 0;\n    for (int i = 0; i < n; ++i) {\n      int current = order[i];\n      heights[i] = boxes[current][1];\n      for (int j = 0; j < i; ++j) {\n        int top = order[j];\n        if (boxes[top][0] < boxes[current][0] && boxes[top][1] < boxes[current][1] &&\n            boxes[top][2] < boxes[current][2])\n          heights[i] = std::max(heights[i], boxes[current][1] + heights[j]);\n      }\n      best = std::max(best, heights[i]);\n    }\n    return best;\n  }\n};\n"
+      },
+      "java": {
+        "signature": "int MaximumBoxStackHeight(int[][] boxes)",
+        "starterCode": "class Solution {\n  public int MaximumBoxStackHeight(int[][] boxes) {\n    return 0;\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public int MaximumBoxStackHeight(int[][] boxes) {\n    int n = boxes.length;\n    Integer[] order = new Integer[n];\n    int[] heights = new int[n];\n    for (int i = 0; i < n; ++i)\n      order[i] = i;\n    Arrays.sort(order, (a, b) -> Integer.compare(boxes[a][0], boxes[b][0]));\n    int best = 0;\n    for (int i = 0; i < n; ++i) {\n      int current = order[i];\n      heights[i] = boxes[current][1];\n      for (int j = 0; j < i; ++j) {\n        int top = order[j];\n        if (boxes[top][0] < boxes[current][0] && boxes[top][1] < boxes[current][1]\n            && boxes[top][2] < boxes[current][2])\n          heights[i] = Math.max(heights[i], boxes[current][1] + heights[j]);\n      }\n      best = Math.max(best, heights[i]);\n    }\n    return best;\n  }\n}\n"
+      }
+    }
+  },
+  {
+    "ref": "8.14",
+    "method": "CountBooleanParenthesizations",
+    "params": [
+      [
+        "expression",
+        "s"
+      ],
+      [
+        "desired",
+        "b"
+      ]
+    ],
+    "result": "i",
+    "mutation": "none",
+    "description": "Count the full binary parenthesizations of expression that evaluate to desired. Preserve the order of literals and operators. Operators are Boolean AND (&), OR (|) and XOR (^); ignore ordinary operator precedence because each parenthesization determines evaluation order.",
+    "constraints": [
+      "The expression is empty, or alternates single literals 0/1 and operators &/|/^ with no whitespace or existing parentheses. There are at most 13 literals. desired is a boolean. Return the exact integer count.",
+      "An empty expression has zero parenthesizations for either desired value. A single literal has one when it matches desired and zero otherwise. Count different binary grouping structures separately, even if their evaluations agree.",
+      "The limit gives at most Catalan(12)=208012 groupings, so all counts fit signed 32-bit integers. Do not reorder symbols or count short-circuit execution paths. Preserve inputs."
+    ],
+    "why": "Every full grouping has a unique outermost operator split. Count true and false possibilities for both sides of each split, then combine them with that operator's truth table. Computing all intervals once prevents repeated evaluation of the same substring and accounts for every grouping rather than applying standard precedence.",
+    "correctness": "A single-literal interval has exactly its literal value. For a longer interval, every parenthesization selects one unique outer split and one grouping for each side. By induction the four combinations of left/right truth counts count exactly those paired choices. AND is true only for true/true, OR is false only for false/false, and XOR is true exactly when sides differ. Adding these disjoint possibilities over all splits yields the exact true/false counts for the interval. Increasing interval length ensures both sides are already known; the full interval count for desired is the answer.",
+    "walkthrough": "For 1^0|1, the two groupings are (1^0)|1, which is true, and 1^(0|1), which is false. Thus desired=true returns 1 and desired=false also returns 1. The split at | and the split at ^ each describe one distinct outermost grouping; normal operator precedence must not discard either.",
+    "example": [
+      [
+        "1^0|1",
+        true
+      ],
+      1
+    ],
+    "time": "O(n^3) time for n literals: O(n^2) intervals and at most n outer split positions each.",
+    "space": "O(n^2) auxiliary storage for separate true and false interval tables.",
+    "edges": [
+      "Empty expression and single true/false literals.",
+      "Different groupings of the same symbols can have different values.",
+      "All-one OR chains at 13 literals hit the maximum grouping count; both desired values are tested."
+    ],
+    "related": "Evaluating one Boolean expression or counting logical assignments is a different task from counting its grouping structures.",
+    "id": "ctci6_8_14",
+    "title": "Boolean Evaluation",
+    "testCount": 1090,
+    "languages": {
+      "csharp": {
+        "signature": "int CountBooleanParenthesizations(string expression, bool desired)",
+        "starterCode": "public class Solution\n{\n    public int CountBooleanParenthesizations(string expression, bool desired)\n    {\n        return 0;\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public int CountBooleanParenthesizations(string expression, bool desired)\n    {\n        if (expression.Length == 0)\n            return 0;\n        int count = (expression.Length + 1) / 2;\n        int[,] truth = new int[count, count], falsity = new int[count, count];\n        for (int i = 0; i < count; ++i)\n        {\n            truth[i, i] = expression[2 * i] == '1' ? 1 : 0;\n            falsity[i, i] = 1 - truth[i, i];\n        }\n        for (int length = 2; length <= count; ++length)\n        {\n            for (int low = 0; low + length <= count; ++low)\n            {\n                int high = low + length - 1;\n                for (int split = low; split < high; ++split)\n                {\n                    int lt = truth[low, split], lf = falsity[low, split],\n                        rt = truth[split + 1, high], rf = falsity[split + 1, high],\n                        total = (lt + lf) * (rt + rf);\n                    char operation = expression[2 * split + 1];\n                    int trueCount = operation == '&'   ? lt * rt\n                                    : operation == '|' ? total - lf * rf\n                                                       : lt * rf + lf * rt;\n                    truth[low, high] += trueCount;\n                    falsity[low, high] += total - trueCount;\n                }\n            }\n        }\n        return desired ? truth[0, count - 1] : falsity[0, count - 1];\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function CountBooleanParenthesizations(expression, desired)",
+        "starterCode": "function CountBooleanParenthesizations(expression, desired) {\n  return 0;\n}\n",
+        "solutionCode": "function CountBooleanParenthesizations(expression, desired) {\n  if (expression.length === 0) return 0;\n  const count = (expression.length + 1) / 2,\n    truth = Array.from({ length: count }, () => Array(count).fill(0)),\n    falsity = Array.from({ length: count }, () => Array(count).fill(0));\n  for (let i = 0; i < count; ++i) {\n    truth[i][i] = expression[2 * i] === \"1\" ? 1 : 0;\n    falsity[i][i] = 1 - truth[i][i];\n  }\n  for (let length = 2; length <= count; ++length) {\n    for (let low = 0; low + length <= count; ++low) {\n      const high = low + length - 1;\n      for (let split = low; split < high; ++split) {\n        const lt = truth[low][split],\n          lf = falsity[low][split],\n          rt = truth[split + 1][high],\n          rf = falsity[split + 1][high],\n          total = (lt + lf) * (rt + rf),\n          operation = expression[2 * split + 1],\n          trueCount =\n            operation === \"&\" ? lt * rt : operation === \"|\" ? total - lf * rf : lt * rf + lf * rt;\n        truth[low][high] += trueCount;\n        falsity[low][high] += total - trueCount;\n      }\n    }\n  }\n  return desired ? truth[0][count - 1] : falsity[0][count - 1];\n}\n"
+      },
+      "python": {
+        "signature": "def CountBooleanParenthesizations(expression: str, desired: bool) -> int",
+        "starterCode": "def CountBooleanParenthesizations(expression: str, desired: bool) -> int:\n    return 0\n",
+        "solutionCode": "def CountBooleanParenthesizations(expression: str, desired: bool) -> int:\n    if not expression:\n        return 0\n    count = (len(expression) + 1) // 2\n    truth = [[0] * count for _ in range(count)]\n    falsity = [[0] * count for _ in range(count)]\n    for index in range(count):\n        truth[index][index] = 1 if expression[2 * index] == \"1\" else 0\n        falsity[index][index] = 1 - truth[index][index]\n    for length in range(2, count + 1):\n        for low in range(count - length + 1):\n            high = low + length - 1\n            for split in range(low, high):\n                lt, lf = truth[low][split], falsity[low][split]\n                rt, rf = truth[split + 1][high], falsity[split + 1][high]\n                total = (lt + lf) * (rt + rf)\n                operation = expression[2 * split + 1]\n                true_count = (\n                    lt * rt\n                    if operation == \"&\"\n                    else total - lf * rf\n                    if operation == \"|\"\n                    else lt * rf + lf * rt\n                )\n                truth[low][high] += true_count\n                falsity[low][high] += total - true_count\n    return truth[0][count - 1] if desired else falsity[0][count - 1]\n"
+      },
+      "cpp": {
+        "signature": "int CountBooleanParenthesizations(const std::string& expression, bool desired)",
+        "starterCode": "class Solution {\n public:\n  int CountBooleanParenthesizations(const std::string& expression, bool desired) {\n    return 0;\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  int CountBooleanParenthesizations(const std::string& expression, bool desired) {\n    if (static_cast<int>(expression.size()) == 0)\n      return 0;\n    int count = (static_cast<int>(expression.size()) + 1) / 2;\n    std::vector<std::vector<int>> truth(count, std::vector<int>(count)),\n        falsity(count, std::vector<int>(count));\n    for (int i = 0; i < count; ++i) {\n      truth[i][i] = expression[2 * i] == '1' ? 1 : 0;\n      falsity[i][i] = 1 - truth[i][i];\n    }\n    for (int length = 2; length <= count; ++length) {\n      for (int low = 0; low + length <= count; ++low) {\n        int high = low + length - 1;\n        for (int split = low; split < high; ++split) {\n          int lt = truth[low][split], lf = falsity[low][split], rt = truth[split + 1][high],\n              rf = falsity[split + 1][high], total = (lt + lf) * (rt + rf);\n          char operation = expression[2 * split + 1];\n          int trueCount = operation == '&'   ? lt * rt\n                          : operation == '|' ? total - lf * rf\n                                             : lt * rf + lf * rt;\n          truth[low][high] += trueCount;\n          falsity[low][high] += total - trueCount;\n        }\n      }\n    }\n    return desired ? truth[0][count - 1] : falsity[0][count - 1];\n  }\n};\n"
+      },
+      "java": {
+        "signature": "int CountBooleanParenthesizations(String expression, boolean desired)",
+        "starterCode": "class Solution {\n  public int CountBooleanParenthesizations(String expression, boolean desired) {\n    return 0;\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public int CountBooleanParenthesizations(String expression, boolean desired) {\n    if (expression.length() == 0)\n      return 0;\n    int count = (expression.length() + 1) / 2;\n    int[][] truth = new int[count][count], falsity = new int[count][count];\n    for (int i = 0; i < count; ++i) {\n      truth[i][i] = expression.charAt(2 * i) == '1' ? 1 : 0;\n      falsity[i][i] = 1 - truth[i][i];\n    }\n    for (int length = 2; length <= count; ++length) {\n      for (int low = 0; low + length <= count; ++low) {\n        int high = low + length - 1;\n        for (int split = low; split < high; ++split) {\n          int lt = truth[low][split], lf = falsity[low][split], rt = truth[split + 1][high],\n              rf = falsity[split + 1][high], total = (lt + lf) * (rt + rf);\n          char operation = expression.charAt(2 * split + 1);\n          int trueCount = operation == '&' ? lt * rt\n              : operation == '|'           ? total - lf * rf\n                                           : lt * rf + lf * rt;\n          truth[low][high] += trueCount;\n          falsity[low][high] += total - trueCount;\n        }\n      }\n    }\n    return desired ? truth[0][count - 1] : falsity[0][count - 1];\n  }\n}\n"
       }
     }
   }

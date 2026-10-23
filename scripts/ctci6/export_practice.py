@@ -104,7 +104,7 @@ def export():
                 ).hexdigest()
                 if row["batch"] in (2, 3)
                 or row["batch"] == 8
-                and row["result"] in ("sets", "strings")
+                and (row["result"] in ("sets", "strings", "arrangements") or ref == "8.3")
                 else digest(inspect.getsource(core_match))
             )
             for variant, field, outcome in (

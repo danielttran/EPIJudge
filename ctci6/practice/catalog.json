@@ -2759,6 +2759,91 @@
     }
   },
   {
+    "id": "ctci6_8_3",
+    "ref": "8.3",
+    "title": "Magic Index",
+    "description": "Return any zero-based index i for which values[i] equals i, or -1 if none exists. The array is sorted. The distinctValues flag selects the original distinct-value case or the duplicate-allowed follow-up, allowing the promised distinct case to use logarithmic search.",
+    "constraints": [
+      "values has 0..10000 signed 32-bit integers in nondecreasing order. If distinctValues is true, the values are guaranteed strictly increasing; otherwise duplicates may occur. The flag is an input promise, not a request to scan and verify distinctness.",
+      "Preserve the input array and its ordering. If several indices qualify, any one is valid; do not assume the smallest index is required. Empty input returns -1."
+    ],
+    "method": "FindMagicIndex",
+    "params": [
+      [
+        "values",
+        "ai"
+      ],
+      [
+        "distinctValues",
+        "b"
+      ]
+    ],
+    "result": "i",
+    "mutation": "none",
+    "testCount": 2288,
+    "batch": 8,
+    "stagingDirectory": "",
+    "example": [
+      [
+        [
+          -2,
+          0,
+          2,
+          5
+        ],
+        true
+      ],
+      2
+    ],
+    "languages": {
+      "csharp": {
+        "signature": "int FindMagicIndex(int[] values, bool distinctValues)",
+        "starterCode": "public class Solution\n{\n    public int FindMagicIndex(int[] values, bool distinctValues)\n    {\n        return 0;\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public int FindMagicIndex(int[] values, bool distinctValues)\n    {\n        if (distinctValues)\n        {\n            int low = 0, high = values.Length - 1;\n            while (low <= high)\n            {\n                int middle = low + (high - low) / 2;\n                if (values[middle] == middle)\n                    return middle;\n                if (values[middle] > middle)\n                    high = middle - 1;\n                else\n                    low = middle + 1;\n            }\n            return -1;\n        }\n        int Search(int low, int high)\n        {\n            if (low > high)\n                return -1;\n            int middle = low + (high - low) / 2, value = values[middle];\n            if (value == middle)\n                return middle;\n            int left = Search(low, Math.Min(middle - 1, value));\n            return left != -1 ? left : Search(Math.Max(middle + 1, value), high);\n        }\n        return Search(0, values.Length - 1);\n    }\n}\n",
+        "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\n",
+        "suffix": "",
+        "harness": "using System;\nusing System.Collections.Generic;\nusing System.Text;\nusing System.IO;\nusing System.Text.Json;\n\nclass Harness {\nstatic object Execute(JsonElement row){string reference=row.GetProperty(\"ref\").GetString()!;var args=row.GetProperty(\"arguments\");if(reference==\"8.3\"){var p0=JsonSerializer.Deserialize<int[]>(args[0].GetRawText())!;var before0=JsonSerializer.Serialize(p0);var p1=JsonSerializer.Deserialize<bool>(args[1].GetRawText())!;var actual=new Solution().FindMagicIndex(p0,p1);return new {actual,mutationOk=(JsonSerializer.Serialize(p0)==before0)};}throw new Exception(\"Unknown reference\");}\nstatic object TimedExecute(JsonElement row) {\nvar clock=System.Diagnostics.Stopwatch.StartNew();object observed;\ntry { observed=Execute(row); } catch(Exception error) { observed=new {error=error.ToString()}; }\nreturn new {observation=observed,elapsedMs=clock.Elapsed.TotalMilliseconds};\n}\nstatic void Main(){using var document=JsonDocument.Parse(File.ReadAllText(\"cases.json\"));var results=new List<object>();foreach(var row in document.RootElement.EnumerateArray()){try{results.Add(TimedExecute(row));}catch(Exception error){results.Add(new {error=error.ToString()});}}File.WriteAllText(\"results.json\",JsonSerializer.Serialize(results));}\n}\n",
+        "reference": ""
+      },
+      "javascript": {
+        "signature": "function FindMagicIndex(values, distinctValues)",
+        "starterCode": "function FindMagicIndex(values, distinctValues) {\n  return 0;\n}\n",
+        "solutionCode": "function FindMagicIndex(values, distinctValues) {\n  if (distinctValues) {\n    let low = 0,\n      high = values.length - 1;\n    while (low <= high) {\n      const middle = low + Math.floor((high - low) / 2);\n      if (values[middle] === middle) return middle;\n      if (values[middle] > middle) high = middle - 1;\n      else low = middle + 1;\n    }\n    return -1;\n  }\n  function search(low, high) {\n    if (low > high) return -1;\n    const middle = low + Math.floor((high - low) / 2),\n      value = values[middle];\n    if (value === middle) return middle;\n    const left = search(low, Math.min(middle - 1, value));\n    return left !== -1 ? left : search(Math.max(middle + 1, value), high);\n  }\n  return search(0, values.length - 1);\n}\n",
+        "prefix": "'use strict';\n",
+        "suffix": "\nmodule.exports = {FindMagicIndex};\n",
+        "harness": "const user = require('./solution.js');\nconst FindMagicIndex = user.FindMagicIndex;\n\nconst fs=require('node:fs'),kinds={\"8.3\": \"i\"};\nfunction invoke(row){const ref=row.ref,args=row.arguments;if(ref===\"8.3\")return FindMagicIndex(...args);throw new Error('Unknown reference');}\nfunction execute(row){const args=row.arguments,before=JSON.stringify(args),outer=args.filter(Array.isArray),rows=outer.filter(v=>v.length&&Array.isArray(v[0])).map(v=>[v,v.slice()]);const actual=invoke(row),kind=kinds[row.ref];const valid=kind==='strings'?Array.isArray(actual)&&actual.every(v=>typeof v==='string'):['sets','arrangements'].includes(kind)?Array.isArray(actual)&&actual.every(r=>Array.isArray(r)&&r.every(Number.isInteger)):Number.isInteger(actual)&&actual>=-2147483648&&actual<=2147483647;return {actual,mutationOk:valid&&JSON.stringify(args)===before&&outer.every(v=>args.includes(v))&&rows.every(([v,old])=>v.length===old.length&&v.every((r,i)=>r===old[i]))};}\nconst results=JSON.parse(fs.readFileSync('cases.json','utf8')).map(timed(row=>{try{return execute(row);}catch(error){return {error:String(error)};}}));\nfs.writeFileSync('results.json',JSON.stringify(results));\n\nfunction timed(fn) { return row => { const start=performance.now(); let observation; try { observation=fn(row); } catch(error) { observation={error:String(error)}; } return {observation,elapsedMs:performance.now()-start}; }; }\n",
+        "reference": ""
+      },
+      "python": {
+        "signature": "def FindMagicIndex(values: list[int], distinctValues: bool) -> int",
+        "starterCode": "def FindMagicIndex(values: list[int], distinctValues: bool) -> int:\n    return 0\n",
+        "solutionCode": "def FindMagicIndex(values: list[int], distinctValues: bool) -> int:\n    if distinctValues:\n        low, high = 0, len(values) - 1\n        while low <= high:\n            middle = low + (high - low) // 2\n            if values[middle] == middle:\n                return middle\n            if values[middle] > middle:\n                high = middle - 1\n            else:\n                low = middle + 1\n        return -1\n\n    def search(low, high):\n        if low > high:\n            return -1\n        middle = low + (high - low) // 2\n        value = values[middle]\n        if value == middle:\n            return middle\n        left = search(low, min(middle - 1, value))\n        return left if left != -1 else search(max(middle + 1, value), high)\n\n    return search(0, len(values) - 1)\n",
+        "prefix": "",
+        "suffix": "",
+        "harness": "import time\nimport solution as user\nFindMagicIndex = user.FindMagicIndex\n\nimport json\nKINDS={'8.3': 'i'}\ndef invoke(row):\n    ref,args=row['ref'],row['arguments']\n    if ref == '8.3': return FindMagicIndex(*args)\n    raise ValueError('Unknown reference')\ndef execute(row):\n    args=row['arguments'];before=json.dumps(args);outer=[v for v in args if type(v) is list];rows=[(v,list(v)) for v in outer if v and type(v[0]) is list]\n    actual=invoke(row);kind=KINDS[row['ref']]\n    valid=(type(actual) is list and all(type(v) is str for v in actual)) if kind=='strings' else (type(actual) is list and all(type(r) is list and all(type(v) is int for v in r) for r in actual)) if kind in ('sets','arrangements') else type(actual) is int and -2147483648<=actual<=2147483647\n    return dict(actual=actual,mutationOk=valid and json.dumps(args)==before and all(any(v is original for v in args) for original in outer) and all(len(v)==len(old) and all(a is b for a,b in zip(v,old)) for v,old in rows))\nresults=[]\nfor row in json.load(open('cases.json',encoding='utf-8')):\n    clock = time.perf_counter()\n    try:results.append(execute(row))\n    except Exception as error:results.append(dict(error=repr(error)))\n    results[-1] = dict(observation=results[-1], elapsedMs=(time.perf_counter()-clock)*1000)\njson.dump(results,open('results.json','w',encoding='utf-8'))\n",
+        "reference": ""
+      },
+      "cpp": {
+        "signature": "int FindMagicIndex(const std::vector<int>& values, bool distinctValues)",
+        "starterCode": "class Solution {\n public:\n  int FindMagicIndex(const std::vector<int>& values, bool distinctValues) {\n    return 0;\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  int FindMagicIndex(const std::vector<int>& values, bool distinctValues) {\n    if (distinctValues) {\n      int low = 0, high = static_cast<int>(values.size()) - 1;\n      while (low <= high) {\n        int middle = low + (high - low) / 2;\n        if (values[middle] == middle)\n          return middle;\n        if (values[middle] > middle)\n          high = middle - 1;\n        else\n          low = middle + 1;\n      }\n      return -1;\n    }\n    std::function<int(int, int)> search = [&](int low, int high) {\n      if (low > high)\n        return -1;\n      int middle = low + (high - low) / 2, value = values[middle];\n      if (value == middle)\n        return middle;\n      int left = search(low, std::min(middle - 1, value));\n      return left != -1 ? left : search(std::max(middle + 1, value), high);\n    };\n    return search(0, static_cast<int>(values.size()) - 1);\n  }\n};\n",
+        "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n",
+        "suffix": "",
+        "harness": "#include <chrono>\n#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include \"solution.cpp\"\n#include <fstream>\n#include \"test_framework/json.h\"\nusing json=nlohmann::json;\n\nbool sameRows(const std::vector<std::vector<int>>& values,const std::vector<const int*>& rows){if(values.size()!=rows.size())return false;for(size_t i=0;i<rows.size();++i)if(values[i].data()!=rows[i])return false;return true;}\njson execute(const json& row){std::string reference=row[\"ref\"].get<std::string>();const auto& args=row[\"arguments\"];if(reference==\"8.3\"){auto p0=args[0].get<std::vector<int>>();auto before0=p0;auto p1=args[1].get<bool>();auto actual=Solution().FindMagicIndex(p0,p1);return json{{\"actual\",actual},{\"mutationOk\",(p0==before0)}};}throw std::runtime_error(\"Unknown reference\");}\njson timedExecute(const json& row) {\nauto start=std::chrono::steady_clock::now();json observed;\ntry { observed=execute(row); } catch(const std::exception& error) { observed=json{{\"error\",error.what()}}; }\ndouble elapsed=std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-start).count();\nreturn json{{\"observation\",observed},{\"elapsedMs\",elapsed}};\n}\nint main(){std::ifstream input(\"cases.json\");json rows;input>>rows;json results=json::array();for(const auto& row:rows){try{results.push_back(timedExecute(row));}catch(const std::exception& error){results.push_back(json{{\"error\",error.what()}});}}std::ofstream(\"results.json\")<<results;}\n",
+        "reference": ""
+      },
+      "java": {
+        "signature": "int FindMagicIndex(int[] values, boolean distinctValues)",
+        "starterCode": "class Solution {\n  public int FindMagicIndex(int[] values, boolean distinctValues) {\n    return 0;\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public int FindMagicIndex(int[] values, boolean distinctValues) {\n    if (distinctValues) {\n      int low = 0, high = values.length - 1;\n      while (low <= high) {\n        int middle = low + (high - low) / 2;\n        if (values[middle] == middle)\n          return middle;\n        if (values[middle] > middle)\n          high = middle - 1;\n        else\n          low = middle + 1;\n      }\n      return -1;\n    }\n    class Finder {\n      int Search(int low, int high) {\n        if (low > high)\n          return -1;\n        int middle = low + (high - low) / 2, value = values[middle];\n        if (value == middle)\n          return middle;\n        int left = Search(low, Math.min(middle - 1, value));\n        return left != -1 ? left : Search(Math.max(middle + 1, value), high);\n      }\n    }\n    return new Finder().Search(0, values.length - 1);\n  }\n}\n",
+        "prefix": "import java.util.*;\n",
+        "suffix": "",
+        "harness": "import java.util.*;\nimport java.nio.file.*;\nimport epi.test_framework.minimal_json.*;\n\npublic class Harness {\nstatic int[] integers(JsonArray values){int[] output=new int[values.size()];for(int i=0;i<output.length;++i)output[i]=values.get(i).asInt();return output;}\nstatic int[][] matrix(JsonArray values){int[][] output=new int[values.size()][];for(int i=0;i<output.length;++i)output[i]=integers(values.get(i).asArray());return output;}\nstatic boolean sameRows(int[][] values,int[][] before){if(values.length!=before.length)return false;for(int i=0;i<values.length;++i)if(values[i]!=before[i])return false;return true;}\nstatic JsonValue encode(Object value){if(value==null)return Json.NULL;if(value instanceof Integer v)return Json.value(v);if(value instanceof String v)return Json.value(v);var result=new JsonArray();if(value instanceof int[] values){for(int v:values)result.add(v);}else if(value instanceof int[][] values){for(int[] v:values)result.add(encode(v));}else if(value instanceof Iterable<?> values){for(Object v:values)result.add(encode(v));}else throw new IllegalArgumentException(\"Invalid result\");return result;}\nstatic JsonValue execute(JsonObject row){String reference=row.get(\"ref\").asString();var args=row.get(\"arguments\").asArray();if(reference.equals(\"8.3\")){int[] p0=integers(args.get(0).asArray());String before0=encode(p0).toString();var p1=args.get(1).asBoolean();var actual=new Solution().FindMagicIndex(p0,p1);return new JsonObject().add(\"actual\",encode(actual)).add(\"mutationOk\",(encode(p0).toString().equals(before0)));}throw new RuntimeException(\"Unknown reference\");}\nstatic JsonValue timedExecute(JsonObject row) {\nlong start=System.nanoTime();JsonValue observed;\ntry { observed=execute(row); } catch(Throwable error) { observed=new JsonObject().add(\"error\",error.toString()); }\nreturn new JsonObject().add(\"observation\",observed).add(\"elapsedMs\",(System.nanoTime()-start)/1000000.0);\n}\npublic static void main(String[] ignored)throws Exception{var results=new JsonArray();for(var row:Json.parse(Files.readString(Path.of(\"cases.json\"))).asArray()){try{results.add(timedExecute(row.asObject()));}catch(Throwable error){results.add(new JsonObject().add(\"error\",error.toString()));}}Files.writeString(Path.of(\"results.json\"),results.toString());}\n}\n",
+        "reference": ""
+      }
+    }
+  },
+  {
     "id": "ctci6_8_4",
     "ref": "8.4",
     "title": "Power Set",
@@ -3240,6 +3325,1172 @@
         "prefix": "import java.util.*;\n",
         "suffix": "",
         "harness": "import java.util.*;\nimport java.nio.file.*;\nimport epi.test_framework.minimal_json.*;\n\npublic class Harness {\nstatic JsonValue invoke(JsonObject row){String reference=row.get(\"ref\").asString();var args=row.get(\"arguments\").asArray();if (reference.equals(\"8.11\")) return Json.value(new Solution().CountCoinCombinations(args.get(0).asInt()));throw new RuntimeException(\"Unknown reference\");}\nstatic JsonValue execute(JsonObject row){return new JsonObject().add(\"actual\",invoke(row)).add(\"mutationOk\",true);}\nstatic JsonValue timedExecute(JsonObject row) {\nlong start=System.nanoTime();JsonValue observed;\ntry { observed=execute(row); } catch(Throwable error) { observed=new JsonObject().add(\"error\",error.toString()); }\nreturn new JsonObject().add(\"observation\",observed).add(\"elapsedMs\",(System.nanoTime()-start)/1000000.0);\n}\npublic static void main(String[] ignored)throws Exception{var results=new JsonArray();for(var row:Json.parse(Files.readString(Path.of(\"cases.json\"))).asArray()){try{results.add(timedExecute(row.asObject()));}catch(Throwable error){results.add(new JsonObject().add(\"error\",error.toString()));}}Files.writeString(Path.of(\"results.json\"),results.toString());}\n}\n",
+        "reference": ""
+      }
+    }
+  },
+  {
+    "id": "ctci6_8_12",
+    "ref": "8.12",
+    "title": "Eight Queens",
+    "description": "Return every way to place eight nonattacking queens on a fixed 8 by 8 board, exactly once. Represent a board as eight column indices: entry r is the column of the queen in row r, with both indices zero-based. Board order is unrestricted, but the order of entries inside each board is meaningful.",
+    "constraints": [
+      "There is no board-size parameter: this is the eight-queens task. Each board is a concrete eight-integer list/vector with entries 0..7. No two queens share a column or diagonal.",
+      "Return all 92 boards. Rotations and reflections count as different boards unless their eight-entry representations are identical. Do not collapse symmetric boards into representatives. The input argument list is empty; examples show the complete returned collection."
+    ],
+    "method": "EightQueens",
+    "params": [],
+    "result": "arrangements",
+    "mutation": "none",
+    "testCount": 3,
+    "batch": 8,
+    "stagingDirectory": "",
+    "example": [
+      [],
+      [
+        [
+          0,
+          4,
+          7,
+          5,
+          2,
+          6,
+          1,
+          3
+        ],
+        [
+          0,
+          5,
+          7,
+          2,
+          6,
+          3,
+          1,
+          4
+        ],
+        [
+          0,
+          6,
+          3,
+          5,
+          7,
+          1,
+          4,
+          2
+        ],
+        [
+          0,
+          6,
+          4,
+          7,
+          1,
+          3,
+          5,
+          2
+        ],
+        [
+          1,
+          3,
+          5,
+          7,
+          2,
+          0,
+          6,
+          4
+        ],
+        [
+          1,
+          4,
+          6,
+          0,
+          2,
+          7,
+          5,
+          3
+        ],
+        [
+          1,
+          4,
+          6,
+          3,
+          0,
+          7,
+          5,
+          2
+        ],
+        [
+          1,
+          5,
+          0,
+          6,
+          3,
+          7,
+          2,
+          4
+        ],
+        [
+          1,
+          5,
+          7,
+          2,
+          0,
+          3,
+          6,
+          4
+        ],
+        [
+          1,
+          6,
+          2,
+          5,
+          7,
+          4,
+          0,
+          3
+        ],
+        [
+          1,
+          6,
+          4,
+          7,
+          0,
+          3,
+          5,
+          2
+        ],
+        [
+          1,
+          7,
+          5,
+          0,
+          2,
+          4,
+          6,
+          3
+        ],
+        [
+          2,
+          0,
+          6,
+          4,
+          7,
+          1,
+          3,
+          5
+        ],
+        [
+          2,
+          4,
+          1,
+          7,
+          0,
+          6,
+          3,
+          5
+        ],
+        [
+          2,
+          4,
+          1,
+          7,
+          5,
+          3,
+          6,
+          0
+        ],
+        [
+          2,
+          4,
+          6,
+          0,
+          3,
+          1,
+          7,
+          5
+        ],
+        [
+          2,
+          4,
+          7,
+          3,
+          0,
+          6,
+          1,
+          5
+        ],
+        [
+          2,
+          5,
+          1,
+          4,
+          7,
+          0,
+          6,
+          3
+        ],
+        [
+          2,
+          5,
+          1,
+          6,
+          0,
+          3,
+          7,
+          4
+        ],
+        [
+          2,
+          5,
+          1,
+          6,
+          4,
+          0,
+          7,
+          3
+        ],
+        [
+          2,
+          5,
+          3,
+          0,
+          7,
+          4,
+          6,
+          1
+        ],
+        [
+          2,
+          5,
+          3,
+          1,
+          7,
+          4,
+          6,
+          0
+        ],
+        [
+          2,
+          5,
+          7,
+          0,
+          3,
+          6,
+          4,
+          1
+        ],
+        [
+          2,
+          5,
+          7,
+          0,
+          4,
+          6,
+          1,
+          3
+        ],
+        [
+          2,
+          5,
+          7,
+          1,
+          3,
+          0,
+          6,
+          4
+        ],
+        [
+          2,
+          6,
+          1,
+          7,
+          4,
+          0,
+          3,
+          5
+        ],
+        [
+          2,
+          6,
+          1,
+          7,
+          5,
+          3,
+          0,
+          4
+        ],
+        [
+          2,
+          7,
+          3,
+          6,
+          0,
+          5,
+          1,
+          4
+        ],
+        [
+          3,
+          0,
+          4,
+          7,
+          1,
+          6,
+          2,
+          5
+        ],
+        [
+          3,
+          0,
+          4,
+          7,
+          5,
+          2,
+          6,
+          1
+        ],
+        [
+          3,
+          1,
+          4,
+          7,
+          5,
+          0,
+          2,
+          6
+        ],
+        [
+          3,
+          1,
+          6,
+          2,
+          5,
+          7,
+          0,
+          4
+        ],
+        [
+          3,
+          1,
+          6,
+          2,
+          5,
+          7,
+          4,
+          0
+        ],
+        [
+          3,
+          1,
+          6,
+          4,
+          0,
+          7,
+          5,
+          2
+        ],
+        [
+          3,
+          1,
+          7,
+          4,
+          6,
+          0,
+          2,
+          5
+        ],
+        [
+          3,
+          1,
+          7,
+          5,
+          0,
+          2,
+          4,
+          6
+        ],
+        [
+          3,
+          5,
+          0,
+          4,
+          1,
+          7,
+          2,
+          6
+        ],
+        [
+          3,
+          5,
+          7,
+          1,
+          6,
+          0,
+          2,
+          4
+        ],
+        [
+          3,
+          5,
+          7,
+          2,
+          0,
+          6,
+          4,
+          1
+        ],
+        [
+          3,
+          6,
+          0,
+          7,
+          4,
+          1,
+          5,
+          2
+        ],
+        [
+          3,
+          6,
+          2,
+          7,
+          1,
+          4,
+          0,
+          5
+        ],
+        [
+          3,
+          6,
+          4,
+          1,
+          5,
+          0,
+          2,
+          7
+        ],
+        [
+          3,
+          6,
+          4,
+          2,
+          0,
+          5,
+          7,
+          1
+        ],
+        [
+          3,
+          7,
+          0,
+          2,
+          5,
+          1,
+          6,
+          4
+        ],
+        [
+          3,
+          7,
+          0,
+          4,
+          6,
+          1,
+          5,
+          2
+        ],
+        [
+          3,
+          7,
+          4,
+          2,
+          0,
+          6,
+          1,
+          5
+        ],
+        [
+          4,
+          0,
+          3,
+          5,
+          7,
+          1,
+          6,
+          2
+        ],
+        [
+          4,
+          0,
+          7,
+          3,
+          1,
+          6,
+          2,
+          5
+        ],
+        [
+          4,
+          0,
+          7,
+          5,
+          2,
+          6,
+          1,
+          3
+        ],
+        [
+          4,
+          1,
+          3,
+          5,
+          7,
+          2,
+          0,
+          6
+        ],
+        [
+          4,
+          1,
+          3,
+          6,
+          2,
+          7,
+          5,
+          0
+        ],
+        [
+          4,
+          1,
+          5,
+          0,
+          6,
+          3,
+          7,
+          2
+        ],
+        [
+          4,
+          1,
+          7,
+          0,
+          3,
+          6,
+          2,
+          5
+        ],
+        [
+          4,
+          2,
+          0,
+          5,
+          7,
+          1,
+          3,
+          6
+        ],
+        [
+          4,
+          2,
+          0,
+          6,
+          1,
+          7,
+          5,
+          3
+        ],
+        [
+          4,
+          2,
+          7,
+          3,
+          6,
+          0,
+          5,
+          1
+        ],
+        [
+          4,
+          6,
+          0,
+          2,
+          7,
+          5,
+          3,
+          1
+        ],
+        [
+          4,
+          6,
+          0,
+          3,
+          1,
+          7,
+          5,
+          2
+        ],
+        [
+          4,
+          6,
+          1,
+          3,
+          7,
+          0,
+          2,
+          5
+        ],
+        [
+          4,
+          6,
+          1,
+          5,
+          2,
+          0,
+          3,
+          7
+        ],
+        [
+          4,
+          6,
+          1,
+          5,
+          2,
+          0,
+          7,
+          3
+        ],
+        [
+          4,
+          6,
+          3,
+          0,
+          2,
+          7,
+          5,
+          1
+        ],
+        [
+          4,
+          7,
+          3,
+          0,
+          2,
+          5,
+          1,
+          6
+        ],
+        [
+          4,
+          7,
+          3,
+          0,
+          6,
+          1,
+          5,
+          2
+        ],
+        [
+          5,
+          0,
+          4,
+          1,
+          7,
+          2,
+          6,
+          3
+        ],
+        [
+          5,
+          1,
+          6,
+          0,
+          2,
+          4,
+          7,
+          3
+        ],
+        [
+          5,
+          1,
+          6,
+          0,
+          3,
+          7,
+          4,
+          2
+        ],
+        [
+          5,
+          2,
+          0,
+          6,
+          4,
+          7,
+          1,
+          3
+        ],
+        [
+          5,
+          2,
+          0,
+          7,
+          3,
+          1,
+          6,
+          4
+        ],
+        [
+          5,
+          2,
+          0,
+          7,
+          4,
+          1,
+          3,
+          6
+        ],
+        [
+          5,
+          2,
+          4,
+          6,
+          0,
+          3,
+          1,
+          7
+        ],
+        [
+          5,
+          2,
+          4,
+          7,
+          0,
+          3,
+          1,
+          6
+        ],
+        [
+          5,
+          2,
+          6,
+          1,
+          3,
+          7,
+          0,
+          4
+        ],
+        [
+          5,
+          2,
+          6,
+          1,
+          7,
+          4,
+          0,
+          3
+        ],
+        [
+          5,
+          2,
+          6,
+          3,
+          0,
+          7,
+          1,
+          4
+        ],
+        [
+          5,
+          3,
+          0,
+          4,
+          7,
+          1,
+          6,
+          2
+        ],
+        [
+          5,
+          3,
+          1,
+          7,
+          4,
+          6,
+          0,
+          2
+        ],
+        [
+          5,
+          3,
+          6,
+          0,
+          2,
+          4,
+          1,
+          7
+        ],
+        [
+          5,
+          3,
+          6,
+          0,
+          7,
+          1,
+          4,
+          2
+        ],
+        [
+          5,
+          7,
+          1,
+          3,
+          0,
+          6,
+          4,
+          2
+        ],
+        [
+          6,
+          0,
+          2,
+          7,
+          5,
+          3,
+          1,
+          4
+        ],
+        [
+          6,
+          1,
+          3,
+          0,
+          7,
+          4,
+          2,
+          5
+        ],
+        [
+          6,
+          1,
+          5,
+          2,
+          0,
+          3,
+          7,
+          4
+        ],
+        [
+          6,
+          2,
+          0,
+          5,
+          7,
+          4,
+          1,
+          3
+        ],
+        [
+          6,
+          2,
+          7,
+          1,
+          4,
+          0,
+          5,
+          3
+        ],
+        [
+          6,
+          3,
+          1,
+          4,
+          7,
+          0,
+          2,
+          5
+        ],
+        [
+          6,
+          3,
+          1,
+          7,
+          5,
+          0,
+          2,
+          4
+        ],
+        [
+          6,
+          4,
+          2,
+          0,
+          5,
+          7,
+          1,
+          3
+        ],
+        [
+          7,
+          1,
+          3,
+          0,
+          6,
+          4,
+          2,
+          5
+        ],
+        [
+          7,
+          1,
+          4,
+          2,
+          0,
+          6,
+          3,
+          5
+        ],
+        [
+          7,
+          2,
+          0,
+          5,
+          1,
+          4,
+          6,
+          3
+        ],
+        [
+          7,
+          3,
+          0,
+          2,
+          5,
+          1,
+          6,
+          4
+        ]
+      ]
+    ],
+    "languages": {
+      "csharp": {
+        "signature": "List<List<int>> EightQueens()",
+        "starterCode": "public class Solution\n{\n    public List<List<int>> EightQueens()\n    {\n        return [];\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public List<List<int>> EightQueens()\n    {\n        int[] board = new int[8];\n        var result = new List<List<int>>();\n        void Visit(int row, int usedColumns, int usedDown, int usedUp)\n        {\n            if (row == 8)\n            {\n                result.Add(new List<int>(board));\n                return;\n            }\n            for (int column = 0; column < 8; ++column)\n            {\n                int colBit = 1 << column, downBit = 1 << (row - column + 7),\n                    upBit = 1 << (row + column);\n                if ((usedColumns & colBit) != 0 || (usedDown & downBit) != 0 ||\n                    (usedUp & upBit) != 0)\n                    continue;\n                board[row] = column;\n                Visit(row + 1, usedColumns | colBit, usedDown | downBit, usedUp | upBit);\n            }\n        }\n        Visit(0, 0, 0, 0);\n        return result;\n    }\n}\n",
+        "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\n",
+        "suffix": "",
+        "harness": "using System;\nusing System.Collections.Generic;\nusing System.Text;\nusing System.IO;\nusing System.Text.Json;\n\nclass Harness {\nstatic object Execute(JsonElement row){string reference=row.GetProperty(\"ref\").GetString()!;var args=row.GetProperty(\"arguments\");if(reference==\"8.12\"){var actual=new Solution().EightQueens();return new {actual,mutationOk=true};}throw new Exception(\"Unknown reference\");}\nstatic object TimedExecute(JsonElement row) {\nvar clock=System.Diagnostics.Stopwatch.StartNew();object observed;\ntry { observed=Execute(row); } catch(Exception error) { observed=new {error=error.ToString()}; }\nreturn new {observation=observed,elapsedMs=clock.Elapsed.TotalMilliseconds};\n}\nstatic void Main(){using var document=JsonDocument.Parse(File.ReadAllText(\"cases.json\"));var results=new List<object>();foreach(var row in document.RootElement.EnumerateArray()){try{results.Add(TimedExecute(row));}catch(Exception error){results.Add(new {error=error.ToString()});}}File.WriteAllText(\"results.json\",JsonSerializer.Serialize(results));}\n}\n",
+        "reference": ""
+      },
+      "javascript": {
+        "signature": "function EightQueens()",
+        "starterCode": "function EightQueens() {\n  return [];\n}\n",
+        "solutionCode": "function EightQueens() {\n  const board = Array(8).fill(0),\n    result = [];\n  function visit(row, usedColumns, usedDown, usedUp) {\n    if (row === 8) {\n      result.push(board.slice());\n      return;\n    }\n    for (let column = 0; column < 8; ++column) {\n      const colBit = 1 << column,\n        downBit = 1 << (row - column + 7),\n        upBit = 1 << (row + column);\n      if (usedColumns & colBit || usedDown & downBit || usedUp & upBit) continue;\n      board[row] = column;\n      visit(row + 1, usedColumns | colBit, usedDown | downBit, usedUp | upBit);\n    }\n  }\n  visit(0, 0, 0, 0);\n  return result;\n}\n",
+        "prefix": "'use strict';\n",
+        "suffix": "\nmodule.exports = {EightQueens};\n",
+        "harness": "const user = require('./solution.js');\nconst EightQueens = user.EightQueens;\n\nconst fs=require('node:fs'),kinds={\"8.12\": \"arrangements\"};\nfunction invoke(row){const ref=row.ref,args=row.arguments;if(ref===\"8.12\")return EightQueens(...args);throw new Error('Unknown reference');}\nfunction execute(row){const args=row.arguments,before=JSON.stringify(args),outer=args.filter(Array.isArray),rows=outer.filter(v=>v.length&&Array.isArray(v[0])).map(v=>[v,v.slice()]);const actual=invoke(row),kind=kinds[row.ref];const valid=kind==='strings'?Array.isArray(actual)&&actual.every(v=>typeof v==='string'):['sets','arrangements'].includes(kind)?Array.isArray(actual)&&actual.every(r=>Array.isArray(r)&&r.every(Number.isInteger)):Number.isInteger(actual)&&actual>=-2147483648&&actual<=2147483647;return {actual,mutationOk:valid&&JSON.stringify(args)===before&&outer.every(v=>args.includes(v))&&rows.every(([v,old])=>v.length===old.length&&v.every((r,i)=>r===old[i]))};}\nconst results=JSON.parse(fs.readFileSync('cases.json','utf8')).map(timed(row=>{try{return execute(row);}catch(error){return {error:String(error)};}}));\nfs.writeFileSync('results.json',JSON.stringify(results));\n\nfunction timed(fn) { return row => { const start=performance.now(); let observation; try { observation=fn(row); } catch(error) { observation={error:String(error)}; } return {observation,elapsedMs:performance.now()-start}; }; }\n",
+        "reference": ""
+      },
+      "python": {
+        "signature": "def EightQueens() -> list[list[int]]",
+        "starterCode": "def EightQueens() -> list[list[int]]:\n    return []\n",
+        "solutionCode": "def EightQueens() -> list[list[int]]:\n    board = [0] * 8\n    result = []\n\n    def visit(row, used_columns, used_down, used_up):\n        if row == 8:\n            result.append(board.copy())\n            return\n        for column in range(8):\n            col_bit = 1 << column\n            down_bit = 1 << (row - column + 7)\n            up_bit = 1 << (row + column)\n            if used_columns & col_bit or used_down & down_bit or used_up & up_bit:\n                continue\n            board[row] = column\n            visit(row + 1, used_columns | col_bit, used_down | down_bit, used_up | up_bit)\n\n    visit(0, 0, 0, 0)\n    return result\n",
+        "prefix": "",
+        "suffix": "",
+        "harness": "import time\nimport solution as user\nEightQueens = user.EightQueens\n\nimport json\nKINDS={'8.12': 'arrangements'}\ndef invoke(row):\n    ref,args=row['ref'],row['arguments']\n    if ref == '8.12': return EightQueens(*args)\n    raise ValueError('Unknown reference')\ndef execute(row):\n    args=row['arguments'];before=json.dumps(args);outer=[v for v in args if type(v) is list];rows=[(v,list(v)) for v in outer if v and type(v[0]) is list]\n    actual=invoke(row);kind=KINDS[row['ref']]\n    valid=(type(actual) is list and all(type(v) is str for v in actual)) if kind=='strings' else (type(actual) is list and all(type(r) is list and all(type(v) is int for v in r) for r in actual)) if kind in ('sets','arrangements') else type(actual) is int and -2147483648<=actual<=2147483647\n    return dict(actual=actual,mutationOk=valid and json.dumps(args)==before and all(any(v is original for v in args) for original in outer) and all(len(v)==len(old) and all(a is b for a,b in zip(v,old)) for v,old in rows))\nresults=[]\nfor row in json.load(open('cases.json',encoding='utf-8')):\n    clock = time.perf_counter()\n    try:results.append(execute(row))\n    except Exception as error:results.append(dict(error=repr(error)))\n    results[-1] = dict(observation=results[-1], elapsedMs=(time.perf_counter()-clock)*1000)\njson.dump(results,open('results.json','w',encoding='utf-8'))\n",
+        "reference": ""
+      },
+      "cpp": {
+        "signature": "std::vector<std::vector<int>> EightQueens()",
+        "starterCode": "class Solution {\n public:\n  std::vector<std::vector<int>> EightQueens() {\n    return {};\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  std::vector<std::vector<int>> EightQueens() {\n    std::vector<int> board(8);\n    std::vector<std::vector<int>> result;\n    std::function<void(int, int, int, int)> visit = [&](int row, int usedColumns, int usedDown,\n                                                        int usedUp) {\n      if (row == 8) {\n        result.push_back(board);\n        return;\n      }\n      for (int column = 0; column < 8; ++column) {\n        int colBit = 1 << column, downBit = 1 << (row - column + 7), upBit = 1 << (row + column);\n        if ((usedColumns & colBit) != 0 || (usedDown & downBit) != 0 || (usedUp & upBit) != 0)\n          continue;\n        board[row] = column;\n        visit(row + 1, usedColumns | colBit, usedDown | downBit, usedUp | upBit);\n      }\n    };\n    visit(0, 0, 0, 0);\n    return result;\n  }\n};\n",
+        "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n",
+        "suffix": "",
+        "harness": "#include <chrono>\n#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include \"solution.cpp\"\n#include <fstream>\n#include \"test_framework/json.h\"\nusing json=nlohmann::json;\n\nbool sameRows(const std::vector<std::vector<int>>& values,const std::vector<const int*>& rows){if(values.size()!=rows.size())return false;for(size_t i=0;i<rows.size();++i)if(values[i].data()!=rows[i])return false;return true;}\njson execute(const json& row){std::string reference=row[\"ref\"].get<std::string>();const auto& args=row[\"arguments\"];if(reference==\"8.12\"){auto actual=Solution().EightQueens();return json{{\"actual\",actual},{\"mutationOk\",true}};}throw std::runtime_error(\"Unknown reference\");}\njson timedExecute(const json& row) {\nauto start=std::chrono::steady_clock::now();json observed;\ntry { observed=execute(row); } catch(const std::exception& error) { observed=json{{\"error\",error.what()}}; }\ndouble elapsed=std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-start).count();\nreturn json{{\"observation\",observed},{\"elapsedMs\",elapsed}};\n}\nint main(){std::ifstream input(\"cases.json\");json rows;input>>rows;json results=json::array();for(const auto& row:rows){try{results.push_back(timedExecute(row));}catch(const std::exception& error){results.push_back(json{{\"error\",error.what()}});}}std::ofstream(\"results.json\")<<results;}\n",
+        "reference": ""
+      },
+      "java": {
+        "signature": "List<List<Integer>> EightQueens()",
+        "starterCode": "class Solution {\n  public List<List<Integer>> EightQueens() {\n    return new ArrayList<>();\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public List<List<Integer>> EightQueens() {\n    int[] board = new int[8];\n    List<List<Integer>> result = new ArrayList<>();\n    class Search {\n      void Visit(int row, int usedColumns, int usedDown, int usedUp) {\n        if (row == 8) {\n          var copy = new ArrayList<Integer>();\n          for (int column : board)\n            copy.add(column);\n          result.add(copy);\n          return;\n        }\n        for (int column = 0; column < 8; ++column) {\n          int colBit = 1 << column, downBit = 1 << (row - column + 7), upBit = 1 << (row + column);\n          if ((usedColumns & colBit) != 0 || (usedDown & downBit) != 0 || (usedUp & upBit) != 0)\n            continue;\n          board[row] = column;\n          Visit(row + 1, usedColumns | colBit, usedDown | downBit, usedUp | upBit);\n        }\n      }\n    }\n    new Search().Visit(0, 0, 0, 0);\n    return result;\n  }\n}\n",
+        "prefix": "import java.util.*;\n",
+        "suffix": "",
+        "harness": "import java.util.*;\nimport java.nio.file.*;\nimport epi.test_framework.minimal_json.*;\n\npublic class Harness {\nstatic int[] integers(JsonArray values){int[] output=new int[values.size()];for(int i=0;i<output.length;++i)output[i]=values.get(i).asInt();return output;}\nstatic int[][] matrix(JsonArray values){int[][] output=new int[values.size()][];for(int i=0;i<output.length;++i)output[i]=integers(values.get(i).asArray());return output;}\nstatic boolean sameRows(int[][] values,int[][] before){if(values.length!=before.length)return false;for(int i=0;i<values.length;++i)if(values[i]!=before[i])return false;return true;}\nstatic JsonValue encode(Object value){if(value==null)return Json.NULL;if(value instanceof Integer v)return Json.value(v);if(value instanceof String v)return Json.value(v);var result=new JsonArray();if(value instanceof int[] values){for(int v:values)result.add(v);}else if(value instanceof int[][] values){for(int[] v:values)result.add(encode(v));}else if(value instanceof Iterable<?> values){for(Object v:values)result.add(encode(v));}else throw new IllegalArgumentException(\"Invalid result\");return result;}\nstatic JsonValue execute(JsonObject row){String reference=row.get(\"ref\").asString();var args=row.get(\"arguments\").asArray();if(reference.equals(\"8.12\")){var actual=new Solution().EightQueens();return new JsonObject().add(\"actual\",encode(actual)).add(\"mutationOk\",true);}throw new RuntimeException(\"Unknown reference\");}\nstatic JsonValue timedExecute(JsonObject row) {\nlong start=System.nanoTime();JsonValue observed;\ntry { observed=execute(row); } catch(Throwable error) { observed=new JsonObject().add(\"error\",error.toString()); }\nreturn new JsonObject().add(\"observation\",observed).add(\"elapsedMs\",(System.nanoTime()-start)/1000000.0);\n}\npublic static void main(String[] ignored)throws Exception{var results=new JsonArray();for(var row:Json.parse(Files.readString(Path.of(\"cases.json\"))).asArray()){try{results.add(timedExecute(row.asObject()));}catch(Throwable error){results.add(new JsonObject().add(\"error\",error.toString()));}}Files.writeString(Path.of(\"results.json\"),results.toString());}\n}\n",
+        "reference": ""
+      }
+    }
+  },
+  {
+    "id": "ctci6_8_13",
+    "ref": "8.13",
+    "title": "Stack of Boxes",
+    "description": "Return the greatest total height of a stack formed from the supplied boxes. Each row is [width,height,depth]. A box may sit above another only when ALL THREE of its dimensions are strictly smaller. Do not rotate boxes, and use each supplied box at most once.",
+    "constraints": [
+      "There are 0..12 boxes. Every row has exactly three integer dimensions in 1..1000. Equal dimensions do not fit; identical boxes cannot stack on one another. Empty input returns zero.",
+      "Preserve the input outer array, row objects, row contents and input order. The height is always row[1]; changing orientation is not permitted. Return a height, not a count of boxes."
+    ],
+    "method": "MaximumBoxStackHeight",
+    "params": [
+      [
+        "boxes",
+        "aai"
+      ]
+    ],
+    "result": "i",
+    "mutation": "none",
+    "testCount": 181,
+    "batch": 8,
+    "stagingDirectory": "",
+    "example": [
+      [
+        [
+          [
+            5,
+            5,
+            5
+          ],
+          [
+            4,
+            3,
+            4
+          ],
+          [
+            3,
+            2,
+            3
+          ],
+          [
+            6,
+            1,
+            6
+          ]
+        ]
+      ],
+      10
+    ],
+    "languages": {
+      "csharp": {
+        "signature": "int MaximumBoxStackHeight(int[][] boxes)",
+        "starterCode": "public class Solution\n{\n    public int MaximumBoxStackHeight(int[][] boxes)\n    {\n        return 0;\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public int MaximumBoxStackHeight(int[][] boxes)\n    {\n        int n = boxes.Length;\n        int[] order = new int[n], heights = new int[n];\n        for (int i = 0; i < n; ++i)\n            order[i] = i;\n        Array.Sort(order, (a, b) => boxes[a][0].CompareTo(boxes[b][0]));\n        int best = 0;\n        for (int i = 0; i < n; ++i)\n        {\n            int current = order[i];\n            heights[i] = boxes[current][1];\n            for (int j = 0; j < i; ++j)\n            {\n                int top = order[j];\n                if (boxes[top][0] < boxes[current][0] && boxes[top][1] < boxes[current][1] &&\n                    boxes[top][2] < boxes[current][2])\n                    heights[i] = Math.Max(heights[i], boxes[current][1] + heights[j]);\n            }\n            best = Math.Max(best, heights[i]);\n        }\n        return best;\n    }\n}\n",
+        "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\n",
+        "suffix": "",
+        "harness": "using System;\nusing System.Collections.Generic;\nusing System.Text;\nusing System.IO;\nusing System.Text.Json;\n\nclass Harness {\nstatic object Execute(JsonElement row){string reference=row.GetProperty(\"ref\").GetString()!;var args=row.GetProperty(\"arguments\");if(reference==\"8.13\"){var p0=JsonSerializer.Deserialize<int[][]>(args[0].GetRawText())!;var before0=JsonSerializer.Serialize(p0);var rows0=p0.ToArray();var actual=new Solution().MaximumBoxStackHeight(p0);return new {actual,mutationOk=(JsonSerializer.Serialize(p0)==before0) && (p0.Length==rows0.Length && p0.Select((r,j)=>ReferenceEquals(r,rows0[j])).All(v=>v))};}throw new Exception(\"Unknown reference\");}\nstatic object TimedExecute(JsonElement row) {\nvar clock=System.Diagnostics.Stopwatch.StartNew();object observed;\ntry { observed=Execute(row); } catch(Exception error) { observed=new {error=error.ToString()}; }\nreturn new {observation=observed,elapsedMs=clock.Elapsed.TotalMilliseconds};\n}\nstatic void Main(){using var document=JsonDocument.Parse(File.ReadAllText(\"cases.json\"));var results=new List<object>();foreach(var row in document.RootElement.EnumerateArray()){try{results.Add(TimedExecute(row));}catch(Exception error){results.Add(new {error=error.ToString()});}}File.WriteAllText(\"results.json\",JsonSerializer.Serialize(results));}\n}\n",
+        "reference": ""
+      },
+      "javascript": {
+        "signature": "function MaximumBoxStackHeight(boxes)",
+        "starterCode": "function MaximumBoxStackHeight(boxes) {\n  return 0;\n}\n",
+        "solutionCode": "function MaximumBoxStackHeight(boxes) {\n  const order = Array.from({ length: boxes.length }, (_, i) => i).sort(\n      (a, b) => boxes[a][0] - boxes[b][0],\n    ),\n    heights = Array(boxes.length).fill(0);\n  let best = 0;\n  for (let i = 0; i < order.length; ++i) {\n    const current = order[i];\n    heights[i] = boxes[current][1];\n    for (let j = 0; j < i; ++j) {\n      const top = order[j];\n      if (\n        boxes[top][0] < boxes[current][0] &&\n        boxes[top][1] < boxes[current][1] &&\n        boxes[top][2] < boxes[current][2]\n      )\n        heights[i] = Math.max(heights[i], boxes[current][1] + heights[j]);\n    }\n    best = Math.max(best, heights[i]);\n  }\n  return best;\n}\n",
+        "prefix": "'use strict';\n",
+        "suffix": "\nmodule.exports = {MaximumBoxStackHeight};\n",
+        "harness": "const user = require('./solution.js');\nconst MaximumBoxStackHeight = user.MaximumBoxStackHeight;\n\nconst fs=require('node:fs'),kinds={\"8.13\": \"i\"};\nfunction invoke(row){const ref=row.ref,args=row.arguments;if(ref===\"8.13\")return MaximumBoxStackHeight(...args);throw new Error('Unknown reference');}\nfunction execute(row){const args=row.arguments,before=JSON.stringify(args),outer=args.filter(Array.isArray),rows=outer.filter(v=>v.length&&Array.isArray(v[0])).map(v=>[v,v.slice()]);const actual=invoke(row),kind=kinds[row.ref];const valid=kind==='strings'?Array.isArray(actual)&&actual.every(v=>typeof v==='string'):['sets','arrangements'].includes(kind)?Array.isArray(actual)&&actual.every(r=>Array.isArray(r)&&r.every(Number.isInteger)):Number.isInteger(actual)&&actual>=-2147483648&&actual<=2147483647;return {actual,mutationOk:valid&&JSON.stringify(args)===before&&outer.every(v=>args.includes(v))&&rows.every(([v,old])=>v.length===old.length&&v.every((r,i)=>r===old[i]))};}\nconst results=JSON.parse(fs.readFileSync('cases.json','utf8')).map(timed(row=>{try{return execute(row);}catch(error){return {error:String(error)};}}));\nfs.writeFileSync('results.json',JSON.stringify(results));\n\nfunction timed(fn) { return row => { const start=performance.now(); let observation; try { observation=fn(row); } catch(error) { observation={error:String(error)}; } return {observation,elapsedMs:performance.now()-start}; }; }\n",
+        "reference": ""
+      },
+      "python": {
+        "signature": "def MaximumBoxStackHeight(boxes: list[list[int]]) -> int",
+        "starterCode": "def MaximumBoxStackHeight(boxes: list[list[int]]) -> int:\n    return 0\n",
+        "solutionCode": "def MaximumBoxStackHeight(boxes: list[list[int]]) -> int:\n    order = sorted(range(len(boxes)), key=lambda index: boxes[index][0])\n    heights = [0] * len(order)\n    best = 0\n    for position, current in enumerate(order):\n        heights[position] = boxes[current][1]\n        for earlier in range(position):\n            top = order[earlier]\n            if all(boxes[top][dimension] < boxes[current][dimension] for dimension in range(3)):\n                heights[position] = max(heights[position], boxes[current][1] + heights[earlier])\n        best = max(best, heights[position])\n    return best\n",
+        "prefix": "",
+        "suffix": "",
+        "harness": "import time\nimport solution as user\nMaximumBoxStackHeight = user.MaximumBoxStackHeight\n\nimport json\nKINDS={'8.13': 'i'}\ndef invoke(row):\n    ref,args=row['ref'],row['arguments']\n    if ref == '8.13': return MaximumBoxStackHeight(*args)\n    raise ValueError('Unknown reference')\ndef execute(row):\n    args=row['arguments'];before=json.dumps(args);outer=[v for v in args if type(v) is list];rows=[(v,list(v)) for v in outer if v and type(v[0]) is list]\n    actual=invoke(row);kind=KINDS[row['ref']]\n    valid=(type(actual) is list and all(type(v) is str for v in actual)) if kind=='strings' else (type(actual) is list and all(type(r) is list and all(type(v) is int for v in r) for r in actual)) if kind in ('sets','arrangements') else type(actual) is int and -2147483648<=actual<=2147483647\n    return dict(actual=actual,mutationOk=valid and json.dumps(args)==before and all(any(v is original for v in args) for original in outer) and all(len(v)==len(old) and all(a is b for a,b in zip(v,old)) for v,old in rows))\nresults=[]\nfor row in json.load(open('cases.json',encoding='utf-8')):\n    clock = time.perf_counter()\n    try:results.append(execute(row))\n    except Exception as error:results.append(dict(error=repr(error)))\n    results[-1] = dict(observation=results[-1], elapsedMs=(time.perf_counter()-clock)*1000)\njson.dump(results,open('results.json','w',encoding='utf-8'))\n",
+        "reference": ""
+      },
+      "cpp": {
+        "signature": "int MaximumBoxStackHeight(const std::vector<std::vector<int>>& boxes)",
+        "starterCode": "class Solution {\n public:\n  int MaximumBoxStackHeight(const std::vector<std::vector<int>>& boxes) {\n    return 0;\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  int MaximumBoxStackHeight(const std::vector<std::vector<int>>& boxes) {\n    int n = static_cast<int>(boxes.size());\n    std::vector<int> order(n), heights(n);\n    for (int i = 0; i < n; ++i)\n      order[i] = i;\n    std::sort(order.begin(), order.end(), [&](int a, int b) { return boxes[a][0] < boxes[b][0]; });\n    int best = 0;\n    for (int i = 0; i < n; ++i) {\n      int current = order[i];\n      heights[i] = boxes[current][1];\n      for (int j = 0; j < i; ++j) {\n        int top = order[j];\n        if (boxes[top][0] < boxes[current][0] && boxes[top][1] < boxes[current][1] &&\n            boxes[top][2] < boxes[current][2])\n          heights[i] = std::max(heights[i], boxes[current][1] + heights[j]);\n      }\n      best = std::max(best, heights[i]);\n    }\n    return best;\n  }\n};\n",
+        "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n",
+        "suffix": "",
+        "harness": "#include <chrono>\n#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include \"solution.cpp\"\n#include <fstream>\n#include \"test_framework/json.h\"\nusing json=nlohmann::json;\n\nbool sameRows(const std::vector<std::vector<int>>& values,const std::vector<const int*>& rows){if(values.size()!=rows.size())return false;for(size_t i=0;i<rows.size();++i)if(values[i].data()!=rows[i])return false;return true;}\njson execute(const json& row){std::string reference=row[\"ref\"].get<std::string>();const auto& args=row[\"arguments\"];if(reference==\"8.13\"){auto p0=args[0].get<std::vector<std::vector<int>>>();auto before0=p0;std::vector<const int*> rows0;for(const auto& row:p0)rows0.push_back(row.data());auto actual=Solution().MaximumBoxStackHeight(p0);return json{{\"actual\",actual},{\"mutationOk\",(p0==before0) && (sameRows(p0,rows0))}};}throw std::runtime_error(\"Unknown reference\");}\njson timedExecute(const json& row) {\nauto start=std::chrono::steady_clock::now();json observed;\ntry { observed=execute(row); } catch(const std::exception& error) { observed=json{{\"error\",error.what()}}; }\ndouble elapsed=std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-start).count();\nreturn json{{\"observation\",observed},{\"elapsedMs\",elapsed}};\n}\nint main(){std::ifstream input(\"cases.json\");json rows;input>>rows;json results=json::array();for(const auto& row:rows){try{results.push_back(timedExecute(row));}catch(const std::exception& error){results.push_back(json{{\"error\",error.what()}});}}std::ofstream(\"results.json\")<<results;}\n",
+        "reference": ""
+      },
+      "java": {
+        "signature": "int MaximumBoxStackHeight(int[][] boxes)",
+        "starterCode": "class Solution {\n  public int MaximumBoxStackHeight(int[][] boxes) {\n    return 0;\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public int MaximumBoxStackHeight(int[][] boxes) {\n    int n = boxes.length;\n    Integer[] order = new Integer[n];\n    int[] heights = new int[n];\n    for (int i = 0; i < n; ++i)\n      order[i] = i;\n    Arrays.sort(order, (a, b) -> Integer.compare(boxes[a][0], boxes[b][0]));\n    int best = 0;\n    for (int i = 0; i < n; ++i) {\n      int current = order[i];\n      heights[i] = boxes[current][1];\n      for (int j = 0; j < i; ++j) {\n        int top = order[j];\n        if (boxes[top][0] < boxes[current][0] && boxes[top][1] < boxes[current][1]\n            && boxes[top][2] < boxes[current][2])\n          heights[i] = Math.max(heights[i], boxes[current][1] + heights[j]);\n      }\n      best = Math.max(best, heights[i]);\n    }\n    return best;\n  }\n}\n",
+        "prefix": "import java.util.*;\n",
+        "suffix": "",
+        "harness": "import java.util.*;\nimport java.nio.file.*;\nimport epi.test_framework.minimal_json.*;\n\npublic class Harness {\nstatic int[] integers(JsonArray values){int[] output=new int[values.size()];for(int i=0;i<output.length;++i)output[i]=values.get(i).asInt();return output;}\nstatic int[][] matrix(JsonArray values){int[][] output=new int[values.size()][];for(int i=0;i<output.length;++i)output[i]=integers(values.get(i).asArray());return output;}\nstatic boolean sameRows(int[][] values,int[][] before){if(values.length!=before.length)return false;for(int i=0;i<values.length;++i)if(values[i]!=before[i])return false;return true;}\nstatic JsonValue encode(Object value){if(value==null)return Json.NULL;if(value instanceof Integer v)return Json.value(v);if(value instanceof String v)return Json.value(v);var result=new JsonArray();if(value instanceof int[] values){for(int v:values)result.add(v);}else if(value instanceof int[][] values){for(int[] v:values)result.add(encode(v));}else if(value instanceof Iterable<?> values){for(Object v:values)result.add(encode(v));}else throw new IllegalArgumentException(\"Invalid result\");return result;}\nstatic JsonValue execute(JsonObject row){String reference=row.get(\"ref\").asString();var args=row.get(\"arguments\").asArray();if(reference.equals(\"8.13\")){int[][] p0=matrix(args.get(0).asArray());String before0=encode(p0).toString();int[][] rows0=p0.clone();var actual=new Solution().MaximumBoxStackHeight(p0);return new JsonObject().add(\"actual\",encode(actual)).add(\"mutationOk\",(encode(p0).toString().equals(before0)) && (sameRows(p0,rows0)));}throw new RuntimeException(\"Unknown reference\");}\nstatic JsonValue timedExecute(JsonObject row) {\nlong start=System.nanoTime();JsonValue observed;\ntry { observed=execute(row); } catch(Throwable error) { observed=new JsonObject().add(\"error\",error.toString()); }\nreturn new JsonObject().add(\"observation\",observed).add(\"elapsedMs\",(System.nanoTime()-start)/1000000.0);\n}\npublic static void main(String[] ignored)throws Exception{var results=new JsonArray();for(var row:Json.parse(Files.readString(Path.of(\"cases.json\"))).asArray()){try{results.add(timedExecute(row.asObject()));}catch(Throwable error){results.add(new JsonObject().add(\"error\",error.toString()));}}Files.writeString(Path.of(\"results.json\"),results.toString());}\n}\n",
+        "reference": ""
+      }
+    }
+  },
+  {
+    "id": "ctci6_8_14",
+    "ref": "8.14",
+    "title": "Boolean Evaluation",
+    "description": "Count the full binary parenthesizations of expression that evaluate to desired. Preserve the order of literals and operators. Operators are Boolean AND (&), OR (|) and XOR (^); ignore ordinary operator precedence because each parenthesization determines evaluation order.",
+    "constraints": [
+      "The expression is empty, or alternates single literals 0/1 and operators &/|/^ with no whitespace or existing parentheses. There are at most 13 literals. desired is a boolean. Return the exact integer count.",
+      "An empty expression has zero parenthesizations for either desired value. A single literal has one when it matches desired and zero otherwise. Count different binary grouping structures separately, even if their evaluations agree.",
+      "The limit gives at most Catalan(12)=208012 groupings, so all counts fit signed 32-bit integers. Do not reorder symbols or count short-circuit execution paths. Preserve inputs."
+    ],
+    "method": "CountBooleanParenthesizations",
+    "params": [
+      [
+        "expression",
+        "s"
+      ],
+      [
+        "desired",
+        "b"
+      ]
+    ],
+    "result": "i",
+    "mutation": "none",
+    "testCount": 1090,
+    "batch": 8,
+    "stagingDirectory": "",
+    "example": [
+      [
+        "1^0|1",
+        true
+      ],
+      1
+    ],
+    "languages": {
+      "csharp": {
+        "signature": "int CountBooleanParenthesizations(string expression, bool desired)",
+        "starterCode": "public class Solution\n{\n    public int CountBooleanParenthesizations(string expression, bool desired)\n    {\n        return 0;\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public int CountBooleanParenthesizations(string expression, bool desired)\n    {\n        if (expression.Length == 0)\n            return 0;\n        int count = (expression.Length + 1) / 2;\n        int[,] truth = new int[count, count], falsity = new int[count, count];\n        for (int i = 0; i < count; ++i)\n        {\n            truth[i, i] = expression[2 * i] == '1' ? 1 : 0;\n            falsity[i, i] = 1 - truth[i, i];\n        }\n        for (int length = 2; length <= count; ++length)\n        {\n            for (int low = 0; low + length <= count; ++low)\n            {\n                int high = low + length - 1;\n                for (int split = low; split < high; ++split)\n                {\n                    int lt = truth[low, split], lf = falsity[low, split],\n                        rt = truth[split + 1, high], rf = falsity[split + 1, high],\n                        total = (lt + lf) * (rt + rf);\n                    char operation = expression[2 * split + 1];\n                    int trueCount = operation == '&'   ? lt * rt\n                                    : operation == '|' ? total - lf * rf\n                                                       : lt * rf + lf * rt;\n                    truth[low, high] += trueCount;\n                    falsity[low, high] += total - trueCount;\n                }\n            }\n        }\n        return desired ? truth[0, count - 1] : falsity[0, count - 1];\n    }\n}\n",
+        "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\n",
+        "suffix": "",
+        "harness": "using System;\nusing System.Collections.Generic;\nusing System.Text;\nusing System.IO;\nusing System.Text.Json;\n\nclass Harness {\nstatic object Execute(JsonElement row){string reference=row.GetProperty(\"ref\").GetString()!;var args=row.GetProperty(\"arguments\");if(reference==\"8.14\"){var p0=JsonSerializer.Deserialize<string>(args[0].GetRawText())!;var p1=JsonSerializer.Deserialize<bool>(args[1].GetRawText())!;var actual=new Solution().CountBooleanParenthesizations(p0,p1);return new {actual,mutationOk=true};}throw new Exception(\"Unknown reference\");}\nstatic object TimedExecute(JsonElement row) {\nvar clock=System.Diagnostics.Stopwatch.StartNew();object observed;\ntry { observed=Execute(row); } catch(Exception error) { observed=new {error=error.ToString()}; }\nreturn new {observation=observed,elapsedMs=clock.Elapsed.TotalMilliseconds};\n}\nstatic void Main(){using var document=JsonDocument.Parse(File.ReadAllText(\"cases.json\"));var results=new List<object>();foreach(var row in document.RootElement.EnumerateArray()){try{results.Add(TimedExecute(row));}catch(Exception error){results.Add(new {error=error.ToString()});}}File.WriteAllText(\"results.json\",JsonSerializer.Serialize(results));}\n}\n",
+        "reference": ""
+      },
+      "javascript": {
+        "signature": "function CountBooleanParenthesizations(expression, desired)",
+        "starterCode": "function CountBooleanParenthesizations(expression, desired) {\n  return 0;\n}\n",
+        "solutionCode": "function CountBooleanParenthesizations(expression, desired) {\n  if (expression.length === 0) return 0;\n  const count = (expression.length + 1) / 2,\n    truth = Array.from({ length: count }, () => Array(count).fill(0)),\n    falsity = Array.from({ length: count }, () => Array(count).fill(0));\n  for (let i = 0; i < count; ++i) {\n    truth[i][i] = expression[2 * i] === \"1\" ? 1 : 0;\n    falsity[i][i] = 1 - truth[i][i];\n  }\n  for (let length = 2; length <= count; ++length) {\n    for (let low = 0; low + length <= count; ++low) {\n      const high = low + length - 1;\n      for (let split = low; split < high; ++split) {\n        const lt = truth[low][split],\n          lf = falsity[low][split],\n          rt = truth[split + 1][high],\n          rf = falsity[split + 1][high],\n          total = (lt + lf) * (rt + rf),\n          operation = expression[2 * split + 1],\n          trueCount =\n            operation === \"&\" ? lt * rt : operation === \"|\" ? total - lf * rf : lt * rf + lf * rt;\n        truth[low][high] += trueCount;\n        falsity[low][high] += total - trueCount;\n      }\n    }\n  }\n  return desired ? truth[0][count - 1] : falsity[0][count - 1];\n}\n",
+        "prefix": "'use strict';\n",
+        "suffix": "\nmodule.exports = {CountBooleanParenthesizations};\n",
+        "harness": "const user = require('./solution.js');\nconst CountBooleanParenthesizations = user.CountBooleanParenthesizations;\n\nconst fs=require('node:fs'),kinds={\"8.14\": \"i\"};\nfunction invoke(row){const ref=row.ref,args=row.arguments;if(ref===\"8.14\")return CountBooleanParenthesizations(...args);throw new Error('Unknown reference');}\nfunction execute(row){const args=row.arguments,before=JSON.stringify(args),outer=args.filter(Array.isArray),rows=outer.filter(v=>v.length&&Array.isArray(v[0])).map(v=>[v,v.slice()]);const actual=invoke(row),kind=kinds[row.ref];const valid=kind==='strings'?Array.isArray(actual)&&actual.every(v=>typeof v==='string'):['sets','arrangements'].includes(kind)?Array.isArray(actual)&&actual.every(r=>Array.isArray(r)&&r.every(Number.isInteger)):Number.isInteger(actual)&&actual>=-2147483648&&actual<=2147483647;return {actual,mutationOk:valid&&JSON.stringify(args)===before&&outer.every(v=>args.includes(v))&&rows.every(([v,old])=>v.length===old.length&&v.every((r,i)=>r===old[i]))};}\nconst results=JSON.parse(fs.readFileSync('cases.json','utf8')).map(timed(row=>{try{return execute(row);}catch(error){return {error:String(error)};}}));\nfs.writeFileSync('results.json',JSON.stringify(results));\n\nfunction timed(fn) { return row => { const start=performance.now(); let observation; try { observation=fn(row); } catch(error) { observation={error:String(error)}; } return {observation,elapsedMs:performance.now()-start}; }; }\n",
+        "reference": ""
+      },
+      "python": {
+        "signature": "def CountBooleanParenthesizations(expression: str, desired: bool) -> int",
+        "starterCode": "def CountBooleanParenthesizations(expression: str, desired: bool) -> int:\n    return 0\n",
+        "solutionCode": "def CountBooleanParenthesizations(expression: str, desired: bool) -> int:\n    if not expression:\n        return 0\n    count = (len(expression) + 1) // 2\n    truth = [[0] * count for _ in range(count)]\n    falsity = [[0] * count for _ in range(count)]\n    for index in range(count):\n        truth[index][index] = 1 if expression[2 * index] == \"1\" else 0\n        falsity[index][index] = 1 - truth[index][index]\n    for length in range(2, count + 1):\n        for low in range(count - length + 1):\n            high = low + length - 1\n            for split in range(low, high):\n                lt, lf = truth[low][split], falsity[low][split]\n                rt, rf = truth[split + 1][high], falsity[split + 1][high]\n                total = (lt + lf) * (rt + rf)\n                operation = expression[2 * split + 1]\n                true_count = (\n                    lt * rt\n                    if operation == \"&\"\n                    else total - lf * rf\n                    if operation == \"|\"\n                    else lt * rf + lf * rt\n                )\n                truth[low][high] += true_count\n                falsity[low][high] += total - true_count\n    return truth[0][count - 1] if desired else falsity[0][count - 1]\n",
+        "prefix": "",
+        "suffix": "",
+        "harness": "import time\nimport solution as user\nCountBooleanParenthesizations = user.CountBooleanParenthesizations\n\nimport json\nKINDS={'8.14': 'i'}\ndef invoke(row):\n    ref,args=row['ref'],row['arguments']\n    if ref == '8.14': return CountBooleanParenthesizations(*args)\n    raise ValueError('Unknown reference')\ndef execute(row):\n    args=row['arguments'];before=json.dumps(args);outer=[v for v in args if type(v) is list];rows=[(v,list(v)) for v in outer if v and type(v[0]) is list]\n    actual=invoke(row);kind=KINDS[row['ref']]\n    valid=(type(actual) is list and all(type(v) is str for v in actual)) if kind=='strings' else (type(actual) is list and all(type(r) is list and all(type(v) is int for v in r) for r in actual)) if kind in ('sets','arrangements') else type(actual) is int and -2147483648<=actual<=2147483647\n    return dict(actual=actual,mutationOk=valid and json.dumps(args)==before and all(any(v is original for v in args) for original in outer) and all(len(v)==len(old) and all(a is b for a,b in zip(v,old)) for v,old in rows))\nresults=[]\nfor row in json.load(open('cases.json',encoding='utf-8')):\n    clock = time.perf_counter()\n    try:results.append(execute(row))\n    except Exception as error:results.append(dict(error=repr(error)))\n    results[-1] = dict(observation=results[-1], elapsedMs=(time.perf_counter()-clock)*1000)\njson.dump(results,open('results.json','w',encoding='utf-8'))\n",
+        "reference": ""
+      },
+      "cpp": {
+        "signature": "int CountBooleanParenthesizations(const std::string& expression, bool desired)",
+        "starterCode": "class Solution {\n public:\n  int CountBooleanParenthesizations(const std::string& expression, bool desired) {\n    return 0;\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  int CountBooleanParenthesizations(const std::string& expression, bool desired) {\n    if (static_cast<int>(expression.size()) == 0)\n      return 0;\n    int count = (static_cast<int>(expression.size()) + 1) / 2;\n    std::vector<std::vector<int>> truth(count, std::vector<int>(count)),\n        falsity(count, std::vector<int>(count));\n    for (int i = 0; i < count; ++i) {\n      truth[i][i] = expression[2 * i] == '1' ? 1 : 0;\n      falsity[i][i] = 1 - truth[i][i];\n    }\n    for (int length = 2; length <= count; ++length) {\n      for (int low = 0; low + length <= count; ++low) {\n        int high = low + length - 1;\n        for (int split = low; split < high; ++split) {\n          int lt = truth[low][split], lf = falsity[low][split], rt = truth[split + 1][high],\n              rf = falsity[split + 1][high], total = (lt + lf) * (rt + rf);\n          char operation = expression[2 * split + 1];\n          int trueCount = operation == '&'   ? lt * rt\n                          : operation == '|' ? total - lf * rf\n                                             : lt * rf + lf * rt;\n          truth[low][high] += trueCount;\n          falsity[low][high] += total - trueCount;\n        }\n      }\n    }\n    return desired ? truth[0][count - 1] : falsity[0][count - 1];\n  }\n};\n",
+        "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n",
+        "suffix": "",
+        "harness": "#include <chrono>\n#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include \"solution.cpp\"\n#include <fstream>\n#include \"test_framework/json.h\"\nusing json=nlohmann::json;\n\nbool sameRows(const std::vector<std::vector<int>>& values,const std::vector<const int*>& rows){if(values.size()!=rows.size())return false;for(size_t i=0;i<rows.size();++i)if(values[i].data()!=rows[i])return false;return true;}\njson execute(const json& row){std::string reference=row[\"ref\"].get<std::string>();const auto& args=row[\"arguments\"];if(reference==\"8.14\"){auto p0=args[0].get<std::string>();auto p1=args[1].get<bool>();auto actual=Solution().CountBooleanParenthesizations(p0,p1);return json{{\"actual\",actual},{\"mutationOk\",true}};}throw std::runtime_error(\"Unknown reference\");}\njson timedExecute(const json& row) {\nauto start=std::chrono::steady_clock::now();json observed;\ntry { observed=execute(row); } catch(const std::exception& error) { observed=json{{\"error\",error.what()}}; }\ndouble elapsed=std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-start).count();\nreturn json{{\"observation\",observed},{\"elapsedMs\",elapsed}};\n}\nint main(){std::ifstream input(\"cases.json\");json rows;input>>rows;json results=json::array();for(const auto& row:rows){try{results.push_back(timedExecute(row));}catch(const std::exception& error){results.push_back(json{{\"error\",error.what()}});}}std::ofstream(\"results.json\")<<results;}\n",
+        "reference": ""
+      },
+      "java": {
+        "signature": "int CountBooleanParenthesizations(String expression, boolean desired)",
+        "starterCode": "class Solution {\n  public int CountBooleanParenthesizations(String expression, boolean desired) {\n    return 0;\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public int CountBooleanParenthesizations(String expression, boolean desired) {\n    if (expression.length() == 0)\n      return 0;\n    int count = (expression.length() + 1) / 2;\n    int[][] truth = new int[count][count], falsity = new int[count][count];\n    for (int i = 0; i < count; ++i) {\n      truth[i][i] = expression.charAt(2 * i) == '1' ? 1 : 0;\n      falsity[i][i] = 1 - truth[i][i];\n    }\n    for (int length = 2; length <= count; ++length) {\n      for (int low = 0; low + length <= count; ++low) {\n        int high = low + length - 1;\n        for (int split = low; split < high; ++split) {\n          int lt = truth[low][split], lf = falsity[low][split], rt = truth[split + 1][high],\n              rf = falsity[split + 1][high], total = (lt + lf) * (rt + rf);\n          char operation = expression.charAt(2 * split + 1);\n          int trueCount = operation == '&' ? lt * rt\n              : operation == '|'           ? total - lf * rf\n                                           : lt * rf + lf * rt;\n          truth[low][high] += trueCount;\n          falsity[low][high] += total - trueCount;\n        }\n      }\n    }\n    return desired ? truth[0][count - 1] : falsity[0][count - 1];\n  }\n}\n",
+        "prefix": "import java.util.*;\n",
+        "suffix": "",
+        "harness": "import java.util.*;\nimport java.nio.file.*;\nimport epi.test_framework.minimal_json.*;\n\npublic class Harness {\nstatic int[] integers(JsonArray values){int[] output=new int[values.size()];for(int i=0;i<output.length;++i)output[i]=values.get(i).asInt();return output;}\nstatic int[][] matrix(JsonArray values){int[][] output=new int[values.size()][];for(int i=0;i<output.length;++i)output[i]=integers(values.get(i).asArray());return output;}\nstatic boolean sameRows(int[][] values,int[][] before){if(values.length!=before.length)return false;for(int i=0;i<values.length;++i)if(values[i]!=before[i])return false;return true;}\nstatic JsonValue encode(Object value){if(value==null)return Json.NULL;if(value instanceof Integer v)return Json.value(v);if(value instanceof String v)return Json.value(v);var result=new JsonArray();if(value instanceof int[] values){for(int v:values)result.add(v);}else if(value instanceof int[][] values){for(int[] v:values)result.add(encode(v));}else if(value instanceof Iterable<?> values){for(Object v:values)result.add(encode(v));}else throw new IllegalArgumentException(\"Invalid result\");return result;}\nstatic JsonValue execute(JsonObject row){String reference=row.get(\"ref\").asString();var args=row.get(\"arguments\").asArray();if(reference.equals(\"8.14\")){var p0=args.get(0).asString();var p1=args.get(1).asBoolean();var actual=new Solution().CountBooleanParenthesizations(p0,p1);return new JsonObject().add(\"actual\",encode(actual)).add(\"mutationOk\",true);}throw new RuntimeException(\"Unknown reference\");}\nstatic JsonValue timedExecute(JsonObject row) {\nlong start=System.nanoTime();JsonValue observed;\ntry { observed=execute(row); } catch(Throwable error) { observed=new JsonObject().add(\"error\",error.toString()); }\nreturn new JsonObject().add(\"observation\",observed).add(\"elapsedMs\",(System.nanoTime()-start)/1000000.0);\n}\npublic static void main(String[] ignored)throws Exception{var results=new JsonArray();for(var row:Json.parse(Files.readString(Path.of(\"cases.json\"))).asArray()){try{results.add(timedExecute(row.asObject()));}catch(Throwable error){results.add(new JsonObject().add(\"error\",error.toString()));}}Files.writeString(Path.of(\"results.json\"),results.toString());}\n}\n",
         "reference": ""
       }
     }

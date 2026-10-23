@@ -85,3 +85,15 @@ Next measurable checkpoint: 41 approved local coding exercises / 205 language
 pairs, with the four new exercises' actual case totals, starter rejection counts,
 per-packet wall times and unchanged-pair cache reuse reported. If a new exercise
 fails, report it separately; do not count a draft or weaken its technical task.
+
+## First optimized batch result
+
+8.3, 8.12, 8.13 and 8.14 passed all five languages. Coverage is now
+41 exercises / 205 language pairs / 52,645 correct cases at each execution
+layer, with 205 rejected starters. Separate-module invocation: 72.68 seconds,
+with unaffected matching receipts reused. Standalone eleven-exercise chapter
+run: 15.17 seconds; final verifier-input reconciliation run: 13.78 seconds.
+262 backend tests pass. Five real HTTP submissions across all five languages
+accepted the new API shapes; local bank registration is 375 problems.
+A new C# grader local-variable name collision was caught at compile time and
+fixed before integration. Final whole-bank acceptance remains pending.

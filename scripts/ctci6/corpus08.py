@@ -68,6 +68,38 @@ def oracle(ref, args):
 
     if ref in ("8.1", "8.5", "8.11"):
         return basic_oracle(ref, args)
+    if ref == "8.3":
+        return next((i for i, value in enumerate(args[0]) if i == value), -1)
+    if ref == "8.12":
+        # Enumerate full permutations, independent of the row/mask solution.
+        return [list(board) for board in permutations(range(8))
+                if all(abs(board[a] - board[b]) != b - a
+                       for a in range(8) for b in range(a + 1, 8))]
+    if ref == "8.13":
+        # Exhaust all fitting paths without sorting or the solution's DP order.
+        boxes = args[0]
+        def above(bottom):
+            return boxes[bottom][1] + max(
+                (above(top) for top in range(len(boxes))
+                 if all(boxes[top][d] < boxes[bottom][d] for d in range(3))),
+                default=0)
+        return max((above(i) for i in range(len(boxes))), default=0)
+    if ref == "8.14":
+        from functools import lru_cache
+        @lru_cache(None)
+        def evaluations(text):
+            if not text:
+                return ()
+            if len(text) == 1:
+                return (text == "1",)
+            result = []
+            for split in range(1, len(text), 2):
+                for left in evaluations(text[:split]):
+                    for right in evaluations(text[split + 1:]):
+                        result.append(left and right if text[split] == "&" else
+                                      left or right if text[split] == "|" else left != right)
+            return tuple(result)
+        return sum(value == args[1] for value in evaluations(args[0]))
     if ref == "8.4":
         return [
             list(subset)
@@ -92,7 +124,7 @@ def oracle(ref, args):
 
 
 def cases(spec):
-    from itertools import product
+    from itertools import product, combinations, combinations_with_replacement
     import json
 
     ref = spec["ref"]
@@ -100,7 +132,40 @@ def cases(spec):
         return basic_cases(spec)
     rng = random.Random(68000 + int(ref.split(".")[1]))
     args = [spec["example"][0]]
-    if ref == "8.4":
+    if ref == "8.3":
+        args += [[list(values), False] for n in range(6)
+                 for values in combinations_with_replacement(range(-2, 5), n)]
+        args += [[list(values), True] for n in range(7)
+                 for values in combinations(range(-3, 8), n)]
+        args += [[values, flag] for flag in (True, False)
+                 for values in ([-2147483648, 2147483647], list(range(10000)),
+                                list(range(-10000, 0)), list(range(1, 10001))) ]
+        args += [[[4] * 10000, False], [[-2147483648] * 10000, False]]
+    elif ref == "8.12":
+        # Deliberately preserve repeated no-argument calls to catch accumulated state.
+        answer = oracle(ref, [])
+        return [dict(arguments=[], expected=answer) for _ in range(3)]
+    elif ref == "8.13":
+        args += [[values] for values in ([], [[1, 1, 1]], [[2, 2, 2]] * 3,
+                 [[5, 5, 5], [5, 4, 4]], [[5, 5, 5], [4, 5, 4]],
+                 [[5, 5, 5], [4, 4, 5]], [[10, 1, 10], [1, 10, 1]],
+                 [[i, i, i] for i in range(1, 13)], [[1000, 1000, 1000]])]
+        args += [[[list(box) for box in values]]
+                 for values in combinations_with_replacement(list(product((1, 2), repeat=3)), 3)]
+        args += [[[[rng.randrange(1, 15) for _ in range(3)] for _ in range(rng.randrange(13))]]
+                 for _ in range(60)]
+    elif ref == "8.14":
+        args += [["", desired] for desired in (True, False)]
+        for n in range(1, 5):
+            for literals in product("01", repeat=n):
+                for operators in product("&|^", repeat=n-1):
+                    text = "".join(literals[i] + (operators[i] if i < n-1 else "") for i in range(n))
+                    args += [[text, desired] for desired in (False, True)]
+        args += [[operation.join([literal] * 13), desired]
+                 for operation in "&|^" for literal in "01" for desired in (False, True)]
+        args += [["".join(rng.choice("01") + (rng.choice("&|^") if i < 6 else "")
+                         for i in range(7)), desired] for desired in (False, True) for _ in range(20)]
+    elif ref == "8.4":
         args += [
             [a]
             for a in ([], [1], [-2147483648, 2147483647], [3, 1, 2], list(range(12)))
@@ -138,6 +203,12 @@ def cases(spec):
 def canonical(ref, value):
     if type(value) is not list:
         raise ValueError("Return a collection")
+    if ref == "8.12":
+        if any(type(row) is not list or len(row) != 8
+               or any(type(v) is not int or not 0 <= v < 8 for v in row)
+               for row in value):
+            raise ValueError("Return eight column integers per board")
+        return sorted(tuple(row) for row in value)
     if ref == "8.4":
         if any(
             type(row) is not list
@@ -153,7 +224,13 @@ def canonical(ref, value):
 
 
 def valid_observation(ref, case, observed):
-    if ref in ("8.1", "8.5", "8.11"):
+    if ref == "8.3":
+        if not isinstance(observed, dict) or observed.get("mutationOk") is not True:
+            return False
+        actual, values = observed.get("actual"), case["arguments"][0]
+        return type(actual) is int and ((actual == -1 and not any(i == v for i, v in enumerate(values)))
+                                       or 0 <= actual < len(values) and values[actual] == actual)
+    if ref in ("8.1", "8.5", "8.11", "8.13", "8.14"):
         return basic_match(case, observed)
     if not isinstance(observed, dict) or observed.get("mutationOk") is not True:
         return False

@@ -136,7 +136,7 @@ def verify(only_ref=None, only_language=None, starters=False):
                         grader=grader_hashes[
                             "combinatorial"
                             if entry["batch"] == 8
-                            and entry["result"] in ("sets", "strings")
+                            and (entry["result"] in ("sets", "strings", "arrangements") or entry["ref"] == "8.3")
                             else {
                                 1: "core",
                                 2: "lists",
@@ -201,7 +201,7 @@ def verify(only_ref=None, only_language=None, starters=False):
                     accepted = (
                         recursive_match(entry["ref"], case, observed)
                         if entry["batch"] == 8
-                        and entry["result"] in ("sets", "strings")
+                        and (entry["result"] in ("sets", "strings", "arrangements") or entry["ref"] == "8.3")
                         else core_match(case, observed)
                         if entry["batch"] in (1, 5, 8)
                         else valid_observation(entry["ref"], case, observed)

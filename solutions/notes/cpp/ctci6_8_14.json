@@ -1,0 +1,20 @@
+{
+  "explanation": "Every full grouping has a unique outermost operator split. Count true and false possibilities for both sides of each split, then combine them with that operator's truth table. Computing all intervals once prevents repeated evaluation of the same substring and accounts for every grouping rather than applying standard precedence.",
+  "correctness": "A single-literal interval has exactly its literal value. For a longer interval, every parenthesization selects one unique outer split and one grouping for each side. By induction the four combinations of left/right truth counts count exactly those paired choices. AND is true only for true/true, OR is false only for false/false, and XOR is true exactly when sides differ. Adding these disjoint possibilities over all splits yields the exact true/false counts for the interval. Increasing interval length ensures both sides are already known; the full interval count for desired is the answer.",
+  "walkthrough": "For 1^0|1, the two groupings are (1^0)|1, which is true, and 1^(0|1), which is false. Thus desired=true returns 1 and desired=false also returns 1. The split at | and the split at ^ each describe one distinct outermost grouping; normal operator precedence must not discard either.",
+  "walkthroughCase": {
+    "arguments": [
+      "1^0|1",
+      true
+    ],
+    "expected": 1
+  },
+  "timeComplexity": "O(n^3) time for n literals: O(n^2) intervals and at most n outer split positions each.",
+  "spaceComplexity": "O(n^2) auxiliary storage for separate true and false interval tables.",
+  "edgeCases": [
+    "Empty expression and single true/false literals.",
+    "Different groupings of the same symbols can have different values.",
+    "All-one OR chains at 13 literals hit the maximum grouping count; both desired values are tested."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 8.14. No affiliation is implied."
+}

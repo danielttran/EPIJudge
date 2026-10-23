@@ -1,0 +1,25 @@
+{
+  "explanation": "With strictly increasing integers, values[i]-i is nondecreasing, so the sign at the middle identifies a side that cannot contain a match. With duplicates that sign rule fails. The sorted middle value still bounds which indices in each half might equal their values, so search only those surviving ranges.",
+  "correctness": "In the distinct case, values[mid]>mid implies every later value exceeds its index, while values[mid]<mid implies every earlier value is below its index; discarding that half is safe. In the duplicate case, a left index greater than values[mid] has value at most values[mid] and cannot match, so the left range ends at min(mid-1,values[mid]). Similarly a right index below values[mid] cannot match, so the right range starts at max(mid+1,values[mid]). Test mid, then search both safe ranges. Each recursive range is smaller, and only impossible indices are omitted. A returned index is tested directly; -1 is returned only when every remaining range is exhausted.",
+  "walkthrough": "For [-2,0,2,5] with distinctValues=true, middle index 1 contains 0, so discard indices 0..1. Index 2 contains 2 and is returned. For [0,1,1,3] with the flag false, indices 0,1 and 3 all qualify; returning any of them is correct. A distinct-only sign rule would be unsafe on arbitrary duplicate input.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        -2,
+        0,
+        2,
+        5
+      ],
+      true
+    ],
+    "expected": 2
+  },
+  "timeComplexity": "O(log n) time with the distinct-value promise. The duplicate-aware search is O(n) worst case; pruning does not justify a logarithmic bound for all repeated-value arrays.",
+  "spaceComplexity": "O(1) auxiliary space for the iterative distinct branch; O(log n) recursion depth for the duplicate branch because each surviving child lies in a half interval.",
+  "edgeCases": [
+    "Empty input and no qualifying index.",
+    "Several valid indices and duplicate blocks around the middle.",
+    "Minimum/maximum signed values must not overflow pruning bounds; both flags on valid strictly increasing arrays."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 8.3. No affiliation is implied."
+}

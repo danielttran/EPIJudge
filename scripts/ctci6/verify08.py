@@ -65,7 +65,7 @@ def verify():
                 f"Passed recursion/DP {language} {label} expectations across {len(SPECS)} exercises",
                 flush=True,
             )
-    paths = standalone_paths(8, "staged08")
+    paths = standalone_paths(8, "staged08") + [ROOT / "scripts/ctci6/harness08_typed.py"]
     hashes = {
         str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest()
         for p in paths

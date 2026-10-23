@@ -74,6 +74,33 @@ public sealed class CtciStagingTests
     }
 
     [Fact]
+    public void MagicIndexAcceptsAnyValidIndexAndRejectsFalseAbsence()
+    {
+        var definition = Definition("8.3");
+        var test = Case([new[] { 0, 1, 1, 3 }, false], 0);
+        foreach (int value in new[] { 0, 1, 3 })
+            Assert.Null(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = value, mutationOk = true })));
+        foreach (int value in new[] { -1, 2, 4, int.MaxValue })
+            Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = value, mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = 0, mutationOk = false })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = true, mutationOk = true })));
+        Assert.Null(CtciStagingGrader.FailureReason(definition, Case([Array.Empty<int>(), true], -1), Json(new { actual = -1, mutationOk = true })));
+    }
+
+    [Fact]
+    public void QueensMayReorderBoardsButCannotSortEachBoardsColumns()
+    {
+        var definition = Definition("8.12");
+        var test = definition.Tests(Root, true)[0];
+        var boards = test.Expected.EnumerateArray().Select(board => board.EnumerateArray().Select(v => v.GetInt32()).ToArray()).ToArray();
+        Assert.Equal(92, boards.Length);
+        Assert.Null(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = boards.Reverse(), mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = boards.Select(board => board.Order()), mutationOk = true })));
+        boards[1] = boards[0];
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = boards, mutationOk = true })));
+    }
+
+    [Fact]
     public void PowerSetAcceptsBothKindsOfReorderingButRejectsDuplicateSubsets()
     {
         var test = Case([new[] { 3, 1 }], new int[][] { [], [3], [1], [3, 1] });

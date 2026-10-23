@@ -31695,6 +31695,91 @@
     ]
   },
   {
+    "problemId": "ctci6_8_3",
+    "collection": "ctci6",
+    "language": "csharp",
+    "code": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic class Solution\n{\n    public int FindMagicIndex(int[] values, bool distinctValues)\n    {\n        if (distinctValues)\n        {\n            int low = 0, high = values.Length - 1;\n            while (low <= high)\n            {\n                int middle = low + (high - low) / 2;\n                if (values[middle] == middle)\n                    return middle;\n                if (values[middle] > middle)\n                    high = middle - 1;\n                else\n                    low = middle + 1;\n            }\n            return -1;\n        }\n        int Search(int low, int high)\n        {\n            if (low > high)\n                return -1;\n            int middle = low + (high - low) / 2, value = values[middle];\n            if (value == middle)\n                return middle;\n            int left = Search(low, Math.Min(middle - 1, value));\n            return left != -1 ? left : Search(Math.Max(middle + 1, value), high);\n        }\n        return Search(0, values.Length - 1);\n    }\n}\n",
+    "explanation": "With strictly increasing integers, values[i]-i is nondecreasing, so the sign at the middle identifies a side that cannot contain a match. With duplicates that sign rule fails. The sorted middle value still bounds which indices in each half might equal their values, so search only those surviving ranges.",
+    "timeComplexity": "O(log n) time with the distinct-value promise. The duplicate-aware search is O(n) worst case; pruning does not justify a logarithmic bound for all repeated-value arrays.",
+    "spaceComplexity": "O(1) auxiliary space for the iterative distinct branch; O(log n) recursion depth for the duplicate branch because each surviving child lies in a half interval.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 8.3. No affiliation is implied.",
+    "correctness": "In the distinct case, values[mid]>mid implies every later value exceeds its index, while values[mid]<mid implies every earlier value is below its index; discarding that half is safe. In the duplicate case, a left index greater than values[mid] has value at most values[mid] and cannot match, so the left range ends at min(mid-1,values[mid]). Similarly a right index below values[mid] cannot match, so the right range starts at max(mid+1,values[mid]). Test mid, then search both safe ranges. Each recursive range is smaller, and only impossible indices are omitted. A returned index is tested directly; -1 is returned only when every remaining range is exhausted.",
+    "walkthrough": "For [-2,0,2,5] with distinctValues=true, middle index 1 contains 0, so discard indices 0..1. Index 2 contains 2 and is returned. For [0,1,1,3] with the flag false, indices 0,1 and 3 all qualify; returning any of them is correct. A distinct-only sign rule would be unsafe on arbitrary duplicate input.",
+    "edgeCases": [
+      "Empty input and no qualifying index.",
+      "Several valid indices and duplicate blocks around the middle.",
+      "Minimum/maximum signed values must not overflow pruning bounds; both flags on valid strictly increasing arrays."
+    ]
+  },
+  {
+    "problemId": "ctci6_8_3",
+    "collection": "ctci6",
+    "language": "javascript",
+    "code": "'use strict';\nfunction FindMagicIndex(values, distinctValues) {\n  if (distinctValues) {\n    let low = 0,\n      high = values.length - 1;\n    while (low <= high) {\n      const middle = low + Math.floor((high - low) / 2);\n      if (values[middle] === middle) return middle;\n      if (values[middle] > middle) high = middle - 1;\n      else low = middle + 1;\n    }\n    return -1;\n  }\n  function search(low, high) {\n    if (low > high) return -1;\n    const middle = low + Math.floor((high - low) / 2),\n      value = values[middle];\n    if (value === middle) return middle;\n    const left = search(low, Math.min(middle - 1, value));\n    return left !== -1 ? left : search(Math.max(middle + 1, value), high);\n  }\n  return search(0, values.length - 1);\n}\n\nmodule.exports = {FindMagicIndex};\n",
+    "explanation": "With strictly increasing integers, values[i]-i is nondecreasing, so the sign at the middle identifies a side that cannot contain a match. With duplicates that sign rule fails. The sorted middle value still bounds which indices in each half might equal their values, so search only those surviving ranges.",
+    "timeComplexity": "O(log n) time with the distinct-value promise. The duplicate-aware search is O(n) worst case; pruning does not justify a logarithmic bound for all repeated-value arrays.",
+    "spaceComplexity": "O(1) auxiliary space for the iterative distinct branch; O(log n) recursion depth for the duplicate branch because each surviving child lies in a half interval.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 8.3. No affiliation is implied.",
+    "correctness": "In the distinct case, values[mid]>mid implies every later value exceeds its index, while values[mid]<mid implies every earlier value is below its index; discarding that half is safe. In the duplicate case, a left index greater than values[mid] has value at most values[mid] and cannot match, so the left range ends at min(mid-1,values[mid]). Similarly a right index below values[mid] cannot match, so the right range starts at max(mid+1,values[mid]). Test mid, then search both safe ranges. Each recursive range is smaller, and only impossible indices are omitted. A returned index is tested directly; -1 is returned only when every remaining range is exhausted.",
+    "walkthrough": "For [-2,0,2,5] with distinctValues=true, middle index 1 contains 0, so discard indices 0..1. Index 2 contains 2 and is returned. For [0,1,1,3] with the flag false, indices 0,1 and 3 all qualify; returning any of them is correct. A distinct-only sign rule would be unsafe on arbitrary duplicate input.",
+    "edgeCases": [
+      "Empty input and no qualifying index.",
+      "Several valid indices and duplicate blocks around the middle.",
+      "Minimum/maximum signed values must not overflow pruning bounds; both flags on valid strictly increasing arrays."
+    ]
+  },
+  {
+    "problemId": "ctci6_8_3",
+    "collection": "ctci6",
+    "language": "python",
+    "code": "def FindMagicIndex(values: list[int], distinctValues: bool) -> int:\n    if distinctValues:\n        low, high = 0, len(values) - 1\n        while low <= high:\n            middle = low + (high - low) // 2\n            if values[middle] == middle:\n                return middle\n            if values[middle] > middle:\n                high = middle - 1\n            else:\n                low = middle + 1\n        return -1\n\n    def search(low, high):\n        if low > high:\n            return -1\n        middle = low + (high - low) // 2\n        value = values[middle]\n        if value == middle:\n            return middle\n        left = search(low, min(middle - 1, value))\n        return left if left != -1 else search(max(middle + 1, value), high)\n\n    return search(0, len(values) - 1)\n",
+    "explanation": "With strictly increasing integers, values[i]-i is nondecreasing, so the sign at the middle identifies a side that cannot contain a match. With duplicates that sign rule fails. The sorted middle value still bounds which indices in each half might equal their values, so search only those surviving ranges.",
+    "timeComplexity": "O(log n) time with the distinct-value promise. The duplicate-aware search is O(n) worst case; pruning does not justify a logarithmic bound for all repeated-value arrays.",
+    "spaceComplexity": "O(1) auxiliary space for the iterative distinct branch; O(log n) recursion depth for the duplicate branch because each surviving child lies in a half interval.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 8.3. No affiliation is implied.",
+    "correctness": "In the distinct case, values[mid]>mid implies every later value exceeds its index, while values[mid]<mid implies every earlier value is below its index; discarding that half is safe. In the duplicate case, a left index greater than values[mid] has value at most values[mid] and cannot match, so the left range ends at min(mid-1,values[mid]). Similarly a right index below values[mid] cannot match, so the right range starts at max(mid+1,values[mid]). Test mid, then search both safe ranges. Each recursive range is smaller, and only impossible indices are omitted. A returned index is tested directly; -1 is returned only when every remaining range is exhausted.",
+    "walkthrough": "For [-2,0,2,5] with distinctValues=true, middle index 1 contains 0, so discard indices 0..1. Index 2 contains 2 and is returned. For [0,1,1,3] with the flag false, indices 0,1 and 3 all qualify; returning any of them is correct. A distinct-only sign rule would be unsafe on arbitrary duplicate input.",
+    "edgeCases": [
+      "Empty input and no qualifying index.",
+      "Several valid indices and duplicate blocks around the middle.",
+      "Minimum/maximum signed values must not overflow pruning bounds; both flags on valid strictly increasing arrays."
+    ]
+  },
+  {
+    "problemId": "ctci6_8_3",
+    "collection": "ctci6",
+    "language": "cpp",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\nclass Solution {\n public:\n  int FindMagicIndex(const std::vector<int>& values, bool distinctValues) {\n    if (distinctValues) {\n      int low = 0, high = static_cast<int>(values.size()) - 1;\n      while (low <= high) {\n        int middle = low + (high - low) / 2;\n        if (values[middle] == middle)\n          return middle;\n        if (values[middle] > middle)\n          high = middle - 1;\n        else\n          low = middle + 1;\n      }\n      return -1;\n    }\n    std::function<int(int, int)> search = [&](int low, int high) {\n      if (low > high)\n        return -1;\n      int middle = low + (high - low) / 2, value = values[middle];\n      if (value == middle)\n        return middle;\n      int left = search(low, std::min(middle - 1, value));\n      return left != -1 ? left : search(std::max(middle + 1, value), high);\n    };\n    return search(0, static_cast<int>(values.size()) - 1);\n  }\n};\n",
+    "explanation": "With strictly increasing integers, values[i]-i is nondecreasing, so the sign at the middle identifies a side that cannot contain a match. With duplicates that sign rule fails. The sorted middle value still bounds which indices in each half might equal their values, so search only those surviving ranges.",
+    "timeComplexity": "O(log n) time with the distinct-value promise. The duplicate-aware search is O(n) worst case; pruning does not justify a logarithmic bound for all repeated-value arrays.",
+    "spaceComplexity": "O(1) auxiliary space for the iterative distinct branch; O(log n) recursion depth for the duplicate branch because each surviving child lies in a half interval.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 8.3. No affiliation is implied.",
+    "correctness": "In the distinct case, values[mid]>mid implies every later value exceeds its index, while values[mid]<mid implies every earlier value is below its index; discarding that half is safe. In the duplicate case, a left index greater than values[mid] has value at most values[mid] and cannot match, so the left range ends at min(mid-1,values[mid]). Similarly a right index below values[mid] cannot match, so the right range starts at max(mid+1,values[mid]). Test mid, then search both safe ranges. Each recursive range is smaller, and only impossible indices are omitted. A returned index is tested directly; -1 is returned only when every remaining range is exhausted.",
+    "walkthrough": "For [-2,0,2,5] with distinctValues=true, middle index 1 contains 0, so discard indices 0..1. Index 2 contains 2 and is returned. For [0,1,1,3] with the flag false, indices 0,1 and 3 all qualify; returning any of them is correct. A distinct-only sign rule would be unsafe on arbitrary duplicate input.",
+    "edgeCases": [
+      "Empty input and no qualifying index.",
+      "Several valid indices and duplicate blocks around the middle.",
+      "Minimum/maximum signed values must not overflow pruning bounds; both flags on valid strictly increasing arrays."
+    ]
+  },
+  {
+    "problemId": "ctci6_8_3",
+    "collection": "ctci6",
+    "language": "java",
+    "code": "import java.util.*;\nclass Solution {\n  public int FindMagicIndex(int[] values, boolean distinctValues) {\n    if (distinctValues) {\n      int low = 0, high = values.length - 1;\n      while (low <= high) {\n        int middle = low + (high - low) / 2;\n        if (values[middle] == middle)\n          return middle;\n        if (values[middle] > middle)\n          high = middle - 1;\n        else\n          low = middle + 1;\n      }\n      return -1;\n    }\n    class Finder {\n      int Search(int low, int high) {\n        if (low > high)\n          return -1;\n        int middle = low + (high - low) / 2, value = values[middle];\n        if (value == middle)\n          return middle;\n        int left = Search(low, Math.min(middle - 1, value));\n        return left != -1 ? left : Search(Math.max(middle + 1, value), high);\n      }\n    }\n    return new Finder().Search(0, values.length - 1);\n  }\n}\n",
+    "explanation": "With strictly increasing integers, values[i]-i is nondecreasing, so the sign at the middle identifies a side that cannot contain a match. With duplicates that sign rule fails. The sorted middle value still bounds which indices in each half might equal their values, so search only those surviving ranges.",
+    "timeComplexity": "O(log n) time with the distinct-value promise. The duplicate-aware search is O(n) worst case; pruning does not justify a logarithmic bound for all repeated-value arrays.",
+    "spaceComplexity": "O(1) auxiliary space for the iterative distinct branch; O(log n) recursion depth for the duplicate branch because each surviving child lies in a half interval.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 8.3. No affiliation is implied.",
+    "correctness": "In the distinct case, values[mid]>mid implies every later value exceeds its index, while values[mid]<mid implies every earlier value is below its index; discarding that half is safe. In the duplicate case, a left index greater than values[mid] has value at most values[mid] and cannot match, so the left range ends at min(mid-1,values[mid]). Similarly a right index below values[mid] cannot match, so the right range starts at max(mid+1,values[mid]). Test mid, then search both safe ranges. Each recursive range is smaller, and only impossible indices are omitted. A returned index is tested directly; -1 is returned only when every remaining range is exhausted.",
+    "walkthrough": "For [-2,0,2,5] with distinctValues=true, middle index 1 contains 0, so discard indices 0..1. Index 2 contains 2 and is returned. For [0,1,1,3] with the flag false, indices 0,1 and 3 all qualify; returning any of them is correct. A distinct-only sign rule would be unsafe on arbitrary duplicate input.",
+    "edgeCases": [
+      "Empty input and no qualifying index.",
+      "Several valid indices and duplicate blocks around the middle.",
+      "Minimum/maximum signed values must not overflow pruning bounds; both flags on valid strictly increasing arrays."
+    ]
+  },
+  {
     "problemId": "ctci6_8_4",
     "collection": "ctci6",
     "language": "csharp",
@@ -32202,6 +32287,261 @@
       "Zero and amounts below the smallest non-penny denomination.",
       "Exact denomination boundaries and combinations using repeated coins.",
       "The upper amount bound; exact counts remain within signed 32-bit range."
+    ]
+  },
+  {
+    "problemId": "ctci6_8_12",
+    "collection": "ctci6",
+    "language": "csharp",
+    "code": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic class Solution\n{\n    public List<List<int>> EightQueens()\n    {\n        int[] board = new int[8];\n        var result = new List<List<int>>();\n        void Visit(int row, int usedColumns, int usedDown, int usedUp)\n        {\n            if (row == 8)\n            {\n                result.Add(new List<int>(board));\n                return;\n            }\n            for (int column = 0; column < 8; ++column)\n            {\n                int colBit = 1 << column, downBit = 1 << (row - column + 7),\n                    upBit = 1 << (row + column);\n                if ((usedColumns & colBit) != 0 || (usedDown & downBit) != 0 ||\n                    (usedUp & upBit) != 0)\n                    continue;\n                board[row] = column;\n                Visit(row + 1, usedColumns | colBit, usedDown | downBit, usedUp | upBit);\n            }\n        }\n        Visit(0, 0, 0, 0);\n        return result;\n    }\n}\n",
+    "explanation": "Place one queen per row, which removes row conflicts by construction. A column number and the two diagonal identifiers row-column+7 and row+column identify every remaining conflict. Carry their used-bit masks into the next row to reject an attacking placement immediately.",
+    "timeComplexity": "O(8*8!) as a loose search/output upper bound for this fixed board: one queen per row, column conflicts prune repeated columns, and each visited prefix checks at most eight candidates. The fixed-size API has a bounded search, but its backtracking work is not a linear board scan.",
+    "spaceComplexity": "O(8) buffer and search depth, excluding the returned 92 boards of eight entries each.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 8.12. No affiliation is implied.",
+    "correctness": "At depth r, exactly the first r rows have queens, and the three masks mark precisely their occupied columns and diagonals. A candidate with any marked identifier would attack an earlier queen and is skipped. An unmarked candidate extends the invariant. At row eight, all queens are nonattacking and the board is copied. Every valid board has one allowed column choice at every row, so it follows one unique recursion path and is emitted exactly once. No symmetry filtering removes other valid boards.",
+    "walkthrough": "One complete returned board is [0,4,7,5,2,6,1,3]. For row 1, column 0 is already occupied and column 1 shares the diagonal of the queen at (0,0), so both are rejected. Every subsequent placement checks its column and both diagonals in the same way. A dead-end prefix is abandoned; the search continues rather than returning just the first completed board.",
+    "edgeCases": [
+      "All 92 distinct boards, including reflected and rotated solutions.",
+      "Within-board row order must not be sorted or ignored.",
+      "Repeated invocations must each return a complete valid collection without accumulating duplicates."
+    ]
+  },
+  {
+    "problemId": "ctci6_8_12",
+    "collection": "ctci6",
+    "language": "javascript",
+    "code": "'use strict';\nfunction EightQueens() {\n  const board = Array(8).fill(0),\n    result = [];\n  function visit(row, usedColumns, usedDown, usedUp) {\n    if (row === 8) {\n      result.push(board.slice());\n      return;\n    }\n    for (let column = 0; column < 8; ++column) {\n      const colBit = 1 << column,\n        downBit = 1 << (row - column + 7),\n        upBit = 1 << (row + column);\n      if (usedColumns & colBit || usedDown & downBit || usedUp & upBit) continue;\n      board[row] = column;\n      visit(row + 1, usedColumns | colBit, usedDown | downBit, usedUp | upBit);\n    }\n  }\n  visit(0, 0, 0, 0);\n  return result;\n}\n\nmodule.exports = {EightQueens};\n",
+    "explanation": "Place one queen per row, which removes row conflicts by construction. A column number and the two diagonal identifiers row-column+7 and row+column identify every remaining conflict. Carry their used-bit masks into the next row to reject an attacking placement immediately.",
+    "timeComplexity": "O(8*8!) as a loose search/output upper bound for this fixed board: one queen per row, column conflicts prune repeated columns, and each visited prefix checks at most eight candidates. The fixed-size API has a bounded search, but its backtracking work is not a linear board scan.",
+    "spaceComplexity": "O(8) buffer and search depth, excluding the returned 92 boards of eight entries each.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 8.12. No affiliation is implied.",
+    "correctness": "At depth r, exactly the first r rows have queens, and the three masks mark precisely their occupied columns and diagonals. A candidate with any marked identifier would attack an earlier queen and is skipped. An unmarked candidate extends the invariant. At row eight, all queens are nonattacking and the board is copied. Every valid board has one allowed column choice at every row, so it follows one unique recursion path and is emitted exactly once. No symmetry filtering removes other valid boards.",
+    "walkthrough": "One complete returned board is [0,4,7,5,2,6,1,3]. For row 1, column 0 is already occupied and column 1 shares the diagonal of the queen at (0,0), so both are rejected. Every subsequent placement checks its column and both diagonals in the same way. A dead-end prefix is abandoned; the search continues rather than returning just the first completed board.",
+    "edgeCases": [
+      "All 92 distinct boards, including reflected and rotated solutions.",
+      "Within-board row order must not be sorted or ignored.",
+      "Repeated invocations must each return a complete valid collection without accumulating duplicates."
+    ]
+  },
+  {
+    "problemId": "ctci6_8_12",
+    "collection": "ctci6",
+    "language": "python",
+    "code": "def EightQueens() -> list[list[int]]:\n    board = [0] * 8\n    result = []\n\n    def visit(row, used_columns, used_down, used_up):\n        if row == 8:\n            result.append(board.copy())\n            return\n        for column in range(8):\n            col_bit = 1 << column\n            down_bit = 1 << (row - column + 7)\n            up_bit = 1 << (row + column)\n            if used_columns & col_bit or used_down & down_bit or used_up & up_bit:\n                continue\n            board[row] = column\n            visit(row + 1, used_columns | col_bit, used_down | down_bit, used_up | up_bit)\n\n    visit(0, 0, 0, 0)\n    return result\n",
+    "explanation": "Place one queen per row, which removes row conflicts by construction. A column number and the two diagonal identifiers row-column+7 and row+column identify every remaining conflict. Carry their used-bit masks into the next row to reject an attacking placement immediately.",
+    "timeComplexity": "O(8*8!) as a loose search/output upper bound for this fixed board: one queen per row, column conflicts prune repeated columns, and each visited prefix checks at most eight candidates. The fixed-size API has a bounded search, but its backtracking work is not a linear board scan.",
+    "spaceComplexity": "O(8) buffer and search depth, excluding the returned 92 boards of eight entries each.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 8.12. No affiliation is implied.",
+    "correctness": "At depth r, exactly the first r rows have queens, and the three masks mark precisely their occupied columns and diagonals. A candidate with any marked identifier would attack an earlier queen and is skipped. An unmarked candidate extends the invariant. At row eight, all queens are nonattacking and the board is copied. Every valid board has one allowed column choice at every row, so it follows one unique recursion path and is emitted exactly once. No symmetry filtering removes other valid boards.",
+    "walkthrough": "One complete returned board is [0,4,7,5,2,6,1,3]. For row 1, column 0 is already occupied and column 1 shares the diagonal of the queen at (0,0), so both are rejected. Every subsequent placement checks its column and both diagonals in the same way. A dead-end prefix is abandoned; the search continues rather than returning just the first completed board.",
+    "edgeCases": [
+      "All 92 distinct boards, including reflected and rotated solutions.",
+      "Within-board row order must not be sorted or ignored.",
+      "Repeated invocations must each return a complete valid collection without accumulating duplicates."
+    ]
+  },
+  {
+    "problemId": "ctci6_8_12",
+    "collection": "ctci6",
+    "language": "cpp",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\nclass Solution {\n public:\n  std::vector<std::vector<int>> EightQueens() {\n    std::vector<int> board(8);\n    std::vector<std::vector<int>> result;\n    std::function<void(int, int, int, int)> visit = [&](int row, int usedColumns, int usedDown,\n                                                        int usedUp) {\n      if (row == 8) {\n        result.push_back(board);\n        return;\n      }\n      for (int column = 0; column < 8; ++column) {\n        int colBit = 1 << column, downBit = 1 << (row - column + 7), upBit = 1 << (row + column);\n        if ((usedColumns & colBit) != 0 || (usedDown & downBit) != 0 || (usedUp & upBit) != 0)\n          continue;\n        board[row] = column;\n        visit(row + 1, usedColumns | colBit, usedDown | downBit, usedUp | upBit);\n      }\n    };\n    visit(0, 0, 0, 0);\n    return result;\n  }\n};\n",
+    "explanation": "Place one queen per row, which removes row conflicts by construction. A column number and the two diagonal identifiers row-column+7 and row+column identify every remaining conflict. Carry their used-bit masks into the next row to reject an attacking placement immediately.",
+    "timeComplexity": "O(8*8!) as a loose search/output upper bound for this fixed board: one queen per row, column conflicts prune repeated columns, and each visited prefix checks at most eight candidates. The fixed-size API has a bounded search, but its backtracking work is not a linear board scan.",
+    "spaceComplexity": "O(8) buffer and search depth, excluding the returned 92 boards of eight entries each.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 8.12. No affiliation is implied.",
+    "correctness": "At depth r, exactly the first r rows have queens, and the three masks mark precisely their occupied columns and diagonals. A candidate with any marked identifier would attack an earlier queen and is skipped. An unmarked candidate extends the invariant. At row eight, all queens are nonattacking and the board is copied. Every valid board has one allowed column choice at every row, so it follows one unique recursion path and is emitted exactly once. No symmetry filtering removes other valid boards.",
+    "walkthrough": "One complete returned board is [0,4,7,5,2,6,1,3]. For row 1, column 0 is already occupied and column 1 shares the diagonal of the queen at (0,0), so both are rejected. Every subsequent placement checks its column and both diagonals in the same way. A dead-end prefix is abandoned; the search continues rather than returning just the first completed board.",
+    "edgeCases": [
+      "All 92 distinct boards, including reflected and rotated solutions.",
+      "Within-board row order must not be sorted or ignored.",
+      "Repeated invocations must each return a complete valid collection without accumulating duplicates."
+    ]
+  },
+  {
+    "problemId": "ctci6_8_12",
+    "collection": "ctci6",
+    "language": "java",
+    "code": "import java.util.*;\nclass Solution {\n  public List<List<Integer>> EightQueens() {\n    int[] board = new int[8];\n    List<List<Integer>> result = new ArrayList<>();\n    class Search {\n      void Visit(int row, int usedColumns, int usedDown, int usedUp) {\n        if (row == 8) {\n          var copy = new ArrayList<Integer>();\n          for (int column : board)\n            copy.add(column);\n          result.add(copy);\n          return;\n        }\n        for (int column = 0; column < 8; ++column) {\n          int colBit = 1 << column, downBit = 1 << (row - column + 7), upBit = 1 << (row + column);\n          if ((usedColumns & colBit) != 0 || (usedDown & downBit) != 0 || (usedUp & upBit) != 0)\n            continue;\n          board[row] = column;\n          Visit(row + 1, usedColumns | colBit, usedDown | downBit, usedUp | upBit);\n        }\n      }\n    }\n    new Search().Visit(0, 0, 0, 0);\n    return result;\n  }\n}\n",
+    "explanation": "Place one queen per row, which removes row conflicts by construction. A column number and the two diagonal identifiers row-column+7 and row+column identify every remaining conflict. Carry their used-bit masks into the next row to reject an attacking placement immediately.",
+    "timeComplexity": "O(8*8!) as a loose search/output upper bound for this fixed board: one queen per row, column conflicts prune repeated columns, and each visited prefix checks at most eight candidates. The fixed-size API has a bounded search, but its backtracking work is not a linear board scan.",
+    "spaceComplexity": "O(8) buffer and search depth, excluding the returned 92 boards of eight entries each.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 8.12. No affiliation is implied.",
+    "correctness": "At depth r, exactly the first r rows have queens, and the three masks mark precisely their occupied columns and diagonals. A candidate with any marked identifier would attack an earlier queen and is skipped. An unmarked candidate extends the invariant. At row eight, all queens are nonattacking and the board is copied. Every valid board has one allowed column choice at every row, so it follows one unique recursion path and is emitted exactly once. No symmetry filtering removes other valid boards.",
+    "walkthrough": "One complete returned board is [0,4,7,5,2,6,1,3]. For row 1, column 0 is already occupied and column 1 shares the diagonal of the queen at (0,0), so both are rejected. Every subsequent placement checks its column and both diagonals in the same way. A dead-end prefix is abandoned; the search continues rather than returning just the first completed board.",
+    "edgeCases": [
+      "All 92 distinct boards, including reflected and rotated solutions.",
+      "Within-board row order must not be sorted or ignored.",
+      "Repeated invocations must each return a complete valid collection without accumulating duplicates."
+    ]
+  },
+  {
+    "problemId": "ctci6_8_13",
+    "collection": "ctci6",
+    "language": "csharp",
+    "code": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic class Solution\n{\n    public int MaximumBoxStackHeight(int[][] boxes)\n    {\n        int n = boxes.Length;\n        int[] order = new int[n], heights = new int[n];\n        for (int i = 0; i < n; ++i)\n            order[i] = i;\n        Array.Sort(order, (a, b) => boxes[a][0].CompareTo(boxes[b][0]));\n        int best = 0;\n        for (int i = 0; i < n; ++i)\n        {\n            int current = order[i];\n            heights[i] = boxes[current][1];\n            for (int j = 0; j < i; ++j)\n            {\n                int top = order[j];\n                if (boxes[top][0] < boxes[current][0] && boxes[top][1] < boxes[current][1] &&\n                    boxes[top][2] < boxes[current][2])\n                    heights[i] = Math.Max(heights[i], boxes[current][1] + heights[j]);\n            }\n            best = Math.Max(best, heights[i]);\n        }\n        return best;\n    }\n}\n",
+    "explanation": "A smaller box always has smaller width, so width gives an acyclic processing order. Sort only an auxiliary index list. For each possible bottom box, combine its height with the best already-computed stack whose bottom fits above it; choosing the widest or tallest box greedily would miss valid alternatives.",
+    "timeComplexity": "O(n^2) time for pairwise fit checks after O(n log n) sorting of indices.",
+    "spaceComplexity": "O(n) auxiliary storage for sorted indices and best heights; input boxes are not copied into reordered rows.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 8.13. No affiliation is implied.",
+    "correctness": "Process boxes by increasing width. Any box that can sit above the current box has smaller width and was processed earlier. By induction its stored value is the best stack with that box at the bottom. Taking the maximum over all earlier boxes strictly smaller in width, height and depth therefore finds the best possible top stack for the current bottom. Adding the current height yields its optimal total. Every nonempty feasible stack has some bottom box, so the maximum stored value is globally optimal. Strict decreases prevent reuse or cycles, and the original input is never reordered.",
+    "walkthrough": "For [[5,5,5],[4,3,4],[3,2,3],[6,1,6]], the first three boxes form a stack of height 5+3+2=10. The last box is wider and deeper but only height 1, so it cannot serve as the bottom beneath those taller boxes. Sorting by width provides a processing order, not a greedy choice of the answer.",
+    "edgeCases": [
+      "Empty input, one box and identical boxes.",
+      "Equality in any one dimension prevents stacking.",
+      "A tall narrow box versus a wide short box; shuffled input and a full strict chain."
+    ]
+  },
+  {
+    "problemId": "ctci6_8_13",
+    "collection": "ctci6",
+    "language": "javascript",
+    "code": "'use strict';\nfunction MaximumBoxStackHeight(boxes) {\n  const order = Array.from({ length: boxes.length }, (_, i) => i).sort(\n      (a, b) => boxes[a][0] - boxes[b][0],\n    ),\n    heights = Array(boxes.length).fill(0);\n  let best = 0;\n  for (let i = 0; i < order.length; ++i) {\n    const current = order[i];\n    heights[i] = boxes[current][1];\n    for (let j = 0; j < i; ++j) {\n      const top = order[j];\n      if (\n        boxes[top][0] < boxes[current][0] &&\n        boxes[top][1] < boxes[current][1] &&\n        boxes[top][2] < boxes[current][2]\n      )\n        heights[i] = Math.max(heights[i], boxes[current][1] + heights[j]);\n    }\n    best = Math.max(best, heights[i]);\n  }\n  return best;\n}\n\nmodule.exports = {MaximumBoxStackHeight};\n",
+    "explanation": "A smaller box always has smaller width, so width gives an acyclic processing order. Sort only an auxiliary index list. For each possible bottom box, combine its height with the best already-computed stack whose bottom fits above it; choosing the widest or tallest box greedily would miss valid alternatives.",
+    "timeComplexity": "O(n^2) time for pairwise fit checks after O(n log n) sorting of indices.",
+    "spaceComplexity": "O(n) auxiliary storage for sorted indices and best heights; input boxes are not copied into reordered rows.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 8.13. No affiliation is implied.",
+    "correctness": "Process boxes by increasing width. Any box that can sit above the current box has smaller width and was processed earlier. By induction its stored value is the best stack with that box at the bottom. Taking the maximum over all earlier boxes strictly smaller in width, height and depth therefore finds the best possible top stack for the current bottom. Adding the current height yields its optimal total. Every nonempty feasible stack has some bottom box, so the maximum stored value is globally optimal. Strict decreases prevent reuse or cycles, and the original input is never reordered.",
+    "walkthrough": "For [[5,5,5],[4,3,4],[3,2,3],[6,1,6]], the first three boxes form a stack of height 5+3+2=10. The last box is wider and deeper but only height 1, so it cannot serve as the bottom beneath those taller boxes. Sorting by width provides a processing order, not a greedy choice of the answer.",
+    "edgeCases": [
+      "Empty input, one box and identical boxes.",
+      "Equality in any one dimension prevents stacking.",
+      "A tall narrow box versus a wide short box; shuffled input and a full strict chain."
+    ]
+  },
+  {
+    "problemId": "ctci6_8_13",
+    "collection": "ctci6",
+    "language": "python",
+    "code": "def MaximumBoxStackHeight(boxes: list[list[int]]) -> int:\n    order = sorted(range(len(boxes)), key=lambda index: boxes[index][0])\n    heights = [0] * len(order)\n    best = 0\n    for position, current in enumerate(order):\n        heights[position] = boxes[current][1]\n        for earlier in range(position):\n            top = order[earlier]\n            if all(boxes[top][dimension] < boxes[current][dimension] for dimension in range(3)):\n                heights[position] = max(heights[position], boxes[current][1] + heights[earlier])\n        best = max(best, heights[position])\n    return best\n",
+    "explanation": "A smaller box always has smaller width, so width gives an acyclic processing order. Sort only an auxiliary index list. For each possible bottom box, combine its height with the best already-computed stack whose bottom fits above it; choosing the widest or tallest box greedily would miss valid alternatives.",
+    "timeComplexity": "O(n^2) time for pairwise fit checks after O(n log n) sorting of indices.",
+    "spaceComplexity": "O(n) auxiliary storage for sorted indices and best heights; input boxes are not copied into reordered rows.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 8.13. No affiliation is implied.",
+    "correctness": "Process boxes by increasing width. Any box that can sit above the current box has smaller width and was processed earlier. By induction its stored value is the best stack with that box at the bottom. Taking the maximum over all earlier boxes strictly smaller in width, height and depth therefore finds the best possible top stack for the current bottom. Adding the current height yields its optimal total. Every nonempty feasible stack has some bottom box, so the maximum stored value is globally optimal. Strict decreases prevent reuse or cycles, and the original input is never reordered.",
+    "walkthrough": "For [[5,5,5],[4,3,4],[3,2,3],[6,1,6]], the first three boxes form a stack of height 5+3+2=10. The last box is wider and deeper but only height 1, so it cannot serve as the bottom beneath those taller boxes. Sorting by width provides a processing order, not a greedy choice of the answer.",
+    "edgeCases": [
+      "Empty input, one box and identical boxes.",
+      "Equality in any one dimension prevents stacking.",
+      "A tall narrow box versus a wide short box; shuffled input and a full strict chain."
+    ]
+  },
+  {
+    "problemId": "ctci6_8_13",
+    "collection": "ctci6",
+    "language": "cpp",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\nclass Solution {\n public:\n  int MaximumBoxStackHeight(const std::vector<std::vector<int>>& boxes) {\n    int n = static_cast<int>(boxes.size());\n    std::vector<int> order(n), heights(n);\n    for (int i = 0; i < n; ++i)\n      order[i] = i;\n    std::sort(order.begin(), order.end(), [&](int a, int b) { return boxes[a][0] < boxes[b][0]; });\n    int best = 0;\n    for (int i = 0; i < n; ++i) {\n      int current = order[i];\n      heights[i] = boxes[current][1];\n      for (int j = 0; j < i; ++j) {\n        int top = order[j];\n        if (boxes[top][0] < boxes[current][0] && boxes[top][1] < boxes[current][1] &&\n            boxes[top][2] < boxes[current][2])\n          heights[i] = std::max(heights[i], boxes[current][1] + heights[j]);\n      }\n      best = std::max(best, heights[i]);\n    }\n    return best;\n  }\n};\n",
+    "explanation": "A smaller box always has smaller width, so width gives an acyclic processing order. Sort only an auxiliary index list. For each possible bottom box, combine its height with the best already-computed stack whose bottom fits above it; choosing the widest or tallest box greedily would miss valid alternatives.",
+    "timeComplexity": "O(n^2) time for pairwise fit checks after O(n log n) sorting of indices.",
+    "spaceComplexity": "O(n) auxiliary storage for sorted indices and best heights; input boxes are not copied into reordered rows.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 8.13. No affiliation is implied.",
+    "correctness": "Process boxes by increasing width. Any box that can sit above the current box has smaller width and was processed earlier. By induction its stored value is the best stack with that box at the bottom. Taking the maximum over all earlier boxes strictly smaller in width, height and depth therefore finds the best possible top stack for the current bottom. Adding the current height yields its optimal total. Every nonempty feasible stack has some bottom box, so the maximum stored value is globally optimal. Strict decreases prevent reuse or cycles, and the original input is never reordered.",
+    "walkthrough": "For [[5,5,5],[4,3,4],[3,2,3],[6,1,6]], the first three boxes form a stack of height 5+3+2=10. The last box is wider and deeper but only height 1, so it cannot serve as the bottom beneath those taller boxes. Sorting by width provides a processing order, not a greedy choice of the answer.",
+    "edgeCases": [
+      "Empty input, one box and identical boxes.",
+      "Equality in any one dimension prevents stacking.",
+      "A tall narrow box versus a wide short box; shuffled input and a full strict chain."
+    ]
+  },
+  {
+    "problemId": "ctci6_8_13",
+    "collection": "ctci6",
+    "language": "java",
+    "code": "import java.util.*;\nclass Solution {\n  public int MaximumBoxStackHeight(int[][] boxes) {\n    int n = boxes.length;\n    Integer[] order = new Integer[n];\n    int[] heights = new int[n];\n    for (int i = 0; i < n; ++i)\n      order[i] = i;\n    Arrays.sort(order, (a, b) -> Integer.compare(boxes[a][0], boxes[b][0]));\n    int best = 0;\n    for (int i = 0; i < n; ++i) {\n      int current = order[i];\n      heights[i] = boxes[current][1];\n      for (int j = 0; j < i; ++j) {\n        int top = order[j];\n        if (boxes[top][0] < boxes[current][0] && boxes[top][1] < boxes[current][1]\n            && boxes[top][2] < boxes[current][2])\n          heights[i] = Math.max(heights[i], boxes[current][1] + heights[j]);\n      }\n      best = Math.max(best, heights[i]);\n    }\n    return best;\n  }\n}\n",
+    "explanation": "A smaller box always has smaller width, so width gives an acyclic processing order. Sort only an auxiliary index list. For each possible bottom box, combine its height with the best already-computed stack whose bottom fits above it; choosing the widest or tallest box greedily would miss valid alternatives.",
+    "timeComplexity": "O(n^2) time for pairwise fit checks after O(n log n) sorting of indices.",
+    "spaceComplexity": "O(n) auxiliary storage for sorted indices and best heights; input boxes are not copied into reordered rows.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 8.13. No affiliation is implied.",
+    "correctness": "Process boxes by increasing width. Any box that can sit above the current box has smaller width and was processed earlier. By induction its stored value is the best stack with that box at the bottom. Taking the maximum over all earlier boxes strictly smaller in width, height and depth therefore finds the best possible top stack for the current bottom. Adding the current height yields its optimal total. Every nonempty feasible stack has some bottom box, so the maximum stored value is globally optimal. Strict decreases prevent reuse or cycles, and the original input is never reordered.",
+    "walkthrough": "For [[5,5,5],[4,3,4],[3,2,3],[6,1,6]], the first three boxes form a stack of height 5+3+2=10. The last box is wider and deeper but only height 1, so it cannot serve as the bottom beneath those taller boxes. Sorting by width provides a processing order, not a greedy choice of the answer.",
+    "edgeCases": [
+      "Empty input, one box and identical boxes.",
+      "Equality in any one dimension prevents stacking.",
+      "A tall narrow box versus a wide short box; shuffled input and a full strict chain."
+    ]
+  },
+  {
+    "problemId": "ctci6_8_14",
+    "collection": "ctci6",
+    "language": "csharp",
+    "code": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic class Solution\n{\n    public int CountBooleanParenthesizations(string expression, bool desired)\n    {\n        if (expression.Length == 0)\n            return 0;\n        int count = (expression.Length + 1) / 2;\n        int[,] truth = new int[count, count], falsity = new int[count, count];\n        for (int i = 0; i < count; ++i)\n        {\n            truth[i, i] = expression[2 * i] == '1' ? 1 : 0;\n            falsity[i, i] = 1 - truth[i, i];\n        }\n        for (int length = 2; length <= count; ++length)\n        {\n            for (int low = 0; low + length <= count; ++low)\n            {\n                int high = low + length - 1;\n                for (int split = low; split < high; ++split)\n                {\n                    int lt = truth[low, split], lf = falsity[low, split],\n                        rt = truth[split + 1, high], rf = falsity[split + 1, high],\n                        total = (lt + lf) * (rt + rf);\n                    char operation = expression[2 * split + 1];\n                    int trueCount = operation == '&'   ? lt * rt\n                                    : operation == '|' ? total - lf * rf\n                                                       : lt * rf + lf * rt;\n                    truth[low, high] += trueCount;\n                    falsity[low, high] += total - trueCount;\n                }\n            }\n        }\n        return desired ? truth[0, count - 1] : falsity[0, count - 1];\n    }\n}\n",
+    "explanation": "Every full grouping has a unique outermost operator split. Count true and false possibilities for both sides of each split, then combine them with that operator's truth table. Computing all intervals once prevents repeated evaluation of the same substring and accounts for every grouping rather than applying standard precedence.",
+    "timeComplexity": "O(n^3) time for n literals: O(n^2) intervals and at most n outer split positions each.",
+    "spaceComplexity": "O(n^2) auxiliary storage for separate true and false interval tables.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 8.14. No affiliation is implied.",
+    "correctness": "A single-literal interval has exactly its literal value. For a longer interval, every parenthesization selects one unique outer split and one grouping for each side. By induction the four combinations of left/right truth counts count exactly those paired choices. AND is true only for true/true, OR is false only for false/false, and XOR is true exactly when sides differ. Adding these disjoint possibilities over all splits yields the exact true/false counts for the interval. Increasing interval length ensures both sides are already known; the full interval count for desired is the answer.",
+    "walkthrough": "For 1^0|1, the two groupings are (1^0)|1, which is true, and 1^(0|1), which is false. Thus desired=true returns 1 and desired=false also returns 1. The split at | and the split at ^ each describe one distinct outermost grouping; normal operator precedence must not discard either.",
+    "edgeCases": [
+      "Empty expression and single true/false literals.",
+      "Different groupings of the same symbols can have different values.",
+      "All-one OR chains at 13 literals hit the maximum grouping count; both desired values are tested."
+    ]
+  },
+  {
+    "problemId": "ctci6_8_14",
+    "collection": "ctci6",
+    "language": "javascript",
+    "code": "'use strict';\nfunction CountBooleanParenthesizations(expression, desired) {\n  if (expression.length === 0) return 0;\n  const count = (expression.length + 1) / 2,\n    truth = Array.from({ length: count }, () => Array(count).fill(0)),\n    falsity = Array.from({ length: count }, () => Array(count).fill(0));\n  for (let i = 0; i < count; ++i) {\n    truth[i][i] = expression[2 * i] === \"1\" ? 1 : 0;\n    falsity[i][i] = 1 - truth[i][i];\n  }\n  for (let length = 2; length <= count; ++length) {\n    for (let low = 0; low + length <= count; ++low) {\n      const high = low + length - 1;\n      for (let split = low; split < high; ++split) {\n        const lt = truth[low][split],\n          lf = falsity[low][split],\n          rt = truth[split + 1][high],\n          rf = falsity[split + 1][high],\n          total = (lt + lf) * (rt + rf),\n          operation = expression[2 * split + 1],\n          trueCount =\n            operation === \"&\" ? lt * rt : operation === \"|\" ? total - lf * rf : lt * rf + lf * rt;\n        truth[low][high] += trueCount;\n        falsity[low][high] += total - trueCount;\n      }\n    }\n  }\n  return desired ? truth[0][count - 1] : falsity[0][count - 1];\n}\n\nmodule.exports = {CountBooleanParenthesizations};\n",
+    "explanation": "Every full grouping has a unique outermost operator split. Count true and false possibilities for both sides of each split, then combine them with that operator's truth table. Computing all intervals once prevents repeated evaluation of the same substring and accounts for every grouping rather than applying standard precedence.",
+    "timeComplexity": "O(n^3) time for n literals: O(n^2) intervals and at most n outer split positions each.",
+    "spaceComplexity": "O(n^2) auxiliary storage for separate true and false interval tables.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 8.14. No affiliation is implied.",
+    "correctness": "A single-literal interval has exactly its literal value. For a longer interval, every parenthesization selects one unique outer split and one grouping for each side. By induction the four combinations of left/right truth counts count exactly those paired choices. AND is true only for true/true, OR is false only for false/false, and XOR is true exactly when sides differ. Adding these disjoint possibilities over all splits yields the exact true/false counts for the interval. Increasing interval length ensures both sides are already known; the full interval count for desired is the answer.",
+    "walkthrough": "For 1^0|1, the two groupings are (1^0)|1, which is true, and 1^(0|1), which is false. Thus desired=true returns 1 and desired=false also returns 1. The split at | and the split at ^ each describe one distinct outermost grouping; normal operator precedence must not discard either.",
+    "edgeCases": [
+      "Empty expression and single true/false literals.",
+      "Different groupings of the same symbols can have different values.",
+      "All-one OR chains at 13 literals hit the maximum grouping count; both desired values are tested."
+    ]
+  },
+  {
+    "problemId": "ctci6_8_14",
+    "collection": "ctci6",
+    "language": "python",
+    "code": "def CountBooleanParenthesizations(expression: str, desired: bool) -> int:\n    if not expression:\n        return 0\n    count = (len(expression) + 1) // 2\n    truth = [[0] * count for _ in range(count)]\n    falsity = [[0] * count for _ in range(count)]\n    for index in range(count):\n        truth[index][index] = 1 if expression[2 * index] == \"1\" else 0\n        falsity[index][index] = 1 - truth[index][index]\n    for length in range(2, count + 1):\n        for low in range(count - length + 1):\n            high = low + length - 1\n            for split in range(low, high):\n                lt, lf = truth[low][split], falsity[low][split]\n                rt, rf = truth[split + 1][high], falsity[split + 1][high]\n                total = (lt + lf) * (rt + rf)\n                operation = expression[2 * split + 1]\n                true_count = (\n                    lt * rt\n                    if operation == \"&\"\n                    else total - lf * rf\n                    if operation == \"|\"\n                    else lt * rf + lf * rt\n                )\n                truth[low][high] += true_count\n                falsity[low][high] += total - true_count\n    return truth[0][count - 1] if desired else falsity[0][count - 1]\n",
+    "explanation": "Every full grouping has a unique outermost operator split. Count true and false possibilities for both sides of each split, then combine them with that operator's truth table. Computing all intervals once prevents repeated evaluation of the same substring and accounts for every grouping rather than applying standard precedence.",
+    "timeComplexity": "O(n^3) time for n literals: O(n^2) intervals and at most n outer split positions each.",
+    "spaceComplexity": "O(n^2) auxiliary storage for separate true and false interval tables.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 8.14. No affiliation is implied.",
+    "correctness": "A single-literal interval has exactly its literal value. For a longer interval, every parenthesization selects one unique outer split and one grouping for each side. By induction the four combinations of left/right truth counts count exactly those paired choices. AND is true only for true/true, OR is false only for false/false, and XOR is true exactly when sides differ. Adding these disjoint possibilities over all splits yields the exact true/false counts for the interval. Increasing interval length ensures both sides are already known; the full interval count for desired is the answer.",
+    "walkthrough": "For 1^0|1, the two groupings are (1^0)|1, which is true, and 1^(0|1), which is false. Thus desired=true returns 1 and desired=false also returns 1. The split at | and the split at ^ each describe one distinct outermost grouping; normal operator precedence must not discard either.",
+    "edgeCases": [
+      "Empty expression and single true/false literals.",
+      "Different groupings of the same symbols can have different values.",
+      "All-one OR chains at 13 literals hit the maximum grouping count; both desired values are tested."
+    ]
+  },
+  {
+    "problemId": "ctci6_8_14",
+    "collection": "ctci6",
+    "language": "cpp",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\nclass Solution {\n public:\n  int CountBooleanParenthesizations(const std::string& expression, bool desired) {\n    if (static_cast<int>(expression.size()) == 0)\n      return 0;\n    int count = (static_cast<int>(expression.size()) + 1) / 2;\n    std::vector<std::vector<int>> truth(count, std::vector<int>(count)),\n        falsity(count, std::vector<int>(count));\n    for (int i = 0; i < count; ++i) {\n      truth[i][i] = expression[2 * i] == '1' ? 1 : 0;\n      falsity[i][i] = 1 - truth[i][i];\n    }\n    for (int length = 2; length <= count; ++length) {\n      for (int low = 0; low + length <= count; ++low) {\n        int high = low + length - 1;\n        for (int split = low; split < high; ++split) {\n          int lt = truth[low][split], lf = falsity[low][split], rt = truth[split + 1][high],\n              rf = falsity[split + 1][high], total = (lt + lf) * (rt + rf);\n          char operation = expression[2 * split + 1];\n          int trueCount = operation == '&'   ? lt * rt\n                          : operation == '|' ? total - lf * rf\n                                             : lt * rf + lf * rt;\n          truth[low][high] += trueCount;\n          falsity[low][high] += total - trueCount;\n        }\n      }\n    }\n    return desired ? truth[0][count - 1] : falsity[0][count - 1];\n  }\n};\n",
+    "explanation": "Every full grouping has a unique outermost operator split. Count true and false possibilities for both sides of each split, then combine them with that operator's truth table. Computing all intervals once prevents repeated evaluation of the same substring and accounts for every grouping rather than applying standard precedence.",
+    "timeComplexity": "O(n^3) time for n literals: O(n^2) intervals and at most n outer split positions each.",
+    "spaceComplexity": "O(n^2) auxiliary storage for separate true and false interval tables.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 8.14. No affiliation is implied.",
+    "correctness": "A single-literal interval has exactly its literal value. For a longer interval, every parenthesization selects one unique outer split and one grouping for each side. By induction the four combinations of left/right truth counts count exactly those paired choices. AND is true only for true/true, OR is false only for false/false, and XOR is true exactly when sides differ. Adding these disjoint possibilities over all splits yields the exact true/false counts for the interval. Increasing interval length ensures both sides are already known; the full interval count for desired is the answer.",
+    "walkthrough": "For 1^0|1, the two groupings are (1^0)|1, which is true, and 1^(0|1), which is false. Thus desired=true returns 1 and desired=false also returns 1. The split at | and the split at ^ each describe one distinct outermost grouping; normal operator precedence must not discard either.",
+    "edgeCases": [
+      "Empty expression and single true/false literals.",
+      "Different groupings of the same symbols can have different values.",
+      "All-one OR chains at 13 literals hit the maximum grouping count; both desired values are tested."
+    ]
+  },
+  {
+    "problemId": "ctci6_8_14",
+    "collection": "ctci6",
+    "language": "java",
+    "code": "import java.util.*;\nclass Solution {\n  public int CountBooleanParenthesizations(String expression, boolean desired) {\n    if (expression.length() == 0)\n      return 0;\n    int count = (expression.length() + 1) / 2;\n    int[][] truth = new int[count][count], falsity = new int[count][count];\n    for (int i = 0; i < count; ++i) {\n      truth[i][i] = expression.charAt(2 * i) == '1' ? 1 : 0;\n      falsity[i][i] = 1 - truth[i][i];\n    }\n    for (int length = 2; length <= count; ++length) {\n      for (int low = 0; low + length <= count; ++low) {\n        int high = low + length - 1;\n        for (int split = low; split < high; ++split) {\n          int lt = truth[low][split], lf = falsity[low][split], rt = truth[split + 1][high],\n              rf = falsity[split + 1][high], total = (lt + lf) * (rt + rf);\n          char operation = expression.charAt(2 * split + 1);\n          int trueCount = operation == '&' ? lt * rt\n              : operation == '|'           ? total - lf * rf\n                                           : lt * rf + lf * rt;\n          truth[low][high] += trueCount;\n          falsity[low][high] += total - trueCount;\n        }\n      }\n    }\n    return desired ? truth[0][count - 1] : falsity[0][count - 1];\n  }\n}\n",
+    "explanation": "Every full grouping has a unique outermost operator split. Count true and false possibilities for both sides of each split, then combine them with that operator's truth table. Computing all intervals once prevents repeated evaluation of the same substring and accounts for every grouping rather than applying standard precedence.",
+    "timeComplexity": "O(n^3) time for n literals: O(n^2) intervals and at most n outer split positions each.",
+    "spaceComplexity": "O(n^2) auxiliary storage for separate true and false interval tables.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 8.14. No affiliation is implied.",
+    "correctness": "A single-literal interval has exactly its literal value. For a longer interval, every parenthesization selects one unique outer split and one grouping for each side. By induction the four combinations of left/right truth counts count exactly those paired choices. AND is true only for true/true, OR is false only for false/false, and XOR is true exactly when sides differ. Adding these disjoint possibilities over all splits yields the exact true/false counts for the interval. Increasing interval length ensures both sides are already known; the full interval count for desired is the answer.",
+    "walkthrough": "For 1^0|1, the two groupings are (1^0)|1, which is true, and 1^(0|1), which is false. Thus desired=true returns 1 and desired=false also returns 1. The split at | and the split at ^ each describe one distinct outermost grouping; normal operator precedence must not discard either.",
+    "edgeCases": [
+      "Empty expression and single true/false literals.",
+      "Different groupings of the same symbols can have different values.",
+      "All-one OR chains at 13 literals hit the maximum grouping count; both desired values are tested."
     ]
   }
 ]

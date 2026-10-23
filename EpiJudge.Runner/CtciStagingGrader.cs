@@ -48,8 +48,16 @@ public static class CtciStagingGrader
             else
             {
                 var members = Integers(value);
-                if (members.Distinct().Count() != members.Length) throw new ArgumentException("A subset cannot repeat a member.");
-                canonical.Add(JsonSerializer.Serialize(members.Order().ToArray()));
+                if (result == "arrangements")
+                {
+                    if (members.Length != 8 || members.Any(v => v < 0 || v > 7)) throw new ArgumentException("Return eight board columns.");
+                    canonical.Add(JsonSerializer.Serialize(members));
+                }
+                else
+                {
+                    if (members.Distinct().Count() != members.Length) throw new ArgumentException("A subset cannot repeat a member.");
+                    canonical.Add(JsonSerializer.Serialize(members.Order().ToArray()));
+                }
             }
         }
         return canonical.Order(StringComparer.Ordinal).ToArray();
@@ -61,7 +69,16 @@ public static class CtciStagingGrader
         {
             if (observed.ValueKind != JsonValueKind.Object || observed.TryGetProperty("error", out var error) && error.ValueKind != JsonValueKind.Null)
                 return "Your code did not finish this case successfully.";
-            if (definition.Batch == 8 && definition.Result is "sets" or "strings")
+            if (definition.Batch == 8 && definition.Ref == "8.3")
+            {
+                if (observed.GetProperty("mutationOk").ValueKind != JsonValueKind.True) return "Preserve the sorted input array.";
+                var value = observed.GetProperty("actual");
+                if (value.ValueKind != JsonValueKind.Number || !value.TryGetInt32(out int index)) return "Return an integer index or -1.";
+                var magicValues = Integers(test.Arguments[0]);
+                return index == -1 ? magicValues.Where((v, i) => v == i).Any() ? "A magic index exists." : null
+                    : index >= 0 && index < magicValues.Length && magicValues[index] == index ? null : "Return an index whose value equals that index.";
+            }
+            if (definition.Batch == 8 && definition.Result is "sets" or "strings" or "arrangements")
             {
                 if (observed.GetProperty("mutationOk").ValueKind != JsonValueKind.True) return "Preserve the input and return the collection type in the selected signature.";
                 return CanonicalCollection(definition.Result, observed.GetProperty("actual")).SequenceEqual(CanonicalCollection(definition.Result, test.Expected), StringComparer.Ordinal)
