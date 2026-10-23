@@ -7853,6 +7853,126 @@
       }
     },
     {
+      "problemId": "ctci6_16_8",
+      "language": "csharp",
+      "filename": "Solution.cs",
+      "signature": "string EnglishInteger(int value)",
+      "starterCode": "public class Solution\n{\n    public string EnglishInteger(int value)\n    {\n        return \"\";\n    }\n}\n",
+      "solutionCode": "public class Solution\n{\n    public string EnglishInteger(int value)\n    {\n        if (value == 0)\n            return \"Zero\";\n        string[] small = { \"Zero\",    \"One\",     \"Two\",       \"Three\",    \"Four\",\n                           \"Five\",    \"Six\",     \"Seven\",     \"Eight\",    \"Nine\",\n                           \"Ten\",     \"Eleven\",  \"Twelve\",    \"Thirteen\", \"Fourteen\",\n                           \"Fifteen\", \"Sixteen\", \"Seventeen\", \"Eighteen\", \"Nineteen\" },\n                 tens = { \"\",      \"\",      \"Twenty\",  \"Thirty\", \"Forty\",\n                          \"Fifty\", \"Sixty\", \"Seventy\", \"Eighty\", \"Ninety\" },\n                 scales = { \"\", \"Thousand\", \"Million\", \"Billion\" };\n        long magnitude = value;\n        if (magnitude < 0)\n            magnitude = -magnitude;\n        List<string> groups = new List<string>();\n        int scale = 0;\n        while (magnitude > 0)\n        {\n            int chunk = (int)(magnitude % 1000);\n            if (chunk != 0)\n            {\n                List<string> words = new List<string>();\n                if (chunk >= 100)\n                {\n                    words.Add(small[chunk / 100]);\n                    words.Add(\"Hundred\");\n                    chunk %= 100;\n                }\n                if (chunk >= 20)\n                {\n                    words.Add(tens[chunk / 10]);\n                    chunk %= 10;\n                }\n                if (chunk != 0)\n                    words.Add(small[chunk]);\n                if (scale != 0)\n                    words.Add(scales[scale]);\n                groups.Add(string.Join(\" \", words));\n            }\n            magnitude /= 1000;\n            ++scale;\n        }\n        groups.Reverse();\n        return (value < 0 ? \"Negative \" : \"\") + string.Join(\" \", groups);\n    }\n}\n",
+      "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/csharp/ctci6_16_8.cs"
+      ],
+      "sourceSha256": {
+        "starter": "f0cb7cd6cd1f3118efdb44c9b1ea590c026f9aee043af0bda52dd3ae83877366",
+        "solution": "8a3d8a8e45fe4e6249f47cecfe07142492d58d07b64e69a92ffbc0cd21b4bcf3"
+      }
+    },
+    {
+      "problemId": "ctci6_16_8",
+      "language": "javascript",
+      "filename": "solution.js",
+      "signature": "function EnglishInteger(value)",
+      "starterCode": "function EnglishInteger(value) {\n  return \"\";\n}\n",
+      "solutionCode": "function EnglishInteger(value) {\n  if (value === 0) return \"Zero\";\n  const small = [\n      \"Zero\",\n      \"One\",\n      \"Two\",\n      \"Three\",\n      \"Four\",\n      \"Five\",\n      \"Six\",\n      \"Seven\",\n      \"Eight\",\n      \"Nine\",\n      \"Ten\",\n      \"Eleven\",\n      \"Twelve\",\n      \"Thirteen\",\n      \"Fourteen\",\n      \"Fifteen\",\n      \"Sixteen\",\n      \"Seventeen\",\n      \"Eighteen\",\n      \"Nineteen\",\n    ],\n    tens = [\"\", \"\", \"Twenty\", \"Thirty\", \"Forty\", \"Fifty\", \"Sixty\", \"Seventy\", \"Eighty\", \"Ninety\"],\n    scales = [\"\", \"Thousand\", \"Million\", \"Billion\"],\n    groups = [];\n  let magnitude = Math.abs(value),\n    scale = 0;\n  while (magnitude > 0) {\n    let chunk = magnitude % 1000;\n    if (chunk !== 0) {\n      const words = [];\n      if (chunk >= 100) {\n        words.push(small[Math.floor(chunk / 100)], \"Hundred\");\n        chunk %= 100;\n      }\n      if (chunk >= 20) {\n        words.push(tens[Math.floor(chunk / 10)]);\n        chunk %= 10;\n      }\n      if (chunk !== 0) words.push(small[chunk]);\n      if (scale !== 0) words.push(scales[scale]);\n      groups.push(words.join(\" \"));\n    }\n    magnitude = Math.floor(magnitude / 1000);\n    ++scale;\n  }\n  return (value < 0 ? \"Negative \" : \"\") + groups.reverse().join(\" \");\n}\n",
+      "prefix": "'use strict';\n",
+      "suffix": "\nmodule.exports = {EnglishInteger};\n",
+      "references": [],
+      "visibleSymbols": [
+        "EnglishInteger"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/javascript/ctci6_16_8.js"
+      ],
+      "sourceSha256": {
+        "starter": "0201fc52ec59415c6d884b4d194331e13b2f81cb58026ccbfded6c57f90ac6d3",
+        "solution": "c6e7e552335d446535f2e96c56ea8b6ec6fdcd07ee42e7a5264e0c897d1023e7"
+      }
+    },
+    {
+      "problemId": "ctci6_16_8",
+      "language": "python",
+      "filename": "solution.py",
+      "signature": "def EnglishInteger(value: int) -> str",
+      "starterCode": "def EnglishInteger(value: int) -> str:\n    return \"\"\n",
+      "solutionCode": "def EnglishInteger(value: int) -> str:\n    if value == 0:\n        return \"Zero\"\n    small = [\n        \"Zero\",\n        \"One\",\n        \"Two\",\n        \"Three\",\n        \"Four\",\n        \"Five\",\n        \"Six\",\n        \"Seven\",\n        \"Eight\",\n        \"Nine\",\n        \"Ten\",\n        \"Eleven\",\n        \"Twelve\",\n        \"Thirteen\",\n        \"Fourteen\",\n        \"Fifteen\",\n        \"Sixteen\",\n        \"Seventeen\",\n        \"Eighteen\",\n        \"Nineteen\",\n    ]\n    tens = [\"\", \"\", \"Twenty\", \"Thirty\", \"Forty\", \"Fifty\", \"Sixty\", \"Seventy\", \"Eighty\", \"Ninety\"]\n    scales = [\"\", \"Thousand\", \"Million\", \"Billion\"]\n    magnitude = abs(value)\n    groups = []\n    scale = 0\n    while magnitude:\n        chunk = magnitude % 1000\n        if chunk:\n            words = []\n            if chunk >= 100:\n                words.extend([small[chunk // 100], \"Hundred\"])\n                chunk %= 100\n            if chunk >= 20:\n                words.append(tens[chunk // 10])\n                chunk %= 10\n            if chunk:\n                words.append(small[chunk])\n            if scale:\n                words.append(scales[scale])\n            groups.append(\" \".join(words))\n        magnitude //= 1000\n        scale += 1\n    return (\"Negative \" if value < 0 else \"\") + \" \".join(reversed(groups))\n",
+      "prefix": "",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "EnglishInteger"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/python/ctci6_16_8.py"
+      ],
+      "sourceSha256": {
+        "starter": "78287d80fa140a5c5458ac73c8b165bea2c783900d597e62e8ea3abd7c2b5cdf",
+        "solution": "abe1121d5edbfb41f231123028e94561c772e37c90cca2998c0ac6cbb0088415"
+      }
+    },
+    {
+      "problemId": "ctci6_16_8",
+      "language": "cpp",
+      "filename": "solution.cpp",
+      "signature": "std::string EnglishInteger(int value)",
+      "starterCode": "class Solution {\n public:\n  std::string EnglishInteger(int value) {\n    return \"\";\n  }\n};\n",
+      "solutionCode": "class Solution {\n public:\n  std::string EnglishInteger(int value) {\n    if (value == 0)\n      return \"Zero\";\n    const std::vector<std::string> small = {\"Zero\",    \"One\",       \"Two\",      \"Three\",\n                                            \"Four\",    \"Five\",      \"Six\",      \"Seven\",\n                                            \"Eight\",   \"Nine\",      \"Ten\",      \"Eleven\",\n                                            \"Twelve\",  \"Thirteen\",  \"Fourteen\", \"Fifteen\",\n                                            \"Sixteen\", \"Seventeen\", \"Eighteen\", \"Nineteen\"},\n                                   tens = {\"\",      \"\",      \"Twenty\",  \"Thirty\", \"Forty\",\n                                           \"Fifty\", \"Sixty\", \"Seventy\", \"Eighty\", \"Ninety\"},\n                                   scales = {\"\", \"Thousand\", \"Million\", \"Billion\"};\n    long long magnitude = value;\n    if (magnitude < 0)\n      magnitude = -magnitude;\n    std::vector<std::string> groups;\n    int scale = 0;\n    while (magnitude > 0) {\n      int chunk = static_cast<int>(magnitude % 1000);\n      if (chunk != 0) {\n        std::vector<std::string> words;\n        if (chunk >= 100) {\n          words.push_back(small[chunk / 100]);\n          words.push_back(\"Hundred\");\n          chunk %= 100;\n        }\n        if (chunk >= 20) {\n          words.push_back(tens[chunk / 10]);\n          chunk %= 10;\n        }\n        if (chunk != 0)\n          words.push_back(small[chunk]);\n        if (scale != 0)\n          words.push_back(scales[scale]);\n        std::string part;\n        for (const auto& word : words) {\n          if (!part.empty())\n            part += \" \";\n          part += word;\n        }\n        groups.push_back(part);\n      }\n      magnitude /= 1000;\n      ++scale;\n    }\n    std::string result = value < 0 ? \"Negative \" : \"\";\n    for (auto it = groups.rbegin(); it != groups.rend(); ++it) {\n      if (it != groups.rbegin())\n        result += \" \";\n      result += *it;\n    }\n    return result;\n  }\n};\n",
+      "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n#include <unordered_map>\n#include <unordered_set>\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/cpp/ctci6_16_8.cpp"
+      ],
+      "sourceSha256": {
+        "starter": "8fd8a61dea9c4d08af250ebc4f311120e29dacfdce5055c341de78a7bc83c9cf",
+        "solution": "63723e8f47a23069172547525b78b5811d4f46407241246d387ceb787975f907"
+      }
+    },
+    {
+      "problemId": "ctci6_16_8",
+      "language": "java",
+      "filename": "Solution.java",
+      "signature": "String EnglishInteger(int value)",
+      "starterCode": "class Solution {\n  public String EnglishInteger(int value) {\n    return \"\";\n  }\n}\n",
+      "solutionCode": "class Solution {\n  public String EnglishInteger(int value) {\n    if (value == 0)\n      return \"Zero\";\n    String[] small = {\"Zero\", \"One\", \"Two\", \"Three\", \"Four\", \"Five\", \"Six\", \"Seven\", \"Eight\",\n                 \"Nine\", \"Ten\", \"Eleven\", \"Twelve\", \"Thirteen\", \"Fourteen\", \"Fifteen\", \"Sixteen\",\n                 \"Seventeen\", \"Eighteen\", \"Nineteen\"},\n             tens = {\"\", \"\", \"Twenty\", \"Thirty\", \"Forty\", \"Fifty\", \"Sixty\", \"Seventy\", \"Eighty\",\n                 \"Ninety\"},\n             scales = {\"\", \"Thousand\", \"Million\", \"Billion\"};\n    long magnitude = value;\n    if (magnitude < 0)\n      magnitude = -magnitude;\n    List<String> groups = new ArrayList<>();\n    int scale = 0;\n    while (magnitude > 0) {\n      int chunk = (int) (magnitude % 1000);\n      if (chunk != 0) {\n        List<String> words = new ArrayList<>();\n        if (chunk >= 100) {\n          words.add(small[chunk / 100]);\n          words.add(\"Hundred\");\n          chunk %= 100;\n        }\n        if (chunk >= 20) {\n          words.add(tens[chunk / 10]);\n          chunk %= 10;\n        }\n        if (chunk != 0)\n          words.add(small[chunk]);\n        if (scale != 0)\n          words.add(scales[scale]);\n        groups.add(String.join(\" \", words));\n      }\n      magnitude /= 1000;\n      ++scale;\n    }\n    Collections.reverse(groups);\n    return (value < 0 ? \"Negative \" : \"\") + String.join(\" \", groups);\n  }\n}\n",
+      "prefix": "import java.util.*;\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/java/ctci6_16_8.java"
+      ],
+      "sourceSha256": {
+        "starter": "e94fe7274ad8de2bf5c88663233ac1e04326d8b6d8e03d488cf4886299108191",
+        "solution": "1a1013cb43536bdc109bec68a93f64ea91b9d95336ddbbfe90bde94415b5e491"
+      }
+    },
+    {
       "problemId": "ctci6_16_10",
       "language": "csharp",
       "filename": "Solution.cs",
@@ -8453,6 +8573,126 @@
       }
     },
     {
+      "problemId": "ctci6_16_18",
+      "language": "csharp",
+      "filename": "Solution.cs",
+      "signature": "bool MatchesPattern(string pattern, string text)",
+      "starterCode": "public class Solution\n{\n    public bool MatchesPattern(string pattern, string text)\n    {\n        return false;\n    }\n}\n",
+      "solutionCode": "public class Solution\n{\n    public bool MatchesPattern(string pattern, string text)\n    {\n        if (pattern.Length == 0)\n            return text.Length == 0;\n        int countA = 0;\n        foreach (char symbol in pattern)\n            if (symbol == 'a')\n                ++countA;\n        int countB = pattern.Length - countA, maximum = countA == 0 ? 0 : text.Length / countA;\n        for (int lengthA = 0; lengthA <= maximum; ++lengthA)\n        {\n            int remaining = text.Length - countA * lengthA;\n            if (countB == 0 ? remaining != 0 : remaining % countB != 0)\n                continue;\n            int lengthB = countB == 0 ? 0 : remaining / countB;\n            string? a = null, b = null;\n            int offset = 0;\n            bool valid = true;\n            foreach (char symbol in pattern)\n            {\n                int length = symbol == 'a' ? lengthA : lengthB;\n                string? part = text.Substring(offset, length);\n                if (symbol == 'a')\n                {\n                    if (a == null)\n                        a = part;\n                    else if (a != part)\n                    {\n                        valid = false;\n                        break;\n                    }\n                }\n                else\n                {\n                    if (b == null)\n                        b = part;\n                    else if (b != part)\n                    {\n                        valid = false;\n                        break;\n                    }\n                }\n                offset += length;\n            }\n            if (valid && offset == text.Length)\n                return true;\n        }\n        return false;\n    }\n}\n",
+      "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/csharp/ctci6_16_18.cs"
+      ],
+      "sourceSha256": {
+        "starter": "99c973f32f7171667fbb0a93657b7c802f6eb0dcd41d0099bc3cd5c3598649c5",
+        "solution": "076d033940e306ba0ed1036c55b6e9422874b1cbc7fb591674d12713f862f6e4"
+      }
+    },
+    {
+      "problemId": "ctci6_16_18",
+      "language": "javascript",
+      "filename": "solution.js",
+      "signature": "function MatchesPattern(pattern, text)",
+      "starterCode": "function MatchesPattern(pattern, text) {\n  return false;\n}\n",
+      "solutionCode": "function MatchesPattern(pattern, text) {\n  if (pattern.length === 0) return text.length === 0;\n  let countA = 0;\n  for (const symbol of pattern) if (symbol === \"a\") ++countA;\n  const countB = pattern.length - countA,\n    maximum = countA ? Math.floor(text.length / countA) : 0;\n  for (let lengthA = 0; lengthA <= maximum; ++lengthA) {\n    const remaining = text.length - countA * lengthA;\n    if (countB === 0 ? remaining !== 0 : remaining % countB !== 0) continue;\n    const lengthB = countB === 0 ? 0 : remaining / countB;\n    let a = null,\n      b = null,\n      offset = 0,\n      valid = true;\n    for (const symbol of pattern) {\n      const length = symbol === \"a\" ? lengthA : lengthB,\n        part = text.slice(offset, offset + length);\n      if (symbol === \"a\") {\n        if (a === null) a = part;\n        else if (a !== part) {\n          valid = false;\n          break;\n        }\n      } else {\n        if (b === null) b = part;\n        else if (b !== part) {\n          valid = false;\n          break;\n        }\n      }\n      offset += length;\n    }\n    if (valid && offset === text.length) return true;\n  }\n  return false;\n}\n",
+      "prefix": "'use strict';\n",
+      "suffix": "\nmodule.exports = {MatchesPattern};\n",
+      "references": [],
+      "visibleSymbols": [
+        "MatchesPattern"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/javascript/ctci6_16_18.js"
+      ],
+      "sourceSha256": {
+        "starter": "e9a10f6ed85cc312c52e54f67235d6dc4d8dc349e8f3cccf141f003c4a8e3571",
+        "solution": "0a40dd32a076223016ce23e286cb763ff6aa72400895b1b9faa58cb3e1d3206b"
+      }
+    },
+    {
+      "problemId": "ctci6_16_18",
+      "language": "python",
+      "filename": "solution.py",
+      "signature": "def MatchesPattern(pattern: str, text: str) -> bool",
+      "starterCode": "def MatchesPattern(pattern: str, text: str) -> bool:\n    return False\n",
+      "solutionCode": "def MatchesPattern(pattern: str, text: str) -> bool:\n    if not pattern:\n        return not text\n    count_a = pattern.count(\"a\")\n    count_b = len(pattern) - count_a\n    maximum = len(text) // count_a if count_a else 0\n    for length_a in range(maximum + 1):\n        remaining = len(text) - count_a * length_a\n        if count_b == 0:\n            if remaining != 0:\n                continue\n            length_b = 0\n        else:\n            if remaining % count_b:\n                continue\n            length_b = remaining // count_b\n        a = b = None\n        offset = 0\n        valid = True\n        for symbol in pattern:\n            length = length_a if symbol == \"a\" else length_b\n            part = text[offset : offset + length]\n            if symbol == \"a\":\n                if a is None:\n                    a = part\n                elif a != part:\n                    valid = False\n                    break\n            else:\n                if b is None:\n                    b = part\n                elif b != part:\n                    valid = False\n                    break\n            offset += length\n        if valid and offset == len(text):\n            return True\n    return False\n",
+      "prefix": "",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "MatchesPattern"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/python/ctci6_16_18.py"
+      ],
+      "sourceSha256": {
+        "starter": "cdcc56e22967b1a34cf3357c4a0e88aababd5df5b75ef9ad89700ce1a47b61a5",
+        "solution": "eaf705379b5f5af065f7f877b8eda1714708fb3a91f236cceb0e9bc2072e73da"
+      }
+    },
+    {
+      "problemId": "ctci6_16_18",
+      "language": "cpp",
+      "filename": "solution.cpp",
+      "signature": "bool MatchesPattern(const std::string& pattern, const std::string& text)",
+      "starterCode": "class Solution {\n public:\n  bool MatchesPattern(const std::string& pattern, const std::string& text) {\n    return false;\n  }\n};\n",
+      "solutionCode": "class Solution {\n public:\n  bool MatchesPattern(const std::string& pattern, const std::string& text) {\n    if (pattern.empty())\n      return text.empty();\n    int countA = 0;\n    for (char symbol : pattern)\n      if (symbol == 'a')\n        ++countA;\n    int countB = static_cast<int>(pattern.size()) - countA, n = static_cast<int>(text.size()),\n        maximum = countA ? n / countA : 0;\n    for (int lengthA = 0; lengthA <= maximum; ++lengthA) {\n      int remaining = n - countA * lengthA;\n      if (countB == 0 ? remaining != 0 : remaining % countB != 0)\n        continue;\n      int lengthB = countB == 0 ? 0 : remaining / countB;\n      std::string a, b;\n      bool haveA = false, haveB = false, valid = true;\n      int offset = 0;\n      for (char symbol : pattern) {\n        int length = symbol == 'a' ? lengthA : lengthB;\n        auto part = text.substr(offset, length);\n        if (symbol == 'a') {\n          if (!haveA) {\n            a = part;\n            haveA = true;\n          } else if (a != part) {\n            valid = false;\n            break;\n          }\n        } else {\n          if (!haveB) {\n            b = part;\n            haveB = true;\n          } else if (b != part) {\n            valid = false;\n            break;\n          }\n        }\n        offset += length;\n      }\n      if (valid && offset == n)\n        return true;\n    }\n    return false;\n  }\n};\n",
+      "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n#include <unordered_map>\n#include <unordered_set>\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/cpp/ctci6_16_18.cpp"
+      ],
+      "sourceSha256": {
+        "starter": "b4f439e5c7924307f81bfc0a4068a722633a7343a34337d7e5cf4d99ba00d61c",
+        "solution": "09b2fb7e520117dd23ef67ccd1c2833405daa07e7de81f2a5f746c1bcedf5319"
+      }
+    },
+    {
+      "problemId": "ctci6_16_18",
+      "language": "java",
+      "filename": "Solution.java",
+      "signature": "boolean MatchesPattern(String pattern, String text)",
+      "starterCode": "class Solution {\n  public boolean MatchesPattern(String pattern, String text) {\n    return false;\n  }\n}\n",
+      "solutionCode": "class Solution {\n  public boolean MatchesPattern(String pattern, String text) {\n    if (pattern.length() == 0)\n      return text.length() == 0;\n    int countA = 0;\n    for (char symbol : pattern.toCharArray())\n      if (symbol == 'a')\n        ++countA;\n    int countB = pattern.length() - countA, maximum = countA == 0 ? 0 : text.length() / countA;\n    for (int lengthA = 0; lengthA <= maximum; ++lengthA) {\n      int remaining = text.length() - countA * lengthA;\n      if (countB == 0 ? remaining != 0 : remaining % countB != 0)\n        continue;\n      int lengthB = countB == 0 ? 0 : remaining / countB;\n      String a = null, b = null;\n      int offset = 0;\n      boolean valid = true;\n      for (char symbol : pattern.toCharArray()) {\n        int length = symbol == 'a' ? lengthA : lengthB;\n        String part = text.substring(offset, offset + length);\n        if (symbol == 'a') {\n          if (a == null)\n            a = part;\n          else if (!a.equals(part)) {\n            valid = false;\n            break;\n          }\n        } else {\n          if (b == null)\n            b = part;\n          else if (!b.equals(part)) {\n            valid = false;\n            break;\n          }\n        }\n        offset += length;\n      }\n      if (valid && offset == text.length())\n        return true;\n    }\n    return false;\n  }\n}\n",
+      "prefix": "import java.util.*;\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/java/ctci6_16_18.java"
+      ],
+      "sourceSha256": {
+        "starter": "f922253b731497bec60b2e755fddc0dab82234e81f30e460c82ad107f597835b",
+        "solution": "03022c99f04769c5ce253728d8fdfee2e6af42d4759523d0fd1909f708eba40a"
+      }
+    },
+    {
       "problemId": "ctci6_16_19",
       "language": "csharp",
       "filename": "Solution.cs",
@@ -8570,6 +8810,126 @@
       "sourceSha256": {
         "starter": "51e007a99abcecf43a63b1e9b313289aa069fc6977ab3bbf32b2a6f5bc3ec0a2",
         "solution": "fe3ee4eab10526204504329af480013bb624ff5846f9644b22e662ee15553583"
+      }
+    },
+    {
+      "problemId": "ctci6_16_20",
+      "language": "csharp",
+      "filename": "Solution.cs",
+      "signature": "List<string> T9Words(string digits, string[] dictionary)",
+      "starterCode": "public class Solution\n{\n    public List<string> T9Words(string digits, string[] dictionary)\n    {\n        return [];\n    }\n}\n",
+      "solutionCode": "public class Solution\n{\n    public List<string> T9Words(string digits, string[] dictionary)\n    {\n        const string mapping = \"22233344455566677778889999\";\n        var result = new List<string>();\n        foreach (string word in dictionary)\n        {\n            if (word.Length != digits.Length)\n                continue;\n            bool valid = true;\n            for (int i = 0; i < word.Length; ++i)\n                if (mapping[word[i] - 'a'] != digits[i])\n                {\n                    valid = false;\n                    break;\n                }\n            if (valid)\n                result.Add(word);\n        }\n        return result;\n    }\n}\n",
+      "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/csharp/ctci6_16_20.cs"
+      ],
+      "sourceSha256": {
+        "starter": "1416f36a1436fa561ee3df11f97aa22b22908fe11eeff5386d11e23442f45d2c",
+        "solution": "ab11a00b72fe591445e17ef0d5ca4a66ee72398609df03decbc5394f7ce84a2f"
+      }
+    },
+    {
+      "problemId": "ctci6_16_20",
+      "language": "javascript",
+      "filename": "solution.js",
+      "signature": "function T9Words(digits, dictionary)",
+      "starterCode": "function T9Words(digits, dictionary) {\n  return [];\n}\n",
+      "solutionCode": "function T9Words(digits, dictionary) {\n  const mapping = \"22233344455566677778889999\",\n    result = [];\n  for (const word of dictionary) {\n    if (word.length !== digits.length) continue;\n    let valid = true;\n    for (let i = 0; i < word.length; ++i)\n      if (mapping[word.charCodeAt(i) - 97] !== digits[i]) {\n        valid = false;\n        break;\n      }\n    if (valid) result.push(word);\n  }\n  return result;\n}\n",
+      "prefix": "'use strict';\n",
+      "suffix": "\nmodule.exports = {T9Words};\n",
+      "references": [],
+      "visibleSymbols": [
+        "T9Words"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/javascript/ctci6_16_20.js"
+      ],
+      "sourceSha256": {
+        "starter": "1fcceb31e58ff6a62e0d7e87e344e7138eaff8c3c872c344a164c1c49461b129",
+        "solution": "7202a98d001e13876a69e062db559864f9a42ec430b7634df96e613c289300c9"
+      }
+    },
+    {
+      "problemId": "ctci6_16_20",
+      "language": "python",
+      "filename": "solution.py",
+      "signature": "def T9Words(digits: str, dictionary: list[str]) -> list[str]",
+      "starterCode": "def T9Words(digits: str, dictionary: list[str]) -> list[str]:\n    return []\n",
+      "solutionCode": "def T9Words(digits: str, dictionary: list[str]) -> list[str]:\n    mapping = \"22233344455566677778889999\"\n    result = []\n    for word in dictionary:\n        if len(word) == len(digits) and all(\n            mapping[ord(letter) - ord(\"a\")] == digit for letter, digit in zip(word, digits)\n        ):\n            result.append(word)\n    return result\n",
+      "prefix": "",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "T9Words"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/python/ctci6_16_20.py"
+      ],
+      "sourceSha256": {
+        "starter": "42a3abd0b3b27c12dfb7e903597eeba5a4cbe6e492b245010cade5717c2ae427",
+        "solution": "67a9078ec3aebac5aa9c0ad3a08bc07c24a9aa6de679e19afd6c546671d566d7"
+      }
+    },
+    {
+      "problemId": "ctci6_16_20",
+      "language": "cpp",
+      "filename": "solution.cpp",
+      "signature": "std::vector<std::string> T9Words(const std::string& digits, const std::vector<std::string>& dictionary)",
+      "starterCode": "class Solution {\n public:\n  std::vector<std::string> T9Words(const std::string& digits,\n                                   const std::vector<std::string>& dictionary) {\n    return {};\n  }\n};\n",
+      "solutionCode": "class Solution {\n public:\n  std::vector<std::string> T9Words(const std::string& digits,\n                                   const std::vector<std::string>& dictionary) {\n    const std::string mapping = \"22233344455566677778889999\";\n    std::vector<std::string> result;\n    for (const auto& word : dictionary) {\n      if (word.size() != digits.size())\n        continue;\n      bool valid = true;\n      for (size_t i = 0; i < word.size(); ++i)\n        if (mapping[word[i] - 'a'] != digits[i]) {\n          valid = false;\n          break;\n        }\n      if (valid)\n        result.push_back(word);\n    }\n    return result;\n  }\n};\n",
+      "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n#include <unordered_map>\n#include <unordered_set>\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/cpp/ctci6_16_20.cpp"
+      ],
+      "sourceSha256": {
+        "starter": "a72e4f4433a3fcbb3c56c3cf5909c7ba52b838048f2f66109fe483bec9ed4568",
+        "solution": "12ec9ea583b9fd14be179e4ee7a657e8be6a698187711bf8616e0a27a81675c6"
+      }
+    },
+    {
+      "problemId": "ctci6_16_20",
+      "language": "java",
+      "filename": "Solution.java",
+      "signature": "List<String> T9Words(String digits, String[] dictionary)",
+      "starterCode": "class Solution {\n  public List<String> T9Words(String digits, String[] dictionary) {\n    return new ArrayList<>();\n  }\n}\n",
+      "solutionCode": "class Solution {\n  public List<String> T9Words(String digits, String[] dictionary) {\n    String mapping = \"22233344455566677778889999\";\n    List<String> result = new ArrayList<>();\n    for (String word : dictionary) {\n      if (word.length() != digits.length())\n        continue;\n      boolean valid = true;\n      for (int i = 0; i < word.length(); ++i)\n        if (mapping.charAt(word.charAt(i) - 'a') != digits.charAt(i)) {\n          valid = false;\n          break;\n        }\n      if (valid)\n        result.add(word);\n    }\n    return result;\n  }\n}\n",
+      "prefix": "import java.util.*;\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/java/ctci6_16_20.java"
+      ],
+      "sourceSha256": {
+        "starter": "cdcabc0ce92ea5346a31df4180b4b2664c1eb73875050b3681196ede46198ca4",
+        "solution": "edd7169cb1d525bc5d4fd25923eb3cbe6d1a4bbb97d21feec8b42f50b1d913bc"
       }
     },
     {

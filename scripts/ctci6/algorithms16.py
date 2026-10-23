@@ -232,3 +232,96 @@ return result'''
         clone='(int[])values.Clone();Array.Sort(ordered);var result=new List<int[]>();' if language=='csharp' else 'values.clone();Arrays.sort(ordered);List<int[]> result=new ArrayList<>();';size='Length' if language=='csharp' else 'length';append='result.Add([ordered[left],ordered[right]]);' if language=='csharp' else 'result.add(new int[]{ordered[left],ordered[right]});';finish='return result.ToArray();' if language=='csharp' else 'return result.toArray(new int[0][]);'
         return f'int[] ordered={clone}int left=0,right=ordered.{size}-1;while(left<right){{long total=(long)ordered[left]+ordered[right];if(total==target){{{append}++left;--right;}}else if(total<target)++left;else --right;}}{finish}'
     return _previous_batch_body(ref,language)
+
+_previous_language_body=body
+
+def body(ref,language):
+    if ref=='16.8':
+        small=['Zero','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Eleven','Twelve','Thirteen','Fourteen','Fifteen','Sixteen','Seventeen','Eighteen','Nineteen'];tens=['','','Twenty','Thirty','Forty','Fifty','Sixty','Seventy','Eighty','Ninety'];scales=['','Thousand','Million','Billion']
+        import json
+        if language=='python':return f'''if value == 0:
+    return "Zero"
+small = {small!r}
+tens = {tens!r}
+scales = {scales!r}
+magnitude = abs(value)
+groups = []
+scale = 0
+while magnitude:
+    chunk = magnitude % 1000
+    if chunk:
+        words = []
+        if chunk >= 100:
+            words.extend([small[chunk // 100], "Hundred"])
+            chunk %= 100
+        if chunk >= 20:
+            words.append(tens[chunk // 10])
+            chunk %= 10
+        if chunk:
+            words.append(small[chunk])
+        if scale:
+            words.append(scales[scale])
+        groups.append(" ".join(words))
+    magnitude //= 1000
+    scale += 1
+return ("Negative " if value < 0 else "") + " ".join(reversed(groups))'''
+        if language=='javascript':return f'if(value===0)return "Zero";const small={json.dumps(small)},tens={json.dumps(tens)},scales={json.dumps(scales)},groups=[];let magnitude=Math.abs(value),scale=0;while(magnitude>0){{let chunk=magnitude%1000;if(chunk!==0){{const words=[];if(chunk>=100){{words.push(small[Math.floor(chunk/100)],"Hundred");chunk%=100;}}if(chunk>=20){{words.push(tens[Math.floor(chunk/10)]);chunk%=10;}}if(chunk!==0)words.push(small[chunk]);if(scale!==0)words.push(scales[scale]);groups.push(words.join(" "));}}magnitude=Math.floor(magnitude/1000);++scale;}}return (value<0?"Negative ":"")+groups.reverse().join(" ");'
+        array=lambda a:'{'+','.join(json.dumps(w) for w in a)+'}'
+        if language=='cpp':return f'if(value==0)return "Zero";const std::vector<std::string> small={array(small)},tens={array(tens)},scales={array(scales)};long long magnitude=value;if(magnitude<0)magnitude=-magnitude;std::vector<std::string> groups;int scale=0;while(magnitude>0){{int chunk=static_cast<int>(magnitude%1000);if(chunk!=0){{std::vector<std::string> words;if(chunk>=100){{words.push_back(small[chunk/100]);words.push_back("Hundred");chunk%=100;}}if(chunk>=20){{words.push_back(tens[chunk/10]);chunk%=10;}}if(chunk!=0)words.push_back(small[chunk]);if(scale!=0)words.push_back(scales[scale]);std::string part;for(const auto& word:words){{if(!part.empty())part+=" ";part+=word;}}groups.push_back(part);}}magnitude/=1000;++scale;}}std::string result=value<0?"Negative ":"";for(auto it=groups.rbegin();it!=groups.rend();++it){{if(it!=groups.rbegin())result+=" ";result+=*it;}}return result;'
+        csharp=language=='csharp';typ='string' if csharp else 'String';listType='List<string>' if csharp else 'List<String>';make='new List<string>()' if csharp else 'new ArrayList<>()';add='Add' if csharp else 'add';join=lambda expr:('string.Join' if csharp else 'String.join')+'(" ",'+expr+')';reverse='groups.Reverse();' if csharp else 'Collections.reverse(groups);'
+        return f'if(value==0)return "Zero";{typ}[] small={array(small)},tens={array(tens)},scales={array(scales)};long magnitude=value;if(magnitude<0)magnitude=-magnitude;{listType} groups={make};int scale=0;while(magnitude>0){{int chunk=(int)(magnitude%1000);if(chunk!=0){{{listType} words={make};if(chunk>=100){{words.{add}(small[chunk/100]);words.{add}("Hundred");chunk%=100;}}if(chunk>=20){{words.{add}(tens[chunk/10]);chunk%=10;}}if(chunk!=0)words.{add}(small[chunk]);if(scale!=0)words.{add}(scales[scale]);groups.{add}({join("words")});}}magnitude/=1000;++scale;}}{reverse}return (value<0?"Negative ":"")+{join("groups")};'
+    if ref=='16.18':
+        if language=='python':return '''if not pattern:
+    return not text
+count_a = pattern.count("a")
+count_b = len(pattern) - count_a
+maximum = len(text) // count_a if count_a else 0
+for length_a in range(maximum + 1):
+    remaining = len(text) - count_a * length_a
+    if count_b == 0:
+        if remaining != 0:
+            continue
+        length_b = 0
+    else:
+        if remaining % count_b:
+            continue
+        length_b = remaining // count_b
+    a = b = None
+    offset = 0
+    valid = True
+    for symbol in pattern:
+        length = length_a if symbol == "a" else length_b
+        part = text[offset:offset + length]
+        if symbol == "a":
+            if a is None:
+                a = part
+            elif a != part:
+                valid = False
+                break
+        else:
+            if b is None:
+                b = part
+            elif b != part:
+                valid = False
+                break
+        offset += length
+    if valid and offset == len(text):
+        return True
+return False'''
+        if language=='javascript':return 'if(pattern.length===0)return text.length===0;let countA=0;for(const symbol of pattern)if(symbol==="a")++countA;const countB=pattern.length-countA,maximum=countA?Math.floor(text.length/countA):0;for(let lengthA=0;lengthA<=maximum;++lengthA){const remaining=text.length-countA*lengthA;if(countB===0?remaining!==0:remaining%countB!==0)continue;const lengthB=countB===0?0:remaining/countB;let a=null,b=null,offset=0,valid=true;for(const symbol of pattern){const length=symbol==="a"?lengthA:lengthB,part=text.slice(offset,offset+length);if(symbol==="a"){if(a===null)a=part;else if(a!==part){valid=false;break;}}else{if(b===null)b=part;else if(b!==part){valid=false;break;}}offset+=length;}if(valid&&offset===text.length)return true;}return false;'
+        if language=='cpp':return 'if(pattern.empty())return text.empty();int countA=0;for(char symbol:pattern)if(symbol==\'a\')++countA;int countB=static_cast<int>(pattern.size())-countA,n=static_cast<int>(text.size()),maximum=countA?n/countA:0;for(int lengthA=0;lengthA<=maximum;++lengthA){int remaining=n-countA*lengthA;if(countB==0?remaining!=0:remaining%countB!=0)continue;int lengthB=countB==0?0:remaining/countB;std::string a,b;bool haveA=false,haveB=false,valid=true;int offset=0;for(char symbol:pattern){int length=symbol==\'a\'?lengthA:lengthB;auto part=text.substr(offset,length);if(symbol==\'a\'){if(!haveA){a=part;haveA=true;}else if(a!=part){valid=false;break;}}else{if(!haveB){b=part;haveB=true;}else if(b!=part){valid=false;break;}}offset+=length;}if(valid&&offset==n)return true;}return false;'
+        cs=language=='csharp';plen='pattern.Length' if cs else 'pattern.length()';n='text.Length' if cs else 'text.length()';iteration='foreach(char symbol in pattern)' if cs else 'for(char symbol:pattern.toCharArray())';typ='string?' if cs else 'String';part='text.Substring(offset,length)' if cs else 'text.substring(offset,offset+length)';eq=lambda v:f'{v}!=part' if cs else f'!{v}.equals(part)'
+        return f'if({plen}==0)return {n}==0;int countA=0;{iteration}if(symbol==\'a\')++countA;int countB={plen}-countA,maximum=countA==0?0:{n}/countA;for(int lengthA=0;lengthA<=maximum;++lengthA){{int remaining={n}-countA*lengthA;if(countB==0?remaining!=0:remaining%countB!=0)continue;int lengthB=countB==0?0:remaining/countB;{typ} a=null,b=null;int offset=0;bool valid=true;{iteration}{{int length=symbol==\'a\'?lengthA:lengthB;{typ} part={part};if(symbol==\'a\'){{if(a==null)a=part;else if({eq("a")}){{valid=false;break;}}}}else{{if(b==null)b=part;else if({eq("b")}){{valid=false;break;}}}}offset+=length;}}if(valid&&offset=={n})return true;}}return false;'.replace('bool valid','boolean valid' if not cs else 'bool valid')
+    if ref=='16.20':
+        mapping='22233344455566677778889999'
+        if language=='python':return f'''mapping = "{mapping}"
+result = []
+for word in dictionary:
+    if len(word) == len(digits) and all(mapping[ord(letter) - ord("a")] == digit for letter, digit in zip(word, digits)):
+        result.append(word)
+return result'''
+        if language=='javascript':return f'const mapping="{mapping}",result=[];for(const word of dictionary){{if(word.length!==digits.length)continue;let valid=true;for(let i=0;i<word.length;++i)if(mapping[word.charCodeAt(i)-97]!==digits[i]){{valid=false;break;}}if(valid)result.push(word);}}return result;'
+        if language=='cpp':return f'const std::string mapping="{mapping}";std::vector<std::string> result;for(const auto& word:dictionary){{if(word.size()!=digits.size())continue;bool valid=true;for(size_t i=0;i<word.size();++i)if(mapping[word[i]-\'a\']!=digits[i]){{valid=false;break;}}if(valid)result.push_back(word);}}return result;'
+        if language=='csharp':return f'const string mapping="{mapping}";var result=new List<string>();foreach(string word in dictionary){{if(word.Length!=digits.Length)continue;bool valid=true;for(int i=0;i<word.Length;++i)if(mapping[word[i]-\'a\']!=digits[i]){{valid=false;break;}}if(valid)result.Add(word);}}return result;'
+        return f'String mapping="{mapping}";List<String> result=new ArrayList<>();for(String word:dictionary){{if(word.length()!=digits.length())continue;boolean valid=true;for(int i=0;i<word.length();++i)if(mapping.charAt(word.charAt(i)-\'a\')!=digits.charAt(i)){{valid=false;break;}}if(valid)result.add(word);}}return result;'
+    return _previous_language_body(ref,language)

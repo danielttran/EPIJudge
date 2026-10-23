@@ -2,6 +2,8 @@
 from harness08_typed import source as typed_source
 from models08 import header as base_header
 from models16 import header
+import json
+from core import ROOT
 
 def source(language,starters=False,only_ref=None):
     value=typed_source(language,starters,only_ref,staging_name='staged16')
@@ -12,4 +14,13 @@ def source(language,starters=False,only_ref=None):
         value=value.replace(base_header(ref,language),header(ref,language),1)
     if language=='java':
         value=value.replace('if(value instanceof Integer v)return Json.value(v);','if(value instanceof Integer v)return Json.value(v);if(value instanceof Long v)return Json.value(v);')
+    entries=json.loads((ROOT/'ctci6/staged16/catalog.json').read_text())
+    kinds={e['result'] for e in entries if only_ref is None or e['ref']==only_ref}
+    if 's' in kinds:
+        if language=='python':value=value.replace('valid=(', "valid=(type(actual) is str) if kind=='s' else (",1)
+        if language=='javascript':value=value.replace("const valid=kind==='strings'", "const valid=kind==='s'?typeof actual==='string':kind==='strings'",1)
+    if 'b' in kinds:
+        if language=='python':value=value.replace('valid=(', "valid=(type(actual) is bool) if kind=='b' else (",1)
+        if language=='javascript':value=value.replace("const valid=", "const valid=kind==='b'?typeof actual==='boolean':",1)
+        if language=='java':value=value.replace('if(value instanceof String v)', 'if(value instanceof Boolean v)return Json.value(v);if(value instanceof String v)',1)
     return value

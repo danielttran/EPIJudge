@@ -1,0 +1,19 @@
+{
+  "explanation": "If a appears ca times and b appears cb times, candidate replacement lengths must satisfy ca*la+cb*lb=text.length. Enumerate one used length, derive the other, and verify every occurrence against the first substring assigned to its symbol. This avoids enumerating all possible replacement strings independently.",
+  "correctness": "Every valid substitution has nonnegative lengths satisfying the total-length equation, so its length pair is among those tested. For a tested pair, scan pattern from left to right and assign a symbol the text slice at its first occurrence; later occurrences must equal that slice. This enforces consistent replacements and advances by exactly the chosen length. The total-length equation ensures the final offset is the text end. Thus any accepted pair defines a valid full substitution, and the pair of any valid substitution passes verification. Empty/unused-symbol cases follow the explicit zero-length and full-consumption rules.",
+  "walkthrough": "For pattern=abba and text=redbluebluered, lengths a=3 and b=4 assign red at the first a and blue at the first b. The second b matches blue and the last a matches red, consuming all text, so return true. For pattern=ab and text=x, a may be empty and b=x; distinct nonempty replacements are not required.",
+  "walkthroughCase": {
+    "arguments": [
+      "abba",
+      "redbluebluered"
+    ],
+    "expected": true
+  },
+  "timeComplexity": "O((n+1)*(n+p+1)) conservative time for text length n and pattern length p: at most n+1 length choices, with O(n+p) slice/comparison work each.",
+  "spaceComplexity": "O(n) replacement-slice storage plus O(1) counters; no expanded candidate string is built.",
+  "edgeCases": [
+    "Empty pattern/text and a pattern using only one symbol.",
+    "Empty or equal replacement strings, mismatched repeated symbols and unmatched trailing text."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.18. No affiliation is implied."
+}

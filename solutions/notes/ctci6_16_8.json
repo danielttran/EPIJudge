@@ -1,0 +1,18 @@
+{
+  "explanation": "Decimal place values naturally split into groups of three digits. Convert each nonzero group using hundreds, tens and the special names below twenty, then attach the appropriate scale. Process the magnitude in 64-bit or arbitrary-precision storage so the most negative signed input can be made positive safely.",
+  "correctness": "Repeated division by 1000 decomposes the magnitude uniquely into group values from 0 through 999 and their powers of 1000. Hundreds plus a remainder below 100 spell each group exactly; a remainder below twenty uses its direct name, otherwise a tens word plus an optional ones word spells it. Attaching the scale to each nonzero group and joining groups from most significant to least therefore spells the entire magnitude without zero placeholders. The separate zero case supplies Zero, and prefixing Negative only for a negative original value gives the correct sign and required spacing.",
+  "walkthrough": "For -1002003, the low-to-high groups are 3,2,1. They spell Three, Two Thousand and One Million. Reverse the group order and join once to get One Million Two Thousand Three, then prefix Negative. The result is \"Negative One Million Two Thousand Three\".",
+  "walkthroughCase": {
+    "arguments": [
+      -1002003
+    ],
+    "expected": "Negative One Million Two Thousand Three"
+  },
+  "timeComplexity": "O(d+o) time for d decimal digits and o returned characters; at most four groups occur in the signed 32-bit domain.",
+  "spaceComplexity": "O(o) for group words and the final text, with constant-size name tables; at most four chunk records are needed.",
+  "edgeCases": [
+    "Zero, negatives and the minimum signed input.",
+    "Teens, exact hundreds/scales and zero groups between nonzero groups."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.8. No affiliation is implied."
+}

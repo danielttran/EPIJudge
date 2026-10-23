@@ -1,0 +1,28 @@
+{
+  "explanation": "Each dictionary word has exactly one keypad encoding. Check only words of the requested length and compare each letter's digit with the query. This avoids generating all exponential letter combinations, most of which might not be dictionary words.",
+  "correctness": "For a word of the right length, the fixed keypad table maps each letter to its unique allowed digit. Equality at every position holds exactly when that word is one valid spelling of the query; a length mismatch or any differing mapped digit makes it impossible. Visiting every dictionary entry therefore returns all and only matches. Appending during the original-order scan preserves ordering and duplicates. Since no letter maps to 0 or 1 and words are nonempty, the explicit no-match cases follow automatically.",
+  "walkthrough": "For digits=8733 and dictionary=[tree,used,true,tree], tree maps t->8,r->7,e->3,e->3 and used maps u->8,s->7,e->3,d->3. true maps to 8783, so the result is [tree,used,tree], retaining the repeated entry.",
+  "walkthroughCase": {
+    "arguments": [
+      "8733",
+      [
+        "tree",
+        "used",
+        "true",
+        "tree"
+      ]
+    ],
+    "expected": [
+      "tree",
+      "used",
+      "tree"
+    ]
+  },
+  "timeComplexity": "O(W+T) time for W dictionary entries and at most T examined word characters; each entry is visited once and length-mismatched words need no character scan.",
+  "spaceComplexity": "O(R) returned word references/copies for R matches, plus a constant 26-entry mapping and scalar loop indices; C++ returned strings also copy their character contents.",
+  "edgeCases": [
+    "Empty dictionary/query, digits 0/1 and words of a different length.",
+    "Four-letter keypad groups pqrs/wxyz, duplicate dictionary entries and no matches."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.20. No affiliation is implied."
+}

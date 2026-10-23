@@ -34020,6 +34020,86 @@
     ]
   },
   {
+    "problemId": "ctci6_16_8",
+    "collection": "ctci6",
+    "language": "csharp",
+    "code": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic class Solution\n{\n    public string EnglishInteger(int value)\n    {\n        if (value == 0)\n            return \"Zero\";\n        string[] small = { \"Zero\",    \"One\",     \"Two\",       \"Three\",    \"Four\",\n                           \"Five\",    \"Six\",     \"Seven\",     \"Eight\",    \"Nine\",\n                           \"Ten\",     \"Eleven\",  \"Twelve\",    \"Thirteen\", \"Fourteen\",\n                           \"Fifteen\", \"Sixteen\", \"Seventeen\", \"Eighteen\", \"Nineteen\" },\n                 tens = { \"\",      \"\",      \"Twenty\",  \"Thirty\", \"Forty\",\n                          \"Fifty\", \"Sixty\", \"Seventy\", \"Eighty\", \"Ninety\" },\n                 scales = { \"\", \"Thousand\", \"Million\", \"Billion\" };\n        long magnitude = value;\n        if (magnitude < 0)\n            magnitude = -magnitude;\n        List<string> groups = new List<string>();\n        int scale = 0;\n        while (magnitude > 0)\n        {\n            int chunk = (int)(magnitude % 1000);\n            if (chunk != 0)\n            {\n                List<string> words = new List<string>();\n                if (chunk >= 100)\n                {\n                    words.Add(small[chunk / 100]);\n                    words.Add(\"Hundred\");\n                    chunk %= 100;\n                }\n                if (chunk >= 20)\n                {\n                    words.Add(tens[chunk / 10]);\n                    chunk %= 10;\n                }\n                if (chunk != 0)\n                    words.Add(small[chunk]);\n                if (scale != 0)\n                    words.Add(scales[scale]);\n                groups.Add(string.Join(\" \", words));\n            }\n            magnitude /= 1000;\n            ++scale;\n        }\n        groups.Reverse();\n        return (value < 0 ? \"Negative \" : \"\") + string.Join(\" \", groups);\n    }\n}\n",
+    "explanation": "Decimal place values naturally split into groups of three digits. Convert each nonzero group using hundreds, tens and the special names below twenty, then attach the appropriate scale. Process the magnitude in 64-bit or arbitrary-precision storage so the most negative signed input can be made positive safely.",
+    "timeComplexity": "O(d+o) time for d decimal digits and o returned characters; at most four groups occur in the signed 32-bit domain.",
+    "spaceComplexity": "O(o) for group words and the final text, with constant-size name tables; at most four chunk records are needed.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.8. No affiliation is implied.",
+    "correctness": "Repeated division by 1000 decomposes the magnitude uniquely into group values from 0 through 999 and their powers of 1000. Hundreds plus a remainder below 100 spell each group exactly; a remainder below twenty uses its direct name, otherwise a tens word plus an optional ones word spells it. Attaching the scale to each nonzero group and joining groups from most significant to least therefore spells the entire magnitude without zero placeholders. The separate zero case supplies Zero, and prefixing Negative only for a negative original value gives the correct sign and required spacing.",
+    "walkthrough": "For -1002003, the low-to-high groups are 3,2,1. They spell Three, Two Thousand and One Million. Reverse the group order and join once to get One Million Two Thousand Three, then prefix Negative. The result is \"Negative One Million Two Thousand Three\".",
+    "edgeCases": [
+      "Zero, negatives and the minimum signed input.",
+      "Teens, exact hundreds/scales and zero groups between nonzero groups."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_8",
+    "collection": "ctci6",
+    "language": "javascript",
+    "code": "'use strict';\nfunction EnglishInteger(value) {\n  if (value === 0) return \"Zero\";\n  const small = [\n      \"Zero\",\n      \"One\",\n      \"Two\",\n      \"Three\",\n      \"Four\",\n      \"Five\",\n      \"Six\",\n      \"Seven\",\n      \"Eight\",\n      \"Nine\",\n      \"Ten\",\n      \"Eleven\",\n      \"Twelve\",\n      \"Thirteen\",\n      \"Fourteen\",\n      \"Fifteen\",\n      \"Sixteen\",\n      \"Seventeen\",\n      \"Eighteen\",\n      \"Nineteen\",\n    ],\n    tens = [\"\", \"\", \"Twenty\", \"Thirty\", \"Forty\", \"Fifty\", \"Sixty\", \"Seventy\", \"Eighty\", \"Ninety\"],\n    scales = [\"\", \"Thousand\", \"Million\", \"Billion\"],\n    groups = [];\n  let magnitude = Math.abs(value),\n    scale = 0;\n  while (magnitude > 0) {\n    let chunk = magnitude % 1000;\n    if (chunk !== 0) {\n      const words = [];\n      if (chunk >= 100) {\n        words.push(small[Math.floor(chunk / 100)], \"Hundred\");\n        chunk %= 100;\n      }\n      if (chunk >= 20) {\n        words.push(tens[Math.floor(chunk / 10)]);\n        chunk %= 10;\n      }\n      if (chunk !== 0) words.push(small[chunk]);\n      if (scale !== 0) words.push(scales[scale]);\n      groups.push(words.join(\" \"));\n    }\n    magnitude = Math.floor(magnitude / 1000);\n    ++scale;\n  }\n  return (value < 0 ? \"Negative \" : \"\") + groups.reverse().join(\" \");\n}\n\nmodule.exports = {EnglishInteger};\n",
+    "explanation": "Decimal place values naturally split into groups of three digits. Convert each nonzero group using hundreds, tens and the special names below twenty, then attach the appropriate scale. Process the magnitude in 64-bit or arbitrary-precision storage so the most negative signed input can be made positive safely.",
+    "timeComplexity": "O(d+o) time for d decimal digits and o returned characters; at most four groups occur in the signed 32-bit domain.",
+    "spaceComplexity": "O(o) for group words and the final text, with constant-size name tables; at most four chunk records are needed.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.8. No affiliation is implied.",
+    "correctness": "Repeated division by 1000 decomposes the magnitude uniquely into group values from 0 through 999 and their powers of 1000. Hundreds plus a remainder below 100 spell each group exactly; a remainder below twenty uses its direct name, otherwise a tens word plus an optional ones word spells it. Attaching the scale to each nonzero group and joining groups from most significant to least therefore spells the entire magnitude without zero placeholders. The separate zero case supplies Zero, and prefixing Negative only for a negative original value gives the correct sign and required spacing.",
+    "walkthrough": "For -1002003, the low-to-high groups are 3,2,1. They spell Three, Two Thousand and One Million. Reverse the group order and join once to get One Million Two Thousand Three, then prefix Negative. The result is \"Negative One Million Two Thousand Three\".",
+    "edgeCases": [
+      "Zero, negatives and the minimum signed input.",
+      "Teens, exact hundreds/scales and zero groups between nonzero groups."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_8",
+    "collection": "ctci6",
+    "language": "python",
+    "code": "def EnglishInteger(value: int) -> str:\n    if value == 0:\n        return \"Zero\"\n    small = [\n        \"Zero\",\n        \"One\",\n        \"Two\",\n        \"Three\",\n        \"Four\",\n        \"Five\",\n        \"Six\",\n        \"Seven\",\n        \"Eight\",\n        \"Nine\",\n        \"Ten\",\n        \"Eleven\",\n        \"Twelve\",\n        \"Thirteen\",\n        \"Fourteen\",\n        \"Fifteen\",\n        \"Sixteen\",\n        \"Seventeen\",\n        \"Eighteen\",\n        \"Nineteen\",\n    ]\n    tens = [\"\", \"\", \"Twenty\", \"Thirty\", \"Forty\", \"Fifty\", \"Sixty\", \"Seventy\", \"Eighty\", \"Ninety\"]\n    scales = [\"\", \"Thousand\", \"Million\", \"Billion\"]\n    magnitude = abs(value)\n    groups = []\n    scale = 0\n    while magnitude:\n        chunk = magnitude % 1000\n        if chunk:\n            words = []\n            if chunk >= 100:\n                words.extend([small[chunk // 100], \"Hundred\"])\n                chunk %= 100\n            if chunk >= 20:\n                words.append(tens[chunk // 10])\n                chunk %= 10\n            if chunk:\n                words.append(small[chunk])\n            if scale:\n                words.append(scales[scale])\n            groups.append(\" \".join(words))\n        magnitude //= 1000\n        scale += 1\n    return (\"Negative \" if value < 0 else \"\") + \" \".join(reversed(groups))\n",
+    "explanation": "Decimal place values naturally split into groups of three digits. Convert each nonzero group using hundreds, tens and the special names below twenty, then attach the appropriate scale. Process the magnitude in 64-bit or arbitrary-precision storage so the most negative signed input can be made positive safely.",
+    "timeComplexity": "O(d+o) time for d decimal digits and o returned characters; at most four groups occur in the signed 32-bit domain.",
+    "spaceComplexity": "O(o) for group words and the final text, with constant-size name tables; at most four chunk records are needed.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.8. No affiliation is implied.",
+    "correctness": "Repeated division by 1000 decomposes the magnitude uniquely into group values from 0 through 999 and their powers of 1000. Hundreds plus a remainder below 100 spell each group exactly; a remainder below twenty uses its direct name, otherwise a tens word plus an optional ones word spells it. Attaching the scale to each nonzero group and joining groups from most significant to least therefore spells the entire magnitude without zero placeholders. The separate zero case supplies Zero, and prefixing Negative only for a negative original value gives the correct sign and required spacing.",
+    "walkthrough": "For -1002003, the low-to-high groups are 3,2,1. They spell Three, Two Thousand and One Million. Reverse the group order and join once to get One Million Two Thousand Three, then prefix Negative. The result is \"Negative One Million Two Thousand Three\".",
+    "edgeCases": [
+      "Zero, negatives and the minimum signed input.",
+      "Teens, exact hundreds/scales and zero groups between nonzero groups."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_8",
+    "collection": "ctci6",
+    "language": "cpp",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n#include <unordered_map>\n#include <unordered_set>\nclass Solution {\n public:\n  std::string EnglishInteger(int value) {\n    if (value == 0)\n      return \"Zero\";\n    const std::vector<std::string> small = {\"Zero\",    \"One\",       \"Two\",      \"Three\",\n                                            \"Four\",    \"Five\",      \"Six\",      \"Seven\",\n                                            \"Eight\",   \"Nine\",      \"Ten\",      \"Eleven\",\n                                            \"Twelve\",  \"Thirteen\",  \"Fourteen\", \"Fifteen\",\n                                            \"Sixteen\", \"Seventeen\", \"Eighteen\", \"Nineteen\"},\n                                   tens = {\"\",      \"\",      \"Twenty\",  \"Thirty\", \"Forty\",\n                                           \"Fifty\", \"Sixty\", \"Seventy\", \"Eighty\", \"Ninety\"},\n                                   scales = {\"\", \"Thousand\", \"Million\", \"Billion\"};\n    long long magnitude = value;\n    if (magnitude < 0)\n      magnitude = -magnitude;\n    std::vector<std::string> groups;\n    int scale = 0;\n    while (magnitude > 0) {\n      int chunk = static_cast<int>(magnitude % 1000);\n      if (chunk != 0) {\n        std::vector<std::string> words;\n        if (chunk >= 100) {\n          words.push_back(small[chunk / 100]);\n          words.push_back(\"Hundred\");\n          chunk %= 100;\n        }\n        if (chunk >= 20) {\n          words.push_back(tens[chunk / 10]);\n          chunk %= 10;\n        }\n        if (chunk != 0)\n          words.push_back(small[chunk]);\n        if (scale != 0)\n          words.push_back(scales[scale]);\n        std::string part;\n        for (const auto& word : words) {\n          if (!part.empty())\n            part += \" \";\n          part += word;\n        }\n        groups.push_back(part);\n      }\n      magnitude /= 1000;\n      ++scale;\n    }\n    std::string result = value < 0 ? \"Negative \" : \"\";\n    for (auto it = groups.rbegin(); it != groups.rend(); ++it) {\n      if (it != groups.rbegin())\n        result += \" \";\n      result += *it;\n    }\n    return result;\n  }\n};\n",
+    "explanation": "Decimal place values naturally split into groups of three digits. Convert each nonzero group using hundreds, tens and the special names below twenty, then attach the appropriate scale. Process the magnitude in 64-bit or arbitrary-precision storage so the most negative signed input can be made positive safely.",
+    "timeComplexity": "O(d+o) time for d decimal digits and o returned characters; at most four groups occur in the signed 32-bit domain.",
+    "spaceComplexity": "O(o) for group words and the final text, with constant-size name tables; at most four chunk records are needed.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.8. No affiliation is implied.",
+    "correctness": "Repeated division by 1000 decomposes the magnitude uniquely into group values from 0 through 999 and their powers of 1000. Hundreds plus a remainder below 100 spell each group exactly; a remainder below twenty uses its direct name, otherwise a tens word plus an optional ones word spells it. Attaching the scale to each nonzero group and joining groups from most significant to least therefore spells the entire magnitude without zero placeholders. The separate zero case supplies Zero, and prefixing Negative only for a negative original value gives the correct sign and required spacing.",
+    "walkthrough": "For -1002003, the low-to-high groups are 3,2,1. They spell Three, Two Thousand and One Million. Reverse the group order and join once to get One Million Two Thousand Three, then prefix Negative. The result is \"Negative One Million Two Thousand Three\".",
+    "edgeCases": [
+      "Zero, negatives and the minimum signed input.",
+      "Teens, exact hundreds/scales and zero groups between nonzero groups."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_8",
+    "collection": "ctci6",
+    "language": "java",
+    "code": "import java.util.*;\nclass Solution {\n  public String EnglishInteger(int value) {\n    if (value == 0)\n      return \"Zero\";\n    String[] small = {\"Zero\", \"One\", \"Two\", \"Three\", \"Four\", \"Five\", \"Six\", \"Seven\", \"Eight\",\n                 \"Nine\", \"Ten\", \"Eleven\", \"Twelve\", \"Thirteen\", \"Fourteen\", \"Fifteen\", \"Sixteen\",\n                 \"Seventeen\", \"Eighteen\", \"Nineteen\"},\n             tens = {\"\", \"\", \"Twenty\", \"Thirty\", \"Forty\", \"Fifty\", \"Sixty\", \"Seventy\", \"Eighty\",\n                 \"Ninety\"},\n             scales = {\"\", \"Thousand\", \"Million\", \"Billion\"};\n    long magnitude = value;\n    if (magnitude < 0)\n      magnitude = -magnitude;\n    List<String> groups = new ArrayList<>();\n    int scale = 0;\n    while (magnitude > 0) {\n      int chunk = (int) (magnitude % 1000);\n      if (chunk != 0) {\n        List<String> words = new ArrayList<>();\n        if (chunk >= 100) {\n          words.add(small[chunk / 100]);\n          words.add(\"Hundred\");\n          chunk %= 100;\n        }\n        if (chunk >= 20) {\n          words.add(tens[chunk / 10]);\n          chunk %= 10;\n        }\n        if (chunk != 0)\n          words.add(small[chunk]);\n        if (scale != 0)\n          words.add(scales[scale]);\n        groups.add(String.join(\" \", words));\n      }\n      magnitude /= 1000;\n      ++scale;\n    }\n    Collections.reverse(groups);\n    return (value < 0 ? \"Negative \" : \"\") + String.join(\" \", groups);\n  }\n}\n",
+    "explanation": "Decimal place values naturally split into groups of three digits. Convert each nonzero group using hundreds, tens and the special names below twenty, then attach the appropriate scale. Process the magnitude in 64-bit or arbitrary-precision storage so the most negative signed input can be made positive safely.",
+    "timeComplexity": "O(d+o) time for d decimal digits and o returned characters; at most four groups occur in the signed 32-bit domain.",
+    "spaceComplexity": "O(o) for group words and the final text, with constant-size name tables; at most four chunk records are needed.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.8. No affiliation is implied.",
+    "correctness": "Repeated division by 1000 decomposes the magnitude uniquely into group values from 0 through 999 and their powers of 1000. Hundreds plus a remainder below 100 spell each group exactly; a remainder below twenty uses its direct name, otherwise a tens word plus an optional ones word spells it. Attaching the scale to each nonzero group and joining groups from most significant to least therefore spells the entire magnitude without zero placeholders. The separate zero case supplies Zero, and prefixing Negative only for a negative original value gives the correct sign and required spacing.",
+    "walkthrough": "For -1002003, the low-to-high groups are 3,2,1. They spell Three, Two Thousand and One Million. Reverse the group order and join once to get One Million Two Thousand Three, then prefix Negative. The result is \"Negative One Million Two Thousand Three\".",
+    "edgeCases": [
+      "Zero, negatives and the minimum signed input.",
+      "Teens, exact hundreds/scales and zero groups between nonzero groups."
+    ]
+  },
+  {
     "problemId": "ctci6_16_10",
     "collection": "ctci6",
     "language": "csharp",
@@ -34420,6 +34500,86 @@
     ]
   },
   {
+    "problemId": "ctci6_16_18",
+    "collection": "ctci6",
+    "language": "csharp",
+    "code": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic class Solution\n{\n    public bool MatchesPattern(string pattern, string text)\n    {\n        if (pattern.Length == 0)\n            return text.Length == 0;\n        int countA = 0;\n        foreach (char symbol in pattern)\n            if (symbol == 'a')\n                ++countA;\n        int countB = pattern.Length - countA, maximum = countA == 0 ? 0 : text.Length / countA;\n        for (int lengthA = 0; lengthA <= maximum; ++lengthA)\n        {\n            int remaining = text.Length - countA * lengthA;\n            if (countB == 0 ? remaining != 0 : remaining % countB != 0)\n                continue;\n            int lengthB = countB == 0 ? 0 : remaining / countB;\n            string? a = null, b = null;\n            int offset = 0;\n            bool valid = true;\n            foreach (char symbol in pattern)\n            {\n                int length = symbol == 'a' ? lengthA : lengthB;\n                string? part = text.Substring(offset, length);\n                if (symbol == 'a')\n                {\n                    if (a == null)\n                        a = part;\n                    else if (a != part)\n                    {\n                        valid = false;\n                        break;\n                    }\n                }\n                else\n                {\n                    if (b == null)\n                        b = part;\n                    else if (b != part)\n                    {\n                        valid = false;\n                        break;\n                    }\n                }\n                offset += length;\n            }\n            if (valid && offset == text.Length)\n                return true;\n        }\n        return false;\n    }\n}\n",
+    "explanation": "If a appears ca times and b appears cb times, candidate replacement lengths must satisfy ca*la+cb*lb=text.length. Enumerate one used length, derive the other, and verify every occurrence against the first substring assigned to its symbol. This avoids enumerating all possible replacement strings independently.",
+    "timeComplexity": "O((n+1)*(n+p+1)) conservative time for text length n and pattern length p: at most n+1 length choices, with O(n+p) slice/comparison work each.",
+    "spaceComplexity": "O(n) replacement-slice storage plus O(1) counters; no expanded candidate string is built.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.18. No affiliation is implied.",
+    "correctness": "Every valid substitution has nonnegative lengths satisfying the total-length equation, so its length pair is among those tested. For a tested pair, scan pattern from left to right and assign a symbol the text slice at its first occurrence; later occurrences must equal that slice. This enforces consistent replacements and advances by exactly the chosen length. The total-length equation ensures the final offset is the text end. Thus any accepted pair defines a valid full substitution, and the pair of any valid substitution passes verification. Empty/unused-symbol cases follow the explicit zero-length and full-consumption rules.",
+    "walkthrough": "For pattern=abba and text=redbluebluered, lengths a=3 and b=4 assign red at the first a and blue at the first b. The second b matches blue and the last a matches red, consuming all text, so return true. For pattern=ab and text=x, a may be empty and b=x; distinct nonempty replacements are not required.",
+    "edgeCases": [
+      "Empty pattern/text and a pattern using only one symbol.",
+      "Empty or equal replacement strings, mismatched repeated symbols and unmatched trailing text."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_18",
+    "collection": "ctci6",
+    "language": "javascript",
+    "code": "'use strict';\nfunction MatchesPattern(pattern, text) {\n  if (pattern.length === 0) return text.length === 0;\n  let countA = 0;\n  for (const symbol of pattern) if (symbol === \"a\") ++countA;\n  const countB = pattern.length - countA,\n    maximum = countA ? Math.floor(text.length / countA) : 0;\n  for (let lengthA = 0; lengthA <= maximum; ++lengthA) {\n    const remaining = text.length - countA * lengthA;\n    if (countB === 0 ? remaining !== 0 : remaining % countB !== 0) continue;\n    const lengthB = countB === 0 ? 0 : remaining / countB;\n    let a = null,\n      b = null,\n      offset = 0,\n      valid = true;\n    for (const symbol of pattern) {\n      const length = symbol === \"a\" ? lengthA : lengthB,\n        part = text.slice(offset, offset + length);\n      if (symbol === \"a\") {\n        if (a === null) a = part;\n        else if (a !== part) {\n          valid = false;\n          break;\n        }\n      } else {\n        if (b === null) b = part;\n        else if (b !== part) {\n          valid = false;\n          break;\n        }\n      }\n      offset += length;\n    }\n    if (valid && offset === text.length) return true;\n  }\n  return false;\n}\n\nmodule.exports = {MatchesPattern};\n",
+    "explanation": "If a appears ca times and b appears cb times, candidate replacement lengths must satisfy ca*la+cb*lb=text.length. Enumerate one used length, derive the other, and verify every occurrence against the first substring assigned to its symbol. This avoids enumerating all possible replacement strings independently.",
+    "timeComplexity": "O((n+1)*(n+p+1)) conservative time for text length n and pattern length p: at most n+1 length choices, with O(n+p) slice/comparison work each.",
+    "spaceComplexity": "O(n) replacement-slice storage plus O(1) counters; no expanded candidate string is built.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.18. No affiliation is implied.",
+    "correctness": "Every valid substitution has nonnegative lengths satisfying the total-length equation, so its length pair is among those tested. For a tested pair, scan pattern from left to right and assign a symbol the text slice at its first occurrence; later occurrences must equal that slice. This enforces consistent replacements and advances by exactly the chosen length. The total-length equation ensures the final offset is the text end. Thus any accepted pair defines a valid full substitution, and the pair of any valid substitution passes verification. Empty/unused-symbol cases follow the explicit zero-length and full-consumption rules.",
+    "walkthrough": "For pattern=abba and text=redbluebluered, lengths a=3 and b=4 assign red at the first a and blue at the first b. The second b matches blue and the last a matches red, consuming all text, so return true. For pattern=ab and text=x, a may be empty and b=x; distinct nonempty replacements are not required.",
+    "edgeCases": [
+      "Empty pattern/text and a pattern using only one symbol.",
+      "Empty or equal replacement strings, mismatched repeated symbols and unmatched trailing text."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_18",
+    "collection": "ctci6",
+    "language": "python",
+    "code": "def MatchesPattern(pattern: str, text: str) -> bool:\n    if not pattern:\n        return not text\n    count_a = pattern.count(\"a\")\n    count_b = len(pattern) - count_a\n    maximum = len(text) // count_a if count_a else 0\n    for length_a in range(maximum + 1):\n        remaining = len(text) - count_a * length_a\n        if count_b == 0:\n            if remaining != 0:\n                continue\n            length_b = 0\n        else:\n            if remaining % count_b:\n                continue\n            length_b = remaining // count_b\n        a = b = None\n        offset = 0\n        valid = True\n        for symbol in pattern:\n            length = length_a if symbol == \"a\" else length_b\n            part = text[offset : offset + length]\n            if symbol == \"a\":\n                if a is None:\n                    a = part\n                elif a != part:\n                    valid = False\n                    break\n            else:\n                if b is None:\n                    b = part\n                elif b != part:\n                    valid = False\n                    break\n            offset += length\n        if valid and offset == len(text):\n            return True\n    return False\n",
+    "explanation": "If a appears ca times and b appears cb times, candidate replacement lengths must satisfy ca*la+cb*lb=text.length. Enumerate one used length, derive the other, and verify every occurrence against the first substring assigned to its symbol. This avoids enumerating all possible replacement strings independently.",
+    "timeComplexity": "O((n+1)*(n+p+1)) conservative time for text length n and pattern length p: at most n+1 length choices, with O(n+p) slice/comparison work each.",
+    "spaceComplexity": "O(n) replacement-slice storage plus O(1) counters; no expanded candidate string is built.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.18. No affiliation is implied.",
+    "correctness": "Every valid substitution has nonnegative lengths satisfying the total-length equation, so its length pair is among those tested. For a tested pair, scan pattern from left to right and assign a symbol the text slice at its first occurrence; later occurrences must equal that slice. This enforces consistent replacements and advances by exactly the chosen length. The total-length equation ensures the final offset is the text end. Thus any accepted pair defines a valid full substitution, and the pair of any valid substitution passes verification. Empty/unused-symbol cases follow the explicit zero-length and full-consumption rules.",
+    "walkthrough": "For pattern=abba and text=redbluebluered, lengths a=3 and b=4 assign red at the first a and blue at the first b. The second b matches blue and the last a matches red, consuming all text, so return true. For pattern=ab and text=x, a may be empty and b=x; distinct nonempty replacements are not required.",
+    "edgeCases": [
+      "Empty pattern/text and a pattern using only one symbol.",
+      "Empty or equal replacement strings, mismatched repeated symbols and unmatched trailing text."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_18",
+    "collection": "ctci6",
+    "language": "cpp",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n#include <unordered_map>\n#include <unordered_set>\nclass Solution {\n public:\n  bool MatchesPattern(const std::string& pattern, const std::string& text) {\n    if (pattern.empty())\n      return text.empty();\n    int countA = 0;\n    for (char symbol : pattern)\n      if (symbol == 'a')\n        ++countA;\n    int countB = static_cast<int>(pattern.size()) - countA, n = static_cast<int>(text.size()),\n        maximum = countA ? n / countA : 0;\n    for (int lengthA = 0; lengthA <= maximum; ++lengthA) {\n      int remaining = n - countA * lengthA;\n      if (countB == 0 ? remaining != 0 : remaining % countB != 0)\n        continue;\n      int lengthB = countB == 0 ? 0 : remaining / countB;\n      std::string a, b;\n      bool haveA = false, haveB = false, valid = true;\n      int offset = 0;\n      for (char symbol : pattern) {\n        int length = symbol == 'a' ? lengthA : lengthB;\n        auto part = text.substr(offset, length);\n        if (symbol == 'a') {\n          if (!haveA) {\n            a = part;\n            haveA = true;\n          } else if (a != part) {\n            valid = false;\n            break;\n          }\n        } else {\n          if (!haveB) {\n            b = part;\n            haveB = true;\n          } else if (b != part) {\n            valid = false;\n            break;\n          }\n        }\n        offset += length;\n      }\n      if (valid && offset == n)\n        return true;\n    }\n    return false;\n  }\n};\n",
+    "explanation": "If a appears ca times and b appears cb times, candidate replacement lengths must satisfy ca*la+cb*lb=text.length. Enumerate one used length, derive the other, and verify every occurrence against the first substring assigned to its symbol. This avoids enumerating all possible replacement strings independently.",
+    "timeComplexity": "O((n+1)*(n+p+1)) conservative time for text length n and pattern length p: at most n+1 length choices, with O(n+p) slice/comparison work each.",
+    "spaceComplexity": "O(n) replacement-slice storage plus O(1) counters; no expanded candidate string is built.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.18. No affiliation is implied.",
+    "correctness": "Every valid substitution has nonnegative lengths satisfying the total-length equation, so its length pair is among those tested. For a tested pair, scan pattern from left to right and assign a symbol the text slice at its first occurrence; later occurrences must equal that slice. This enforces consistent replacements and advances by exactly the chosen length. The total-length equation ensures the final offset is the text end. Thus any accepted pair defines a valid full substitution, and the pair of any valid substitution passes verification. Empty/unused-symbol cases follow the explicit zero-length and full-consumption rules.",
+    "walkthrough": "For pattern=abba and text=redbluebluered, lengths a=3 and b=4 assign red at the first a and blue at the first b. The second b matches blue and the last a matches red, consuming all text, so return true. For pattern=ab and text=x, a may be empty and b=x; distinct nonempty replacements are not required.",
+    "edgeCases": [
+      "Empty pattern/text and a pattern using only one symbol.",
+      "Empty or equal replacement strings, mismatched repeated symbols and unmatched trailing text."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_18",
+    "collection": "ctci6",
+    "language": "java",
+    "code": "import java.util.*;\nclass Solution {\n  public boolean MatchesPattern(String pattern, String text) {\n    if (pattern.length() == 0)\n      return text.length() == 0;\n    int countA = 0;\n    for (char symbol : pattern.toCharArray())\n      if (symbol == 'a')\n        ++countA;\n    int countB = pattern.length() - countA, maximum = countA == 0 ? 0 : text.length() / countA;\n    for (int lengthA = 0; lengthA <= maximum; ++lengthA) {\n      int remaining = text.length() - countA * lengthA;\n      if (countB == 0 ? remaining != 0 : remaining % countB != 0)\n        continue;\n      int lengthB = countB == 0 ? 0 : remaining / countB;\n      String a = null, b = null;\n      int offset = 0;\n      boolean valid = true;\n      for (char symbol : pattern.toCharArray()) {\n        int length = symbol == 'a' ? lengthA : lengthB;\n        String part = text.substring(offset, offset + length);\n        if (symbol == 'a') {\n          if (a == null)\n            a = part;\n          else if (!a.equals(part)) {\n            valid = false;\n            break;\n          }\n        } else {\n          if (b == null)\n            b = part;\n          else if (!b.equals(part)) {\n            valid = false;\n            break;\n          }\n        }\n        offset += length;\n      }\n      if (valid && offset == text.length())\n        return true;\n    }\n    return false;\n  }\n}\n",
+    "explanation": "If a appears ca times and b appears cb times, candidate replacement lengths must satisfy ca*la+cb*lb=text.length. Enumerate one used length, derive the other, and verify every occurrence against the first substring assigned to its symbol. This avoids enumerating all possible replacement strings independently.",
+    "timeComplexity": "O((n+1)*(n+p+1)) conservative time for text length n and pattern length p: at most n+1 length choices, with O(n+p) slice/comparison work each.",
+    "spaceComplexity": "O(n) replacement-slice storage plus O(1) counters; no expanded candidate string is built.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.18. No affiliation is implied.",
+    "correctness": "Every valid substitution has nonnegative lengths satisfying the total-length equation, so its length pair is among those tested. For a tested pair, scan pattern from left to right and assign a symbol the text slice at its first occurrence; later occurrences must equal that slice. This enforces consistent replacements and advances by exactly the chosen length. The total-length equation ensures the final offset is the text end. Thus any accepted pair defines a valid full substitution, and the pair of any valid substitution passes verification. Empty/unused-symbol cases follow the explicit zero-length and full-consumption rules.",
+    "walkthrough": "For pattern=abba and text=redbluebluered, lengths a=3 and b=4 assign red at the first a and blue at the first b. The second b matches blue and the last a matches red, consuming all text, so return true. For pattern=ab and text=x, a may be empty and b=x; distinct nonempty replacements are not required.",
+    "edgeCases": [
+      "Empty pattern/text and a pattern using only one symbol.",
+      "Empty or equal replacement strings, mismatched repeated symbols and unmatched trailing text."
+    ]
+  },
+  {
     "problemId": "ctci6_16_19",
     "collection": "ctci6",
     "language": "csharp",
@@ -34497,6 +34657,86 @@
     "edgeCases": [
       "No water, all water, empty dimensions.",
       "Diagonal-only connections, separate equal-sized ponds, and boundary/corner cells."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_20",
+    "collection": "ctci6",
+    "language": "csharp",
+    "code": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic class Solution\n{\n    public List<string> T9Words(string digits, string[] dictionary)\n    {\n        const string mapping = \"22233344455566677778889999\";\n        var result = new List<string>();\n        foreach (string word in dictionary)\n        {\n            if (word.Length != digits.Length)\n                continue;\n            bool valid = true;\n            for (int i = 0; i < word.Length; ++i)\n                if (mapping[word[i] - 'a'] != digits[i])\n                {\n                    valid = false;\n                    break;\n                }\n            if (valid)\n                result.Add(word);\n        }\n        return result;\n    }\n}\n",
+    "explanation": "Each dictionary word has exactly one keypad encoding. Check only words of the requested length and compare each letter's digit with the query. This avoids generating all exponential letter combinations, most of which might not be dictionary words.",
+    "timeComplexity": "O(W+T) time for W dictionary entries and at most T examined word characters; each entry is visited once and length-mismatched words need no character scan.",
+    "spaceComplexity": "O(R) returned word references/copies for R matches, plus a constant 26-entry mapping and scalar loop indices; C++ returned strings also copy their character contents.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.20. No affiliation is implied.",
+    "correctness": "For a word of the right length, the fixed keypad table maps each letter to its unique allowed digit. Equality at every position holds exactly when that word is one valid spelling of the query; a length mismatch or any differing mapped digit makes it impossible. Visiting every dictionary entry therefore returns all and only matches. Appending during the original-order scan preserves ordering and duplicates. Since no letter maps to 0 or 1 and words are nonempty, the explicit no-match cases follow automatically.",
+    "walkthrough": "For digits=8733 and dictionary=[tree,used,true,tree], tree maps t->8,r->7,e->3,e->3 and used maps u->8,s->7,e->3,d->3. true maps to 8783, so the result is [tree,used,tree], retaining the repeated entry.",
+    "edgeCases": [
+      "Empty dictionary/query, digits 0/1 and words of a different length.",
+      "Four-letter keypad groups pqrs/wxyz, duplicate dictionary entries and no matches."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_20",
+    "collection": "ctci6",
+    "language": "javascript",
+    "code": "'use strict';\nfunction T9Words(digits, dictionary) {\n  const mapping = \"22233344455566677778889999\",\n    result = [];\n  for (const word of dictionary) {\n    if (word.length !== digits.length) continue;\n    let valid = true;\n    for (let i = 0; i < word.length; ++i)\n      if (mapping[word.charCodeAt(i) - 97] !== digits[i]) {\n        valid = false;\n        break;\n      }\n    if (valid) result.push(word);\n  }\n  return result;\n}\n\nmodule.exports = {T9Words};\n",
+    "explanation": "Each dictionary word has exactly one keypad encoding. Check only words of the requested length and compare each letter's digit with the query. This avoids generating all exponential letter combinations, most of which might not be dictionary words.",
+    "timeComplexity": "O(W+T) time for W dictionary entries and at most T examined word characters; each entry is visited once and length-mismatched words need no character scan.",
+    "spaceComplexity": "O(R) returned word references/copies for R matches, plus a constant 26-entry mapping and scalar loop indices; C++ returned strings also copy their character contents.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.20. No affiliation is implied.",
+    "correctness": "For a word of the right length, the fixed keypad table maps each letter to its unique allowed digit. Equality at every position holds exactly when that word is one valid spelling of the query; a length mismatch or any differing mapped digit makes it impossible. Visiting every dictionary entry therefore returns all and only matches. Appending during the original-order scan preserves ordering and duplicates. Since no letter maps to 0 or 1 and words are nonempty, the explicit no-match cases follow automatically.",
+    "walkthrough": "For digits=8733 and dictionary=[tree,used,true,tree], tree maps t->8,r->7,e->3,e->3 and used maps u->8,s->7,e->3,d->3. true maps to 8783, so the result is [tree,used,tree], retaining the repeated entry.",
+    "edgeCases": [
+      "Empty dictionary/query, digits 0/1 and words of a different length.",
+      "Four-letter keypad groups pqrs/wxyz, duplicate dictionary entries and no matches."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_20",
+    "collection": "ctci6",
+    "language": "python",
+    "code": "def T9Words(digits: str, dictionary: list[str]) -> list[str]:\n    mapping = \"22233344455566677778889999\"\n    result = []\n    for word in dictionary:\n        if len(word) == len(digits) and all(\n            mapping[ord(letter) - ord(\"a\")] == digit for letter, digit in zip(word, digits)\n        ):\n            result.append(word)\n    return result\n",
+    "explanation": "Each dictionary word has exactly one keypad encoding. Check only words of the requested length and compare each letter's digit with the query. This avoids generating all exponential letter combinations, most of which might not be dictionary words.",
+    "timeComplexity": "O(W+T) time for W dictionary entries and at most T examined word characters; each entry is visited once and length-mismatched words need no character scan.",
+    "spaceComplexity": "O(R) returned word references/copies for R matches, plus a constant 26-entry mapping and scalar loop indices; C++ returned strings also copy their character contents.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.20. No affiliation is implied.",
+    "correctness": "For a word of the right length, the fixed keypad table maps each letter to its unique allowed digit. Equality at every position holds exactly when that word is one valid spelling of the query; a length mismatch or any differing mapped digit makes it impossible. Visiting every dictionary entry therefore returns all and only matches. Appending during the original-order scan preserves ordering and duplicates. Since no letter maps to 0 or 1 and words are nonempty, the explicit no-match cases follow automatically.",
+    "walkthrough": "For digits=8733 and dictionary=[tree,used,true,tree], tree maps t->8,r->7,e->3,e->3 and used maps u->8,s->7,e->3,d->3. true maps to 8783, so the result is [tree,used,tree], retaining the repeated entry.",
+    "edgeCases": [
+      "Empty dictionary/query, digits 0/1 and words of a different length.",
+      "Four-letter keypad groups pqrs/wxyz, duplicate dictionary entries and no matches."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_20",
+    "collection": "ctci6",
+    "language": "cpp",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n#include <unordered_map>\n#include <unordered_set>\nclass Solution {\n public:\n  std::vector<std::string> T9Words(const std::string& digits,\n                                   const std::vector<std::string>& dictionary) {\n    const std::string mapping = \"22233344455566677778889999\";\n    std::vector<std::string> result;\n    for (const auto& word : dictionary) {\n      if (word.size() != digits.size())\n        continue;\n      bool valid = true;\n      for (size_t i = 0; i < word.size(); ++i)\n        if (mapping[word[i] - 'a'] != digits[i]) {\n          valid = false;\n          break;\n        }\n      if (valid)\n        result.push_back(word);\n    }\n    return result;\n  }\n};\n",
+    "explanation": "Each dictionary word has exactly one keypad encoding. Check only words of the requested length and compare each letter's digit with the query. This avoids generating all exponential letter combinations, most of which might not be dictionary words.",
+    "timeComplexity": "O(W+T) time for W dictionary entries and at most T examined word characters; each entry is visited once and length-mismatched words need no character scan.",
+    "spaceComplexity": "O(R) returned word references/copies for R matches, plus a constant 26-entry mapping and scalar loop indices; C++ returned strings also copy their character contents.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.20. No affiliation is implied.",
+    "correctness": "For a word of the right length, the fixed keypad table maps each letter to its unique allowed digit. Equality at every position holds exactly when that word is one valid spelling of the query; a length mismatch or any differing mapped digit makes it impossible. Visiting every dictionary entry therefore returns all and only matches. Appending during the original-order scan preserves ordering and duplicates. Since no letter maps to 0 or 1 and words are nonempty, the explicit no-match cases follow automatically.",
+    "walkthrough": "For digits=8733 and dictionary=[tree,used,true,tree], tree maps t->8,r->7,e->3,e->3 and used maps u->8,s->7,e->3,d->3. true maps to 8783, so the result is [tree,used,tree], retaining the repeated entry.",
+    "edgeCases": [
+      "Empty dictionary/query, digits 0/1 and words of a different length.",
+      "Four-letter keypad groups pqrs/wxyz, duplicate dictionary entries and no matches."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_20",
+    "collection": "ctci6",
+    "language": "java",
+    "code": "import java.util.*;\nclass Solution {\n  public List<String> T9Words(String digits, String[] dictionary) {\n    String mapping = \"22233344455566677778889999\";\n    List<String> result = new ArrayList<>();\n    for (String word : dictionary) {\n      if (word.length() != digits.length())\n        continue;\n      boolean valid = true;\n      for (int i = 0; i < word.length(); ++i)\n        if (mapping.charAt(word.charAt(i) - 'a') != digits.charAt(i)) {\n          valid = false;\n          break;\n        }\n      if (valid)\n        result.add(word);\n    }\n    return result;\n  }\n}\n",
+    "explanation": "Each dictionary word has exactly one keypad encoding. Check only words of the requested length and compare each letter's digit with the query. This avoids generating all exponential letter combinations, most of which might not be dictionary words.",
+    "timeComplexity": "O(W+T) time for W dictionary entries and at most T examined word characters; each entry is visited once and length-mismatched words need no character scan.",
+    "spaceComplexity": "O(R) returned word references/copies for R matches, plus a constant 26-entry mapping and scalar loop indices; C++ returned strings also copy their character contents.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.20. No affiliation is implied.",
+    "correctness": "For a word of the right length, the fixed keypad table maps each letter to its unique allowed digit. Equality at every position holds exactly when that word is one valid spelling of the query; a length mismatch or any differing mapped digit makes it impossible. Visiting every dictionary entry therefore returns all and only matches. Appending during the original-order scan preserves ordering and duplicates. Since no letter maps to 0 or 1 and words are nonempty, the explicit no-match cases follow automatically.",
+    "walkthrough": "For digits=8733 and dictionary=[tree,used,true,tree], tree maps t->8,r->7,e->3,e->3 and used maps u->8,s->7,e->3,d->3. true maps to 8783, so the result is [tree,used,tree], retaining the repeated entry.",
+    "edgeCases": [
+      "Empty dictionary/query, digits 0/1 and words of a different length.",
+      "Four-letter keypad groups pqrs/wxyz, duplicate dictionary entries and no matches."
     ]
   },
   {

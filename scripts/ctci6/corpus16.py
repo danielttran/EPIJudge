@@ -202,3 +202,69 @@ def valid_observation(ref,case,observed):
     if not isinstance(observed,dict) or observed.get('mutationOk') is not True:return False
     actual=observed.get('actual')
     return type(actual) is list and all(type(row) is list and len(row)==2 and all(type(value) is int for value in row) for row in actual) and actual==case['expected']
+
+_previous_language_oracle=oracle
+_previous_language_cases=cases
+
+def oracle(ref,args):
+    if ref=='16.8':
+        names=['Zero','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Eleven','Twelve','Thirteen','Fourteen','Fifteen','Sixteen','Seventeen','Eighteen','Nineteen']
+        tens={20:'Twenty',30:'Thirty',40:'Forty',50:'Fifty',60:'Sixty',70:'Seventy',80:'Eighty',90:'Ninety'}
+        def spell(n):
+            if n<0:return 'Negative '+spell(-n)
+            if n<20:return names[n]
+            for scale,label in ((1000000000,'Billion'),(1000000,'Million'),(1000,'Thousand'),(100,'Hundred')):
+                if n>=scale:
+                    return spell(n//scale)+' '+label+(' '+spell(n%scale) if n%scale else '')
+            return tens[n//10*10]+(' '+spell(n%10) if n%10 else '')
+        return spell(args[0])
+    if ref=='16.18':
+        from functools import lru_cache
+        pattern,text=args
+        @lru_cache(None)
+        def search(index,offset,a,b):
+            if index==len(pattern):return offset==len(text)
+            known=a if pattern[index]=='a' else b
+            if known is not None:
+                return text.startswith(known,offset) and search(index+1,offset+len(known),a,b)
+            for end in range(offset,len(text)+1):
+                part=text[offset:end]
+                if search(index+1,end,part if pattern[index]=='a' else a,part if pattern[index]=='b' else b):return True
+            return False
+        return search(0,0,None,None)
+    if ref=='16.20':
+        digits,dictionary=args;groups=dict(zip('0123456789',('','','abc','def','ghi','jkl','mno','pqrs','tuv','wxyz')))
+        return [word for word in dictionary if len(word)==len(digits) and all(letter in groups[digit] for letter,digit in zip(word,digits))]
+    return _previous_language_oracle(ref,args)
+
+def cases(spec):
+    ref=spec['ref']
+    if ref not in ('16.8','16.18','16.20'):return _previous_language_cases(spec)
+    rng=random.Random(int(ref.replace('.',''))+1600000);args=[spec['example'][0]]
+    if ref=='16.8':
+        args += [[n] for n in range(-1001,2001)]
+        for scale in (1000,1000000,1000000000):
+            args += [[sign*n] for n in (scale-1,scale,scale+1,2*scale+1) for sign in (-1,1) if -2147483648<=sign*n<=2147483647]
+        args += [[-2147483648],[2147483647],[1000001],[1001001],[1002003]]+[[rng.randrange(-2147483648,2147483648)] for _ in range(100)]
+    elif ref=='16.18':
+        patterns=[''.join(p) for n in range(6) for p in itertools.product('ab',repeat=n)]
+        texts=[''.join(t) for n in range(6) for t in itertools.product('xy',repeat=n)]
+        args += [[p,t] for p in patterns for t in texts]
+        args += [['a','x'*100],['b'*20,'x'*100],['a'*20,'x'*99],['ab'*10,'x'*100],['ab'*10,'x'*99+'y'],['aba','x'],['aa','xy']]
+    else:
+        dictionary=[''.join(w) for n in range(1,4) for w in itertools.product('adsz',repeat=n)]
+        args += [[''.join(d),dictionary] for n in range(4) for d in itertools.product('2379',repeat=n)]
+        args += [[str(d),list('abcdefghijklmnopqrstuvwxyz')] for d in range(10)]
+        args += [['8733',['tree']*1000],['9'*20,['z'*20]*1000],['',[]],['10',['a','tree']]]
+        for _ in range(100):args.append([''.join(rng.choice('0123456789') for _ in range(rng.randrange(10))),[rng.choice(dictionary) for _ in range(rng.randrange(40))]])
+    distinct={json.dumps(a):a for a in args}
+    return [dict(arguments=a,expected=oracle(ref,a)) for a in distinct.values()]
+
+_previous_integer_observation=valid_observation
+
+def valid_observation(ref,case,observed):
+    if ref not in ('16.8','16.18','16.20'):return _previous_integer_observation(ref,case,observed)
+    if not isinstance(observed,dict) or observed.get('mutationOk') is not True:return False
+    actual=observed.get('actual')
+    expected_type={'16.8':str,'16.18':bool,'16.20':list}[ref]
+    return type(actual) is expected_type and (ref!='16.20' or all(type(word) is str for word in actual)) and actual==case['expected']

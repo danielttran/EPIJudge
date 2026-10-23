@@ -10076,6 +10076,66 @@
         "ctci6/runtime/validation.json",
         "ctci6/cases/ctci6_17_17.json"
       ]
+    },
+    "ctci6_16_8": {
+      "collection": "ctci6",
+      "statementSha256": "3093248bfc5ea2858f1e624c32e046f0a6efee846831dfaa0187bf5b376ec12f",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "inputDomain": "value is any signed 32-bit integer, including -2147483648. Return a nonempty string with no leading/trailing spaces. Examples of the exact convention: 21 -> \"Twenty One\", 105 -> \"One Hundred Five\", 1001 -> \"One Thousand One\". Use Thousand, Million and Billion for groups of three decimal digits. Omit zero groups completely; do not insert \"Zero\" between nonzero groups. Widen before negating the minimum signed value. Preserve the input value.",
+        "outputAndTies": "Write a signed 32-bit integer in English words. Use title-case number words, single spaces, no punctuation, no hyphens and no word \"and\". Prefix a negative number with \"Negative \"; zero is \"Zero\". The largest scale needed is Billion.",
+        "mutationAndIdentity": "Read all five bodies and number-name tables. C#/Java/C++ widen the input before negating its minimum signed value; Python and JS represent that magnitude exactly. Zero groups are omitted, teens are not split into tens/ones, and joining nonempty groups prevents trailing/doubled spaces. Zero is handled separately. An independent largest-scale recursive oracle checks every -1001..2000 value, scale boundaries, zero gaps, random signed values and both endpoints. The returned title-case/no-and convention is explicit.",
+        "boundaryBehavior": "Zero, negatives and the minimum signed input. Teens, exact hundreds/scales and zero groups between nonzero groups.",
+        "examples": "The independently checked displayed example and algorithm trace agree with the executed five-language bodies.",
+        "languageContracts": "{\"csharp\": \"Read all actual signed-int bodies. Array return expressions match int[] signatures. NumberMax uses uint sign extraction and an explicit unchecked difference, then signed masks; no conditional comparison helper. MasterMind IndexOf uses the admitted ASCII alphabet. Mutable array inputs are read only in this batch. New closest-difference results are long; subtraction and pair totals widen before arithmetic. Invariant token keys and private array clones preserve contracts. English magnitude is long before negation; local nonempty word groups join with exact spaces. Nullable mapping strings distinguish unassigned from empty. T9 returns List<string> matching its visible signature.\", \"javascript\": \"Read all actual functions. Factorial division is floored, NumberMax bit operations coerce the intended signed 32-bit patterns, and bounded ordinary arithmetic stays exactly representable. All array results are materialized, not generators. Inputs remain unchanged. New widened results use Number.isSafeInteger and the admitted exact range. Numeric sort comparators avoid lexical sorting; Map/Set and copied arrays preserve inputs. English magnitude uses exact Number arithmetic with Math.floor divisions. Pattern null differs from empty, matching results require boolean type, and T9 preserves duplicate entries in a concrete array.\", \"python\": \"Read all actual function bodies and exact annotations. NumberMax masks the potentially wider difference before extracting its 32-bit sign; the signed selection mask works with arbitrary-width bitwise operations. Arrays are concrete lists and bool is not an integer observation. The admitted numeric bounds remain shared. New closest-difference observations allow the exact widened result without accepting bool; pair observations validate nested integer rows. Sorted copies preserve caller lists. Text/bool observation branches apply only to their actual return kinds, leaving integer strictness intact. English floor division consumes chunks; pattern None differs from empty; T9 yields a concrete list.\", \"cpp\": \"Read all actual methods with const vector/string references. NumberMax difference is uint32_t and final operand multiplication by 0/1 cannot overflow. No undefined signed subtraction or implementation-defined unsigned narrowing is used. Returned vectors own their values; prefix/suffix scans index only nonempty input. New dictionary/set headers are explicit. long long arithmetic precedes differences/sums and range checks precede narrowing; all original vectors remain const. English magnitude widens before negation and reverse iteration joins groups. Pattern assignment uses separate haveA/haveB flags so empty strings are valid mappings; T9 output strings own their copies.\", \"java\": \"Read all actual methods. Integer arithmetic uses justified bounds, except the intentionally wrapping subtraction whose bit pattern is observed with >>>. Returned int[] arrays match declared types, String indexing uses charAt, and the frequency table is local per call. Inputs are unchanged. New closest-difference results are long and the JSON encoder handles Long. Locale.ROOT fixes token normalization; sum candidates are range-checked before int conversion. English magnitude is long, groups reverse locally, and String.join emits no extra spaces. Pattern matching uses String.equals and Boolean encoding; T9 returns materialized List<String>.\"}",
+        "judgeAgreement": "Read all five bodies and number-name tables. C#/Java/C++ widen the input before negating its minimum signed value; Python and JS represent that magnitude exactly. Zero groups are omitted, teens are not split into tens/ones, and joining nonempty groups prevents trailing/doubled spaces. Zero is handled separately. An independent largest-scale recursive oracle checks every -1001..2000 value, scale boundaries, zero gaps, random signed values and both endpoints. The returned title-case/no-and convention is explicit."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_8.json"
+      ]
+    },
+    "ctci6_16_18": {
+      "collection": "ctci6",
+      "statementSha256": "e950fcf96fa63b9d36ead22bfaa99e88aa5cf59691f158ceff850ba7fe68e0c7",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "inputDomain": "pattern contains 0..20 symbols, each a or b. text contains 0..100 lowercase ASCII letters. Strings are nonnull and unchanged. This is concatenation substitution, not regular-expression matching. An empty pattern matches only empty text. A nonempty pattern matches empty text by assigning empty replacements to its used symbols. An unused symbol imposes no constraint. Consume the whole text; matching a prefix is insufficient.",
+        "outputAndTies": "Determine whether replacing every a in pattern with one fixed string and every b with another fixed string can produce text exactly. Each replacement may be empty, and the two replacement strings may be equal. Every occurrence of the same symbol must use the same replacement.",
+        "mutationAndIdentity": "Read all five actual bodies. Missing a symbols use one candidate length zero; missing b requires zero remaining text. The first assigned empty substring is distinguished from an unassigned null/flag, so empty and equal mappings remain legal. Total length is checked before scanning, and final offset must consume all text. C#/Java slices and C++ substr bounds follow that equation. An independent memoized assignment-backtracking oracle covers all small binary patterns/texts, single-symbol nondivisible lengths, empty values and maximum bounds. Boolean observations reject numeric stand-ins.",
+        "boundaryBehavior": "Empty pattern/text and a pattern using only one symbol. Empty or equal replacement strings, mismatched repeated symbols and unmatched trailing text.",
+        "examples": "The independently checked displayed example and algorithm trace agree with the executed five-language bodies.",
+        "languageContracts": "{\"csharp\": \"Read all actual signed-int bodies. Array return expressions match int[] signatures. NumberMax uses uint sign extraction and an explicit unchecked difference, then signed masks; no conditional comparison helper. MasterMind IndexOf uses the admitted ASCII alphabet. Mutable array inputs are read only in this batch. New closest-difference results are long; subtraction and pair totals widen before arithmetic. Invariant token keys and private array clones preserve contracts. English magnitude is long before negation; local nonempty word groups join with exact spaces. Nullable mapping strings distinguish unassigned from empty. T9 returns List<string> matching its visible signature.\", \"javascript\": \"Read all actual functions. Factorial division is floored, NumberMax bit operations coerce the intended signed 32-bit patterns, and bounded ordinary arithmetic stays exactly representable. All array results are materialized, not generators. Inputs remain unchanged. New widened results use Number.isSafeInteger and the admitted exact range. Numeric sort comparators avoid lexical sorting; Map/Set and copied arrays preserve inputs. English magnitude uses exact Number arithmetic with Math.floor divisions. Pattern null differs from empty, matching results require boolean type, and T9 preserves duplicate entries in a concrete array.\", \"python\": \"Read all actual function bodies and exact annotations. NumberMax masks the potentially wider difference before extracting its 32-bit sign; the signed selection mask works with arbitrary-width bitwise operations. Arrays are concrete lists and bool is not an integer observation. The admitted numeric bounds remain shared. New closest-difference observations allow the exact widened result without accepting bool; pair observations validate nested integer rows. Sorted copies preserve caller lists. Text/bool observation branches apply only to their actual return kinds, leaving integer strictness intact. English floor division consumes chunks; pattern None differs from empty; T9 yields a concrete list.\", \"cpp\": \"Read all actual methods with const vector/string references. NumberMax difference is uint32_t and final operand multiplication by 0/1 cannot overflow. No undefined signed subtraction or implementation-defined unsigned narrowing is used. Returned vectors own their values; prefix/suffix scans index only nonempty input. New dictionary/set headers are explicit. long long arithmetic precedes differences/sums and range checks precede narrowing; all original vectors remain const. English magnitude widens before negation and reverse iteration joins groups. Pattern assignment uses separate haveA/haveB flags so empty strings are valid mappings; T9 output strings own their copies.\", \"java\": \"Read all actual methods. Integer arithmetic uses justified bounds, except the intentionally wrapping subtraction whose bit pattern is observed with >>>. Returned int[] arrays match declared types, String indexing uses charAt, and the frequency table is local per call. Inputs are unchanged. New closest-difference results are long and the JSON encoder handles Long. Locale.ROOT fixes token normalization; sum candidates are range-checked before int conversion. English magnitude is long, groups reverse locally, and String.join emits no extra spaces. Pattern matching uses String.equals and Boolean encoding; T9 returns materialized List<String>.\"}",
+        "judgeAgreement": "Read all five actual bodies. Missing a symbols use one candidate length zero; missing b requires zero remaining text. The first assigned empty substring is distinguished from an unassigned null/flag, so empty and equal mappings remain legal. Total length is checked before scanning, and final offset must consume all text. C#/Java slices and C++ substr bounds follow that equation. An independent memoized assignment-backtracking oracle covers all small binary patterns/texts, single-symbol nondivisible lengths, empty values and maximum bounds. Boolean observations reject numeric stand-ins."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_18.json"
+      ]
+    },
+    "ctci6_16_20": {
+      "collection": "ctci6",
+      "statementSha256": "087e15f1a66dc4929067c28481473807862ad93aab29d26b57b2960ca96ecff6",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "inputDomain": "digits is a nonnull string of 0..20 ASCII digits 0..9. dictionary is a nonnull array of 0..1000 nonnull lowercase ASCII words, each 1..20 letters. Preserve the array and its entries. Return matches in original dictionary order, retaining duplicate matching entries. A word must have exactly digits.length letters and match every position. Digits 0 and 1 have no letters, so any query containing either has no matches. Empty digits has no match because dictionary words are nonempty.",
+        "outputAndTies": "Return dictionary entries whose letters map exactly to digits on a traditional telephone keypad. Each letter consumes one digit: 2=abc, 3=def, 4=ghi, 5=jkl, 6=mno, 7=pqrs, 8=tuv, 9=wxyz. This is predictive spelling, not repeated key presses for one letter.",
+        "mutationAndIdentity": "Read all five actual bodies and all 26 mapping entries, especially four-letter groups pqrs and wxyz. Length is tested before character matching; digits 0/1 and empty digits cannot match the nonempty-word domain. Returned entries preserve original order and duplicate occurrences. C++ returns copied string values; other languages retain immutable word references. An independent inverse digit-to-letter-group oracle checks every letter, short combinations and the 1000-entry/20-character bounds.",
+        "boundaryBehavior": "Empty dictionary/query, digits 0/1 and words of a different length. Four-letter keypad groups pqrs/wxyz, duplicate dictionary entries and no matches.",
+        "examples": "The independently checked displayed example and algorithm trace agree with the executed five-language bodies.",
+        "languageContracts": "{\"csharp\": \"Read all actual signed-int bodies. Array return expressions match int[] signatures. NumberMax uses uint sign extraction and an explicit unchecked difference, then signed masks; no conditional comparison helper. MasterMind IndexOf uses the admitted ASCII alphabet. Mutable array inputs are read only in this batch. New closest-difference results are long; subtraction and pair totals widen before arithmetic. Invariant token keys and private array clones preserve contracts. English magnitude is long before negation; local nonempty word groups join with exact spaces. Nullable mapping strings distinguish unassigned from empty. T9 returns List<string> matching its visible signature.\", \"javascript\": \"Read all actual functions. Factorial division is floored, NumberMax bit operations coerce the intended signed 32-bit patterns, and bounded ordinary arithmetic stays exactly representable. All array results are materialized, not generators. Inputs remain unchanged. New widened results use Number.isSafeInteger and the admitted exact range. Numeric sort comparators avoid lexical sorting; Map/Set and copied arrays preserve inputs. English magnitude uses exact Number arithmetic with Math.floor divisions. Pattern null differs from empty, matching results require boolean type, and T9 preserves duplicate entries in a concrete array.\", \"python\": \"Read all actual function bodies and exact annotations. NumberMax masks the potentially wider difference before extracting its 32-bit sign; the signed selection mask works with arbitrary-width bitwise operations. Arrays are concrete lists and bool is not an integer observation. The admitted numeric bounds remain shared. New closest-difference observations allow the exact widened result without accepting bool; pair observations validate nested integer rows. Sorted copies preserve caller lists. Text/bool observation branches apply only to their actual return kinds, leaving integer strictness intact. English floor division consumes chunks; pattern None differs from empty; T9 yields a concrete list.\", \"cpp\": \"Read all actual methods with const vector/string references. NumberMax difference is uint32_t and final operand multiplication by 0/1 cannot overflow. No undefined signed subtraction or implementation-defined unsigned narrowing is used. Returned vectors own their values; prefix/suffix scans index only nonempty input. New dictionary/set headers are explicit. long long arithmetic precedes differences/sums and range checks precede narrowing; all original vectors remain const. English magnitude widens before negation and reverse iteration joins groups. Pattern assignment uses separate haveA/haveB flags so empty strings are valid mappings; T9 output strings own their copies.\", \"java\": \"Read all actual methods. Integer arithmetic uses justified bounds, except the intentionally wrapping subtraction whose bit pattern is observed with >>>. Returned int[] arrays match declared types, String indexing uses charAt, and the frequency table is local per call. Inputs are unchanged. New closest-difference results are long and the JSON encoder handles Long. Locale.ROOT fixes token normalization; sum candidates are range-checked before int conversion. English magnitude is long, groups reverse locally, and String.join emits no extra spaces. Pattern matching uses String.equals and Boolean encoding; T9 returns materialized List<String>.\"}",
+        "judgeAgreement": "Read all five actual bodies and all 26 mapping entries, especially four-letter groups pqrs and wxyz. Length is tested before character matching; digits 0/1 and empty digits cannot match the nonempty-word domain. Returned entries preserve original order and duplicate occurrences. C++ returns copied string values; other languages retain immutable word references. An independent inverse digit-to-letter-group oracle checks every letter, short combinations and the 1000-entry/20-character bounds."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_20.json"
+      ]
     }
   },
   "solutions": {
@@ -58856,6 +58916,351 @@
         "ctci6/cases/ctci6_17_17.json",
         "solutions/java/ctci6_17_17.java",
         "solutions/notes/java/ctci6_17_17.json"
+      ]
+    },
+    "ctci6_16_8/csharp": {
+      "codePath": "solutions/csharp/ctci6_16_8.cs",
+      "notesPath": "solutions/notes/ctci6_16_8.json",
+      "contentSha256": "8812fcd065c205256a787c04b225156f9f95148e01fda1ba553f74b3880f5e91",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Iteratively spell nonzero three-digit groups and scales, reverse groups, join once and apply the original sign.",
+        "correctness": "Repeated division by 1000 decomposes the magnitude uniquely into group values from 0 through 999 and their powers of 1000. Hundreds plus a remainder below 100 spell each group exactly; a remainder below twenty uses its direct name, otherwise a tens word plus an optional ones word spells it. Attaching the scale to each nonzero group and joining groups from most significant to least therefore spells the entire magnitude without zero placeholders. The separate zero case supplies Zero, and prefixing Negative only for a negative original value gives the correct sign and required spacing.",
+        "workedTrace": "For -1002003, the low-to-high groups are 3,2,1. They spell Three, Two Thousand and One Million. Reverse the group order and join once to get One Million Two Thousand Three, then prefix Negative. The result is \"Negative One Million Two Thousand Three\".",
+        "edgeCases": "Zero, negatives and the minimum signed input. Teens, exact hundreds/scales and zero groups between nonzero groups.",
+        "timeDerivation": "O(d+o) time for d decimal digits and o returned characters; at most four groups occur in the signed 32-bit domain.",
+        "spaceDerivation": "O(o) for group words and the final text, with constant-size name tables; at most four chunk records are needed.",
+        "callableAgreement": "Read all five bodies and number-name tables. C#/Java/C++ widen the input before negating its minimum signed value; Python and JS represent that magnitude exactly. Zero groups are omitted, teens are not split into tens/ones, and joining nonempty groups prevents trailing/doubled spaces. Zero is handled separately. An independent largest-scale recursive oracle checks every -1001..2000 value, scale boundaries, zero gaps, random signed values and both endpoints. The returned title-case/no-and convention is explicit. Read all actual signed-int bodies. Array return expressions match int[] signatures. NumberMax uses uint sign extraction and an explicit unchecked difference, then signed masks; no conditional comparison helper. MasterMind IndexOf uses the admitted ASCII alphabet. Mutable array inputs are read only in this batch. New closest-difference results are long; subtraction and pair totals widen before arithmetic. Invariant token keys and private array clones preserve contracts. English magnitude is long before negation; local nonempty word groups join with exact spaces. Nullable mapping strings distinguish unassigned from empty. T9 returns List<string> matching its visible signature."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_8.json",
+        "solutions/csharp/ctci6_16_8.cs",
+        "solutions/notes/ctci6_16_8.json"
+      ]
+    },
+    "ctci6_16_8/javascript": {
+      "codePath": "solutions/javascript/ctci6_16_8.js",
+      "notesPath": "solutions/notes/javascript/ctci6_16_8.json",
+      "contentSha256": "3b491f2e836956047af94ba14336085141c07ccc6d902b9d654eb2743e658a1b",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Iteratively spell nonzero three-digit groups and scales, reverse groups, join once and apply the original sign.",
+        "correctness": "Repeated division by 1000 decomposes the magnitude uniquely into group values from 0 through 999 and their powers of 1000. Hundreds plus a remainder below 100 spell each group exactly; a remainder below twenty uses its direct name, otherwise a tens word plus an optional ones word spells it. Attaching the scale to each nonzero group and joining groups from most significant to least therefore spells the entire magnitude without zero placeholders. The separate zero case supplies Zero, and prefixing Negative only for a negative original value gives the correct sign and required spacing.",
+        "workedTrace": "For -1002003, the low-to-high groups are 3,2,1. They spell Three, Two Thousand and One Million. Reverse the group order and join once to get One Million Two Thousand Three, then prefix Negative. The result is \"Negative One Million Two Thousand Three\".",
+        "edgeCases": "Zero, negatives and the minimum signed input. Teens, exact hundreds/scales and zero groups between nonzero groups.",
+        "timeDerivation": "O(d+o) time for d decimal digits and o returned characters; at most four groups occur in the signed 32-bit domain.",
+        "spaceDerivation": "O(o) for group words and the final text, with constant-size name tables; at most four chunk records are needed.",
+        "callableAgreement": "Read all five bodies and number-name tables. C#/Java/C++ widen the input before negating its minimum signed value; Python and JS represent that magnitude exactly. Zero groups are omitted, teens are not split into tens/ones, and joining nonempty groups prevents trailing/doubled spaces. Zero is handled separately. An independent largest-scale recursive oracle checks every -1001..2000 value, scale boundaries, zero gaps, random signed values and both endpoints. The returned title-case/no-and convention is explicit. Read all actual functions. Factorial division is floored, NumberMax bit operations coerce the intended signed 32-bit patterns, and bounded ordinary arithmetic stays exactly representable. All array results are materialized, not generators. Inputs remain unchanged. New widened results use Number.isSafeInteger and the admitted exact range. Numeric sort comparators avoid lexical sorting; Map/Set and copied arrays preserve inputs. English magnitude uses exact Number arithmetic with Math.floor divisions. Pattern null differs from empty, matching results require boolean type, and T9 preserves duplicate entries in a concrete array."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_8.json",
+        "solutions/javascript/ctci6_16_8.js",
+        "solutions/notes/javascript/ctci6_16_8.json"
+      ]
+    },
+    "ctci6_16_8/python": {
+      "codePath": "solutions/python/ctci6_16_8.py",
+      "notesPath": "solutions/notes/python/ctci6_16_8.json",
+      "contentSha256": "7aa645bc7c04bca0b892a8262d215d1f7ad7fbd616c3686d15cecf62aff72288",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Iteratively spell nonzero three-digit groups and scales, reverse groups, join once and apply the original sign.",
+        "correctness": "Repeated division by 1000 decomposes the magnitude uniquely into group values from 0 through 999 and their powers of 1000. Hundreds plus a remainder below 100 spell each group exactly; a remainder below twenty uses its direct name, otherwise a tens word plus an optional ones word spells it. Attaching the scale to each nonzero group and joining groups from most significant to least therefore spells the entire magnitude without zero placeholders. The separate zero case supplies Zero, and prefixing Negative only for a negative original value gives the correct sign and required spacing.",
+        "workedTrace": "For -1002003, the low-to-high groups are 3,2,1. They spell Three, Two Thousand and One Million. Reverse the group order and join once to get One Million Two Thousand Three, then prefix Negative. The result is \"Negative One Million Two Thousand Three\".",
+        "edgeCases": "Zero, negatives and the minimum signed input. Teens, exact hundreds/scales and zero groups between nonzero groups.",
+        "timeDerivation": "O(d+o) time for d decimal digits and o returned characters; at most four groups occur in the signed 32-bit domain.",
+        "spaceDerivation": "O(o) for group words and the final text, with constant-size name tables; at most four chunk records are needed.",
+        "callableAgreement": "Read all five bodies and number-name tables. C#/Java/C++ widen the input before negating its minimum signed value; Python and JS represent that magnitude exactly. Zero groups are omitted, teens are not split into tens/ones, and joining nonempty groups prevents trailing/doubled spaces. Zero is handled separately. An independent largest-scale recursive oracle checks every -1001..2000 value, scale boundaries, zero gaps, random signed values and both endpoints. The returned title-case/no-and convention is explicit. Read all actual function bodies and exact annotations. NumberMax masks the potentially wider difference before extracting its 32-bit sign; the signed selection mask works with arbitrary-width bitwise operations. Arrays are concrete lists and bool is not an integer observation. The admitted numeric bounds remain shared. New closest-difference observations allow the exact widened result without accepting bool; pair observations validate nested integer rows. Sorted copies preserve caller lists. Text/bool observation branches apply only to their actual return kinds, leaving integer strictness intact. English floor division consumes chunks; pattern None differs from empty; T9 yields a concrete list."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_8.json",
+        "solutions/python/ctci6_16_8.py",
+        "solutions/notes/python/ctci6_16_8.json"
+      ]
+    },
+    "ctci6_16_8/cpp": {
+      "codePath": "solutions/cpp/ctci6_16_8.cpp",
+      "notesPath": "solutions/notes/cpp/ctci6_16_8.json",
+      "contentSha256": "5164d6d2ebe78668adae2b2ac652f3c80c8bce9b91e220790544811ab0900d78",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Iteratively spell nonzero three-digit groups and scales, reverse groups, join once and apply the original sign.",
+        "correctness": "Repeated division by 1000 decomposes the magnitude uniquely into group values from 0 through 999 and their powers of 1000. Hundreds plus a remainder below 100 spell each group exactly; a remainder below twenty uses its direct name, otherwise a tens word plus an optional ones word spells it. Attaching the scale to each nonzero group and joining groups from most significant to least therefore spells the entire magnitude without zero placeholders. The separate zero case supplies Zero, and prefixing Negative only for a negative original value gives the correct sign and required spacing.",
+        "workedTrace": "For -1002003, the low-to-high groups are 3,2,1. They spell Three, Two Thousand and One Million. Reverse the group order and join once to get One Million Two Thousand Three, then prefix Negative. The result is \"Negative One Million Two Thousand Three\".",
+        "edgeCases": "Zero, negatives and the minimum signed input. Teens, exact hundreds/scales and zero groups between nonzero groups.",
+        "timeDerivation": "O(d+o) time for d decimal digits and o returned characters; at most four groups occur in the signed 32-bit domain.",
+        "spaceDerivation": "O(o) for group words and the final text, with constant-size name tables; at most four chunk records are needed.",
+        "callableAgreement": "Read all five bodies and number-name tables. C#/Java/C++ widen the input before negating its minimum signed value; Python and JS represent that magnitude exactly. Zero groups are omitted, teens are not split into tens/ones, and joining nonempty groups prevents trailing/doubled spaces. Zero is handled separately. An independent largest-scale recursive oracle checks every -1001..2000 value, scale boundaries, zero gaps, random signed values and both endpoints. The returned title-case/no-and convention is explicit. Read all actual methods with const vector/string references. NumberMax difference is uint32_t and final operand multiplication by 0/1 cannot overflow. No undefined signed subtraction or implementation-defined unsigned narrowing is used. Returned vectors own their values; prefix/suffix scans index only nonempty input. New dictionary/set headers are explicit. long long arithmetic precedes differences/sums and range checks precede narrowing; all original vectors remain const. English magnitude widens before negation and reverse iteration joins groups. Pattern assignment uses separate haveA/haveB flags so empty strings are valid mappings; T9 output strings own their copies."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_8.json",
+        "solutions/cpp/ctci6_16_8.cpp",
+        "solutions/notes/cpp/ctci6_16_8.json"
+      ]
+    },
+    "ctci6_16_8/java": {
+      "codePath": "solutions/java/ctci6_16_8.java",
+      "notesPath": "solutions/notes/java/ctci6_16_8.json",
+      "contentSha256": "0f7a4b9fb177c1635100046123ebd08fae127b08daa412b91c731b90f37ce87f",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Iteratively spell nonzero three-digit groups and scales, reverse groups, join once and apply the original sign.",
+        "correctness": "Repeated division by 1000 decomposes the magnitude uniquely into group values from 0 through 999 and their powers of 1000. Hundreds plus a remainder below 100 spell each group exactly; a remainder below twenty uses its direct name, otherwise a tens word plus an optional ones word spells it. Attaching the scale to each nonzero group and joining groups from most significant to least therefore spells the entire magnitude without zero placeholders. The separate zero case supplies Zero, and prefixing Negative only for a negative original value gives the correct sign and required spacing.",
+        "workedTrace": "For -1002003, the low-to-high groups are 3,2,1. They spell Three, Two Thousand and One Million. Reverse the group order and join once to get One Million Two Thousand Three, then prefix Negative. The result is \"Negative One Million Two Thousand Three\".",
+        "edgeCases": "Zero, negatives and the minimum signed input. Teens, exact hundreds/scales and zero groups between nonzero groups.",
+        "timeDerivation": "O(d+o) time for d decimal digits and o returned characters; at most four groups occur in the signed 32-bit domain.",
+        "spaceDerivation": "O(o) for group words and the final text, with constant-size name tables; at most four chunk records are needed.",
+        "callableAgreement": "Read all five bodies and number-name tables. C#/Java/C++ widen the input before negating its minimum signed value; Python and JS represent that magnitude exactly. Zero groups are omitted, teens are not split into tens/ones, and joining nonempty groups prevents trailing/doubled spaces. Zero is handled separately. An independent largest-scale recursive oracle checks every -1001..2000 value, scale boundaries, zero gaps, random signed values and both endpoints. The returned title-case/no-and convention is explicit. Read all actual methods. Integer arithmetic uses justified bounds, except the intentionally wrapping subtraction whose bit pattern is observed with >>>. Returned int[] arrays match declared types, String indexing uses charAt, and the frequency table is local per call. Inputs are unchanged. New closest-difference results are long and the JSON encoder handles Long. Locale.ROOT fixes token normalization; sum candidates are range-checked before int conversion. English magnitude is long, groups reverse locally, and String.join emits no extra spaces. Pattern matching uses String.equals and Boolean encoding; T9 returns materialized List<String>."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_8.json",
+        "solutions/java/ctci6_16_8.java",
+        "solutions/notes/java/ctci6_16_8.json"
+      ]
+    },
+    "ctci6_16_18/csharp": {
+      "codePath": "solutions/csharp/ctci6_16_18.cs",
+      "notesPath": "solutions/notes/ctci6_16_18.json",
+      "contentSha256": "188a17b6b397e8f6d942cadc40f1b02a7e5fc3d584c036a9308fced1c9d34010",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Enumerate a replacement length, derive the other from symbol counts and verify consistent text slices without expansion.",
+        "correctness": "Every valid substitution has nonnegative lengths satisfying the total-length equation, so its length pair is among those tested. For a tested pair, scan pattern from left to right and assign a symbol the text slice at its first occurrence; later occurrences must equal that slice. This enforces consistent replacements and advances by exactly the chosen length. The total-length equation ensures the final offset is the text end. Thus any accepted pair defines a valid full substitution, and the pair of any valid substitution passes verification. Empty/unused-symbol cases follow the explicit zero-length and full-consumption rules.",
+        "workedTrace": "For pattern=abba and text=redbluebluered, lengths a=3 and b=4 assign red at the first a and blue at the first b. The second b matches blue and the last a matches red, consuming all text, so return true. For pattern=ab and text=x, a may be empty and b=x; distinct nonempty replacements are not required.",
+        "edgeCases": "Empty pattern/text and a pattern using only one symbol. Empty or equal replacement strings, mismatched repeated symbols and unmatched trailing text.",
+        "timeDerivation": "O((n+1)*(n+p+1)) conservative time for text length n and pattern length p: at most n+1 length choices, with O(n+p) slice/comparison work each.",
+        "spaceDerivation": "O(n) replacement-slice storage plus O(1) counters; no expanded candidate string is built.",
+        "callableAgreement": "Read all five actual bodies. Missing a symbols use one candidate length zero; missing b requires zero remaining text. The first assigned empty substring is distinguished from an unassigned null/flag, so empty and equal mappings remain legal. Total length is checked before scanning, and final offset must consume all text. C#/Java slices and C++ substr bounds follow that equation. An independent memoized assignment-backtracking oracle covers all small binary patterns/texts, single-symbol nondivisible lengths, empty values and maximum bounds. Boolean observations reject numeric stand-ins. Read all actual signed-int bodies. Array return expressions match int[] signatures. NumberMax uses uint sign extraction and an explicit unchecked difference, then signed masks; no conditional comparison helper. MasterMind IndexOf uses the admitted ASCII alphabet. Mutable array inputs are read only in this batch. New closest-difference results are long; subtraction and pair totals widen before arithmetic. Invariant token keys and private array clones preserve contracts. English magnitude is long before negation; local nonempty word groups join with exact spaces. Nullable mapping strings distinguish unassigned from empty. T9 returns List<string> matching its visible signature."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_18.json",
+        "solutions/csharp/ctci6_16_18.cs",
+        "solutions/notes/ctci6_16_18.json"
+      ]
+    },
+    "ctci6_16_18/javascript": {
+      "codePath": "solutions/javascript/ctci6_16_18.js",
+      "notesPath": "solutions/notes/javascript/ctci6_16_18.json",
+      "contentSha256": "c3067d33daf08d5c12225f7452be2fa4512b1a9de3425e22301377ea80664c64",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Enumerate a replacement length, derive the other from symbol counts and verify consistent text slices without expansion.",
+        "correctness": "Every valid substitution has nonnegative lengths satisfying the total-length equation, so its length pair is among those tested. For a tested pair, scan pattern from left to right and assign a symbol the text slice at its first occurrence; later occurrences must equal that slice. This enforces consistent replacements and advances by exactly the chosen length. The total-length equation ensures the final offset is the text end. Thus any accepted pair defines a valid full substitution, and the pair of any valid substitution passes verification. Empty/unused-symbol cases follow the explicit zero-length and full-consumption rules.",
+        "workedTrace": "For pattern=abba and text=redbluebluered, lengths a=3 and b=4 assign red at the first a and blue at the first b. The second b matches blue and the last a matches red, consuming all text, so return true. For pattern=ab and text=x, a may be empty and b=x; distinct nonempty replacements are not required.",
+        "edgeCases": "Empty pattern/text and a pattern using only one symbol. Empty or equal replacement strings, mismatched repeated symbols and unmatched trailing text.",
+        "timeDerivation": "O((n+1)*(n+p+1)) conservative time for text length n and pattern length p: at most n+1 length choices, with O(n+p) slice/comparison work each.",
+        "spaceDerivation": "O(n) replacement-slice storage plus O(1) counters; no expanded candidate string is built.",
+        "callableAgreement": "Read all five actual bodies. Missing a symbols use one candidate length zero; missing b requires zero remaining text. The first assigned empty substring is distinguished from an unassigned null/flag, so empty and equal mappings remain legal. Total length is checked before scanning, and final offset must consume all text. C#/Java slices and C++ substr bounds follow that equation. An independent memoized assignment-backtracking oracle covers all small binary patterns/texts, single-symbol nondivisible lengths, empty values and maximum bounds. Boolean observations reject numeric stand-ins. Read all actual functions. Factorial division is floored, NumberMax bit operations coerce the intended signed 32-bit patterns, and bounded ordinary arithmetic stays exactly representable. All array results are materialized, not generators. Inputs remain unchanged. New widened results use Number.isSafeInteger and the admitted exact range. Numeric sort comparators avoid lexical sorting; Map/Set and copied arrays preserve inputs. English magnitude uses exact Number arithmetic with Math.floor divisions. Pattern null differs from empty, matching results require boolean type, and T9 preserves duplicate entries in a concrete array."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_18.json",
+        "solutions/javascript/ctci6_16_18.js",
+        "solutions/notes/javascript/ctci6_16_18.json"
+      ]
+    },
+    "ctci6_16_18/python": {
+      "codePath": "solutions/python/ctci6_16_18.py",
+      "notesPath": "solutions/notes/python/ctci6_16_18.json",
+      "contentSha256": "6fab216ab67729cb18198179f56d51ae547009d17c9edba0da4d8a4b2149b9a3",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Enumerate a replacement length, derive the other from symbol counts and verify consistent text slices without expansion.",
+        "correctness": "Every valid substitution has nonnegative lengths satisfying the total-length equation, so its length pair is among those tested. For a tested pair, scan pattern from left to right and assign a symbol the text slice at its first occurrence; later occurrences must equal that slice. This enforces consistent replacements and advances by exactly the chosen length. The total-length equation ensures the final offset is the text end. Thus any accepted pair defines a valid full substitution, and the pair of any valid substitution passes verification. Empty/unused-symbol cases follow the explicit zero-length and full-consumption rules.",
+        "workedTrace": "For pattern=abba and text=redbluebluered, lengths a=3 and b=4 assign red at the first a and blue at the first b. The second b matches blue and the last a matches red, consuming all text, so return true. For pattern=ab and text=x, a may be empty and b=x; distinct nonempty replacements are not required.",
+        "edgeCases": "Empty pattern/text and a pattern using only one symbol. Empty or equal replacement strings, mismatched repeated symbols and unmatched trailing text.",
+        "timeDerivation": "O((n+1)*(n+p+1)) conservative time for text length n and pattern length p: at most n+1 length choices, with O(n+p) slice/comparison work each.",
+        "spaceDerivation": "O(n) replacement-slice storage plus O(1) counters; no expanded candidate string is built.",
+        "callableAgreement": "Read all five actual bodies. Missing a symbols use one candidate length zero; missing b requires zero remaining text. The first assigned empty substring is distinguished from an unassigned null/flag, so empty and equal mappings remain legal. Total length is checked before scanning, and final offset must consume all text. C#/Java slices and C++ substr bounds follow that equation. An independent memoized assignment-backtracking oracle covers all small binary patterns/texts, single-symbol nondivisible lengths, empty values and maximum bounds. Boolean observations reject numeric stand-ins. Read all actual function bodies and exact annotations. NumberMax masks the potentially wider difference before extracting its 32-bit sign; the signed selection mask works with arbitrary-width bitwise operations. Arrays are concrete lists and bool is not an integer observation. The admitted numeric bounds remain shared. New closest-difference observations allow the exact widened result without accepting bool; pair observations validate nested integer rows. Sorted copies preserve caller lists. Text/bool observation branches apply only to their actual return kinds, leaving integer strictness intact. English floor division consumes chunks; pattern None differs from empty; T9 yields a concrete list."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_18.json",
+        "solutions/python/ctci6_16_18.py",
+        "solutions/notes/python/ctci6_16_18.json"
+      ]
+    },
+    "ctci6_16_18/cpp": {
+      "codePath": "solutions/cpp/ctci6_16_18.cpp",
+      "notesPath": "solutions/notes/cpp/ctci6_16_18.json",
+      "contentSha256": "baee772545e6af34f3e1ecee6fa7451c43e813bdd154177d94bc65a0b1be8220",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Enumerate a replacement length, derive the other from symbol counts and verify consistent text slices without expansion.",
+        "correctness": "Every valid substitution has nonnegative lengths satisfying the total-length equation, so its length pair is among those tested. For a tested pair, scan pattern from left to right and assign a symbol the text slice at its first occurrence; later occurrences must equal that slice. This enforces consistent replacements and advances by exactly the chosen length. The total-length equation ensures the final offset is the text end. Thus any accepted pair defines a valid full substitution, and the pair of any valid substitution passes verification. Empty/unused-symbol cases follow the explicit zero-length and full-consumption rules.",
+        "workedTrace": "For pattern=abba and text=redbluebluered, lengths a=3 and b=4 assign red at the first a and blue at the first b. The second b matches blue and the last a matches red, consuming all text, so return true. For pattern=ab and text=x, a may be empty and b=x; distinct nonempty replacements are not required.",
+        "edgeCases": "Empty pattern/text and a pattern using only one symbol. Empty or equal replacement strings, mismatched repeated symbols and unmatched trailing text.",
+        "timeDerivation": "O((n+1)*(n+p+1)) conservative time for text length n and pattern length p: at most n+1 length choices, with O(n+p) slice/comparison work each.",
+        "spaceDerivation": "O(n) replacement-slice storage plus O(1) counters; no expanded candidate string is built.",
+        "callableAgreement": "Read all five actual bodies. Missing a symbols use one candidate length zero; missing b requires zero remaining text. The first assigned empty substring is distinguished from an unassigned null/flag, so empty and equal mappings remain legal. Total length is checked before scanning, and final offset must consume all text. C#/Java slices and C++ substr bounds follow that equation. An independent memoized assignment-backtracking oracle covers all small binary patterns/texts, single-symbol nondivisible lengths, empty values and maximum bounds. Boolean observations reject numeric stand-ins. Read all actual methods with const vector/string references. NumberMax difference is uint32_t and final operand multiplication by 0/1 cannot overflow. No undefined signed subtraction or implementation-defined unsigned narrowing is used. Returned vectors own their values; prefix/suffix scans index only nonempty input. New dictionary/set headers are explicit. long long arithmetic precedes differences/sums and range checks precede narrowing; all original vectors remain const. English magnitude widens before negation and reverse iteration joins groups. Pattern assignment uses separate haveA/haveB flags so empty strings are valid mappings; T9 output strings own their copies."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_18.json",
+        "solutions/cpp/ctci6_16_18.cpp",
+        "solutions/notes/cpp/ctci6_16_18.json"
+      ]
+    },
+    "ctci6_16_18/java": {
+      "codePath": "solutions/java/ctci6_16_18.java",
+      "notesPath": "solutions/notes/java/ctci6_16_18.json",
+      "contentSha256": "8d359e5166aaa9bb78bcf53199f1ab26882cdb22c89dca5d06cce2a184ebcbc7",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Enumerate a replacement length, derive the other from symbol counts and verify consistent text slices without expansion.",
+        "correctness": "Every valid substitution has nonnegative lengths satisfying the total-length equation, so its length pair is among those tested. For a tested pair, scan pattern from left to right and assign a symbol the text slice at its first occurrence; later occurrences must equal that slice. This enforces consistent replacements and advances by exactly the chosen length. The total-length equation ensures the final offset is the text end. Thus any accepted pair defines a valid full substitution, and the pair of any valid substitution passes verification. Empty/unused-symbol cases follow the explicit zero-length and full-consumption rules.",
+        "workedTrace": "For pattern=abba and text=redbluebluered, lengths a=3 and b=4 assign red at the first a and blue at the first b. The second b matches blue and the last a matches red, consuming all text, so return true. For pattern=ab and text=x, a may be empty and b=x; distinct nonempty replacements are not required.",
+        "edgeCases": "Empty pattern/text and a pattern using only one symbol. Empty or equal replacement strings, mismatched repeated symbols and unmatched trailing text.",
+        "timeDerivation": "O((n+1)*(n+p+1)) conservative time for text length n and pattern length p: at most n+1 length choices, with O(n+p) slice/comparison work each.",
+        "spaceDerivation": "O(n) replacement-slice storage plus O(1) counters; no expanded candidate string is built.",
+        "callableAgreement": "Read all five actual bodies. Missing a symbols use one candidate length zero; missing b requires zero remaining text. The first assigned empty substring is distinguished from an unassigned null/flag, so empty and equal mappings remain legal. Total length is checked before scanning, and final offset must consume all text. C#/Java slices and C++ substr bounds follow that equation. An independent memoized assignment-backtracking oracle covers all small binary patterns/texts, single-symbol nondivisible lengths, empty values and maximum bounds. Boolean observations reject numeric stand-ins. Read all actual methods. Integer arithmetic uses justified bounds, except the intentionally wrapping subtraction whose bit pattern is observed with >>>. Returned int[] arrays match declared types, String indexing uses charAt, and the frequency table is local per call. Inputs are unchanged. New closest-difference results are long and the JSON encoder handles Long. Locale.ROOT fixes token normalization; sum candidates are range-checked before int conversion. English magnitude is long, groups reverse locally, and String.join emits no extra spaces. Pattern matching uses String.equals and Boolean encoding; T9 returns materialized List<String>."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_18.json",
+        "solutions/java/ctci6_16_18.java",
+        "solutions/notes/java/ctci6_16_18.json"
+      ]
+    },
+    "ctci6_16_20/csharp": {
+      "codePath": "solutions/csharp/ctci6_16_20.cs",
+      "notesPath": "solutions/notes/ctci6_16_20.json",
+      "contentSha256": "dbea597afbd4a3a17670f2355467ff9f16d10665f01a7cdf7ddc6d2cbe41a5fb",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Scan dictionary entries in order and compare each letter through a fixed 26-letter keypad map.",
+        "correctness": "For a word of the right length, the fixed keypad table maps each letter to its unique allowed digit. Equality at every position holds exactly when that word is one valid spelling of the query; a length mismatch or any differing mapped digit makes it impossible. Visiting every dictionary entry therefore returns all and only matches. Appending during the original-order scan preserves ordering and duplicates. Since no letter maps to 0 or 1 and words are nonempty, the explicit no-match cases follow automatically.",
+        "workedTrace": "For digits=8733 and dictionary=[tree,used,true,tree], tree maps t->8,r->7,e->3,e->3 and used maps u->8,s->7,e->3,d->3. true maps to 8783, so the result is [tree,used,tree], retaining the repeated entry.",
+        "edgeCases": "Empty dictionary/query, digits 0/1 and words of a different length. Four-letter keypad groups pqrs/wxyz, duplicate dictionary entries and no matches.",
+        "timeDerivation": "O(W+T) time for W dictionary entries and at most T examined word characters; each entry is visited once and length-mismatched words need no character scan.",
+        "spaceDerivation": "O(R) returned word references/copies for R matches, plus a constant 26-entry mapping and scalar loop indices; C++ returned strings also copy their character contents.",
+        "callableAgreement": "Read all five actual bodies and all 26 mapping entries, especially four-letter groups pqrs and wxyz. Length is tested before character matching; digits 0/1 and empty digits cannot match the nonempty-word domain. Returned entries preserve original order and duplicate occurrences. C++ returns copied string values; other languages retain immutable word references. An independent inverse digit-to-letter-group oracle checks every letter, short combinations and the 1000-entry/20-character bounds. Read all actual signed-int bodies. Array return expressions match int[] signatures. NumberMax uses uint sign extraction and an explicit unchecked difference, then signed masks; no conditional comparison helper. MasterMind IndexOf uses the admitted ASCII alphabet. Mutable array inputs are read only in this batch. New closest-difference results are long; subtraction and pair totals widen before arithmetic. Invariant token keys and private array clones preserve contracts. English magnitude is long before negation; local nonempty word groups join with exact spaces. Nullable mapping strings distinguish unassigned from empty. T9 returns List<string> matching its visible signature."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_20.json",
+        "solutions/csharp/ctci6_16_20.cs",
+        "solutions/notes/ctci6_16_20.json"
+      ]
+    },
+    "ctci6_16_20/javascript": {
+      "codePath": "solutions/javascript/ctci6_16_20.js",
+      "notesPath": "solutions/notes/javascript/ctci6_16_20.json",
+      "contentSha256": "5027995561ea93afa66e4b1396655f793b0237076f63de56c0131b38aa9b8a91",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Scan dictionary entries in order and compare each letter through a fixed 26-letter keypad map.",
+        "correctness": "For a word of the right length, the fixed keypad table maps each letter to its unique allowed digit. Equality at every position holds exactly when that word is one valid spelling of the query; a length mismatch or any differing mapped digit makes it impossible. Visiting every dictionary entry therefore returns all and only matches. Appending during the original-order scan preserves ordering and duplicates. Since no letter maps to 0 or 1 and words are nonempty, the explicit no-match cases follow automatically.",
+        "workedTrace": "For digits=8733 and dictionary=[tree,used,true,tree], tree maps t->8,r->7,e->3,e->3 and used maps u->8,s->7,e->3,d->3. true maps to 8783, so the result is [tree,used,tree], retaining the repeated entry.",
+        "edgeCases": "Empty dictionary/query, digits 0/1 and words of a different length. Four-letter keypad groups pqrs/wxyz, duplicate dictionary entries and no matches.",
+        "timeDerivation": "O(W+T) time for W dictionary entries and at most T examined word characters; each entry is visited once and length-mismatched words need no character scan.",
+        "spaceDerivation": "O(R) returned word references/copies for R matches, plus a constant 26-entry mapping and scalar loop indices; C++ returned strings also copy their character contents.",
+        "callableAgreement": "Read all five actual bodies and all 26 mapping entries, especially four-letter groups pqrs and wxyz. Length is tested before character matching; digits 0/1 and empty digits cannot match the nonempty-word domain. Returned entries preserve original order and duplicate occurrences. C++ returns copied string values; other languages retain immutable word references. An independent inverse digit-to-letter-group oracle checks every letter, short combinations and the 1000-entry/20-character bounds. Read all actual functions. Factorial division is floored, NumberMax bit operations coerce the intended signed 32-bit patterns, and bounded ordinary arithmetic stays exactly representable. All array results are materialized, not generators. Inputs remain unchanged. New widened results use Number.isSafeInteger and the admitted exact range. Numeric sort comparators avoid lexical sorting; Map/Set and copied arrays preserve inputs. English magnitude uses exact Number arithmetic with Math.floor divisions. Pattern null differs from empty, matching results require boolean type, and T9 preserves duplicate entries in a concrete array."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_20.json",
+        "solutions/javascript/ctci6_16_20.js",
+        "solutions/notes/javascript/ctci6_16_20.json"
+      ]
+    },
+    "ctci6_16_20/python": {
+      "codePath": "solutions/python/ctci6_16_20.py",
+      "notesPath": "solutions/notes/python/ctci6_16_20.json",
+      "contentSha256": "74a6f123037ed88097d828e575f87a0abcac7f893b52047f87222fee17f0d6a9",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Scan dictionary entries in order and compare each letter through a fixed 26-letter keypad map.",
+        "correctness": "For a word of the right length, the fixed keypad table maps each letter to its unique allowed digit. Equality at every position holds exactly when that word is one valid spelling of the query; a length mismatch or any differing mapped digit makes it impossible. Visiting every dictionary entry therefore returns all and only matches. Appending during the original-order scan preserves ordering and duplicates. Since no letter maps to 0 or 1 and words are nonempty, the explicit no-match cases follow automatically.",
+        "workedTrace": "For digits=8733 and dictionary=[tree,used,true,tree], tree maps t->8,r->7,e->3,e->3 and used maps u->8,s->7,e->3,d->3. true maps to 8783, so the result is [tree,used,tree], retaining the repeated entry.",
+        "edgeCases": "Empty dictionary/query, digits 0/1 and words of a different length. Four-letter keypad groups pqrs/wxyz, duplicate dictionary entries and no matches.",
+        "timeDerivation": "O(W+T) time for W dictionary entries and at most T examined word characters; each entry is visited once and length-mismatched words need no character scan.",
+        "spaceDerivation": "O(R) returned word references/copies for R matches, plus a constant 26-entry mapping and scalar loop indices; C++ returned strings also copy their character contents.",
+        "callableAgreement": "Read all five actual bodies and all 26 mapping entries, especially four-letter groups pqrs and wxyz. Length is tested before character matching; digits 0/1 and empty digits cannot match the nonempty-word domain. Returned entries preserve original order and duplicate occurrences. C++ returns copied string values; other languages retain immutable word references. An independent inverse digit-to-letter-group oracle checks every letter, short combinations and the 1000-entry/20-character bounds. Read all actual function bodies and exact annotations. NumberMax masks the potentially wider difference before extracting its 32-bit sign; the signed selection mask works with arbitrary-width bitwise operations. Arrays are concrete lists and bool is not an integer observation. The admitted numeric bounds remain shared. New closest-difference observations allow the exact widened result without accepting bool; pair observations validate nested integer rows. Sorted copies preserve caller lists. Text/bool observation branches apply only to their actual return kinds, leaving integer strictness intact. English floor division consumes chunks; pattern None differs from empty; T9 yields a concrete list."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_20.json",
+        "solutions/python/ctci6_16_20.py",
+        "solutions/notes/python/ctci6_16_20.json"
+      ]
+    },
+    "ctci6_16_20/cpp": {
+      "codePath": "solutions/cpp/ctci6_16_20.cpp",
+      "notesPath": "solutions/notes/cpp/ctci6_16_20.json",
+      "contentSha256": "b75becaf2d8106f3428434cfb946dab7f136bc6028995c0f70ab911c538968ea",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Scan dictionary entries in order and compare each letter through a fixed 26-letter keypad map.",
+        "correctness": "For a word of the right length, the fixed keypad table maps each letter to its unique allowed digit. Equality at every position holds exactly when that word is one valid spelling of the query; a length mismatch or any differing mapped digit makes it impossible. Visiting every dictionary entry therefore returns all and only matches. Appending during the original-order scan preserves ordering and duplicates. Since no letter maps to 0 or 1 and words are nonempty, the explicit no-match cases follow automatically.",
+        "workedTrace": "For digits=8733 and dictionary=[tree,used,true,tree], tree maps t->8,r->7,e->3,e->3 and used maps u->8,s->7,e->3,d->3. true maps to 8783, so the result is [tree,used,tree], retaining the repeated entry.",
+        "edgeCases": "Empty dictionary/query, digits 0/1 and words of a different length. Four-letter keypad groups pqrs/wxyz, duplicate dictionary entries and no matches.",
+        "timeDerivation": "O(W+T) time for W dictionary entries and at most T examined word characters; each entry is visited once and length-mismatched words need no character scan.",
+        "spaceDerivation": "O(R) returned word references/copies for R matches, plus a constant 26-entry mapping and scalar loop indices; C++ returned strings also copy their character contents.",
+        "callableAgreement": "Read all five actual bodies and all 26 mapping entries, especially four-letter groups pqrs and wxyz. Length is tested before character matching; digits 0/1 and empty digits cannot match the nonempty-word domain. Returned entries preserve original order and duplicate occurrences. C++ returns copied string values; other languages retain immutable word references. An independent inverse digit-to-letter-group oracle checks every letter, short combinations and the 1000-entry/20-character bounds. Read all actual methods with const vector/string references. NumberMax difference is uint32_t and final operand multiplication by 0/1 cannot overflow. No undefined signed subtraction or implementation-defined unsigned narrowing is used. Returned vectors own their values; prefix/suffix scans index only nonempty input. New dictionary/set headers are explicit. long long arithmetic precedes differences/sums and range checks precede narrowing; all original vectors remain const. English magnitude widens before negation and reverse iteration joins groups. Pattern assignment uses separate haveA/haveB flags so empty strings are valid mappings; T9 output strings own their copies."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_20.json",
+        "solutions/cpp/ctci6_16_20.cpp",
+        "solutions/notes/cpp/ctci6_16_20.json"
+      ]
+    },
+    "ctci6_16_20/java": {
+      "codePath": "solutions/java/ctci6_16_20.java",
+      "notesPath": "solutions/notes/java/ctci6_16_20.json",
+      "contentSha256": "401634c10869f63fe3a1830e7b83eaffbd800ffd83b2d928980951352ce7bf24",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Scan dictionary entries in order and compare each letter through a fixed 26-letter keypad map.",
+        "correctness": "For a word of the right length, the fixed keypad table maps each letter to its unique allowed digit. Equality at every position holds exactly when that word is one valid spelling of the query; a length mismatch or any differing mapped digit makes it impossible. Visiting every dictionary entry therefore returns all and only matches. Appending during the original-order scan preserves ordering and duplicates. Since no letter maps to 0 or 1 and words are nonempty, the explicit no-match cases follow automatically.",
+        "workedTrace": "For digits=8733 and dictionary=[tree,used,true,tree], tree maps t->8,r->7,e->3,e->3 and used maps u->8,s->7,e->3,d->3. true maps to 8783, so the result is [tree,used,tree], retaining the repeated entry.",
+        "edgeCases": "Empty dictionary/query, digits 0/1 and words of a different length. Four-letter keypad groups pqrs/wxyz, duplicate dictionary entries and no matches.",
+        "timeDerivation": "O(W+T) time for W dictionary entries and at most T examined word characters; each entry is visited once and length-mismatched words need no character scan.",
+        "spaceDerivation": "O(R) returned word references/copies for R matches, plus a constant 26-entry mapping and scalar loop indices; C++ returned strings also copy their character contents.",
+        "callableAgreement": "Read all five actual bodies and all 26 mapping entries, especially four-letter groups pqrs and wxyz. Length is tested before character matching; digits 0/1 and empty digits cannot match the nonempty-word domain. Returned entries preserve original order and duplicate occurrences. C++ returns copied string values; other languages retain immutable word references. An independent inverse digit-to-letter-group oracle checks every letter, short combinations and the 1000-entry/20-character bounds. Read all actual methods. Integer arithmetic uses justified bounds, except the intentionally wrapping subtraction whose bit pattern is observed with >>>. Returned int[] arrays match declared types, String indexing uses charAt, and the frequency table is local per call. Inputs are unchanged. New closest-difference results are long and the JSON encoder handles Long. Locale.ROOT fixes token normalization; sum candidates are range-checked before int conversion. English magnitude is long, groups reverse locally, and String.join emits no extra spaces. Pattern matching uses String.equals and Boolean encoding; T9 returns materialized List<String>."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_20.json",
+        "solutions/java/ctci6_16_20.java",
+        "solutions/notes/java/ctci6_16_20.json"
       ]
     }
   }

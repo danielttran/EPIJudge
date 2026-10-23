@@ -438,6 +438,69 @@
     }
   },
   {
+    "ref": "16.8",
+    "method": "EnglishInteger",
+    "params": [
+      [
+        "value",
+        "i"
+      ]
+    ],
+    "result": "s",
+    "mutation": "none",
+    "description": "Write a signed 32-bit integer in English words. Use title-case number words, single spaces, no punctuation, no hyphens and no word \"and\". Prefix a negative number with \"Negative \"; zero is \"Zero\". The largest scale needed is Billion.",
+    "constraints": [
+      "value is any signed 32-bit integer, including -2147483648. Return a nonempty string with no leading/trailing spaces. Examples of the exact convention: 21 -> \"Twenty One\", 105 -> \"One Hundred Five\", 1001 -> \"One Thousand One\".",
+      "Use Thousand, Million and Billion for groups of three decimal digits. Omit zero groups completely; do not insert \"Zero\" between nonzero groups. Widen before negating the minimum signed value. Preserve the input value."
+    ],
+    "why": "Decimal place values naturally split into groups of three digits. Convert each nonzero group using hundreds, tens and the special names below twenty, then attach the appropriate scale. Process the magnitude in 64-bit or arbitrary-precision storage so the most negative signed input can be made positive safely.",
+    "correctness": "Repeated division by 1000 decomposes the magnitude uniquely into group values from 0 through 999 and their powers of 1000. Hundreds plus a remainder below 100 spell each group exactly; a remainder below twenty uses its direct name, otherwise a tens word plus an optional ones word spells it. Attaching the scale to each nonzero group and joining groups from most significant to least therefore spells the entire magnitude without zero placeholders. The separate zero case supplies Zero, and prefixing Negative only for a negative original value gives the correct sign and required spacing.",
+    "walkthrough": "For -1002003, the low-to-high groups are 3,2,1. They spell Three, Two Thousand and One Million. Reverse the group order and join once to get One Million Two Thousand Three, then prefix Negative. The result is \"Negative One Million Two Thousand Three\".",
+    "example": [
+      [
+        -1002003
+      ],
+      "Negative One Million Two Thousand Three"
+    ],
+    "time": "O(d+o) time for d decimal digits and o returned characters; at most four groups occur in the signed 32-bit domain.",
+    "space": "O(o) for group words and the final text, with constant-size name tables; at most four chunk records are needed.",
+    "edges": [
+      "Zero, negatives and the minimum signed input.",
+      "Teens, exact hundreds/scales and zero groups between nonzero groups."
+    ],
+    "related": "The public integer-to-English task includes negatives. This bank fixes spacing and widens the magnitude rather than inheriting the public minimum-integer negation overflow.",
+    "id": "ctci6_16_8",
+    "title": "English Int",
+    "testCount": 3125,
+    "languages": {
+      "csharp": {
+        "signature": "string EnglishInteger(int value)",
+        "starterCode": "public class Solution\n{\n    public string EnglishInteger(int value)\n    {\n        return \"\";\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public string EnglishInteger(int value)\n    {\n        if (value == 0)\n            return \"Zero\";\n        string[] small = { \"Zero\",    \"One\",     \"Two\",       \"Three\",    \"Four\",\n                           \"Five\",    \"Six\",     \"Seven\",     \"Eight\",    \"Nine\",\n                           \"Ten\",     \"Eleven\",  \"Twelve\",    \"Thirteen\", \"Fourteen\",\n                           \"Fifteen\", \"Sixteen\", \"Seventeen\", \"Eighteen\", \"Nineteen\" },\n                 tens = { \"\",      \"\",      \"Twenty\",  \"Thirty\", \"Forty\",\n                          \"Fifty\", \"Sixty\", \"Seventy\", \"Eighty\", \"Ninety\" },\n                 scales = { \"\", \"Thousand\", \"Million\", \"Billion\" };\n        long magnitude = value;\n        if (magnitude < 0)\n            magnitude = -magnitude;\n        List<string> groups = new List<string>();\n        int scale = 0;\n        while (magnitude > 0)\n        {\n            int chunk = (int)(magnitude % 1000);\n            if (chunk != 0)\n            {\n                List<string> words = new List<string>();\n                if (chunk >= 100)\n                {\n                    words.Add(small[chunk / 100]);\n                    words.Add(\"Hundred\");\n                    chunk %= 100;\n                }\n                if (chunk >= 20)\n                {\n                    words.Add(tens[chunk / 10]);\n                    chunk %= 10;\n                }\n                if (chunk != 0)\n                    words.Add(small[chunk]);\n                if (scale != 0)\n                    words.Add(scales[scale]);\n                groups.Add(string.Join(\" \", words));\n            }\n            magnitude /= 1000;\n            ++scale;\n        }\n        groups.Reverse();\n        return (value < 0 ? \"Negative \" : \"\") + string.Join(\" \", groups);\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function EnglishInteger(value)",
+        "starterCode": "function EnglishInteger(value) {\n  return \"\";\n}\n",
+        "solutionCode": "function EnglishInteger(value) {\n  if (value === 0) return \"Zero\";\n  const small = [\n      \"Zero\",\n      \"One\",\n      \"Two\",\n      \"Three\",\n      \"Four\",\n      \"Five\",\n      \"Six\",\n      \"Seven\",\n      \"Eight\",\n      \"Nine\",\n      \"Ten\",\n      \"Eleven\",\n      \"Twelve\",\n      \"Thirteen\",\n      \"Fourteen\",\n      \"Fifteen\",\n      \"Sixteen\",\n      \"Seventeen\",\n      \"Eighteen\",\n      \"Nineteen\",\n    ],\n    tens = [\"\", \"\", \"Twenty\", \"Thirty\", \"Forty\", \"Fifty\", \"Sixty\", \"Seventy\", \"Eighty\", \"Ninety\"],\n    scales = [\"\", \"Thousand\", \"Million\", \"Billion\"],\n    groups = [];\n  let magnitude = Math.abs(value),\n    scale = 0;\n  while (magnitude > 0) {\n    let chunk = magnitude % 1000;\n    if (chunk !== 0) {\n      const words = [];\n      if (chunk >= 100) {\n        words.push(small[Math.floor(chunk / 100)], \"Hundred\");\n        chunk %= 100;\n      }\n      if (chunk >= 20) {\n        words.push(tens[Math.floor(chunk / 10)]);\n        chunk %= 10;\n      }\n      if (chunk !== 0) words.push(small[chunk]);\n      if (scale !== 0) words.push(scales[scale]);\n      groups.push(words.join(\" \"));\n    }\n    magnitude = Math.floor(magnitude / 1000);\n    ++scale;\n  }\n  return (value < 0 ? \"Negative \" : \"\") + groups.reverse().join(\" \");\n}\n"
+      },
+      "python": {
+        "signature": "def EnglishInteger(value: int) -> str",
+        "starterCode": "def EnglishInteger(value: int) -> str:\n    return \"\"\n",
+        "solutionCode": "def EnglishInteger(value: int) -> str:\n    if value == 0:\n        return \"Zero\"\n    small = [\n        \"Zero\",\n        \"One\",\n        \"Two\",\n        \"Three\",\n        \"Four\",\n        \"Five\",\n        \"Six\",\n        \"Seven\",\n        \"Eight\",\n        \"Nine\",\n        \"Ten\",\n        \"Eleven\",\n        \"Twelve\",\n        \"Thirteen\",\n        \"Fourteen\",\n        \"Fifteen\",\n        \"Sixteen\",\n        \"Seventeen\",\n        \"Eighteen\",\n        \"Nineteen\",\n    ]\n    tens = [\"\", \"\", \"Twenty\", \"Thirty\", \"Forty\", \"Fifty\", \"Sixty\", \"Seventy\", \"Eighty\", \"Ninety\"]\n    scales = [\"\", \"Thousand\", \"Million\", \"Billion\"]\n    magnitude = abs(value)\n    groups = []\n    scale = 0\n    while magnitude:\n        chunk = magnitude % 1000\n        if chunk:\n            words = []\n            if chunk >= 100:\n                words.extend([small[chunk // 100], \"Hundred\"])\n                chunk %= 100\n            if chunk >= 20:\n                words.append(tens[chunk // 10])\n                chunk %= 10\n            if chunk:\n                words.append(small[chunk])\n            if scale:\n                words.append(scales[scale])\n            groups.append(\" \".join(words))\n        magnitude //= 1000\n        scale += 1\n    return (\"Negative \" if value < 0 else \"\") + \" \".join(reversed(groups))\n"
+      },
+      "cpp": {
+        "signature": "std::string EnglishInteger(int value)",
+        "starterCode": "class Solution {\n public:\n  std::string EnglishInteger(int value) {\n    return \"\";\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  std::string EnglishInteger(int value) {\n    if (value == 0)\n      return \"Zero\";\n    const std::vector<std::string> small = {\"Zero\",    \"One\",       \"Two\",      \"Three\",\n                                            \"Four\",    \"Five\",      \"Six\",      \"Seven\",\n                                            \"Eight\",   \"Nine\",      \"Ten\",      \"Eleven\",\n                                            \"Twelve\",  \"Thirteen\",  \"Fourteen\", \"Fifteen\",\n                                            \"Sixteen\", \"Seventeen\", \"Eighteen\", \"Nineteen\"},\n                                   tens = {\"\",      \"\",      \"Twenty\",  \"Thirty\", \"Forty\",\n                                           \"Fifty\", \"Sixty\", \"Seventy\", \"Eighty\", \"Ninety\"},\n                                   scales = {\"\", \"Thousand\", \"Million\", \"Billion\"};\n    long long magnitude = value;\n    if (magnitude < 0)\n      magnitude = -magnitude;\n    std::vector<std::string> groups;\n    int scale = 0;\n    while (magnitude > 0) {\n      int chunk = static_cast<int>(magnitude % 1000);\n      if (chunk != 0) {\n        std::vector<std::string> words;\n        if (chunk >= 100) {\n          words.push_back(small[chunk / 100]);\n          words.push_back(\"Hundred\");\n          chunk %= 100;\n        }\n        if (chunk >= 20) {\n          words.push_back(tens[chunk / 10]);\n          chunk %= 10;\n        }\n        if (chunk != 0)\n          words.push_back(small[chunk]);\n        if (scale != 0)\n          words.push_back(scales[scale]);\n        std::string part;\n        for (const auto& word : words) {\n          if (!part.empty())\n            part += \" \";\n          part += word;\n        }\n        groups.push_back(part);\n      }\n      magnitude /= 1000;\n      ++scale;\n    }\n    std::string result = value < 0 ? \"Negative \" : \"\";\n    for (auto it = groups.rbegin(); it != groups.rend(); ++it) {\n      if (it != groups.rbegin())\n        result += \" \";\n      result += *it;\n    }\n    return result;\n  }\n};\n"
+      },
+      "java": {
+        "signature": "String EnglishInteger(int value)",
+        "starterCode": "class Solution {\n  public String EnglishInteger(int value) {\n    return \"\";\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public String EnglishInteger(int value) {\n    if (value == 0)\n      return \"Zero\";\n    String[] small = {\"Zero\", \"One\", \"Two\", \"Three\", \"Four\", \"Five\", \"Six\", \"Seven\", \"Eight\",\n                 \"Nine\", \"Ten\", \"Eleven\", \"Twelve\", \"Thirteen\", \"Fourteen\", \"Fifteen\", \"Sixteen\",\n                 \"Seventeen\", \"Eighteen\", \"Nineteen\"},\n             tens = {\"\", \"\", \"Twenty\", \"Thirty\", \"Forty\", \"Fifty\", \"Sixty\", \"Seventy\", \"Eighty\",\n                 \"Ninety\"},\n             scales = {\"\", \"Thousand\", \"Million\", \"Billion\"};\n    long magnitude = value;\n    if (magnitude < 0)\n      magnitude = -magnitude;\n    List<String> groups = new ArrayList<>();\n    int scale = 0;\n    while (magnitude > 0) {\n      int chunk = (int) (magnitude % 1000);\n      if (chunk != 0) {\n        List<String> words = new ArrayList<>();\n        if (chunk >= 100) {\n          words.add(small[chunk / 100]);\n          words.add(\"Hundred\");\n          chunk %= 100;\n        }\n        if (chunk >= 20) {\n          words.add(tens[chunk / 10]);\n          chunk %= 10;\n        }\n        if (chunk != 0)\n          words.add(small[chunk]);\n        if (scale != 0)\n          words.add(scales[scale]);\n        groups.add(String.join(\" \", words));\n      }\n      magnitude /= 1000;\n      ++scale;\n    }\n    Collections.reverse(groups);\n    return (value < 0 ? \"Negative \" : \"\") + String.join(\" \", groups);\n  }\n}\n"
+      }
+    }
+  },
+  {
     "ref": "16.10",
     "method": "MostPopulatedYear",
     "params": [
@@ -806,6 +869,74 @@
     }
   },
   {
+    "ref": "16.18",
+    "method": "MatchesPattern",
+    "params": [
+      [
+        "pattern",
+        "s"
+      ],
+      [
+        "text",
+        "s"
+      ]
+    ],
+    "result": "b",
+    "mutation": "none",
+    "description": "Determine whether replacing every a in pattern with one fixed string and every b with another fixed string can produce text exactly. Each replacement may be empty, and the two replacement strings may be equal. Every occurrence of the same symbol must use the same replacement.",
+    "constraints": [
+      "pattern contains 0..20 symbols, each a or b. text contains 0..100 lowercase ASCII letters. Strings are nonnull and unchanged. This is concatenation substitution, not regular-expression matching.",
+      "An empty pattern matches only empty text. A nonempty pattern matches empty text by assigning empty replacements to its used symbols. An unused symbol imposes no constraint. Consume the whole text; matching a prefix is insufficient."
+    ],
+    "why": "If a appears ca times and b appears cb times, candidate replacement lengths must satisfy ca*la+cb*lb=text.length. Enumerate one used length, derive the other, and verify every occurrence against the first substring assigned to its symbol. This avoids enumerating all possible replacement strings independently.",
+    "correctness": "Every valid substitution has nonnegative lengths satisfying the total-length equation, so its length pair is among those tested. For a tested pair, scan pattern from left to right and assign a symbol the text slice at its first occurrence; later occurrences must equal that slice. This enforces consistent replacements and advances by exactly the chosen length. The total-length equation ensures the final offset is the text end. Thus any accepted pair defines a valid full substitution, and the pair of any valid substitution passes verification. Empty/unused-symbol cases follow the explicit zero-length and full-consumption rules.",
+    "walkthrough": "For pattern=abba and text=redbluebluered, lengths a=3 and b=4 assign red at the first a and blue at the first b. The second b matches blue and the last a matches red, consuming all text, so return true. For pattern=ab and text=x, a may be empty and b=x; distinct nonempty replacements are not required.",
+    "example": [
+      [
+        "abba",
+        "redbluebluered"
+      ],
+      true
+    ],
+    "time": "O((n+1)*(n+p+1)) conservative time for text length n and pattern length p: at most n+1 length choices, with O(n+p) slice/comparison work each.",
+    "space": "O(n) replacement-slice storage plus O(1) counters; no expanded candidate string is built.",
+    "edges": [
+      "Empty pattern/text and a pattern using only one symbol.",
+      "Empty or equal replacement strings, mismatched repeated symbols and unmatched trailing text."
+    ],
+    "related": "The public exhaustive construction allows empty and equal substitutions. The bank states those rules explicitly and checks exact total length, including the one-symbol case.",
+    "id": "ctci6_16_18",
+    "title": "Pattern Matcher",
+    "testCount": 3975,
+    "languages": {
+      "csharp": {
+        "signature": "bool MatchesPattern(string pattern, string text)",
+        "starterCode": "public class Solution\n{\n    public bool MatchesPattern(string pattern, string text)\n    {\n        return false;\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public bool MatchesPattern(string pattern, string text)\n    {\n        if (pattern.Length == 0)\n            return text.Length == 0;\n        int countA = 0;\n        foreach (char symbol in pattern)\n            if (symbol == 'a')\n                ++countA;\n        int countB = pattern.Length - countA, maximum = countA == 0 ? 0 : text.Length / countA;\n        for (int lengthA = 0; lengthA <= maximum; ++lengthA)\n        {\n            int remaining = text.Length - countA * lengthA;\n            if (countB == 0 ? remaining != 0 : remaining % countB != 0)\n                continue;\n            int lengthB = countB == 0 ? 0 : remaining / countB;\n            string? a = null, b = null;\n            int offset = 0;\n            bool valid = true;\n            foreach (char symbol in pattern)\n            {\n                int length = symbol == 'a' ? lengthA : lengthB;\n                string? part = text.Substring(offset, length);\n                if (symbol == 'a')\n                {\n                    if (a == null)\n                        a = part;\n                    else if (a != part)\n                    {\n                        valid = false;\n                        break;\n                    }\n                }\n                else\n                {\n                    if (b == null)\n                        b = part;\n                    else if (b != part)\n                    {\n                        valid = false;\n                        break;\n                    }\n                }\n                offset += length;\n            }\n            if (valid && offset == text.Length)\n                return true;\n        }\n        return false;\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function MatchesPattern(pattern, text)",
+        "starterCode": "function MatchesPattern(pattern, text) {\n  return false;\n}\n",
+        "solutionCode": "function MatchesPattern(pattern, text) {\n  if (pattern.length === 0) return text.length === 0;\n  let countA = 0;\n  for (const symbol of pattern) if (symbol === \"a\") ++countA;\n  const countB = pattern.length - countA,\n    maximum = countA ? Math.floor(text.length / countA) : 0;\n  for (let lengthA = 0; lengthA <= maximum; ++lengthA) {\n    const remaining = text.length - countA * lengthA;\n    if (countB === 0 ? remaining !== 0 : remaining % countB !== 0) continue;\n    const lengthB = countB === 0 ? 0 : remaining / countB;\n    let a = null,\n      b = null,\n      offset = 0,\n      valid = true;\n    for (const symbol of pattern) {\n      const length = symbol === \"a\" ? lengthA : lengthB,\n        part = text.slice(offset, offset + length);\n      if (symbol === \"a\") {\n        if (a === null) a = part;\n        else if (a !== part) {\n          valid = false;\n          break;\n        }\n      } else {\n        if (b === null) b = part;\n        else if (b !== part) {\n          valid = false;\n          break;\n        }\n      }\n      offset += length;\n    }\n    if (valid && offset === text.length) return true;\n  }\n  return false;\n}\n"
+      },
+      "python": {
+        "signature": "def MatchesPattern(pattern: str, text: str) -> bool",
+        "starterCode": "def MatchesPattern(pattern: str, text: str) -> bool:\n    return False\n",
+        "solutionCode": "def MatchesPattern(pattern: str, text: str) -> bool:\n    if not pattern:\n        return not text\n    count_a = pattern.count(\"a\")\n    count_b = len(pattern) - count_a\n    maximum = len(text) // count_a if count_a else 0\n    for length_a in range(maximum + 1):\n        remaining = len(text) - count_a * length_a\n        if count_b == 0:\n            if remaining != 0:\n                continue\n            length_b = 0\n        else:\n            if remaining % count_b:\n                continue\n            length_b = remaining // count_b\n        a = b = None\n        offset = 0\n        valid = True\n        for symbol in pattern:\n            length = length_a if symbol == \"a\" else length_b\n            part = text[offset : offset + length]\n            if symbol == \"a\":\n                if a is None:\n                    a = part\n                elif a != part:\n                    valid = False\n                    break\n            else:\n                if b is None:\n                    b = part\n                elif b != part:\n                    valid = False\n                    break\n            offset += length\n        if valid and offset == len(text):\n            return True\n    return False\n"
+      },
+      "cpp": {
+        "signature": "bool MatchesPattern(const std::string& pattern, const std::string& text)",
+        "starterCode": "class Solution {\n public:\n  bool MatchesPattern(const std::string& pattern, const std::string& text) {\n    return false;\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  bool MatchesPattern(const std::string& pattern, const std::string& text) {\n    if (pattern.empty())\n      return text.empty();\n    int countA = 0;\n    for (char symbol : pattern)\n      if (symbol == 'a')\n        ++countA;\n    int countB = static_cast<int>(pattern.size()) - countA, n = static_cast<int>(text.size()),\n        maximum = countA ? n / countA : 0;\n    for (int lengthA = 0; lengthA <= maximum; ++lengthA) {\n      int remaining = n - countA * lengthA;\n      if (countB == 0 ? remaining != 0 : remaining % countB != 0)\n        continue;\n      int lengthB = countB == 0 ? 0 : remaining / countB;\n      std::string a, b;\n      bool haveA = false, haveB = false, valid = true;\n      int offset = 0;\n      for (char symbol : pattern) {\n        int length = symbol == 'a' ? lengthA : lengthB;\n        auto part = text.substr(offset, length);\n        if (symbol == 'a') {\n          if (!haveA) {\n            a = part;\n            haveA = true;\n          } else if (a != part) {\n            valid = false;\n            break;\n          }\n        } else {\n          if (!haveB) {\n            b = part;\n            haveB = true;\n          } else if (b != part) {\n            valid = false;\n            break;\n          }\n        }\n        offset += length;\n      }\n      if (valid && offset == n)\n        return true;\n    }\n    return false;\n  }\n};\n"
+      },
+      "java": {
+        "signature": "boolean MatchesPattern(String pattern, String text)",
+        "starterCode": "class Solution {\n  public boolean MatchesPattern(String pattern, String text) {\n    return false;\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public boolean MatchesPattern(String pattern, String text) {\n    if (pattern.length() == 0)\n      return text.length() == 0;\n    int countA = 0;\n    for (char symbol : pattern.toCharArray())\n      if (symbol == 'a')\n        ++countA;\n    int countB = pattern.length() - countA, maximum = countA == 0 ? 0 : text.length() / countA;\n    for (int lengthA = 0; lengthA <= maximum; ++lengthA) {\n      int remaining = text.length() - countA * lengthA;\n      if (countB == 0 ? remaining != 0 : remaining % countB != 0)\n        continue;\n      int lengthB = countB == 0 ? 0 : remaining / countB;\n      String a = null, b = null;\n      int offset = 0;\n      boolean valid = true;\n      for (char symbol : pattern.toCharArray()) {\n        int length = symbol == 'a' ? lengthA : lengthB;\n        String part = text.substring(offset, offset + length);\n        if (symbol == 'a') {\n          if (a == null)\n            a = part;\n          else if (!a.equals(part)) {\n            valid = false;\n            break;\n          }\n        } else {\n          if (b == null)\n            b = part;\n          else if (!b.equals(part)) {\n            valid = false;\n            break;\n          }\n        }\n        offset += length;\n      }\n      if (valid && offset == text.length())\n        return true;\n    }\n    return false;\n  }\n}\n"
+      }
+    }
+  },
+  {
     "ref": "16.19",
     "method": "PondSizes",
     "params": [
@@ -883,6 +1014,83 @@
         "signature": "int[] PondSizes(int[][] land)",
         "starterCode": "class Solution {\n  public int[] PondSizes(int[][] land) {\n    return new int[0];\n  }\n}\n",
         "solutionCode": "class Solution {\n  public int[] PondSizes(int[][] land) {\n    int rows = land.length, columns = rows == 0 ? 0 : land[0].length;\n    boolean[][] seen = new boolean[rows][columns];\n    List<Integer> sizes = new ArrayList<>();\n    for (int row = 0; row < rows; ++row) {\n      for (int column = 0; column < columns; ++column) {\n        if (land[row][column] != 0 || seen[row][column])\n          continue;\n        seen[row][column] = true;\n        Deque<int[]> work = new ArrayDeque<>();\n        work.push(new int[] {row, column});\n        int size = 0;\n        while (!work.isEmpty()) {\n          var cell = work.pop();\n          int r = cell[0], c = cell[1];\n          ++size;\n          for (int dr = -1; dr <= 1; ++dr) {\n            for (int dc = -1; dc <= 1; ++dc) {\n              if (dr == 0 && dc == 0)\n                continue;\n              int nr = r + dr, nc = c + dc;\n              if (nr >= 0 && nr < rows && nc >= 0 && nc < columns && land[nr][nc] == 0\n                  && !seen[nr][nc]) {\n                seen[nr][nc] = true;\n                work.push(new int[] {nr, nc});\n              }\n            }\n          }\n        }\n        sizes.add(size);\n      }\n    }\n    Collections.sort(sizes);\n    int[] result = new int[sizes.size()];\n    for (int i = 0; i < result.length; ++i)\n      result[i] = sizes.get(i);\n    return result;\n  }\n}\n"
+      }
+    }
+  },
+  {
+    "ref": "16.20",
+    "method": "T9Words",
+    "params": [
+      [
+        "digits",
+        "s"
+      ],
+      [
+        "dictionary",
+        "as"
+      ]
+    ],
+    "result": "strings",
+    "mutation": "none",
+    "description": "Return dictionary entries whose letters map exactly to digits on a traditional telephone keypad. Each letter consumes one digit: 2=abc, 3=def, 4=ghi, 5=jkl, 6=mno, 7=pqrs, 8=tuv, 9=wxyz. This is predictive spelling, not repeated key presses for one letter.",
+    "constraints": [
+      "digits is a nonnull string of 0..20 ASCII digits 0..9. dictionary is a nonnull array of 0..1000 nonnull lowercase ASCII words, each 1..20 letters. Preserve the array and its entries.",
+      "Return matches in original dictionary order, retaining duplicate matching entries. A word must have exactly digits.length letters and match every position. Digits 0 and 1 have no letters, so any query containing either has no matches. Empty digits has no match because dictionary words are nonempty."
+    ],
+    "why": "Each dictionary word has exactly one keypad encoding. Check only words of the requested length and compare each letter's digit with the query. This avoids generating all exponential letter combinations, most of which might not be dictionary words.",
+    "correctness": "For a word of the right length, the fixed keypad table maps each letter to its unique allowed digit. Equality at every position holds exactly when that word is one valid spelling of the query; a length mismatch or any differing mapped digit makes it impossible. Visiting every dictionary entry therefore returns all and only matches. Appending during the original-order scan preserves ordering and duplicates. Since no letter maps to 0 or 1 and words are nonempty, the explicit no-match cases follow automatically.",
+    "walkthrough": "For digits=8733 and dictionary=[tree,used,true,tree], tree maps t->8,r->7,e->3,e->3 and used maps u->8,s->7,e->3,d->3. true maps to 8783, so the result is [tree,used,tree], retaining the repeated entry.",
+    "example": [
+      [
+        "8733",
+        [
+          "tree",
+          "used",
+          "true",
+          "tree"
+        ]
+      ],
+      [
+        "tree",
+        "used",
+        "tree"
+      ]
+    ],
+    "time": "O(W+T) time for W dictionary entries and at most T examined word characters; each entry is visited once and length-mismatched words need no character scan.",
+    "space": "O(R) returned word references/copies for R matches, plus a constant 26-entry mapping and scalar loop indices; C++ returned strings also copy their character contents.",
+    "edges": [
+      "Empty dictionary/query, digits 0/1 and words of a different length.",
+      "Four-letter keypad groups pqrs/wxyz, duplicate dictionary entries and no matches."
+    ],
+    "related": "The public encoded-dictionary variant retains dictionary entry order and multiplicity. This independently authored single-query scan uses the same keypad task without a caller-provided trie.",
+    "id": "ctci6_16_20",
+    "title": "T9",
+    "testCount": 200,
+    "languages": {
+      "csharp": {
+        "signature": "List<string> T9Words(string digits, string[] dictionary)",
+        "starterCode": "public class Solution\n{\n    public List<string> T9Words(string digits, string[] dictionary)\n    {\n        return [];\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public List<string> T9Words(string digits, string[] dictionary)\n    {\n        const string mapping = \"22233344455566677778889999\";\n        var result = new List<string>();\n        foreach (string word in dictionary)\n        {\n            if (word.Length != digits.Length)\n                continue;\n            bool valid = true;\n            for (int i = 0; i < word.Length; ++i)\n                if (mapping[word[i] - 'a'] != digits[i])\n                {\n                    valid = false;\n                    break;\n                }\n            if (valid)\n                result.Add(word);\n        }\n        return result;\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function T9Words(digits, dictionary)",
+        "starterCode": "function T9Words(digits, dictionary) {\n  return [];\n}\n",
+        "solutionCode": "function T9Words(digits, dictionary) {\n  const mapping = \"22233344455566677778889999\",\n    result = [];\n  for (const word of dictionary) {\n    if (word.length !== digits.length) continue;\n    let valid = true;\n    for (let i = 0; i < word.length; ++i)\n      if (mapping[word.charCodeAt(i) - 97] !== digits[i]) {\n        valid = false;\n        break;\n      }\n    if (valid) result.push(word);\n  }\n  return result;\n}\n"
+      },
+      "python": {
+        "signature": "def T9Words(digits: str, dictionary: list[str]) -> list[str]",
+        "starterCode": "def T9Words(digits: str, dictionary: list[str]) -> list[str]:\n    return []\n",
+        "solutionCode": "def T9Words(digits: str, dictionary: list[str]) -> list[str]:\n    mapping = \"22233344455566677778889999\"\n    result = []\n    for word in dictionary:\n        if len(word) == len(digits) and all(\n            mapping[ord(letter) - ord(\"a\")] == digit for letter, digit in zip(word, digits)\n        ):\n            result.append(word)\n    return result\n"
+      },
+      "cpp": {
+        "signature": "std::vector<std::string> T9Words(const std::string& digits, const std::vector<std::string>& dictionary)",
+        "starterCode": "class Solution {\n public:\n  std::vector<std::string> T9Words(const std::string& digits,\n                                   const std::vector<std::string>& dictionary) {\n    return {};\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  std::vector<std::string> T9Words(const std::string& digits,\n                                   const std::vector<std::string>& dictionary) {\n    const std::string mapping = \"22233344455566677778889999\";\n    std::vector<std::string> result;\n    for (const auto& word : dictionary) {\n      if (word.size() != digits.size())\n        continue;\n      bool valid = true;\n      for (size_t i = 0; i < word.size(); ++i)\n        if (mapping[word[i] - 'a'] != digits[i]) {\n          valid = false;\n          break;\n        }\n      if (valid)\n        result.push_back(word);\n    }\n    return result;\n  }\n};\n"
+      },
+      "java": {
+        "signature": "List<String> T9Words(String digits, String[] dictionary)",
+        "starterCode": "class Solution {\n  public List<String> T9Words(String digits, String[] dictionary) {\n    return new ArrayList<>();\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public List<String> T9Words(String digits, String[] dictionary) {\n    String mapping = \"22233344455566677778889999\";\n    List<String> result = new ArrayList<>();\n    for (String word : dictionary) {\n      if (word.length() != digits.length())\n        continue;\n      boolean valid = true;\n      for (int i = 0; i < word.length(); ++i)\n        if (mapping.charAt(word.charAt(i) - 'a') != digits.charAt(i)) {\n          valid = false;\n          break;\n        }\n      if (valid)\n        result.add(word);\n    }\n    return result;\n  }\n}\n"
       }
     }
   },

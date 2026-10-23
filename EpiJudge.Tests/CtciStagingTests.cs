@@ -137,6 +137,15 @@ public sealed class CtciStagingTests
     }
 
     [Fact]
+    public void PatternMappingsAllowEmptyStringsButCannotIgnoreATrailingSuffix()
+    {
+        var definition = Definition("16.18");
+        Assert.Null(CtciStagingGrader.FailureReason(definition, Case(["ab", "x"], true), Json(new { actual = true, mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, Case(["aa", "xxx"], false), Json(new { actual = true, mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, Case(["ab", "x"], true), Json(new { actual = 1, mutationOk = true })));
+    }
+
+    [Fact]
     public void MultiSearchKeepsOverlapsAndTheLastEmptyPatternBoundary()
     {
         var definition = Definition("17.17");
