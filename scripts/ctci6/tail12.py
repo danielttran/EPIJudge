@@ -14,11 +14,11 @@ SPEC=dict(ref='12.1',method='LastKLines',params=[('filePath','s'),('k','i')],res
  'csharp':'C# File.ReadLines reads lazily. Queue<string> retains the suffix, and foreach disposes its enumerator, closing the file before ToList returns the concrete result.',
  'java':'Java BufferedReader reads one line at a time. ArrayDeque removes its oldest entry in constant amortized time; try-with-resources closes the reader even if a read fails. The admitted inputs guarantee successful I/O; an unexpected IOException is reported rather than silently returning a partial suffix.',
  'cpp':'C++ std::getline distinguishes a successfully read empty line from EOF. std::deque supports constant-time removal at the front; the local ifstream closes through RAII when the method returns.',
- 'python':'Python iterates an open file inside a with block and strips exactly the terminating LF from each admitted line. deque(maxlen=k) automatically discards the oldest entry. list materializes the final suffix before the context closes.',
- 'javascript':'JavaScript uses synchronous readSync with a fixed 4096-byte buffer, not readFileSync. Printable ASCII makes byte-to-character decoding unambiguous. A k-slot circular array overwrites the oldest line; the output starts at the oldest retained slot. finally closes the descriptor, including unexpected failures.'})
+ 'python':'Python imports deque inside the callable, then iterates an open file inside a with block and strips exactly the terminating LF from each admitted line. deque(maxlen=k) automatically discards the oldest entry. The with block closes the file before list materializes the final suffix; the deque already owns the retained strings.',
+ 'javascript':'JavaScript requires the built-in node:fs module inside the callable and uses synchronous readSync with a fixed 4096-byte buffer, not readFileSync. Printable ASCII makes byte-to-character decoding unambiguous. A k-slot circular array overwrites the oldest line; the output starts at the oldest retained slot. finally closes the descriptor, including unexpected failures.'})
 EXTRA={
 'csharp':'', 'java':'',
-'cpp':'#include <fstream>\n#include <deque>\n#include <filesystem>\n', 'python':'from collections import deque\n', 'javascript':"const tailFs = require('node:fs');\n"}
+'cpp':'#include <fstream>\n#include <deque>\n#include <filesystem>\n', 'python':'', 'javascript':''}
 BODIES={
 'csharp':'''var suffix = new Queue<string>();
 foreach (string line in System.IO.File.ReadLines(filePath)) {
@@ -47,12 +47,14 @@ while (std::getline(input, line)) {
 }
 if (input.bad()) throw std::runtime_error("Could not read input file");
 return std::vector<std::string>(suffix.begin(), suffix.end());''',
-'python':'''suffix = deque(maxlen=k)
+'python':'''from collections import deque
+suffix = deque(maxlen=k)
 with open(filePath, "r", encoding="ascii", newline="") as source:
     for line in source:
         suffix.append(line[:-1])
 return list(suffix)''',
-'javascript':'''const descriptor = tailFs.openSync(filePath, "r");
+'javascript':'''const tailFs = require("node:fs");
+const descriptor = tailFs.openSync(filePath, "r");
 const chunk = Buffer.alloc(4096), ring = new Array(k);
 let used = 0, next = 0, current = "";
 try {

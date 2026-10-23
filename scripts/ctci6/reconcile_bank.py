@@ -26,6 +26,8 @@ def main(tag):
         for language in LANGUAGES:merge(f'.epi-runs/solutions-audit-callable-{label}-{language}-clarity-final.json',merged)
         merge('.epi-runs/solutions-audit-wholebank-overlap-'+('correct'if role=='solution'else'starters')+'.json',merged)
         for language in LANGUAGES:merge(f'.epi-runs/solutions-audit-{tag}-{language}-'+('correct'if role=='solution'else'starters')+'.json',merged)
+        for language in ("python","javascript"):
+            merge(f'.epi-runs/solutions-audit-ctci6-tail131-{language}-'+('correct'if role=='solution'else'starters')+'.json',merged)
         assert set(merged)==set(current),'Missing/extraneous corpus execution pairs'
         for pair,(row,path)in merged.items():
             assert row['success'] is True,(pair,'failed receipt')

@@ -985,8 +985,8 @@
       "csharp": "C# File.ReadLines reads lazily. Queue<string> retains the suffix, and foreach disposes its enumerator, closing the file before ToList returns the concrete result.",
       "java": "Java BufferedReader reads one line at a time. ArrayDeque removes its oldest entry in constant amortized time; try-with-resources closes the reader even if a read fails. The admitted inputs guarantee successful I/O; an unexpected IOException is reported rather than silently returning a partial suffix.",
       "cpp": "C++ std::getline distinguishes a successfully read empty line from EOF. std::deque supports constant-time removal at the front; the local ifstream closes through RAII when the method returns.",
-      "python": "Python iterates an open file inside a with block and strips exactly the terminating LF from each admitted line. deque(maxlen=k) automatically discards the oldest entry. list materializes the final suffix before the context closes.",
-      "javascript": "JavaScript uses synchronous readSync with a fixed 4096-byte buffer, not readFileSync. Printable ASCII makes byte-to-character decoding unambiguous. A k-slot circular array overwrites the oldest line; the output starts at the oldest retained slot. finally closes the descriptor, including unexpected failures."
+      "python": "Python imports deque inside the callable, then iterates an open file inside a with block and strips exactly the terminating LF from each admitted line. deque(maxlen=k) automatically discards the oldest entry. The with block closes the file before list materializes the final suffix; the deque already owns the retained strings.",
+      "javascript": "JavaScript requires the built-in node:fs module inside the callable and uses synchronous readSync with a fixed 4096-byte buffer, not readFileSync. Printable ASCII makes byte-to-character decoding unambiguous. A k-slot circular array overwrites the oldest line; the output starts at the oldest retained slot. finally closes the descriptor, including unexpected failures."
     },
     "id": "ctci6_12_1",
     "title": "Last K Lines",
@@ -1000,12 +1000,12 @@
       "javascript": {
         "signature": "function LastKLines(filePath, k)",
         "starterCode": "function LastKLines(filePath, k) {\n  return [];\n}\n",
-        "solutionCode": "function LastKLines(filePath, k) {\n  const descriptor = tailFs.openSync(filePath, \"r\");\n  const chunk = Buffer.alloc(4096),\n    ring = new Array(k);\n  let used = 0,\n    next = 0,\n    current = \"\";\n  try {\n    for (;;) {\n      const count = tailFs.readSync(descriptor, chunk, 0, chunk.length, null);\n      if (count === 0) break;\n      for (let i = 0; i < count; ++i) {\n        if (chunk[i] === 10) {\n          ring[next] = current;\n          next = (next + 1) % k;\n          used = Math.min(used + 1, k);\n          current = \"\";\n        } else current += String.fromCharCode(chunk[i]);\n      }\n    }\n  } finally {\n    tailFs.closeSync(descriptor);\n  }\n  const result = [];\n  for (let i = 0; i < used; ++i) result.push(ring[(next - used + k + i) % k]);\n  return result;\n}\n"
+        "solutionCode": "function LastKLines(filePath, k) {\n  const tailFs = require(\"node:fs\");\n  const descriptor = tailFs.openSync(filePath, \"r\");\n  const chunk = Buffer.alloc(4096),\n    ring = new Array(k);\n  let used = 0,\n    next = 0,\n    current = \"\";\n  try {\n    for (;;) {\n      const count = tailFs.readSync(descriptor, chunk, 0, chunk.length, null);\n      if (count === 0) break;\n      for (let i = 0; i < count; ++i) {\n        if (chunk[i] === 10) {\n          ring[next] = current;\n          next = (next + 1) % k;\n          used = Math.min(used + 1, k);\n          current = \"\";\n        } else current += String.fromCharCode(chunk[i]);\n      }\n    }\n  } finally {\n    tailFs.closeSync(descriptor);\n  }\n  const result = [];\n  for (let i = 0; i < used; ++i) result.push(ring[(next - used + k + i) % k]);\n  return result;\n}\n"
       },
       "python": {
         "signature": "def LastKLines(filePath: str, k: int) -> list[str]",
         "starterCode": "def LastKLines(filePath: str, k: int) -> list[str]:\n    return []\n",
-        "solutionCode": "def LastKLines(filePath: str, k: int) -> list[str]:\n    suffix = deque(maxlen=k)\n    with open(filePath, \"r\", encoding=\"ascii\", newline=\"\") as source:\n        for line in source:\n            suffix.append(line[:-1])\n    return list(suffix)\n"
+        "solutionCode": "def LastKLines(filePath: str, k: int) -> list[str]:\n    from collections import deque\n\n    suffix = deque(maxlen=k)\n    with open(filePath, \"r\", encoding=\"ascii\", newline=\"\") as source:\n        for line in source:\n            suffix.append(line[:-1])\n    return list(suffix)\n"
       },
       "cpp": {
         "signature": "std::vector<std::string> LastKLines(const std::string& filePath, int k)",

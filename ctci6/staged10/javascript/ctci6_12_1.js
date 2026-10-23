@@ -1,6 +1,6 @@
 'use strict';
-const tailFs = require('node:fs');
 function LastKLines(filePath, k) {
+  const tailFs = require("node:fs");
   const descriptor = tailFs.openSync(filePath, "r");
   const chunk = Buffer.alloc(4096),
     ring = new Array(k);

@@ -21824,8 +21824,8 @@
       "filename": "solution.js",
       "signature": "function LastKLines(filePath, k)",
       "starterCode": "function LastKLines(filePath, k) {\n  return [];\n}\n",
-      "solutionCode": "function LastKLines(filePath, k) {\n  const descriptor = tailFs.openSync(filePath, \"r\");\n  const chunk = Buffer.alloc(4096),\n    ring = new Array(k);\n  let used = 0,\n    next = 0,\n    current = \"\";\n  try {\n    for (;;) {\n      const count = tailFs.readSync(descriptor, chunk, 0, chunk.length, null);\n      if (count === 0) break;\n      for (let i = 0; i < count; ++i) {\n        if (chunk[i] === 10) {\n          ring[next] = current;\n          next = (next + 1) % k;\n          used = Math.min(used + 1, k);\n          current = \"\";\n        } else current += String.fromCharCode(chunk[i]);\n      }\n    }\n  } finally {\n    tailFs.closeSync(descriptor);\n  }\n  const result = [];\n  for (let i = 0; i < used; ++i) result.push(ring[(next - used + k + i) % k]);\n  return result;\n}\n",
-      "prefix": "'use strict';\nconst tailFs = require('node:fs');\n",
+      "solutionCode": "function LastKLines(filePath, k) {\n  const tailFs = require(\"node:fs\");\n  const descriptor = tailFs.openSync(filePath, \"r\");\n  const chunk = Buffer.alloc(4096),\n    ring = new Array(k);\n  let used = 0,\n    next = 0,\n    current = \"\";\n  try {\n    for (;;) {\n      const count = tailFs.readSync(descriptor, chunk, 0, chunk.length, null);\n      if (count === 0) break;\n      for (let i = 0; i < count; ++i) {\n        if (chunk[i] === 10) {\n          ring[next] = current;\n          next = (next + 1) % k;\n          used = Math.min(used + 1, k);\n          current = \"\";\n        } else current += String.fromCharCode(chunk[i]);\n      }\n    }\n  } finally {\n    tailFs.closeSync(descriptor);\n  }\n  const result = [];\n  for (let i = 0; i < used; ++i) result.push(ring[(next - used + k + i) % k]);\n  return result;\n}\n",
+      "prefix": "'use strict';\n",
       "suffix": "\nmodule.exports = {LastKLines};\n",
       "references": [],
       "visibleSymbols": [
@@ -21838,8 +21838,8 @@
         "solutions/javascript/ctci6_12_1.js"
       ],
       "sourceSha256": {
-        "starter": "a4f343d2a5fc2d8a5246b19baf8da9f71203cf242df89f52a1f10eff52836a54",
-        "solution": "ad45028d2ae148b663a4e5959bdeaa4284648afd05c72867366d2a9da3395d9f"
+        "starter": "670df3dbb48a99d6d244c2f96c64fffbeae7c9fa7d33f278ce9286944112f2c7",
+        "solution": "5c8e53f8a799ecf55bcadc9199381d3a945fdd7dad613883fe3528994039f8d5"
       }
     },
     {
@@ -21848,8 +21848,8 @@
       "filename": "solution.py",
       "signature": "def LastKLines(filePath: str, k: int) -> list[str]",
       "starterCode": "def LastKLines(filePath: str, k: int) -> list[str]:\n    return []\n",
-      "solutionCode": "def LastKLines(filePath: str, k: int) -> list[str]:\n    suffix = deque(maxlen=k)\n    with open(filePath, \"r\", encoding=\"ascii\", newline=\"\") as source:\n        for line in source:\n            suffix.append(line[:-1])\n    return list(suffix)\n",
-      "prefix": "from collections import deque\n",
+      "solutionCode": "def LastKLines(filePath: str, k: int) -> list[str]:\n    from collections import deque\n\n    suffix = deque(maxlen=k)\n    with open(filePath, \"r\", encoding=\"ascii\", newline=\"\") as source:\n        for line in source:\n            suffix.append(line[:-1])\n    return list(suffix)\n",
+      "prefix": "",
       "suffix": "",
       "references": [],
       "visibleSymbols": [
@@ -21862,8 +21862,8 @@
         "solutions/python/ctci6_12_1.py"
       ],
       "sourceSha256": {
-        "starter": "195fc5726b6d573f9cc87227272599450b876b54dff21a6742c8a498e03bb4ca",
-        "solution": "e54b9ac82500a91b44882268d0d3f5d99c52520e4edff2d90bf9c5b7d3acdb1a"
+        "starter": "a150d7b3f0e1089b1f6b5b23bd315755be10337f197bf980b614e1adc500012a",
+        "solution": "cb41efc89201bf1f2338a487ef6cc6a3d5d3dfa026d28fefb959f5bc1a781bf1"
       }
     },
     {
