@@ -11673,6 +11673,126 @@
       }
     },
     {
+      "problemId": "ctci6_17_8",
+      "language": "csharp",
+      "filename": "Solution.cs",
+      "signature": "int[] CircusTower(int[][] people)",
+      "starterCode": "public class Solution\n{\n    public int[] CircusTower(int[][] people)\n    {\n        return [];\n    }\n}\n",
+      "solutionCode": "public class Solution\n{\n    public int[] CircusTower(int[][] people)\n    {\n        int n = people.Length;\n        if (n == 0)\n            return [];\n        int[] order = new int[n], length = new int[n], previous = new int[n];\n        for (int i = 0; i < n; ++i)\n            order[i] = i;\n        Array.Sort(order, (a, b) =>\n                          {\n                              int height = people[a][0].CompareTo(people[b][0]);\n                              if (height != 0)\n                                  return height;\n                              int weight = people[a][1].CompareTo(people[b][1]);\n                              return weight != 0 ? weight : a.CompareTo(b);\n                          });\n        Array.Fill(length, 1);\n        Array.Fill(previous, -1);\n        int best = 0;\n        for (int i = 0; i < n; ++i)\n        {\n            for (int j = 0; j < i; ++j)\n                if (people[order[j]][0] < people[order[i]][0] &&\n                    people[order[j]][1] < people[order[i]][1] && length[j] + 1 > length[i])\n                {\n                    length[i] = length[j] + 1;\n                    previous[i] = j;\n                }\n            if (length[i] > length[best])\n                best = i;\n        }\n        var result = new List<int>();\n        for (int at = best; at != -1; at = previous[at])\n            result.Add(order[at]);\n        result.Reverse();\n        return result.ToArray();\n    }\n}\n",
+      "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/csharp/ctci6_17_8.cs"
+      ],
+      "sourceSha256": {
+        "starter": "55092751eab2d5bf6907042650a7aa3b6c1ad44288fcb60f19f2f41b4cc5c1a6",
+        "solution": "3a0a4c5dc417594561d8bcfcaf852fe9da67ec148bf6e20c72b03db857bccc53"
+      }
+    },
+    {
+      "problemId": "ctci6_17_8",
+      "language": "javascript",
+      "filename": "solution.js",
+      "signature": "function CircusTower(people)",
+      "starterCode": "function CircusTower(people) {\n  return [];\n}\n",
+      "solutionCode": "function CircusTower(people) {\n  if (people.length === 0) return [];\n  const order = Array.from({ length: people.length }, (_, i) => i).sort(\n      (a, b) => people[a][0] - people[b][0] || people[a][1] - people[b][1] || a - b,\n    ),\n    length = new Array(order.length).fill(1),\n    previous = new Array(order.length).fill(-1);\n  let best = 0;\n  for (let i = 0; i < order.length; ++i) {\n    for (let j = 0; j < i; ++j) {\n      const a = people[order[j]],\n        b = people[order[i]];\n      if (a[0] < b[0] && a[1] < b[1] && length[j] + 1 > length[i]) {\n        length[i] = length[j] + 1;\n        previous[i] = j;\n      }\n    }\n    if (length[i] > length[best]) best = i;\n  }\n  const result = [];\n  while (best !== -1) {\n    result.push(order[best]);\n    best = previous[best];\n  }\n  return result.reverse();\n}\n",
+      "prefix": "'use strict';\n",
+      "suffix": "\nmodule.exports = {CircusTower};\n",
+      "references": [],
+      "visibleSymbols": [
+        "CircusTower"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/javascript/ctci6_17_8.js"
+      ],
+      "sourceSha256": {
+        "starter": "e5fee95de22d744f75391c99b886220109f07157fd152f127aef67c348b68bc5",
+        "solution": "763728baf482f097de8bff6c8b59dbaea9d9a3621533f857084edb4530955530"
+      }
+    },
+    {
+      "problemId": "ctci6_17_8",
+      "language": "python",
+      "filename": "solution.py",
+      "signature": "def CircusTower(people: list[list[int]]) -> list[int]",
+      "starterCode": "def CircusTower(people: list[list[int]]) -> list[int]:\n    return []\n",
+      "solutionCode": "def CircusTower(people: list[list[int]]) -> list[int]:\n    if not people:\n        return []\n    order = sorted(range(len(people)), key=lambda i: (people[i][0], people[i][1], i))\n    length = [1] * len(order)\n    previous = [-1] * len(order)\n    best = 0\n    for i in range(len(order)):\n        for j in range(i):\n            a, b = people[order[j]], people[order[i]]\n            if a[0] < b[0] and a[1] < b[1] and length[j] + 1 > length[i]:\n                length[i] = length[j] + 1\n                previous[i] = j\n        if length[i] > length[best]:\n            best = i\n    result = []\n    while best != -1:\n        result.append(order[best])\n        best = previous[best]\n    result.reverse()\n    return result\n",
+      "prefix": "",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "CircusTower"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/python/ctci6_17_8.py"
+      ],
+      "sourceSha256": {
+        "starter": "c8d0e9f56675b13dd3e47db880451151a3fa32d489bd4bc439a9b8c5e27ab7f6",
+        "solution": "8dc5ffc410ad54eb4d543ed7fe50551b0015c108e92eb9e259cc0e682ef288b1"
+      }
+    },
+    {
+      "problemId": "ctci6_17_8",
+      "language": "cpp",
+      "filename": "solution.cpp",
+      "signature": "std::vector<int> CircusTower(const std::vector<std::vector<int>>& people)",
+      "starterCode": "class Solution {\n public:\n  std::vector<int> CircusTower(const std::vector<std::vector<int>>& people) {\n    return {};\n  }\n};\n",
+      "solutionCode": "class Solution {\n public:\n  std::vector<int> CircusTower(const std::vector<std::vector<int>>& people) {\n    int n = static_cast<int>(people.size());\n    if (n == 0)\n      return {};\n    std::vector<int> order(n), length(n, 1), previous(n, -1);\n    for (int i = 0; i < n; ++i)\n      order[i] = i;\n    std::sort(order.begin(), order.end(), [&](int a, int b) {\n      if (people[a][0] != people[b][0])\n        return people[a][0] < people[b][0];\n      if (people[a][1] != people[b][1])\n        return people[a][1] < people[b][1];\n      return a < b;\n    });\n    int best = 0;\n    for (int i = 0; i < n; ++i) {\n      for (int j = 0; j < i; ++j)\n        if (people[order[j]][0] < people[order[i]][0] &&\n            people[order[j]][1] < people[order[i]][1] && length[j] + 1 > length[i]) {\n          length[i] = length[j] + 1;\n          previous[i] = j;\n        }\n      if (length[i] > length[best])\n        best = i;\n    }\n    std::vector<int> result;\n    for (int at = best; at != -1; at = previous[at])\n      result.push_back(order[at]);\n    std::reverse(result.begin(), result.end());\n    return result;\n  }\n};\n",
+      "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/cpp/ctci6_17_8.cpp"
+      ],
+      "sourceSha256": {
+        "starter": "c7da3eea496bdeb0cdf89f9517f0345cbd45fb348993bfbc043626fcedd77ecf",
+        "solution": "2a688939683c7ba45998dd7f4c08fcb659f03dcab6c4fde0620309be7b1d2586"
+      }
+    },
+    {
+      "problemId": "ctci6_17_8",
+      "language": "java",
+      "filename": "Solution.java",
+      "signature": "int[] CircusTower(int[][] people)",
+      "starterCode": "class Solution {\n  public int[] CircusTower(int[][] people) {\n    return new int[0];\n  }\n}\n",
+      "solutionCode": "class Solution {\n  public int[] CircusTower(int[][] people) {\n    int n = people.length;\n    if (n == 0)\n      return new int[0];\n    Integer[] order = new Integer[n];\n    int[] length = new int[n], previous = new int[n];\n    for (int i = 0; i < n; ++i)\n      order[i] = i;\n    Arrays.sort(order, (a, b) -> {\n      int height = Integer.compare(people[a][0], people[b][0]);\n      if (height != 0)\n        return height;\n      int weight = Integer.compare(people[a][1], people[b][1]);\n      return weight != 0 ? weight : Integer.compare(a, b);\n    });\n    Arrays.fill(length, 1);\n    Arrays.fill(previous, -1);\n    int best = 0;\n    for (int i = 0; i < n; ++i) {\n      for (int j = 0; j < i; ++j)\n        if (people[order[j]][0] < people[order[i]][0] && people[order[j]][1] < people[order[i]][1]\n            && length[j] + 1 > length[i]) {\n          length[i] = length[j] + 1;\n          previous[i] = j;\n        }\n      if (length[i] > length[best])\n        best = i;\n    }\n    int[] result = new int[length[best]];\n    for (int at = result.length - 1; at >= 0; --at) {\n      result[at] = order[best];\n      best = previous[best];\n    }\n    return result;\n  }\n}\n",
+      "prefix": "import java.util.*;\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/java/ctci6_17_8.java"
+      ],
+      "sourceSha256": {
+        "starter": "14a3abad0325a058855e58080b21e9a8d245b4ce75e521cb0930f95abea7836d",
+        "solution": "5d1ead31125776f172330a49853e14335efc6cc42fe21b50d4558503d56c409d"
+      }
+    },
+    {
       "problemId": "ctci6_17_9",
       "language": "csharp",
       "filename": "Solution.cs",
@@ -12030,6 +12150,126 @@
       "sourceSha256": {
         "starter": "94e770c176369b31c0858925c5d579ed2e0c1081378ee4a7a0a27b5e6bac4f86",
         "solution": "81027ffb4e4b020f26b7bde63d63a2073b954c12ffc9cdc365c8b027ed773a7a"
+      }
+    },
+    {
+      "problemId": "ctci6_17_13",
+      "language": "csharp",
+      "filename": "Solution.cs",
+      "signature": "List<string> ReSpace(string text, string[] dictionary)",
+      "starterCode": "public class Solution\n{\n    public List<string> ReSpace(string text, string[] dictionary)\n    {\n        return [];\n    }\n}\n",
+      "solutionCode": "public class Solution\n{\n    public List<string> ReSpace(string text, string[] dictionary)\n    {\n        var words = new HashSet<string>(dictionary, StringComparer.Ordinal);\n        int maximum = 0;\n        foreach (string word in words)\n            maximum = Math.Max(maximum, word.Length);\n        int[] cost = new int[text.Length + 1], previous = new int[text.Length + 1];\n        for (int end = 1; end <= text.Length; ++end)\n        {\n            cost[end] = cost[end - 1] + 1;\n            previous[end] = end - 1;\n            for (int length = 1; length <= maximum && length <= end; ++length)\n            {\n                int start = end - length;\n                if (words.Contains(text.Substring(start, length)) && cost[start] < cost[end])\n                {\n                    cost[end] = cost[start];\n                    previous[end] = start;\n                }\n            }\n        }\n        var result = new List<string>();\n        for (int end = text.Length; end > 0; end = previous[end])\n            result.Add(text.Substring(previous[end], end - previous[end]));\n        result.Reverse();\n        return result;\n    }\n}\n",
+      "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/csharp/ctci6_17_13.cs"
+      ],
+      "sourceSha256": {
+        "starter": "4c9aa4bcf4be3a0385ea9c3885722732b3c7ee270a6f5912f0a5d13b5c8496e2",
+        "solution": "11a81038d672c6650bdfba939da2cf04e80a6c6b9ed65fbf1dbd3201df6e16ad"
+      }
+    },
+    {
+      "problemId": "ctci6_17_13",
+      "language": "javascript",
+      "filename": "solution.js",
+      "signature": "function ReSpace(text, dictionary)",
+      "starterCode": "function ReSpace(text, dictionary) {\n  return [];\n}\n",
+      "solutionCode": "function ReSpace(text, dictionary) {\n  const words = new Set(dictionary);\n  let maximum = 0;\n  for (const word of words) maximum = Math.max(maximum, word.length);\n  const cost = new Array(text.length + 1).fill(0),\n    previous = new Array(text.length + 1).fill(0);\n  for (let end = 1; end <= text.length; ++end) {\n    cost[end] = cost[end - 1] + 1;\n    previous[end] = end - 1;\n    for (let length = 1; length <= maximum && length <= end; ++length) {\n      const start = end - length;\n      if (words.has(text.slice(start, end)) && cost[start] < cost[end]) {\n        cost[end] = cost[start];\n        previous[end] = start;\n      }\n    }\n  }\n  const result = [];\n  for (let end = text.length; end > 0; end = previous[end])\n    result.push(text.slice(previous[end], end));\n  return result.reverse();\n}\n",
+      "prefix": "'use strict';\n",
+      "suffix": "\nmodule.exports = {ReSpace};\n",
+      "references": [],
+      "visibleSymbols": [
+        "ReSpace"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/javascript/ctci6_17_13.js"
+      ],
+      "sourceSha256": {
+        "starter": "fe3736ec2f52509f9c18da6ff16902aa83b7b6e719be3c2e5c4ea688a7484baa",
+        "solution": "a9c490aca2c2fd854235c757ad5059f519f96633d019d20f034e10613da0a60d"
+      }
+    },
+    {
+      "problemId": "ctci6_17_13",
+      "language": "python",
+      "filename": "solution.py",
+      "signature": "def ReSpace(text: str, dictionary: list[str]) -> list[str]",
+      "starterCode": "def ReSpace(text: str, dictionary: list[str]) -> list[str]:\n    return []\n",
+      "solutionCode": "def ReSpace(text: str, dictionary: list[str]) -> list[str]:\n    words = set(dictionary)\n    maximum = max(map(len, words), default=0)\n    cost = [0] * (len(text) + 1)\n    previous = [0] * (len(text) + 1)\n    for end in range(1, len(text) + 1):\n        cost[end] = cost[end - 1] + 1\n        previous[end] = end - 1\n        for length in range(1, min(maximum, end) + 1):\n            start = end - length\n            if text[start:end] in words and cost[start] < cost[end]:\n                cost[end] = cost[start]\n                previous[end] = start\n    result = []\n    end = len(text)\n    while end:\n        result.append(text[previous[end] : end])\n        end = previous[end]\n    result.reverse()\n    return result\n",
+      "prefix": "",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "ReSpace"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/python/ctci6_17_13.py"
+      ],
+      "sourceSha256": {
+        "starter": "128ed58c99400f7a74357219a9b2dfd70f6dad331a2c2ebf21b801dba637461b",
+        "solution": "15fcea2f6d9dcbf3fb84dc498977072ba777029eccc064cffbcce98d4840e1cb"
+      }
+    },
+    {
+      "problemId": "ctci6_17_13",
+      "language": "cpp",
+      "filename": "solution.cpp",
+      "signature": "std::vector<std::string> ReSpace(const std::string& text, const std::vector<std::string>& dictionary)",
+      "starterCode": "#include <unordered_set>\nclass Solution {\n public:\n  std::vector<std::string> ReSpace(const std::string& text,\n                                   const std::vector<std::string>& dictionary) {\n    return {};\n  }\n};\n",
+      "solutionCode": "#include <unordered_set>\nclass Solution {\n public:\n  std::vector<std::string> ReSpace(const std::string& text,\n                                   const std::vector<std::string>& dictionary) {\n    std::unordered_set<std::string> words(dictionary.begin(), dictionary.end());\n    int maximum = 0;\n    for (const auto& word : words)\n      maximum = std::max(maximum, static_cast<int>(word.size()));\n    int n = static_cast<int>(text.size());\n    std::vector<int> cost(n + 1, 0), previous(n + 1, 0);\n    for (int end = 1; end <= n; ++end) {\n      cost[end] = cost[end - 1] + 1;\n      previous[end] = end - 1;\n      for (int length = 1; length <= maximum && length <= end; ++length) {\n        int start = end - length;\n        if (words.count(text.substr(start, length)) && cost[start] < cost[end]) {\n          cost[end] = cost[start];\n          previous[end] = start;\n        }\n      }\n    }\n    std::vector<std::string> result;\n    for (int end = n; end > 0; end = previous[end])\n      result.push_back(text.substr(previous[end], end - previous[end]));\n    std::reverse(result.begin(), result.end());\n    return result;\n  }\n};\n",
+      "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/cpp/ctci6_17_13.cpp"
+      ],
+      "sourceSha256": {
+        "starter": "53228e69250063bdf5a3e15041772acfbb7c9e27b8c1a51bada5deef1ca27488",
+        "solution": "dab693fc310799473edd37e60482eea5cb86f1b97d09b93f99d712084c0317dd"
+      }
+    },
+    {
+      "problemId": "ctci6_17_13",
+      "language": "java",
+      "filename": "Solution.java",
+      "signature": "List<String> ReSpace(String text, String[] dictionary)",
+      "starterCode": "class Solution {\n  public List<String> ReSpace(String text, String[] dictionary) {\n    return new ArrayList<>();\n  }\n}\n",
+      "solutionCode": "class Solution {\n  public List<String> ReSpace(String text, String[] dictionary) {\n    Set<String> words = new HashSet<>(Arrays.asList(dictionary));\n    int maximum = 0;\n    for (String word : words)\n      maximum = Math.max(maximum, word.length());\n    int[] cost = new int[text.length() + 1], previous = new int[text.length() + 1];\n    for (int end = 1; end <= text.length(); ++end) {\n      cost[end] = cost[end - 1] + 1;\n      previous[end] = end - 1;\n      for (int length = 1; length <= maximum && length <= end; ++length) {\n        int start = end - length;\n        if (words.contains(text.substring(start, end)) && cost[start] < cost[end]) {\n          cost[end] = cost[start];\n          previous[end] = start;\n        }\n      }\n    }\n    List<String> result = new ArrayList<>();\n    for (int end = text.length(); end > 0; end = previous[end])\n      result.add(text.substring(previous[end], end));\n    Collections.reverse(result);\n    return result;\n  }\n}\n",
+      "prefix": "import java.util.*;\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/java/ctci6_17_13.java"
+      ],
+      "sourceSha256": {
+        "starter": "f3bf1906d8d96011d86f4177424a2c956a5ab610f73fcd8fbf944b09bdf99e2a",
+        "solution": "10344cdef51e9441d60ac591ccc3072c520bbe12fe1488dca3f4f703e23de856"
       }
     },
     {
@@ -12873,6 +13113,126 @@
       }
     },
     {
+      "problemId": "ctci6_17_22",
+      "language": "csharp",
+      "filename": "Solution.cs",
+      "signature": "List<string> WordTransformation(string start, string stop, string[] dictionary)",
+      "starterCode": "public class Solution\n{\n    public List<string> WordTransformation(string start, string stop, string[] dictionary)\n    {\n        return [];\n    }\n}\n",
+      "solutionCode": "public class Solution\n{\n    public List<string> WordTransformation(string start, string stop, string[] dictionary)\n    {\n        var words = new HashSet<string>(dictionary, StringComparer.Ordinal);\n        var previous = new Dictionary<string, string?>(StringComparer.Ordinal) { { start, null } };\n        var queue = new List<string> { start };\n        for (int head = 0; head < queue.Count; ++head)\n        {\n            string word = queue[head];\n            if (word == stop)\n            {\n                var path = new List<string>();\n                for (string? current = stop; current != null; current = previous[current])\n                    path.Add(current);\n                path.Reverse();\n                return path;\n            }\n            char[] letters = word.ToCharArray();\n            for (int position = 0; position < letters.Length; ++position)\n            {\n                char original = letters[position];\n                for (char letter = 'a'; letter <= 'z'; ++letter)\n                {\n                    if (letter == original)\n                        continue;\n                    letters[position] = letter;\n                    string candidate = new string(letters);\n                    if (words.Contains(candidate) && !previous.ContainsKey(candidate))\n                    {\n                        previous[candidate] = word;\n                        queue.Add(candidate);\n                    }\n                }\n                letters[position] = original;\n            }\n        }\n        return [];\n    }\n}\n",
+      "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/csharp/ctci6_17_22.cs"
+      ],
+      "sourceSha256": {
+        "starter": "5ed83b81586d9e44e9466b1565db5cf42d0c21467224326ab1c22c6f8196db18",
+        "solution": "3326dbfc66bf9d431efedc67f5afc62d26674d9b578c2369ee9e9ea062bc1684"
+      }
+    },
+    {
+      "problemId": "ctci6_17_22",
+      "language": "javascript",
+      "filename": "solution.js",
+      "signature": "function WordTransformation(start, stop, dictionary)",
+      "starterCode": "function WordTransformation(start, stop, dictionary) {\n  return [];\n}\n",
+      "solutionCode": "function WordTransformation(start, stop, dictionary) {\n  const words = new Set(dictionary),\n    previous = new Map([[start, null]]),\n    queue = [start];\n  for (let head = 0; head < queue.length; ++head) {\n    const word = queue[head];\n    if (word === stop) {\n      const path = [];\n      for (let current = stop; current !== null; current = previous.get(current))\n        path.push(current);\n      return path.reverse();\n    }\n    for (let position = 0; position < word.length; ++position)\n      for (let code = 97; code <= 122; ++code) {\n        const letter = String.fromCharCode(code);\n        if (letter === word[position]) continue;\n        const candidate = word.slice(0, position) + letter + word.slice(position + 1);\n        if (words.has(candidate) && !previous.has(candidate)) {\n          previous.set(candidate, word);\n          queue.push(candidate);\n        }\n      }\n  }\n  return [];\n}\n",
+      "prefix": "'use strict';\n",
+      "suffix": "\nmodule.exports = {WordTransformation};\n",
+      "references": [],
+      "visibleSymbols": [
+        "WordTransformation"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/javascript/ctci6_17_22.js"
+      ],
+      "sourceSha256": {
+        "starter": "0fd2121ec96be161c382bed26951873cc60946b049d9aabe02761acf8d9ce2fa",
+        "solution": "2a6379ae4eabab1cf7347285ab7fe80d298273f4e45e785b9c88e6a6094d83cb"
+      }
+    },
+    {
+      "problemId": "ctci6_17_22",
+      "language": "python",
+      "filename": "solution.py",
+      "signature": "def WordTransformation(start: str, stop: str, dictionary: list[str]) -> list[str]",
+      "starterCode": "def WordTransformation(start: str, stop: str, dictionary: list[str]) -> list[str]:\n    return []\n",
+      "solutionCode": "def WordTransformation(start: str, stop: str, dictionary: list[str]) -> list[str]:\n    words = set(dictionary)\n    previous = {start: None}\n    queue = [start]\n    head = 0\n    while head < len(queue):\n        word = queue[head]\n        head += 1\n        if word == stop:\n            path = []\n            current = stop\n            while current is not None:\n                path.append(current)\n                current = previous[current]\n            path.reverse()\n            return path\n        for position in range(len(word)):\n            for letter in \"abcdefghijklmnopqrstuvwxyz\":\n                if letter == word[position]:\n                    continue\n                candidate = word[:position] + letter + word[position + 1 :]\n                if candidate in words and candidate not in previous:\n                    previous[candidate] = word\n                    queue.append(candidate)\n    return []\n",
+      "prefix": "",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "WordTransformation"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/python/ctci6_17_22.py"
+      ],
+      "sourceSha256": {
+        "starter": "3f81651fb6a65024f2abd65c3b265b04a03021d030b3d4986b9af9b122c8b4cf",
+        "solution": "9dddf153ffa5c3c12ac2d8ab050cb4b856926318c79a11aedc1ed80b8fcc8ab0"
+      }
+    },
+    {
+      "problemId": "ctci6_17_22",
+      "language": "cpp",
+      "filename": "solution.cpp",
+      "signature": "std::vector<std::string> WordTransformation(const std::string& start, const std::string& stop, const std::vector<std::string>& dictionary)",
+      "starterCode": "#include <unordered_map>\n#include <unordered_set>\nclass Solution {\n public:\n  std::vector<std::string> WordTransformation(const std::string& start, const std::string& stop,\n                                              const std::vector<std::string>& dictionary) {\n    return {};\n  }\n};\n",
+      "solutionCode": "#include <unordered_map>\n#include <unordered_set>\nclass Solution {\n public:\n  std::vector<std::string> WordTransformation(const std::string& start, const std::string& stop,\n                                              const std::vector<std::string>& dictionary) {\n    std::unordered_set<std::string> words(dictionary.begin(), dictionary.end());\n    std::unordered_map<std::string, std::string> previous{{start, \"\"}};\n    std::vector<std::string> queue{start};\n    for (size_t head = 0; head < queue.size(); ++head) {\n      std::string word = queue[head];\n      if (word == stop) {\n        std::vector<std::string> path;\n        for (std::string current = stop; !current.empty(); current = previous.at(current))\n          path.push_back(current);\n        std::reverse(path.begin(), path.end());\n        return path;\n      }\n      for (size_t position = 0; position < word.size(); ++position) {\n        std::string candidate = word;\n        for (char letter = 'a'; letter <= 'z'; ++letter) {\n          if (letter == word[position])\n            continue;\n          candidate[position] = letter;\n          if (words.count(candidate) && !previous.count(candidate)) {\n            previous[candidate] = word;\n            queue.push_back(candidate);\n          }\n        }\n      }\n    }\n    return {};\n  }\n};\n",
+      "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/cpp/ctci6_17_22.cpp"
+      ],
+      "sourceSha256": {
+        "starter": "ae27248ae051220aef9776b1dcad9dfff7e511818a308eee4792650b217de3cf",
+        "solution": "19992147c26c9713a7ea4a7c63ee49f51789d089e6c0f88c67e3ed97d65a87d7"
+      }
+    },
+    {
+      "problemId": "ctci6_17_22",
+      "language": "java",
+      "filename": "Solution.java",
+      "signature": "List<String> WordTransformation(String start, String stop, String[] dictionary)",
+      "starterCode": "class Solution {\n  public List<String> WordTransformation(String start, String stop, String[] dictionary) {\n    return new ArrayList<>();\n  }\n}\n",
+      "solutionCode": "class Solution {\n  public List<String> WordTransformation(String start, String stop, String[] dictionary) {\n    Set<String> words = new HashSet<>(Arrays.asList(dictionary));\n    Map<String, String> previous = new HashMap<>();\n    previous.put(start, null);\n    List<String> queue = new ArrayList<>();\n    queue.add(start);\n    for (int head = 0; head < queue.size(); ++head) {\n      String word = queue.get(head);\n      if (word.equals(stop)) {\n        List<String> path = new ArrayList<>();\n        for (String current = stop; current != null; current = previous.get(current))\n          path.add(current);\n        Collections.reverse(path);\n        return path;\n      }\n      char[] letters = word.toCharArray();\n      for (int position = 0; position < letters.length; ++position) {\n        char original = letters[position];\n        for (char letter = 'a'; letter <= 'z'; ++letter) {\n          if (letter == original)\n            continue;\n          letters[position] = letter;\n          String candidate = new String(letters);\n          if (words.contains(candidate) && !previous.containsKey(candidate)) {\n            previous.put(candidate, word);\n            queue.add(candidate);\n          }\n        }\n        letters[position] = original;\n      }\n    }\n    return new ArrayList<>();\n  }\n}\n",
+      "prefix": "import java.util.*;\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/java/ctci6_17_22.java"
+      ],
+      "sourceSha256": {
+        "starter": "f19748b7303a29a3f6501f0f50a1c6dd560fe569330e04ee49359a536ea24fbe",
+        "solution": "278729050e83d1e48ecdcf6c5f826b83ac4afa842084c516d724c9fa9e268ed0"
+      }
+    },
+    {
       "problemId": "ctci6_17_23",
       "language": "csharp",
       "filename": "Solution.cs",
@@ -13110,6 +13470,246 @@
       "sourceSha256": {
         "starter": "4d1b2b96056599567e5608fc4fdc06036f535700615f4039df0c02a8678eefab",
         "solution": "94b26292fefe935a0dfa4e7d197518c3593bc3204c4dfc3bdaad7d96c8d93921"
+      }
+    },
+    {
+      "problemId": "ctci6_17_25",
+      "language": "csharp",
+      "filename": "Solution.cs",
+      "signature": "List<string> LargestWordRectangle(string[] words)",
+      "starterCode": "public class Solution\n{\n    public List<string> LargestWordRectangle(string[] words)\n    {\n        return [];\n    }\n}\n",
+      "solutionCode": "public class Solution\n{\n    public List<string> LargestWordRectangle(string[] words)\n    {\n        var seen = new HashSet<string>(StringComparer.Ordinal);\n        var groups = new List<string>[6];\n        for (int i = 0; i < groups.Length; ++i)\n            groups[i] = new List<string>();\n        int maximum = 0;\n        foreach (string word in words)\n            if (seen.Add(word))\n            {\n                groups[word.Length].Add(word);\n                maximum = Math.Max(maximum, word.Length);\n            }\n        for (int area = maximum * maximum; area > 0; --area)\n            for (int height = 1; height <= maximum; ++height)\n            {\n                if (area % height != 0)\n                    continue;\n                int width = area / height;\n                if (width > maximum || groups[width].Count == 0 || groups[height].Count == 0)\n                    continue;\n                var prefixes = new HashSet<string>(StringComparer.Ordinal);\n                foreach (string word in groups[height])\n                    for (int length = 1; length <= height; ++length)\n                        prefixes.Add(word.Substring(0, length));\n                var rows = new List<string>();\n                bool Search()\n                {\n                    if (rows.Count == height)\n                        return true;\n                    foreach (string word in groups[width])\n                    {\n                        rows.Add(word);\n                        bool valid = true;\n                        for (int column = 0; column < width; ++column)\n                        {\n                            var prefix = new StringBuilder();\n                            foreach (string row in rows)\n                                prefix.Append(row[column]);\n                            if (!prefixes.Contains(prefix.ToString()))\n                            {\n                                valid = false;\n                                break;\n                            }\n                        }\n                        if (valid && Search())\n                            return true;\n                        rows.RemoveAt(rows.Count - 1);\n                    }\n                    return false;\n                }\n                if (Search())\n                    return rows;\n            }\n        return [];\n    }\n}\n",
+      "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/csharp/ctci6_17_25.cs"
+      ],
+      "sourceSha256": {
+        "starter": "ce7a9b6f9d0acd02d34bd8347d0b5554f9d3ec8655f5db885f0cfe90e34ca189",
+        "solution": "2d696e28c8f92b53480df7d0e149e0883127e10d8097a7b3cc3c686b7f573c17"
+      }
+    },
+    {
+      "problemId": "ctci6_17_25",
+      "language": "javascript",
+      "filename": "solution.js",
+      "signature": "function LargestWordRectangle(words)",
+      "starterCode": "function LargestWordRectangle(words) {\n  return [];\n}\n",
+      "solutionCode": "function LargestWordRectangle(words) {\n  const groups = new Map(),\n    seen = new Set();\n  let maximum = 0;\n  for (const word of words)\n    if (!seen.has(word)) {\n      seen.add(word);\n      if (!groups.has(word.length)) groups.set(word.length, []);\n      groups.get(word.length).push(word);\n      maximum = Math.max(maximum, word.length);\n    }\n  for (let area = maximum * maximum; area > 0; --area)\n    for (let height = 1; height <= maximum; ++height) {\n      if (area % height !== 0) continue;\n      const width = area / height;\n      if (!groups.has(width) || !groups.has(height)) continue;\n      const prefixes = new Set();\n      for (const word of groups.get(height))\n        for (let length = 1; length <= height; ++length) prefixes.add(word.slice(0, length));\n      const rows = [];\n      function search() {\n        if (rows.length === height) return true;\n        for (const word of groups.get(width)) {\n          rows.push(word);\n          let valid = true;\n          for (let column = 0; column < width; ++column) {\n            let prefix = \"\";\n            for (const row of rows) prefix += row[column];\n            if (!prefixes.has(prefix)) {\n              valid = false;\n              break;\n            }\n          }\n          if (valid && search()) return true;\n          rows.pop();\n        }\n        return false;\n      }\n      if (search()) return rows;\n    }\n  return [];\n}\n",
+      "prefix": "'use strict';\n",
+      "suffix": "\nmodule.exports = {LargestWordRectangle};\n",
+      "references": [],
+      "visibleSymbols": [
+        "LargestWordRectangle"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/javascript/ctci6_17_25.js"
+      ],
+      "sourceSha256": {
+        "starter": "c7a8d70f6ea2e008ad46b85f063c8ef6a4da0a182f746552c7fa41e30211d3b3",
+        "solution": "52d6f6c1d109b50e8db7754fdb50134c8566fe3b3b4b96509fb13f528d499c02"
+      }
+    },
+    {
+      "problemId": "ctci6_17_25",
+      "language": "python",
+      "filename": "solution.py",
+      "signature": "def LargestWordRectangle(words: list[str]) -> list[str]",
+      "starterCode": "def LargestWordRectangle(words: list[str]) -> list[str]:\n    return []\n",
+      "solutionCode": "def LargestWordRectangle(words: list[str]) -> list[str]:\n    groups = {}\n    seen = set()\n    maximum = 0\n    for word in words:\n        if word not in seen:\n            seen.add(word)\n            groups.setdefault(len(word), []).append(word)\n            maximum = max(maximum, len(word))\n    for area in range(maximum * maximum, 0, -1):\n        for height in range(1, maximum + 1):\n            if area % height:\n                continue\n            width = area // height\n            if width not in groups or height not in groups:\n                continue\n            prefixes = {word[:length] for word in groups[height] for length in range(1, height + 1)}\n            rows = []\n\n            def search():\n                if len(rows) == height:\n                    return True\n                for word in groups[width]:\n                    rows.append(word)\n                    if (\n                        all(\n                            \"\".join(row[column] for row in rows) in prefixes\n                            for column in range(width)\n                        )\n                        and search()\n                    ):\n                        return True\n                    rows.pop()\n                return False\n\n            if search():\n                return rows\n    return []\n",
+      "prefix": "",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "LargestWordRectangle"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/python/ctci6_17_25.py"
+      ],
+      "sourceSha256": {
+        "starter": "daa3662b18c06e26a7581d414665a0a2602c6cb3503b054c42ce90ae90b01f0b",
+        "solution": "6fd81abc3628e7225fbb852a1d311961d3974bbb30dbbe8605710bc8d3af0170"
+      }
+    },
+    {
+      "problemId": "ctci6_17_25",
+      "language": "cpp",
+      "filename": "solution.cpp",
+      "signature": "std::vector<std::string> LargestWordRectangle(const std::vector<std::string>& words)",
+      "starterCode": "#include <unordered_set>\nclass Solution {\n public:\n  std::vector<std::string> LargestWordRectangle(const std::vector<std::string>& words) {\n    return {};\n  }\n};\n",
+      "solutionCode": "#include <unordered_set>\nclass Solution {\n public:\n  std::vector<std::string> LargestWordRectangle(const std::vector<std::string>& words) {\n    std::unordered_set<std::string> seen;\n    std::vector<std::vector<std::string>> groups(6);\n    int maximum = 0;\n    for (const auto& word : words)\n      if (seen.insert(word).second) {\n        groups[word.size()].push_back(word);\n        maximum = std::max(maximum, static_cast<int>(word.size()));\n      }\n    for (int area = maximum * maximum; area > 0; --area)\n      for (int height = 1; height <= maximum; ++height) {\n        if (area % height != 0)\n          continue;\n        int width = area / height;\n        if (width > maximum || groups[width].empty() || groups[height].empty())\n          continue;\n        std::unordered_set<std::string> prefixes;\n        for (const auto& word : groups[height])\n          for (int length = 1; length <= height; ++length)\n            prefixes.insert(word.substr(0, length));\n        std::vector<std::string> rows;\n        std::function<bool()> search = [&]() {\n          if (static_cast<int>(rows.size()) == height)\n            return true;\n          for (const auto& word : groups[width]) {\n            rows.push_back(word);\n            bool valid = true;\n            for (int column = 0; column < width; ++column) {\n              std::string prefix;\n              for (const auto& row : rows)\n                prefix += row[column];\n              if (!prefixes.count(prefix)) {\n                valid = false;\n                break;\n              }\n            }\n            if (valid && search())\n              return true;\n            rows.pop_back();\n          }\n          return false;\n        };\n        if (search())\n          return rows;\n      }\n    return {};\n  }\n};\n",
+      "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/cpp/ctci6_17_25.cpp"
+      ],
+      "sourceSha256": {
+        "starter": "73e156aa072c690554bc41092c12cebb3e4a687228093753bc916eefdfcecb0c",
+        "solution": "3877792b18a3f2961940f751f39409aa0947b372c718147f88ba769c3b1758fa"
+      }
+    },
+    {
+      "problemId": "ctci6_17_25",
+      "language": "java",
+      "filename": "Solution.java",
+      "signature": "List<String> LargestWordRectangle(String[] words)",
+      "starterCode": "class Solution {\n  public List<String> LargestWordRectangle(String[] words) {\n    return new ArrayList<>();\n  }\n}\n",
+      "solutionCode": "class Solution {\n  public List<String> LargestWordRectangle(String[] words) {\n    Set<String> seen = new HashSet<>();\n    List<List<String>> groups = new ArrayList<>();\n    for (int i = 0; i <= 5; ++i)\n      groups.add(new ArrayList<>());\n    int maximum = 0;\n    for (String word : words)\n      if (seen.add(word)) {\n        groups.get(word.length()).add(word);\n        maximum = Math.max(maximum, word.length());\n      }\n    for (int area = maximum * maximum; area > 0; --area)\n      for (int height = 1; height <= maximum; ++height) {\n        if (area % height != 0)\n          continue;\n        int width = area / height;\n        if (width > maximum || groups.get(width).isEmpty() || groups.get(height).isEmpty())\n          continue;\n        Set<String> prefixes = new HashSet<>();\n        for (String word : groups.get(height))\n          for (int length = 1; length <= height; ++length)\n            prefixes.add(word.substring(0, length));\n        List<String> rows = new ArrayList<>();\n        int targetHeight = height, targetWidth = width;\n        class Search {\n          boolean run() {\n            if (rows.size() == targetHeight)\n              return true;\n            for (String word : groups.get(targetWidth)) {\n              rows.add(word);\n              boolean valid = true;\n              for (int column = 0; column < targetWidth; ++column) {\n                StringBuilder prefix = new StringBuilder();\n                for (String row : rows)\n                  prefix.append(row.charAt(column));\n                if (!prefixes.contains(prefix.toString())) {\n                  valid = false;\n                  break;\n                }\n              }\n              if (valid && run())\n                return true;\n              rows.remove(rows.size() - 1);\n            }\n            return false;\n          }\n        }\n        if (new Search().run())\n          return rows;\n      }\n    return new ArrayList<>();\n  }\n}\n",
+      "prefix": "import java.util.*;\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/java/ctci6_17_25.java"
+      ],
+      "sourceSha256": {
+        "starter": "d356ac977e1d7436b650c233b48a07ca4ad47a25de0fc318b898b1bd6a2f2c17",
+        "solution": "3b5657cf0d5f4cdfd0f6c6d44c32dc3a67855baff4d8da48f1c06cb4b1564189"
+      }
+    },
+    {
+      "problemId": "ctci6_17_26",
+      "language": "csharp",
+      "filename": "Solution.cs",
+      "signature": "int[][] SparseSimilarities(int[] documentIds, int[][] documents)",
+      "starterCode": "public class Solution\n{\n    public int[][] SparseSimilarities(int[] documentIds, int[][] documents)\n    {\n        return [];\n    }\n}\n",
+      "solutionCode": "public class Solution\n{\n    public int[][] SparseSimilarities(int[] documentIds, int[][] documents)\n    {\n        int n = documentIds.Length;\n        var postings = new Dictionary<int, List<int>>();\n        for (int i = 0; i < n; ++i)\n            foreach (int word in documents[i])\n            {\n                if (!postings.TryGetValue(word, out var posting))\n                {\n                    posting = new List<int>();\n                    postings[word] = posting;\n                }\n                posting.Add(i);\n            }\n        var intersections = new Dictionary<int, int>();\n        foreach (var posting in postings.Values)\n            for (int a = 0; a < posting.Count; ++a)\n                for (int b = a + 1; b < posting.Count; ++b)\n                {\n                    int key = posting[a] * n + posting[b];\n                    intersections.TryGetValue(key, out int count);\n                    intersections[key] = count + 1;\n                }\n        var result = new List<int[]>();\n        foreach (var entry in intersections)\n        {\n            int left = entry.Key / n, right = entry.Key % n, count = entry.Value,\n                a = documentIds[left], b = documentIds[right];\n            result.Add([\n                Math.Min(a, b), Math.Max(a, b), count,\n                documents[left].Length + documents[right].Length - count\n            ]);\n        }\n        result.Sort((a, b) =>\n                    {\n                        int first = a[0].CompareTo(b[0]);\n                        return first != 0 ? first : a[1].CompareTo(b[1]);\n                    });\n        return result.ToArray();\n    }\n}\n",
+      "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/csharp/ctci6_17_26.cs"
+      ],
+      "sourceSha256": {
+        "starter": "d99608bd171d3df38591a1baedf0c1cab9061ed93d4d30910a97fc2234350619",
+        "solution": "8efe2ed142ac9ea7e7f0bf51191bd873477ea559048518979b55d1ce37a802c4"
+      }
+    },
+    {
+      "problemId": "ctci6_17_26",
+      "language": "javascript",
+      "filename": "solution.js",
+      "signature": "function SparseSimilarities(documentIds, documents)",
+      "starterCode": "function SparseSimilarities(documentIds, documents) {\n  return [];\n}\n",
+      "solutionCode": "function SparseSimilarities(documentIds, documents) {\n  const n = documentIds.length,\n    postings = new Map(),\n    intersections = new Map();\n  for (let i = 0; i < n; ++i)\n    for (const word of documents[i]) {\n      if (!postings.has(word)) postings.set(word, []);\n      postings.get(word).push(i);\n    }\n  for (const posting of postings.values())\n    for (let left = 0; left < posting.length; ++left)\n      for (let right = left + 1; right < posting.length; ++right) {\n        const key = posting[left] * n + posting[right];\n        intersections.set(key, (intersections.get(key) || 0) + 1);\n      }\n  const result = [];\n  for (const [key, count] of intersections) {\n    const left = Math.floor(key / n),\n      right = key % n,\n      a = documentIds[left],\n      b = documentIds[right];\n    result.push([\n      Math.min(a, b),\n      Math.max(a, b),\n      count,\n      documents[left].length + documents[right].length - count,\n    ]);\n  }\n  result.sort((a, b) => a[0] - b[0] || a[1] - b[1]);\n  return result;\n}\n",
+      "prefix": "'use strict';\n",
+      "suffix": "\nmodule.exports = {SparseSimilarities};\n",
+      "references": [],
+      "visibleSymbols": [
+        "SparseSimilarities"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/javascript/ctci6_17_26.js"
+      ],
+      "sourceSha256": {
+        "starter": "72f6e620ba227d3c7f57bf05a26a809e10af7f6c5f41a2e409fc55bb7e14c31c",
+        "solution": "7cfd00499fd1420dc42620bd80a637bf9bb48be79deb90dfcbb0003e23828e1e"
+      }
+    },
+    {
+      "problemId": "ctci6_17_26",
+      "language": "python",
+      "filename": "solution.py",
+      "signature": "def SparseSimilarities(documentIds: list[int], documents: list[list[int]]) -> list[list[int]]",
+      "starterCode": "def SparseSimilarities(documentIds: list[int], documents: list[list[int]]) -> list[list[int]]:\n    return []\n",
+      "solutionCode": "def SparseSimilarities(documentIds: list[int], documents: list[list[int]]) -> list[list[int]]:\n    n = len(documentIds)\n    postings = {}\n    for index, document in enumerate(documents):\n        for word in document:\n            postings.setdefault(word, []).append(index)\n    intersections = {}\n    for posting in postings.values():\n        for left in range(len(posting)):\n            for right in range(left + 1, len(posting)):\n                key = posting[left] * n + posting[right]\n                intersections[key] = intersections.get(key, 0) + 1\n    result = []\n    for key, count in intersections.items():\n        left, right = divmod(key, n)\n        a, b = sorted((documentIds[left], documentIds[right]))\n        result.append([a, b, count, len(documents[left]) + len(documents[right]) - count])\n    result.sort()\n    return result\n",
+      "prefix": "",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "SparseSimilarities"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/python/ctci6_17_26.py"
+      ],
+      "sourceSha256": {
+        "starter": "ef2577606f94c2a8d8930ca0a1fb9a85769ef2695b0924ccf620ca4579ce7968",
+        "solution": "91b1af22cfdff215b99c3026d5fd337b69aa29409c3bcc330591387ab533fa6f"
+      }
+    },
+    {
+      "problemId": "ctci6_17_26",
+      "language": "cpp",
+      "filename": "solution.cpp",
+      "signature": "std::vector<std::vector<int>> SparseSimilarities(const std::vector<int>& documentIds, const std::vector<std::vector<int>>& documents)",
+      "starterCode": "#include <unordered_map>\nclass Solution {\n public:\n  std::vector<std::vector<int>> SparseSimilarities(const std::vector<int>& documentIds,\n                                                   const std::vector<std::vector<int>>& documents) {\n    return {};\n  }\n};\n",
+      "solutionCode": "#include <unordered_map>\nclass Solution {\n public:\n  std::vector<std::vector<int>> SparseSimilarities(const std::vector<int>& documentIds,\n                                                   const std::vector<std::vector<int>>& documents) {\n    int n = static_cast<int>(documentIds.size());\n    std::unordered_map<int, std::vector<int>> postings;\n    for (int i = 0; i < n; ++i)\n      for (int word : documents[i])\n        postings[word].push_back(i);\n    std::unordered_map<int, int> intersections;\n    for (const auto& entry : postings) {\n      const auto& posting = entry.second;\n      for (size_t a = 0; a < posting.size(); ++a)\n        for (size_t b = a + 1; b < posting.size(); ++b)\n          ++intersections[posting[a] * n + posting[b]];\n    }\n    std::vector<std::vector<int>> result;\n    for (const auto& entry : intersections) {\n      int left = entry.first / n, right = entry.first % n, count = entry.second,\n          a = documentIds[left], b = documentIds[right];\n      result.push_back(\n          {std::min(a, b), std::max(a, b), count,\n           static_cast<int>(documents[left].size() + documents[right].size()) - count});\n    }\n    std::sort(result.begin(), result.end());\n    return result;\n  }\n};\n",
+      "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/cpp/ctci6_17_26.cpp"
+      ],
+      "sourceSha256": {
+        "starter": "7739082d4c6f038db6791cbba2384428d86763170cd383ddc51d8bc241d5bb7e",
+        "solution": "544ba69be0780f6ccaf81cd191531a27af2c14f5272cec3501611a2e11985e5d"
+      }
+    },
+    {
+      "problemId": "ctci6_17_26",
+      "language": "java",
+      "filename": "Solution.java",
+      "signature": "int[][] SparseSimilarities(int[] documentIds, int[][] documents)",
+      "starterCode": "class Solution {\n  public int[][] SparseSimilarities(int[] documentIds, int[][] documents) {\n    return new int[0][];\n  }\n}\n",
+      "solutionCode": "class Solution {\n  public int[][] SparseSimilarities(int[] documentIds, int[][] documents) {\n    int n = documentIds.length;\n    Map<Integer, List<Integer>> postings = new HashMap<>();\n    for (int i = 0; i < n; ++i)\n      for (int word : documents[i])\n        postings.computeIfAbsent(word, k -> new ArrayList<>()).add(i);\n    Map<Integer, Integer> intersections = new HashMap<>();\n    for (List<Integer> posting : postings.values())\n      for (int a = 0; a < posting.size(); ++a)\n        for (int b = a + 1; b < posting.size(); ++b) {\n          int key = posting.get(a) * n + posting.get(b);\n          intersections.put(key, intersections.getOrDefault(key, 0) + 1);\n        }\n    List<int[]> result = new ArrayList<>();\n    for (var entry : intersections.entrySet()) {\n      int left = entry.getKey() / n, right = entry.getKey() % n, count = entry.getValue(),\n          a = documentIds[left], b = documentIds[right];\n      result.add(new int[] {Math.min(a, b), Math.max(a, b), count,\n          documents[left].length + documents[right].length - count});\n    }\n    result.sort((a, b) -> {\n      int first = Integer.compare(a[0], b[0]);\n      return first != 0 ? first : Integer.compare(a[1], b[1]);\n    });\n    return result.toArray(new int[0][]);\n  }\n}\n",
+      "prefix": "import java.util.*;\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/java/ctci6_17_26.java"
+      ],
+      "sourceSha256": {
+        "starter": "ad9a7dcdef096c655b240d9f83dc8cd29a99ed531ada8675184394960d819764",
+        "solution": "8653a9d31dcdd550fa156b326129efb6ab5532eb1ec1cad8c4bdfc3a01a74624"
       }
     }
   ]

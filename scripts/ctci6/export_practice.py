@@ -12,6 +12,7 @@ import json
 import sys
 
 from core import EXT, LANGUAGES, ROOT
+from corpus17 import STRUCTURED_REFS
 from verify_runtime import core_match, digest, tool_versions
 
 sys.path.insert(0, str(ROOT / "scripts/code_workspace"))
@@ -96,7 +97,7 @@ def export():
         contracts = {}
         for language in LANGUAGES:
             config = row["languages"][language]
-            grader = hashlib.sha256((ROOT / "scripts/ctci6/corpus04.py").read_bytes()).hexdigest() if row["batch"] == 4 else hashlib.sha256((ROOT / "scripts/ctci6/corpus10.py").read_bytes()).hexdigest() if row["batch"] == 10 else (
+            grader = hashlib.sha256((ROOT / "scripts/ctci6/corpus17.py").read_bytes()).hexdigest() if row["batch"] == 17 and ref in STRUCTURED_REFS else hashlib.sha256((ROOT / "scripts/ctci6/corpus04.py").read_bytes()).hexdigest() if row["batch"] == 4 else hashlib.sha256((ROOT / "scripts/ctci6/corpus10.py").read_bytes()).hexdigest() if row["batch"] == 10 else (
                 hashlib.sha256(
                     (
                         ROOT

@@ -1,0 +1,41 @@
+{
+  "explanation": "Most document pairs may share nothing. Build an inverted index from each word ID to the document positions containing it. A pair appears together once for each shared word, so incrementing only those pairs computes positive intersection sizes without testing every disjoint pair. Document lengths then give union=lengthA+lengthB-intersection. C++ unordered_map stores only observed posting pairs. Position keys stay below 40000, and union counts stay below 401, so the signed arithmetic/casts are safe. The final vector is sorted lexicographically after positions are mapped to the supplied IDs.",
+  "correctness": "Because each document contains a word ID at most once, a word posting list contributes exactly one increment to each pair sharing that word. Summing over words therefore yields the exact intersection count for every recorded pair, and records no zero-intersection pair. Inclusion-exclusion gives its exact union size. Mapping positions back to the supplied unique document IDs, normalizing pair orientation and sorting yields each required row once. Empty documents appear in no posting list and correctly contribute no positive pair.",
+  "walkthrough": "For IDs [10,20,30] and documents [[1,2],[2,3],[]], word 2 links documents 10 and 20 once. Their intersection is 1 and union is 2+2-1=3, so return [[10,20,1,3]], representing exact similarity 1/3. Empty document 30 creates no positive pair.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        10,
+        20,
+        30
+      ],
+      [
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        []
+      ]
+    ],
+    "expected": [
+      [
+        10,
+        20,
+        1,
+        3
+      ]
+    ]
+  },
+  "timeComplexity": "Expected O(T+sum(f_w^2)+P log(P+1)) time for T word occurrences, posting frequency f_w per word and P positive document pairs. Posting-pair work can still be quadratic when many documents share words.",
+  "spaceComplexity": "O(T+P+n) inverted postings, sparse intersection counters and result rows for n documents; no dense n-by-n matrix is allocated.",
+  "edgeCases": [
+    "No documents, empty/disjoint documents and identical sets.",
+    "Arbitrary/signed-endpoint document IDs, input order differing from ID order and several shared words.",
+    "Word duplicates inside one document are outside the set-input domain."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.26. No affiliation is implied."
+}

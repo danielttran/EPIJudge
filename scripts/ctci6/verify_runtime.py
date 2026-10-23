@@ -21,6 +21,7 @@ from corpus03 import valid_observation as state_match
 from corpus08 import valid_observation as recursive_match
 from corpus10 import valid_observation as sorting_match
 from corpus04 import valid_observation as graph_match
+from corpus17 import STRUCTURED_REFS,valid_observation as hard_match
 from runtime import generate_runtime
 from verify01 import execute
 
@@ -69,6 +70,7 @@ def verify(only_ref=None, only_language=None, starters=False):
     tools = tool_versions()
     grader_hashes = dict(
         core=digest(inspect.getsource(core_match)),
+        hard=hashlib.sha256((ROOT / "scripts/ctci6/corpus17.py").read_bytes()).hexdigest(),
         graphs=hashlib.sha256((ROOT / "scripts/ctci6/corpus04.py").read_bytes()).hexdigest(),
         searching=hashlib.sha256((ROOT / "scripts/ctci6/corpus10.py").read_bytes()).hexdigest(),
         combinatorial=hashlib.sha256(
@@ -138,6 +140,7 @@ def verify(only_ref=None, only_language=None, starters=False):
                         cases=cases,
                         tool=tools[language],
                         grader=grader_hashes[
+                            "hard" if entry["batch"] == 17 and entry["ref"] in STRUCTURED_REFS else
                             "searching" if entry["batch"] == 10 else
                             "combinatorial"
                             if entry["batch"] == 8
@@ -207,6 +210,7 @@ def verify(only_ref=None, only_language=None, starters=False):
                 elapsed += value["elapsedMs"]
                 try:
                     accepted = (
+                        hard_match(entry["ref"], case, observed) if entry["batch"] == 17 and entry["ref"] in STRUCTURED_REFS else
                         graph_match(entry["ref"], case, observed) if entry["batch"] == 4 else
                         sorting_match(entry["ref"], case, observed) if entry["batch"] == 10 else
                         recursive_match(entry["ref"], case, observed)

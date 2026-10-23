@@ -1,0 +1,30 @@
+{
+  "explanation": "Treat words as graph vertices and one-letter changes as edges. Breadth-first search discovers each word once and stores the predecessor that first reached it. Generate possible neighbors by changing one position to each other letter and checking dictionary membership, avoiding a comparison against every word for every step.",
+  "correctness": "Every generated neighbor changes exactly one position and is queued only if it is a dictionary word, so every predecessor edge is a legal transformation. Visited tracking prevents repeated vertices and guarantees finite exploration. Induction on path length shows BFS discovers every reachable word; thus queue exhaustion proves no path exists. When stop is found, following predecessors back to start and reversing yields a valid path with both endpoints and no repeated word. The identical-endpoint case is the one-word path.",
+  "walkthrough": "With dictionary=[cat,cot,cog,dog], start cat changes a to o to reach cot, then t to g to reach cog, then c to d to reach dog. Return [cat,cot,cog,dog]. cat->dog directly is invalid because several positions differ.",
+  "walkthroughCase": {
+    "arguments": [
+      "cat",
+      "dog",
+      [
+        "cat",
+        "cot",
+        "cog",
+        "dog"
+      ]
+    ],
+    "expected": [
+      "cat",
+      "cot",
+      "cog",
+      "dog"
+    ]
+  },
+  "timeComplexity": "Expected O(D+26*W*L^2) character work for D dictionary characters, W reachable length-L words and copying/hashing each generated length-L candidate. At most 26*L candidates are tried per expanded word.",
+  "spaceComplexity": "O(D+W*L) dictionary, visited/predecessor/queue and returned-word storage.",
+  "edgeCases": [
+    "Equal endpoints, disconnected components and direct one-letter neighbors.",
+    "Repeated dictionary entries, other word lengths, cycles and several valid paths."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.22. No affiliation is implied."
+}

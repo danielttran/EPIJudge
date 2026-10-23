@@ -1,0 +1,26 @@
+{
+  "explanation": "A prefix either ends with one unrecognized character, costing one extra, or with a recognized dictionary word, costing nothing beyond the best preceding prefix. Considering every dictionary-length suffix handles overlapping word choices that greedy splitting can miss. Save the chosen preceding position to reconstruct tokens as well as the minimum cost.",
+  "correctness": "Every produced tokenization ends in either a recognized word or an unrecognized segment. The latter can be split into single unknown characters without changing its cost, so the recurrence considering one unknown character is sufficient. Removing the final recognized word or unknown character leaves a strictly shorter prefix with optimal cost by induction. Taking the minimum over these possibilities therefore gives the global minimum. Saved predecessor positions strictly decrease during reconstruction and concatenate to the complete original text, proving both valid coverage and minimum cost.",
+  "walkthrough": "For text=abcd and dictionary=[ab,abc,cd], choosing the longest first word abc leaves unknown d with cost 1. Prefix DP instead finds ab+cd with cost 0 and returns [ab,cd]. For text=xyz with no dictionary, [x,y,z] and [xyz] both have minimum cost 3 and are accepted.",
+  "walkthroughCase": {
+    "arguments": [
+      "abcd",
+      [
+        "ab",
+        "abc",
+        "cd"
+      ]
+    ],
+    "expected": [
+      "ab",
+      "cd"
+    ]
+  },
+  "timeComplexity": "Expected O(D+N*L^2) character work for D dictionary characters, text length N and maximum dictionary word length L: at most L suffix checks per prefix, each copying/hashing up to L characters. Hash collisions can worsen lookup.",
+  "spaceComplexity": "O(D+N) dictionary and DP/predecessor/output storage, plus O(L) temporary substring characters.",
+  "edgeCases": [
+    "Empty text or dictionary, all-known and all-unknown text.",
+    "Overlapping words where greedy longest-prefix choice fails; repeated vocabulary use and multiple optimal tokenizations."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.13. No affiliation is implied."
+}

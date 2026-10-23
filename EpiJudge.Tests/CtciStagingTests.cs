@@ -266,6 +266,58 @@ public sealed class CtciStagingTests
     }
 
     [Fact]
+    public void CircusTowerAllowsMaximumTiesButRequiresBothDimensionsStrict()
+    {
+        var definition = Definition("17.8");
+        var test = Case([new int[][] { [1, 1], [1, 2], [2, 3] }], new[] { 0, 2 });
+        Assert.Null(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new[] { 1, 2 }, mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new[] { 0, 1 }, mutationOk = true })));
+    }
+
+    [Fact]
+    public void ReSpaceRequiresOptimalActualTokenCoverageAndAcceptsUnknownGrouping()
+    {
+        var definition = Definition("17.13");
+        var test = Case(["abcd", new[] { "ab", "abc", "cd" }], new[] { "ab", "cd" });
+        Assert.Null(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new[] { "ab", "cd" }, mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new[] { "abc", "d" }, mutationOk = true })));
+        var unknown = Case(["xyz", Array.Empty<string>()], new[] { "x", "y", "z" });
+        Assert.Null(CtciStagingGrader.FailureReason(definition, unknown, Json(new { actual = new[] { "xyz" }, mutationOk = true })));
+    }
+
+    [Fact]
+    public void WordTransformationAcceptsAValidNonshortestSimplePath()
+    {
+        var definition = Definition("17.22");
+        var words = new[] { "aaa", "aba", "abb", "aab", "bab", "bbb" };
+        var test = Case(["aaa", "bbb", words], new[] { "aaa", "aab", "bab", "bbb" });
+        Assert.Null(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = words, mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new[] { "aaa", "bbb" }, mutationOk = true })));
+    }
+
+    [Fact]
+    public void WordRectangleAcceptsMaximumOrientationsAndVocabularyReuse()
+    {
+        var definition = Definition("17.25");
+        var test = Case([new[] { "ab", "a", "b" }], new[] { "ab" });
+        Assert.Null(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new[] { "a", "b" }, mutationOk = true })));
+        var reused = Case([new[] { "aa", "a" }], new[] { "aa", "aa" });
+        Assert.Null(CtciStagingGrader.FailureReason(definition, reused, Json(new { actual = new[] { "aa", "aa" }, mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, reused, Json(new { actual = new[] { "a" }, mutationOk = true })));
+    }
+
+    [Fact]
+    public void SparseSimilarityPreservesDocumentIdsAndActualCounts()
+    {
+        var definition = Definition("17.26");
+        var expected = new int[][] { [10, 20, 2, 4] };
+        var test = Case([new[] { 20, 10 }, new int[][] { [1, 2, 3], [2, 3, 4] }], expected);
+        Assert.Null(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = expected, mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new int[][] { [10, 20, 1, 2] }, mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new int[][] { [0, 1, 2, 4] }, mutationOk = true })));
+    }
+
+    [Fact]
     public void AntRenderingUsesVisitedBoundsAndOverlaysTheFinalDirection()
     {
         var definition = Definition("16.22");

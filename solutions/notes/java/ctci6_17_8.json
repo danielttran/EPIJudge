@@ -1,0 +1,35 @@
+{
+  "explanation": "Sort original indices by height, then use dynamic programming over possible final people. A shorter/lighter predecessor can extend a valid tower; retaining a predecessor index reconstructs an actual maximum tower rather than only its length. Checking BOTH strict comparisons keeps equal dimensions from forming invalid links. Java uses an Integer[] index array because Arrays.sort with a custom row comparator cannot directly sort primitive int indices. It reconstructs backward into an int[] of exactly the recorded best length, retaining original person IDs without another reverse-copy step.",
+  "correctness": "Every predecessor of a person in a valid top-to-bottom tower has smaller height and therefore occurs earlier in the private sorted order. For each person, the recurrence takes one plus the largest valid predecessor tower length, or one if none exists. Induction over that order proves each recorded length is optimal among towers ending there. The global best endpoint consequently has maximum possible length. Following its recorded predecessor links reconstructs only strict height/weight links, and reversing them yields top-to-bottom original indices. Private index sorting leaves caller rows unchanged.",
+  "walkthrough": "For people=[[65,100],[70,150],[56,90]], the sorted index order is [2,0,1]. Each person can follow the previous one, so return [2,0,1]. For [[60,100],[60,90]], only one person can be used despite the different weights, because heights must also increase strictly.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          65,
+          100
+        ],
+        [
+          70,
+          150
+        ],
+        [
+          56,
+          90
+        ]
+      ]
+    ],
+    "expected": [
+      2,
+      0,
+      1
+    ]
+  },
+  "timeComplexity": "O(n^2) dynamic-programming comparisons after O(n log(n+1)) private index sorting.",
+  "spaceComplexity": "O(n) index, length, predecessor and returned-index storage.",
+  "edgeCases": [
+    "Empty/single person, duplicate rows and ties in either dimension.",
+    "A best tower using neither original input order nor every person; arbitrary maximum-tower ties."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.8. No affiliation is implied."
+}

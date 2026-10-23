@@ -1,0 +1,24 @@
+{
+  "explanation": "Try height/width pairs from largest area downward. For a fixed pair, append candidate row words and check whether every partial column is still a prefix of some dictionary word of the required column height. An impossible prefix can never be repaired by later rows, so pruning avoids exploring the rest of that branch.",
+  "correctness": "Every completed accepted row sequence uses dictionary row words and has each full column in the required-height dictionary group, so it is a valid rectangle. At a partial state, a column prefix absent from every possible full column word cannot extend to any valid solution; rejecting it is safe. Trying every candidate row at each unpruned depth therefore finds a rectangle for those dimensions whenever one exists. Dimensions are considered in decreasing area, so the first successful rectangle has globally maximum area. Exhaustion proves no nonempty rectangle exists.",
+  "walkthrough": "For words=[ab,ba], rows [ab,ba] make columns ab and ba, giving area 4. Rows [ba,ab] are another accepted maximum. With words=[aa], reusing aa twice gives [aa,aa], whose columns are also aa. With only [ab], no compatible column words exist, so return [].",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        "ab",
+        "ba"
+      ]
+    ],
+    "expected": [
+      "ab",
+      "ba"
+    ]
+  },
+  "timeComplexity": "Exponential search in the maximum word length L: O(D^L*(L+1)^4) conservative character work for at most D distinct dictionary words across O(L^2) dimension pairs, including copying/hashing column prefixes. L<=5 bounds this search; pruning can greatly reduce it.",
+  "spaceComplexity": "O(D*(L+1)^2) dictionary/prefix characters plus O(L^2) candidate/result grid and O(L) recursion frames.",
+  "edgeCases": [
+    "Empty vocabulary, no compatible rectangle, one-letter words and nonsquare maxima.",
+    "Reused words, duplicate entries, equal-area alternate rectangles and column-prefix dead ends."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.25. No affiliation is implied."
+}

@@ -254,3 +254,119 @@ def valid_observation(ref,case,observed):
     actual=observed.get('actual')
     if ref=='17.15':return type(actual) is str and actual==case['expected']
     return type(actual) is list and all(type(row) is list and all(type(value) is int for value in row) for row in actual) and actual==case['expected']
+
+_previous_structured_oracle=oracle
+_previous_structured_cases=cases
+_previous_structured_observation=valid_observation
+STRUCTURED_REFS=('17.8','17.13','17.22','17.25','17.26')
+
+def oracle(ref,args):
+    if ref=='17.8':
+        people=args[0]
+        @lru_cache(None)
+        def ending(index):
+            candidates=[ending(before)+(index,) for before in range(len(people)) if people[before][0]<people[index][0] and people[before][1]<people[index][1]]
+            return min(candidates,key=lambda row:(-len(row),row)) if candidates else (index,)
+        return list(min((ending(i) for i in range(len(people))),key=lambda row:(-len(row),row),default=()))
+    if ref=='17.13':
+        text,dictionary=args;words=set(dictionary)
+        @lru_cache(None)
+        def split(start):
+            if start==len(text):return 0,()
+            choices=[]
+            for end in range(start+1,len(text)+1):
+                word=text[start:end];cost,tail=split(end);choices.append((cost+(0 if word in words else len(word)),(word,)+tail))
+            return min(choices)
+        return list(split(0)[1])
+    if ref=='17.22':
+        start,stop,dictionary=args;words=sorted({word for word in dictionary if len(word)==len(start)})
+        queue=[start];previous={start:None}
+        for word in queue:
+            if word==stop:
+                path=[]
+                while word is not None:path.append(word);word=previous[word]
+                return path[::-1]
+            for candidate in words:
+                if candidate not in previous and sum(a!=b for a,b in zip(word,candidate))==1:previous[candidate]=word;queue.append(candidate)
+        return []
+    if ref=='17.25':
+        words=set(args[0]);maximum=max(map(len,words),default=0)
+        groups={length:sorted(word for word in words if len(word)==length) for length in range(1,maximum+1)}
+        for area in range(maximum*maximum,0,-1):
+            for height in range(1,maximum+1):
+                if area%height:continue
+                width=area//height
+                if width>maximum or not groups[width] or not groups[height]:continue
+                for rows in itertools.product(groups[width],repeat=height):
+                    if all(''.join(row[column] for row in rows) in words for column in range(width)):return list(rows)
+        return []
+    if ref=='17.26':
+        ids,documents=args;sets=list(map(set,documents));rows=[]
+        for left in range(len(ids)):
+            for right in range(left+1,len(ids)):
+                intersection=len(sets[left]&sets[right])
+                if intersection:rows.append([min(ids[left],ids[right]),max(ids[left],ids[right]),intersection,len(sets[left]|sets[right])])
+        return sorted(rows)
+    return _previous_structured_oracle(ref,args)
+
+def cases(spec):
+    ref=spec['ref']
+    if ref not in STRUCTURED_REFS:return _previous_structured_cases(spec)
+    rng=random.Random(int(ref.replace('.',''))+17000000);args=[spec['example'][0]]
+    if ref=='17.8':
+        dimensions=[(a,b) for a in range(1,4) for b in range(1,4)]
+        args += [[[list(person) for person in people]] for n in range(4) for people in itertools.product(dimensions,repeat=n)]
+        args += [[[list(person) for person in people]] for people in itertools.product(((1,1),(1,2),(2,1),(2,2)),repeat=4)]
+        args += [[[[i+1,i+1] for i in range(200)]],[[[200-i,200-i] for i in range(200)]],[[[1,1]]*200],[[[1,i+1] for i in range(200)]],[[[i+1,1] for i in range(200)]],[[[1,1],[1000000,1000000]]]]
+        args += [[[[rng.randrange(1,101),rng.randrange(1,101)] for _ in range(rng.randrange(30))]] for _ in range(100)]
+    elif ref=='17.13':
+        vocab=['a','b','ab','ba','aba'];texts=[''.join(v) for n in range(6) for v in itertools.product('ab',repeat=n)]
+        args += [[text,[word for index,word in enumerate(vocab) if mask>>index&1]] for mask in range(1<<len(vocab)) for text in texts]
+        words=['a'*20]+[''.join(rng.choice('bcdef') for _ in range(20)) for _ in range(199)]
+        args += [['x'*200,[]],['a'*200,words],['abc',['ab','bc']],['abcabc',['abc']]]
+    elif ref=='17.22':
+        vocabulary=[''.join(v) for v in itertools.product('ab',repeat=3)]
+        for mask in range(1,1<<len(vocabulary)):
+            words=[word for index,word in enumerate(vocabulary) if mask>>index&1]
+            args += [[start,stop,words] for start in words for stop in words]
+        large=[''.join(v) for v in itertools.product('abcdef',repeat=4)][:1000]
+        args += [[large[0],large[-1],large],['cat','dog',['cat','dog','cat','cot','cog','it','elephant']],['a','a',['a']],['cat','dog',['cat','dog']]]
+    elif ref=='17.25':
+        vocab=['a','b','aa','ab','ba','bb']
+        args += [[[word for index,word in enumerate(vocab) if mask>>index&1]] for mask in range(1<<len(vocab))]
+        vocab=[''.join(v) for v in itertools.product('ab',repeat=3)]
+        args += [[[word for index,word in enumerate(vocab) if mask>>index&1]] for mask in range(1<<len(vocab))]
+        args += [[['aa']],[['ab']],[['ab','a','b']],[[''.join(v) for v in itertools.product('ab',repeat=5)][:20]]]
+        pool=[''.join(v) for n in range(1,4) for v in itertools.product('abc',repeat=n)]
+        args += [[rng.sample(pool,rng.randrange(6))] for _ in range(50)]
+    else:
+        subsets=[[value for bit,value in enumerate((-1,0,1)) if mask>>bit&1] for mask in range(8)]
+        args += [[[10,-2,7][:n],list(docs)] for n in range(4) for docs in itertools.product(subsets,repeat=n)]
+        ids=[-2147483648,2147483647]+rng.sample(range(-2000000000,2000000000),198)
+        args += [[ids,[list(range(200)) for _ in range(200)]],[ids,[[i] for i in range(200)]],[[-2147483648,2147483647],[[-2147483648,2147483647],[-2147483648]]],[[20,10],[[1,2,3],[2,3,4]]]]
+        for _ in range(100):
+            n=rng.randrange(15);args.append([rng.sample(range(-100,101),n),[rng.sample(range(-20,21),rng.randrange(15)) for _ in range(n)]])
+    distinct={json.dumps(a):a for a in args}
+    return [dict(arguments=a,expected=oracle(ref,a)) for a in distinct.values()]
+
+def valid_observation(ref,case,observed):
+    if ref not in STRUCTURED_REFS:return _previous_structured_observation(ref,case,observed)
+    if not isinstance(observed,dict) or observed.get('mutationOk') is not True:return False
+    actual=observed.get('actual');expected=case['expected'];args=case['arguments']
+    if type(actual) is not list:return False
+    if ref=='17.8':
+        people=args[0]
+        return all(type(v) is int for v in actual) and len(actual)==len(expected) and len(set(actual))==len(actual) and all(0<=v<len(people) for v in actual) and all(people[a][0]<people[b][0] and people[a][1]<people[b][1] for a,b in zip(actual,actual[1:]))
+    if ref=='17.26':return all(type(row) is list and all(type(v) is int for v in row) for row in actual) and actual==expected
+    if any(type(word) is not str for word in actual):return False
+    if ref=='17.13':
+        text,dictionary=args;words=set(dictionary)
+        return all(actual) and ''.join(actual)==text and sum(len(word) for word in actual if word not in words)==sum(len(word) for word in expected if word not in words) if actual else text==''
+    if ref=='17.22':
+        if not actual:return not expected
+        start,stop,dictionary=args;words=set(dictionary)
+        return actual[0]==start and actual[-1]==stop and len(set(actual))==len(actual) and all(word in words for word in actual) and all(len(a)==len(b) and sum(x!=y for x,y in zip(a,b))==1 for a,b in zip(actual,actual[1:]))
+    if not actual:return not expected
+    if not expected:return False
+    words=set(args[0]);height=len(actual);width=len(actual[0])
+    return width>0 and all(len(row)==width and row in words for row in actual) and all(''.join(row[column] for row in actual) in words for column in range(width)) and height*width==len(expected)*len(expected[0])

@@ -6585,6 +6585,72 @@
         ]
       }
     },
+    "ctci6_17_8": {
+      "description": "Arrange the largest possible number of people into a tower so each person above another is strictly shorter AND strictly lighter. Each input row is [height,weight]. Return original zero-based row indices in top-to-bottom order, so both height and weight strictly increase along the returned sequence. Any maximum-length tower is accepted.",
+      "constraints": [
+        "people is a nonnull array of 0..200 nonnull two-integer rows. Heights and weights are in 1..1000000. Equal heights, equal weights and identical rows for different people are allowed, but equality in either dimension prevents stacking that pair.",
+        "Use each original person at most once and preserve the input outer/row objects, values and order. Return original row indices, not indices in a privately sorted copy. Empty input returns []."
+      ],
+      "examples": [
+        {
+          "input": "[[[65, 100], [70, 150], [56, 90]]]",
+          "output": "[2, 0, 1]",
+          "explanation": "For people=[[65,100],[70,150],[56,90]], the sorted index order is [2,0,1]. Each person can follow the previous one, so return [2,0,1]. For [[60,100],[60,90]], only one person can be used despite the different weights, because heights must also increase strictly."
+        }
+      ],
+      "exampleCases": [
+        {
+          "arguments": [
+            [
+              [
+                65,
+                100
+              ],
+              [
+                70,
+                150
+              ],
+              [
+                56,
+                90
+              ]
+            ]
+          ],
+          "expected": [
+            2,
+            0,
+            1
+          ]
+        }
+      ],
+      "contracts": {
+        "csharp": [
+          "Callable: int[] CircusTower(int[][] people)",
+          "people is a nonnull array of 0..200 nonnull two-integer rows. Heights and weights are in 1..1000000. Equal heights, equal weights and identical rows for different people are allowed, but equality in either dimension prevents stacking that pair.",
+          "Use each original person at most once and preserve the input outer/row objects, values and order. Return original row indices, not indices in a privately sorted copy. Empty input returns []."
+        ],
+        "javascript": [
+          "Callable: function CircusTower(people)",
+          "people is a nonnull array of 0..200 nonnull two-integer rows. Heights and weights are in 1..1000000. Equal heights, equal weights and identical rows for different people are allowed, but equality in either dimension prevents stacking that pair.",
+          "Use each original person at most once and preserve the input outer/row objects, values and order. Return original row indices, not indices in a privately sorted copy. Empty input returns []."
+        ],
+        "python": [
+          "Callable: def CircusTower(people: list[list[int]]) -> list[int]",
+          "people is a nonnull array of 0..200 nonnull two-integer rows. Heights and weights are in 1..1000000. Equal heights, equal weights and identical rows for different people are allowed, but equality in either dimension prevents stacking that pair.",
+          "Use each original person at most once and preserve the input outer/row objects, values and order. Return original row indices, not indices in a privately sorted copy. Empty input returns []."
+        ],
+        "cpp": [
+          "Callable: std::vector<int> CircusTower(const std::vector<std::vector<int>>& people)",
+          "people is a nonnull array of 0..200 nonnull two-integer rows. Heights and weights are in 1..1000000. Equal heights, equal weights and identical rows for different people are allowed, but equality in either dimension prevents stacking that pair.",
+          "Use each original person at most once and preserve the input outer/row objects, values and order. Return original row indices, not indices in a privately sorted copy. Empty input returns []."
+        ],
+        "java": [
+          "Callable: int[] CircusTower(int[][] people)",
+          "people is a nonnull array of 0..200 nonnull two-integer rows. Heights and weights are in 1..1000000. Equal heights, equal weights and identical rows for different people are allowed, but equality in either dimension prevents stacking that pair.",
+          "Use each original person at most once and preserve the input outer/row objects, values and order. Return original row indices, not indices in a privately sorted copy. Empty input returns []."
+        ]
+      }
+    },
     "ctci6_17_9": {
       "description": "Return the zero-indexed kth number in the increasing sequence of positive integers whose only prime factors are 3,5 and 7. Include 1 as the empty product at index zero. Each distinct value appears once even if several multiplication histories produce it.",
       "constraints": [
@@ -6746,6 +6812,63 @@
           "Callable: int WordDistance(String[] words, String first, String second)",
           "words contains 0..10000 nonnull lowercase ASCII words, each 1..20 letters. first and second are distinct nonempty lowercase ASCII words of length at most 20. Matching is case-sensitive and requires a complete token.",
           "Preserve words and its order. Positions are zero-based. Adjacent requested words have distance 1, and two equal query words are outside this callable's domain. This is the single-query task; no persistent index is supplied."
+        ]
+      }
+    },
+    "ctci6_17_13": {
+      "description": "Split a spaceless text into nonempty tokens so the total number of characters in unrecognized tokens is as small as possible. A token is recognized exactly when it appears in dictionary. Return the actual token sequence, whose concatenation must equal text. Any minimum-cost tokenization is accepted; no characters may be deleted, changed or reordered.",
+      "constraints": [
+        "text is a nonnull string of 0..200 lowercase ASCII letters. dictionary is a nonnull array of 0..200 nonempty lowercase ASCII words of length at most 20. Duplicate entries are vocabulary duplicates, not consumable supplies. A known word may be used repeatedly.",
+        "An unrecognized token costs its full character length. Unknown text may be grouped or split into individual-character tokens at the same cost. Empty text returns []; empty tokens are invalid. Preserve dictionary order/entries and text."
+      ],
+      "examples": [
+        {
+          "input": "[\"abcd\", [\"ab\", \"abc\", \"cd\"]]",
+          "output": "[\"ab\", \"cd\"]",
+          "explanation": "For text=abcd and dictionary=[ab,abc,cd], choosing the longest first word abc leaves unknown d with cost 1. Prefix DP instead finds ab+cd with cost 0 and returns [ab,cd]. For text=xyz with no dictionary, [x,y,z] and [xyz] both have minimum cost 3 and are accepted."
+        }
+      ],
+      "exampleCases": [
+        {
+          "arguments": [
+            "abcd",
+            [
+              "ab",
+              "abc",
+              "cd"
+            ]
+          ],
+          "expected": [
+            "ab",
+            "cd"
+          ]
+        }
+      ],
+      "contracts": {
+        "csharp": [
+          "Callable: List<string> ReSpace(string text, string[] dictionary)",
+          "text is a nonnull string of 0..200 lowercase ASCII letters. dictionary is a nonnull array of 0..200 nonempty lowercase ASCII words of length at most 20. Duplicate entries are vocabulary duplicates, not consumable supplies. A known word may be used repeatedly.",
+          "An unrecognized token costs its full character length. Unknown text may be grouped or split into individual-character tokens at the same cost. Empty text returns []; empty tokens are invalid. Preserve dictionary order/entries and text."
+        ],
+        "javascript": [
+          "Callable: function ReSpace(text, dictionary)",
+          "text is a nonnull string of 0..200 lowercase ASCII letters. dictionary is a nonnull array of 0..200 nonempty lowercase ASCII words of length at most 20. Duplicate entries are vocabulary duplicates, not consumable supplies. A known word may be used repeatedly.",
+          "An unrecognized token costs its full character length. Unknown text may be grouped or split into individual-character tokens at the same cost. Empty text returns []; empty tokens are invalid. Preserve dictionary order/entries and text."
+        ],
+        "python": [
+          "Callable: def ReSpace(text: str, dictionary: list[str]) -> list[str]",
+          "text is a nonnull string of 0..200 lowercase ASCII letters. dictionary is a nonnull array of 0..200 nonempty lowercase ASCII words of length at most 20. Duplicate entries are vocabulary duplicates, not consumable supplies. A known word may be used repeatedly.",
+          "An unrecognized token costs its full character length. Unknown text may be grouped or split into individual-character tokens at the same cost. Empty text returns []; empty tokens are invalid. Preserve dictionary order/entries and text."
+        ],
+        "cpp": [
+          "Callable: std::vector<std::string> ReSpace(const std::string& text, const std::vector<std::string>& dictionary)",
+          "text is a nonnull string of 0..200 lowercase ASCII letters. dictionary is a nonnull array of 0..200 nonempty lowercase ASCII words of length at most 20. Duplicate entries are vocabulary duplicates, not consumable supplies. A known word may be used repeatedly.",
+          "An unrecognized token costs its full character length. Unknown text may be grouped or split into individual-character tokens at the same cost. Empty text returns []; empty tokens are invalid. Preserve dictionary order/entries and text."
+        ],
+        "java": [
+          "Callable: List<String> ReSpace(String text, String[] dictionary)",
+          "text is a nonnull string of 0..200 lowercase ASCII letters. dictionary is a nonnull array of 0..200 nonempty lowercase ASCII words of length at most 20. Duplicate entries are vocabulary duplicates, not consumable supplies. A known word may be used repeatedly.",
+          "An unrecognized token costs its full character length. Unknown text may be grouped or split into individual-character tokens at the same cost. Empty text returns []; empty tokens are invalid. Preserve dictionary order/entries and text."
         ]
       }
     },
@@ -7171,6 +7294,67 @@
         ]
       }
     },
+    "ctci6_17_22": {
+      "description": "Find a path of dictionary words from start to stop, changing exactly one letter at each step. Return both endpoints and every intermediate word, with no repeated word. Any valid such path is accepted; return [] when no transformation exists. If start==stop, return [start].",
+      "constraints": [
+        "start and stop are nonempty lowercase ASCII words of the same length 1..8. dictionary contains 1..1000 nonempty lowercase ASCII words of length at most 8 and includes both endpoints. Duplicates are allowed and do not create new vertices; words of other lengths cannot participate.",
+        "Every returned word must be in dictionary, and each adjacent pair must differ in exactly one position. No letter insertion, deletion, transposition or arbitrary replacement of several letters is allowed. Preserve all inputs. The reference finds a shortest path, but shortest length is not a grading requirement."
+      ],
+      "examples": [
+        {
+          "input": "[\"cat\", \"dog\", [\"cat\", \"cot\", \"cog\", \"dog\"]]",
+          "output": "[\"cat\", \"cot\", \"cog\", \"dog\"]",
+          "explanation": "With dictionary=[cat,cot,cog,dog], start cat changes a to o to reach cot, then t to g to reach cog, then c to d to reach dog. Return [cat,cot,cog,dog]. cat->dog directly is invalid because several positions differ."
+        }
+      ],
+      "exampleCases": [
+        {
+          "arguments": [
+            "cat",
+            "dog",
+            [
+              "cat",
+              "cot",
+              "cog",
+              "dog"
+            ]
+          ],
+          "expected": [
+            "cat",
+            "cot",
+            "cog",
+            "dog"
+          ]
+        }
+      ],
+      "contracts": {
+        "csharp": [
+          "Callable: List<string> WordTransformation(string start, string stop, string[] dictionary)",
+          "start and stop are nonempty lowercase ASCII words of the same length 1..8. dictionary contains 1..1000 nonempty lowercase ASCII words of length at most 8 and includes both endpoints. Duplicates are allowed and do not create new vertices; words of other lengths cannot participate.",
+          "Every returned word must be in dictionary, and each adjacent pair must differ in exactly one position. No letter insertion, deletion, transposition or arbitrary replacement of several letters is allowed. Preserve all inputs. The reference finds a shortest path, but shortest length is not a grading requirement."
+        ],
+        "javascript": [
+          "Callable: function WordTransformation(start, stop, dictionary)",
+          "start and stop are nonempty lowercase ASCII words of the same length 1..8. dictionary contains 1..1000 nonempty lowercase ASCII words of length at most 8 and includes both endpoints. Duplicates are allowed and do not create new vertices; words of other lengths cannot participate.",
+          "Every returned word must be in dictionary, and each adjacent pair must differ in exactly one position. No letter insertion, deletion, transposition or arbitrary replacement of several letters is allowed. Preserve all inputs. The reference finds a shortest path, but shortest length is not a grading requirement."
+        ],
+        "python": [
+          "Callable: def WordTransformation(start: str, stop: str, dictionary: list[str]) -> list[str]",
+          "start and stop are nonempty lowercase ASCII words of the same length 1..8. dictionary contains 1..1000 nonempty lowercase ASCII words of length at most 8 and includes both endpoints. Duplicates are allowed and do not create new vertices; words of other lengths cannot participate.",
+          "Every returned word must be in dictionary, and each adjacent pair must differ in exactly one position. No letter insertion, deletion, transposition or arbitrary replacement of several letters is allowed. Preserve all inputs. The reference finds a shortest path, but shortest length is not a grading requirement."
+        ],
+        "cpp": [
+          "Callable: std::vector<std::string> WordTransformation(const std::string& start, const std::string& stop, const std::vector<std::string>& dictionary)",
+          "start and stop are nonempty lowercase ASCII words of the same length 1..8. dictionary contains 1..1000 nonempty lowercase ASCII words of length at most 8 and includes both endpoints. Duplicates are allowed and do not create new vertices; words of other lengths cannot participate.",
+          "Every returned word must be in dictionary, and each adjacent pair must differ in exactly one position. No letter insertion, deletion, transposition or arbitrary replacement of several letters is allowed. Preserve all inputs. The reference finds a shortest path, but shortest length is not a grading requirement."
+        ],
+        "java": [
+          "Callable: List<String> WordTransformation(String start, String stop, String[] dictionary)",
+          "start and stop are nonempty lowercase ASCII words of the same length 1..8. dictionary contains 1..1000 nonempty lowercase ASCII words of length at most 8 and includes both endpoints. Duplicates are allowed and do not create new vertices; words of other lengths cannot participate.",
+          "Every returned word must be in dictionary, and each adjacent pair must differ in exactly one position. No letter insertion, deletion, transposition or arbitrary replacement of several letters is allowed. Preserve all inputs. The reference finds a shortest path, but shortest length is not a grading requirement."
+        ]
+      }
+    },
     "ctci6_17_23": {
       "description": "Find the largest square submatrix whose entire border is black. Encode black as 0 and white as 1. Interior cells need not be black. Return [topRow,leftColumn,sideLength], using zero-based coordinates, or [] if no black cell exists. Among equal largest squares choose the smallest top row, then smallest left column.",
       "constraints": [
@@ -7303,6 +7487,132 @@
           "Callable: int[] MaximumSubmatrix(int[][] matrix)",
           "matrix is nonnull and rectangular, with 0..30 rows and 0..30 columns. Entries are integers in -1000000..1000000, so every rectangle sum fits signed 32-bit range. Preserve outer/row identities, dimensions and values.",
           "For a nonempty matrix the selected rectangle must be nonempty, even if every entry is negative. Sum all cells in one rectangle; do not choose disconnected positive entries. Return coordinates as well as the sum."
+        ]
+      }
+    },
+    "ctci6_17_25": {
+      "description": "Return a rectangle of letters with the largest possible area such that every row, read left to right, and every column, read top to bottom, is a dictionary word. Return the rows as equal-length strings. Any maximum-area rectangle is accepted; return [] if no nonempty rectangle exists.",
+      "constraints": [
+        "words is a nonnull array of 0..20 nonempty lowercase ASCII words, each 1..5 letters. Duplicate entries describe the same vocabulary word. The same word may be reused as multiple rows or columns; dictionary occurrences are not consumed.",
+        "A rectangle has positive height and width. Row words have length equal to width and column words length equal to height, so both dimensions are at most the largest dictionary word length. A square is not required. Preserve the input and all entries."
+      ],
+      "examples": [
+        {
+          "input": "[[\"ab\", \"ba\"]]",
+          "output": "[\"ab\", \"ba\"]",
+          "explanation": "For words=[ab,ba], rows [ab,ba] make columns ab and ba, giving area 4. Rows [ba,ab] are another accepted maximum. With words=[aa], reusing aa twice gives [aa,aa], whose columns are also aa. With only [ab], no compatible column words exist, so return []."
+        }
+      ],
+      "exampleCases": [
+        {
+          "arguments": [
+            [
+              "ab",
+              "ba"
+            ]
+          ],
+          "expected": [
+            "ab",
+            "ba"
+          ]
+        }
+      ],
+      "contracts": {
+        "csharp": [
+          "Callable: List<string> LargestWordRectangle(string[] words)",
+          "words is a nonnull array of 0..20 nonempty lowercase ASCII words, each 1..5 letters. Duplicate entries describe the same vocabulary word. The same word may be reused as multiple rows or columns; dictionary occurrences are not consumed.",
+          "A rectangle has positive height and width. Row words have length equal to width and column words length equal to height, so both dimensions are at most the largest dictionary word length. A square is not required. Preserve the input and all entries."
+        ],
+        "javascript": [
+          "Callable: function LargestWordRectangle(words)",
+          "words is a nonnull array of 0..20 nonempty lowercase ASCII words, each 1..5 letters. Duplicate entries describe the same vocabulary word. The same word may be reused as multiple rows or columns; dictionary occurrences are not consumed.",
+          "A rectangle has positive height and width. Row words have length equal to width and column words length equal to height, so both dimensions are at most the largest dictionary word length. A square is not required. Preserve the input and all entries."
+        ],
+        "python": [
+          "Callable: def LargestWordRectangle(words: list[str]) -> list[str]",
+          "words is a nonnull array of 0..20 nonempty lowercase ASCII words, each 1..5 letters. Duplicate entries describe the same vocabulary word. The same word may be reused as multiple rows or columns; dictionary occurrences are not consumed.",
+          "A rectangle has positive height and width. Row words have length equal to width and column words length equal to height, so both dimensions are at most the largest dictionary word length. A square is not required. Preserve the input and all entries."
+        ],
+        "cpp": [
+          "Callable: std::vector<std::string> LargestWordRectangle(const std::vector<std::string>& words)",
+          "words is a nonnull array of 0..20 nonempty lowercase ASCII words, each 1..5 letters. Duplicate entries describe the same vocabulary word. The same word may be reused as multiple rows or columns; dictionary occurrences are not consumed.",
+          "A rectangle has positive height and width. Row words have length equal to width and column words length equal to height, so both dimensions are at most the largest dictionary word length. A square is not required. Preserve the input and all entries."
+        ],
+        "java": [
+          "Callable: List<String> LargestWordRectangle(String[] words)",
+          "words is a nonnull array of 0..20 nonempty lowercase ASCII words, each 1..5 letters. Duplicate entries describe the same vocabulary word. The same word may be reused as multiple rows or columns; dictionary occurrences are not consumed.",
+          "A rectangle has positive height and width. Row words have length equal to width and column words length equal to height, so both dimensions are at most the largest dictionary word length. A square is not required. Preserve the input and all entries."
+        ]
+      }
+    },
+    "ctci6_17_26": {
+      "description": "Compute positive Jaccard similarities between distinct documents treated as sets of integer word IDs. Return one row [smallerDocumentId,largerDocumentId,intersectionSize,unionSize] for each pair with a nonempty intersection. The exact similarity is intersectionSize/unionSize; no floating-point rounding is involved. Sort result rows by the two document IDs.",
+      "constraints": [
+        "documentIds has 0..200 distinct signed 32-bit IDs. documents has the same length; each nonnull row contains 0..200 distinct signed 32-bit word IDs. Document/word IDs are identities, not array positions or counts. Preserve both input arrays, every document row and all order/values.",
+        "Each returned pair appears once, with IDs in increasing order. Omit disjoint pairs, including pairs of empty documents. Counts are the actual intersection/union sizes, not reduced fraction components. Empty documents have no positive-similarity partner."
+      ],
+      "examples": [
+        {
+          "input": "[[10, 20, 30], [[1, 2], [2, 3], []]]",
+          "output": "[[10, 20, 1, 3]]",
+          "explanation": "For IDs [10,20,30] and documents [[1,2],[2,3],[]], word 2 links documents 10 and 20 once. Their intersection is 1 and union is 2+2-1=3, so return [[10,20,1,3]], representing exact similarity 1/3. Empty document 30 creates no positive pair."
+        }
+      ],
+      "exampleCases": [
+        {
+          "arguments": [
+            [
+              10,
+              20,
+              30
+            ],
+            [
+              [
+                1,
+                2
+              ],
+              [
+                2,
+                3
+              ],
+              []
+            ]
+          ],
+          "expected": [
+            [
+              10,
+              20,
+              1,
+              3
+            ]
+          ]
+        }
+      ],
+      "contracts": {
+        "csharp": [
+          "Callable: int[][] SparseSimilarities(int[] documentIds, int[][] documents)",
+          "documentIds has 0..200 distinct signed 32-bit IDs. documents has the same length; each nonnull row contains 0..200 distinct signed 32-bit word IDs. Document/word IDs are identities, not array positions or counts. Preserve both input arrays, every document row and all order/values.",
+          "Each returned pair appears once, with IDs in increasing order. Omit disjoint pairs, including pairs of empty documents. Counts are the actual intersection/union sizes, not reduced fraction components. Empty documents have no positive-similarity partner."
+        ],
+        "javascript": [
+          "Callable: function SparseSimilarities(documentIds, documents)",
+          "documentIds has 0..200 distinct signed 32-bit IDs. documents has the same length; each nonnull row contains 0..200 distinct signed 32-bit word IDs. Document/word IDs are identities, not array positions or counts. Preserve both input arrays, every document row and all order/values.",
+          "Each returned pair appears once, with IDs in increasing order. Omit disjoint pairs, including pairs of empty documents. Counts are the actual intersection/union sizes, not reduced fraction components. Empty documents have no positive-similarity partner."
+        ],
+        "python": [
+          "Callable: def SparseSimilarities(documentIds: list[int], documents: list[list[int]]) -> list[list[int]]",
+          "documentIds has 0..200 distinct signed 32-bit IDs. documents has the same length; each nonnull row contains 0..200 distinct signed 32-bit word IDs. Document/word IDs are identities, not array positions or counts. Preserve both input arrays, every document row and all order/values.",
+          "Each returned pair appears once, with IDs in increasing order. Omit disjoint pairs, including pairs of empty documents. Counts are the actual intersection/union sizes, not reduced fraction components. Empty documents have no positive-similarity partner."
+        ],
+        "cpp": [
+          "Callable: std::vector<std::vector<int>> SparseSimilarities(const std::vector<int>& documentIds, const std::vector<std::vector<int>>& documents)",
+          "documentIds has 0..200 distinct signed 32-bit IDs. documents has the same length; each nonnull row contains 0..200 distinct signed 32-bit word IDs. Document/word IDs are identities, not array positions or counts. Preserve both input arrays, every document row and all order/values.",
+          "Each returned pair appears once, with IDs in increasing order. Omit disjoint pairs, including pairs of empty documents. Counts are the actual intersection/union sizes, not reduced fraction components. Empty documents have no positive-similarity partner."
+        ],
+        "java": [
+          "Callable: int[][] SparseSimilarities(int[] documentIds, int[][] documents)",
+          "documentIds has 0..200 distinct signed 32-bit IDs. documents has the same length; each nonnull row contains 0..200 distinct signed 32-bit word IDs. Document/word IDs are identities, not array positions or counts. Preserve both input arrays, every document row and all order/values.",
+          "Each returned pair appears once, with IDs in increasing order. Omit disjoint pairs, including pairs of empty documents. Counts are the actual intersection/union sizes, not reduced fraction components. Empty documents have no positive-similarity partner."
         ]
       }
     }

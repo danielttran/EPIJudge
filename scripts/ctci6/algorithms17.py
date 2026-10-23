@@ -294,3 +294,142 @@ return result'''
         if language=='csharp':return 'var result=new List<int[]>();foreach(string pattern in patterns){var positions=new List<int>();for(int start=0;start+pattern.Length<=text.Length;++start)if(string.CompareOrdinal(text,start,pattern,0,pattern.Length)==0)positions.Add(start);result.Add(positions.ToArray());}return result.ToArray();'
         return 'List<int[]> result=new ArrayList<>();for(String pattern:patterns){List<Integer> positions=new ArrayList<>();for(int start=0;start+pattern.length()<=text.length();++start)if(text.startsWith(pattern,start))positions.add(start);int[] row=new int[positions.size()];for(int i=0;i<row.length;++i)row[i]=positions.get(i);result.add(row);}return result.toArray(new int[0][]);'
     return _previous_text_body(ref,language)
+
+_previous_structured_body=body
+
+def body(ref,language):
+    if ref=='17.8':
+        if language=='python':return '''if not people:
+    return []
+order = sorted(range(len(people)), key=lambda i: (people[i][0], people[i][1], i))
+length = [1] * len(order)
+previous = [-1] * len(order)
+best = 0
+for i in range(len(order)):
+    for j in range(i):
+        a, b = people[order[j]], people[order[i]]
+        if a[0] < b[0] and a[1] < b[1] and length[j] + 1 > length[i]:
+            length[i] = length[j] + 1
+            previous[i] = j
+    if length[i] > length[best]:
+        best = i
+result = []
+while best != -1:
+    result.append(order[best])
+    best = previous[best]
+result.reverse()
+return result'''
+        if language=='javascript':return 'if(people.length===0)return [];const order=Array.from({length:people.length},(_,i)=>i).sort((a,b)=>people[a][0]-people[b][0]||people[a][1]-people[b][1]||a-b),length=new Array(order.length).fill(1),previous=new Array(order.length).fill(-1);let best=0;for(let i=0;i<order.length;++i){for(let j=0;j<i;++j){const a=people[order[j]],b=people[order[i]];if(a[0]<b[0]&&a[1]<b[1]&&length[j]+1>length[i]){length[i]=length[j]+1;previous[i]=j;}}if(length[i]>length[best])best=i;}const result=[];while(best!==-1){result.push(order[best]);best=previous[best];}return result.reverse();'
+        if language=='cpp':return 'int n=static_cast<int>(people.size());if(n==0)return {};std::vector<int> order(n),length(n,1),previous(n,-1);for(int i=0;i<n;++i)order[i]=i;std::sort(order.begin(),order.end(),[&](int a,int b){if(people[a][0]!=people[b][0])return people[a][0]<people[b][0];if(people[a][1]!=people[b][1])return people[a][1]<people[b][1];return a<b;});int best=0;for(int i=0;i<n;++i){for(int j=0;j<i;++j)if(people[order[j]][0]<people[order[i]][0]&&people[order[j]][1]<people[order[i]][1]&&length[j]+1>length[i]){length[i]=length[j]+1;previous[i]=j;}if(length[i]>length[best])best=i;}std::vector<int> result;for(int at=best;at!=-1;at=previous[at])result.push_back(order[at]);std::reverse(result.begin(),result.end());return result;'
+        if language=='csharp':return 'int n=people.Length;if(n==0)return [];int[] order=new int[n],length=new int[n],previous=new int[n];for(int i=0;i<n;++i)order[i]=i;Array.Sort(order,(a,b)=>{int height=people[a][0].CompareTo(people[b][0]);if(height!=0)return height;int weight=people[a][1].CompareTo(people[b][1]);return weight!=0?weight:a.CompareTo(b);});Array.Fill(length,1);Array.Fill(previous,-1);int best=0;for(int i=0;i<n;++i){for(int j=0;j<i;++j)if(people[order[j]][0]<people[order[i]][0]&&people[order[j]][1]<people[order[i]][1]&&length[j]+1>length[i]){length[i]=length[j]+1;previous[i]=j;}if(length[i]>length[best])best=i;}var result=new List<int>();for(int at=best;at!=-1;at=previous[at])result.Add(order[at]);result.Reverse();return result.ToArray();'
+        return 'int n=people.length;if(n==0)return new int[0];Integer[] order=new Integer[n];int[] length=new int[n],previous=new int[n];for(int i=0;i<n;++i)order[i]=i;Arrays.sort(order,(a,b)->{int height=Integer.compare(people[a][0],people[b][0]);if(height!=0)return height;int weight=Integer.compare(people[a][1],people[b][1]);return weight!=0?weight:Integer.compare(a,b);});Arrays.fill(length,1);Arrays.fill(previous,-1);int best=0;for(int i=0;i<n;++i){for(int j=0;j<i;++j)if(people[order[j]][0]<people[order[i]][0]&&people[order[j]][1]<people[order[i]][1]&&length[j]+1>length[i]){length[i]=length[j]+1;previous[i]=j;}if(length[i]>length[best])best=i;}int[] result=new int[length[best]];for(int at=result.length-1;at>=0;--at){result[at]=order[best];best=previous[best];}return result;'
+    if ref=='17.13':
+        if language=='python':return '''words = set(dictionary)
+maximum = max(map(len, words), default=0)
+cost = [0] * (len(text) + 1)
+previous = [0] * (len(text) + 1)
+for end in range(1, len(text) + 1):
+    cost[end] = cost[end - 1] + 1
+    previous[end] = end - 1
+    for length in range(1, min(maximum, end) + 1):
+        start = end - length
+        if text[start:end] in words and cost[start] < cost[end]:
+            cost[end] = cost[start]
+            previous[end] = start
+result = []
+end = len(text)
+while end:
+    result.append(text[previous[end]:end])
+    end = previous[end]
+result.reverse()
+return result'''
+        if language=='javascript':return 'const words=new Set(dictionary);let maximum=0;for(const word of words)maximum=Math.max(maximum,word.length);const cost=new Array(text.length+1).fill(0),previous=new Array(text.length+1).fill(0);for(let end=1;end<=text.length;++end){cost[end]=cost[end-1]+1;previous[end]=end-1;for(let length=1;length<=maximum&&length<=end;++length){const start=end-length;if(words.has(text.slice(start,end))&&cost[start]<cost[end]){cost[end]=cost[start];previous[end]=start;}}}const result=[];for(let end=text.length;end>0;end=previous[end])result.push(text.slice(previous[end],end));return result.reverse();'
+        if language=='cpp':return 'std::unordered_set<std::string> words(dictionary.begin(),dictionary.end());int maximum=0;for(const auto& word:words)maximum=std::max(maximum,static_cast<int>(word.size()));int n=static_cast<int>(text.size());std::vector<int> cost(n+1,0),previous(n+1,0);for(int end=1;end<=n;++end){cost[end]=cost[end-1]+1;previous[end]=end-1;for(int length=1;length<=maximum&&length<=end;++length){int start=end-length;if(words.count(text.substr(start,length))&&cost[start]<cost[end]){cost[end]=cost[start];previous[end]=start;}}}std::vector<std::string> result;for(int end=n;end>0;end=previous[end])result.push_back(text.substr(previous[end],end-previous[end]));std::reverse(result.begin(),result.end());return result;'
+        if language=='csharp':return 'var words=new HashSet<string>(dictionary,StringComparer.Ordinal);int maximum=0;foreach(string word in words)maximum=Math.Max(maximum,word.Length);int[] cost=new int[text.Length+1],previous=new int[text.Length+1];for(int end=1;end<=text.Length;++end){cost[end]=cost[end-1]+1;previous[end]=end-1;for(int length=1;length<=maximum&&length<=end;++length){int start=end-length;if(words.Contains(text.Substring(start,length))&&cost[start]<cost[end]){cost[end]=cost[start];previous[end]=start;}}}var result=new List<string>();for(int end=text.Length;end>0;end=previous[end])result.Add(text.Substring(previous[end],end-previous[end]));result.Reverse();return result;'
+        return 'Set<String> words=new HashSet<>(Arrays.asList(dictionary));int maximum=0;for(String word:words)maximum=Math.max(maximum,word.length());int[] cost=new int[text.length()+1],previous=new int[text.length()+1];for(int end=1;end<=text.length();++end){cost[end]=cost[end-1]+1;previous[end]=end-1;for(int length=1;length<=maximum&&length<=end;++length){int start=end-length;if(words.contains(text.substring(start,end))&&cost[start]<cost[end]){cost[end]=cost[start];previous[end]=start;}}}List<String> result=new ArrayList<>();for(int end=text.length();end>0;end=previous[end])result.add(text.substring(previous[end],end));Collections.reverse(result);return result;'
+    if ref=='17.22':
+        if language=='python':return '''words = set(dictionary)
+previous = {start: None}
+queue = [start]
+head = 0
+while head < len(queue):
+    word = queue[head]
+    head += 1
+    if word == stop:
+        path = []
+        current = stop
+        while current is not None:
+            path.append(current)
+            current = previous[current]
+        path.reverse()
+        return path
+    for position in range(len(word)):
+        for letter in "abcdefghijklmnopqrstuvwxyz":
+            if letter == word[position]:
+                continue
+            candidate = word[:position] + letter + word[position + 1:]
+            if candidate in words and candidate not in previous:
+                previous[candidate] = word
+                queue.append(candidate)
+return []'''
+        if language=='javascript':return 'const words=new Set(dictionary),previous=new Map([[start,null]]),queue=[start];for(let head=0;head<queue.length;++head){const word=queue[head];if(word===stop){const path=[];for(let current=stop;current!==null;current=previous.get(current))path.push(current);return path.reverse();}for(let position=0;position<word.length;++position)for(let code=97;code<=122;++code){const letter=String.fromCharCode(code);if(letter===word[position])continue;const candidate=word.slice(0,position)+letter+word.slice(position+1);if(words.has(candidate)&&!previous.has(candidate)){previous.set(candidate,word);queue.push(candidate);}}}return [];'
+        if language=='cpp':return 'std::unordered_set<std::string> words(dictionary.begin(),dictionary.end());std::unordered_map<std::string,std::string> previous{{start,""}};std::vector<std::string> queue{start};for(size_t head=0;head<queue.size();++head){std::string word=queue[head];if(word==stop){std::vector<std::string> path;for(std::string current=stop;!current.empty();current=previous.at(current))path.push_back(current);std::reverse(path.begin(),path.end());return path;}for(size_t position=0;position<word.size();++position){std::string candidate=word;for(char letter=\'a\';letter<=\'z\';++letter){if(letter==word[position])continue;candidate[position]=letter;if(words.count(candidate)&&!previous.count(candidate)){previous[candidate]=word;queue.push_back(candidate);}}}}return {};'
+        if language=='csharp':return 'var words=new HashSet<string>(dictionary,StringComparer.Ordinal);var previous=new Dictionary<string,string?>(StringComparer.Ordinal){{start,null}};var queue=new List<string>{start};for(int head=0;head<queue.Count;++head){string word=queue[head];if(word==stop){var path=new List<string>();for(string? current=stop;current!=null;current=previous[current])path.Add(current);path.Reverse();return path;}char[] letters=word.ToCharArray();for(int position=0;position<letters.Length;++position){char original=letters[position];for(char letter=\'a\';letter<=\'z\';++letter){if(letter==original)continue;letters[position]=letter;string candidate=new string(letters);if(words.Contains(candidate)&&!previous.ContainsKey(candidate)){previous[candidate]=word;queue.Add(candidate);}}letters[position]=original;}}return [];'
+        return 'Set<String> words=new HashSet<>(Arrays.asList(dictionary));Map<String,String> previous=new HashMap<>();previous.put(start,null);List<String> queue=new ArrayList<>();queue.add(start);for(int head=0;head<queue.size();++head){String word=queue.get(head);if(word.equals(stop)){List<String> path=new ArrayList<>();for(String current=stop;current!=null;current=previous.get(current))path.add(current);Collections.reverse(path);return path;}char[] letters=word.toCharArray();for(int position=0;position<letters.length;++position){char original=letters[position];for(char letter=\'a\';letter<=\'z\';++letter){if(letter==original)continue;letters[position]=letter;String candidate=new String(letters);if(words.contains(candidate)&&!previous.containsKey(candidate)){previous.put(candidate,word);queue.add(candidate);}}letters[position]=original;}}return new ArrayList<>();'
+    if ref=='17.26':
+        if language=='python':return '''n = len(documentIds)
+postings = {}
+for index, document in enumerate(documents):
+    for word in document:
+        postings.setdefault(word, []).append(index)
+intersections = {}
+for posting in postings.values():
+    for left in range(len(posting)):
+        for right in range(left + 1, len(posting)):
+            key = posting[left] * n + posting[right]
+            intersections[key] = intersections.get(key, 0) + 1
+result = []
+for key, count in intersections.items():
+    left, right = divmod(key, n)
+    a, b = sorted((documentIds[left], documentIds[right]))
+    result.append([a, b, count, len(documents[left]) + len(documents[right]) - count])
+result.sort()
+return result'''
+        if language=='javascript':return 'const n=documentIds.length,postings=new Map(),intersections=new Map();for(let i=0;i<n;++i)for(const word of documents[i]){if(!postings.has(word))postings.set(word,[]);postings.get(word).push(i);}for(const posting of postings.values())for(let left=0;left<posting.length;++left)for(let right=left+1;right<posting.length;++right){const key=posting[left]*n+posting[right];intersections.set(key,(intersections.get(key)||0)+1);}const result=[];for(const [key,count] of intersections){const left=Math.floor(key/n),right=key%n,a=documentIds[left],b=documentIds[right];result.push([Math.min(a,b),Math.max(a,b),count,documents[left].length+documents[right].length-count]);}result.sort((a,b)=>a[0]-b[0]||a[1]-b[1]);return result;'
+        if language=='cpp':return 'int n=static_cast<int>(documentIds.size());std::unordered_map<int,std::vector<int>> postings;for(int i=0;i<n;++i)for(int word:documents[i])postings[word].push_back(i);std::unordered_map<int,int> intersections;for(const auto& entry:postings){const auto& posting=entry.second;for(size_t a=0;a<posting.size();++a)for(size_t b=a+1;b<posting.size();++b)++intersections[posting[a]*n+posting[b]];}std::vector<std::vector<int>> result;for(const auto& entry:intersections){int left=entry.first/n,right=entry.first%n,count=entry.second,a=documentIds[left],b=documentIds[right];result.push_back({std::min(a,b),std::max(a,b),count,static_cast<int>(documents[left].size()+documents[right].size())-count});}std::sort(result.begin(),result.end());return result;'
+        if language=='csharp':return 'int n=documentIds.Length;var postings=new Dictionary<int,List<int>>();for(int i=0;i<n;++i)foreach(int word in documents[i]){if(!postings.TryGetValue(word,out var posting)){posting=new List<int>();postings[word]=posting;}posting.Add(i);}var intersections=new Dictionary<int,int>();foreach(var posting in postings.Values)for(int a=0;a<posting.Count;++a)for(int b=a+1;b<posting.Count;++b){int key=posting[a]*n+posting[b];intersections.TryGetValue(key,out int count);intersections[key]=count+1;}var result=new List<int[]>();foreach(var entry in intersections){int left=entry.Key/n,right=entry.Key%n,count=entry.Value,a=documentIds[left],b=documentIds[right];result.Add([Math.Min(a,b),Math.Max(a,b),count,documents[left].Length+documents[right].Length-count]);}result.Sort((a,b)=>{int first=a[0].CompareTo(b[0]);return first!=0?first:a[1].CompareTo(b[1]);});return result.ToArray();'
+        return 'int n=documentIds.length;Map<Integer,List<Integer>> postings=new HashMap<>();for(int i=0;i<n;++i)for(int word:documents[i])postings.computeIfAbsent(word,k->new ArrayList<>()).add(i);Map<Integer,Integer> intersections=new HashMap<>();for(List<Integer> posting:postings.values())for(int a=0;a<posting.size();++a)for(int b=a+1;b<posting.size();++b){int key=posting.get(a)*n+posting.get(b);intersections.put(key,intersections.getOrDefault(key,0)+1);}List<int[]> result=new ArrayList<>();for(var entry:intersections.entrySet()){int left=entry.getKey()/n,right=entry.getKey()%n,count=entry.getValue(),a=documentIds[left],b=documentIds[right];result.add(new int[]{Math.min(a,b),Math.max(a,b),count,documents[left].length+documents[right].length-count});}result.sort((a,b)->{int first=Integer.compare(a[0],b[0]);return first!=0?first:Integer.compare(a[1],b[1]);});return result.toArray(new int[0][]);'
+    if ref!='17.25':return _previous_structured_body(ref,language)
+    if language=='python':return '''groups = {}
+seen = set()
+maximum = 0
+for word in words:
+    if word not in seen:
+        seen.add(word)
+        groups.setdefault(len(word), []).append(word)
+        maximum = max(maximum, len(word))
+for area in range(maximum * maximum, 0, -1):
+    for height in range(1, maximum + 1):
+        if area % height:
+            continue
+        width = area // height
+        if width not in groups or height not in groups:
+            continue
+        prefixes = {word[:length] for word in groups[height] for length in range(1, height + 1)}
+        rows = []
+        def search():
+            if len(rows) == height:
+                return True
+            for word in groups[width]:
+                rows.append(word)
+                if all("".join(row[column] for row in rows) in prefixes for column in range(width)) and search():
+                    return True
+                rows.pop()
+            return False
+        if search():
+            return rows
+return []'''
+    if language=='javascript':return 'const groups=new Map(),seen=new Set();let maximum=0;for(const word of words)if(!seen.has(word)){seen.add(word);if(!groups.has(word.length))groups.set(word.length,[]);groups.get(word.length).push(word);maximum=Math.max(maximum,word.length);}for(let area=maximum*maximum;area>0;--area)for(let height=1;height<=maximum;++height){if(area%height!==0)continue;const width=area/height;if(!groups.has(width)||!groups.has(height))continue;const prefixes=new Set();for(const word of groups.get(height))for(let length=1;length<=height;++length)prefixes.add(word.slice(0,length));const rows=[];function search(){if(rows.length===height)return true;for(const word of groups.get(width)){rows.push(word);let valid=true;for(let column=0;column<width;++column){let prefix="";for(const row of rows)prefix+=row[column];if(!prefixes.has(prefix)){valid=false;break;}}if(valid&&search())return true;rows.pop();}return false;}if(search())return rows;}return [];'
+    if language=='cpp':return 'std::unordered_set<std::string> seen;std::vector<std::vector<std::string>> groups(6);int maximum=0;for(const auto& word:words)if(seen.insert(word).second){groups[word.size()].push_back(word);maximum=std::max(maximum,static_cast<int>(word.size()));}for(int area=maximum*maximum;area>0;--area)for(int height=1;height<=maximum;++height){if(area%height!=0)continue;int width=area/height;if(width>maximum||groups[width].empty()||groups[height].empty())continue;std::unordered_set<std::string> prefixes;for(const auto& word:groups[height])for(int length=1;length<=height;++length)prefixes.insert(word.substr(0,length));std::vector<std::string> rows;std::function<bool()> search=[&](){if(static_cast<int>(rows.size())==height)return true;for(const auto& word:groups[width]){rows.push_back(word);bool valid=true;for(int column=0;column<width;++column){std::string prefix;for(const auto& row:rows)prefix+=row[column];if(!prefixes.count(prefix)){valid=false;break;}}if(valid&&search())return true;rows.pop_back();}return false;};if(search())return rows;}return {};'
+    if language=='csharp':return 'var seen=new HashSet<string>(StringComparer.Ordinal);var groups=new List<string>[6];for(int i=0;i<groups.Length;++i)groups[i]=new List<string>();int maximum=0;foreach(string word in words)if(seen.Add(word)){groups[word.Length].Add(word);maximum=Math.Max(maximum,word.Length);}for(int area=maximum*maximum;area>0;--area)for(int height=1;height<=maximum;++height){if(area%height!=0)continue;int width=area/height;if(width>maximum||groups[width].Count==0||groups[height].Count==0)continue;var prefixes=new HashSet<string>(StringComparer.Ordinal);foreach(string word in groups[height])for(int length=1;length<=height;++length)prefixes.Add(word.Substring(0,length));var rows=new List<string>();bool Search(){if(rows.Count==height)return true;foreach(string word in groups[width]){rows.Add(word);bool valid=true;for(int column=0;column<width;++column){var prefix=new StringBuilder();foreach(string row in rows)prefix.Append(row[column]);if(!prefixes.Contains(prefix.ToString())){valid=false;break;}}if(valid&&Search())return true;rows.RemoveAt(rows.Count-1);}return false;}if(Search())return rows;}return [];'
+    return 'Set<String> seen=new HashSet<>();List<List<String>> groups=new ArrayList<>();for(int i=0;i<=5;++i)groups.add(new ArrayList<>());int maximum=0;for(String word:words)if(seen.add(word)){groups.get(word.length()).add(word);maximum=Math.max(maximum,word.length());}for(int area=maximum*maximum;area>0;--area)for(int height=1;height<=maximum;++height){if(area%height!=0)continue;int width=area/height;if(width>maximum||groups.get(width).isEmpty()||groups.get(height).isEmpty())continue;Set<String> prefixes=new HashSet<>();for(String word:groups.get(height))for(int length=1;length<=height;++length)prefixes.add(word.substring(0,length));List<String> rows=new ArrayList<>();int targetHeight=height,targetWidth=width;class Search {boolean run(){if(rows.size()==targetHeight)return true;for(String word:groups.get(targetWidth)){rows.add(word);boolean valid=true;for(int column=0;column<targetWidth;++column){StringBuilder prefix=new StringBuilder();for(String row:rows)prefix.append(row.charAt(column));if(!prefixes.contains(prefix.toString())){valid=false;break;}}if(valid&&run())return true;rows.remove(rows.size()-1);}return false;}}if(new Search().run())return rows;}return new ArrayList<>();'

@@ -58,6 +58,61 @@ public static class CtciStagingGrader
         return height == minimum ? null : "The returned BST must have the smallest possible height.";
     }
 
+    private static string? StructuredHardFailure(CtciStagingDefinition definition, TestCase test, JsonElement observed)
+    {
+        if (observed.GetProperty("mutationOk").ValueKind != JsonValueKind.True) return "Preserve the required input arrays, original rows and values, and return the selected signature's concrete collection type.";
+        var actual = observed.GetProperty("actual");
+        if (definition.Ref == "17.26") return Equal(actual, test.Expected) ? null : "Return every positive pair in ID order with its actual intersection and union counts.";
+        if (definition.Ref == "17.8")
+        {
+            var order = Integers(actual);
+            var people = test.Arguments[0];
+            if (order.Length != test.Expected.GetArrayLength() || order.Distinct().Count() != order.Length || order.Any(index => index < 0 || index >= people.GetArrayLength())) return "Return original person indices forming a maximum-length tower.";
+            for (int i = 1; i < order.Length; i++)
+                if (people[order[i - 1]][0].GetInt32() >= people[order[i]][0].GetInt32() || people[order[i - 1]][1].GetInt32() >= people[order[i]][1].GetInt32()) return "Height and weight must both increase strictly from top to bottom.";
+            return null;
+        }
+        var result = Strings(actual);
+        if (definition.Ref == "17.13")
+        {
+            string text = test.Arguments[0].GetString()!;
+            var words = Strings(test.Arguments[1]).ToHashSet(StringComparer.Ordinal);
+            if (result.Any(word => word.Length == 0) || string.Concat(result) != text) return "Return nonempty tokens that concatenate to the complete original text.";
+            int cost = result.Where(word => !words.Contains(word)).Sum(word => word.Length);
+            int optimum = Strings(test.Expected).Where(word => !words.Contains(word)).Sum(word => word.Length);
+            return cost == optimum ? null : "Minimize the number of characters in unrecognized tokens.";
+        }
+        if (definition.Ref == "17.22")
+        {
+            if (result.Length == 0) return test.Expected.GetArrayLength() == 0 ? null : "A dictionary transformation path exists.";
+            string start = test.Arguments[0].GetString()!, stop = test.Arguments[1].GetString()!;
+            var words = Strings(test.Arguments[2]).ToHashSet(StringComparer.Ordinal);
+            if (result[0] != start || result[^1] != stop || result.Distinct(StringComparer.Ordinal).Count() != result.Length || result.Any(word => !words.Contains(word))) return "Return both endpoints and a path of dictionary words without repeated vertices.";
+            for (int i = 1; i < result.Length; i++)
+            {
+                if (result[i - 1].Length != result[i].Length) return "Each step changes one letter without insertion or deletion.";
+                int changes = 0;
+                for (int j = 0; j < result[i].Length; j++) if (result[i - 1][j] != result[i][j]) changes++;
+                if (changes != 1) return "Each adjacent pair must differ at exactly one position.";
+            }
+            return null;
+        }
+        if (result.Length == 0) return test.Expected.GetArrayLength() == 0 ? null : "A nonempty word rectangle exists.";
+        var vocabulary = Strings(test.Arguments[0]).ToHashSet(StringComparer.Ordinal);
+        int maximum = vocabulary.Count == 0 ? 0 : vocabulary.Max(word => word.Length);
+        int height = result.Length, width = result[0].Length;
+        if (height > maximum || width == 0 || width > maximum || result.Any(row => row.Length != width || !vocabulary.Contains(row))) return "Return equal-length dictionary rows with positive valid dimensions.";
+        for (int column = 0; column < width; column++)
+        {
+            var word = new System.Text.StringBuilder();
+            foreach (string row in result) word.Append(row[column]);
+            if (!vocabulary.Contains(word.ToString())) return "Every top-to-bottom column must also be a dictionary word.";
+        }
+        int expectedHeight = test.Expected.GetArrayLength();
+        int area = expectedHeight == 0 ? 0 : expectedHeight * test.Expected[0].GetString()!.Length;
+        return height * width == area ? null : "Return a maximum-area rectangle; every equal-area valid arrangement is accepted.";
+    }
+
     private static string? SortingFailure(CtciStagingDefinition definition, TestCase test, JsonElement observed)
     {
         if (observed.GetProperty("mutationOk").ValueKind != JsonValueKind.True) return "Preserve the required input objects and readonly values, and perform the stated in-place changes.";
@@ -173,6 +228,7 @@ public static class CtciStagingGrader
             if (observed.ValueKind != JsonValueKind.Object || observed.TryGetProperty("error", out var error) && error.ValueKind != JsonValueKind.Null)
                 return "Your code did not finish this case successfully.";
             if (definition.Batch == 10) return SortingFailure(definition, test, observed);
+            if (definition.Batch == 17 && definition.Ref is ("17.8" or "17.13" or "17.22" or "17.25" or "17.26")) return StructuredHardFailure(definition, test, observed);
             if (definition.Batch == 4 && definition.Ref == "4.2") return MinimalTreeFailure(test, observed);
             if (definition.Batch == 4 && definition.Ref == "4.3")
             {
