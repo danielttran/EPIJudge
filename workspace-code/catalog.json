@@ -21147,6 +21147,196 @@
       }
     },
     {
+      "problemId": "ctci6_10_6",
+      "language": "cpp",
+      "filename": "solution.cpp",
+      "signature": "TextFile* SortExternalFile(TextFile& inputFile, int bufferLimit, TextWorkspace& workspace)",
+      "starterCode": "class Solution {\n public:\n  TextFile* SortExternalFile(TextFile& inputFile, int bufferLimit, TextWorkspace& workspace) {\n    return &inputFile;\n  }\n};\n",
+      "solutionCode": "class Solution {\n public:\n  TextFile* SortExternalFile(TextFile& inputFile, int bufferLimit, TextWorkspace& workspace) {\n    inputFile.Rewind();\n    std::vector<TextFile*> runs;\n    while (true) {\n      std::vector<LineRecord*> chunk;\n      for (int i = 0; i < bufferLimit; ++i) {\n        auto record = inputFile.ReadLine();\n        if (!record)\n          break;\n        chunk.push_back(record);\n      }\n      if (chunk.empty())\n        break;\n      std::sort(chunk.begin(), chunk.end(), [](LineRecord* first, LineRecord* second) {\n        return first->CompareTo(*second) < 0;\n      });\n      TextFile* run = workspace.CreateFile();\n      for (auto record : chunk)\n        run->AppendLine(*record);\n      run->Close();\n      runs.push_back(run);\n    }\n    inputFile.Close();\n    if (runs.empty()) {\n      TextFile* empty = workspace.CreateFile();\n      empty->Close();\n      return empty;\n    }\n    while (runs.size() > 1) {\n      std::vector<TextFile*> merged;\n      for (std::size_t index = 0; index < runs.size(); index += 2) {\n        if (index + 1 == runs.size()) {\n          merged.push_back(runs[index]);\n          continue;\n        }\n        TextFile* left = runs[index];\n        TextFile* right = runs[index + 1];\n        left->Rewind();\n        right->Rewind();\n        TextFile* output = workspace.CreateFile();\n        LineRecord* first = left->ReadLine();\n        LineRecord* second = right->ReadLine();\n        while (first || second) {\n          if (!second || (first && first->CompareTo(*second) <= 0)) {\n            output->AppendLine(*first);\n            first = left->ReadLine();\n          } else {\n            output->AppendLine(*second);\n            second = right->ReadLine();\n          }\n        }\n        output->Close();\n        left->Close();\n        right->Close();\n        workspace.DeleteFile(*left);\n        workspace.DeleteFile(*right);\n        merged.push_back(output);\n      }\n      runs = std::move(merged);\n    }\n    runs[0]->Rewind();\n    return runs[0];\n  }\n};\n",
+      "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\nstruct LineRecord {virtual int CompareTo(const LineRecord& other)const=0;virtual void Release()=0;protected:virtual ~LineRecord()=default;};\nstruct TextFile {virtual LineRecord* ReadLine()=0;virtual void Rewind()=0;virtual void AppendLine(LineRecord& record)=0;virtual void Close()=0;protected:virtual ~TextFile()=default;};\nstruct TextWorkspace {virtual TextFile* CreateFile()=0;virtual void DeleteFile(TextFile& file)=0;protected:virtual ~TextWorkspace()=default;};\n",
+      "suffix": "",
+      "references": [
+        {
+          "title": "Required callable model APIs",
+          "code": "struct LineRecord {\n  virtual int CompareTo(const LineRecord& other) const = 0;\n  virtual void Release() = 0;\n\n protected:\n  virtual ~LineRecord() = default;\n};\nstruct TextFile {\n  virtual LineRecord* ReadLine() = 0;\n  virtual void Rewind() = 0;\n  virtual void AppendLine(LineRecord& record) = 0;\n  virtual void Close() = 0;\n\n protected:\n  virtual ~TextFile() = default;\n};\nstruct TextWorkspace {\n  virtual TextFile* CreateFile() = 0;\n  virtual void DeleteFile(TextFile& file) = 0;\n\n protected:\n  virtual ~TextWorkspace() = default;\n};\n",
+          "names": [
+            "LineRecord",
+            "TextFile",
+            "TextWorkspace"
+          ]
+        }
+      ],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [
+        "LineRecord",
+        "TextFile",
+        "TextWorkspace"
+      ],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/cpp/ctci6_10_6.cpp"
+      ],
+      "sourceSha256": {
+        "starter": "c589eaba31f00634ca350f2ccb76dcaff72d9d7b5b780d19881996314c4225db",
+        "solution": "85c9aabeae58a56f630b9771da99d9e691b3be043d348d1368167040b5d91484"
+      }
+    },
+    {
+      "problemId": "ctci6_10_6",
+      "language": "csharp",
+      "filename": "Solution.cs",
+      "signature": "TextFile SortExternalFile(TextFile inputFile, int bufferLimit, TextWorkspace workspace)",
+      "starterCode": "public class Solution\n{\n    public TextFile SortExternalFile(TextFile inputFile, int bufferLimit, TextWorkspace workspace)\n    {\n        return inputFile;\n    }\n}\n",
+      "solutionCode": "public class Solution\n{\n    public TextFile SortExternalFile(TextFile inputFile, int bufferLimit, TextWorkspace workspace)\n    {\n        inputFile.Rewind();\n        var runs = new List<TextFile>();\n        while (true)\n        {\n            var chunk = new List<LineRecord>();\n            for (int i = 0; i < bufferLimit; ++i)\n            {\n                var record = inputFile.ReadLine();\n                if (record is null)\n                    break;\n                chunk.Add(record);\n            }\n            if (chunk.Count == 0)\n                break;\n            chunk.Sort((first, second) => first.CompareTo(second));\n            var run = workspace.CreateFile();\n            foreach (var record in chunk)\n                run.AppendLine(record);\n            run.Close();\n            runs.Add(run);\n        }\n        inputFile.Close();\n        if (runs.Count == 0)\n        {\n            var empty = workspace.CreateFile();\n            empty.Close();\n            return empty;\n        }\n        while (runs.Count > 1)\n        {\n            var merged = new List<TextFile>();\n            for (int index = 0; index < runs.Count; index += 2)\n            {\n                if (index + 1 == runs.Count)\n                {\n                    merged.Add(runs[index]);\n                    continue;\n                }\n                var left = runs[index];\n                var right = runs[index + 1];\n                left.Rewind();\n                right.Rewind();\n                var output = workspace.CreateFile();\n                LineRecord? first = left.ReadLine(), second = right.ReadLine();\n                while (first is not null || second is not null)\n                {\n                    if (second is null || (first is not null && first.CompareTo(second) <= 0))\n                    {\n                        output.AppendLine(first!);\n                        first = left.ReadLine();\n                    }\n                    else\n                    {\n                        output.AppendLine(second);\n                        second = right.ReadLine();\n                    }\n                }\n                output.Close();\n                left.Close();\n                right.Close();\n                workspace.DeleteFile(left);\n                workspace.DeleteFile(right);\n                merged.Add(output);\n            }\n            runs = merged;\n        }\n        runs[0].Rewind();\n        return runs[0];\n    }\n}\n",
+      "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic abstract class LineRecord {public abstract int CompareTo(LineRecord other);public abstract void Release();}\npublic abstract class TextFile {public abstract LineRecord? ReadLine();public abstract void Rewind();public abstract void AppendLine(LineRecord record);public abstract void Close();}\npublic abstract class TextWorkspace {public abstract TextFile CreateFile();public abstract void DeleteFile(TextFile file);}\n",
+      "suffix": "",
+      "references": [
+        {
+          "title": "Required callable model APIs",
+          "code": "public abstract class LineRecord\n{\n    public abstract int CompareTo(LineRecord other);\n    public abstract void Release();\n}\npublic abstract class TextFile\n{\n    public abstract LineRecord? ReadLine();\n    public abstract void Rewind();\n    public abstract void AppendLine(LineRecord record);\n    public abstract void Close();\n}\npublic abstract class TextWorkspace\n{\n    public abstract TextFile CreateFile();\n    public abstract void DeleteFile(TextFile file);\n}\n",
+          "names": [
+            "LineRecord",
+            "TextFile",
+            "TextWorkspace"
+          ]
+        }
+      ],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [
+        "LineRecord",
+        "TextFile",
+        "TextWorkspace"
+      ],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/csharp/ctci6_10_6.cs"
+      ],
+      "sourceSha256": {
+        "starter": "cc5ea4dc592d18c1c8c9f2d068fb41fa8c442847d337b0ffead717522933f3a8",
+        "solution": "746baa6d219a931d085a87d17fb2e51f75e90a8c010b0dd3dbe00fe996e9e267"
+      }
+    },
+    {
+      "problemId": "ctci6_10_6",
+      "language": "java",
+      "filename": "Solution.java",
+      "signature": "TextFile SortExternalFile(TextFile inputFile, int bufferLimit, TextWorkspace workspace)",
+      "starterCode": "class Solution {\n  public TextFile SortExternalFile(TextFile inputFile, int bufferLimit, TextWorkspace workspace) {\n    return inputFile;\n  }\n}\n",
+      "solutionCode": "class Solution {\n  public TextFile SortExternalFile(TextFile inputFile, int bufferLimit, TextWorkspace workspace) {\n    inputFile.Rewind();\n    var runs = new ArrayList<TextFile>();\n    while (true) {\n      var chunk = new ArrayList<LineRecord>();\n      for (int i = 0; i < bufferLimit; ++i) {\n        var record = inputFile.ReadLine();\n        if (record == null)\n          break;\n        chunk.add(record);\n      }\n      if (chunk.isEmpty())\n        break;\n      chunk.sort((first, second) -> first.CompareTo(second));\n      var run = workspace.CreateFile();\n      for (var record : chunk)\n        run.AppendLine(record);\n      run.Close();\n      runs.add(run);\n    }\n    inputFile.Close();\n    if (runs.isEmpty()) {\n      var empty = workspace.CreateFile();\n      empty.Close();\n      return empty;\n    }\n    while (runs.size() > 1) {\n      var merged = new ArrayList<TextFile>();\n      for (int index = 0; index < runs.size(); index += 2) {\n        if (index + 1 == runs.size()) {\n          merged.add(runs.get(index));\n          continue;\n        }\n        var left = runs.get(index);\n        var right = runs.get(index + 1);\n        left.Rewind();\n        right.Rewind();\n        var output = workspace.CreateFile();\n        LineRecord first = left.ReadLine(), second = right.ReadLine();\n        while (first != null || second != null) {\n          if (second == null || (first != null && first.CompareTo(second) <= 0)) {\n            output.AppendLine(first);\n            first = left.ReadLine();\n          } else {\n            output.AppendLine(second);\n            second = right.ReadLine();\n          }\n        }\n        output.Close();\n        left.Close();\n        right.Close();\n        workspace.DeleteFile(left);\n        workspace.DeleteFile(right);\n        merged.add(output);\n      }\n      runs = merged;\n    }\n    runs.get(0).Rewind();\n    return runs.get(0);\n  }\n}\n",
+      "prefix": "import java.util.*;\nabstract class LineRecord {public abstract int CompareTo(LineRecord other);public abstract void Release();}\nabstract class TextFile {public abstract LineRecord ReadLine();public abstract void Rewind();public abstract void AppendLine(LineRecord record);public abstract void Close();}\nabstract class TextWorkspace {public abstract TextFile CreateFile();public abstract void DeleteFile(TextFile file);}\n",
+      "suffix": "",
+      "references": [
+        {
+          "title": "Required callable model APIs",
+          "code": "abstract class LineRecord {\n  public abstract int CompareTo(LineRecord other);\n  public abstract void Release();\n}\nabstract class TextFile {\n  public abstract LineRecord ReadLine();\n  public abstract void Rewind();\n  public abstract void AppendLine(LineRecord record);\n  public abstract void Close();\n}\nabstract class TextWorkspace {\n  public abstract TextFile CreateFile();\n  public abstract void DeleteFile(TextFile file);\n}\n",
+          "names": [
+            "LineRecord",
+            "TextFile",
+            "TextWorkspace"
+          ]
+        }
+      ],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [
+        "LineRecord",
+        "TextFile",
+        "TextWorkspace"
+      ],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/java/ctci6_10_6.java"
+      ],
+      "sourceSha256": {
+        "starter": "e9955072849f7e220b86b2c54df1aef82a5bc2a9ef9c639d5f3a1bfb6a1c0ce0",
+        "solution": "b9dd517d063973cf70b32296a83db2251dcd93704abf12945371a2958ff202a3"
+      }
+    },
+    {
+      "problemId": "ctci6_10_6",
+      "language": "javascript",
+      "filename": "solution.js",
+      "signature": "function SortExternalFile(inputFile, bufferLimit, workspace)",
+      "starterCode": "function SortExternalFile(inputFile, bufferLimit, workspace) {\n  return inputFile;\n}\n",
+      "solutionCode": "function SortExternalFile(inputFile, bufferLimit, workspace) {\n  inputFile.Rewind();\n  let runs = [];\n  while (true) {\n    const chunk = [];\n    for (let i = 0; i < bufferLimit; ++i) {\n      const record = inputFile.ReadLine();\n      if (record === null) break;\n      chunk.push(record);\n    }\n    if (chunk.length === 0) break;\n    chunk.sort((first, second) => first.CompareTo(second));\n    const run = workspace.CreateFile();\n    for (const record of chunk) run.AppendLine(record);\n    run.Close();\n    runs.push(run);\n  }\n  inputFile.Close();\n  if (runs.length === 0) {\n    const empty = workspace.CreateFile();\n    empty.Close();\n    return empty;\n  }\n  while (runs.length > 1) {\n    const merged = [];\n    for (let index = 0; index < runs.length; index += 2) {\n      if (index + 1 === runs.length) {\n        merged.push(runs[index]);\n        continue;\n      }\n      const left = runs[index],\n        right = runs[index + 1];\n      left.Rewind();\n      right.Rewind();\n      const output = workspace.CreateFile();\n      let first = left.ReadLine(),\n        second = right.ReadLine();\n      while (first !== null || second !== null) {\n        if (second === null || (first !== null && first.CompareTo(second) <= 0)) {\n          output.AppendLine(first);\n          first = left.ReadLine();\n        } else {\n          output.AppendLine(second);\n          second = right.ReadLine();\n        }\n      }\n      output.Close();\n      left.Close();\n      right.Close();\n      workspace.DeleteFile(left);\n      workspace.DeleteFile(right);\n      merged.push(output);\n    }\n    runs = merged;\n  }\n  runs[0].Rewind();\n  return runs[0];\n}\n",
+      "prefix": "'use strict';\nclass LineRecord {CompareTo(other){throw new Error(\"Provided by the judge\");}Release(){throw new Error(\"Provided by the judge\");}}\nclass TextFile {ReadLine(){throw new Error(\"Provided by the judge\");}Rewind(){throw new Error(\"Provided by the judge\");}AppendLine(record){throw new Error(\"Provided by the judge\");}Close(){throw new Error(\"Provided by the judge\");}}\nclass TextWorkspace {CreateFile(){throw new Error(\"Provided by the judge\");}DeleteFile(file){throw new Error(\"Provided by the judge\");}}\n",
+      "suffix": "\nmodule.exports = {LineRecord,TextFile,TextWorkspace,SortExternalFile};\n",
+      "references": [
+        {
+          "title": "Required callable model APIs",
+          "code": "class LineRecord {\n  CompareTo(other) {\n    throw new Error(\"Provided by the judge\");\n  }\n  Release() {\n    throw new Error(\"Provided by the judge\");\n  }\n}\nclass TextFile {\n  ReadLine() {\n    throw new Error(\"Provided by the judge\");\n  }\n  Rewind() {\n    throw new Error(\"Provided by the judge\");\n  }\n  AppendLine(record) {\n    throw new Error(\"Provided by the judge\");\n  }\n  Close() {\n    throw new Error(\"Provided by the judge\");\n  }\n}\nclass TextWorkspace {\n  CreateFile() {\n    throw new Error(\"Provided by the judge\");\n  }\n  DeleteFile(file) {\n    throw new Error(\"Provided by the judge\");\n  }\n}\n",
+          "names": [
+            "LineRecord",
+            "TextFile",
+            "TextWorkspace"
+          ]
+        }
+      ],
+      "visibleSymbols": [
+        "SortExternalFile"
+      ],
+      "hiddenSymbols": [
+        "LineRecord",
+        "TextFile",
+        "TextWorkspace"
+      ],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/javascript/ctci6_10_6.js"
+      ],
+      "sourceSha256": {
+        "starter": "85b4a1f8f5e8b381dd498605aa32c48193a03be66a6108fa7797a179d6024d1b",
+        "solution": "19310292c07a1b9450f36c8daf3e9dd4e99fc70d68e6ec504037ea2576276c42"
+      }
+    },
+    {
+      "problemId": "ctci6_10_6",
+      "language": "python",
+      "filename": "solution.py",
+      "signature": "def SortExternalFile(inputFile: TextFile, bufferLimit: int, workspace: TextWorkspace) -> TextFile",
+      "starterCode": "def SortExternalFile(inputFile: TextFile, bufferLimit: int, workspace: TextWorkspace) -> TextFile:\n    return inputFile\n",
+      "solutionCode": "def SortExternalFile(inputFile: TextFile, bufferLimit: int, workspace: TextWorkspace) -> TextFile:\n    from functools import cmp_to_key\n\n    inputFile.Rewind()\n    runs = []\n    while True:\n        chunk = []\n        for _ in range(bufferLimit):\n            record = inputFile.ReadLine()\n            if record is None:\n                break\n            chunk.append(record)\n        if not chunk:\n            break\n        chunk.sort(key=cmp_to_key(lambda first, second: first.CompareTo(second)))\n        run = workspace.CreateFile()\n        for record in chunk:\n            run.AppendLine(record)\n        run.Close()\n        runs.append(run)\n    inputFile.Close()\n    if not runs:\n        empty = workspace.CreateFile()\n        empty.Close()\n        return empty\n    while len(runs) > 1:\n        merged = []\n        for index in range(0, len(runs), 2):\n            if index + 1 == len(runs):\n                merged.append(runs[index])\n                continue\n            left, right = runs[index], runs[index + 1]\n            left.Rewind()\n            right.Rewind()\n            output = workspace.CreateFile()\n            first, second = left.ReadLine(), right.ReadLine()\n            while first is not None or second is not None:\n                if second is None or first is not None and first.CompareTo(second) <= 0:\n                    output.AppendLine(first)\n                    first = left.ReadLine()\n                else:\n                    output.AppendLine(second)\n                    second = right.ReadLine()\n            output.Close()\n            left.Close()\n            right.Close()\n            workspace.DeleteFile(left)\n            workspace.DeleteFile(right)\n            merged.append(output)\n        runs = merged\n    runs[0].Rewind()\n    return runs[0]\n",
+      "prefix": "class LineRecord:\n    def CompareTo(self,other: \"LineRecord\") -> int:\n        raise RuntimeError(\"Provided by the judge\")\n    def Release(self) -> None:\n        raise RuntimeError(\"Provided by the judge\")\nclass TextFile:\n    def ReadLine(self) -> LineRecord | None:\n        raise RuntimeError(\"Provided by the judge\")\n    def Rewind(self) -> None:\n        raise RuntimeError(\"Provided by the judge\")\n    def AppendLine(self,record: LineRecord) -> None:\n        raise RuntimeError(\"Provided by the judge\")\n    def Close(self) -> None:\n        raise RuntimeError(\"Provided by the judge\")\nclass TextWorkspace:\n    def CreateFile(self) -> TextFile:\n        raise RuntimeError(\"Provided by the judge\")\n    def DeleteFile(self,file: TextFile) -> None:\n        raise RuntimeError(\"Provided by the judge\")\n",
+      "suffix": "",
+      "references": [
+        {
+          "title": "Required callable model APIs",
+          "code": "class LineRecord:\n    def CompareTo(self, other: \"LineRecord\") -> int:\n        raise RuntimeError(\"Provided by the judge\")\n\n    def Release(self) -> None:\n        raise RuntimeError(\"Provided by the judge\")\n\n\nclass TextFile:\n    def ReadLine(self) -> LineRecord | None:\n        raise RuntimeError(\"Provided by the judge\")\n\n    def Rewind(self) -> None:\n        raise RuntimeError(\"Provided by the judge\")\n\n    def AppendLine(self, record: LineRecord) -> None:\n        raise RuntimeError(\"Provided by the judge\")\n\n    def Close(self) -> None:\n        raise RuntimeError(\"Provided by the judge\")\n\n\nclass TextWorkspace:\n    def CreateFile(self) -> TextFile:\n        raise RuntimeError(\"Provided by the judge\")\n\n    def DeleteFile(self, file: TextFile) -> None:\n        raise RuntimeError(\"Provided by the judge\")\n",
+          "names": [
+            "LineRecord",
+            "TextFile",
+            "TextWorkspace"
+          ]
+        }
+      ],
+      "visibleSymbols": [
+        "SortExternalFile"
+      ],
+      "hiddenSymbols": [
+        "LineRecord",
+        "TextFile",
+        "TextWorkspace"
+      ],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/python/ctci6_10_6.py"
+      ],
+      "sourceSha256": {
+        "starter": "08e011152df58b96b341c7dc8fd3233656f98f6309756ff887d9d5567e2f421a",
+        "solution": "6a922887f8eda6bafc37131d0a9d7e3cfedf40df69ec73291aa0fdf82fd22b57"
+      }
+    },
+    {
       "problemId": "ctci6_10_7",
       "language": "cpp",
       "filename": "solution.cpp",

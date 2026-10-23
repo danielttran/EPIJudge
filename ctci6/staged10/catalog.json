@@ -409,6 +409,105 @@
     }
   },
   {
+    "ref": "10.6",
+    "method": "SortExternalFile",
+    "params": [
+      [
+        "inputFile",
+        "textfile"
+      ],
+      [
+        "bufferLimit",
+        "i"
+      ],
+      [
+        "workspace",
+        "textworkspace"
+      ]
+    ],
+    "result": "file_result",
+    "mutation": "external-files",
+    "description": "Sort a read-only text file using external-memory runs, returning a live input/workspace TextFile whose records are in ascending ordinal order. Preserve every line occurrence, including duplicates and empty lines, and preserve the input file contents. The file can exceed the permitted record buffer: do not collect the whole input in memory. Use only the provided stream/workspace APIs; candidate code does not receive an array of all lines or direct filesystem paths.",
+    "constraints": [
+      "The file contains N=0..20000 lines. Each line is 0..40 printable ASCII characters (U+0020..U+007E); line delimiters are not part of a record. Leading/trailing spaces and case are significant. The bufferLimit B is 2..1024 and is a limit on simultaneously live leased records, not a count of files. A null/None ReadLine result means EOF; an empty text line is a real record.",
+      "ReadLine returns an opaque LineRecord. CompareTo(other) gives a negative/zero/positive integer for ordinal text order. Keep at most B live records. AppendLine(record) writes its line to that file and consumes/releases that record; using it again is an error. Release explicitly discards an unused lease. All leases must be released/consumed before returning. O(ceil(N/B)) small run-file handles and fixed stream buffers are separate from the record budget.",
+      "TextWorkspace.CreateFile creates an empty disk-backed temporary file. DeleteFile accepts only a live file created by that workspace; never delete the input or directly destroy provided objects. AppendLine on the input is forbidden. Return a live input/workspace file, not a new in-memory TextFile subclass or a line array. Files remain valid after Close; Close flushes and closes stream handles, and subsequent ReadLine reopens at the beginning. Rewind also flushes pending writes and resets reading to the beginning. EOF stays EOF until Close/Rewind.",
+      "At most 16 stream handles may be open simultaneously; close completed run writers/readers before opening more. ReadLine and AppendLine calls each have a generous independent limit 8*N*(ceil(log2(max(1,N)))+2)+128, including EOF reads. At most 4*N+64 temporary files may be created. These bounds admit ordinary binary external mergesort, including one-record runs; no particular run-merging order or tie direction is required.",
+      "JSON arguments are [inputLines,bufferLimit,[]]. The judge creates the read-only input file from inputLines and injects TextFile/TextWorkspace objects; [] is the workspace placeholder. Displayed output is the returned file line sequence. Raw line text is private to the provided record comparator/writer so the live-record budget is enforced. C++ borrows provided objects/pointers; use Release/DeleteFile rather than delete."
+    ],
+    "why": "Sorting only B leased records creates small sorted runs without retaining the large input. Two sorted runs can be merged while holding just their two current records: the smaller current record must be the next output because everything behind either cursor is at least that cursor value. Writing consumes that lease, leaving room to read its successor. Repeated pairwise merging reduces the run count until one complete sorted file remains.",
+    "correctness": "Every chunk is a disjoint consecutive part of the input, and sorting changes only its order. Writing the chunk therefore creates a sorted run with exactly those occurrences. For a merge, maintain that the output is sorted and contains exactly the consumed prefixes of both runs. Choosing the smaller current record extends this output in sorted order; once a run ends, the other remaining sorted suffix can be copied. Thus the merged run is sorted and preserves the union multiset. Carrying an unpaired run unchanged preserves the same invariant. Each merge round reduces the number of runs, so termination leaves one sorted run containing all input occurrences. Empty input returns an empty workspace file. Chunk writing consumes all B-or-fewer leases before merging; each merge keeps at most two current leases, so B>=2 suffices.",
+    "walkthrough": "With B=2 and lines [pear,\"\",apple,pear,\" A\",a], the sorted chunks are [\"\",pear], [apple,pear] and [\" A\",a]. Merge the first two: compare the two current records, write the smaller, then read a replacement from that same file; the result is [\"\",apple,pear,pear]. Carry the third run into the next round. Their merge produces [\"\",\" A\",a,apple,pear,pear]. Both pear occurrences survive. Each append consumes its current record, so the merge never holds more than two live records, and the leading space is preserved.",
+    "example": [
+      [
+        [
+          "pear",
+          "",
+          "apple",
+          "pear",
+          " A",
+          "a"
+        ],
+        2,
+        []
+      ],
+      [
+        "",
+        " A",
+        "a",
+        "apple",
+        "pear",
+        "pear"
+      ]
+    ],
+    "time": "For R=ceil(N/B) nonempty initial runs, chunk sorting takes O(N log B) comparisons and merging O(N log(max(1,R))) comparisons. ASCII line length is bounded; otherwise comparator cost includes compared text length. Disk traffic is O(N*(1+log(max(1,R)))) records. Empty input takes O(1) file operations.",
+    "space": "At most B live record payloads, plus O(R) small run-file handles and fixed stream buffers. The reference stores no full input/result array. Live scratch-file contents occupy O(N) records because consumed runs are deleted. The judge projection/lease instrumentation is separate from candidate working storage.",
+    "edges": [
+      "No lines, one line, empty lines versus EOF, duplicate lines and all-equal input.",
+      "Ordinal case/space/prefix order, odd run counts and partial final chunks.",
+      "B=2, B>=N, 20000 input lines and bounded live record payloads.",
+      "Consumed-record reuse, read-only input, foreign/deleted output files and stream/file I/O limits."
+    ],
+    "related": "The author-linked chapter-10 public source describes splitting a large file into runs and repeatedly merging files. This callable uses disk-backed opaque comparable records to enforce a scalable record-count memory budget. It remains an external-file sorting exercise rather than substituting an in-memory array sort.",
+    "languageWhy": {
+      "csharp": "C# sorts a List<LineRecord> with a CompareTo lambda, writes/consumes every chunk lease, and keeps TextFile references only for run metadata. Null EOF checks are separate from record comparisons. Explicit Close calls bound open streams; null-forgiving annotations in the merge are justified by its nonempty-head invariant.",
+      "java": "Java ArrayList<LineRecord> sorting uses the provided comparator, not raw text or locale collation. A pair of nullable record references represents stream heads. Each written head is consumed before ReadLine obtains its successor; run files are closed and deleted only after their contents reach the merged file.",
+      "cpp": "C++ vectors contain borrowed LineRecord*/TextFile* handles, with protected base destructors preventing direct deletion. Comparator lambdas dereference only live record pointers; AppendLine consumes a record. The workspace owns file lifetimes, and temporary files are removed through DeleteFile after each merge.",
+      "python": "Python cmp_to_key wraps the provided comparator for a bounded record list. is None identifies EOF without confusing it with an empty line. The list contains record handles, and appending each record consumes its lease before the next phase; only run-file metadata survives the chunk phase.",
+      "javascript": "JavaScript sorts each bounded array with the provided CompareTo comparator rather than default object-string sorting. Explicit null checks implement EOF. Each append consumes one head before replacing it, while closing writers/readers keeps disk handles bounded."
+    },
+    "id": "ctci6_10_6",
+    "title": "Sort Big File",
+    "testCount": 298,
+    "languages": {
+      "csharp": {
+        "signature": "TextFile SortExternalFile(TextFile inputFile, int bufferLimit, TextWorkspace workspace)",
+        "starterCode": "public class Solution\n{\n    public TextFile SortExternalFile(TextFile inputFile, int bufferLimit, TextWorkspace workspace)\n    {\n        return inputFile;\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public TextFile SortExternalFile(TextFile inputFile, int bufferLimit, TextWorkspace workspace)\n    {\n        inputFile.Rewind();\n        var runs = new List<TextFile>();\n        while (true)\n        {\n            var chunk = new List<LineRecord>();\n            for (int i = 0; i < bufferLimit; ++i)\n            {\n                var record = inputFile.ReadLine();\n                if (record is null)\n                    break;\n                chunk.Add(record);\n            }\n            if (chunk.Count == 0)\n                break;\n            chunk.Sort((first, second) => first.CompareTo(second));\n            var run = workspace.CreateFile();\n            foreach (var record in chunk)\n                run.AppendLine(record);\n            run.Close();\n            runs.Add(run);\n        }\n        inputFile.Close();\n        if (runs.Count == 0)\n        {\n            var empty = workspace.CreateFile();\n            empty.Close();\n            return empty;\n        }\n        while (runs.Count > 1)\n        {\n            var merged = new List<TextFile>();\n            for (int index = 0; index < runs.Count; index += 2)\n            {\n                if (index + 1 == runs.Count)\n                {\n                    merged.Add(runs[index]);\n                    continue;\n                }\n                var left = runs[index];\n                var right = runs[index + 1];\n                left.Rewind();\n                right.Rewind();\n                var output = workspace.CreateFile();\n                LineRecord? first = left.ReadLine(), second = right.ReadLine();\n                while (first is not null || second is not null)\n                {\n                    if (second is null || (first is not null && first.CompareTo(second) <= 0))\n                    {\n                        output.AppendLine(first!);\n                        first = left.ReadLine();\n                    }\n                    else\n                    {\n                        output.AppendLine(second);\n                        second = right.ReadLine();\n                    }\n                }\n                output.Close();\n                left.Close();\n                right.Close();\n                workspace.DeleteFile(left);\n                workspace.DeleteFile(right);\n                merged.Add(output);\n            }\n            runs = merged;\n        }\n        runs[0].Rewind();\n        return runs[0];\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function SortExternalFile(inputFile, bufferLimit, workspace)",
+        "starterCode": "function SortExternalFile(inputFile, bufferLimit, workspace) {\n  return inputFile;\n}\n",
+        "solutionCode": "function SortExternalFile(inputFile, bufferLimit, workspace) {\n  inputFile.Rewind();\n  let runs = [];\n  while (true) {\n    const chunk = [];\n    for (let i = 0; i < bufferLimit; ++i) {\n      const record = inputFile.ReadLine();\n      if (record === null) break;\n      chunk.push(record);\n    }\n    if (chunk.length === 0) break;\n    chunk.sort((first, second) => first.CompareTo(second));\n    const run = workspace.CreateFile();\n    for (const record of chunk) run.AppendLine(record);\n    run.Close();\n    runs.push(run);\n  }\n  inputFile.Close();\n  if (runs.length === 0) {\n    const empty = workspace.CreateFile();\n    empty.Close();\n    return empty;\n  }\n  while (runs.length > 1) {\n    const merged = [];\n    for (let index = 0; index < runs.length; index += 2) {\n      if (index + 1 === runs.length) {\n        merged.push(runs[index]);\n        continue;\n      }\n      const left = runs[index],\n        right = runs[index + 1];\n      left.Rewind();\n      right.Rewind();\n      const output = workspace.CreateFile();\n      let first = left.ReadLine(),\n        second = right.ReadLine();\n      while (first !== null || second !== null) {\n        if (second === null || (first !== null && first.CompareTo(second) <= 0)) {\n          output.AppendLine(first);\n          first = left.ReadLine();\n        } else {\n          output.AppendLine(second);\n          second = right.ReadLine();\n        }\n      }\n      output.Close();\n      left.Close();\n      right.Close();\n      workspace.DeleteFile(left);\n      workspace.DeleteFile(right);\n      merged.push(output);\n    }\n    runs = merged;\n  }\n  runs[0].Rewind();\n  return runs[0];\n}\n"
+      },
+      "python": {
+        "signature": "def SortExternalFile(inputFile: TextFile, bufferLimit: int, workspace: TextWorkspace) -> TextFile",
+        "starterCode": "def SortExternalFile(inputFile: TextFile, bufferLimit: int, workspace: TextWorkspace) -> TextFile:\n    return inputFile\n",
+        "solutionCode": "def SortExternalFile(inputFile: TextFile, bufferLimit: int, workspace: TextWorkspace) -> TextFile:\n    from functools import cmp_to_key\n\n    inputFile.Rewind()\n    runs = []\n    while True:\n        chunk = []\n        for _ in range(bufferLimit):\n            record = inputFile.ReadLine()\n            if record is None:\n                break\n            chunk.append(record)\n        if not chunk:\n            break\n        chunk.sort(key=cmp_to_key(lambda first, second: first.CompareTo(second)))\n        run = workspace.CreateFile()\n        for record in chunk:\n            run.AppendLine(record)\n        run.Close()\n        runs.append(run)\n    inputFile.Close()\n    if not runs:\n        empty = workspace.CreateFile()\n        empty.Close()\n        return empty\n    while len(runs) > 1:\n        merged = []\n        for index in range(0, len(runs), 2):\n            if index + 1 == len(runs):\n                merged.append(runs[index])\n                continue\n            left, right = runs[index], runs[index + 1]\n            left.Rewind()\n            right.Rewind()\n            output = workspace.CreateFile()\n            first, second = left.ReadLine(), right.ReadLine()\n            while first is not None or second is not None:\n                if second is None or first is not None and first.CompareTo(second) <= 0:\n                    output.AppendLine(first)\n                    first = left.ReadLine()\n                else:\n                    output.AppendLine(second)\n                    second = right.ReadLine()\n            output.Close()\n            left.Close()\n            right.Close()\n            workspace.DeleteFile(left)\n            workspace.DeleteFile(right)\n            merged.append(output)\n        runs = merged\n    runs[0].Rewind()\n    return runs[0]\n"
+      },
+      "cpp": {
+        "signature": "TextFile* SortExternalFile(TextFile& inputFile, int bufferLimit, TextWorkspace& workspace)",
+        "starterCode": "class Solution {\n public:\n  TextFile* SortExternalFile(TextFile& inputFile, int bufferLimit, TextWorkspace& workspace) {\n    return &inputFile;\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  TextFile* SortExternalFile(TextFile& inputFile, int bufferLimit, TextWorkspace& workspace) {\n    inputFile.Rewind();\n    std::vector<TextFile*> runs;\n    while (true) {\n      std::vector<LineRecord*> chunk;\n      for (int i = 0; i < bufferLimit; ++i) {\n        auto record = inputFile.ReadLine();\n        if (!record)\n          break;\n        chunk.push_back(record);\n      }\n      if (chunk.empty())\n        break;\n      std::sort(chunk.begin(), chunk.end(), [](LineRecord* first, LineRecord* second) {\n        return first->CompareTo(*second) < 0;\n      });\n      TextFile* run = workspace.CreateFile();\n      for (auto record : chunk)\n        run->AppendLine(*record);\n      run->Close();\n      runs.push_back(run);\n    }\n    inputFile.Close();\n    if (runs.empty()) {\n      TextFile* empty = workspace.CreateFile();\n      empty->Close();\n      return empty;\n    }\n    while (runs.size() > 1) {\n      std::vector<TextFile*> merged;\n      for (std::size_t index = 0; index < runs.size(); index += 2) {\n        if (index + 1 == runs.size()) {\n          merged.push_back(runs[index]);\n          continue;\n        }\n        TextFile* left = runs[index];\n        TextFile* right = runs[index + 1];\n        left->Rewind();\n        right->Rewind();\n        TextFile* output = workspace.CreateFile();\n        LineRecord* first = left->ReadLine();\n        LineRecord* second = right->ReadLine();\n        while (first || second) {\n          if (!second || (first && first->CompareTo(*second) <= 0)) {\n            output->AppendLine(*first);\n            first = left->ReadLine();\n          } else {\n            output->AppendLine(*second);\n            second = right->ReadLine();\n          }\n        }\n        output->Close();\n        left->Close();\n        right->Close();\n        workspace.DeleteFile(*left);\n        workspace.DeleteFile(*right);\n        merged.push_back(output);\n      }\n      runs = std::move(merged);\n    }\n    runs[0]->Rewind();\n    return runs[0];\n  }\n};\n"
+      },
+      "java": {
+        "signature": "TextFile SortExternalFile(TextFile inputFile, int bufferLimit, TextWorkspace workspace)",
+        "starterCode": "class Solution {\n  public TextFile SortExternalFile(TextFile inputFile, int bufferLimit, TextWorkspace workspace) {\n    return inputFile;\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public TextFile SortExternalFile(TextFile inputFile, int bufferLimit, TextWorkspace workspace) {\n    inputFile.Rewind();\n    var runs = new ArrayList<TextFile>();\n    while (true) {\n      var chunk = new ArrayList<LineRecord>();\n      for (int i = 0; i < bufferLimit; ++i) {\n        var record = inputFile.ReadLine();\n        if (record == null)\n          break;\n        chunk.add(record);\n      }\n      if (chunk.isEmpty())\n        break;\n      chunk.sort((first, second) -> first.CompareTo(second));\n      var run = workspace.CreateFile();\n      for (var record : chunk)\n        run.AppendLine(record);\n      run.Close();\n      runs.add(run);\n    }\n    inputFile.Close();\n    if (runs.isEmpty()) {\n      var empty = workspace.CreateFile();\n      empty.Close();\n      return empty;\n    }\n    while (runs.size() > 1) {\n      var merged = new ArrayList<TextFile>();\n      for (int index = 0; index < runs.size(); index += 2) {\n        if (index + 1 == runs.size()) {\n          merged.add(runs.get(index));\n          continue;\n        }\n        var left = runs.get(index);\n        var right = runs.get(index + 1);\n        left.Rewind();\n        right.Rewind();\n        var output = workspace.CreateFile();\n        LineRecord first = left.ReadLine(), second = right.ReadLine();\n        while (first != null || second != null) {\n          if (second == null || (first != null && first.CompareTo(second) <= 0)) {\n            output.AppendLine(first);\n            first = left.ReadLine();\n          } else {\n            output.AppendLine(second);\n            second = right.ReadLine();\n          }\n        }\n        output.Close();\n        left.Close();\n        right.Close();\n        workspace.DeleteFile(left);\n        workspace.DeleteFile(right);\n        merged.add(output);\n      }\n      runs = merged;\n    }\n    runs.get(0).Rewind();\n    return runs.get(0);\n  }\n}\n"
+      }
+    }
+  },
+  {
     "ref": "10.7",
     "method": "FindMissingInt",
     "params": [

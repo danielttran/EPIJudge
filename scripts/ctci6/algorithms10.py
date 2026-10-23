@@ -244,3 +244,10 @@ return -1'''
     if language=='csharp':return 'int block=0;if(smallMemory){var counts=new int[2048];int value;while((value=file.ReadNext())!=-1)counts[value>>20]++;while(counts[block]==(1<<20))block++;file.Reset();}var bitmap=new byte[smallMemory?1<<17:1<<28];int item;while((item=file.ReadNext())!=-1)if(!smallMemory||(item>>20)==block){int offset=smallMemory?item&((1<<20)-1):item;bitmap[offset>>3]|=(byte)(1<<(offset&7));}for(int index=0;index<bitmap.Length;++index)if(bitmap[index]!=255)for(int bit=0;bit<8;++bit)if((bitmap[index]&(1<<bit))==0)return (block<<20)+(index<<3)+bit;return -1;'
     if language=='java':return 'int block=0;if(smallMemory){int[] counts=new int[2048];int value;while((value=file.ReadNext())!=-1)counts[value>>>20]++;while(counts[block]==(1<<20))block++;file.Reset();}byte[] bitmap=new byte[smallMemory?1<<17:1<<28];int item;while((item=file.ReadNext())!=-1)if(!smallMemory||(item>>>20)==block){int offset=smallMemory?item&((1<<20)-1):item;bitmap[offset>>>3]|=(byte)(1<<(offset&7));}for(int index=0;index<bitmap.length;++index)if(bitmap[index]!=(byte)255)for(int bit=0;bit<8;++bit)if((bitmap[index]&(1<<bit))==0)return (block<<20)+(index<<3)+bit;return -1;'
     return 'int block=0;if(smallMemory){std::vector<int> counts(2048);int value;while((value=file.ReadNext())!=-1)++counts[value>>20];while(counts[block]==(1<<20))++block;file.Reset();}std::vector<unsigned char> bitmap(smallMemory?1u<<17:1u<<28);int item;while((item=file.ReadNext())!=-1)if(!smallMemory||(item>>20)==block){int offset=smallMemory?item&((1<<20)-1):item;bitmap[offset>>3]|=static_cast<unsigned char>(1<<(offset&7));}for(size_t index=0;index<bitmap.size();++index)if(bitmap[index]!=255)for(int bit=0;bit<8;++bit)if((bitmap[index]&(1<<bit))==0)return (block<<20)+static_cast<int>(index*8)+bit;return -1;'
+
+_previous_external_body=body
+def body(ref,language):
+    if ref=='10.6':
+        from algorithms_external10 import body as run
+        return run(language)
+    return _previous_external_body(ref,language)

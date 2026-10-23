@@ -1,6 +1,6 @@
 # Cracking the Coding Interview, sixth edition
 
-This collection is being authored. **122 verified coding exercises are registered in the local website; the collection has not been pushed.**
+This collection is being authored. **123 verified coding exercises are registered in the local website; the collection has not been pushed.**
 The advertised 189 is a book question count, not a count of executable exercises.
 
 `inventory.json` records numbered references established from the author's public
@@ -41,7 +41,7 @@ It does **not** prove statement clarity, solution correctness, test adequacy, or
 completed semantic review. Those are separately recorded and executed before the
 collection is published.
 
-The current local checkpoint stages 122 coding exercises: all references in
+The current local checkpoint stages 123 coding exercises: all references in
 chapters 1–4, seven coding tasks from chapter 5, generic Circular Array/Hash Table 7.9/7.12, all fourteen chapter-8 tasks,
 ten chapter-10 tasks, both functional tasks 13.7–13.8, and all twenty-six tasks in each of chapters 16 and 17.
 Their 610 actual language solutions pass standalone and separate-submission runs,
@@ -77,3 +77,5 @@ The verified 104-exercise subset is integrated locally into a 438-problem bank.
 Remaining known content/classifications, final whole-bank runs and publication
 remain pending. Local integration preserves existing progress and drafts.
 See `workflow-review.md` for the measured workflow diagnosis and next batch gates.
+
+External-file checkpoint: 10.6 now executes genuine disk-backed external merging through opaque leased-record/file APIs in all five languages. All 615 staged solutions passed 975,120 cases per layer; 615 starters were rejected. Fifty compiled resource/ownership and valid-alternative programs passed sixty audit fixtures. All 323 backend tests pass; five HTTP submissions each passed 298 external-sort cases. These are local results, not publication or whole-bank final acceptance.

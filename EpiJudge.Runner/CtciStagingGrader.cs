@@ -373,6 +373,17 @@ public static class CtciStagingGrader
         return Integers(actual.GetProperty("finalValues")).SequenceEqual(finalValues) ? null : "Preserve all remaining occurrences in BST order.";
     }
 
+    private static string? ExternalFileFailure(TestCase test, JsonElement observed)
+    {
+        if (observed.GetProperty("mutationOk").ValueKind != JsonValueKind.True || observed.GetProperty("ownedResult").ValueKind != JsonValueKind.True) return "Preserve the input and return a live file owned by the input/workspace.";
+        int n = test.Arguments[0].GetArrayLength(), buffer = test.Arguments[1].GetInt32(), power = 1, logarithm = 0;
+        while (power < Math.Max(1, n)) { power <<= 1; logarithm++; }
+        long ioLimit = 8L * n * (logarithm + 2) + 128;
+        foreach (var pair in new (string Field, long Maximum)[] { ("peakRecords", buffer), ("liveRecords", 0), ("reads", ioLimit), ("writes", ioLimit), ("createdFiles", 4L * n + 64), ("maxStreams", 16) })
+            if (!observed.GetProperty(pair.Field).TryGetInt64(out long count) || count < 0 || count > pair.Maximum) return "Respect live-record, stream and external-file I/O budgets; consume/release every lease.";
+        return Strings(observed.GetProperty("actual")).SequenceEqual(Strings(test.Expected), StringComparer.Ordinal) ? null : "Return every input line occurrence in ordinal order, including empty lines and spaces.";
+    }
+
     public static string? FailureReason(CtciStagingDefinition definition, TestCase test, JsonElement observed)
     {
         try
@@ -423,6 +434,7 @@ public static class CtciStagingGrader
             if (definition.Ref is "16.3" or "16.13") return GeometryFailure(definition, test, observed);
             if (definition.Ref is "16.26" or "17.20") return NumericFailure(definition, test, observed);
             if (definition.Ref is "16.14" or "17.7") return GroupOrLineFailure(definition, test, observed);
+            if (definition.Ref == "10.6") return ExternalFileFailure(test, observed);
             if (definition.Batch == 10) return SortingFailure(definition, test, observed);
             if (definition.Batch == 17 && definition.Ref is ("17.8" or "17.13" or "17.22" or "17.25" or "17.26")) return StructuredHardFailure(definition, test, observed);
             if (definition.Batch == 4 && definition.Ref == "4.2") return MinimalTreeFailure(test, observed);

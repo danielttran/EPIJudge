@@ -1,0 +1,36 @@
+{
+  "explanation": "Sorting only B leased records creates small sorted runs without retaining the large input. Two sorted runs can be merged while holding just their two current records: the smaller current record must be the next output because everything behind either cursor is at least that cursor value. Writing consumes that lease, leaving room to read its successor. Repeated pairwise merging reduces the run count until one complete sorted file remains. Java ArrayList<LineRecord> sorting uses the provided comparator, not raw text or locale collation. A pair of nullable record references represents stream heads. Each written head is consumed before ReadLine obtains its successor; run files are closed and deleted only after their contents reach the merged file.",
+  "correctness": "Every chunk is a disjoint consecutive part of the input, and sorting changes only its order. Writing the chunk therefore creates a sorted run with exactly those occurrences. For a merge, maintain that the output is sorted and contains exactly the consumed prefixes of both runs. Choosing the smaller current record extends this output in sorted order; once a run ends, the other remaining sorted suffix can be copied. Thus the merged run is sorted and preserves the union multiset. Carrying an unpaired run unchanged preserves the same invariant. Each merge round reduces the number of runs, so termination leaves one sorted run containing all input occurrences. Empty input returns an empty workspace file. Chunk writing consumes all B-or-fewer leases before merging; each merge keeps at most two current leases, so B>=2 suffices.",
+  "walkthrough": "With B=2 and lines [pear,\"\",apple,pear,\" A\",a], the sorted chunks are [\"\",pear], [apple,pear] and [\" A\",a]. Merge the first two: compare the two current records, write the smaller, then read a replacement from that same file; the result is [\"\",apple,pear,pear]. Carry the third run into the next round. Their merge produces [\"\",\" A\",a,apple,pear,pear]. Both pear occurrences survive. Each append consumes its current record, so the merge never holds more than two live records, and the leading space is preserved.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        "pear",
+        "",
+        "apple",
+        "pear",
+        " A",
+        "a"
+      ],
+      2,
+      []
+    ],
+    "expected": [
+      "",
+      " A",
+      "a",
+      "apple",
+      "pear",
+      "pear"
+    ]
+  },
+  "timeComplexity": "For R=ceil(N/B) nonempty initial runs, chunk sorting takes O(N log B) comparisons and merging O(N log(max(1,R))) comparisons. ASCII line length is bounded; otherwise comparator cost includes compared text length. Disk traffic is O(N*(1+log(max(1,R)))) records. Empty input takes O(1) file operations.",
+  "spaceComplexity": "At most B live record payloads, plus O(R) small run-file handles and fixed stream buffers. The reference stores no full input/result array. Live scratch-file contents occupy O(N) records because consumed runs are deleted. The judge projection/lease instrumentation is separate from candidate working storage.",
+  "edgeCases": [
+    "No lines, one line, empty lines versus EOF, duplicate lines and all-equal input.",
+    "Ordinal case/space/prefix order, odd run counts and partial final chunks.",
+    "B=2, B>=N, 20000 input lines and bounded live record payloads.",
+    "Consumed-record reuse, read-only input, foreign/deleted output files and stream/file I/O limits."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 10.6. No affiliation is implied."
+}

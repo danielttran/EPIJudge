@@ -786,4 +786,21 @@ public sealed class CtciStagingTests
         Assert.Contains("Hashable", definition.Callable("python").StarterCode);
     }
 
+    [Fact]
+    public void ExternalSortEnforcesOwnershipResourceBoundsAndExactLines()
+    {
+        var definition = Definition("10.6");
+        var test = new TestCase(definition.Example[0].EnumerateArray().Select(value => value.Clone()).ToArray(), definition.Example[1].Clone());
+        var fields = new Dictionary<string, object?> { ["actual"] = test.Expected, ["mutationOk"] = true, ["ownedResult"] = true, ["peakRecords"] = 2, ["liveRecords"] = 0, ["reads"] = 40, ["writes"] = 30, ["createdFiles"] = 5, ["maxStreams"] = 3 };
+        Assert.Null(CtciStagingGrader.FailureReason(definition, test, Json(fields)));
+        Assert.True(JsonElement.DeepEquals(test.Expected, CtciStagingGrader.Display(definition, test, Json(fields))));
+        foreach (var pair in new (string Field, object Bad)[] { ("mutationOk", false), ("ownedResult", false), ("peakRecords", 3), ("liveRecords", 1), ("reads", 9999999), ("writes", -1), ("createdFiles", 9999999), ("maxStreams", 17), ("peakRecords", 1.5), ("actual", new[] { "apple", "pear" }) })
+        {
+            var changed = new Dictionary<string, object?>(fields) { [pair.Field] = pair.Bad };
+            Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(changed)));
+        }
+        var model = Assert.Single(definition.Callable("python").References);
+        Assert.Equal(new[] { "LineRecord", "TextFile", "TextWorkspace" }, model.Names.Order().ToArray());
+    }
+
 }

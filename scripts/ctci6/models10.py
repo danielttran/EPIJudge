@@ -30,3 +30,13 @@ def neutral(spec,language):
         return 'return new int[0];' if language=='java' else 'return []' if language=='python' else 'return [];' if language in ('csharp','javascript') else 'return {};'
     if spec['result']=='strings':return collection_neutral(spec,language)
     return starter_body(spec,language)
+
+import models_external10
+_previous_external_header=header
+_previous_external_neutral=neutral
+def header(ref,language):
+    if ref=='10.6':return base_header(ref,language)+models_external10.API[language]
+    return _previous_external_header(ref,language)
+def neutral(spec,language):
+    if spec['ref']=='10.6':return 'return &inputFile;' if language=='cpp' else 'return inputFile' if language=='python' else 'return inputFile;'
+    return _previous_external_neutral(spec,language)

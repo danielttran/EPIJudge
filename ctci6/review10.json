@@ -1,7 +1,7 @@
 {
   "stage": "standalone-authoring-and-separate-module",
   "liveIntegration": "pending-local-export",
-  "reviewScope": "Ten sorting/searching tasks and fifty actual language bodies, including genuine readonly streaming and bounded bitmap memory modes.",
+  "reviewScope": "Eleven sorting/searching tasks and fifty-five actual language bodies, including disk-backed external merging and readonly streaming/bitmap modes.",
   "questions": [
     {
       "ref": "10.1",
@@ -27,6 +27,11 @@
       "ref": "10.5",
       "algorithm": "Binary search with an outward nonempty-pivot scan inside the current interval.",
       "review": "Empty targets are explicitly not searchable, following the public wrapper. All five preserve gap positions and accept any matching original index. C# uses ordinal comparison, Java compareTo, and the shared ASCII domain makes other languages consistent. Empty/all-gap arrays, long gap blocks, duplicate words and dense sorted subsequences agree with independent direct lookup. Complexity explicitly allows linear gap work instead of promising logarithmic worst case."
+    },
+    {
+      "ref": "10.6",
+      "algorithm": "Sort bounded chunks of leased records into disk runs, then pairwise merge runs using two live heads.",
+      "review": "Read each actual body and supplied opaque record/file/workspace API. Append consumes a record lease; each comparison occurs before consumption. All five sort at most B live records, close completed files, merge with two live heads, delete consumed runs, carry odd runs, and rewind the final file. Empty input creates an empty owned file. ASCII ordinal comparison preserves spaces and empty lines. Correctness follows sorted chunk permutations and the least remaining head invariant; no stability requirement is invented. Execution includes 20000 descending/equal lines and independent sorted-line oracle. Fifty compiled audit programs reject buffer-all, consumed reuse, input writes, foreign/deleted output, leaked leases, excess EOF reads and excess open streams; valid one-record runs and opposite tie direction pass. Enforced leased payload bounds are distinct from arbitrary process heap measurement."
     },
     {
       "ref": "10.7",
@@ -62,11 +67,11 @@
     "java"
   ],
   "languageBindingReview": {
-    "csharp": "Read all actual bodies and typed string[]/int[] contracts. Backward merge and local peak swaps mutate only the first array. Grouping computes tuple keys once and uses StringComparer.Ordinal. Sparse word comparisons are ordinal. The property grader does not demand one canonical output ordering or duplicate index. Listy is supplied as an abstract API; RankTracker delegates enforce void Track and int GetRank. Duplicate marking uses exactly one byte array and Array.Clear.",
-    "javascript": "Read exact functions: mutable arrays are changed by indexed writes or swaps before return. Decorated anagram keys avoid comparator recomputation. Map-free searches use ASCII comparisons and bounded integer indices. Snapshot observations preserve all other argument values and original array references. Listy exposes ElementAt only and counts actual calls. Rank state belongs to each constructed object. One Uint8Array is reused and result storage is allocated at the counted size.",
-    "python": "Read exact functions: backward merge and local swaps mutate the supplied lists; grouping sorts the list in place before returning a copy. The gap search never compacts input. First-array observations compare every other input against the original snapshot and reject a correct result computed only on a rebound copy. Listy remains opaque; runtime query limits reject linear scans. Rank operations are iterative and bool is rejected as an integer rank. The existing bytearray is cleared without allocating another marking buffer.",
-    "cpp": "Read exact C++17 signatures: only the first array reference is mutable where specified, while the second merge input stays const. Return copies are accounted for in complexity. Group key/word pairs retain occurrences during writeback. String vectors use the generic JSON decoder; comparator decisions do not subtract signed integer endpoints. The opaque Listy reference provides a virtual ElementAt only. RankTracker owns nodes with unique_ptr; unevaluated static_assert checks enforce operation types. Duplicate marking uses one std::array<unsigned char,4000>.",
-    "java": "Read exact methods: string-array JSON decoding and Object[] observation encoding preserve empty gaps. Grouping sorts cached-key indices and reads an original clone during writeback. Mutable first arrays retain their object identities; second arrays are independently observed unchanged. Searches compare primitives/ASCII strings without narrowing or locale assumptions. Listy exposes only ElementAt; reflective public method checks enforce int rank/void tracking. Byte masks correctly inspect signed Java bytes; RankTracker filename follows its class."
+    "csharp": "Read all actual bodies and typed string[]/int[] contracts. Backward merge and local peak swaps mutate only the first array. Grouping computes tuple keys once and uses StringComparer.Ordinal. Sparse word comparisons are ordinal. The property grader does not demand one canonical output ordering or duplicate index. Listy is supplied as an abstract API; RankTracker delegates enforce void Track and int GetRank. Duplicate marking uses exactly one byte array and Array.Clear. External sorting uses the actual LineRecord comparison/release and TextFile consume-on-append API, not an in-memory string array; chunk sorting and pairwise merging preserve the live-record cap and explicit file ownership.",
+    "javascript": "Read exact functions: mutable arrays are changed by indexed writes or swaps before return. Decorated anagram keys avoid comparator recomputation. Map-free searches use ASCII comparisons and bounded integer indices. Snapshot observations preserve all other argument values and original array references. Listy exposes ElementAt only and counts actual calls. Rank state belongs to each constructed object. One Uint8Array is reused and result storage is allocated at the counted size. External sorting uses the actual LineRecord comparison/release and TextFile consume-on-append API, not an in-memory string array; chunk sorting and pairwise merging preserve the live-record cap and explicit file ownership.",
+    "python": "Read exact functions: backward merge and local swaps mutate the supplied lists; grouping sorts the list in place before returning a copy. The gap search never compacts input. First-array observations compare every other input against the original snapshot and reject a correct result computed only on a rebound copy. Listy remains opaque; runtime query limits reject linear scans. Rank operations are iterative and bool is rejected as an integer rank. The existing bytearray is cleared without allocating another marking buffer. External sorting uses the actual LineRecord comparison/release and TextFile consume-on-append API, not an in-memory string array; chunk sorting and pairwise merging preserve the live-record cap and explicit file ownership.",
+    "cpp": "Read exact C++17 signatures: only the first array reference is mutable where specified, while the second merge input stays const. Return copies are accounted for in complexity. Group key/word pairs retain occurrences during writeback. String vectors use the generic JSON decoder; comparator decisions do not subtract signed integer endpoints. The opaque Listy reference provides a virtual ElementAt only. RankTracker owns nodes with unique_ptr; unevaluated static_assert checks enforce operation types. Duplicate marking uses one std::array<unsigned char,4000>. External sorting uses the actual LineRecord comparison/release and TextFile consume-on-append API, not an in-memory string array; chunk sorting and pairwise merging preserve the live-record cap and explicit file ownership.",
+    "java": "Read exact methods: string-array JSON decoding and Object[] observation encoding preserve empty gaps. Grouping sorts cached-key indices and reads an original clone during writeback. Mutable first arrays retain their object identities; second arrays are independently observed unchanged. Searches compare primitives/ASCII strings without narrowing or locale assumptions. Listy exposes only ElementAt; reflective public method checks enforce int rank/void tracking. Byte masks correctly inspect signed Java bytes; RankTracker filename follows its class. External sorting uses the actual LineRecord comparison/release and TextFile consume-on-append API, not an in-memory string array; chunk sorting and pairwise merging preserve the live-record cap and explicit file ownership."
   },
   "executionEvidence": "staged10/validation.json",
   "submissionEvidence": "runtime/validation.json",
@@ -75,7 +80,8 @@
     "EpiJudge.Tests/CtciStagingTests.cs",
     "scripts/ctci6/test_listy_rank10.py",
     "scripts/ctci6/test_file10.py",
-    "scripts/ctci6/test_file_runtime10.py"
+    "scripts/ctci6/test_file_runtime10.py",
+    "scripts/ctci6/test_external_runtime10.py"
   ],
   "remainingAcceptance": [
     "remaining known content and classification",

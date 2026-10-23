@@ -21,6 +21,7 @@ import harness16
 import harness17
 import models07
 import models08
+import models_external10
 import models10
 import models13
 import models16
@@ -189,6 +190,8 @@ def adapter(entry, language, batch):
             imports += "RandomSource = user.RandomSource\n"
         elif batch == 16 and entry["ref"] == "16.23":
             imports += "Rand5Source = user.Rand5Source\n"
+        elif entry["ref"]=="10.6":
+            imports += "LineRecord = user.LineRecord\nTextFile = user.TextFile\nTextWorkspace = user.TextWorkspace\n"
         elif batch == 10 and entry["ref"] == "10.4":
             imports += "Listy = user.Listy\n"
         elif batch == 10 and entry["ref"] == "10.7":
@@ -220,6 +223,8 @@ def adapter(entry, language, batch):
             imports += "const RandomSource = user.RandomSource;\n"
         elif batch == 16 and entry["ref"] == "16.23":
             imports += "const Rand5Source = user.Rand5Source;\n"
+        elif entry["ref"]=="10.6":
+            imports += "const {LineRecord,TextFile,TextWorkspace} = user;\n"
         elif batch == 10 and entry["ref"] == "10.4":
             imports += "const Listy = user.Listy;\n"
         elif batch == 10 and entry["ref"] == "10.7":
@@ -289,6 +294,7 @@ def generate_runtime():
                     else ["BitArray"] if batch == 17 and entry["ref"] == "17.4"
                     else ["RandomSource"] if batch == 17 and entry["ref"] in ("17.2","17.3")
                     else ["Rand5Source"] if batch == 16 and entry["ref"] == "16.23"
+                    else ["LineRecord", "TextFile", "TextWorkspace"] if entry["ref"]=="10.6"
                     else ["NumberFile"] if batch == 10 and entry["ref"] == "10.7"
                     else ["Listy"] if batch == 10 and entry["ref"] == "10.4"
                     else ["BankError", "IntStack", "Animal"]
@@ -312,7 +318,7 @@ def generate_runtime():
                             HEADERS[language]
                         )
                         if batch == 3
-                        else models13.reference(entry["ref"],language) if batch == 13 else models_random04.REFERENCE[language] if entry["ref"] == "4.11" else models17.BINODE[language] if batch == 17 and entry["ref"] == "17.12" else models17.BITS[language] if batch == 17 and entry["ref"] == "17.4" else models04.reference(entry["ref"],language) if batch == 4 and entry["ref"] in models04.TREE_REFS else models_random17.REFERENCE[language] if batch == 17 and entry["ref"] in ("17.2","17.3") else models16.RAND5[language] if batch == 16 and entry["ref"] == "16.23" else models10.NUMBER_FILE[language] if batch == 10 and entry["ref"] == "10.7" else models10.LISTY[language] if batch == 10 and entry["ref"] == "10.4" else ""
+                        else models13.reference(entry["ref"],language) if batch == 13 else models_random04.REFERENCE[language] if entry["ref"] == "4.11" else models17.BINODE[language] if batch == 17 and entry["ref"] == "17.12" else models17.BITS[language] if batch == 17 and entry["ref"] == "17.4" else models04.reference(entry["ref"],language) if batch == 4 and entry["ref"] in models04.TREE_REFS else models_random17.REFERENCE[language] if batch == 17 and entry["ref"] in ("17.2","17.3") else models16.RAND5[language] if batch == 16 and entry["ref"] == "16.23" else models_external10.API[language] if entry["ref"]=="10.6" else models10.NUMBER_FILE[language] if batch == 10 and entry["ref"] == "10.7" else models10.LISTY[language] if batch == 10 and entry["ref"] == "10.4" else ""
                     ),
                 )
             rows.append(item)
