@@ -739,4 +739,23 @@ public sealed class CtciStagingTests
         Assert.Contains("Country", model.Names);
     }
 
+    [Fact]
+    public void CoinFilteredSubsetsAllowVariableSizeAndRequireOriginalRelativeOrder()
+    {
+        var definition = Definition("13.8");
+        var test = Case([new[] { 7, 7, 9 }, Array.Empty<int>()], new[] { 7, 9 });
+        foreach (int[] actual in new int[][] { [], [7], [7, 7], [9], [7, 9], [7, 7, 9] })
+        {
+            var observed = Json(new { actual, mutationOk = true, uniformOk = true });
+            Assert.Null(CtciStagingGrader.FailureReason(definition, test, observed));
+            Assert.True(JsonElement.DeepEquals(Json(actual), CtciStagingGrader.Display(definition, test, observed)));
+        }
+        foreach (int[] actual in new int[][] { [9, 7], [7, 7, 7], [8] }) Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual, mutationOk = true, uniformOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = Array.Empty<int>(), mutationOk = true, uniformOk = false })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = Array.Empty<int>(), mutationOk = false, uniformOk = true })));
+        var model = Assert.Single(definition.Callable("python").References);
+        Assert.Contains("FairCoinSource", model.Names);
+        Assert.DoesNotContain("Country", model.Names);
+    }
+
 }

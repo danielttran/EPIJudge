@@ -1,0 +1,28 @@
+{
+  "explanation": "Choose independently whether to retain each occurrence. A lambda filter expresses this decision without changing the input or sorting the retained elements. A uniform subset is not a uniformly chosen size followed by a uniform subset of that size: sizes near n/2 correspond to more subsets and must occur more often. Java IntStream.filter receives a lambda capturing the supplied source. Its sequential stream invokes one predicate per occurrence, and toArray completes evaluation before the source goes out of scope.",
+  "correctness": "For any fixed occurrence subset S, a run returns S precisely when the independent coin for each of its members is true and the coin for every other occurrence is false. There are n required coin outcomes, each of probability 1/2, so their joint probability is 2^-n for every S. Filtering visits occurrences in input order and emits only retained values, preserving the required relative order and multiplicities. Equal Data values do not merge coin decisions. For n=0 there is one subset, the empty subset, with probability 1.",
+  "walkthrough": "For [7,7,9], label occurrences a,b,c. Coin outcomes true,false,true retain a and c and return [7,9]. There are eight equally likely occurrence subsets. Returned value array [7] has probability 2/8 because either a alone or b alone produces it; [7,7] has probability 1/8. Choosing distinct values uniformly would lose this multiplicity. The empty and full arrays each occur with probability 1/8.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        7,
+        7,
+        9
+      ],
+      []
+    ],
+    "expected": [
+      7,
+      9
+    ]
+  },
+  "timeComplexity": "O(n) time, with one independent supplied-coin call per input occurrence in these implementations.",
+  "spaceComplexity": "O(n) worst-case space for the concrete result and any collection-building buffers. The final result has m retained occurrences; filtering does not copy or reorder the input.",
+  "edgeCases": [
+    "Empty, singleton, repeated and all-equal values; signed endpoints.",
+    "Empty/full outcomes and variable size; equal-valued occurrences remain independent.",
+    "Exact original relative order, input preservation and repeated independent invocations.",
+    "1000 input occurrences with finite source usage."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 13.8. No affiliation is implied."
+}

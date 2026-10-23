@@ -15,4 +15,22 @@ def declare(spec,language,body,class_name='Solution'):
         signature=signature.replace('std::vector<Country> countries','const std::vector<Country>& countries');code=code.replace('std::vector<Country> countries','const std::vector<Country>& countries')
     return signature,code
 def header(ref,language):return base_header(ref,language)+COUNTRY[language]
-def neutral(spec,language):return starter_body(spec,language)
+def neutral(spec,language):
+    if spec['result']=='ai':return {'python':'return []','javascript':'return [];','csharp':'return [];','java':'return new int[0];','cpp':'return {};'}[language]
+    return starter_body(spec,language)
+
+COINS={
+'csharp':'public abstract class FairCoinSource {public abstract bool Next();}\n',
+'java':'abstract class FairCoinSource {public abstract boolean Next();}\n',
+'cpp':'#include <iterator>\nstruct FairCoinSource {virtual bool Next()=0;virtual ~FairCoinSource()=default;};\n',
+'python':'class FairCoinSource:\n    def Next(self) -> bool:\n        raise RuntimeError("Provided by the judge")\n',
+'javascript':'class FairCoinSource {Next(){throw new Error("Provided by the judge");}}\n'}
+for lang,kind in {'csharp':'FairCoinSource','java':'FairCoinSource','cpp':'FairCoinSource','python':'FairCoinSource'}.items():TYPES[lang]['coins']=kind
+_previous_declare=declare
+def declare(spec,language,body,class_name='Solution'):
+    signature,code=_previous_declare(spec,language,body,class_name)
+    if language=='cpp':signature=signature.replace('FairCoinSource coins','FairCoinSource& coins');code=code.replace('FairCoinSource coins','FairCoinSource& coins')
+    return signature,code
+
+def reference(ref,language):return COINS[language] if ref=='13.8' else COUNTRY[language]
+def header(ref,language):return base_header(ref,language)+reference(ref,language)

@@ -43,3 +43,27 @@ def source(language,starters=False,only_ref=None):
     if language=='csharp':return value.replace('class Harness {',code+'\nclass Harness {\n'+part,1).replace('static object Execute(JsonElement row){','static object Execute(JsonElement row){if(row.GetProperty("ref").GetString()=="13.7")return ExecuteCountry13(row);',1)
     if language=='java':return value.replace('public class Harness {',code+'\npublic class Harness {\n'+part,1).replace('static JsonValue execute(JsonObject row){','static JsonValue execute(JsonObject row){if(row.get("ref").asString().equals("13.7"))return executeCountry13(row);',1)
     return value.replace('json execute(const json& row){',code+'\n'+part+'\njson execute(const json& row){if(row["ref"]=="13.7")return executeCountry13(row);',1)
+
+_country_source=source
+def source(language,starters=False,only_ref=None):
+    entries=json.loads((ROOT/'ctci6/staged13/catalog.json').read_text())
+    selected=[e for e in entries if only_ref is None or e['ref']==only_ref]
+    if any(e['ref']=='13.7' for e in selected):
+        value=_country_source(language,starters,only_ref='13.7')
+    else:
+        value=typed_source(language,starters,only_ref,staging_name='staged13',exclude_refs=('13.7','13.8'),allow_empty=True)
+    for entry in selected:
+        if entry['ref']!='13.8':continue
+        from models13 import COINS
+        from harness_subset13 import parts
+        code=entry['languages'][language]['starterCode' if starters else 'solutionCode']
+        if language not in ('python','javascript'):code=code.replace('class Solution','class Solution_13_8',1)
+        outside,inside=parts(language,code)
+        plain=base_header('13.8',language)
+        value=value.replace(plain,plain+COINS[language],1) if plain else COINS[language]+value
+        if language=='python':value=value.replace('def execute(row):',outside+"\ndef execute(row):\n    if row['ref']=='13.8':return executeSubset13(row)\n",1)
+        elif language=='javascript':value=value.replace('function execute(row){',outside+'\nfunction execute(row){if(row.ref==="13.8")return executeSubset13(row);',1)
+        elif language=='csharp':value=value.replace('class Harness {',outside+'\nclass Harness {\n'+inside,1).replace('static object Execute(JsonElement row){','static object Execute(JsonElement row){if(row.GetProperty("ref").GetString()=="13.8")return ExecuteSubset13(row);',1)
+        elif language=='java':value=value.replace('public class Harness {',outside+'\npublic class Harness {\n'+inside,1).replace('static JsonValue execute(JsonObject row){','static JsonValue execute(JsonObject row){if(row.get("ref").asString().equals("13.8"))return executeSubset13(row);',1)
+        else:value=value.replace('json execute(const json& row){',outside+'\njson execute(const json& row){if(row["ref"]=="13.8")return executeSubset13(row);',1)
+    return value

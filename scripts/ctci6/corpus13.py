@@ -26,3 +26,22 @@ def cases(spec):
     return [dict(arguments=a,expected=oracle(spec['ref'],a)) for a in unique.values()]
 
 def valid_observation(ref,case,observed):return isinstance(observed,dict) and observed.get('mutationOk') is True and type(observed.get('actual')) is int and observed['actual']==case['expected']
+
+_previous_oracle=oracle
+_previous_cases=cases
+_previous_observation=valid_observation
+def oracle(ref,args):
+    if ref=='13.8':
+        from corpus_subset13 import oracle as run
+        return run(ref,args)
+    return _previous_oracle(ref,args)
+def cases(spec):
+    if spec['ref']=='13.8':
+        from corpus_subset13 import cases as run
+        return run(spec)
+    return _previous_cases(spec)
+def valid_observation(ref,case,observed):
+    if ref=='13.8':
+        from corpus_subset13 import valid_observation as run
+        return run(ref,case,observed)
+    return _previous_observation(ref,case,observed)

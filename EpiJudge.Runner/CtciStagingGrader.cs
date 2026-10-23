@@ -379,6 +379,19 @@ public static class CtciStagingGrader
         {
             if (observed.ValueKind != JsonValueKind.Object || observed.TryGetProperty("error", out var error) && error.ValueKind != JsonValueKind.Null)
                 return "Your code did not finish this case successfully.";
+            if (definition.Ref == "13.8")
+            {
+                if (observed.GetProperty("mutationOk").ValueKind != JsonValueKind.True || observed.GetProperty("uniformOk").ValueKind != JsonValueKind.True) return "Preserve the input and sample independent occurrence subsets with the supplied fair coins.";
+                var inputValues = Integers(test.Arguments[0]);
+                int cursor = 0;
+                foreach (int value in Integers(observed.GetProperty("actual")))
+                {
+                    while (cursor < inputValues.Length && inputValues[cursor] != value) cursor++;
+                    if (cursor == inputValues.Length) return "Return an ordered subsequence of the original occurrences.";
+                    cursor++;
+                }
+                return null;
+            }
             if (definition.Ref == "4.11") return RandomTreeFailure(test, observed);
             if (definition.Ref is "17.2" or "17.3")
             {

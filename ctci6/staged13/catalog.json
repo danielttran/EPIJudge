@@ -91,5 +91,90 @@
         "solutionCode": "class Solution {\n  public int PopulationByContinent(Country[] countries, String continent) {\n    return Arrays.stream(countries)\n        .filter(country -> country.GetContinent().equals(continent))\n        .mapToInt(country -> country.GetPopulation())\n        .sum();\n  }\n}\n"
       }
     }
+  },
+  {
+    "ref": "13.8",
+    "method": "RandomSubset",
+    "params": [
+      [
+        "values",
+        "ai"
+      ],
+      [
+        "coins",
+        "coins"
+      ]
+    ],
+    "result": "ai",
+    "mutation": "none",
+    "description": "Use a lambda-based filter to return a random subset of the input occurrences, in their original relative order. Every one of the 2^n occurrence subsets must be equally likely, including the empty subset and the full subset. Subset size is not fixed. Use the supplied FairCoinSource.Next(), which returns independent equiprobable true/false values. Preserve the input. Equal values are separate occurrences; they must not be deduplicated.",
+    "constraints": [
+      "values is a nonnull array of 0..1000 signed 32-bit integers. Return a concrete integer array/list containing an ordered subsequence of values, with no invented members or extra multiplicities. Empty input always returns an empty collection.",
+      "Each fair-coin call is independent, including across repeated invocations. Use only the supplied source for randomness, not a global RNG, clock or fixed seed. The normal implementation draws once per input occurrence; equivalent correct samplers may draw differently within a per-invocation budget of 64*n+128 primitive calls.",
+      "The caller owns the provided FairCoinSource. Do not delete, replace or retain it beyond the invocation. The first JSON argument is values; the second must be [] as a placeholder for the judge-injected coin object. The callable receives FairCoinSource, never that empty array. Any valid sampled result may differ from the illustrated output."
+    ],
+    "why": "Choose independently whether to retain each occurrence. A lambda filter expresses this decision without changing the input or sorting the retained elements. A uniform subset is not a uniformly chosen size followed by a uniform subset of that size: sizes near n/2 correspond to more subsets and must occur more often.",
+    "correctness": "For any fixed occurrence subset S, a run returns S precisely when the independent coin for each of its members is true and the coin for every other occurrence is false. There are n required coin outcomes, each of probability 1/2, so their joint probability is 2^-n for every S. Filtering visits occurrences in input order and emits only retained values, preserving the required relative order and multiplicities. Equal Data values do not merge coin decisions. For n=0 there is one subset, the empty subset, with probability 1.",
+    "walkthrough": "For [7,7,9], label occurrences a,b,c. Coin outcomes true,false,true retain a and c and return [7,9]. There are eight equally likely occurrence subsets. Returned value array [7] has probability 2/8 because either a alone or b alone produces it; [7,7] has probability 1/8. Choosing distinct values uniformly would lose this multiplicity. The empty and full arrays each occur with probability 1/8.",
+    "example": [
+      [
+        [
+          7,
+          7,
+          9
+        ],
+        []
+      ],
+      [
+        7,
+        9
+      ]
+    ],
+    "time": "O(n) time, with one independent supplied-coin call per input occurrence in these implementations.",
+    "space": "O(n) worst-case space for the concrete result and any collection-building buffers. The final result has m retained occurrences; filtering does not copy or reorder the input.",
+    "edges": [
+      "Empty, singleton, repeated and all-equal values; signed endpoints.",
+      "Empty/full outcomes and variable size; equal-valued occurrences remain independent.",
+      "Exact original relative order, input preservation and repeated independent invocations.",
+      "1000 input occurrences with finite source usage."
+    ],
+    "related": "The primary Java QuestionA/QuestionB implementations establish independent per-occurrence coin filtering, not the fixed-cardinality subset task 17.3. It is retained as its own collection reference.",
+    "languageWhy": {
+      "csharp": "C# Where invokes the coin lambda once for each occurrence; ToArray forces the lazy query to execute during this invocation and returns a concrete result rather than retaining the caller-owned coin source.",
+      "java": "Java IntStream.filter receives a lambda capturing the supplied source. Its sequential stream invokes one predicate per occurrence, and toArray completes evaluation before the source goes out of scope.",
+      "cpp": "C++ std::copy_if uses a lambda capturing the supplied coin by reference and a back_insert_iterator into a new vector. It preserves traversal order and copies selected values without retaining the source or mutating the const input vector.",
+      "python": "Python filter is lazy, so list immediately consumes it while the supplied source is valid. The lambda is called separately for each occurrence, including repeated equal integers; returning the iterator itself would violate the concrete-result contract.",
+      "javascript": "JavaScript filter evaluates the coin lambda for every array position and returns a fresh array in original order. It neither samples distinct values nor fixes the resulting length."
+    },
+    "id": "ctci6_13_8",
+    "title": "Lambda Random",
+    "testCount": 145,
+    "languages": {
+      "csharp": {
+        "signature": "int[] RandomSubset(int[] values, FairCoinSource coins)",
+        "starterCode": "public class Solution\n{\n    public int[] RandomSubset(int[] values, FairCoinSource coins)\n    {\n        return [];\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public int[] RandomSubset(int[] values, FairCoinSource coins)\n    {\n        return values.Where(value => coins.Next()).ToArray();\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function RandomSubset(values, coins)",
+        "starterCode": "function RandomSubset(values, coins) {\n  return [];\n}\n",
+        "solutionCode": "function RandomSubset(values, coins) {\n  return values.filter((value) => coins.Next());\n}\n"
+      },
+      "python": {
+        "signature": "def RandomSubset(values: list[int], coins: FairCoinSource) -> list[int]",
+        "starterCode": "def RandomSubset(values: list[int], coins: FairCoinSource) -> list[int]:\n    return []\n",
+        "solutionCode": "def RandomSubset(values: list[int], coins: FairCoinSource) -> list[int]:\n    return list(filter(lambda value: coins.Next(), values))\n"
+      },
+      "cpp": {
+        "signature": "std::vector<int> RandomSubset(const std::vector<int>& values, FairCoinSource& coins)",
+        "starterCode": "class Solution {\n public:\n  std::vector<int> RandomSubset(const std::vector<int>& values, FairCoinSource& coins) {\n    return {};\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  std::vector<int> RandomSubset(const std::vector<int>& values, FairCoinSource& coins) {\n    std::vector<int> selected;\n    std::copy_if(values.begin(), values.end(), std::back_inserter(selected),\n                 [&coins](int value) { return coins.Next(); });\n    return selected;\n  }\n};\n"
+      },
+      "java": {
+        "signature": "int[] RandomSubset(int[] values, FairCoinSource coins)",
+        "starterCode": "class Solution {\n  public int[] RandomSubset(int[] values, FairCoinSource coins) {\n    return new int[0];\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public int[] RandomSubset(int[] values, FairCoinSource coins) {\n    return Arrays.stream(values).filter(value -> coins.Next()).toArray();\n  }\n}\n"
+      }
+    }
   }
 ]

@@ -1,0 +1,17 @@
+"""Concrete arrays, readonly values and physical occurrence masks for small n."""
+CORE=r'''
+static class SubsetState13 {
+public static int[] Input=[],LastOutput=[];
+public static void Check(bool ok,string message){if(!ok)throw new InvalidOperationException(message);}
+sealed class Coins(ChoiceBitSource source):FairCoinSource {int calls;public override bool Next(){Check(++calls<=64*Input.Length+128,"Subset exceeded the supplied-coin budget");return source.Next()==1;}}
+public static int[] Sample(ChoiceBitSource source){var values=Input.ToArray();int[] result=new Solution_13_8().RandomSubset(values,new Coins(source));Check(values.SequenceEqual(Input),"Preserve input values and order");Check(result is not null,"Return a concrete integer subset");int cursor=0;foreach(int value in result!){while(cursor<values.Length&&values[cursor]!=value)cursor++;Check(cursor<values.Length,"Return an ordered subsequence of original occurrences");cursor++;}LastOutput=result.ToArray();return result;}
+public static int Mask(ChoiceBitSource source){var result=Sample(source);int n=Input.Length,m=result.Length;var ways=new int[n+1][];for(int i=0;i<=n;++i){ways[i]=new int[m+1];ways[i][m]=1;}for(int i=n-1;i>=0;--i)for(int j=m-1;j>=0;--j)ways[i][j]=ways[i+1][j]+(Input[i]==result[j]?ways[i+1][j+1]:0);int mask=0,index=0;for(int i=0;i<n;++i){int choose=index<m&&Input[i]==result[index]?ways[i+1][index+1]:0,total=ways[i][index],ticket=0;if(total>1){int bits=0;for(int maximum=total-1;maximum>0;maximum>>=1)bits++;do{ticket=0;for(int b=0;b<bits;++b)ticket=(ticket<<1)|source.Next();}while(ticket>=total);}if(ticket<choose){mask|=1<<i;index++;}}return mask;}
+sealed class SeedBits:ChoiceBitSource {uint seed=0x85ebca6b;public override int Next(){seed=unchecked(seed*1664525+1013904223);return (int)(seed>>31);}}
+public static object Large(){int n=Input.Length,samples=n>64?128:4096;var multiplicities=Input.GroupBy(v=>v).ToDictionary(g=>g.Key,g=>g.Count());var totals=multiplicities.Keys.ToDictionary(v=>v,_=>0);var source=new SeedBits();double lengthSum=0,squares=0;for(int trial=0;trial<samples;++trial){var result=Sample(source);lengthSum+=result.Length;squares+=(result.Length-n/2.0)*(result.Length-n/2.0);foreach(int value in result)totals[value]++;}double statistic=0;foreach(var pair in multiplicities){double difference=totals[pair.Key]-samples*pair.Value/2.0;statistic+=difference*difference/(samples*pair.Value/4.0);}Check(statistic<4*totals.Count+80,"Subset inclusion frequencies are biased");Check((lengthSum-samples*n/2.0)*(lengthSum-samples*n/2.0)/(samples*n/4.0)<40,"Subset sizes are biased");Check(squares/(samples*n/4.0)>0.25&&squares/(samples*n/4.0)<4,"Subset size variation must reflect independent choices");return new {actual=LastOutput,mutationOk=true,uniformOk=true};}
+}
+class SubsetSubject13 {public int ChooseMask13(ChoiceBitSource source)=>SubsetState13.Mask(source);}
+'''
+def finish(value):
+    value=value.replace('public static object Run(JsonElement row){','public static object Run(JsonElement row){SubsetState13.Input=JsonSerializer.Deserialize<int[]>(row.GetProperty("arguments")[0].GetRawText())!;if(SubsetState13.Input.Length>5)return SubsetState13.Large();')
+    value=value.replace('var values=row.GetProperty("arguments")[0].EnumerateArray().Select(value=>value.GetInt32()+1).ToArray();','int[] values=[];')
+    return value.replace('actual=First','actual=SubsetState13.LastOutput')

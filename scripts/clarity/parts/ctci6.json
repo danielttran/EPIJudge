@@ -5521,6 +5521,69 @@
         ]
       }
     },
+    "ctci6_13_8": {
+      "description": "Use a lambda-based filter to return a random subset of the input occurrences, in their original relative order. Every one of the 2^n occurrence subsets must be equally likely, including the empty subset and the full subset. Subset size is not fixed. Use the supplied FairCoinSource.Next(), which returns independent equiprobable true/false values. Preserve the input. Equal values are separate occurrences; they must not be deduplicated.",
+      "constraints": [
+        "values is a nonnull array of 0..1000 signed 32-bit integers. Return a concrete integer array/list containing an ordered subsequence of values, with no invented members or extra multiplicities. Empty input always returns an empty collection.",
+        "Each fair-coin call is independent, including across repeated invocations. Use only the supplied source for randomness, not a global RNG, clock or fixed seed. The normal implementation draws once per input occurrence; equivalent correct samplers may draw differently within a per-invocation budget of 64*n+128 primitive calls.",
+        "The caller owns the provided FairCoinSource. Do not delete, replace or retain it beyond the invocation. The first JSON argument is values; the second must be [] as a placeholder for the judge-injected coin object. The callable receives FairCoinSource, never that empty array. Any valid sampled result may differ from the illustrated output."
+      ],
+      "examples": [
+        {
+          "input": "[[7, 7, 9], []]",
+          "output": "[7, 9]",
+          "explanation": "For [7,7,9], label occurrences a,b,c. Coin outcomes true,false,true retain a and c and return [7,9]. There are eight equally likely occurrence subsets. Returned value array [7] has probability 2/8 because either a alone or b alone produces it; [7,7] has probability 1/8. Choosing distinct values uniformly would lose this multiplicity. The empty and full arrays each occur with probability 1/8."
+        }
+      ],
+      "exampleCases": [
+        {
+          "arguments": [
+            [
+              7,
+              7,
+              9
+            ],
+            []
+          ],
+          "expected": [
+            7,
+            9
+          ]
+        }
+      ],
+      "contracts": {
+        "csharp": [
+          "Callable: int[] RandomSubset(int[] values, FairCoinSource coins)",
+          "values is a nonnull array of 0..1000 signed 32-bit integers. Return a concrete integer array/list containing an ordered subsequence of values, with no invented members or extra multiplicities. Empty input always returns an empty collection.",
+          "Each fair-coin call is independent, including across repeated invocations. Use only the supplied source for randomness, not a global RNG, clock or fixed seed. The normal implementation draws once per input occurrence; equivalent correct samplers may draw differently within a per-invocation budget of 64*n+128 primitive calls.",
+          "The caller owns the provided FairCoinSource. Do not delete, replace or retain it beyond the invocation. The first JSON argument is values; the second must be [] as a placeholder for the judge-injected coin object. The callable receives FairCoinSource, never that empty array. Any valid sampled result may differ from the illustrated output."
+        ],
+        "javascript": [
+          "Callable: function RandomSubset(values, coins)",
+          "values is a nonnull array of 0..1000 signed 32-bit integers. Return a concrete integer array/list containing an ordered subsequence of values, with no invented members or extra multiplicities. Empty input always returns an empty collection.",
+          "Each fair-coin call is independent, including across repeated invocations. Use only the supplied source for randomness, not a global RNG, clock or fixed seed. The normal implementation draws once per input occurrence; equivalent correct samplers may draw differently within a per-invocation budget of 64*n+128 primitive calls.",
+          "The caller owns the provided FairCoinSource. Do not delete, replace or retain it beyond the invocation. The first JSON argument is values; the second must be [] as a placeholder for the judge-injected coin object. The callable receives FairCoinSource, never that empty array. Any valid sampled result may differ from the illustrated output."
+        ],
+        "python": [
+          "Callable: def RandomSubset(values: list[int], coins: FairCoinSource) -> list[int]",
+          "values is a nonnull array of 0..1000 signed 32-bit integers. Return a concrete integer array/list containing an ordered subsequence of values, with no invented members or extra multiplicities. Empty input always returns an empty collection.",
+          "Each fair-coin call is independent, including across repeated invocations. Use only the supplied source for randomness, not a global RNG, clock or fixed seed. The normal implementation draws once per input occurrence; equivalent correct samplers may draw differently within a per-invocation budget of 64*n+128 primitive calls.",
+          "The caller owns the provided FairCoinSource. Do not delete, replace or retain it beyond the invocation. The first JSON argument is values; the second must be [] as a placeholder for the judge-injected coin object. The callable receives FairCoinSource, never that empty array. Any valid sampled result may differ from the illustrated output."
+        ],
+        "cpp": [
+          "Callable: std::vector<int> RandomSubset(const std::vector<int>& values, FairCoinSource& coins)",
+          "values is a nonnull array of 0..1000 signed 32-bit integers. Return a concrete integer array/list containing an ordered subsequence of values, with no invented members or extra multiplicities. Empty input always returns an empty collection.",
+          "Each fair-coin call is independent, including across repeated invocations. Use only the supplied source for randomness, not a global RNG, clock or fixed seed. The normal implementation draws once per input occurrence; equivalent correct samplers may draw differently within a per-invocation budget of 64*n+128 primitive calls.",
+          "The caller owns the provided FairCoinSource. Do not delete, replace or retain it beyond the invocation. The first JSON argument is values; the second must be [] as a placeholder for the judge-injected coin object. The callable receives FairCoinSource, never that empty array. Any valid sampled result may differ from the illustrated output."
+        ],
+        "java": [
+          "Callable: int[] RandomSubset(int[] values, FairCoinSource coins)",
+          "values is a nonnull array of 0..1000 signed 32-bit integers. Return a concrete integer array/list containing an ordered subsequence of values, with no invented members or extra multiplicities. Empty input always returns an empty collection.",
+          "Each fair-coin call is independent, including across repeated invocations. Use only the supplied source for randomness, not a global RNG, clock or fixed seed. The normal implementation draws once per input occurrence; equivalent correct samplers may draw differently within a per-invocation budget of 64*n+128 primitive calls.",
+          "The caller owns the provided FairCoinSource. Do not delete, replace or retain it beyond the invocation. The first JSON argument is values; the second must be [] as a placeholder for the judge-injected coin object. The callable receives FairCoinSource, never that empty array. Any valid sampled result may differ from the illustrated output."
+        ]
+      }
+    },
     "ctci6_16_1": {
       "description": "Exchange the values of two independent local integer variables without a third temporary variable, then return their final values as [first,second]. Perform the exchange using arithmetic or bit operations on those two variables; do not merely construct the reversed result directly.",
       "constraints": [
