@@ -1,0 +1,38 @@
+{
+  "explanation": "Precompute how many consecutive black cells begin at each position going right and down. Four run-length checks then verify any candidate border in constant time. Search side lengths from largest to smallest and top-left positions in row order so the first valid candidate also satisfies the tie rule.",
+  "correctness": "Processing cells from bottom-right computes exact right/down black-run lengths: a white cell has zero, while a black cell extends the adjacent run by one. A candidate of side s has an all-black border exactly when its top and bottom horizontal runs and left and right vertical runs each reach s. Interior values do not enter these checks. Descending sizes guarantee maximality of the first valid result; row/column order guarantees the requested earliest top-left tie. If no candidate succeeds, no side-one black cell exists either, so [] is correct.",
+  "walkthrough": "For [[0,0,0],[0,1,0],[0,0,0]], all four length-three edges are black even though the center is white, so return [0,0,3]. Requiring a completely filled black square would incorrectly reject the correct answer.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ]
+    ],
+    "expected": [
+      0,
+      0,
+      3
+    ]
+  },
+  "timeComplexity": "O(n^3) time: O(n^2) preprocessing and O(n^3) candidates with four constant-time border checks.",
+  "spaceComplexity": "O(n^2) auxiliary right/down run-length tables.",
+  "edgeCases": [
+    "Empty and all-white input; one black cell.",
+    "A hollow black border, a broken edge with black corners, and tied largest squares."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.23. No affiliation is implied."
+}

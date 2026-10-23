@@ -1,0 +1,34 @@
+{
+  "explanation": "Expand the right edge until the window contains all required values, then shrink its left edge while that remains true. Track only required-value frequencies and how many required values are still absent. Unneeded values can be skipped at the left, and duplicate needed values can be removed until the last occurrence would disappear.",
+  "correctness": "The frequency map always counts each required value inside the current window; missing equals the number with zero count. Thus missing=0 exactly characterizes a covering window. For each right edge, removing left entries until coverage would fail examines the shortest feasible window ending there. No discarded earlier left edge could give a shorter future window than the surviving one. Every right edge is processed, so the best recorded candidate is globally shortest. Strictly shorter updates during increasing right order preserve the earliest start among ties.",
+  "walkthrough": "For big=[7,5,9,1,5,9,1] and small=[1,5,9], indices 1..3 contain 5,9,1 and cover the target in length three. Later windows 2..4 and 3..5 have the same length, so [1,3] remains the answer. Matching the target in its supplied order would incorrectly reject valid windows.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        7,
+        5,
+        9,
+        1,
+        5,
+        9,
+        1
+      ],
+      [
+        1,
+        5,
+        9
+      ]
+    ],
+    "expected": [
+      1,
+      3
+    ]
+  },
+  "timeComplexity": "Expected O(big.length + small.length) time with hash-map operations; each window edge advances at most big.length times.",
+  "spaceComplexity": "O(small.length) auxiliary map entries, plus the two-index output.",
+  "edgeCases": [
+    "Empty target, empty big array, missing target value.",
+    "Target values in a different order, redundant occurrences, and equal-length ties."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.18. No affiliation is implied."
+}

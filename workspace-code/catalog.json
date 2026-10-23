@@ -21697,6 +21697,126 @@
       }
     },
     {
+      "problemId": "ctci6_17_14",
+      "language": "cpp",
+      "filename": "solution.cpp",
+      "signature": "std::vector<int> SmallestK(const std::vector<int>& values, int k)",
+      "starterCode": "class Solution {\n public:\n  std::vector<int> SmallestK(const std::vector<int>& values, int k) {\n    return {};\n  }\n};\n",
+      "solutionCode": "class Solution {\n public:\n  std::vector<int> SmallestK(const std::vector<int>& values, int k) {\n    if (k == 0)\n      return {};\n    std::vector<int> heap(values.begin(), values.begin() + k);\n    std::make_heap(heap.begin(), heap.end());\n    for (int i = k; i < static_cast<int>(values.size()); ++i) {\n      if (values[i] < heap.front()) {\n        std::pop_heap(heap.begin(), heap.end());\n        heap.back() = values[i];\n        std::push_heap(heap.begin(), heap.end());\n      }\n    }\n    std::sort_heap(heap.begin(), heap.end());\n    return heap;\n  }\n};\n",
+      "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/cpp/ctci6_17_14.cpp"
+      ],
+      "sourceSha256": {
+        "starter": "311b9af9e7d5939d5a31e9235ffbeefa78e8eb05190b522974c67cf5211283b8",
+        "solution": "cd5adf89e2172fa272d688f676b4c6a8d776c1346b2c1ea31ed8fd75f35f808f"
+      }
+    },
+    {
+      "problemId": "ctci6_17_14",
+      "language": "csharp",
+      "filename": "Solution.cs",
+      "signature": "int[] SmallestK(int[] values, int k)",
+      "starterCode": "public class Solution\n{\n    public int[] SmallestK(int[] values, int k)\n    {\n        return [];\n    }\n}\n",
+      "solutionCode": "public class Solution\n{\n    public int[] SmallestK(int[] values, int k)\n    {\n        if (k == 0)\n            return [];\n        var heap = new PriorityQueue<int, int>(Comparer<int>.Create((a, b) => b.CompareTo(a)));\n        for (int i = 0; i < k; ++i)\n            heap.Enqueue(values[i], values[i]);\n        for (int i = k; i < values.Length; ++i)\n        {\n            if (values[i] < heap.Peek())\n            {\n                heap.Dequeue();\n                heap.Enqueue(values[i], values[i]);\n            }\n        }\n        int[] result = new int[k];\n        for (int i = k - 1; i >= 0; --i)\n            result[i] = heap.Dequeue();\n        return result;\n    }\n}\n",
+      "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/csharp/ctci6_17_14.cs"
+      ],
+      "sourceSha256": {
+        "starter": "ccb5a7999dae9f94daf30c5eda9885eb949266c2590e517dc1db3557f2aa9922",
+        "solution": "0696d8d084b8ee5d9a869a03cc35ed4810cb85245a2e7d4cc8f3a4ae061fa1a9"
+      }
+    },
+    {
+      "problemId": "ctci6_17_14",
+      "language": "java",
+      "filename": "Solution.java",
+      "signature": "int[] SmallestK(int[] values, int k)",
+      "starterCode": "class Solution {\n  public int[] SmallestK(int[] values, int k) {\n    return new int[0];\n  }\n}\n",
+      "solutionCode": "class Solution {\n  public int[] SmallestK(int[] values, int k) {\n    if (k == 0)\n      return new int[0];\n    var heap = new PriorityQueue<Integer>(Comparator.reverseOrder());\n    for (int i = 0; i < k; ++i)\n      heap.add(values[i]);\n    for (int i = k; i < values.length; ++i) {\n      if (values[i] < heap.peek()) {\n        heap.remove();\n        heap.add(values[i]);\n      }\n    }\n    int[] result = new int[k];\n    for (int i = k - 1; i >= 0; --i)\n      result[i] = heap.remove();\n    return result;\n  }\n}\n",
+      "prefix": "import java.util.*;\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/java/ctci6_17_14.java"
+      ],
+      "sourceSha256": {
+        "starter": "c838a7048a113e9a4966569eff61b17d8341d4ade5fb2c69be4915c63ead8ce4",
+        "solution": "d48ea6d1669ac9b1525d2ab5f7ed6872bc79e9e448cd563fc8a9f099efed4b84"
+      }
+    },
+    {
+      "problemId": "ctci6_17_14",
+      "language": "javascript",
+      "filename": "solution.js",
+      "signature": "function SmallestK(values, k)",
+      "starterCode": "function SmallestK(values, k) {\n  return [];\n}\n",
+      "solutionCode": "function SmallestK(values, k) {\n  if (k === 0) return [];\n  const heap = values.slice(0, k);\n  function down(index) {\n    while (true) {\n      let child = 2 * index + 1;\n      if (child >= heap.length) return;\n      if (child + 1 < heap.length && heap[child + 1] > heap[child]) ++child;\n      if (heap[index] >= heap[child]) return;\n      [heap[index], heap[child]] = [heap[child], heap[index]];\n      index = child;\n    }\n  }\n  for (let i = Math.floor(k / 2) - 1; i >= 0; --i) down(i);\n  for (let i = k; i < values.length; ++i) {\n    if (values[i] < heap[0]) {\n      heap[0] = values[i];\n      down(0);\n    }\n  }\n  heap.sort((a, b) => a - b);\n  return heap;\n}\n",
+      "prefix": "'use strict';\n",
+      "suffix": "\nmodule.exports = {SmallestK};\n",
+      "references": [],
+      "visibleSymbols": [
+        "SmallestK"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/javascript/ctci6_17_14.js"
+      ],
+      "sourceSha256": {
+        "starter": "79092f4419d021586c916e125edf703dafc93dd570e363df80bbb16f64da1e41",
+        "solution": "861e64a05261ca8b3eed5824357288a09c7374bdb55cfe07918403141ccbbf68"
+      }
+    },
+    {
+      "problemId": "ctci6_17_14",
+      "language": "python",
+      "filename": "solution.py",
+      "signature": "def SmallestK(values: list[int], k: int) -> list[int]",
+      "starterCode": "def SmallestK(values: list[int], k: int) -> list[int]:\n    return []\n",
+      "solutionCode": "def SmallestK(values: list[int], k: int) -> list[int]:\n    if k == 0:\n        return []\n    import heapq\n\n    heap = [-values[i] for i in range(k)]\n    heapq.heapify(heap)\n    for index in range(k, len(values)):\n        value = values[index]\n        if value < -heap[0]:\n            heapq.heapreplace(heap, -value)\n    return sorted(-value for value in heap)\n",
+      "prefix": "",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "SmallestK"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/python/ctci6_17_14.py"
+      ],
+      "sourceSha256": {
+        "starter": "3c18b8e368cd8cc66baf9e9ccbc62becf6c65965b73e2fd386fac357bff221c0",
+        "solution": "553023277b242f935d04df16de423c5e32d474e45473db7b0e15a9d544ef1e8d"
+      }
+    },
+    {
       "problemId": "ctci6_17_16",
       "language": "cpp",
       "filename": "solution.cpp",
@@ -21817,6 +21937,246 @@
       }
     },
     {
+      "problemId": "ctci6_17_18",
+      "language": "cpp",
+      "filename": "solution.cpp",
+      "signature": "std::vector<int> ShortestCoveringRange(const std::vector<int>& big, const std::vector<int>& small)",
+      "starterCode": "#include <unordered_map>\nclass Solution {\n public:\n  std::vector<int> ShortestCoveringRange(const std::vector<int>& big,\n                                         const std::vector<int>& small) {\n    return {};\n  }\n};\n",
+      "solutionCode": "#include <unordered_map>\nclass Solution {\n public:\n  std::vector<int> ShortestCoveringRange(const std::vector<int>& big,\n                                         const std::vector<int>& small) {\n    if (static_cast<int>(small.size()) == 0)\n      return {-1, -1};\n    std::unordered_map<int, int> counts;\n    for (int value : small)\n      counts[value] = 0;\n    int missing = static_cast<int>(small.size()), left = 0, start = -1, end = -1;\n    for (int right = 0; right < static_cast<int>(big.size()); ++right) {\n      int value = big[right];\n      if (counts.find(value) != counts.end()) {\n        if (counts[value] == 0)\n          --missing;\n        ++counts[value];\n      }\n      while (missing == 0) {\n        if (start == -1 || right - left < end - start) {\n          start = left;\n          end = right;\n        }\n        int removed = big[left];\n        if (counts.find(removed) != counts.end()) {\n          --counts[removed];\n          if (counts[removed] == 0)\n            ++missing;\n        }\n        ++left;\n      }\n    }\n    return {start, end};\n  }\n};\n",
+      "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/cpp/ctci6_17_18.cpp"
+      ],
+      "sourceSha256": {
+        "starter": "1403a86a16e564fb2203ab7396c7d9d9cc60b1c4fbc955da0b8520a23ef1570a",
+        "solution": "240fa3e7867feb8dfb3f8a55c319c6a4ddfe78256a8dd9730d14835eb91a710a"
+      }
+    },
+    {
+      "problemId": "ctci6_17_18",
+      "language": "csharp",
+      "filename": "Solution.cs",
+      "signature": "int[] ShortestCoveringRange(int[] big, int[] small)",
+      "starterCode": "public class Solution\n{\n    public int[] ShortestCoveringRange(int[] big, int[] small)\n    {\n        return [];\n    }\n}\n",
+      "solutionCode": "public class Solution\n{\n    public int[] ShortestCoveringRange(int[] big, int[] small)\n    {\n        if (small.Length == 0)\n            return [-1, -1];\n        var counts = new Dictionary<int, int>();\n        foreach (int value in small)\n            counts[value] = 0;\n        int missing = small.Length, left = 0, start = -1, end = -1;\n        for (int right = 0; right < big.Length; ++right)\n        {\n            int value = big[right];\n            if (counts.ContainsKey(value))\n            {\n                if (counts[value] == 0)\n                    --missing;\n                ++counts[value];\n            }\n            while (missing == 0)\n            {\n                if (start == -1 || right - left < end - start)\n                {\n                    start = left;\n                    end = right;\n                }\n                int removed = big[left];\n                if (counts.ContainsKey(removed))\n                {\n                    --counts[removed];\n                    if (counts[removed] == 0)\n                        ++missing;\n                }\n                ++left;\n            }\n        }\n        return [start, end];\n    }\n}\n",
+      "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/csharp/ctci6_17_18.cs"
+      ],
+      "sourceSha256": {
+        "starter": "500bb733944939e4ba438fd43eb9d9c0ac775cf7383e8986d2f46a027b09a8a4",
+        "solution": "c2d5feae1dc0d34c0524a10695b0bc46af05443988ead26dc805f25d2c2cb7cf"
+      }
+    },
+    {
+      "problemId": "ctci6_17_18",
+      "language": "java",
+      "filename": "Solution.java",
+      "signature": "int[] ShortestCoveringRange(int[] big, int[] small)",
+      "starterCode": "class Solution {\n  public int[] ShortestCoveringRange(int[] big, int[] small) {\n    return new int[0];\n  }\n}\n",
+      "solutionCode": "class Solution {\n  public int[] ShortestCoveringRange(int[] big, int[] small) {\n    if (small.length == 0)\n      return new int[] {-1, -1};\n    Map<Integer, Integer> counts = new HashMap<>();\n    for (int value : small)\n      counts.put(value, 0);\n    int missing = small.length, left = 0, start = -1, end = -1;\n    for (int right = 0; right < big.length; ++right) {\n      int value = big[right];\n      if (counts.containsKey(value)) {\n        if (counts.get(value) == 0)\n          --missing;\n        counts.put(value, counts.get(value) + 1);\n      }\n      while (missing == 0) {\n        if (start == -1 || right - left < end - start) {\n          start = left;\n          end = right;\n        }\n        int removed = big[left];\n        if (counts.containsKey(removed)) {\n          counts.put(removed, counts.get(removed) - 1);\n          if (counts.get(removed) == 0)\n            ++missing;\n        }\n        ++left;\n      }\n    }\n    return new int[] {start, end};\n  }\n}\n",
+      "prefix": "import java.util.*;\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/java/ctci6_17_18.java"
+      ],
+      "sourceSha256": {
+        "starter": "e8de08a3918f28d2644d10b2ab10fa802f024d307e35d2d359e5c00ff652b4f8",
+        "solution": "9ad4bfeb1c771485b283a9383e9e9f42867655f0a8fe3f85a66c54aa52069e38"
+      }
+    },
+    {
+      "problemId": "ctci6_17_18",
+      "language": "javascript",
+      "filename": "solution.js",
+      "signature": "function ShortestCoveringRange(big, small)",
+      "starterCode": "function ShortestCoveringRange(big, small) {\n  return [];\n}\n",
+      "solutionCode": "function ShortestCoveringRange(big, small) {\n  if (small.length === 0) return [-1, -1];\n  const counts = new Map(small.map((v) => [v, 0]));\n  let missing = small.length,\n    left = 0,\n    start = -1,\n    end = -1;\n  for (let right = 0; right < big.length; ++right) {\n    const value = big[right];\n    if (counts.has(value)) {\n      if (counts.get(value) === 0) --missing;\n      counts.set(value, counts.get(value) + 1);\n    }\n    while (missing === 0) {\n      if (start === -1 || right - left < end - start) {\n        start = left;\n        end = right;\n      }\n      const removed = big[left];\n      if (counts.has(removed)) {\n        counts.set(removed, counts.get(removed) - 1);\n        if (counts.get(removed) === 0) ++missing;\n      }\n      ++left;\n    }\n  }\n  return [start, end];\n}\n",
+      "prefix": "'use strict';\n",
+      "suffix": "\nmodule.exports = {ShortestCoveringRange};\n",
+      "references": [],
+      "visibleSymbols": [
+        "ShortestCoveringRange"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/javascript/ctci6_17_18.js"
+      ],
+      "sourceSha256": {
+        "starter": "134c5af822199193e903df4c4b6ef145390f55bba2741c434462b1215e496e63",
+        "solution": "178cf7d931a60c863dc230ef39e3f2a2544073d4f38b3c70ac5a387fcfe6be68"
+      }
+    },
+    {
+      "problemId": "ctci6_17_18",
+      "language": "python",
+      "filename": "solution.py",
+      "signature": "def ShortestCoveringRange(big: list[int], small: list[int]) -> list[int]",
+      "starterCode": "def ShortestCoveringRange(big: list[int], small: list[int]) -> list[int]:\n    return []\n",
+      "solutionCode": "def ShortestCoveringRange(big: list[int], small: list[int]) -> list[int]:\n    if not small:\n        return [-1, -1]\n    counts = {value: 0 for value in small}\n    missing = len(small)\n    left = 0\n    best_start = best_end = -1\n    for right, value in enumerate(big):\n        if value in counts:\n            if counts[value] == 0:\n                missing -= 1\n            counts[value] += 1\n        while missing == 0:\n            if best_start == -1 or right - left < best_end - best_start:\n                best_start, best_end = left, right\n            removed = big[left]\n            if removed in counts:\n                counts[removed] -= 1\n                if counts[removed] == 0:\n                    missing += 1\n            left += 1\n    return [best_start, best_end]\n",
+      "prefix": "",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "ShortestCoveringRange"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/python/ctci6_17_18.py"
+      ],
+      "sourceSha256": {
+        "starter": "ff6a1260c1344f1b3b0401d70a299684de13d9a46d0ad2ecd6e11a649b029f6d",
+        "solution": "49eac3f131170f73ffed86f89a253ba5a8e0879945739f6bd0b9d7a10849228e"
+      }
+    },
+    {
+      "problemId": "ctci6_17_19",
+      "language": "cpp",
+      "filename": "solution.cpp",
+      "signature": "std::vector<int> MissingTwo(const std::vector<int>& values)",
+      "starterCode": "class Solution {\n public:\n  std::vector<int> MissingTwo(const std::vector<int>& values) {\n    return {};\n  }\n};\n",
+      "solutionCode": "class Solution {\n public:\n  std::vector<int> MissingTwo(const std::vector<int>& values) {\n    int n = static_cast<int>(values.size()) + 2, combined = 0;\n    for (int value = 1; value <= n; ++value)\n      combined ^= value;\n    for (int value : values)\n      combined ^= value;\n    int bit = combined & -combined, first = 0, second = 0;\n    for (int value = 1; value <= n; ++value) {\n      if ((value & bit) != 0)\n        first ^= value;\n      else\n        second ^= value;\n    }\n    for (int value : values) {\n      if ((value & bit) != 0)\n        first ^= value;\n      else\n        second ^= value;\n    }\n    return {std::min(first, second), std::max(first, second)};\n  }\n};\n",
+      "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/cpp/ctci6_17_19.cpp"
+      ],
+      "sourceSha256": {
+        "starter": "61951bd2cf514f8b9a436aed2eaec8e74164e294ea2e58d0752d6aa5fc72efb7",
+        "solution": "3b3df6345fedab193c1d80ee44e1845548b2f4ad1f0e75d4771d9c7b60b5a6bf"
+      }
+    },
+    {
+      "problemId": "ctci6_17_19",
+      "language": "csharp",
+      "filename": "Solution.cs",
+      "signature": "int[] MissingTwo(int[] values)",
+      "starterCode": "public class Solution\n{\n    public int[] MissingTwo(int[] values)\n    {\n        return [];\n    }\n}\n",
+      "solutionCode": "public class Solution\n{\n    public int[] MissingTwo(int[] values)\n    {\n        int n = values.Length + 2, combined = 0;\n        for (int value = 1; value <= n; ++value)\n            combined ^= value;\n        foreach (int value in values)\n            combined ^= value;\n        int bit = combined & -combined, first = 0, second = 0;\n        for (int value = 1; value <= n; ++value)\n        {\n            if ((value & bit) != 0)\n                first ^= value;\n            else\n                second ^= value;\n        }\n        foreach (int value in values)\n        {\n            if ((value & bit) != 0)\n                first ^= value;\n            else\n                second ^= value;\n        }\n        return [Math.Min(first, second), Math.Max(first, second)];\n    }\n}\n",
+      "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/csharp/ctci6_17_19.cs"
+      ],
+      "sourceSha256": {
+        "starter": "91226661f707b53bd79fec12d29885f2172ff1727668b5d13c5f9036936ef7c1",
+        "solution": "aa3f3685db4caf5cbd1f20e1f0af2eec24d2198dec1df4e408b13caed3dd261b"
+      }
+    },
+    {
+      "problemId": "ctci6_17_19",
+      "language": "java",
+      "filename": "Solution.java",
+      "signature": "int[] MissingTwo(int[] values)",
+      "starterCode": "class Solution {\n  public int[] MissingTwo(int[] values) {\n    return new int[0];\n  }\n}\n",
+      "solutionCode": "class Solution {\n  public int[] MissingTwo(int[] values) {\n    int n = values.length + 2, combined = 0;\n    for (int value = 1; value <= n; ++value)\n      combined ^= value;\n    for (int value : values)\n      combined ^= value;\n    int bit = combined & -combined, first = 0, second = 0;\n    for (int value = 1; value <= n; ++value) {\n      if ((value & bit) != 0)\n        first ^= value;\n      else\n        second ^= value;\n    }\n    for (int value : values) {\n      if ((value & bit) != 0)\n        first ^= value;\n      else\n        second ^= value;\n    }\n    return new int[] {Math.min(first, second), Math.max(first, second)};\n  }\n}\n",
+      "prefix": "import java.util.*;\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/java/ctci6_17_19.java"
+      ],
+      "sourceSha256": {
+        "starter": "6560a5b6780c58946eca5ad3d25a8fefc7e6153cf6d454724280ffc51de6970e",
+        "solution": "825a2f044e962a5430daa6468a57881efc458ddd3df014c47a5744a8b8f274de"
+      }
+    },
+    {
+      "problemId": "ctci6_17_19",
+      "language": "javascript",
+      "filename": "solution.js",
+      "signature": "function MissingTwo(values)",
+      "starterCode": "function MissingTwo(values) {\n  return [];\n}\n",
+      "solutionCode": "function MissingTwo(values) {\n  const n = values.length + 2;\n  let combined = 0;\n  for (let value = 1; value <= n; ++value) combined ^= value;\n  for (const value of values) combined ^= value;\n  const bit = combined & -combined;\n  let first = 0,\n    second = 0;\n  for (let value = 1; value <= n; ++value) {\n    if (value & bit) first ^= value;\n    else second ^= value;\n  }\n  for (const value of values) {\n    if (value & bit) first ^= value;\n    else second ^= value;\n  }\n  return [Math.min(first, second), Math.max(first, second)];\n}\n",
+      "prefix": "'use strict';\n",
+      "suffix": "\nmodule.exports = {MissingTwo};\n",
+      "references": [],
+      "visibleSymbols": [
+        "MissingTwo"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/javascript/ctci6_17_19.js"
+      ],
+      "sourceSha256": {
+        "starter": "e178f9033efa735cc22a7331a7ddf19a481aaeb9a9cb1ec0a78b8a179c4d7ee5",
+        "solution": "225e5ae9f4d457d8a47f271b2b25b473fc3fffd1b48a46be475129f66497dfb7"
+      }
+    },
+    {
+      "problemId": "ctci6_17_19",
+      "language": "python",
+      "filename": "solution.py",
+      "signature": "def MissingTwo(values: list[int]) -> list[int]",
+      "starterCode": "def MissingTwo(values: list[int]) -> list[int]:\n    return []\n",
+      "solutionCode": "def MissingTwo(values: list[int]) -> list[int]:\n    n = len(values) + 2\n    combined = 0\n    for value in range(1, n + 1):\n        combined ^= value\n    for value in values:\n        combined ^= value\n    bit = combined & -combined\n    first = second = 0\n    for value in range(1, n + 1):\n        if value & bit:\n            first ^= value\n        else:\n            second ^= value\n    for value in values:\n        if value & bit:\n            first ^= value\n        else:\n            second ^= value\n    return [min(first, second), max(first, second)]\n",
+      "prefix": "",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "MissingTwo"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/python/ctci6_17_19.py"
+      ],
+      "sourceSha256": {
+        "starter": "632cb5a74e33a673bbbab81c5f84e98da942de99c12a895761b0cf4f7ee1fd01",
+        "solution": "47b52995e34b2d34deec0a08b6806764c5ef1a04f4fb0d6a9feed8f4ca3bb8d6"
+      }
+    },
+    {
       "problemId": "ctci6_17_21",
       "language": "cpp",
       "filename": "solution.cpp",
@@ -21934,6 +22294,366 @@
       "sourceSha256": {
         "starter": "ca515372b44262101cc2b48f0e40b48619a58ce494b3cbe197f07513faa294f2",
         "solution": "ace99c173586f035f40f51a449edfbf8dac85bfb5fb498644df73ed8d0c9409e"
+      }
+    },
+    {
+      "problemId": "ctci6_17_23",
+      "language": "cpp",
+      "filename": "solution.cpp",
+      "signature": "std::vector<int> LargestBlackBorder(const std::vector<std::vector<int>>& matrix)",
+      "starterCode": "class Solution {\n public:\n  std::vector<int> LargestBlackBorder(const std::vector<std::vector<int>>& matrix) {\n    return {};\n  }\n};\n",
+      "solutionCode": "class Solution {\n public:\n  std::vector<int> LargestBlackBorder(const std::vector<std::vector<int>>& matrix) {\n    int n = static_cast<int>(matrix.size());\n    std::vector<std::vector<int>> right(n, std::vector<int>(n)), down(n, std::vector<int>(n));\n    for (int r = n - 1; r >= 0; --r) {\n      for (int c = n - 1; c >= 0; --c) {\n        if (matrix[r][c] == 0) {\n          right[r][c] = 1 + (c + 1 < n ? right[r][c + 1] : 0);\n          down[r][c] = 1 + (r + 1 < n ? down[r + 1][c] : 0);\n        }\n      }\n    }\n    for (int size = n; size >= 1; --size) {\n      for (int r = 0; r + size <= n; ++r) {\n        for (int c = 0; c + size <= n; ++c) {\n          if (right[r][c] >= size && down[r][c] >= size && right[r + size - 1][c] >= size &&\n              down[r][c + size - 1] >= size)\n            return {r, c, size};\n        }\n      }\n    }\n    return {};\n  }\n};\n",
+      "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/cpp/ctci6_17_23.cpp"
+      ],
+      "sourceSha256": {
+        "starter": "efb49e20f7cdd56c6e5a2c398f49af4376dd310995fc3c5238685f621d6f8bd8",
+        "solution": "5065edb25eb3a14faacbe2365338f38a9ca23e1677c3d0b245bd5d1510c25c7d"
+      }
+    },
+    {
+      "problemId": "ctci6_17_23",
+      "language": "csharp",
+      "filename": "Solution.cs",
+      "signature": "int[] LargestBlackBorder(int[][] matrix)",
+      "starterCode": "public class Solution\n{\n    public int[] LargestBlackBorder(int[][] matrix)\n    {\n        return [];\n    }\n}\n",
+      "solutionCode": "public class Solution\n{\n    public int[] LargestBlackBorder(int[][] matrix)\n    {\n        int n = matrix.Length;\n        int[,] right = new int[n, n], down = new int[n, n];\n        for (int r = n - 1; r >= 0; --r)\n        {\n            for (int c = n - 1; c >= 0; --c)\n            {\n                if (matrix[r][c] == 0)\n                {\n                    right[r, c] = 1 + (c + 1 < n ? right[r, c + 1] : 0);\n                    down[r, c] = 1 + (r + 1 < n ? down[r + 1, c] : 0);\n                }\n            }\n        }\n        for (int size = n; size >= 1; --size)\n        {\n            for (int r = 0; r + size <= n; ++r)\n            {\n                for (int c = 0; c + size <= n; ++c)\n                {\n                    if (right[r, c] >= size && down[r, c] >= size &&\n                        right[r + size - 1, c] >= size && down[r, c + size - 1] >= size)\n                        return [r, c, size];\n                }\n            }\n        }\n        return [];\n    }\n}\n",
+      "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/csharp/ctci6_17_23.cs"
+      ],
+      "sourceSha256": {
+        "starter": "89e1dca771d0e2bd4c5cfdeeeccd62382130f00f0f9cbff11a1c41e220886d99",
+        "solution": "02fba075fc1df38be69cc4b048788046500f0c4379b26dbfe7e85f4a9c250b4c"
+      }
+    },
+    {
+      "problemId": "ctci6_17_23",
+      "language": "java",
+      "filename": "Solution.java",
+      "signature": "int[] LargestBlackBorder(int[][] matrix)",
+      "starterCode": "class Solution {\n  public int[] LargestBlackBorder(int[][] matrix) {\n    return new int[0];\n  }\n}\n",
+      "solutionCode": "class Solution {\n  public int[] LargestBlackBorder(int[][] matrix) {\n    int n = matrix.length;\n    int[][] right = new int[n][n], down = new int[n][n];\n    for (int r = n - 1; r >= 0; --r) {\n      for (int c = n - 1; c >= 0; --c) {\n        if (matrix[r][c] == 0) {\n          right[r][c] = 1 + (c + 1 < n ? right[r][c + 1] : 0);\n          down[r][c] = 1 + (r + 1 < n ? down[r + 1][c] : 0);\n        }\n      }\n    }\n    for (int size = n; size >= 1; --size) {\n      for (int r = 0; r + size <= n; ++r) {\n        for (int c = 0; c + size <= n; ++c) {\n          if (right[r][c] >= size && down[r][c] >= size && right[r + size - 1][c] >= size\n              && down[r][c + size - 1] >= size)\n            return new int[] {r, c, size};\n        }\n      }\n    }\n    return new int[0];\n  }\n}\n",
+      "prefix": "import java.util.*;\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/java/ctci6_17_23.java"
+      ],
+      "sourceSha256": {
+        "starter": "8b29270acee4dcfc366acd4c85f4783650476db91f0c76e84e4b9dca8d8fe5b8",
+        "solution": "25e5c34d1ef9837b2aefe6aca568ec83f33cb04a425dfc6378b1df741e61ca08"
+      }
+    },
+    {
+      "problemId": "ctci6_17_23",
+      "language": "javascript",
+      "filename": "solution.js",
+      "signature": "function LargestBlackBorder(matrix)",
+      "starterCode": "function LargestBlackBorder(matrix) {\n  return [];\n}\n",
+      "solutionCode": "function LargestBlackBorder(matrix) {\n  const n = matrix.length,\n    right = Array.from({ length: n }, () => Array(n).fill(0)),\n    down = Array.from({ length: n }, () => Array(n).fill(0));\n  for (let r = n - 1; r >= 0; --r) {\n    for (let c = n - 1; c >= 0; --c) {\n      if (matrix[r][c] === 0) {\n        right[r][c] = 1 + (c + 1 < n ? right[r][c + 1] : 0);\n        down[r][c] = 1 + (r + 1 < n ? down[r + 1][c] : 0);\n      }\n    }\n  }\n  for (let size = n; size >= 1; --size) {\n    for (let r = 0; r + size <= n; ++r) {\n      for (let c = 0; c + size <= n; ++c) {\n        if (\n          right[r][c] >= size &&\n          down[r][c] >= size &&\n          right[r + size - 1][c] >= size &&\n          down[r][c + size - 1] >= size\n        )\n          return [r, c, size];\n      }\n    }\n  }\n  return [];\n}\n",
+      "prefix": "'use strict';\n",
+      "suffix": "\nmodule.exports = {LargestBlackBorder};\n",
+      "references": [],
+      "visibleSymbols": [
+        "LargestBlackBorder"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/javascript/ctci6_17_23.js"
+      ],
+      "sourceSha256": {
+        "starter": "4264458d417cb81f2fa18aa296b16739a2cf6564701c9ff338abe7590131781d",
+        "solution": "db618d1837e7ce46c48da29126dacb8e5f172f3284c8da6f3055598c9e8c9903"
+      }
+    },
+    {
+      "problemId": "ctci6_17_23",
+      "language": "python",
+      "filename": "solution.py",
+      "signature": "def LargestBlackBorder(matrix: list[list[int]]) -> list[int]",
+      "starterCode": "def LargestBlackBorder(matrix: list[list[int]]) -> list[int]:\n    return []\n",
+      "solutionCode": "def LargestBlackBorder(matrix: list[list[int]]) -> list[int]:\n    n = len(matrix)\n    right = [[0] * n for _ in range(n)]\n    down = [[0] * n for _ in range(n)]\n    for row in range(n - 1, -1, -1):\n        for column in range(n - 1, -1, -1):\n            if matrix[row][column] == 0:\n                right[row][column] = 1 + (right[row][column + 1] if column + 1 < n else 0)\n                down[row][column] = 1 + (down[row + 1][column] if row + 1 < n else 0)\n    for size in range(n, 0, -1):\n        for row in range(n - size + 1):\n            for column in range(n - size + 1):\n                if (\n                    right[row][column] >= size\n                    and down[row][column] >= size\n                    and right[row + size - 1][column] >= size\n                    and down[row][column + size - 1] >= size\n                ):\n                    return [row, column, size]\n    return []\n",
+      "prefix": "",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "LargestBlackBorder"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/python/ctci6_17_23.py"
+      ],
+      "sourceSha256": {
+        "starter": "4c742486a7076f3cb5e8243c64ae8ed2effcbc6155338b67ed19bbf321783527",
+        "solution": "abda55c3aea62311562a808dbb71a73c3c6a2755f631a881e960e7f1a4598bc4"
+      }
+    },
+    {
+      "problemId": "ctci6_17_24",
+      "language": "cpp",
+      "filename": "solution.cpp",
+      "signature": "std::vector<int> MaximumSubmatrix(const std::vector<std::vector<int>>& matrix)",
+      "starterCode": "class Solution {\n public:\n  std::vector<int> MaximumSubmatrix(const std::vector<std::vector<int>>& matrix) {\n    return {};\n  }\n};\n",
+      "solutionCode": "class Solution {\n public:\n  std::vector<int> MaximumSubmatrix(const std::vector<std::vector<int>>& matrix) {\n    int rows = static_cast<int>(matrix.size()),\n        columns = rows == 0 ? 0 : static_cast<int>(matrix[0].size());\n    if (rows == 0 || columns == 0)\n      return {};\n    int best = -2147483648;\n    std::vector<int> answer(5);\n    for (int top = 0; top < rows; ++top) {\n      std::vector<int> totals(columns);\n      for (int bottom = top; bottom < rows; ++bottom) {\n        int running = 0, start = 0;\n        for (int c = 0; c < columns; ++c) {\n          totals[c] += matrix[bottom][c];\n          if (running < 0) {\n            running = totals[c];\n            start = c;\n          } else\n            running += totals[c];\n          if (running > best) {\n            best = running;\n            answer = {best, top, start, bottom, c};\n          }\n        }\n      }\n    }\n    return answer;\n  }\n};\n",
+      "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/cpp/ctci6_17_24.cpp"
+      ],
+      "sourceSha256": {
+        "starter": "fa73067cacc37fb414ddcf6e9a8e645f925e43abcfe79f9c14676e657c561233",
+        "solution": "96720ed7278963db59a558782a697e3bfacb5ace6c828f7a19126cc6829e2c2f"
+      }
+    },
+    {
+      "problemId": "ctci6_17_24",
+      "language": "csharp",
+      "filename": "Solution.cs",
+      "signature": "int[] MaximumSubmatrix(int[][] matrix)",
+      "starterCode": "public class Solution\n{\n    public int[] MaximumSubmatrix(int[][] matrix)\n    {\n        return [];\n    }\n}\n",
+      "solutionCode": "public class Solution\n{\n    public int[] MaximumSubmatrix(int[][] matrix)\n    {\n        int rows = matrix.Length, columns = rows == 0 ? 0 : matrix[0].Length;\n        if (rows == 0 || columns == 0)\n            return [];\n        int best = -2147483648;\n        int[] answer = new int[5];\n        for (int top = 0; top < rows; ++top)\n        {\n            int[] totals = new int[columns];\n            for (int bottom = top; bottom < rows; ++bottom)\n            {\n                int running = 0, start = 0;\n                for (int c = 0; c < columns; ++c)\n                {\n                    totals[c] += matrix[bottom][c];\n                    if (running < 0)\n                    {\n                        running = totals[c];\n                        start = c;\n                    }\n                    else\n                        running += totals[c];\n                    if (running > best)\n                    {\n                        best = running;\n                        answer = [best, top, start, bottom, c];\n                    }\n                }\n            }\n        }\n        return answer;\n    }\n}\n",
+      "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/csharp/ctci6_17_24.cs"
+      ],
+      "sourceSha256": {
+        "starter": "1e7f7607857891eae76203880e23e532bd399e98d6338c780d69a3b60c5b5dcd",
+        "solution": "4f93d306c69859d2ac43a7637d07a8c3d2b95963971c7d06d32960bb78f23fb7"
+      }
+    },
+    {
+      "problemId": "ctci6_17_24",
+      "language": "java",
+      "filename": "Solution.java",
+      "signature": "int[] MaximumSubmatrix(int[][] matrix)",
+      "starterCode": "class Solution {\n  public int[] MaximumSubmatrix(int[][] matrix) {\n    return new int[0];\n  }\n}\n",
+      "solutionCode": "class Solution {\n  public int[] MaximumSubmatrix(int[][] matrix) {\n    int rows = matrix.length, columns = rows == 0 ? 0 : matrix[0].length;\n    if (rows == 0 || columns == 0)\n      return new int[0];\n    int best = -2147483648;\n    int[] answer = new int[5];\n    for (int top = 0; top < rows; ++top) {\n      int[] totals = new int[columns];\n      for (int bottom = top; bottom < rows; ++bottom) {\n        int running = 0, start = 0;\n        for (int c = 0; c < columns; ++c) {\n          totals[c] += matrix[bottom][c];\n          if (running < 0) {\n            running = totals[c];\n            start = c;\n          } else\n            running += totals[c];\n          if (running > best) {\n            best = running;\n            answer = new int[] {best, top, start, bottom, c};\n          }\n        }\n      }\n    }\n    return answer;\n  }\n}\n",
+      "prefix": "import java.util.*;\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/java/ctci6_17_24.java"
+      ],
+      "sourceSha256": {
+        "starter": "4d1b2b96056599567e5608fc4fdc06036f535700615f4039df0c02a8678eefab",
+        "solution": "94b26292fefe935a0dfa4e7d197518c3593bc3204c4dfc3bdaad7d96c8d93921"
+      }
+    },
+    {
+      "problemId": "ctci6_17_24",
+      "language": "javascript",
+      "filename": "solution.js",
+      "signature": "function MaximumSubmatrix(matrix)",
+      "starterCode": "function MaximumSubmatrix(matrix) {\n  return [];\n}\n",
+      "solutionCode": "function MaximumSubmatrix(matrix) {\n  const rows = matrix.length,\n    columns = rows ? matrix[0].length : 0;\n  if (!rows || !columns) return [];\n  let best = -2147483648,\n    answer = [];\n  for (let top = 0; top < rows; ++top) {\n    const totals = Array(columns).fill(0);\n    for (let bottom = top; bottom < rows; ++bottom) {\n      let running = 0,\n        start = 0;\n      for (let c = 0; c < columns; ++c) {\n        totals[c] += matrix[bottom][c];\n        if (running < 0) {\n          running = totals[c];\n          start = c;\n        } else running += totals[c];\n        if (running > best) {\n          best = running;\n          answer = [best, top, start, bottom, c];\n        }\n      }\n    }\n  }\n  return answer;\n}\n",
+      "prefix": "'use strict';\n",
+      "suffix": "\nmodule.exports = {MaximumSubmatrix};\n",
+      "references": [],
+      "visibleSymbols": [
+        "MaximumSubmatrix"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/javascript/ctci6_17_24.js"
+      ],
+      "sourceSha256": {
+        "starter": "5f8296ddf3bc41d0b9c746939d802fdd3f6d3ac217f05e73764c7ff6c56ffdbd",
+        "solution": "bfb972d925d62ff14c4223eb2f9291b258e95878cb67df9c6e13f4e04400ffd4"
+      }
+    },
+    {
+      "problemId": "ctci6_17_24",
+      "language": "python",
+      "filename": "solution.py",
+      "signature": "def MaximumSubmatrix(matrix: list[list[int]]) -> list[int]",
+      "starterCode": "def MaximumSubmatrix(matrix: list[list[int]]) -> list[int]:\n    return []\n",
+      "solutionCode": "def MaximumSubmatrix(matrix: list[list[int]]) -> list[int]:\n    rows = len(matrix)\n    columns = len(matrix[0]) if rows else 0\n    if not rows or not columns:\n        return []\n    best = -2147483648\n    answer = []\n    for top in range(rows):\n        totals = [0] * columns\n        for bottom in range(top, rows):\n            running = start = 0\n            for column in range(columns):\n                totals[column] += matrix[bottom][column]\n                if running < 0:\n                    running = totals[column]\n                    start = column\n                else:\n                    running += totals[column]\n                if running > best:\n                    best = running\n                    answer = [best, top, start, bottom, column]\n    return answer\n",
+      "prefix": "",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "MaximumSubmatrix"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/python/ctci6_17_24.py"
+      ],
+      "sourceSha256": {
+        "starter": "ea4e410b7347aee8f006dc11a9e9b4eed3c76cf6090f6152b3f1c989f6ce6ccb",
+        "solution": "543614fafb60577709791237563b90f0b914c3e725b9f0e7550b2ae54097d0d4"
+      }
+    },
+    {
+      "problemId": "ctci6_17_5",
+      "language": "cpp",
+      "filename": "solution.cpp",
+      "signature": "std::vector<int> LongestLettersDigits(const std::string& text)",
+      "starterCode": "class Solution {\n public:\n  std::vector<int> LongestLettersDigits(const std::string& text) {\n    return {};\n  }\n};\n",
+      "solutionCode": "class Solution {\n public:\n  std::vector<int> LongestLettersDigits(const std::string& text) {\n    int n = static_cast<int>(text.size());\n    std::vector<int> first(2 * n + 1, -2);\n    first[n] = -1;\n    int balance = 0, best = 0, start = -1, end = -1;\n    for (int i = 0; i < n; ++i) {\n      balance += (text[i] >= '0' && text[i] <= '9') ? -1 : 1;\n      int slot = balance + n;\n      if (first[slot] == -2)\n        first[slot] = i;\n      else if (i - first[slot] > best) {\n        best = i - first[slot];\n        start = first[slot] + 1;\n        end = i;\n      }\n    }\n    return {start, end};\n  }\n};\n",
+      "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/cpp/ctci6_17_5.cpp"
+      ],
+      "sourceSha256": {
+        "starter": "0a77cffbdec973be56b7b21a210daf541e84972083d6704a772cebab454092a5",
+        "solution": "5aa8fcc607a0538c274b008bb5fdb43c93b79b90d35c9c2aac6f41d57dc49b64"
+      }
+    },
+    {
+      "problemId": "ctci6_17_5",
+      "language": "csharp",
+      "filename": "Solution.cs",
+      "signature": "int[] LongestLettersDigits(string text)",
+      "starterCode": "public class Solution\n{\n    public int[] LongestLettersDigits(string text)\n    {\n        return [];\n    }\n}\n",
+      "solutionCode": "public class Solution\n{\n    public int[] LongestLettersDigits(string text)\n    {\n        int n = text.Length;\n        int[] first = new int[2 * n + 1];\n        Array.Fill(first, -2);\n        first[n] = -1;\n        int balance = 0, best = 0, start = -1, end = -1;\n        for (int i = 0; i < n; ++i)\n        {\n            balance += (text[i] >= '0' && text[i] <= '9') ? -1 : 1;\n            int slot = balance + n;\n            if (first[slot] == -2)\n                first[slot] = i;\n            else if (i - first[slot] > best)\n            {\n                best = i - first[slot];\n                start = first[slot] + 1;\n                end = i;\n            }\n        }\n        return [start, end];\n    }\n}\n",
+      "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/csharp/ctci6_17_5.cs"
+      ],
+      "sourceSha256": {
+        "starter": "a1aafdca319fabf81b6e2a8776ca74b5b245b2c39b65b30d150a841c89e74f22",
+        "solution": "28152eb3179ddd0127b957c2b3e04ba2a52844541fce860e388c50fd5ed435f3"
+      }
+    },
+    {
+      "problemId": "ctci6_17_5",
+      "language": "java",
+      "filename": "Solution.java",
+      "signature": "int[] LongestLettersDigits(String text)",
+      "starterCode": "class Solution {\n  public int[] LongestLettersDigits(String text) {\n    return new int[0];\n  }\n}\n",
+      "solutionCode": "class Solution {\n  public int[] LongestLettersDigits(String text) {\n    int n = text.length();\n    int[] first = new int[2 * n + 1];\n    Arrays.fill(first, -2);\n    first[n] = -1;\n    int balance = 0, best = 0, start = -1, end = -1;\n    for (int i = 0; i < n; ++i) {\n      balance += (text.charAt(i) >= '0' && text.charAt(i) <= '9') ? -1 : 1;\n      int slot = balance + n;\n      if (first[slot] == -2)\n        first[slot] = i;\n      else if (i - first[slot] > best) {\n        best = i - first[slot];\n        start = first[slot] + 1;\n        end = i;\n      }\n    }\n    return new int[] {start, end};\n  }\n}\n",
+      "prefix": "import java.util.*;\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/java/ctci6_17_5.java"
+      ],
+      "sourceSha256": {
+        "starter": "b4ccaecf8533b9b6f36d481afaefe06c121d822fb071882b2c46e312df7ed424",
+        "solution": "1a5e5795b1bba37842f0499bded3389bd7e4511a7db29cfd5d90406500cbbcc5"
+      }
+    },
+    {
+      "problemId": "ctci6_17_5",
+      "language": "javascript",
+      "filename": "solution.js",
+      "signature": "function LongestLettersDigits(text)",
+      "starterCode": "function LongestLettersDigits(text) {\n  return [];\n}\n",
+      "solutionCode": "function LongestLettersDigits(text) {\n  const n = text.length,\n    first = Array(2 * n + 1).fill(-2);\n  first[n] = -1;\n  let balance = 0,\n    best = 0,\n    start = -1,\n    end = -1;\n  for (let i = 0; i < n; ++i) {\n    balance += text[i] >= \"0\" && text[i] <= \"9\" ? -1 : 1;\n    const slot = balance + n;\n    if (first[slot] === -2) first[slot] = i;\n    else if (i - first[slot] > best) {\n      best = i - first[slot];\n      start = first[slot] + 1;\n      end = i;\n    }\n  }\n  return [start, end];\n}\n",
+      "prefix": "'use strict';\n",
+      "suffix": "\nmodule.exports = {LongestLettersDigits};\n",
+      "references": [],
+      "visibleSymbols": [
+        "LongestLettersDigits"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/javascript/ctci6_17_5.js"
+      ],
+      "sourceSha256": {
+        "starter": "300cac665ceedc9f0b6fc9d308cfba07e6054fe9d32ad858fbef76fe4ff3afbf",
+        "solution": "3192afed4a18b149e90300dd46a686dbfccf14a5735ac46b6c0fe44bde838aec"
+      }
+    },
+    {
+      "problemId": "ctci6_17_5",
+      "language": "python",
+      "filename": "solution.py",
+      "signature": "def LongestLettersDigits(text: str) -> list[int]",
+      "starterCode": "def LongestLettersDigits(text: str) -> list[int]:\n    return []\n",
+      "solutionCode": "def LongestLettersDigits(text: str) -> list[int]:\n    n = len(text)\n    first = [-2] * (2 * n + 1)\n    first[n] = -1\n    balance = best = 0\n    start = end = -1\n    for index, char in enumerate(text):\n        balance += -1 if \"0\" <= char <= \"9\" else 1\n        slot = balance + n\n        if first[slot] == -2:\n            first[slot] = index\n        elif index - first[slot] > best:\n            best = index - first[slot]\n            start, end = first[slot] + 1, index\n    return [start, end]\n",
+      "prefix": "",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "LongestLettersDigits"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/python/ctci6_17_5.py"
+      ],
+      "sourceSha256": {
+        "starter": "59498b89a2974be7e882f25f93d279f6be07fab7b1e870bcd133d3e1d740c416",
+        "solution": "62d57e6dbe50fdde0775ab2bfcb21a45826b823c25195e4505771ed9337b2a82"
       }
     },
     {

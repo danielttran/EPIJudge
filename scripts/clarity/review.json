@@ -9636,6 +9636,126 @@
         "ctci6/runtime/validation.json",
         "ctci6/cases/ctci6_17_21.json"
       ]
+    },
+    "ctci6_17_5": {
+      "collection": "ctci6",
+      "statementSha256": "f0337c4bf11fdbbf2f4a9d68ddd1cf8a263271a7266df04076871e5912dadeb8",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "inputDomain": "text is nonnull, has length 0..10000, and contains only a..z, A..Z and 0..9. Each letter or digit counts as one character; letter case and digit value do not change its category. Preserve the input. Return original-text indices, not a reordered selection or a count. Empty text and an all-letter/all-digit text return [-1,-1]. Punctuation and Unicode category classification are outside this shared ASCII domain.",
+        "outputAndTies": "Find the longest contiguous substring containing equally many ASCII letters and decimal digits. Return its inclusive zero-based endpoints [start,end]. If several longest substrings qualify, return the one with the smallest start. Return [-1,-1] when no nonempty balanced substring exists.",
+        "mutationAndIdentity": "The ASCII-only shared domain removes locale/Unicode category differences. All five map digits to -1 and letters to +1, seed zero balance at index -1, and retain only the earliest occurrence. Returned endpoints refer to original text. Exhaustive binary-category strings, mixed-case/digit strings, no-match inputs and 10000-character bounds agree with independent interval enumeration/batch-grouped balances.",
+        "boundaryBehavior": "Empty input and a single category. An optimum starting at zero, mixed letter cases, equal-length tied windows.",
+        "examples": "The independently checked displayed example and algorithm trace agree with the executed five-language bodies.",
+        "languageContracts": "{\"csharp\": \"Read exact bodies: AddWithoutArithmetic uses unsigned carry shifts and explicit unchecked signed conversions. CountDigitTwos uses long before multiplying place blocks. Array-return expressions match int[]; bounded sums and candidate products stay within int. All arrays supplied to algorithms remain unchanged. SmallestK reverses PriorityQueue priority with CompareTo and fills output backward. Prefix first-occurrence arrays use -2 as the unseen sentinel. Matrix runs use rectangular int tables; hash windows use Dictionary values counted before/after edge changes.\", \"javascript\": \"Read exact functions: addition relies on signed 32-bit bitwise coercion, while decimal division uses Math.floor. All ordinary counts/products are safely exact Numbers under shared bounds. Zero/one majority output is an Array; the rolling DP and water scan use local scalars and never rewrite input elements. SmallestK explicitly builds/repairs a local max heap then numerically sorts its k retained values. Its helper and mutation are inside the visible callable. Map keys remain integer Numbers; nested matrix rows use Array.from, avoiding shared-row aliasing.\", \"python\": \"Read exact functions: masked 32-bit addition terminates on negative inputs and complement reconstructs signed output without arithmetic. Majority verification uses a fresh scalar count, not a misleading sentinel. All collection results are concrete lists, and observation rejects bool-as-int. Recursion is absent in all six bodies. SmallestK has a language-specific heapq/negated-key explanation; no input-sized suffix slice is allocated. Matrix tables allocate distinct row lists, and nonempty Kadane restarts only after a negative running sum. Returned ranges are concrete integer lists.\", \"cpp\": \"Read exact C++17 methods: uint32_t carry shifts are defined; the visible <cstring> include supports memcpy of the final int32_t bits. Digit counting widens place arithmetic to int64_t. Const vector references preserve inputs; by-value returned vectors own optional majority results. All index arithmetic handles emptiness before access. The visible unordered_map include belongs to the covering-window callable, not a hidden helper. SmallestK uses standard heap algorithms on a k-sized vector; const inputs remain unchanged. Comparator decisions avoid subtraction of extreme signed values.\", \"java\": \"Read exact methods: int carry shifts deliberately discard overflow bits; digit counting uses long intermediates before the justified final cast. int[] and ArrayList-free optional results match signatures. Bit/loop state is per invocation, and bounded DP/water totals fit int; no static state or mutable input side effects. SmallestK uses Comparator.reverseOrder safely and fills int[] output backward. Prefix slots use Arrays.fill(-2); matrix tables allocate independent rows. Hash windows use boxed integer keys consistently with primitive input values.\"}",
+        "judgeAgreement": "The ASCII-only shared domain removes locale/Unicode category differences. All five map digits to -1 and letters to +1, seed zero balance at index -1, and retain only the earliest occurrence. Returned endpoints refer to original text. Exhaustive binary-category strings, mixed-case/digit strings, no-match inputs and 10000-character bounds agree with independent interval enumeration/batch-grouped balances."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_5.json"
+      ]
+    },
+    "ctci6_17_14": {
+      "collection": "ctci6",
+      "statementSha256": "a283da524dedf02d431756acd646a9ab71ada6f1a98d34be0e9e6b77f44aa538",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "inputDomain": "values contains 0..10000 signed 32-bit integers, and 0 <= k <= values.length. For k=0 return an empty integer collection. Signed endpoints and repeated equal values are admitted. Use an auxiliary max heap of at most k values rather than sorting or partitioning the input. Sorting the retained k result values is allowed. The ascending output order and the k=0 result are explicit bank conventions.",
+        "outputAndTies": "Return the k smallest input values in nondecreasing order, preserving duplicate occurrences. The output has exactly k elements. Do not change the input array or its order.",
+        "mutationAndIdentity": "All five implement the actual heap requirement, not sorting/partitioning the entire input. C#/Java reversed comparers avoid signed subtraction overflow; Python heapq uses exact negated keys; C++ standard max-heap algorithms update a copied k-vector; JavaScript implements downward repair locally. Selected-language WHY details explain these differences. Duplicate occurrences, k=0/all, signed endpoints and 10000 input elements are checked against independent sorting. Returned order is ascending and inputs remain unchanged.",
+        "boundaryBehavior": "k=0, k equal to input size, empty input. Repeated boundary values, negative values, and signed extremes without comparator-subtraction overflow.",
+        "examples": "The independently checked displayed example and algorithm trace agree with the executed five-language bodies.",
+        "languageContracts": "{\"csharp\": \"Read exact bodies: AddWithoutArithmetic uses unsigned carry shifts and explicit unchecked signed conversions. CountDigitTwos uses long before multiplying place blocks. Array-return expressions match int[]; bounded sums and candidate products stay within int. All arrays supplied to algorithms remain unchanged. SmallestK reverses PriorityQueue priority with CompareTo and fills output backward. Prefix first-occurrence arrays use -2 as the unseen sentinel. Matrix runs use rectangular int tables; hash windows use Dictionary values counted before/after edge changes.\", \"javascript\": \"Read exact functions: addition relies on signed 32-bit bitwise coercion, while decimal division uses Math.floor. All ordinary counts/products are safely exact Numbers under shared bounds. Zero/one majority output is an Array; the rolling DP and water scan use local scalars and never rewrite input elements. SmallestK explicitly builds/repairs a local max heap then numerically sorts its k retained values. Its helper and mutation are inside the visible callable. Map keys remain integer Numbers; nested matrix rows use Array.from, avoiding shared-row aliasing.\", \"python\": \"Read exact functions: masked 32-bit addition terminates on negative inputs and complement reconstructs signed output without arithmetic. Majority verification uses a fresh scalar count, not a misleading sentinel. All collection results are concrete lists, and observation rejects bool-as-int. Recursion is absent in all six bodies. SmallestK has a language-specific heapq/negated-key explanation; no input-sized suffix slice is allocated. Matrix tables allocate distinct row lists, and nonempty Kadane restarts only after a negative running sum. Returned ranges are concrete integer lists.\", \"cpp\": \"Read exact C++17 methods: uint32_t carry shifts are defined; the visible <cstring> include supports memcpy of the final int32_t bits. Digit counting widens place arithmetic to int64_t. Const vector references preserve inputs; by-value returned vectors own optional majority results. All index arithmetic handles emptiness before access. The visible unordered_map include belongs to the covering-window callable, not a hidden helper. SmallestK uses standard heap algorithms on a k-sized vector; const inputs remain unchanged. Comparator decisions avoid subtraction of extreme signed values.\", \"java\": \"Read exact methods: int carry shifts deliberately discard overflow bits; digit counting uses long intermediates before the justified final cast. int[] and ArrayList-free optional results match signatures. Bit/loop state is per invocation, and bounded DP/water totals fit int; no static state or mutable input side effects. SmallestK uses Comparator.reverseOrder safely and fills int[] output backward. Prefix slots use Arrays.fill(-2); matrix tables allocate independent rows. Hash windows use boxed integer keys consistently with primitive input values.\"}",
+        "judgeAgreement": "All five implement the actual heap requirement, not sorting/partitioning the entire input. C#/Java reversed comparers avoid signed subtraction overflow; Python heapq uses exact negated keys; C++ standard max-heap algorithms update a copied k-vector; JavaScript implements downward repair locally. Selected-language WHY details explain these differences. Duplicate occurrences, k=0/all, signed endpoints and 10000 input elements are checked against independent sorting. Returned order is ascending and inputs remain unchanged."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_14.json"
+      ]
+    },
+    "ctci6_17_18": {
+      "collection": "ctci6",
+      "statementSha256": "31ed46b02d9f73bcc2df542a38b76e87f02fea92f69db6983f9661f257e649a7",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "inputDomain": "big contains 0..10000 signed 32-bit integers. small contains 0..100 distinct signed 32-bit integers; its entries are a set of required values, not a required sequence. Preserve both arrays and their order. Repeated occurrences in big do not require extra matches. An empty target needs no nonempty window and uses [-1,-1] as its explicit representation. A missing target value yields [-1,-1] as well.",
+        "outputAndTies": "Return inclusive zero-based endpoints [start,end] of the shortest contiguous subarray of big containing every value from small at least once. The values of small may appear in any order inside the subarray. Break equal-length ties by the smallest start. Return [-1,-1] if no such subarray exists or small is empty.",
+        "mutationAndIdentity": "The shorter array is a distinct required set; order inside the big window is irrelevant. All five dictionary implementations ignore unneeded values, track redundant occurrences and shrink until one required value disappears. Empty target and absence use the explicit [-1,-1] convention. Strictly shorter updates retain earliest ties. Independent brute windows/next-occurrence closure checks cover all small ternary big arrays, target subsets, signed extremes and 10000-element boundaries.",
+        "boundaryBehavior": "Empty target, empty big array, missing target value. Target values in a different order, redundant occurrences, and equal-length ties.",
+        "examples": "The independently checked displayed example and algorithm trace agree with the executed five-language bodies.",
+        "languageContracts": "{\"csharp\": \"Read exact bodies: AddWithoutArithmetic uses unsigned carry shifts and explicit unchecked signed conversions. CountDigitTwos uses long before multiplying place blocks. Array-return expressions match int[]; bounded sums and candidate products stay within int. All arrays supplied to algorithms remain unchanged. SmallestK reverses PriorityQueue priority with CompareTo and fills output backward. Prefix first-occurrence arrays use -2 as the unseen sentinel. Matrix runs use rectangular int tables; hash windows use Dictionary values counted before/after edge changes.\", \"javascript\": \"Read exact functions: addition relies on signed 32-bit bitwise coercion, while decimal division uses Math.floor. All ordinary counts/products are safely exact Numbers under shared bounds. Zero/one majority output is an Array; the rolling DP and water scan use local scalars and never rewrite input elements. SmallestK explicitly builds/repairs a local max heap then numerically sorts its k retained values. Its helper and mutation are inside the visible callable. Map keys remain integer Numbers; nested matrix rows use Array.from, avoiding shared-row aliasing.\", \"python\": \"Read exact functions: masked 32-bit addition terminates on negative inputs and complement reconstructs signed output without arithmetic. Majority verification uses a fresh scalar count, not a misleading sentinel. All collection results are concrete lists, and observation rejects bool-as-int. Recursion is absent in all six bodies. SmallestK has a language-specific heapq/negated-key explanation; no input-sized suffix slice is allocated. Matrix tables allocate distinct row lists, and nonempty Kadane restarts only after a negative running sum. Returned ranges are concrete integer lists.\", \"cpp\": \"Read exact C++17 methods: uint32_t carry shifts are defined; the visible <cstring> include supports memcpy of the final int32_t bits. Digit counting widens place arithmetic to int64_t. Const vector references preserve inputs; by-value returned vectors own optional majority results. All index arithmetic handles emptiness before access. The visible unordered_map include belongs to the covering-window callable, not a hidden helper. SmallestK uses standard heap algorithms on a k-sized vector; const inputs remain unchanged. Comparator decisions avoid subtraction of extreme signed values.\", \"java\": \"Read exact methods: int carry shifts deliberately discard overflow bits; digit counting uses long intermediates before the justified final cast. int[] and ArrayList-free optional results match signatures. Bit/loop state is per invocation, and bounded DP/water totals fit int; no static state or mutable input side effects. SmallestK uses Comparator.reverseOrder safely and fills int[] output backward. Prefix slots use Arrays.fill(-2); matrix tables allocate independent rows. Hash windows use boxed integer keys consistently with primitive input values.\"}",
+        "judgeAgreement": "The shorter array is a distinct required set; order inside the big window is irrelevant. All five dictionary implementations ignore unneeded values, track redundant occurrences and shrink until one required value disappears. Empty target and absence use the explicit [-1,-1] convention. Strictly shorter updates retain earliest ties. Independent brute windows/next-occurrence closure checks cover all small ternary big arrays, target subsets, signed extremes and 10000-element boundaries."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_18.json"
+      ]
+    },
+    "ctci6_17_19": {
+      "collection": "ctci6",
+      "statementSha256": "1b9a8682925274295ae7b5c7c49f71f179ce0a2d0adfcac4b72b14f878de4150",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "inputDomain": "2 <= n <= 100000. Input entries are distinct, lie in 1..n and omit exactly two values. No duplicates or out-of-range entries are admitted. For an empty input n=2 and the answer is [1,2]. Use O(1) auxiliary storage besides the two returned values. Do not sort or allocate a presence table proportional to n. Increasing result order is an explicit deterministic convention.",
+        "outputAndTies": "The input contains all integers from 1 through n except two distinct missing values, in arbitrary order, with n=values.length+2. Return the two missing values in increasing order without modifying the input.",
+        "mutationAndIdentity": "All languages infer n=input.length+2 and use scalar accumulators rather than a presence table or sorting. The combined XOR is nonzero because missing values are distinct. The n<=100000 bound makes low-bit isolation and all loop increments signed-safe. Independent set difference tests every small missing pair, shuffled input and three maximum-sized ranges. No sum-of-squares precision/overflow assumption remains.",
+        "boundaryBehavior": "Empty input, missing endpoints, arbitrary input order. The largest n; arithmetic square-sum formulas would exceed ordinary int bounds.",
+        "examples": "The independently checked displayed example and algorithm trace agree with the executed five-language bodies.",
+        "languageContracts": "{\"csharp\": \"Read exact bodies: AddWithoutArithmetic uses unsigned carry shifts and explicit unchecked signed conversions. CountDigitTwos uses long before multiplying place blocks. Array-return expressions match int[]; bounded sums and candidate products stay within int. All arrays supplied to algorithms remain unchanged. SmallestK reverses PriorityQueue priority with CompareTo and fills output backward. Prefix first-occurrence arrays use -2 as the unseen sentinel. Matrix runs use rectangular int tables; hash windows use Dictionary values counted before/after edge changes.\", \"javascript\": \"Read exact functions: addition relies on signed 32-bit bitwise coercion, while decimal division uses Math.floor. All ordinary counts/products are safely exact Numbers under shared bounds. Zero/one majority output is an Array; the rolling DP and water scan use local scalars and never rewrite input elements. SmallestK explicitly builds/repairs a local max heap then numerically sorts its k retained values. Its helper and mutation are inside the visible callable. Map keys remain integer Numbers; nested matrix rows use Array.from, avoiding shared-row aliasing.\", \"python\": \"Read exact functions: masked 32-bit addition terminates on negative inputs and complement reconstructs signed output without arithmetic. Majority verification uses a fresh scalar count, not a misleading sentinel. All collection results are concrete lists, and observation rejects bool-as-int. Recursion is absent in all six bodies. SmallestK has a language-specific heapq/negated-key explanation; no input-sized suffix slice is allocated. Matrix tables allocate distinct row lists, and nonempty Kadane restarts only after a negative running sum. Returned ranges are concrete integer lists.\", \"cpp\": \"Read exact C++17 methods: uint32_t carry shifts are defined; the visible <cstring> include supports memcpy of the final int32_t bits. Digit counting widens place arithmetic to int64_t. Const vector references preserve inputs; by-value returned vectors own optional majority results. All index arithmetic handles emptiness before access. The visible unordered_map include belongs to the covering-window callable, not a hidden helper. SmallestK uses standard heap algorithms on a k-sized vector; const inputs remain unchanged. Comparator decisions avoid subtraction of extreme signed values.\", \"java\": \"Read exact methods: int carry shifts deliberately discard overflow bits; digit counting uses long intermediates before the justified final cast. int[] and ArrayList-free optional results match signatures. Bit/loop state is per invocation, and bounded DP/water totals fit int; no static state or mutable input side effects. SmallestK uses Comparator.reverseOrder safely and fills int[] output backward. Prefix slots use Arrays.fill(-2); matrix tables allocate independent rows. Hash windows use boxed integer keys consistently with primitive input values.\"}",
+        "judgeAgreement": "All languages infer n=input.length+2 and use scalar accumulators rather than a presence table or sorting. The combined XOR is nonzero because missing values are distinct. The n<=100000 bound makes low-bit isolation and all loop increments signed-safe. Independent set difference tests every small missing pair, shuffled input and three maximum-sized ranges. No sum-of-squares precision/overflow assumption remains."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_19.json"
+      ]
+    },
+    "ctci6_17_23": {
+      "collection": "ctci6",
+      "statementSha256": "b3272eb65838574ab248ea52904654438cc1f9b35d5ddcf8e0b433609eb2983b",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "inputDomain": "matrix is nonnull and square with size 0..40 and entries only 0 or 1. An empty matrix has no square. A single black cell is a valid side-one square. Preserve the outer array, every row object and every cell value. Check all four full edges, not just corners or the main diagonal. The result describes original coordinates.",
+        "outputAndTies": "Find the largest square submatrix whose entire border is black. Encode black as 0 and white as 1. Interior cells need not be black. Return [topRow,leftColumn,sideLength], using zero-based coordinates, or [] if no black cell exists. Among equal largest squares choose the smallest top row, then smallest left column.",
+        "mutationAndIdentity": "Black is explicitly zero, interior cells are unrestricted, and tie order is deterministic. C# rectangular and other languages nested tables hold run lengths; input matrix rows/content remain original. Independent literal border scans check all binary matrices through size three, 40x40 solid/hollow/white bounds and random squares. Broken edges with black corners fail; a white interior remains valid. O(n^3) candidates and O(n^2) storage match actual bodies.",
+        "boundaryBehavior": "Empty and all-white input; one black cell. A hollow black border, a broken edge with black corners, and tied largest squares.",
+        "examples": "The independently checked displayed example and algorithm trace agree with the executed five-language bodies.",
+        "languageContracts": "{\"csharp\": \"Read exact bodies: AddWithoutArithmetic uses unsigned carry shifts and explicit unchecked signed conversions. CountDigitTwos uses long before multiplying place blocks. Array-return expressions match int[]; bounded sums and candidate products stay within int. All arrays supplied to algorithms remain unchanged. SmallestK reverses PriorityQueue priority with CompareTo and fills output backward. Prefix first-occurrence arrays use -2 as the unseen sentinel. Matrix runs use rectangular int tables; hash windows use Dictionary values counted before/after edge changes.\", \"javascript\": \"Read exact functions: addition relies on signed 32-bit bitwise coercion, while decimal division uses Math.floor. All ordinary counts/products are safely exact Numbers under shared bounds. Zero/one majority output is an Array; the rolling DP and water scan use local scalars and never rewrite input elements. SmallestK explicitly builds/repairs a local max heap then numerically sorts its k retained values. Its helper and mutation are inside the visible callable. Map keys remain integer Numbers; nested matrix rows use Array.from, avoiding shared-row aliasing.\", \"python\": \"Read exact functions: masked 32-bit addition terminates on negative inputs and complement reconstructs signed output without arithmetic. Majority verification uses a fresh scalar count, not a misleading sentinel. All collection results are concrete lists, and observation rejects bool-as-int. Recursion is absent in all six bodies. SmallestK has a language-specific heapq/negated-key explanation; no input-sized suffix slice is allocated. Matrix tables allocate distinct row lists, and nonempty Kadane restarts only after a negative running sum. Returned ranges are concrete integer lists.\", \"cpp\": \"Read exact C++17 methods: uint32_t carry shifts are defined; the visible <cstring> include supports memcpy of the final int32_t bits. Digit counting widens place arithmetic to int64_t. Const vector references preserve inputs; by-value returned vectors own optional majority results. All index arithmetic handles emptiness before access. The visible unordered_map include belongs to the covering-window callable, not a hidden helper. SmallestK uses standard heap algorithms on a k-sized vector; const inputs remain unchanged. Comparator decisions avoid subtraction of extreme signed values.\", \"java\": \"Read exact methods: int carry shifts deliberately discard overflow bits; digit counting uses long intermediates before the justified final cast. int[] and ArrayList-free optional results match signatures. Bit/loop state is per invocation, and bounded DP/water totals fit int; no static state or mutable input side effects. SmallestK uses Comparator.reverseOrder safely and fills int[] output backward. Prefix slots use Arrays.fill(-2); matrix tables allocate independent rows. Hash windows use boxed integer keys consistently with primitive input values.\"}",
+        "judgeAgreement": "Black is explicitly zero, interior cells are unrestricted, and tie order is deterministic. C# rectangular and other languages nested tables hold run lengths; input matrix rows/content remain original. Independent literal border scans check all binary matrices through size three, 40x40 solid/hollow/white bounds and random squares. Broken edges with black corners fail; a white interior remains valid. O(n^3) candidates and O(n^2) storage match actual bodies."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_23.json"
+      ]
+    },
+    "ctci6_17_24": {
+      "collection": "ctci6",
+      "statementSha256": "1d38a033ee8301b890480197b615be2e4be581f74f2866c313e315d70f00df92",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "inputDomain": "matrix is nonnull and rectangular, with 0..30 rows and 0..30 columns. Entries are integers in -1000000..1000000, so every rectangle sum fits signed 32-bit range. Preserve outer/row identities, dimensions and values. For a nonempty matrix the selected rectangle must be nonempty, even if every entry is negative. Sum all cells in one rectangle; do not choose disconnected positive entries. Return coordinates as well as the sum.",
+        "outputAndTies": "Find a nonempty rectangular submatrix with greatest sum and return [sum,top,left,bottom,right], with all bounds zero-based and inclusive. For ties prefer smaller top, then smaller bottom, then smaller left, then smaller right. If either input dimension is empty, return [].",
+        "mutationAndIdentity": "All five keep actual sum and inclusive coordinates. Negative running sums restart; zero running sums retain an earlier left endpoint. Strict best updates plus top/bottom traversal preserve the explicitly stated tie priority. An initial signed-minimum best cannot admit a fake empty zero rectangle. Independent 2D-prefix enumeration tests all small signed rectangular inputs, all-negative/zero cases and 30x30 signed bounds. O(rows^2*columns) time and O(columns) auxiliary space match each body.",
+        "boundaryBehavior": "Empty dimensions, a single negative cell, all-negative matrices. The entire matrix, a strict interior optimum, and ties under the stated top/bottom/left/right priority.",
+        "examples": "The independently checked displayed example and algorithm trace agree with the executed five-language bodies.",
+        "languageContracts": "{\"csharp\": \"Read exact bodies: AddWithoutArithmetic uses unsigned carry shifts and explicit unchecked signed conversions. CountDigitTwos uses long before multiplying place blocks. Array-return expressions match int[]; bounded sums and candidate products stay within int. All arrays supplied to algorithms remain unchanged. SmallestK reverses PriorityQueue priority with CompareTo and fills output backward. Prefix first-occurrence arrays use -2 as the unseen sentinel. Matrix runs use rectangular int tables; hash windows use Dictionary values counted before/after edge changes.\", \"javascript\": \"Read exact functions: addition relies on signed 32-bit bitwise coercion, while decimal division uses Math.floor. All ordinary counts/products are safely exact Numbers under shared bounds. Zero/one majority output is an Array; the rolling DP and water scan use local scalars and never rewrite input elements. SmallestK explicitly builds/repairs a local max heap then numerically sorts its k retained values. Its helper and mutation are inside the visible callable. Map keys remain integer Numbers; nested matrix rows use Array.from, avoiding shared-row aliasing.\", \"python\": \"Read exact functions: masked 32-bit addition terminates on negative inputs and complement reconstructs signed output without arithmetic. Majority verification uses a fresh scalar count, not a misleading sentinel. All collection results are concrete lists, and observation rejects bool-as-int. Recursion is absent in all six bodies. SmallestK has a language-specific heapq/negated-key explanation; no input-sized suffix slice is allocated. Matrix tables allocate distinct row lists, and nonempty Kadane restarts only after a negative running sum. Returned ranges are concrete integer lists.\", \"cpp\": \"Read exact C++17 methods: uint32_t carry shifts are defined; the visible <cstring> include supports memcpy of the final int32_t bits. Digit counting widens place arithmetic to int64_t. Const vector references preserve inputs; by-value returned vectors own optional majority results. All index arithmetic handles emptiness before access. The visible unordered_map include belongs to the covering-window callable, not a hidden helper. SmallestK uses standard heap algorithms on a k-sized vector; const inputs remain unchanged. Comparator decisions avoid subtraction of extreme signed values.\", \"java\": \"Read exact methods: int carry shifts deliberately discard overflow bits; digit counting uses long intermediates before the justified final cast. int[] and ArrayList-free optional results match signatures. Bit/loop state is per invocation, and bounded DP/water totals fit int; no static state or mutable input side effects. SmallestK uses Comparator.reverseOrder safely and fills int[] output backward. Prefix slots use Arrays.fill(-2); matrix tables allocate independent rows. Hash windows use boxed integer keys consistently with primitive input values.\"}",
+        "judgeAgreement": "All five keep actual sum and inclusive coordinates. Negative running sums restart; zero running sums retain an earlier left endpoint. Strict best updates plus top/bottom traversal preserve the explicitly stated tie priority. An initial signed-minimum best cannot admit a fake empty zero rectangle. Independent 2D-prefix enumeration tests all small signed rectangular inputs, all-negative/zero cases and 30x30 signed bounds. O(rows^2*columns) time and O(columns) auxiliary space match each body."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_24.json"
+      ]
     }
   },
   "solutions": {
@@ -55886,6 +56006,696 @@
         "ctci6/cases/ctci6_17_21.json",
         "solutions/java/ctci6_17_21.java",
         "solutions/notes/java/ctci6_17_21.json"
+      ]
+    },
+    "ctci6_17_5/csharp": {
+      "codePath": "solutions/csharp/ctci6_17_5.cs",
+      "notesPath": "solutions/notes/ctci6_17_5.json",
+      "contentSha256": "4ec1a852e377aa9e5fc322951d63886428f3b9427e9970e73cb6632a183ac2a3",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "Dense first-prefix-balance table finds the longest equal letter/digit interval and keeps the earliest tie.",
+        "correctness": "The difference of two prefix balances is the letter count minus digit count in the enclosed substring, so equality is equivalent to balance. At each end position, pairing with the earliest prior equal balance gives the longest balanced substring ending there. Every possible end is examined, so the longest of these candidates is globally optimal. End positions increase; keeping the first equal-length optimum also keeps the smallest start. Initial balance zero at prefix index -1 admits intervals starting at zero. No repeated balance means no qualifying nonempty interval.",
+        "workedTrace": "For A1B2C the successive balances after each character are 1,0,1,0,1. Balance zero at index 3 matches the initial zero at -1, giving [0,3] (A1B2), length four. Balance one at index 4 gives [1,4], also length four; the earlier start wins.",
+        "edgeCases": "Empty input and a single category. An optimum starting at zero, mixed letter cases, equal-length tied windows.",
+        "timeDerivation": "O(n) time to scan characters and initialize the 2n+1 balance slots.",
+        "spaceDerivation": "O(n) auxiliary first-occurrence slots, plus two returned indices.",
+        "callableAgreement": "The ASCII-only shared domain removes locale/Unicode category differences. All five map digits to -1 and letters to +1, seed zero balance at index -1, and retain only the earliest occurrence. Returned endpoints refer to original text. Exhaustive binary-category strings, mixed-case/digit strings, no-match inputs and 10000-character bounds agree with independent interval enumeration/batch-grouped balances. Read exact bodies: AddWithoutArithmetic uses unsigned carry shifts and explicit unchecked signed conversions. CountDigitTwos uses long before multiplying place blocks. Array-return expressions match int[]; bounded sums and candidate products stay within int. All arrays supplied to algorithms remain unchanged. SmallestK reverses PriorityQueue priority with CompareTo and fills output backward. Prefix first-occurrence arrays use -2 as the unseen sentinel. Matrix runs use rectangular int tables; hash windows use Dictionary values counted before/after edge changes."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_5.json",
+        "solutions/csharp/ctci6_17_5.cs",
+        "solutions/notes/ctci6_17_5.json"
+      ]
+    },
+    "ctci6_17_5/javascript": {
+      "codePath": "solutions/javascript/ctci6_17_5.js",
+      "notesPath": "solutions/notes/javascript/ctci6_17_5.json",
+      "contentSha256": "1c695a4a4794a3127efd63b5ce104c1fb65626bcb807f2b752289e66cce00fd3",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "Dense first-prefix-balance table finds the longest equal letter/digit interval and keeps the earliest tie.",
+        "correctness": "The difference of two prefix balances is the letter count minus digit count in the enclosed substring, so equality is equivalent to balance. At each end position, pairing with the earliest prior equal balance gives the longest balanced substring ending there. Every possible end is examined, so the longest of these candidates is globally optimal. End positions increase; keeping the first equal-length optimum also keeps the smallest start. Initial balance zero at prefix index -1 admits intervals starting at zero. No repeated balance means no qualifying nonempty interval.",
+        "workedTrace": "For A1B2C the successive balances after each character are 1,0,1,0,1. Balance zero at index 3 matches the initial zero at -1, giving [0,3] (A1B2), length four. Balance one at index 4 gives [1,4], also length four; the earlier start wins.",
+        "edgeCases": "Empty input and a single category. An optimum starting at zero, mixed letter cases, equal-length tied windows.",
+        "timeDerivation": "O(n) time to scan characters and initialize the 2n+1 balance slots.",
+        "spaceDerivation": "O(n) auxiliary first-occurrence slots, plus two returned indices.",
+        "callableAgreement": "The ASCII-only shared domain removes locale/Unicode category differences. All five map digits to -1 and letters to +1, seed zero balance at index -1, and retain only the earliest occurrence. Returned endpoints refer to original text. Exhaustive binary-category strings, mixed-case/digit strings, no-match inputs and 10000-character bounds agree with independent interval enumeration/batch-grouped balances. Read exact functions: addition relies on signed 32-bit bitwise coercion, while decimal division uses Math.floor. All ordinary counts/products are safely exact Numbers under shared bounds. Zero/one majority output is an Array; the rolling DP and water scan use local scalars and never rewrite input elements. SmallestK explicitly builds/repairs a local max heap then numerically sorts its k retained values. Its helper and mutation are inside the visible callable. Map keys remain integer Numbers; nested matrix rows use Array.from, avoiding shared-row aliasing."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_5.json",
+        "solutions/javascript/ctci6_17_5.js",
+        "solutions/notes/javascript/ctci6_17_5.json"
+      ]
+    },
+    "ctci6_17_5/python": {
+      "codePath": "solutions/python/ctci6_17_5.py",
+      "notesPath": "solutions/notes/python/ctci6_17_5.json",
+      "contentSha256": "928fbd5f2eeb1f486028c433612cedcee10cfe46eff3ed5fe59a2b99658d42cc",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "Dense first-prefix-balance table finds the longest equal letter/digit interval and keeps the earliest tie.",
+        "correctness": "The difference of two prefix balances is the letter count minus digit count in the enclosed substring, so equality is equivalent to balance. At each end position, pairing with the earliest prior equal balance gives the longest balanced substring ending there. Every possible end is examined, so the longest of these candidates is globally optimal. End positions increase; keeping the first equal-length optimum also keeps the smallest start. Initial balance zero at prefix index -1 admits intervals starting at zero. No repeated balance means no qualifying nonempty interval.",
+        "workedTrace": "For A1B2C the successive balances after each character are 1,0,1,0,1. Balance zero at index 3 matches the initial zero at -1, giving [0,3] (A1B2), length four. Balance one at index 4 gives [1,4], also length four; the earlier start wins.",
+        "edgeCases": "Empty input and a single category. An optimum starting at zero, mixed letter cases, equal-length tied windows.",
+        "timeDerivation": "O(n) time to scan characters and initialize the 2n+1 balance slots.",
+        "spaceDerivation": "O(n) auxiliary first-occurrence slots, plus two returned indices.",
+        "callableAgreement": "The ASCII-only shared domain removes locale/Unicode category differences. All five map digits to -1 and letters to +1, seed zero balance at index -1, and retain only the earliest occurrence. Returned endpoints refer to original text. Exhaustive binary-category strings, mixed-case/digit strings, no-match inputs and 10000-character bounds agree with independent interval enumeration/batch-grouped balances. Read exact functions: masked 32-bit addition terminates on negative inputs and complement reconstructs signed output without arithmetic. Majority verification uses a fresh scalar count, not a misleading sentinel. All collection results are concrete lists, and observation rejects bool-as-int. Recursion is absent in all six bodies. SmallestK has a language-specific heapq/negated-key explanation; no input-sized suffix slice is allocated. Matrix tables allocate distinct row lists, and nonempty Kadane restarts only after a negative running sum. Returned ranges are concrete integer lists."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_5.json",
+        "solutions/python/ctci6_17_5.py",
+        "solutions/notes/python/ctci6_17_5.json"
+      ]
+    },
+    "ctci6_17_5/cpp": {
+      "codePath": "solutions/cpp/ctci6_17_5.cpp",
+      "notesPath": "solutions/notes/cpp/ctci6_17_5.json",
+      "contentSha256": "e312a4daebdf77700a5b6e157a23a2cb12cb0ede538015fc14d10f3965750ca9",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "Dense first-prefix-balance table finds the longest equal letter/digit interval and keeps the earliest tie.",
+        "correctness": "The difference of two prefix balances is the letter count minus digit count in the enclosed substring, so equality is equivalent to balance. At each end position, pairing with the earliest prior equal balance gives the longest balanced substring ending there. Every possible end is examined, so the longest of these candidates is globally optimal. End positions increase; keeping the first equal-length optimum also keeps the smallest start. Initial balance zero at prefix index -1 admits intervals starting at zero. No repeated balance means no qualifying nonempty interval.",
+        "workedTrace": "For A1B2C the successive balances after each character are 1,0,1,0,1. Balance zero at index 3 matches the initial zero at -1, giving [0,3] (A1B2), length four. Balance one at index 4 gives [1,4], also length four; the earlier start wins.",
+        "edgeCases": "Empty input and a single category. An optimum starting at zero, mixed letter cases, equal-length tied windows.",
+        "timeDerivation": "O(n) time to scan characters and initialize the 2n+1 balance slots.",
+        "spaceDerivation": "O(n) auxiliary first-occurrence slots, plus two returned indices.",
+        "callableAgreement": "The ASCII-only shared domain removes locale/Unicode category differences. All five map digits to -1 and letters to +1, seed zero balance at index -1, and retain only the earliest occurrence. Returned endpoints refer to original text. Exhaustive binary-category strings, mixed-case/digit strings, no-match inputs and 10000-character bounds agree with independent interval enumeration/batch-grouped balances. Read exact C++17 methods: uint32_t carry shifts are defined; the visible <cstring> include supports memcpy of the final int32_t bits. Digit counting widens place arithmetic to int64_t. Const vector references preserve inputs; by-value returned vectors own optional majority results. All index arithmetic handles emptiness before access. The visible unordered_map include belongs to the covering-window callable, not a hidden helper. SmallestK uses standard heap algorithms on a k-sized vector; const inputs remain unchanged. Comparator decisions avoid subtraction of extreme signed values."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_5.json",
+        "solutions/cpp/ctci6_17_5.cpp",
+        "solutions/notes/cpp/ctci6_17_5.json"
+      ]
+    },
+    "ctci6_17_5/java": {
+      "codePath": "solutions/java/ctci6_17_5.java",
+      "notesPath": "solutions/notes/java/ctci6_17_5.json",
+      "contentSha256": "d8e5e0aec57a6e024abe7a5db01e36e325761f4042ae257997257243da842237",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "Dense first-prefix-balance table finds the longest equal letter/digit interval and keeps the earliest tie.",
+        "correctness": "The difference of two prefix balances is the letter count minus digit count in the enclosed substring, so equality is equivalent to balance. At each end position, pairing with the earliest prior equal balance gives the longest balanced substring ending there. Every possible end is examined, so the longest of these candidates is globally optimal. End positions increase; keeping the first equal-length optimum also keeps the smallest start. Initial balance zero at prefix index -1 admits intervals starting at zero. No repeated balance means no qualifying nonempty interval.",
+        "workedTrace": "For A1B2C the successive balances after each character are 1,0,1,0,1. Balance zero at index 3 matches the initial zero at -1, giving [0,3] (A1B2), length four. Balance one at index 4 gives [1,4], also length four; the earlier start wins.",
+        "edgeCases": "Empty input and a single category. An optimum starting at zero, mixed letter cases, equal-length tied windows.",
+        "timeDerivation": "O(n) time to scan characters and initialize the 2n+1 balance slots.",
+        "spaceDerivation": "O(n) auxiliary first-occurrence slots, plus two returned indices.",
+        "callableAgreement": "The ASCII-only shared domain removes locale/Unicode category differences. All five map digits to -1 and letters to +1, seed zero balance at index -1, and retain only the earliest occurrence. Returned endpoints refer to original text. Exhaustive binary-category strings, mixed-case/digit strings, no-match inputs and 10000-character bounds agree with independent interval enumeration/batch-grouped balances. Read exact methods: int carry shifts deliberately discard overflow bits; digit counting uses long intermediates before the justified final cast. int[] and ArrayList-free optional results match signatures. Bit/loop state is per invocation, and bounded DP/water totals fit int; no static state or mutable input side effects. SmallestK uses Comparator.reverseOrder safely and fills int[] output backward. Prefix slots use Arrays.fill(-2); matrix tables allocate independent rows. Hash windows use boxed integer keys consistently with primitive input values."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_5.json",
+        "solutions/java/ctci6_17_5.java",
+        "solutions/notes/java/ctci6_17_5.json"
+      ]
+    },
+    "ctci6_17_14/csharp": {
+      "codePath": "solutions/csharp/ctci6_17_14.cs",
+      "notesPath": "solutions/notes/ctci6_17_14.json",
+      "contentSha256": "8233fe45bf2f2ec806b228cc71d6a646f25eb321bbf6e9f6cc12ee0e5fa67e85",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "Retain a logical max heap of k smallest occurrences and return its ordered values.",
+        "correctness": "After the first k values, the heap contains exactly their k-smallest multiset. Inductively, a new value no smaller than the root leaves that multiset optimal; a smaller value replaces one largest retained occurrence, yielding precisely the k smallest values of the extended prefix. Equal values are ordinary separate occurrences and are neither deduplicated nor overcounted. At the end the retained multiset is the required answer, and output ordering changes only its order. The zero-k branch returns before accessing a heap root.",
+        "workedTrace": "For [5,1,5,-2,3] and k=3, the initial heap retains [5,1,5]. Reading -2 displaces one 5; reading 3 displaces the remaining 5. The retained values are -2,1,3, returned in that order. For k=4, one 5 must remain: duplicates are not a set.",
+        "edgeCases": "k=0, k equal to input size, empty input. Repeated boundary values, negative values, and signed extremes without comparator-subtraction overflow.",
+        "timeDerivation": "O(n*log(k+1) + k*log(k+1)) time including heap updates and ordered output; k=0 takes O(1).",
+        "spaceDerivation": "O(k) heap/result storage and no input-sized copy when k is small.",
+        "callableAgreement": "All five implement the actual heap requirement, not sorting/partitioning the entire input. C#/Java reversed comparers avoid signed subtraction overflow; Python heapq uses exact negated keys; C++ standard max-heap algorithms update a copied k-vector; JavaScript implements downward repair locally. Selected-language WHY details explain these differences. Duplicate occurrences, k=0/all, signed endpoints and 10000 input elements are checked against independent sorting. Returned order is ascending and inputs remain unchanged. Read exact bodies: AddWithoutArithmetic uses unsigned carry shifts and explicit unchecked signed conversions. CountDigitTwos uses long before multiplying place blocks. Array-return expressions match int[]; bounded sums and candidate products stay within int. All arrays supplied to algorithms remain unchanged. SmallestK reverses PriorityQueue priority with CompareTo and fills output backward. Prefix first-occurrence arrays use -2 as the unseen sentinel. Matrix runs use rectangular int tables; hash windows use Dictionary values counted before/after edge changes."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_14.json",
+        "solutions/csharp/ctci6_17_14.cs",
+        "solutions/notes/ctci6_17_14.json"
+      ]
+    },
+    "ctci6_17_14/javascript": {
+      "codePath": "solutions/javascript/ctci6_17_14.js",
+      "notesPath": "solutions/notes/javascript/ctci6_17_14.json",
+      "contentSha256": "1cc744413f0fa9bf2ad0e7b9d6373c67b58aba6893dad00ad62004dd4439fa7b",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "Retain a logical max heap of k smallest occurrences and return its ordered values.",
+        "correctness": "After the first k values, the heap contains exactly their k-smallest multiset. Inductively, a new value no smaller than the root leaves that multiset optimal; a smaller value replaces one largest retained occurrence, yielding precisely the k smallest values of the extended prefix. Equal values are ordinary separate occurrences and are neither deduplicated nor overcounted. At the end the retained multiset is the required answer, and output ordering changes only its order. The zero-k branch returns before accessing a heap root.",
+        "workedTrace": "For [5,1,5,-2,3] and k=3, the initial heap retains [5,1,5]. Reading -2 displaces one 5; reading 3 displaces the remaining 5. The retained values are -2,1,3, returned in that order. For k=4, one 5 must remain: duplicates are not a set.",
+        "edgeCases": "k=0, k equal to input size, empty input. Repeated boundary values, negative values, and signed extremes without comparator-subtraction overflow.",
+        "timeDerivation": "O(n*log(k+1) + k*log(k+1)) time including heap updates and ordered output; k=0 takes O(1).",
+        "spaceDerivation": "O(k) heap/result storage and no input-sized copy when k is small.",
+        "callableAgreement": "All five implement the actual heap requirement, not sorting/partitioning the entire input. C#/Java reversed comparers avoid signed subtraction overflow; Python heapq uses exact negated keys; C++ standard max-heap algorithms update a copied k-vector; JavaScript implements downward repair locally. Selected-language WHY details explain these differences. Duplicate occurrences, k=0/all, signed endpoints and 10000 input elements are checked against independent sorting. Returned order is ascending and inputs remain unchanged. Read exact functions: addition relies on signed 32-bit bitwise coercion, while decimal division uses Math.floor. All ordinary counts/products are safely exact Numbers under shared bounds. Zero/one majority output is an Array; the rolling DP and water scan use local scalars and never rewrite input elements. SmallestK explicitly builds/repairs a local max heap then numerically sorts its k retained values. Its helper and mutation are inside the visible callable. Map keys remain integer Numbers; nested matrix rows use Array.from, avoiding shared-row aliasing."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_14.json",
+        "solutions/javascript/ctci6_17_14.js",
+        "solutions/notes/javascript/ctci6_17_14.json"
+      ]
+    },
+    "ctci6_17_14/python": {
+      "codePath": "solutions/python/ctci6_17_14.py",
+      "notesPath": "solutions/notes/python/ctci6_17_14.json",
+      "contentSha256": "6e2afa44278932089410f2c08be2a1ca7ab332cc97aefa220c47f866eaa84001",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "Retain a logical max heap of k smallest occurrences and return its ordered values.",
+        "correctness": "After the first k values, the heap contains exactly their k-smallest multiset. Inductively, a new value no smaller than the root leaves that multiset optimal; a smaller value replaces one largest retained occurrence, yielding precisely the k smallest values of the extended prefix. Equal values are ordinary separate occurrences and are neither deduplicated nor overcounted. At the end the retained multiset is the required answer, and output ordering changes only its order. The zero-k branch returns before accessing a heap root.",
+        "workedTrace": "For [5,1,5,-2,3] and k=3, the initial heap retains [5,1,5]. Reading -2 displaces one 5; reading 3 displaces the remaining 5. The retained values are -2,1,3, returned in that order. For k=4, one 5 must remain: duplicates are not a set.",
+        "edgeCases": "k=0, k equal to input size, empty input. Repeated boundary values, negative values, and signed extremes without comparator-subtraction overflow.",
+        "timeDerivation": "O(n*log(k+1) + k*log(k+1)) time including heap updates and ordered output; k=0 takes O(1).",
+        "spaceDerivation": "O(k) heap/result storage and no input-sized copy when k is small.",
+        "callableAgreement": "All five implement the actual heap requirement, not sorting/partitioning the entire input. C#/Java reversed comparers avoid signed subtraction overflow; Python heapq uses exact negated keys; C++ standard max-heap algorithms update a copied k-vector; JavaScript implements downward repair locally. Selected-language WHY details explain these differences. Duplicate occurrences, k=0/all, signed endpoints and 10000 input elements are checked against independent sorting. Returned order is ascending and inputs remain unchanged. Read exact functions: masked 32-bit addition terminates on negative inputs and complement reconstructs signed output without arithmetic. Majority verification uses a fresh scalar count, not a misleading sentinel. All collection results are concrete lists, and observation rejects bool-as-int. Recursion is absent in all six bodies. SmallestK has a language-specific heapq/negated-key explanation; no input-sized suffix slice is allocated. Matrix tables allocate distinct row lists, and nonempty Kadane restarts only after a negative running sum. Returned ranges are concrete integer lists."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_14.json",
+        "solutions/python/ctci6_17_14.py",
+        "solutions/notes/python/ctci6_17_14.json"
+      ]
+    },
+    "ctci6_17_14/cpp": {
+      "codePath": "solutions/cpp/ctci6_17_14.cpp",
+      "notesPath": "solutions/notes/cpp/ctci6_17_14.json",
+      "contentSha256": "6048cd382f1366c5d262f9eeaf516c8bc6294975052326e5ee4629c686217a20",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "Retain a logical max heap of k smallest occurrences and return its ordered values.",
+        "correctness": "After the first k values, the heap contains exactly their k-smallest multiset. Inductively, a new value no smaller than the root leaves that multiset optimal; a smaller value replaces one largest retained occurrence, yielding precisely the k smallest values of the extended prefix. Equal values are ordinary separate occurrences and are neither deduplicated nor overcounted. At the end the retained multiset is the required answer, and output ordering changes only its order. The zero-k branch returns before accessing a heap root.",
+        "workedTrace": "For [5,1,5,-2,3] and k=3, the initial heap retains [5,1,5]. Reading -2 displaces one 5; reading 3 displaces the remaining 5. The retained values are -2,1,3, returned in that order. For k=4, one 5 must remain: duplicates are not a set.",
+        "edgeCases": "k=0, k equal to input size, empty input. Repeated boundary values, negative values, and signed extremes without comparator-subtraction overflow.",
+        "timeDerivation": "O(n*log(k+1) + k*log(k+1)) time including heap updates and ordered output; k=0 takes O(1).",
+        "spaceDerivation": "O(k) heap/result storage and no input-sized copy when k is small.",
+        "callableAgreement": "All five implement the actual heap requirement, not sorting/partitioning the entire input. C#/Java reversed comparers avoid signed subtraction overflow; Python heapq uses exact negated keys; C++ standard max-heap algorithms update a copied k-vector; JavaScript implements downward repair locally. Selected-language WHY details explain these differences. Duplicate occurrences, k=0/all, signed endpoints and 10000 input elements are checked against independent sorting. Returned order is ascending and inputs remain unchanged. Read exact C++17 methods: uint32_t carry shifts are defined; the visible <cstring> include supports memcpy of the final int32_t bits. Digit counting widens place arithmetic to int64_t. Const vector references preserve inputs; by-value returned vectors own optional majority results. All index arithmetic handles emptiness before access. The visible unordered_map include belongs to the covering-window callable, not a hidden helper. SmallestK uses standard heap algorithms on a k-sized vector; const inputs remain unchanged. Comparator decisions avoid subtraction of extreme signed values."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_14.json",
+        "solutions/cpp/ctci6_17_14.cpp",
+        "solutions/notes/cpp/ctci6_17_14.json"
+      ]
+    },
+    "ctci6_17_14/java": {
+      "codePath": "solutions/java/ctci6_17_14.java",
+      "notesPath": "solutions/notes/java/ctci6_17_14.json",
+      "contentSha256": "d8422b5f17ef2689b002809abb6ce1af29d1af8f944f28e003d261bec0636e87",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "Retain a logical max heap of k smallest occurrences and return its ordered values.",
+        "correctness": "After the first k values, the heap contains exactly their k-smallest multiset. Inductively, a new value no smaller than the root leaves that multiset optimal; a smaller value replaces one largest retained occurrence, yielding precisely the k smallest values of the extended prefix. Equal values are ordinary separate occurrences and are neither deduplicated nor overcounted. At the end the retained multiset is the required answer, and output ordering changes only its order. The zero-k branch returns before accessing a heap root.",
+        "workedTrace": "For [5,1,5,-2,3] and k=3, the initial heap retains [5,1,5]. Reading -2 displaces one 5; reading 3 displaces the remaining 5. The retained values are -2,1,3, returned in that order. For k=4, one 5 must remain: duplicates are not a set.",
+        "edgeCases": "k=0, k equal to input size, empty input. Repeated boundary values, negative values, and signed extremes without comparator-subtraction overflow.",
+        "timeDerivation": "O(n*log(k+1) + k*log(k+1)) time including heap updates and ordered output; k=0 takes O(1).",
+        "spaceDerivation": "O(k) heap/result storage and no input-sized copy when k is small.",
+        "callableAgreement": "All five implement the actual heap requirement, not sorting/partitioning the entire input. C#/Java reversed comparers avoid signed subtraction overflow; Python heapq uses exact negated keys; C++ standard max-heap algorithms update a copied k-vector; JavaScript implements downward repair locally. Selected-language WHY details explain these differences. Duplicate occurrences, k=0/all, signed endpoints and 10000 input elements are checked against independent sorting. Returned order is ascending and inputs remain unchanged. Read exact methods: int carry shifts deliberately discard overflow bits; digit counting uses long intermediates before the justified final cast. int[] and ArrayList-free optional results match signatures. Bit/loop state is per invocation, and bounded DP/water totals fit int; no static state or mutable input side effects. SmallestK uses Comparator.reverseOrder safely and fills int[] output backward. Prefix slots use Arrays.fill(-2); matrix tables allocate independent rows. Hash windows use boxed integer keys consistently with primitive input values."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_14.json",
+        "solutions/java/ctci6_17_14.java",
+        "solutions/notes/java/ctci6_17_14.json"
+      ]
+    },
+    "ctci6_17_18/csharp": {
+      "codePath": "solutions/csharp/ctci6_17_18.cs",
+      "notesPath": "solutions/notes/ctci6_17_18.json",
+      "contentSha256": "264c30dbdf397aeee753a76b26b2db7a05431bddd4cb808680b889ce4c9b6193",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "Expand/shrink a covering window with required-value frequencies and a missing-value count.",
+        "correctness": "The frequency map always counts each required value inside the current window; missing equals the number with zero count. Thus missing=0 exactly characterizes a covering window. For each right edge, removing left entries until coverage would fail examines the shortest feasible window ending there. No discarded earlier left edge could give a shorter future window than the surviving one. Every right edge is processed, so the best recorded candidate is globally shortest. Strictly shorter updates during increasing right order preserve the earliest start among ties.",
+        "workedTrace": "For big=[7,5,9,1,5,9,1] and small=[1,5,9], indices 1..3 contain 5,9,1 and cover the target in length three. Later windows 2..4 and 3..5 have the same length, so [1,3] remains the answer. Matching the target in its supplied order would incorrectly reject valid windows.",
+        "edgeCases": "Empty target, empty big array, missing target value. Target values in a different order, redundant occurrences, and equal-length ties.",
+        "timeDerivation": "Expected O(big.length + small.length) time with hash-map operations; each window edge advances at most big.length times.",
+        "spaceDerivation": "O(small.length) auxiliary map entries, plus the two-index output.",
+        "callableAgreement": "The shorter array is a distinct required set; order inside the big window is irrelevant. All five dictionary implementations ignore unneeded values, track redundant occurrences and shrink until one required value disappears. Empty target and absence use the explicit [-1,-1] convention. Strictly shorter updates retain earliest ties. Independent brute windows/next-occurrence closure checks cover all small ternary big arrays, target subsets, signed extremes and 10000-element boundaries. Read exact bodies: AddWithoutArithmetic uses unsigned carry shifts and explicit unchecked signed conversions. CountDigitTwos uses long before multiplying place blocks. Array-return expressions match int[]; bounded sums and candidate products stay within int. All arrays supplied to algorithms remain unchanged. SmallestK reverses PriorityQueue priority with CompareTo and fills output backward. Prefix first-occurrence arrays use -2 as the unseen sentinel. Matrix runs use rectangular int tables; hash windows use Dictionary values counted before/after edge changes."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_18.json",
+        "solutions/csharp/ctci6_17_18.cs",
+        "solutions/notes/ctci6_17_18.json"
+      ]
+    },
+    "ctci6_17_18/javascript": {
+      "codePath": "solutions/javascript/ctci6_17_18.js",
+      "notesPath": "solutions/notes/javascript/ctci6_17_18.json",
+      "contentSha256": "97b6f6613c73ae805b2a83848bb7f4b447e53fbb594102bd4e0e5034d583e7a8",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "Expand/shrink a covering window with required-value frequencies and a missing-value count.",
+        "correctness": "The frequency map always counts each required value inside the current window; missing equals the number with zero count. Thus missing=0 exactly characterizes a covering window. For each right edge, removing left entries until coverage would fail examines the shortest feasible window ending there. No discarded earlier left edge could give a shorter future window than the surviving one. Every right edge is processed, so the best recorded candidate is globally shortest. Strictly shorter updates during increasing right order preserve the earliest start among ties.",
+        "workedTrace": "For big=[7,5,9,1,5,9,1] and small=[1,5,9], indices 1..3 contain 5,9,1 and cover the target in length three. Later windows 2..4 and 3..5 have the same length, so [1,3] remains the answer. Matching the target in its supplied order would incorrectly reject valid windows.",
+        "edgeCases": "Empty target, empty big array, missing target value. Target values in a different order, redundant occurrences, and equal-length ties.",
+        "timeDerivation": "Expected O(big.length + small.length) time with hash-map operations; each window edge advances at most big.length times.",
+        "spaceDerivation": "O(small.length) auxiliary map entries, plus the two-index output.",
+        "callableAgreement": "The shorter array is a distinct required set; order inside the big window is irrelevant. All five dictionary implementations ignore unneeded values, track redundant occurrences and shrink until one required value disappears. Empty target and absence use the explicit [-1,-1] convention. Strictly shorter updates retain earliest ties. Independent brute windows/next-occurrence closure checks cover all small ternary big arrays, target subsets, signed extremes and 10000-element boundaries. Read exact functions: addition relies on signed 32-bit bitwise coercion, while decimal division uses Math.floor. All ordinary counts/products are safely exact Numbers under shared bounds. Zero/one majority output is an Array; the rolling DP and water scan use local scalars and never rewrite input elements. SmallestK explicitly builds/repairs a local max heap then numerically sorts its k retained values. Its helper and mutation are inside the visible callable. Map keys remain integer Numbers; nested matrix rows use Array.from, avoiding shared-row aliasing."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_18.json",
+        "solutions/javascript/ctci6_17_18.js",
+        "solutions/notes/javascript/ctci6_17_18.json"
+      ]
+    },
+    "ctci6_17_18/python": {
+      "codePath": "solutions/python/ctci6_17_18.py",
+      "notesPath": "solutions/notes/python/ctci6_17_18.json",
+      "contentSha256": "dbdd7357210964415f8e78ca7282cfef38f595a56375593050aa1255e8d60995",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "Expand/shrink a covering window with required-value frequencies and a missing-value count.",
+        "correctness": "The frequency map always counts each required value inside the current window; missing equals the number with zero count. Thus missing=0 exactly characterizes a covering window. For each right edge, removing left entries until coverage would fail examines the shortest feasible window ending there. No discarded earlier left edge could give a shorter future window than the surviving one. Every right edge is processed, so the best recorded candidate is globally shortest. Strictly shorter updates during increasing right order preserve the earliest start among ties.",
+        "workedTrace": "For big=[7,5,9,1,5,9,1] and small=[1,5,9], indices 1..3 contain 5,9,1 and cover the target in length three. Later windows 2..4 and 3..5 have the same length, so [1,3] remains the answer. Matching the target in its supplied order would incorrectly reject valid windows.",
+        "edgeCases": "Empty target, empty big array, missing target value. Target values in a different order, redundant occurrences, and equal-length ties.",
+        "timeDerivation": "Expected O(big.length + small.length) time with hash-map operations; each window edge advances at most big.length times.",
+        "spaceDerivation": "O(small.length) auxiliary map entries, plus the two-index output.",
+        "callableAgreement": "The shorter array is a distinct required set; order inside the big window is irrelevant. All five dictionary implementations ignore unneeded values, track redundant occurrences and shrink until one required value disappears. Empty target and absence use the explicit [-1,-1] convention. Strictly shorter updates retain earliest ties. Independent brute windows/next-occurrence closure checks cover all small ternary big arrays, target subsets, signed extremes and 10000-element boundaries. Read exact functions: masked 32-bit addition terminates on negative inputs and complement reconstructs signed output without arithmetic. Majority verification uses a fresh scalar count, not a misleading sentinel. All collection results are concrete lists, and observation rejects bool-as-int. Recursion is absent in all six bodies. SmallestK has a language-specific heapq/negated-key explanation; no input-sized suffix slice is allocated. Matrix tables allocate distinct row lists, and nonempty Kadane restarts only after a negative running sum. Returned ranges are concrete integer lists."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_18.json",
+        "solutions/python/ctci6_17_18.py",
+        "solutions/notes/python/ctci6_17_18.json"
+      ]
+    },
+    "ctci6_17_18/cpp": {
+      "codePath": "solutions/cpp/ctci6_17_18.cpp",
+      "notesPath": "solutions/notes/cpp/ctci6_17_18.json",
+      "contentSha256": "b487d7fcd77ee7f1cee9880f706d048b8fce66b6e99eda3bc446d484919621e0",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "Expand/shrink a covering window with required-value frequencies and a missing-value count.",
+        "correctness": "The frequency map always counts each required value inside the current window; missing equals the number with zero count. Thus missing=0 exactly characterizes a covering window. For each right edge, removing left entries until coverage would fail examines the shortest feasible window ending there. No discarded earlier left edge could give a shorter future window than the surviving one. Every right edge is processed, so the best recorded candidate is globally shortest. Strictly shorter updates during increasing right order preserve the earliest start among ties.",
+        "workedTrace": "For big=[7,5,9,1,5,9,1] and small=[1,5,9], indices 1..3 contain 5,9,1 and cover the target in length three. Later windows 2..4 and 3..5 have the same length, so [1,3] remains the answer. Matching the target in its supplied order would incorrectly reject valid windows.",
+        "edgeCases": "Empty target, empty big array, missing target value. Target values in a different order, redundant occurrences, and equal-length ties.",
+        "timeDerivation": "Expected O(big.length + small.length) time with hash-map operations; each window edge advances at most big.length times.",
+        "spaceDerivation": "O(small.length) auxiliary map entries, plus the two-index output.",
+        "callableAgreement": "The shorter array is a distinct required set; order inside the big window is irrelevant. All five dictionary implementations ignore unneeded values, track redundant occurrences and shrink until one required value disappears. Empty target and absence use the explicit [-1,-1] convention. Strictly shorter updates retain earliest ties. Independent brute windows/next-occurrence closure checks cover all small ternary big arrays, target subsets, signed extremes and 10000-element boundaries. Read exact C++17 methods: uint32_t carry shifts are defined; the visible <cstring> include supports memcpy of the final int32_t bits. Digit counting widens place arithmetic to int64_t. Const vector references preserve inputs; by-value returned vectors own optional majority results. All index arithmetic handles emptiness before access. The visible unordered_map include belongs to the covering-window callable, not a hidden helper. SmallestK uses standard heap algorithms on a k-sized vector; const inputs remain unchanged. Comparator decisions avoid subtraction of extreme signed values."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_18.json",
+        "solutions/cpp/ctci6_17_18.cpp",
+        "solutions/notes/cpp/ctci6_17_18.json"
+      ]
+    },
+    "ctci6_17_18/java": {
+      "codePath": "solutions/java/ctci6_17_18.java",
+      "notesPath": "solutions/notes/java/ctci6_17_18.json",
+      "contentSha256": "38d456f643bd6c84cc76a4fb880c08142feb6d8e76e192a6fbadc375234669a5",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "Expand/shrink a covering window with required-value frequencies and a missing-value count.",
+        "correctness": "The frequency map always counts each required value inside the current window; missing equals the number with zero count. Thus missing=0 exactly characterizes a covering window. For each right edge, removing left entries until coverage would fail examines the shortest feasible window ending there. No discarded earlier left edge could give a shorter future window than the surviving one. Every right edge is processed, so the best recorded candidate is globally shortest. Strictly shorter updates during increasing right order preserve the earliest start among ties.",
+        "workedTrace": "For big=[7,5,9,1,5,9,1] and small=[1,5,9], indices 1..3 contain 5,9,1 and cover the target in length three. Later windows 2..4 and 3..5 have the same length, so [1,3] remains the answer. Matching the target in its supplied order would incorrectly reject valid windows.",
+        "edgeCases": "Empty target, empty big array, missing target value. Target values in a different order, redundant occurrences, and equal-length ties.",
+        "timeDerivation": "Expected O(big.length + small.length) time with hash-map operations; each window edge advances at most big.length times.",
+        "spaceDerivation": "O(small.length) auxiliary map entries, plus the two-index output.",
+        "callableAgreement": "The shorter array is a distinct required set; order inside the big window is irrelevant. All five dictionary implementations ignore unneeded values, track redundant occurrences and shrink until one required value disappears. Empty target and absence use the explicit [-1,-1] convention. Strictly shorter updates retain earliest ties. Independent brute windows/next-occurrence closure checks cover all small ternary big arrays, target subsets, signed extremes and 10000-element boundaries. Read exact methods: int carry shifts deliberately discard overflow bits; digit counting uses long intermediates before the justified final cast. int[] and ArrayList-free optional results match signatures. Bit/loop state is per invocation, and bounded DP/water totals fit int; no static state or mutable input side effects. SmallestK uses Comparator.reverseOrder safely and fills int[] output backward. Prefix slots use Arrays.fill(-2); matrix tables allocate independent rows. Hash windows use boxed integer keys consistently with primitive input values."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_18.json",
+        "solutions/java/ctci6_17_18.java",
+        "solutions/notes/java/ctci6_17_18.json"
+      ]
+    },
+    "ctci6_17_19/csharp": {
+      "codePath": "solutions/csharp/ctci6_17_19.cs",
+      "notesPath": "solutions/notes/ctci6_17_19.json",
+      "contentSha256": "97408aa56e5a5b45dc77b937e520c0517ce497c9bfbbe1ab8cc8819ccefb2994",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "XOR full range/input, split by one set bit of the missing-pair XOR, then order the two recovered values.",
+        "correctness": "Each present value appears twice in the full/input XOR and cancels, leaving exactly the two missing values. A set bit of their XOR means one missing value has that bit and the other does not. Repeating XOR separately for the two bit groups therefore leaves one missing value in each accumulator. These are the complete missing pair; ordering them changes no membership. All values and the selected low bit fit the admitted signed range, so no square sums or floating-point roots can overflow or round incorrectly.",
+        "workedTrace": "For [1,3,5], n is 5 and the missing pair is 2,4. The combined XOR is 6 (binary 110); choosing its low set bit 2 separates 2 from 4. Present numbers cancel in each bit group, leaving those two values, returned as [2,4].",
+        "edgeCases": "Empty input, missing endpoints, arbitrary input order. The largest n; arithmetic square-sum formulas would exceed ordinary int bounds.",
+        "timeDerivation": "O(n) time for full-range and input XOR scans.",
+        "spaceDerivation": "O(1) auxiliary scalar storage, excluding the two-value output.",
+        "callableAgreement": "All languages infer n=input.length+2 and use scalar accumulators rather than a presence table or sorting. The combined XOR is nonzero because missing values are distinct. The n<=100000 bound makes low-bit isolation and all loop increments signed-safe. Independent set difference tests every small missing pair, shuffled input and three maximum-sized ranges. No sum-of-squares precision/overflow assumption remains. Read exact bodies: AddWithoutArithmetic uses unsigned carry shifts and explicit unchecked signed conversions. CountDigitTwos uses long before multiplying place blocks. Array-return expressions match int[]; bounded sums and candidate products stay within int. All arrays supplied to algorithms remain unchanged. SmallestK reverses PriorityQueue priority with CompareTo and fills output backward. Prefix first-occurrence arrays use -2 as the unseen sentinel. Matrix runs use rectangular int tables; hash windows use Dictionary values counted before/after edge changes."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_19.json",
+        "solutions/csharp/ctci6_17_19.cs",
+        "solutions/notes/ctci6_17_19.json"
+      ]
+    },
+    "ctci6_17_19/javascript": {
+      "codePath": "solutions/javascript/ctci6_17_19.js",
+      "notesPath": "solutions/notes/javascript/ctci6_17_19.json",
+      "contentSha256": "1664c8994cbe350aa34888215a0d16a243e58cee6949c31e59bdcbba694a504f",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "XOR full range/input, split by one set bit of the missing-pair XOR, then order the two recovered values.",
+        "correctness": "Each present value appears twice in the full/input XOR and cancels, leaving exactly the two missing values. A set bit of their XOR means one missing value has that bit and the other does not. Repeating XOR separately for the two bit groups therefore leaves one missing value in each accumulator. These are the complete missing pair; ordering them changes no membership. All values and the selected low bit fit the admitted signed range, so no square sums or floating-point roots can overflow or round incorrectly.",
+        "workedTrace": "For [1,3,5], n is 5 and the missing pair is 2,4. The combined XOR is 6 (binary 110); choosing its low set bit 2 separates 2 from 4. Present numbers cancel in each bit group, leaving those two values, returned as [2,4].",
+        "edgeCases": "Empty input, missing endpoints, arbitrary input order. The largest n; arithmetic square-sum formulas would exceed ordinary int bounds.",
+        "timeDerivation": "O(n) time for full-range and input XOR scans.",
+        "spaceDerivation": "O(1) auxiliary scalar storage, excluding the two-value output.",
+        "callableAgreement": "All languages infer n=input.length+2 and use scalar accumulators rather than a presence table or sorting. The combined XOR is nonzero because missing values are distinct. The n<=100000 bound makes low-bit isolation and all loop increments signed-safe. Independent set difference tests every small missing pair, shuffled input and three maximum-sized ranges. No sum-of-squares precision/overflow assumption remains. Read exact functions: addition relies on signed 32-bit bitwise coercion, while decimal division uses Math.floor. All ordinary counts/products are safely exact Numbers under shared bounds. Zero/one majority output is an Array; the rolling DP and water scan use local scalars and never rewrite input elements. SmallestK explicitly builds/repairs a local max heap then numerically sorts its k retained values. Its helper and mutation are inside the visible callable. Map keys remain integer Numbers; nested matrix rows use Array.from, avoiding shared-row aliasing."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_19.json",
+        "solutions/javascript/ctci6_17_19.js",
+        "solutions/notes/javascript/ctci6_17_19.json"
+      ]
+    },
+    "ctci6_17_19/python": {
+      "codePath": "solutions/python/ctci6_17_19.py",
+      "notesPath": "solutions/notes/python/ctci6_17_19.json",
+      "contentSha256": "f5167b3563b28768a693d4bf9f167503211222a3aba8e90b78ca39c030ce35e8",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "XOR full range/input, split by one set bit of the missing-pair XOR, then order the two recovered values.",
+        "correctness": "Each present value appears twice in the full/input XOR and cancels, leaving exactly the two missing values. A set bit of their XOR means one missing value has that bit and the other does not. Repeating XOR separately for the two bit groups therefore leaves one missing value in each accumulator. These are the complete missing pair; ordering them changes no membership. All values and the selected low bit fit the admitted signed range, so no square sums or floating-point roots can overflow or round incorrectly.",
+        "workedTrace": "For [1,3,5], n is 5 and the missing pair is 2,4. The combined XOR is 6 (binary 110); choosing its low set bit 2 separates 2 from 4. Present numbers cancel in each bit group, leaving those two values, returned as [2,4].",
+        "edgeCases": "Empty input, missing endpoints, arbitrary input order. The largest n; arithmetic square-sum formulas would exceed ordinary int bounds.",
+        "timeDerivation": "O(n) time for full-range and input XOR scans.",
+        "spaceDerivation": "O(1) auxiliary scalar storage, excluding the two-value output.",
+        "callableAgreement": "All languages infer n=input.length+2 and use scalar accumulators rather than a presence table or sorting. The combined XOR is nonzero because missing values are distinct. The n<=100000 bound makes low-bit isolation and all loop increments signed-safe. Independent set difference tests every small missing pair, shuffled input and three maximum-sized ranges. No sum-of-squares precision/overflow assumption remains. Read exact functions: masked 32-bit addition terminates on negative inputs and complement reconstructs signed output without arithmetic. Majority verification uses a fresh scalar count, not a misleading sentinel. All collection results are concrete lists, and observation rejects bool-as-int. Recursion is absent in all six bodies. SmallestK has a language-specific heapq/negated-key explanation; no input-sized suffix slice is allocated. Matrix tables allocate distinct row lists, and nonempty Kadane restarts only after a negative running sum. Returned ranges are concrete integer lists."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_19.json",
+        "solutions/python/ctci6_17_19.py",
+        "solutions/notes/python/ctci6_17_19.json"
+      ]
+    },
+    "ctci6_17_19/cpp": {
+      "codePath": "solutions/cpp/ctci6_17_19.cpp",
+      "notesPath": "solutions/notes/cpp/ctci6_17_19.json",
+      "contentSha256": "8723bda659ad38f02e80cdd27354b66063ee54240dc158226e32ceb61af96cf4",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "XOR full range/input, split by one set bit of the missing-pair XOR, then order the two recovered values.",
+        "correctness": "Each present value appears twice in the full/input XOR and cancels, leaving exactly the two missing values. A set bit of their XOR means one missing value has that bit and the other does not. Repeating XOR separately for the two bit groups therefore leaves one missing value in each accumulator. These are the complete missing pair; ordering them changes no membership. All values and the selected low bit fit the admitted signed range, so no square sums or floating-point roots can overflow or round incorrectly.",
+        "workedTrace": "For [1,3,5], n is 5 and the missing pair is 2,4. The combined XOR is 6 (binary 110); choosing its low set bit 2 separates 2 from 4. Present numbers cancel in each bit group, leaving those two values, returned as [2,4].",
+        "edgeCases": "Empty input, missing endpoints, arbitrary input order. The largest n; arithmetic square-sum formulas would exceed ordinary int bounds.",
+        "timeDerivation": "O(n) time for full-range and input XOR scans.",
+        "spaceDerivation": "O(1) auxiliary scalar storage, excluding the two-value output.",
+        "callableAgreement": "All languages infer n=input.length+2 and use scalar accumulators rather than a presence table or sorting. The combined XOR is nonzero because missing values are distinct. The n<=100000 bound makes low-bit isolation and all loop increments signed-safe. Independent set difference tests every small missing pair, shuffled input and three maximum-sized ranges. No sum-of-squares precision/overflow assumption remains. Read exact C++17 methods: uint32_t carry shifts are defined; the visible <cstring> include supports memcpy of the final int32_t bits. Digit counting widens place arithmetic to int64_t. Const vector references preserve inputs; by-value returned vectors own optional majority results. All index arithmetic handles emptiness before access. The visible unordered_map include belongs to the covering-window callable, not a hidden helper. SmallestK uses standard heap algorithms on a k-sized vector; const inputs remain unchanged. Comparator decisions avoid subtraction of extreme signed values."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_19.json",
+        "solutions/cpp/ctci6_17_19.cpp",
+        "solutions/notes/cpp/ctci6_17_19.json"
+      ]
+    },
+    "ctci6_17_19/java": {
+      "codePath": "solutions/java/ctci6_17_19.java",
+      "notesPath": "solutions/notes/java/ctci6_17_19.json",
+      "contentSha256": "03ce28f6dfb4f631a4b4b67641e9ae90c799eb14a5ab6badafc49a1cda250e60",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "XOR full range/input, split by one set bit of the missing-pair XOR, then order the two recovered values.",
+        "correctness": "Each present value appears twice in the full/input XOR and cancels, leaving exactly the two missing values. A set bit of their XOR means one missing value has that bit and the other does not. Repeating XOR separately for the two bit groups therefore leaves one missing value in each accumulator. These are the complete missing pair; ordering them changes no membership. All values and the selected low bit fit the admitted signed range, so no square sums or floating-point roots can overflow or round incorrectly.",
+        "workedTrace": "For [1,3,5], n is 5 and the missing pair is 2,4. The combined XOR is 6 (binary 110); choosing its low set bit 2 separates 2 from 4. Present numbers cancel in each bit group, leaving those two values, returned as [2,4].",
+        "edgeCases": "Empty input, missing endpoints, arbitrary input order. The largest n; arithmetic square-sum formulas would exceed ordinary int bounds.",
+        "timeDerivation": "O(n) time for full-range and input XOR scans.",
+        "spaceDerivation": "O(1) auxiliary scalar storage, excluding the two-value output.",
+        "callableAgreement": "All languages infer n=input.length+2 and use scalar accumulators rather than a presence table or sorting. The combined XOR is nonzero because missing values are distinct. The n<=100000 bound makes low-bit isolation and all loop increments signed-safe. Independent set difference tests every small missing pair, shuffled input and three maximum-sized ranges. No sum-of-squares precision/overflow assumption remains. Read exact methods: int carry shifts deliberately discard overflow bits; digit counting uses long intermediates before the justified final cast. int[] and ArrayList-free optional results match signatures. Bit/loop state is per invocation, and bounded DP/water totals fit int; no static state or mutable input side effects. SmallestK uses Comparator.reverseOrder safely and fills int[] output backward. Prefix slots use Arrays.fill(-2); matrix tables allocate independent rows. Hash windows use boxed integer keys consistently with primitive input values."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_19.json",
+        "solutions/java/ctci6_17_19.java",
+        "solutions/notes/java/ctci6_17_19.json"
+      ]
+    },
+    "ctci6_17_23/csharp": {
+      "codePath": "solutions/csharp/ctci6_17_23.cs",
+      "notesPath": "solutions/notes/ctci6_17_23.json",
+      "contentSha256": "dc7e2b8b8a3a8688eded4f2c7ebadbb30dfe2522d9a538be546e788683247436",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "Precompute right/down black-run lengths, then test four borders in descending side/row/column order.",
+        "correctness": "Processing cells from bottom-right computes exact right/down black-run lengths: a white cell has zero, while a black cell extends the adjacent run by one. A candidate of side s has an all-black border exactly when its top and bottom horizontal runs and left and right vertical runs each reach s. Interior values do not enter these checks. Descending sizes guarantee maximality of the first valid result; row/column order guarantees the requested earliest top-left tie. If no candidate succeeds, no side-one black cell exists either, so [] is correct.",
+        "workedTrace": "For [[0,0,0],[0,1,0],[0,0,0]], all four length-three edges are black even though the center is white, so return [0,0,3]. Requiring a completely filled black square would incorrectly reject the correct answer.",
+        "edgeCases": "Empty and all-white input; one black cell. A hollow black border, a broken edge with black corners, and tied largest squares.",
+        "timeDerivation": "O(n^3) time: O(n^2) preprocessing and O(n^3) candidates with four constant-time border checks.",
+        "spaceDerivation": "O(n^2) auxiliary right/down run-length tables.",
+        "callableAgreement": "Black is explicitly zero, interior cells are unrestricted, and tie order is deterministic. C# rectangular and other languages nested tables hold run lengths; input matrix rows/content remain original. Independent literal border scans check all binary matrices through size three, 40x40 solid/hollow/white bounds and random squares. Broken edges with black corners fail; a white interior remains valid. O(n^3) candidates and O(n^2) storage match actual bodies. Read exact bodies: AddWithoutArithmetic uses unsigned carry shifts and explicit unchecked signed conversions. CountDigitTwos uses long before multiplying place blocks. Array-return expressions match int[]; bounded sums and candidate products stay within int. All arrays supplied to algorithms remain unchanged. SmallestK reverses PriorityQueue priority with CompareTo and fills output backward. Prefix first-occurrence arrays use -2 as the unseen sentinel. Matrix runs use rectangular int tables; hash windows use Dictionary values counted before/after edge changes."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_23.json",
+        "solutions/csharp/ctci6_17_23.cs",
+        "solutions/notes/ctci6_17_23.json"
+      ]
+    },
+    "ctci6_17_23/javascript": {
+      "codePath": "solutions/javascript/ctci6_17_23.js",
+      "notesPath": "solutions/notes/javascript/ctci6_17_23.json",
+      "contentSha256": "250cbda27f5f8fe4a314f80edc980023f59ad29d59945fd1f33c4eec4e863d5c",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "Precompute right/down black-run lengths, then test four borders in descending side/row/column order.",
+        "correctness": "Processing cells from bottom-right computes exact right/down black-run lengths: a white cell has zero, while a black cell extends the adjacent run by one. A candidate of side s has an all-black border exactly when its top and bottom horizontal runs and left and right vertical runs each reach s. Interior values do not enter these checks. Descending sizes guarantee maximality of the first valid result; row/column order guarantees the requested earliest top-left tie. If no candidate succeeds, no side-one black cell exists either, so [] is correct.",
+        "workedTrace": "For [[0,0,0],[0,1,0],[0,0,0]], all four length-three edges are black even though the center is white, so return [0,0,3]. Requiring a completely filled black square would incorrectly reject the correct answer.",
+        "edgeCases": "Empty and all-white input; one black cell. A hollow black border, a broken edge with black corners, and tied largest squares.",
+        "timeDerivation": "O(n^3) time: O(n^2) preprocessing and O(n^3) candidates with four constant-time border checks.",
+        "spaceDerivation": "O(n^2) auxiliary right/down run-length tables.",
+        "callableAgreement": "Black is explicitly zero, interior cells are unrestricted, and tie order is deterministic. C# rectangular and other languages nested tables hold run lengths; input matrix rows/content remain original. Independent literal border scans check all binary matrices through size three, 40x40 solid/hollow/white bounds and random squares. Broken edges with black corners fail; a white interior remains valid. O(n^3) candidates and O(n^2) storage match actual bodies. Read exact functions: addition relies on signed 32-bit bitwise coercion, while decimal division uses Math.floor. All ordinary counts/products are safely exact Numbers under shared bounds. Zero/one majority output is an Array; the rolling DP and water scan use local scalars and never rewrite input elements. SmallestK explicitly builds/repairs a local max heap then numerically sorts its k retained values. Its helper and mutation are inside the visible callable. Map keys remain integer Numbers; nested matrix rows use Array.from, avoiding shared-row aliasing."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_23.json",
+        "solutions/javascript/ctci6_17_23.js",
+        "solutions/notes/javascript/ctci6_17_23.json"
+      ]
+    },
+    "ctci6_17_23/python": {
+      "codePath": "solutions/python/ctci6_17_23.py",
+      "notesPath": "solutions/notes/python/ctci6_17_23.json",
+      "contentSha256": "55090d289fe0c8bfb3417f3d1152d1b22abfa6107fdb49ca993e824e4cdc7e7b",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "Precompute right/down black-run lengths, then test four borders in descending side/row/column order.",
+        "correctness": "Processing cells from bottom-right computes exact right/down black-run lengths: a white cell has zero, while a black cell extends the adjacent run by one. A candidate of side s has an all-black border exactly when its top and bottom horizontal runs and left and right vertical runs each reach s. Interior values do not enter these checks. Descending sizes guarantee maximality of the first valid result; row/column order guarantees the requested earliest top-left tie. If no candidate succeeds, no side-one black cell exists either, so [] is correct.",
+        "workedTrace": "For [[0,0,0],[0,1,0],[0,0,0]], all four length-three edges are black even though the center is white, so return [0,0,3]. Requiring a completely filled black square would incorrectly reject the correct answer.",
+        "edgeCases": "Empty and all-white input; one black cell. A hollow black border, a broken edge with black corners, and tied largest squares.",
+        "timeDerivation": "O(n^3) time: O(n^2) preprocessing and O(n^3) candidates with four constant-time border checks.",
+        "spaceDerivation": "O(n^2) auxiliary right/down run-length tables.",
+        "callableAgreement": "Black is explicitly zero, interior cells are unrestricted, and tie order is deterministic. C# rectangular and other languages nested tables hold run lengths; input matrix rows/content remain original. Independent literal border scans check all binary matrices through size three, 40x40 solid/hollow/white bounds and random squares. Broken edges with black corners fail; a white interior remains valid. O(n^3) candidates and O(n^2) storage match actual bodies. Read exact functions: masked 32-bit addition terminates on negative inputs and complement reconstructs signed output without arithmetic. Majority verification uses a fresh scalar count, not a misleading sentinel. All collection results are concrete lists, and observation rejects bool-as-int. Recursion is absent in all six bodies. SmallestK has a language-specific heapq/negated-key explanation; no input-sized suffix slice is allocated. Matrix tables allocate distinct row lists, and nonempty Kadane restarts only after a negative running sum. Returned ranges are concrete integer lists."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_23.json",
+        "solutions/python/ctci6_17_23.py",
+        "solutions/notes/python/ctci6_17_23.json"
+      ]
+    },
+    "ctci6_17_23/cpp": {
+      "codePath": "solutions/cpp/ctci6_17_23.cpp",
+      "notesPath": "solutions/notes/cpp/ctci6_17_23.json",
+      "contentSha256": "65902ed0a44b9875b2a1893d46e7bd1e03d5d2fa4183a922f22daf28709a5fc8",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "Precompute right/down black-run lengths, then test four borders in descending side/row/column order.",
+        "correctness": "Processing cells from bottom-right computes exact right/down black-run lengths: a white cell has zero, while a black cell extends the adjacent run by one. A candidate of side s has an all-black border exactly when its top and bottom horizontal runs and left and right vertical runs each reach s. Interior values do not enter these checks. Descending sizes guarantee maximality of the first valid result; row/column order guarantees the requested earliest top-left tie. If no candidate succeeds, no side-one black cell exists either, so [] is correct.",
+        "workedTrace": "For [[0,0,0],[0,1,0],[0,0,0]], all four length-three edges are black even though the center is white, so return [0,0,3]. Requiring a completely filled black square would incorrectly reject the correct answer.",
+        "edgeCases": "Empty and all-white input; one black cell. A hollow black border, a broken edge with black corners, and tied largest squares.",
+        "timeDerivation": "O(n^3) time: O(n^2) preprocessing and O(n^3) candidates with four constant-time border checks.",
+        "spaceDerivation": "O(n^2) auxiliary right/down run-length tables.",
+        "callableAgreement": "Black is explicitly zero, interior cells are unrestricted, and tie order is deterministic. C# rectangular and other languages nested tables hold run lengths; input matrix rows/content remain original. Independent literal border scans check all binary matrices through size three, 40x40 solid/hollow/white bounds and random squares. Broken edges with black corners fail; a white interior remains valid. O(n^3) candidates and O(n^2) storage match actual bodies. Read exact C++17 methods: uint32_t carry shifts are defined; the visible <cstring> include supports memcpy of the final int32_t bits. Digit counting widens place arithmetic to int64_t. Const vector references preserve inputs; by-value returned vectors own optional majority results. All index arithmetic handles emptiness before access. The visible unordered_map include belongs to the covering-window callable, not a hidden helper. SmallestK uses standard heap algorithms on a k-sized vector; const inputs remain unchanged. Comparator decisions avoid subtraction of extreme signed values."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_23.json",
+        "solutions/cpp/ctci6_17_23.cpp",
+        "solutions/notes/cpp/ctci6_17_23.json"
+      ]
+    },
+    "ctci6_17_23/java": {
+      "codePath": "solutions/java/ctci6_17_23.java",
+      "notesPath": "solutions/notes/java/ctci6_17_23.json",
+      "contentSha256": "426d9512239b4d080999bf3473532ee20898b5948415848083c1dab57aac0c99",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "Precompute right/down black-run lengths, then test four borders in descending side/row/column order.",
+        "correctness": "Processing cells from bottom-right computes exact right/down black-run lengths: a white cell has zero, while a black cell extends the adjacent run by one. A candidate of side s has an all-black border exactly when its top and bottom horizontal runs and left and right vertical runs each reach s. Interior values do not enter these checks. Descending sizes guarantee maximality of the first valid result; row/column order guarantees the requested earliest top-left tie. If no candidate succeeds, no side-one black cell exists either, so [] is correct.",
+        "workedTrace": "For [[0,0,0],[0,1,0],[0,0,0]], all four length-three edges are black even though the center is white, so return [0,0,3]. Requiring a completely filled black square would incorrectly reject the correct answer.",
+        "edgeCases": "Empty and all-white input; one black cell. A hollow black border, a broken edge with black corners, and tied largest squares.",
+        "timeDerivation": "O(n^3) time: O(n^2) preprocessing and O(n^3) candidates with four constant-time border checks.",
+        "spaceDerivation": "O(n^2) auxiliary right/down run-length tables.",
+        "callableAgreement": "Black is explicitly zero, interior cells are unrestricted, and tie order is deterministic. C# rectangular and other languages nested tables hold run lengths; input matrix rows/content remain original. Independent literal border scans check all binary matrices through size three, 40x40 solid/hollow/white bounds and random squares. Broken edges with black corners fail; a white interior remains valid. O(n^3) candidates and O(n^2) storage match actual bodies. Read exact methods: int carry shifts deliberately discard overflow bits; digit counting uses long intermediates before the justified final cast. int[] and ArrayList-free optional results match signatures. Bit/loop state is per invocation, and bounded DP/water totals fit int; no static state or mutable input side effects. SmallestK uses Comparator.reverseOrder safely and fills int[] output backward. Prefix slots use Arrays.fill(-2); matrix tables allocate independent rows. Hash windows use boxed integer keys consistently with primitive input values."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_23.json",
+        "solutions/java/ctci6_17_23.java",
+        "solutions/notes/java/ctci6_17_23.json"
+      ]
+    },
+    "ctci6_17_24/csharp": {
+      "codePath": "solutions/csharp/ctci6_17_24.cs",
+      "notesPath": "solutions/notes/ctci6_17_24.json",
+      "contentSha256": "43726720a97a8ed1bdee1292ad276a4c6896892b2847d02522f60aa03b6b40bb",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "Accumulate column sums for each top/bottom row pair and scan nonempty maximum subarrays.",
+        "correctness": "For each row pair, each column total is exactly the sum between those rows. Therefore a column interval and its corresponding rectangle have identical sums. Kadane keeps the maximum nonempty sum ending at each column: extend a nonnegative preceding sum, or start anew after a negative one. Every possible rectangle has one enumerated row pair and column interval, so maximizing these candidates yields the global optimum. Keeping an equal-zero prefix favors earlier left bounds; strict global improvements with top/bottom iteration order preserve the specified tie priority. Initializing below all admitted sums prevents an empty zero choice from defeating all-negative rectangles.",
+        "workedTrace": "For [[1,-2,3],[-4,5,6]], the bottom row interval columns 1..2 sums to 11. Including both rows over those columns gives -2+3+5+6=12, so return [12,0,1,1,2]. In [[-5,-2]], the correct nonempty answer is [-2,0,1,0,1], not zero.",
+        "edgeCases": "Empty dimensions, a single negative cell, all-negative matrices. The entire matrix, a strict interior optimum, and ties under the stated top/bottom/left/right priority.",
+        "timeDerivation": "O(rows^2*columns) time for all row pairs and their column scans.",
+        "spaceDerivation": "O(columns) auxiliary column totals plus constant scalar bounds and the five-integer result.",
+        "callableAgreement": "All five keep actual sum and inclusive coordinates. Negative running sums restart; zero running sums retain an earlier left endpoint. Strict best updates plus top/bottom traversal preserve the explicitly stated tie priority. An initial signed-minimum best cannot admit a fake empty zero rectangle. Independent 2D-prefix enumeration tests all small signed rectangular inputs, all-negative/zero cases and 30x30 signed bounds. O(rows^2*columns) time and O(columns) auxiliary space match each body. Read exact bodies: AddWithoutArithmetic uses unsigned carry shifts and explicit unchecked signed conversions. CountDigitTwos uses long before multiplying place blocks. Array-return expressions match int[]; bounded sums and candidate products stay within int. All arrays supplied to algorithms remain unchanged. SmallestK reverses PriorityQueue priority with CompareTo and fills output backward. Prefix first-occurrence arrays use -2 as the unseen sentinel. Matrix runs use rectangular int tables; hash windows use Dictionary values counted before/after edge changes."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_24.json",
+        "solutions/csharp/ctci6_17_24.cs",
+        "solutions/notes/ctci6_17_24.json"
+      ]
+    },
+    "ctci6_17_24/javascript": {
+      "codePath": "solutions/javascript/ctci6_17_24.js",
+      "notesPath": "solutions/notes/javascript/ctci6_17_24.json",
+      "contentSha256": "c07be54f57acd83c543bf797f146912c45d003b6ae3fadd8b1185c39557e6ea2",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "Accumulate column sums for each top/bottom row pair and scan nonempty maximum subarrays.",
+        "correctness": "For each row pair, each column total is exactly the sum between those rows. Therefore a column interval and its corresponding rectangle have identical sums. Kadane keeps the maximum nonempty sum ending at each column: extend a nonnegative preceding sum, or start anew after a negative one. Every possible rectangle has one enumerated row pair and column interval, so maximizing these candidates yields the global optimum. Keeping an equal-zero prefix favors earlier left bounds; strict global improvements with top/bottom iteration order preserve the specified tie priority. Initializing below all admitted sums prevents an empty zero choice from defeating all-negative rectangles.",
+        "workedTrace": "For [[1,-2,3],[-4,5,6]], the bottom row interval columns 1..2 sums to 11. Including both rows over those columns gives -2+3+5+6=12, so return [12,0,1,1,2]. In [[-5,-2]], the correct nonempty answer is [-2,0,1,0,1], not zero.",
+        "edgeCases": "Empty dimensions, a single negative cell, all-negative matrices. The entire matrix, a strict interior optimum, and ties under the stated top/bottom/left/right priority.",
+        "timeDerivation": "O(rows^2*columns) time for all row pairs and their column scans.",
+        "spaceDerivation": "O(columns) auxiliary column totals plus constant scalar bounds and the five-integer result.",
+        "callableAgreement": "All five keep actual sum and inclusive coordinates. Negative running sums restart; zero running sums retain an earlier left endpoint. Strict best updates plus top/bottom traversal preserve the explicitly stated tie priority. An initial signed-minimum best cannot admit a fake empty zero rectangle. Independent 2D-prefix enumeration tests all small signed rectangular inputs, all-negative/zero cases and 30x30 signed bounds. O(rows^2*columns) time and O(columns) auxiliary space match each body. Read exact functions: addition relies on signed 32-bit bitwise coercion, while decimal division uses Math.floor. All ordinary counts/products are safely exact Numbers under shared bounds. Zero/one majority output is an Array; the rolling DP and water scan use local scalars and never rewrite input elements. SmallestK explicitly builds/repairs a local max heap then numerically sorts its k retained values. Its helper and mutation are inside the visible callable. Map keys remain integer Numbers; nested matrix rows use Array.from, avoiding shared-row aliasing."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_24.json",
+        "solutions/javascript/ctci6_17_24.js",
+        "solutions/notes/javascript/ctci6_17_24.json"
+      ]
+    },
+    "ctci6_17_24/python": {
+      "codePath": "solutions/python/ctci6_17_24.py",
+      "notesPath": "solutions/notes/python/ctci6_17_24.json",
+      "contentSha256": "87277be49197758546f02220010f6e5972e3c823bd4e1aa5e1b88594f70f1ef2",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "Accumulate column sums for each top/bottom row pair and scan nonempty maximum subarrays.",
+        "correctness": "For each row pair, each column total is exactly the sum between those rows. Therefore a column interval and its corresponding rectangle have identical sums. Kadane keeps the maximum nonempty sum ending at each column: extend a nonnegative preceding sum, or start anew after a negative one. Every possible rectangle has one enumerated row pair and column interval, so maximizing these candidates yields the global optimum. Keeping an equal-zero prefix favors earlier left bounds; strict global improvements with top/bottom iteration order preserve the specified tie priority. Initializing below all admitted sums prevents an empty zero choice from defeating all-negative rectangles.",
+        "workedTrace": "For [[1,-2,3],[-4,5,6]], the bottom row interval columns 1..2 sums to 11. Including both rows over those columns gives -2+3+5+6=12, so return [12,0,1,1,2]. In [[-5,-2]], the correct nonempty answer is [-2,0,1,0,1], not zero.",
+        "edgeCases": "Empty dimensions, a single negative cell, all-negative matrices. The entire matrix, a strict interior optimum, and ties under the stated top/bottom/left/right priority.",
+        "timeDerivation": "O(rows^2*columns) time for all row pairs and their column scans.",
+        "spaceDerivation": "O(columns) auxiliary column totals plus constant scalar bounds and the five-integer result.",
+        "callableAgreement": "All five keep actual sum and inclusive coordinates. Negative running sums restart; zero running sums retain an earlier left endpoint. Strict best updates plus top/bottom traversal preserve the explicitly stated tie priority. An initial signed-minimum best cannot admit a fake empty zero rectangle. Independent 2D-prefix enumeration tests all small signed rectangular inputs, all-negative/zero cases and 30x30 signed bounds. O(rows^2*columns) time and O(columns) auxiliary space match each body. Read exact functions: masked 32-bit addition terminates on negative inputs and complement reconstructs signed output without arithmetic. Majority verification uses a fresh scalar count, not a misleading sentinel. All collection results are concrete lists, and observation rejects bool-as-int. Recursion is absent in all six bodies. SmallestK has a language-specific heapq/negated-key explanation; no input-sized suffix slice is allocated. Matrix tables allocate distinct row lists, and nonempty Kadane restarts only after a negative running sum. Returned ranges are concrete integer lists."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_24.json",
+        "solutions/python/ctci6_17_24.py",
+        "solutions/notes/python/ctci6_17_24.json"
+      ]
+    },
+    "ctci6_17_24/cpp": {
+      "codePath": "solutions/cpp/ctci6_17_24.cpp",
+      "notesPath": "solutions/notes/cpp/ctci6_17_24.json",
+      "contentSha256": "8a204e0528b35cdfc3b9637e455a428df18c16757ccbbf86050396dbb55b2360",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "Accumulate column sums for each top/bottom row pair and scan nonempty maximum subarrays.",
+        "correctness": "For each row pair, each column total is exactly the sum between those rows. Therefore a column interval and its corresponding rectangle have identical sums. Kadane keeps the maximum nonempty sum ending at each column: extend a nonnegative preceding sum, or start anew after a negative one. Every possible rectangle has one enumerated row pair and column interval, so maximizing these candidates yields the global optimum. Keeping an equal-zero prefix favors earlier left bounds; strict global improvements with top/bottom iteration order preserve the specified tie priority. Initializing below all admitted sums prevents an empty zero choice from defeating all-negative rectangles.",
+        "workedTrace": "For [[1,-2,3],[-4,5,6]], the bottom row interval columns 1..2 sums to 11. Including both rows over those columns gives -2+3+5+6=12, so return [12,0,1,1,2]. In [[-5,-2]], the correct nonempty answer is [-2,0,1,0,1], not zero.",
+        "edgeCases": "Empty dimensions, a single negative cell, all-negative matrices. The entire matrix, a strict interior optimum, and ties under the stated top/bottom/left/right priority.",
+        "timeDerivation": "O(rows^2*columns) time for all row pairs and their column scans.",
+        "spaceDerivation": "O(columns) auxiliary column totals plus constant scalar bounds and the five-integer result.",
+        "callableAgreement": "All five keep actual sum and inclusive coordinates. Negative running sums restart; zero running sums retain an earlier left endpoint. Strict best updates plus top/bottom traversal preserve the explicitly stated tie priority. An initial signed-minimum best cannot admit a fake empty zero rectangle. Independent 2D-prefix enumeration tests all small signed rectangular inputs, all-negative/zero cases and 30x30 signed bounds. O(rows^2*columns) time and O(columns) auxiliary space match each body. Read exact C++17 methods: uint32_t carry shifts are defined; the visible <cstring> include supports memcpy of the final int32_t bits. Digit counting widens place arithmetic to int64_t. Const vector references preserve inputs; by-value returned vectors own optional majority results. All index arithmetic handles emptiness before access. The visible unordered_map include belongs to the covering-window callable, not a hidden helper. SmallestK uses standard heap algorithms on a k-sized vector; const inputs remain unchanged. Comparator decisions avoid subtraction of extreme signed values."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_24.json",
+        "solutions/cpp/ctci6_17_24.cpp",
+        "solutions/notes/cpp/ctci6_17_24.json"
+      ]
+    },
+    "ctci6_17_24/java": {
+      "codePath": "solutions/java/ctci6_17_24.java",
+      "notesPath": "solutions/notes/java/ctci6_17_24.json",
+      "contentSha256": "c9eeb1d664f6ebf1b98cedd6ae292034eb5dec8776e1fb400c8e3dc63abd8b5a",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review17.json",
+      "checks": {
+        "actualAlgorithm": "Accumulate column sums for each top/bottom row pair and scan nonempty maximum subarrays.",
+        "correctness": "For each row pair, each column total is exactly the sum between those rows. Therefore a column interval and its corresponding rectangle have identical sums. Kadane keeps the maximum nonempty sum ending at each column: extend a nonnegative preceding sum, or start anew after a negative one. Every possible rectangle has one enumerated row pair and column interval, so maximizing these candidates yields the global optimum. Keeping an equal-zero prefix favors earlier left bounds; strict global improvements with top/bottom iteration order preserve the specified tie priority. Initializing below all admitted sums prevents an empty zero choice from defeating all-negative rectangles.",
+        "workedTrace": "For [[1,-2,3],[-4,5,6]], the bottom row interval columns 1..2 sums to 11. Including both rows over those columns gives -2+3+5+6=12, so return [12,0,1,1,2]. In [[-5,-2]], the correct nonempty answer is [-2,0,1,0,1], not zero.",
+        "edgeCases": "Empty dimensions, a single negative cell, all-negative matrices. The entire matrix, a strict interior optimum, and ties under the stated top/bottom/left/right priority.",
+        "timeDerivation": "O(rows^2*columns) time for all row pairs and their column scans.",
+        "spaceDerivation": "O(columns) auxiliary column totals plus constant scalar bounds and the five-integer result.",
+        "callableAgreement": "All five keep actual sum and inclusive coordinates. Negative running sums restart; zero running sums retain an earlier left endpoint. Strict best updates plus top/bottom traversal preserve the explicitly stated tie priority. An initial signed-minimum best cannot admit a fake empty zero rectangle. Independent 2D-prefix enumeration tests all small signed rectangular inputs, all-negative/zero cases and 30x30 signed bounds. O(rows^2*columns) time and O(columns) auxiliary space match each body. Read exact methods: int carry shifts deliberately discard overflow bits; digit counting uses long intermediates before the justified final cast. int[] and ArrayList-free optional results match signatures. Bit/loop state is per invocation, and bounded DP/water totals fit int; no static state or mutable input side effects. SmallestK uses Comparator.reverseOrder safely and fills int[] output backward. Prefix slots use Arrays.fill(-2); matrix tables allocate independent rows. Hash windows use boxed integer keys consistently with primitive input values."
+      },
+      "evidence": [
+        "ctci6/review17.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_17_24.json",
+        "solutions/java/ctci6_17_24.java",
+        "solutions/notes/java/ctci6_17_24.json"
       ]
     }
   }

@@ -5742,6 +5742,84 @@
     }
   },
   {
+    "id": "ctci6_17_5",
+    "ref": "17.5",
+    "title": "Letters and Numbers",
+    "description": "Find the longest contiguous substring containing equally many ASCII letters and decimal digits. Return its inclusive zero-based endpoints [start,end]. If several longest substrings qualify, return the one with the smallest start. Return [-1,-1] when no nonempty balanced substring exists.",
+    "constraints": [
+      "text is nonnull, has length 0..10000, and contains only a..z, A..Z and 0..9. Each letter or digit counts as one character; letter case and digit value do not change its category. Preserve the input.",
+      "Return original-text indices, not a reordered selection or a count. Empty text and an all-letter/all-digit text return [-1,-1]. Punctuation and Unicode category classification are outside this shared ASCII domain."
+    ],
+    "method": "LongestLettersDigits",
+    "params": [
+      [
+        "text",
+        "s"
+      ]
+    ],
+    "result": "ai",
+    "mutation": "none",
+    "testCount": 1101,
+    "batch": 17,
+    "stagingDirectory": "",
+    "example": [
+      [
+        "A1B2C"
+      ],
+      [
+        0,
+        3
+      ]
+    ],
+    "languages": {
+      "csharp": {
+        "signature": "int[] LongestLettersDigits(string text)",
+        "starterCode": "public class Solution\n{\n    public int[] LongestLettersDigits(string text)\n    {\n        return [];\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public int[] LongestLettersDigits(string text)\n    {\n        int n = text.Length;\n        int[] first = new int[2 * n + 1];\n        Array.Fill(first, -2);\n        first[n] = -1;\n        int balance = 0, best = 0, start = -1, end = -1;\n        for (int i = 0; i < n; ++i)\n        {\n            balance += (text[i] >= '0' && text[i] <= '9') ? -1 : 1;\n            int slot = balance + n;\n            if (first[slot] == -2)\n                first[slot] = i;\n            else if (i - first[slot] > best)\n            {\n                best = i - first[slot];\n                start = first[slot] + 1;\n                end = i;\n            }\n        }\n        return [start, end];\n    }\n}\n",
+        "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\n",
+        "suffix": "",
+        "harness": "using System;\nusing System.Collections.Generic;\nusing System.Text;\nusing System.IO;\nusing System.Text.Json;\n\nclass Harness {\nstatic object Execute(JsonElement row){string reference=row.GetProperty(\"ref\").GetString()!;var args=row.GetProperty(\"arguments\");if(reference==\"17.5\"){var p0=JsonSerializer.Deserialize<string>(args[0].GetRawText())!;var actual=new Solution().LongestLettersDigits(p0);return new {actual,mutationOk=true};}throw new Exception(\"Unknown reference\");}\nstatic object TimedExecute(JsonElement row) {\nvar clock=System.Diagnostics.Stopwatch.StartNew();object observed;\ntry { observed=Execute(row); } catch(Exception error) { observed=new {error=error.ToString()}; }\nreturn new {observation=observed,elapsedMs=clock.Elapsed.TotalMilliseconds};\n}\nstatic void Main(){using var document=JsonDocument.Parse(File.ReadAllText(\"cases.json\"));var results=new List<object>();foreach(var row in document.RootElement.EnumerateArray()){try{results.Add(TimedExecute(row));}catch(Exception error){results.Add(new {error=error.ToString()});}}File.WriteAllText(\"results.json\",JsonSerializer.Serialize(results));}\n}\n",
+        "reference": ""
+      },
+      "javascript": {
+        "signature": "function LongestLettersDigits(text)",
+        "starterCode": "function LongestLettersDigits(text) {\n  return [];\n}\n",
+        "solutionCode": "function LongestLettersDigits(text) {\n  const n = text.length,\n    first = Array(2 * n + 1).fill(-2);\n  first[n] = -1;\n  let balance = 0,\n    best = 0,\n    start = -1,\n    end = -1;\n  for (let i = 0; i < n; ++i) {\n    balance += text[i] >= \"0\" && text[i] <= \"9\" ? -1 : 1;\n    const slot = balance + n;\n    if (first[slot] === -2) first[slot] = i;\n    else if (i - first[slot] > best) {\n      best = i - first[slot];\n      start = first[slot] + 1;\n      end = i;\n    }\n  }\n  return [start, end];\n}\n",
+        "prefix": "'use strict';\n",
+        "suffix": "\nmodule.exports = {LongestLettersDigits};\n",
+        "harness": "const user = require('./solution.js');\nconst LongestLettersDigits = user.LongestLettersDigits;\n\nconst fs=require('node:fs'),kinds={\"17.5\": \"ai\"};\nfunction invoke(row){const ref=row.ref,args=row.arguments;if(ref===\"17.5\")return LongestLettersDigits(...args);throw new Error('Unknown reference');}\nfunction execute(row){const args=row.arguments,before=JSON.stringify(args),outer=args.filter(Array.isArray),rows=outer.filter(v=>v.length&&Array.isArray(v[0])).map(v=>[v,v.slice()]);const actual=invoke(row),kind=kinds[row.ref];const valid=kind==='strings'?Array.isArray(actual)&&actual.every(v=>typeof v==='string'):['sets','arrangements','path','aai'].includes(kind)?Array.isArray(actual)&&actual.every(r=>Array.isArray(r)&&r.every(Number.isInteger)):kind==='ai'?Array.isArray(actual)&&actual.every(v=>Number.isInteger(v)&&v>=-2147483648&&v<=2147483647):Number.isInteger(actual)&&actual>=-2147483648&&actual<=2147483647;return {actual,mutationOk:valid&&(row.ref==='8.10'?JSON.stringify(actual)===JSON.stringify(args[0]):JSON.stringify(args)===before)&&outer.every(v=>args.includes(v))&&rows.every(([v,old])=>v.length===old.length&&v.every((r,i)=>r===old[i]))};}\nconst results=JSON.parse(fs.readFileSync('cases.json','utf8')).map(timed(row=>{try{return execute(row);}catch(error){return {error:String(error)};}}));\nfs.writeFileSync('results.json',JSON.stringify(results));\n\nfunction timed(fn) { return row => { const start=performance.now(); let observation; try { observation=fn(row); } catch(error) { observation={error:String(error)}; } return {observation,elapsedMs:performance.now()-start}; }; }\n",
+        "reference": ""
+      },
+      "python": {
+        "signature": "def LongestLettersDigits(text: str) -> list[int]",
+        "starterCode": "def LongestLettersDigits(text: str) -> list[int]:\n    return []\n",
+        "solutionCode": "def LongestLettersDigits(text: str) -> list[int]:\n    n = len(text)\n    first = [-2] * (2 * n + 1)\n    first[n] = -1\n    balance = best = 0\n    start = end = -1\n    for index, char in enumerate(text):\n        balance += -1 if \"0\" <= char <= \"9\" else 1\n        slot = balance + n\n        if first[slot] == -2:\n            first[slot] = index\n        elif index - first[slot] > best:\n            best = index - first[slot]\n            start, end = first[slot] + 1, index\n    return [start, end]\n",
+        "prefix": "",
+        "suffix": "",
+        "harness": "import time\nimport solution as user\nLongestLettersDigits = user.LongestLettersDigits\n\nimport json\nKINDS={'17.5': 'ai'}\ndef invoke(row):\n    ref,args=row['ref'],row['arguments']\n    if ref == '17.5': return LongestLettersDigits(*args)\n    raise ValueError('Unknown reference')\ndef execute(row):\n    args=row['arguments'];before=json.dumps(args);outer=[v for v in args if type(v) is list];rows=[(v,list(v)) for v in outer if v and type(v[0]) is list]\n    actual=invoke(row);kind=KINDS[row['ref']]\n    valid=(type(actual) is list and all(type(v) is str for v in actual)) if kind=='strings' else (type(actual) is list and all(type(r) is list and all(type(v) is int for v in r) for r in actual)) if kind in ('sets','arrangements','path','aai') else (type(actual) is list and all(type(v) is int for v in actual)) if kind=='ai' else type(actual) is int and -2147483648<=actual<=2147483647\n    return dict(actual=actual,mutationOk=valid and (actual==args[0] if row['ref']=='8.10' else json.dumps(args)==before) and all(any(v is original for v in args) for original in outer) and all(len(v)==len(old) and all(a is b for a,b in zip(v,old)) for v,old in rows))\nresults=[]\nfor row in json.load(open('cases.json',encoding='utf-8')):\n    clock = time.perf_counter()\n    try:results.append(execute(row))\n    except Exception as error:results.append(dict(error=repr(error)))\n    results[-1] = dict(observation=results[-1], elapsedMs=(time.perf_counter()-clock)*1000)\njson.dump(results,open('results.json','w',encoding='utf-8'))\n",
+        "reference": ""
+      },
+      "cpp": {
+        "signature": "std::vector<int> LongestLettersDigits(const std::string& text)",
+        "starterCode": "class Solution {\n public:\n  std::vector<int> LongestLettersDigits(const std::string& text) {\n    return {};\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  std::vector<int> LongestLettersDigits(const std::string& text) {\n    int n = static_cast<int>(text.size());\n    std::vector<int> first(2 * n + 1, -2);\n    first[n] = -1;\n    int balance = 0, best = 0, start = -1, end = -1;\n    for (int i = 0; i < n; ++i) {\n      balance += (text[i] >= '0' && text[i] <= '9') ? -1 : 1;\n      int slot = balance + n;\n      if (first[slot] == -2)\n        first[slot] = i;\n      else if (i - first[slot] > best) {\n        best = i - first[slot];\n        start = first[slot] + 1;\n        end = i;\n      }\n    }\n    return {start, end};\n  }\n};\n",
+        "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n",
+        "suffix": "",
+        "harness": "#include <chrono>\n#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include \"solution.cpp\"\n#include <fstream>\n#include \"test_framework/json.h\"\nusing json=nlohmann::json;\n\nbool sameRows(const std::vector<std::vector<int>>& values,const std::vector<const int*>& rows){if(values.size()!=rows.size())return false;for(size_t i=0;i<rows.size();++i)if(values[i].data()!=rows[i])return false;return true;}\njson execute(const json& row){std::string reference=row[\"ref\"].get<std::string>();const auto& args=row[\"arguments\"];if(reference==\"17.5\"){auto p0=args[0].get<std::string>();auto actual=Solution().LongestLettersDigits(p0);return json{{\"actual\",actual},{\"mutationOk\",true}};}throw std::runtime_error(\"Unknown reference\");}\njson timedExecute(const json& row) {\nauto start=std::chrono::steady_clock::now();json observed;\ntry { observed=execute(row); } catch(const std::exception& error) { observed=json{{\"error\",error.what()}}; }\ndouble elapsed=std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-start).count();\nreturn json{{\"observation\",observed},{\"elapsedMs\",elapsed}};\n}\nint main(){std::ifstream input(\"cases.json\");json rows;input>>rows;json results=json::array();for(const auto& row:rows){try{results.push_back(timedExecute(row));}catch(const std::exception& error){results.push_back(json{{\"error\",error.what()}});}}std::ofstream(\"results.json\")<<results;}\n",
+        "reference": ""
+      },
+      "java": {
+        "signature": "int[] LongestLettersDigits(String text)",
+        "starterCode": "class Solution {\n  public int[] LongestLettersDigits(String text) {\n    return new int[0];\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public int[] LongestLettersDigits(String text) {\n    int n = text.length();\n    int[] first = new int[2 * n + 1];\n    Arrays.fill(first, -2);\n    first[n] = -1;\n    int balance = 0, best = 0, start = -1, end = -1;\n    for (int i = 0; i < n; ++i) {\n      balance += (text.charAt(i) >= '0' && text.charAt(i) <= '9') ? -1 : 1;\n      int slot = balance + n;\n      if (first[slot] == -2)\n        first[slot] = i;\n      else if (i - first[slot] > best) {\n        best = i - first[slot];\n        start = first[slot] + 1;\n        end = i;\n      }\n    }\n    return new int[] {start, end};\n  }\n}\n",
+        "prefix": "import java.util.*;\n",
+        "suffix": "",
+        "harness": "import java.util.*;\nimport java.nio.file.*;\nimport epi.test_framework.minimal_json.*;\n\npublic class Harness {\nstatic int[] integers(JsonArray values){int[] output=new int[values.size()];for(int i=0;i<output.length;++i)output[i]=values.get(i).asInt();return output;}\nstatic int[][] matrix(JsonArray values){int[][] output=new int[values.size()][];for(int i=0;i<output.length;++i)output[i]=integers(values.get(i).asArray());return output;}\nstatic boolean sameRows(int[][] values,int[][] before){if(values.length!=before.length)return false;for(int i=0;i<values.length;++i)if(values[i]!=before[i])return false;return true;}\nstatic JsonValue encode(Object value){if(value==null)return Json.NULL;if(value instanceof Integer v)return Json.value(v);if(value instanceof String v)return Json.value(v);var result=new JsonArray();if(value instanceof int[] values){for(int v:values)result.add(v);}else if(value instanceof int[][] values){for(int[] v:values)result.add(encode(v));}else if(value instanceof Iterable<?> values){for(Object v:values)result.add(encode(v));}else throw new IllegalArgumentException(\"Invalid result\");return result;}\nstatic JsonValue execute(JsonObject row){String reference=row.get(\"ref\").asString();var args=row.get(\"arguments\").asArray();if(reference.equals(\"17.5\")){var p0=args.get(0).asString();var actual=new Solution().LongestLettersDigits(p0);return new JsonObject().add(\"actual\",encode(actual)).add(\"mutationOk\",true);}throw new RuntimeException(\"Unknown reference\");}\nstatic JsonValue timedExecute(JsonObject row) {\nlong start=System.nanoTime();JsonValue observed;\ntry { observed=execute(row); } catch(Throwable error) { observed=new JsonObject().add(\"error\",error.toString()); }\nreturn new JsonObject().add(\"observation\",observed).add(\"elapsedMs\",(System.nanoTime()-start)/1000000.0);\n}\npublic static void main(String[] ignored)throws Exception{var results=new JsonArray();for(var row:Json.parse(Files.readString(Path.of(\"cases.json\"))).asArray()){try{results.add(timedExecute(row.asObject()));}catch(Throwable error){results.add(new JsonObject().add(\"error\",error.toString()));}}Files.writeString(Path.of(\"results.json\"),results.toString());}\n}\n",
+        "reference": ""
+      }
+    }
+  },
+  {
     "id": "ctci6_17_6",
     "ref": "17.6",
     "title": "Count of 2s",
@@ -5975,6 +6053,96 @@
     }
   },
   {
+    "id": "ctci6_17_14",
+    "ref": "17.14",
+    "title": "Smallest K",
+    "description": "Return the k smallest input values in nondecreasing order, preserving duplicate occurrences. The output has exactly k elements. Do not change the input array or its order.",
+    "constraints": [
+      "values contains 0..10000 signed 32-bit integers, and 0 <= k <= values.length. For k=0 return an empty integer collection. Signed endpoints and repeated equal values are admitted.",
+      "Use an auxiliary max heap of at most k values rather than sorting or partitioning the input. Sorting the retained k result values is allowed. The ascending output order and the k=0 result are explicit bank conventions."
+    ],
+    "method": "SmallestK",
+    "params": [
+      [
+        "values",
+        "ai"
+      ],
+      [
+        "k",
+        "i"
+      ]
+    ],
+    "result": "ai",
+    "mutation": "none",
+    "testCount": 7197,
+    "batch": 17,
+    "stagingDirectory": "",
+    "example": [
+      [
+        [
+          5,
+          1,
+          5,
+          -2,
+          3
+        ],
+        3
+      ],
+      [
+        -2,
+        1,
+        3
+      ]
+    ],
+    "languages": {
+      "csharp": {
+        "signature": "int[] SmallestK(int[] values, int k)",
+        "starterCode": "public class Solution\n{\n    public int[] SmallestK(int[] values, int k)\n    {\n        return [];\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public int[] SmallestK(int[] values, int k)\n    {\n        if (k == 0)\n            return [];\n        var heap = new PriorityQueue<int, int>(Comparer<int>.Create((a, b) => b.CompareTo(a)));\n        for (int i = 0; i < k; ++i)\n            heap.Enqueue(values[i], values[i]);\n        for (int i = k; i < values.Length; ++i)\n        {\n            if (values[i] < heap.Peek())\n            {\n                heap.Dequeue();\n                heap.Enqueue(values[i], values[i]);\n            }\n        }\n        int[] result = new int[k];\n        for (int i = k - 1; i >= 0; --i)\n            result[i] = heap.Dequeue();\n        return result;\n    }\n}\n",
+        "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\n",
+        "suffix": "",
+        "harness": "using System;\nusing System.Collections.Generic;\nusing System.Text;\nusing System.IO;\nusing System.Text.Json;\n\nclass Harness {\nstatic object Execute(JsonElement row){string reference=row.GetProperty(\"ref\").GetString()!;var args=row.GetProperty(\"arguments\");if(reference==\"17.14\"){var p0=JsonSerializer.Deserialize<int[]>(args[0].GetRawText())!;var before0=JsonSerializer.Serialize(p0);var p1=JsonSerializer.Deserialize<int>(args[1].GetRawText())!;var actual=new Solution().SmallestK(p0,p1);return new {actual,mutationOk=(JsonSerializer.Serialize(p0)==before0)};}throw new Exception(\"Unknown reference\");}\nstatic object TimedExecute(JsonElement row) {\nvar clock=System.Diagnostics.Stopwatch.StartNew();object observed;\ntry { observed=Execute(row); } catch(Exception error) { observed=new {error=error.ToString()}; }\nreturn new {observation=observed,elapsedMs=clock.Elapsed.TotalMilliseconds};\n}\nstatic void Main(){using var document=JsonDocument.Parse(File.ReadAllText(\"cases.json\"));var results=new List<object>();foreach(var row in document.RootElement.EnumerateArray()){try{results.Add(TimedExecute(row));}catch(Exception error){results.Add(new {error=error.ToString()});}}File.WriteAllText(\"results.json\",JsonSerializer.Serialize(results));}\n}\n",
+        "reference": ""
+      },
+      "javascript": {
+        "signature": "function SmallestK(values, k)",
+        "starterCode": "function SmallestK(values, k) {\n  return [];\n}\n",
+        "solutionCode": "function SmallestK(values, k) {\n  if (k === 0) return [];\n  const heap = values.slice(0, k);\n  function down(index) {\n    while (true) {\n      let child = 2 * index + 1;\n      if (child >= heap.length) return;\n      if (child + 1 < heap.length && heap[child + 1] > heap[child]) ++child;\n      if (heap[index] >= heap[child]) return;\n      [heap[index], heap[child]] = [heap[child], heap[index]];\n      index = child;\n    }\n  }\n  for (let i = Math.floor(k / 2) - 1; i >= 0; --i) down(i);\n  for (let i = k; i < values.length; ++i) {\n    if (values[i] < heap[0]) {\n      heap[0] = values[i];\n      down(0);\n    }\n  }\n  heap.sort((a, b) => a - b);\n  return heap;\n}\n",
+        "prefix": "'use strict';\n",
+        "suffix": "\nmodule.exports = {SmallestK};\n",
+        "harness": "const user = require('./solution.js');\nconst SmallestK = user.SmallestK;\n\nconst fs=require('node:fs'),kinds={\"17.14\": \"ai\"};\nfunction invoke(row){const ref=row.ref,args=row.arguments;if(ref===\"17.14\")return SmallestK(...args);throw new Error('Unknown reference');}\nfunction execute(row){const args=row.arguments,before=JSON.stringify(args),outer=args.filter(Array.isArray),rows=outer.filter(v=>v.length&&Array.isArray(v[0])).map(v=>[v,v.slice()]);const actual=invoke(row),kind=kinds[row.ref];const valid=kind==='strings'?Array.isArray(actual)&&actual.every(v=>typeof v==='string'):['sets','arrangements','path','aai'].includes(kind)?Array.isArray(actual)&&actual.every(r=>Array.isArray(r)&&r.every(Number.isInteger)):kind==='ai'?Array.isArray(actual)&&actual.every(v=>Number.isInteger(v)&&v>=-2147483648&&v<=2147483647):Number.isInteger(actual)&&actual>=-2147483648&&actual<=2147483647;return {actual,mutationOk:valid&&(row.ref==='8.10'?JSON.stringify(actual)===JSON.stringify(args[0]):JSON.stringify(args)===before)&&outer.every(v=>args.includes(v))&&rows.every(([v,old])=>v.length===old.length&&v.every((r,i)=>r===old[i]))};}\nconst results=JSON.parse(fs.readFileSync('cases.json','utf8')).map(timed(row=>{try{return execute(row);}catch(error){return {error:String(error)};}}));\nfs.writeFileSync('results.json',JSON.stringify(results));\n\nfunction timed(fn) { return row => { const start=performance.now(); let observation; try { observation=fn(row); } catch(error) { observation={error:String(error)}; } return {observation,elapsedMs:performance.now()-start}; }; }\n",
+        "reference": ""
+      },
+      "python": {
+        "signature": "def SmallestK(values: list[int], k: int) -> list[int]",
+        "starterCode": "def SmallestK(values: list[int], k: int) -> list[int]:\n    return []\n",
+        "solutionCode": "def SmallestK(values: list[int], k: int) -> list[int]:\n    if k == 0:\n        return []\n    import heapq\n\n    heap = [-values[i] for i in range(k)]\n    heapq.heapify(heap)\n    for index in range(k, len(values)):\n        value = values[index]\n        if value < -heap[0]:\n            heapq.heapreplace(heap, -value)\n    return sorted(-value for value in heap)\n",
+        "prefix": "",
+        "suffix": "",
+        "harness": "import time\nimport solution as user\nSmallestK = user.SmallestK\n\nimport json\nKINDS={'17.14': 'ai'}\ndef invoke(row):\n    ref,args=row['ref'],row['arguments']\n    if ref == '17.14': return SmallestK(*args)\n    raise ValueError('Unknown reference')\ndef execute(row):\n    args=row['arguments'];before=json.dumps(args);outer=[v for v in args if type(v) is list];rows=[(v,list(v)) for v in outer if v and type(v[0]) is list]\n    actual=invoke(row);kind=KINDS[row['ref']]\n    valid=(type(actual) is list and all(type(v) is str for v in actual)) if kind=='strings' else (type(actual) is list and all(type(r) is list and all(type(v) is int for v in r) for r in actual)) if kind in ('sets','arrangements','path','aai') else (type(actual) is list and all(type(v) is int for v in actual)) if kind=='ai' else type(actual) is int and -2147483648<=actual<=2147483647\n    return dict(actual=actual,mutationOk=valid and (actual==args[0] if row['ref']=='8.10' else json.dumps(args)==before) and all(any(v is original for v in args) for original in outer) and all(len(v)==len(old) and all(a is b for a,b in zip(v,old)) for v,old in rows))\nresults=[]\nfor row in json.load(open('cases.json',encoding='utf-8')):\n    clock = time.perf_counter()\n    try:results.append(execute(row))\n    except Exception as error:results.append(dict(error=repr(error)))\n    results[-1] = dict(observation=results[-1], elapsedMs=(time.perf_counter()-clock)*1000)\njson.dump(results,open('results.json','w',encoding='utf-8'))\n",
+        "reference": ""
+      },
+      "cpp": {
+        "signature": "std::vector<int> SmallestK(const std::vector<int>& values, int k)",
+        "starterCode": "class Solution {\n public:\n  std::vector<int> SmallestK(const std::vector<int>& values, int k) {\n    return {};\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  std::vector<int> SmallestK(const std::vector<int>& values, int k) {\n    if (k == 0)\n      return {};\n    std::vector<int> heap(values.begin(), values.begin() + k);\n    std::make_heap(heap.begin(), heap.end());\n    for (int i = k; i < static_cast<int>(values.size()); ++i) {\n      if (values[i] < heap.front()) {\n        std::pop_heap(heap.begin(), heap.end());\n        heap.back() = values[i];\n        std::push_heap(heap.begin(), heap.end());\n      }\n    }\n    std::sort_heap(heap.begin(), heap.end());\n    return heap;\n  }\n};\n",
+        "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n",
+        "suffix": "",
+        "harness": "#include <chrono>\n#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include \"solution.cpp\"\n#include <fstream>\n#include \"test_framework/json.h\"\nusing json=nlohmann::json;\n\nbool sameRows(const std::vector<std::vector<int>>& values,const std::vector<const int*>& rows){if(values.size()!=rows.size())return false;for(size_t i=0;i<rows.size();++i)if(values[i].data()!=rows[i])return false;return true;}\njson execute(const json& row){std::string reference=row[\"ref\"].get<std::string>();const auto& args=row[\"arguments\"];if(reference==\"17.14\"){auto p0=args[0].get<std::vector<int>>();auto before0=p0;auto p1=args[1].get<int>();auto actual=Solution().SmallestK(p0,p1);return json{{\"actual\",actual},{\"mutationOk\",(p0==before0)}};}throw std::runtime_error(\"Unknown reference\");}\njson timedExecute(const json& row) {\nauto start=std::chrono::steady_clock::now();json observed;\ntry { observed=execute(row); } catch(const std::exception& error) { observed=json{{\"error\",error.what()}}; }\ndouble elapsed=std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-start).count();\nreturn json{{\"observation\",observed},{\"elapsedMs\",elapsed}};\n}\nint main(){std::ifstream input(\"cases.json\");json rows;input>>rows;json results=json::array();for(const auto& row:rows){try{results.push_back(timedExecute(row));}catch(const std::exception& error){results.push_back(json{{\"error\",error.what()}});}}std::ofstream(\"results.json\")<<results;}\n",
+        "reference": ""
+      },
+      "java": {
+        "signature": "int[] SmallestK(int[] values, int k)",
+        "starterCode": "class Solution {\n  public int[] SmallestK(int[] values, int k) {\n    return new int[0];\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public int[] SmallestK(int[] values, int k) {\n    if (k == 0)\n      return new int[0];\n    var heap = new PriorityQueue<Integer>(Comparator.reverseOrder());\n    for (int i = 0; i < k; ++i)\n      heap.add(values[i]);\n    for (int i = k; i < values.length; ++i) {\n      if (values[i] < heap.peek()) {\n        heap.remove();\n        heap.add(values[i]);\n      }\n    }\n    int[] result = new int[k];\n    for (int i = k - 1; i >= 0; --i)\n      result[i] = heap.remove();\n    return result;\n  }\n}\n",
+        "prefix": "import java.util.*;\n",
+        "suffix": "",
+        "harness": "import java.util.*;\nimport java.nio.file.*;\nimport epi.test_framework.minimal_json.*;\n\npublic class Harness {\nstatic int[] integers(JsonArray values){int[] output=new int[values.size()];for(int i=0;i<output.length;++i)output[i]=values.get(i).asInt();return output;}\nstatic int[][] matrix(JsonArray values){int[][] output=new int[values.size()][];for(int i=0;i<output.length;++i)output[i]=integers(values.get(i).asArray());return output;}\nstatic boolean sameRows(int[][] values,int[][] before){if(values.length!=before.length)return false;for(int i=0;i<values.length;++i)if(values[i]!=before[i])return false;return true;}\nstatic JsonValue encode(Object value){if(value==null)return Json.NULL;if(value instanceof Integer v)return Json.value(v);if(value instanceof String v)return Json.value(v);var result=new JsonArray();if(value instanceof int[] values){for(int v:values)result.add(v);}else if(value instanceof int[][] values){for(int[] v:values)result.add(encode(v));}else if(value instanceof Iterable<?> values){for(Object v:values)result.add(encode(v));}else throw new IllegalArgumentException(\"Invalid result\");return result;}\nstatic JsonValue execute(JsonObject row){String reference=row.get(\"ref\").asString();var args=row.get(\"arguments\").asArray();if(reference.equals(\"17.14\")){int[] p0=integers(args.get(0).asArray());String before0=encode(p0).toString();var p1=args.get(1).asInt();var actual=new Solution().SmallestK(p0,p1);return new JsonObject().add(\"actual\",encode(actual)).add(\"mutationOk\",(encode(p0).toString().equals(before0)));}throw new RuntimeException(\"Unknown reference\");}\nstatic JsonValue timedExecute(JsonObject row) {\nlong start=System.nanoTime();JsonValue observed;\ntry { observed=execute(row); } catch(Throwable error) { observed=new JsonObject().add(\"error\",error.toString()); }\nreturn new JsonObject().add(\"observation\",observed).add(\"elapsedMs\",(System.nanoTime()-start)/1000000.0);\n}\npublic static void main(String[] ignored)throws Exception{var results=new JsonArray();for(var row:Json.parse(Files.readString(Path.of(\"cases.json\"))).asArray()){try{results.add(timedExecute(row.asObject()));}catch(Throwable error){results.add(new JsonObject().add(\"error\",error.toString()));}}Files.writeString(Path.of(\"results.json\"),results.toString());}\n}\n",
+        "reference": ""
+      }
+    }
+  },
+  {
     "id": "ctci6_17_16",
     "ref": "17.16",
     "title": "The Masseuse",
@@ -6059,6 +6227,183 @@
     }
   },
   {
+    "id": "ctci6_17_18",
+    "ref": "17.18",
+    "title": "Shortest Supersequence",
+    "description": "Return inclusive zero-based endpoints [start,end] of the shortest contiguous subarray of big containing every value from small at least once. The values of small may appear in any order inside the subarray. Break equal-length ties by the smallest start. Return [-1,-1] if no such subarray exists or small is empty.",
+    "constraints": [
+      "big contains 0..10000 signed 32-bit integers. small contains 0..100 distinct signed 32-bit integers; its entries are a set of required values, not a required sequence. Preserve both arrays and their order.",
+      "Repeated occurrences in big do not require extra matches. An empty target needs no nonempty window and uses [-1,-1] as its explicit representation. A missing target value yields [-1,-1] as well."
+    ],
+    "method": "ShortestCoveringRange",
+    "params": [
+      [
+        "big",
+        "ai"
+      ],
+      [
+        "small",
+        "ai"
+      ]
+    ],
+    "result": "ai",
+    "mutation": "none",
+    "testCount": 2917,
+    "batch": 17,
+    "stagingDirectory": "",
+    "example": [
+      [
+        [
+          7,
+          5,
+          9,
+          1,
+          5,
+          9,
+          1
+        ],
+        [
+          1,
+          5,
+          9
+        ]
+      ],
+      [
+        1,
+        3
+      ]
+    ],
+    "languages": {
+      "csharp": {
+        "signature": "int[] ShortestCoveringRange(int[] big, int[] small)",
+        "starterCode": "public class Solution\n{\n    public int[] ShortestCoveringRange(int[] big, int[] small)\n    {\n        return [];\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public int[] ShortestCoveringRange(int[] big, int[] small)\n    {\n        if (small.Length == 0)\n            return [-1, -1];\n        var counts = new Dictionary<int, int>();\n        foreach (int value in small)\n            counts[value] = 0;\n        int missing = small.Length, left = 0, start = -1, end = -1;\n        for (int right = 0; right < big.Length; ++right)\n        {\n            int value = big[right];\n            if (counts.ContainsKey(value))\n            {\n                if (counts[value] == 0)\n                    --missing;\n                ++counts[value];\n            }\n            while (missing == 0)\n            {\n                if (start == -1 || right - left < end - start)\n                {\n                    start = left;\n                    end = right;\n                }\n                int removed = big[left];\n                if (counts.ContainsKey(removed))\n                {\n                    --counts[removed];\n                    if (counts[removed] == 0)\n                        ++missing;\n                }\n                ++left;\n            }\n        }\n        return [start, end];\n    }\n}\n",
+        "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\n",
+        "suffix": "",
+        "harness": "using System;\nusing System.Collections.Generic;\nusing System.Text;\nusing System.IO;\nusing System.Text.Json;\n\nclass Harness {\nstatic object Execute(JsonElement row){string reference=row.GetProperty(\"ref\").GetString()!;var args=row.GetProperty(\"arguments\");if(reference==\"17.18\"){var p0=JsonSerializer.Deserialize<int[]>(args[0].GetRawText())!;var before0=JsonSerializer.Serialize(p0);var p1=JsonSerializer.Deserialize<int[]>(args[1].GetRawText())!;var before1=JsonSerializer.Serialize(p1);var actual=new Solution().ShortestCoveringRange(p0,p1);return new {actual,mutationOk=(JsonSerializer.Serialize(p0)==before0) && (JsonSerializer.Serialize(p1)==before1)};}throw new Exception(\"Unknown reference\");}\nstatic object TimedExecute(JsonElement row) {\nvar clock=System.Diagnostics.Stopwatch.StartNew();object observed;\ntry { observed=Execute(row); } catch(Exception error) { observed=new {error=error.ToString()}; }\nreturn new {observation=observed,elapsedMs=clock.Elapsed.TotalMilliseconds};\n}\nstatic void Main(){using var document=JsonDocument.Parse(File.ReadAllText(\"cases.json\"));var results=new List<object>();foreach(var row in document.RootElement.EnumerateArray()){try{results.Add(TimedExecute(row));}catch(Exception error){results.Add(new {error=error.ToString()});}}File.WriteAllText(\"results.json\",JsonSerializer.Serialize(results));}\n}\n",
+        "reference": ""
+      },
+      "javascript": {
+        "signature": "function ShortestCoveringRange(big, small)",
+        "starterCode": "function ShortestCoveringRange(big, small) {\n  return [];\n}\n",
+        "solutionCode": "function ShortestCoveringRange(big, small) {\n  if (small.length === 0) return [-1, -1];\n  const counts = new Map(small.map((v) => [v, 0]));\n  let missing = small.length,\n    left = 0,\n    start = -1,\n    end = -1;\n  for (let right = 0; right < big.length; ++right) {\n    const value = big[right];\n    if (counts.has(value)) {\n      if (counts.get(value) === 0) --missing;\n      counts.set(value, counts.get(value) + 1);\n    }\n    while (missing === 0) {\n      if (start === -1 || right - left < end - start) {\n        start = left;\n        end = right;\n      }\n      const removed = big[left];\n      if (counts.has(removed)) {\n        counts.set(removed, counts.get(removed) - 1);\n        if (counts.get(removed) === 0) ++missing;\n      }\n      ++left;\n    }\n  }\n  return [start, end];\n}\n",
+        "prefix": "'use strict';\n",
+        "suffix": "\nmodule.exports = {ShortestCoveringRange};\n",
+        "harness": "const user = require('./solution.js');\nconst ShortestCoveringRange = user.ShortestCoveringRange;\n\nconst fs=require('node:fs'),kinds={\"17.18\": \"ai\"};\nfunction invoke(row){const ref=row.ref,args=row.arguments;if(ref===\"17.18\")return ShortestCoveringRange(...args);throw new Error('Unknown reference');}\nfunction execute(row){const args=row.arguments,before=JSON.stringify(args),outer=args.filter(Array.isArray),rows=outer.filter(v=>v.length&&Array.isArray(v[0])).map(v=>[v,v.slice()]);const actual=invoke(row),kind=kinds[row.ref];const valid=kind==='strings'?Array.isArray(actual)&&actual.every(v=>typeof v==='string'):['sets','arrangements','path','aai'].includes(kind)?Array.isArray(actual)&&actual.every(r=>Array.isArray(r)&&r.every(Number.isInteger)):kind==='ai'?Array.isArray(actual)&&actual.every(v=>Number.isInteger(v)&&v>=-2147483648&&v<=2147483647):Number.isInteger(actual)&&actual>=-2147483648&&actual<=2147483647;return {actual,mutationOk:valid&&(row.ref==='8.10'?JSON.stringify(actual)===JSON.stringify(args[0]):JSON.stringify(args)===before)&&outer.every(v=>args.includes(v))&&rows.every(([v,old])=>v.length===old.length&&v.every((r,i)=>r===old[i]))};}\nconst results=JSON.parse(fs.readFileSync('cases.json','utf8')).map(timed(row=>{try{return execute(row);}catch(error){return {error:String(error)};}}));\nfs.writeFileSync('results.json',JSON.stringify(results));\n\nfunction timed(fn) { return row => { const start=performance.now(); let observation; try { observation=fn(row); } catch(error) { observation={error:String(error)}; } return {observation,elapsedMs:performance.now()-start}; }; }\n",
+        "reference": ""
+      },
+      "python": {
+        "signature": "def ShortestCoveringRange(big: list[int], small: list[int]) -> list[int]",
+        "starterCode": "def ShortestCoveringRange(big: list[int], small: list[int]) -> list[int]:\n    return []\n",
+        "solutionCode": "def ShortestCoveringRange(big: list[int], small: list[int]) -> list[int]:\n    if not small:\n        return [-1, -1]\n    counts = {value: 0 for value in small}\n    missing = len(small)\n    left = 0\n    best_start = best_end = -1\n    for right, value in enumerate(big):\n        if value in counts:\n            if counts[value] == 0:\n                missing -= 1\n            counts[value] += 1\n        while missing == 0:\n            if best_start == -1 or right - left < best_end - best_start:\n                best_start, best_end = left, right\n            removed = big[left]\n            if removed in counts:\n                counts[removed] -= 1\n                if counts[removed] == 0:\n                    missing += 1\n            left += 1\n    return [best_start, best_end]\n",
+        "prefix": "",
+        "suffix": "",
+        "harness": "import time\nimport solution as user\nShortestCoveringRange = user.ShortestCoveringRange\n\nimport json\nKINDS={'17.18': 'ai'}\ndef invoke(row):\n    ref,args=row['ref'],row['arguments']\n    if ref == '17.18': return ShortestCoveringRange(*args)\n    raise ValueError('Unknown reference')\ndef execute(row):\n    args=row['arguments'];before=json.dumps(args);outer=[v for v in args if type(v) is list];rows=[(v,list(v)) for v in outer if v and type(v[0]) is list]\n    actual=invoke(row);kind=KINDS[row['ref']]\n    valid=(type(actual) is list and all(type(v) is str for v in actual)) if kind=='strings' else (type(actual) is list and all(type(r) is list and all(type(v) is int for v in r) for r in actual)) if kind in ('sets','arrangements','path','aai') else (type(actual) is list and all(type(v) is int for v in actual)) if kind=='ai' else type(actual) is int and -2147483648<=actual<=2147483647\n    return dict(actual=actual,mutationOk=valid and (actual==args[0] if row['ref']=='8.10' else json.dumps(args)==before) and all(any(v is original for v in args) for original in outer) and all(len(v)==len(old) and all(a is b for a,b in zip(v,old)) for v,old in rows))\nresults=[]\nfor row in json.load(open('cases.json',encoding='utf-8')):\n    clock = time.perf_counter()\n    try:results.append(execute(row))\n    except Exception as error:results.append(dict(error=repr(error)))\n    results[-1] = dict(observation=results[-1], elapsedMs=(time.perf_counter()-clock)*1000)\njson.dump(results,open('results.json','w',encoding='utf-8'))\n",
+        "reference": ""
+      },
+      "cpp": {
+        "signature": "std::vector<int> ShortestCoveringRange(const std::vector<int>& big, const std::vector<int>& small)",
+        "starterCode": "#include <unordered_map>\nclass Solution {\n public:\n  std::vector<int> ShortestCoveringRange(const std::vector<int>& big,\n                                         const std::vector<int>& small) {\n    return {};\n  }\n};\n",
+        "solutionCode": "#include <unordered_map>\nclass Solution {\n public:\n  std::vector<int> ShortestCoveringRange(const std::vector<int>& big,\n                                         const std::vector<int>& small) {\n    if (static_cast<int>(small.size()) == 0)\n      return {-1, -1};\n    std::unordered_map<int, int> counts;\n    for (int value : small)\n      counts[value] = 0;\n    int missing = static_cast<int>(small.size()), left = 0, start = -1, end = -1;\n    for (int right = 0; right < static_cast<int>(big.size()); ++right) {\n      int value = big[right];\n      if (counts.find(value) != counts.end()) {\n        if (counts[value] == 0)\n          --missing;\n        ++counts[value];\n      }\n      while (missing == 0) {\n        if (start == -1 || right - left < end - start) {\n          start = left;\n          end = right;\n        }\n        int removed = big[left];\n        if (counts.find(removed) != counts.end()) {\n          --counts[removed];\n          if (counts[removed] == 0)\n            ++missing;\n        }\n        ++left;\n      }\n    }\n    return {start, end};\n  }\n};\n",
+        "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n",
+        "suffix": "",
+        "harness": "#include <chrono>\n#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include \"solution.cpp\"\n#include <fstream>\n#include \"test_framework/json.h\"\nusing json=nlohmann::json;\n\nbool sameRows(const std::vector<std::vector<int>>& values,const std::vector<const int*>& rows){if(values.size()!=rows.size())return false;for(size_t i=0;i<rows.size();++i)if(values[i].data()!=rows[i])return false;return true;}\njson execute(const json& row){std::string reference=row[\"ref\"].get<std::string>();const auto& args=row[\"arguments\"];if(reference==\"17.18\"){auto p0=args[0].get<std::vector<int>>();auto before0=p0;auto p1=args[1].get<std::vector<int>>();auto before1=p1;auto actual=Solution().ShortestCoveringRange(p0,p1);return json{{\"actual\",actual},{\"mutationOk\",(p0==before0) && (p1==before1)}};}throw std::runtime_error(\"Unknown reference\");}\njson timedExecute(const json& row) {\nauto start=std::chrono::steady_clock::now();json observed;\ntry { observed=execute(row); } catch(const std::exception& error) { observed=json{{\"error\",error.what()}}; }\ndouble elapsed=std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-start).count();\nreturn json{{\"observation\",observed},{\"elapsedMs\",elapsed}};\n}\nint main(){std::ifstream input(\"cases.json\");json rows;input>>rows;json results=json::array();for(const auto& row:rows){try{results.push_back(timedExecute(row));}catch(const std::exception& error){results.push_back(json{{\"error\",error.what()}});}}std::ofstream(\"results.json\")<<results;}\n",
+        "reference": ""
+      },
+      "java": {
+        "signature": "int[] ShortestCoveringRange(int[] big, int[] small)",
+        "starterCode": "class Solution {\n  public int[] ShortestCoveringRange(int[] big, int[] small) {\n    return new int[0];\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public int[] ShortestCoveringRange(int[] big, int[] small) {\n    if (small.length == 0)\n      return new int[] {-1, -1};\n    Map<Integer, Integer> counts = new HashMap<>();\n    for (int value : small)\n      counts.put(value, 0);\n    int missing = small.length, left = 0, start = -1, end = -1;\n    for (int right = 0; right < big.length; ++right) {\n      int value = big[right];\n      if (counts.containsKey(value)) {\n        if (counts.get(value) == 0)\n          --missing;\n        counts.put(value, counts.get(value) + 1);\n      }\n      while (missing == 0) {\n        if (start == -1 || right - left < end - start) {\n          start = left;\n          end = right;\n        }\n        int removed = big[left];\n        if (counts.containsKey(removed)) {\n          counts.put(removed, counts.get(removed) - 1);\n          if (counts.get(removed) == 0)\n            ++missing;\n        }\n        ++left;\n      }\n    }\n    return new int[] {start, end};\n  }\n}\n",
+        "prefix": "import java.util.*;\n",
+        "suffix": "",
+        "harness": "import java.util.*;\nimport java.nio.file.*;\nimport epi.test_framework.minimal_json.*;\n\npublic class Harness {\nstatic int[] integers(JsonArray values){int[] output=new int[values.size()];for(int i=0;i<output.length;++i)output[i]=values.get(i).asInt();return output;}\nstatic int[][] matrix(JsonArray values){int[][] output=new int[values.size()][];for(int i=0;i<output.length;++i)output[i]=integers(values.get(i).asArray());return output;}\nstatic boolean sameRows(int[][] values,int[][] before){if(values.length!=before.length)return false;for(int i=0;i<values.length;++i)if(values[i]!=before[i])return false;return true;}\nstatic JsonValue encode(Object value){if(value==null)return Json.NULL;if(value instanceof Integer v)return Json.value(v);if(value instanceof String v)return Json.value(v);var result=new JsonArray();if(value instanceof int[] values){for(int v:values)result.add(v);}else if(value instanceof int[][] values){for(int[] v:values)result.add(encode(v));}else if(value instanceof Iterable<?> values){for(Object v:values)result.add(encode(v));}else throw new IllegalArgumentException(\"Invalid result\");return result;}\nstatic JsonValue execute(JsonObject row){String reference=row.get(\"ref\").asString();var args=row.get(\"arguments\").asArray();if(reference.equals(\"17.18\")){int[] p0=integers(args.get(0).asArray());String before0=encode(p0).toString();int[] p1=integers(args.get(1).asArray());String before1=encode(p1).toString();var actual=new Solution().ShortestCoveringRange(p0,p1);return new JsonObject().add(\"actual\",encode(actual)).add(\"mutationOk\",(encode(p0).toString().equals(before0)) && (encode(p1).toString().equals(before1)));}throw new RuntimeException(\"Unknown reference\");}\nstatic JsonValue timedExecute(JsonObject row) {\nlong start=System.nanoTime();JsonValue observed;\ntry { observed=execute(row); } catch(Throwable error) { observed=new JsonObject().add(\"error\",error.toString()); }\nreturn new JsonObject().add(\"observation\",observed).add(\"elapsedMs\",(System.nanoTime()-start)/1000000.0);\n}\npublic static void main(String[] ignored)throws Exception{var results=new JsonArray();for(var row:Json.parse(Files.readString(Path.of(\"cases.json\"))).asArray()){try{results.add(timedExecute(row.asObject()));}catch(Throwable error){results.add(new JsonObject().add(\"error\",error.toString()));}}Files.writeString(Path.of(\"results.json\"),results.toString());}\n}\n",
+        "reference": ""
+      }
+    }
+  },
+  {
+    "id": "ctci6_17_19",
+    "ref": "17.19",
+    "title": "Missing Two",
+    "description": "The input contains all integers from 1 through n except two distinct missing values, in arbitrary order, with n=values.length+2. Return the two missing values in increasing order without modifying the input.",
+    "constraints": [
+      "2 <= n <= 100000. Input entries are distinct, lie in 1..n and omit exactly two values. No duplicates or out-of-range entries are admitted. For an empty input n=2 and the answer is [1,2].",
+      "Use O(1) auxiliary storage besides the two returned values. Do not sort or allocate a presence table proportional to n. Increasing result order is an explicit deterministic convention."
+    ],
+    "method": "MissingTwo",
+    "params": [
+      [
+        "values",
+        "ai"
+      ]
+    ],
+    "result": "ai",
+    "mutation": "none",
+    "testCount": 623,
+    "batch": 17,
+    "stagingDirectory": "",
+    "example": [
+      [
+        [
+          1,
+          3,
+          5
+        ]
+      ],
+      [
+        2,
+        4
+      ]
+    ],
+    "languages": {
+      "csharp": {
+        "signature": "int[] MissingTwo(int[] values)",
+        "starterCode": "public class Solution\n{\n    public int[] MissingTwo(int[] values)\n    {\n        return [];\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public int[] MissingTwo(int[] values)\n    {\n        int n = values.Length + 2, combined = 0;\n        for (int value = 1; value <= n; ++value)\n            combined ^= value;\n        foreach (int value in values)\n            combined ^= value;\n        int bit = combined & -combined, first = 0, second = 0;\n        for (int value = 1; value <= n; ++value)\n        {\n            if ((value & bit) != 0)\n                first ^= value;\n            else\n                second ^= value;\n        }\n        foreach (int value in values)\n        {\n            if ((value & bit) != 0)\n                first ^= value;\n            else\n                second ^= value;\n        }\n        return [Math.Min(first, second), Math.Max(first, second)];\n    }\n}\n",
+        "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\n",
+        "suffix": "",
+        "harness": "using System;\nusing System.Collections.Generic;\nusing System.Text;\nusing System.IO;\nusing System.Text.Json;\n\nclass Harness {\nstatic object Execute(JsonElement row){string reference=row.GetProperty(\"ref\").GetString()!;var args=row.GetProperty(\"arguments\");if(reference==\"17.19\"){var p0=JsonSerializer.Deserialize<int[]>(args[0].GetRawText())!;var before0=JsonSerializer.Serialize(p0);var actual=new Solution().MissingTwo(p0);return new {actual,mutationOk=(JsonSerializer.Serialize(p0)==before0)};}throw new Exception(\"Unknown reference\");}\nstatic object TimedExecute(JsonElement row) {\nvar clock=System.Diagnostics.Stopwatch.StartNew();object observed;\ntry { observed=Execute(row); } catch(Exception error) { observed=new {error=error.ToString()}; }\nreturn new {observation=observed,elapsedMs=clock.Elapsed.TotalMilliseconds};\n}\nstatic void Main(){using var document=JsonDocument.Parse(File.ReadAllText(\"cases.json\"));var results=new List<object>();foreach(var row in document.RootElement.EnumerateArray()){try{results.Add(TimedExecute(row));}catch(Exception error){results.Add(new {error=error.ToString()});}}File.WriteAllText(\"results.json\",JsonSerializer.Serialize(results));}\n}\n",
+        "reference": ""
+      },
+      "javascript": {
+        "signature": "function MissingTwo(values)",
+        "starterCode": "function MissingTwo(values) {\n  return [];\n}\n",
+        "solutionCode": "function MissingTwo(values) {\n  const n = values.length + 2;\n  let combined = 0;\n  for (let value = 1; value <= n; ++value) combined ^= value;\n  for (const value of values) combined ^= value;\n  const bit = combined & -combined;\n  let first = 0,\n    second = 0;\n  for (let value = 1; value <= n; ++value) {\n    if (value & bit) first ^= value;\n    else second ^= value;\n  }\n  for (const value of values) {\n    if (value & bit) first ^= value;\n    else second ^= value;\n  }\n  return [Math.min(first, second), Math.max(first, second)];\n}\n",
+        "prefix": "'use strict';\n",
+        "suffix": "\nmodule.exports = {MissingTwo};\n",
+        "harness": "const user = require('./solution.js');\nconst MissingTwo = user.MissingTwo;\n\nconst fs=require('node:fs'),kinds={\"17.19\": \"ai\"};\nfunction invoke(row){const ref=row.ref,args=row.arguments;if(ref===\"17.19\")return MissingTwo(...args);throw new Error('Unknown reference');}\nfunction execute(row){const args=row.arguments,before=JSON.stringify(args),outer=args.filter(Array.isArray),rows=outer.filter(v=>v.length&&Array.isArray(v[0])).map(v=>[v,v.slice()]);const actual=invoke(row),kind=kinds[row.ref];const valid=kind==='strings'?Array.isArray(actual)&&actual.every(v=>typeof v==='string'):['sets','arrangements','path','aai'].includes(kind)?Array.isArray(actual)&&actual.every(r=>Array.isArray(r)&&r.every(Number.isInteger)):kind==='ai'?Array.isArray(actual)&&actual.every(v=>Number.isInteger(v)&&v>=-2147483648&&v<=2147483647):Number.isInteger(actual)&&actual>=-2147483648&&actual<=2147483647;return {actual,mutationOk:valid&&(row.ref==='8.10'?JSON.stringify(actual)===JSON.stringify(args[0]):JSON.stringify(args)===before)&&outer.every(v=>args.includes(v))&&rows.every(([v,old])=>v.length===old.length&&v.every((r,i)=>r===old[i]))};}\nconst results=JSON.parse(fs.readFileSync('cases.json','utf8')).map(timed(row=>{try{return execute(row);}catch(error){return {error:String(error)};}}));\nfs.writeFileSync('results.json',JSON.stringify(results));\n\nfunction timed(fn) { return row => { const start=performance.now(); let observation; try { observation=fn(row); } catch(error) { observation={error:String(error)}; } return {observation,elapsedMs:performance.now()-start}; }; }\n",
+        "reference": ""
+      },
+      "python": {
+        "signature": "def MissingTwo(values: list[int]) -> list[int]",
+        "starterCode": "def MissingTwo(values: list[int]) -> list[int]:\n    return []\n",
+        "solutionCode": "def MissingTwo(values: list[int]) -> list[int]:\n    n = len(values) + 2\n    combined = 0\n    for value in range(1, n + 1):\n        combined ^= value\n    for value in values:\n        combined ^= value\n    bit = combined & -combined\n    first = second = 0\n    for value in range(1, n + 1):\n        if value & bit:\n            first ^= value\n        else:\n            second ^= value\n    for value in values:\n        if value & bit:\n            first ^= value\n        else:\n            second ^= value\n    return [min(first, second), max(first, second)]\n",
+        "prefix": "",
+        "suffix": "",
+        "harness": "import time\nimport solution as user\nMissingTwo = user.MissingTwo\n\nimport json\nKINDS={'17.19': 'ai'}\ndef invoke(row):\n    ref,args=row['ref'],row['arguments']\n    if ref == '17.19': return MissingTwo(*args)\n    raise ValueError('Unknown reference')\ndef execute(row):\n    args=row['arguments'];before=json.dumps(args);outer=[v for v in args if type(v) is list];rows=[(v,list(v)) for v in outer if v and type(v[0]) is list]\n    actual=invoke(row);kind=KINDS[row['ref']]\n    valid=(type(actual) is list and all(type(v) is str for v in actual)) if kind=='strings' else (type(actual) is list and all(type(r) is list and all(type(v) is int for v in r) for r in actual)) if kind in ('sets','arrangements','path','aai') else (type(actual) is list and all(type(v) is int for v in actual)) if kind=='ai' else type(actual) is int and -2147483648<=actual<=2147483647\n    return dict(actual=actual,mutationOk=valid and (actual==args[0] if row['ref']=='8.10' else json.dumps(args)==before) and all(any(v is original for v in args) for original in outer) and all(len(v)==len(old) and all(a is b for a,b in zip(v,old)) for v,old in rows))\nresults=[]\nfor row in json.load(open('cases.json',encoding='utf-8')):\n    clock = time.perf_counter()\n    try:results.append(execute(row))\n    except Exception as error:results.append(dict(error=repr(error)))\n    results[-1] = dict(observation=results[-1], elapsedMs=(time.perf_counter()-clock)*1000)\njson.dump(results,open('results.json','w',encoding='utf-8'))\n",
+        "reference": ""
+      },
+      "cpp": {
+        "signature": "std::vector<int> MissingTwo(const std::vector<int>& values)",
+        "starterCode": "class Solution {\n public:\n  std::vector<int> MissingTwo(const std::vector<int>& values) {\n    return {};\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  std::vector<int> MissingTwo(const std::vector<int>& values) {\n    int n = static_cast<int>(values.size()) + 2, combined = 0;\n    for (int value = 1; value <= n; ++value)\n      combined ^= value;\n    for (int value : values)\n      combined ^= value;\n    int bit = combined & -combined, first = 0, second = 0;\n    for (int value = 1; value <= n; ++value) {\n      if ((value & bit) != 0)\n        first ^= value;\n      else\n        second ^= value;\n    }\n    for (int value : values) {\n      if ((value & bit) != 0)\n        first ^= value;\n      else\n        second ^= value;\n    }\n    return {std::min(first, second), std::max(first, second)};\n  }\n};\n",
+        "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n",
+        "suffix": "",
+        "harness": "#include <chrono>\n#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include \"solution.cpp\"\n#include <fstream>\n#include \"test_framework/json.h\"\nusing json=nlohmann::json;\n\nbool sameRows(const std::vector<std::vector<int>>& values,const std::vector<const int*>& rows){if(values.size()!=rows.size())return false;for(size_t i=0;i<rows.size();++i)if(values[i].data()!=rows[i])return false;return true;}\njson execute(const json& row){std::string reference=row[\"ref\"].get<std::string>();const auto& args=row[\"arguments\"];if(reference==\"17.19\"){auto p0=args[0].get<std::vector<int>>();auto before0=p0;auto actual=Solution().MissingTwo(p0);return json{{\"actual\",actual},{\"mutationOk\",(p0==before0)}};}throw std::runtime_error(\"Unknown reference\");}\njson timedExecute(const json& row) {\nauto start=std::chrono::steady_clock::now();json observed;\ntry { observed=execute(row); } catch(const std::exception& error) { observed=json{{\"error\",error.what()}}; }\ndouble elapsed=std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-start).count();\nreturn json{{\"observation\",observed},{\"elapsedMs\",elapsed}};\n}\nint main(){std::ifstream input(\"cases.json\");json rows;input>>rows;json results=json::array();for(const auto& row:rows){try{results.push_back(timedExecute(row));}catch(const std::exception& error){results.push_back(json{{\"error\",error.what()}});}}std::ofstream(\"results.json\")<<results;}\n",
+        "reference": ""
+      },
+      "java": {
+        "signature": "int[] MissingTwo(int[] values)",
+        "starterCode": "class Solution {\n  public int[] MissingTwo(int[] values) {\n    return new int[0];\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public int[] MissingTwo(int[] values) {\n    int n = values.length + 2, combined = 0;\n    for (int value = 1; value <= n; ++value)\n      combined ^= value;\n    for (int value : values)\n      combined ^= value;\n    int bit = combined & -combined, first = 0, second = 0;\n    for (int value = 1; value <= n; ++value) {\n      if ((value & bit) != 0)\n        first ^= value;\n      else\n        second ^= value;\n    }\n    for (int value : values) {\n      if ((value & bit) != 0)\n        first ^= value;\n      else\n        second ^= value;\n    }\n    return new int[] {Math.min(first, second), Math.max(first, second)};\n  }\n}\n",
+        "prefix": "import java.util.*;\n",
+        "suffix": "",
+        "harness": "import java.util.*;\nimport java.nio.file.*;\nimport epi.test_framework.minimal_json.*;\n\npublic class Harness {\nstatic int[] integers(JsonArray values){int[] output=new int[values.size()];for(int i=0;i<output.length;++i)output[i]=values.get(i).asInt();return output;}\nstatic int[][] matrix(JsonArray values){int[][] output=new int[values.size()][];for(int i=0;i<output.length;++i)output[i]=integers(values.get(i).asArray());return output;}\nstatic boolean sameRows(int[][] values,int[][] before){if(values.length!=before.length)return false;for(int i=0;i<values.length;++i)if(values[i]!=before[i])return false;return true;}\nstatic JsonValue encode(Object value){if(value==null)return Json.NULL;if(value instanceof Integer v)return Json.value(v);if(value instanceof String v)return Json.value(v);var result=new JsonArray();if(value instanceof int[] values){for(int v:values)result.add(v);}else if(value instanceof int[][] values){for(int[] v:values)result.add(encode(v));}else if(value instanceof Iterable<?> values){for(Object v:values)result.add(encode(v));}else throw new IllegalArgumentException(\"Invalid result\");return result;}\nstatic JsonValue execute(JsonObject row){String reference=row.get(\"ref\").asString();var args=row.get(\"arguments\").asArray();if(reference.equals(\"17.19\")){int[] p0=integers(args.get(0).asArray());String before0=encode(p0).toString();var actual=new Solution().MissingTwo(p0);return new JsonObject().add(\"actual\",encode(actual)).add(\"mutationOk\",(encode(p0).toString().equals(before0)));}throw new RuntimeException(\"Unknown reference\");}\nstatic JsonValue timedExecute(JsonObject row) {\nlong start=System.nanoTime();JsonValue observed;\ntry { observed=execute(row); } catch(Throwable error) { observed=new JsonObject().add(\"error\",error.toString()); }\nreturn new JsonObject().add(\"observation\",observed).add(\"elapsedMs\",(System.nanoTime()-start)/1000000.0);\n}\npublic static void main(String[] ignored)throws Exception{var results=new JsonArray();for(var row:Json.parse(Files.readString(Path.of(\"cases.json\"))).asArray()){try{results.add(timedExecute(row.asObject()));}catch(Throwable error){results.add(new JsonObject().add(\"error\",error.toString()));}}Files.writeString(Path.of(\"results.json\"),results.toString());}\n}\n",
+        "reference": ""
+      }
+    }
+  },
+  {
     "id": "ctci6_17_21",
     "ref": "17.21",
     "title": "Volume of Histogram",
@@ -6135,6 +6480,193 @@
         "prefix": "import java.util.*;\n",
         "suffix": "",
         "harness": "import java.util.*;\nimport java.nio.file.*;\nimport epi.test_framework.minimal_json.*;\n\npublic class Harness {\nstatic int[] integers(JsonArray values){int[] output=new int[values.size()];for(int i=0;i<output.length;++i)output[i]=values.get(i).asInt();return output;}\nstatic int[][] matrix(JsonArray values){int[][] output=new int[values.size()][];for(int i=0;i<output.length;++i)output[i]=integers(values.get(i).asArray());return output;}\nstatic boolean sameRows(int[][] values,int[][] before){if(values.length!=before.length)return false;for(int i=0;i<values.length;++i)if(values[i]!=before[i])return false;return true;}\nstatic JsonValue encode(Object value){if(value==null)return Json.NULL;if(value instanceof Integer v)return Json.value(v);if(value instanceof String v)return Json.value(v);var result=new JsonArray();if(value instanceof int[] values){for(int v:values)result.add(v);}else if(value instanceof int[][] values){for(int[] v:values)result.add(encode(v));}else if(value instanceof Iterable<?> values){for(Object v:values)result.add(encode(v));}else throw new IllegalArgumentException(\"Invalid result\");return result;}\nstatic JsonValue execute(JsonObject row){String reference=row.get(\"ref\").asString();var args=row.get(\"arguments\").asArray();if(reference.equals(\"17.21\")){int[] p0=integers(args.get(0).asArray());String before0=encode(p0).toString();var actual=new Solution().HistogramWaterVolume(p0);return new JsonObject().add(\"actual\",encode(actual)).add(\"mutationOk\",(encode(p0).toString().equals(before0)));}throw new RuntimeException(\"Unknown reference\");}\nstatic JsonValue timedExecute(JsonObject row) {\nlong start=System.nanoTime();JsonValue observed;\ntry { observed=execute(row); } catch(Throwable error) { observed=new JsonObject().add(\"error\",error.toString()); }\nreturn new JsonObject().add(\"observation\",observed).add(\"elapsedMs\",(System.nanoTime()-start)/1000000.0);\n}\npublic static void main(String[] ignored)throws Exception{var results=new JsonArray();for(var row:Json.parse(Files.readString(Path.of(\"cases.json\"))).asArray()){try{results.add(timedExecute(row.asObject()));}catch(Throwable error){results.add(new JsonObject().add(\"error\",error.toString()));}}Files.writeString(Path.of(\"results.json\"),results.toString());}\n}\n",
+        "reference": ""
+      }
+    }
+  },
+  {
+    "id": "ctci6_17_23",
+    "ref": "17.23",
+    "title": "Max Black Square",
+    "description": "Find the largest square submatrix whose entire border is black. Encode black as 0 and white as 1. Interior cells need not be black. Return [topRow,leftColumn,sideLength], using zero-based coordinates, or [] if no black cell exists. Among equal largest squares choose the smallest top row, then smallest left column.",
+    "constraints": [
+      "matrix is nonnull and square with size 0..40 and entries only 0 or 1. An empty matrix has no square. A single black cell is a valid side-one square.",
+      "Preserve the outer array, every row object and every cell value. Check all four full edges, not just corners or the main diagonal. The result describes original coordinates."
+    ],
+    "method": "LargestBlackBorder",
+    "params": [
+      [
+        "matrix",
+        "aai"
+      ]
+    ],
+    "result": "ai",
+    "mutation": "none",
+    "testCount": 574,
+    "batch": 17,
+    "stagingDirectory": "",
+    "example": [
+      [
+        [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ]
+      ],
+      [
+        0,
+        0,
+        3
+      ]
+    ],
+    "languages": {
+      "csharp": {
+        "signature": "int[] LargestBlackBorder(int[][] matrix)",
+        "starterCode": "public class Solution\n{\n    public int[] LargestBlackBorder(int[][] matrix)\n    {\n        return [];\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public int[] LargestBlackBorder(int[][] matrix)\n    {\n        int n = matrix.Length;\n        int[,] right = new int[n, n], down = new int[n, n];\n        for (int r = n - 1; r >= 0; --r)\n        {\n            for (int c = n - 1; c >= 0; --c)\n            {\n                if (matrix[r][c] == 0)\n                {\n                    right[r, c] = 1 + (c + 1 < n ? right[r, c + 1] : 0);\n                    down[r, c] = 1 + (r + 1 < n ? down[r + 1, c] : 0);\n                }\n            }\n        }\n        for (int size = n; size >= 1; --size)\n        {\n            for (int r = 0; r + size <= n; ++r)\n            {\n                for (int c = 0; c + size <= n; ++c)\n                {\n                    if (right[r, c] >= size && down[r, c] >= size &&\n                        right[r + size - 1, c] >= size && down[r, c + size - 1] >= size)\n                        return [r, c, size];\n                }\n            }\n        }\n        return [];\n    }\n}\n",
+        "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\n",
+        "suffix": "",
+        "harness": "using System;\nusing System.Collections.Generic;\nusing System.Text;\nusing System.IO;\nusing System.Text.Json;\n\nclass Harness {\nstatic object Execute(JsonElement row){string reference=row.GetProperty(\"ref\").GetString()!;var args=row.GetProperty(\"arguments\");if(reference==\"17.23\"){var p0=JsonSerializer.Deserialize<int[][]>(args[0].GetRawText())!;var before0=JsonSerializer.Serialize(p0);var rows0=p0.ToArray();var actual=new Solution().LargestBlackBorder(p0);return new {actual,mutationOk=(JsonSerializer.Serialize(p0)==before0) && (p0.Length==rows0.Length && p0.Select((r,j)=>ReferenceEquals(r,rows0[j])).All(v=>v))};}throw new Exception(\"Unknown reference\");}\nstatic object TimedExecute(JsonElement row) {\nvar clock=System.Diagnostics.Stopwatch.StartNew();object observed;\ntry { observed=Execute(row); } catch(Exception error) { observed=new {error=error.ToString()}; }\nreturn new {observation=observed,elapsedMs=clock.Elapsed.TotalMilliseconds};\n}\nstatic void Main(){using var document=JsonDocument.Parse(File.ReadAllText(\"cases.json\"));var results=new List<object>();foreach(var row in document.RootElement.EnumerateArray()){try{results.Add(TimedExecute(row));}catch(Exception error){results.Add(new {error=error.ToString()});}}File.WriteAllText(\"results.json\",JsonSerializer.Serialize(results));}\n}\n",
+        "reference": ""
+      },
+      "javascript": {
+        "signature": "function LargestBlackBorder(matrix)",
+        "starterCode": "function LargestBlackBorder(matrix) {\n  return [];\n}\n",
+        "solutionCode": "function LargestBlackBorder(matrix) {\n  const n = matrix.length,\n    right = Array.from({ length: n }, () => Array(n).fill(0)),\n    down = Array.from({ length: n }, () => Array(n).fill(0));\n  for (let r = n - 1; r >= 0; --r) {\n    for (let c = n - 1; c >= 0; --c) {\n      if (matrix[r][c] === 0) {\n        right[r][c] = 1 + (c + 1 < n ? right[r][c + 1] : 0);\n        down[r][c] = 1 + (r + 1 < n ? down[r + 1][c] : 0);\n      }\n    }\n  }\n  for (let size = n; size >= 1; --size) {\n    for (let r = 0; r + size <= n; ++r) {\n      for (let c = 0; c + size <= n; ++c) {\n        if (\n          right[r][c] >= size &&\n          down[r][c] >= size &&\n          right[r + size - 1][c] >= size &&\n          down[r][c + size - 1] >= size\n        )\n          return [r, c, size];\n      }\n    }\n  }\n  return [];\n}\n",
+        "prefix": "'use strict';\n",
+        "suffix": "\nmodule.exports = {LargestBlackBorder};\n",
+        "harness": "const user = require('./solution.js');\nconst LargestBlackBorder = user.LargestBlackBorder;\n\nconst fs=require('node:fs'),kinds={\"17.23\": \"ai\"};\nfunction invoke(row){const ref=row.ref,args=row.arguments;if(ref===\"17.23\")return LargestBlackBorder(...args);throw new Error('Unknown reference');}\nfunction execute(row){const args=row.arguments,before=JSON.stringify(args),outer=args.filter(Array.isArray),rows=outer.filter(v=>v.length&&Array.isArray(v[0])).map(v=>[v,v.slice()]);const actual=invoke(row),kind=kinds[row.ref];const valid=kind==='strings'?Array.isArray(actual)&&actual.every(v=>typeof v==='string'):['sets','arrangements','path','aai'].includes(kind)?Array.isArray(actual)&&actual.every(r=>Array.isArray(r)&&r.every(Number.isInteger)):kind==='ai'?Array.isArray(actual)&&actual.every(v=>Number.isInteger(v)&&v>=-2147483648&&v<=2147483647):Number.isInteger(actual)&&actual>=-2147483648&&actual<=2147483647;return {actual,mutationOk:valid&&(row.ref==='8.10'?JSON.stringify(actual)===JSON.stringify(args[0]):JSON.stringify(args)===before)&&outer.every(v=>args.includes(v))&&rows.every(([v,old])=>v.length===old.length&&v.every((r,i)=>r===old[i]))};}\nconst results=JSON.parse(fs.readFileSync('cases.json','utf8')).map(timed(row=>{try{return execute(row);}catch(error){return {error:String(error)};}}));\nfs.writeFileSync('results.json',JSON.stringify(results));\n\nfunction timed(fn) { return row => { const start=performance.now(); let observation; try { observation=fn(row); } catch(error) { observation={error:String(error)}; } return {observation,elapsedMs:performance.now()-start}; }; }\n",
+        "reference": ""
+      },
+      "python": {
+        "signature": "def LargestBlackBorder(matrix: list[list[int]]) -> list[int]",
+        "starterCode": "def LargestBlackBorder(matrix: list[list[int]]) -> list[int]:\n    return []\n",
+        "solutionCode": "def LargestBlackBorder(matrix: list[list[int]]) -> list[int]:\n    n = len(matrix)\n    right = [[0] * n for _ in range(n)]\n    down = [[0] * n for _ in range(n)]\n    for row in range(n - 1, -1, -1):\n        for column in range(n - 1, -1, -1):\n            if matrix[row][column] == 0:\n                right[row][column] = 1 + (right[row][column + 1] if column + 1 < n else 0)\n                down[row][column] = 1 + (down[row + 1][column] if row + 1 < n else 0)\n    for size in range(n, 0, -1):\n        for row in range(n - size + 1):\n            for column in range(n - size + 1):\n                if (\n                    right[row][column] >= size\n                    and down[row][column] >= size\n                    and right[row + size - 1][column] >= size\n                    and down[row][column + size - 1] >= size\n                ):\n                    return [row, column, size]\n    return []\n",
+        "prefix": "",
+        "suffix": "",
+        "harness": "import time\nimport solution as user\nLargestBlackBorder = user.LargestBlackBorder\n\nimport json\nKINDS={'17.23': 'ai'}\ndef invoke(row):\n    ref,args=row['ref'],row['arguments']\n    if ref == '17.23': return LargestBlackBorder(*args)\n    raise ValueError('Unknown reference')\ndef execute(row):\n    args=row['arguments'];before=json.dumps(args);outer=[v for v in args if type(v) is list];rows=[(v,list(v)) for v in outer if v and type(v[0]) is list]\n    actual=invoke(row);kind=KINDS[row['ref']]\n    valid=(type(actual) is list and all(type(v) is str for v in actual)) if kind=='strings' else (type(actual) is list and all(type(r) is list and all(type(v) is int for v in r) for r in actual)) if kind in ('sets','arrangements','path','aai') else (type(actual) is list and all(type(v) is int for v in actual)) if kind=='ai' else type(actual) is int and -2147483648<=actual<=2147483647\n    return dict(actual=actual,mutationOk=valid and (actual==args[0] if row['ref']=='8.10' else json.dumps(args)==before) and all(any(v is original for v in args) for original in outer) and all(len(v)==len(old) and all(a is b for a,b in zip(v,old)) for v,old in rows))\nresults=[]\nfor row in json.load(open('cases.json',encoding='utf-8')):\n    clock = time.perf_counter()\n    try:results.append(execute(row))\n    except Exception as error:results.append(dict(error=repr(error)))\n    results[-1] = dict(observation=results[-1], elapsedMs=(time.perf_counter()-clock)*1000)\njson.dump(results,open('results.json','w',encoding='utf-8'))\n",
+        "reference": ""
+      },
+      "cpp": {
+        "signature": "std::vector<int> LargestBlackBorder(const std::vector<std::vector<int>>& matrix)",
+        "starterCode": "class Solution {\n public:\n  std::vector<int> LargestBlackBorder(const std::vector<std::vector<int>>& matrix) {\n    return {};\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  std::vector<int> LargestBlackBorder(const std::vector<std::vector<int>>& matrix) {\n    int n = static_cast<int>(matrix.size());\n    std::vector<std::vector<int>> right(n, std::vector<int>(n)), down(n, std::vector<int>(n));\n    for (int r = n - 1; r >= 0; --r) {\n      for (int c = n - 1; c >= 0; --c) {\n        if (matrix[r][c] == 0) {\n          right[r][c] = 1 + (c + 1 < n ? right[r][c + 1] : 0);\n          down[r][c] = 1 + (r + 1 < n ? down[r + 1][c] : 0);\n        }\n      }\n    }\n    for (int size = n; size >= 1; --size) {\n      for (int r = 0; r + size <= n; ++r) {\n        for (int c = 0; c + size <= n; ++c) {\n          if (right[r][c] >= size && down[r][c] >= size && right[r + size - 1][c] >= size &&\n              down[r][c + size - 1] >= size)\n            return {r, c, size};\n        }\n      }\n    }\n    return {};\n  }\n};\n",
+        "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n",
+        "suffix": "",
+        "harness": "#include <chrono>\n#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include \"solution.cpp\"\n#include <fstream>\n#include \"test_framework/json.h\"\nusing json=nlohmann::json;\n\nbool sameRows(const std::vector<std::vector<int>>& values,const std::vector<const int*>& rows){if(values.size()!=rows.size())return false;for(size_t i=0;i<rows.size();++i)if(values[i].data()!=rows[i])return false;return true;}\njson execute(const json& row){std::string reference=row[\"ref\"].get<std::string>();const auto& args=row[\"arguments\"];if(reference==\"17.23\"){auto p0=args[0].get<std::vector<std::vector<int>>>();auto before0=p0;std::vector<const int*> rows0;for(const auto& row:p0)rows0.push_back(row.data());auto actual=Solution().LargestBlackBorder(p0);return json{{\"actual\",actual},{\"mutationOk\",(p0==before0) && (sameRows(p0,rows0))}};}throw std::runtime_error(\"Unknown reference\");}\njson timedExecute(const json& row) {\nauto start=std::chrono::steady_clock::now();json observed;\ntry { observed=execute(row); } catch(const std::exception& error) { observed=json{{\"error\",error.what()}}; }\ndouble elapsed=std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-start).count();\nreturn json{{\"observation\",observed},{\"elapsedMs\",elapsed}};\n}\nint main(){std::ifstream input(\"cases.json\");json rows;input>>rows;json results=json::array();for(const auto& row:rows){try{results.push_back(timedExecute(row));}catch(const std::exception& error){results.push_back(json{{\"error\",error.what()}});}}std::ofstream(\"results.json\")<<results;}\n",
+        "reference": ""
+      },
+      "java": {
+        "signature": "int[] LargestBlackBorder(int[][] matrix)",
+        "starterCode": "class Solution {\n  public int[] LargestBlackBorder(int[][] matrix) {\n    return new int[0];\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public int[] LargestBlackBorder(int[][] matrix) {\n    int n = matrix.length;\n    int[][] right = new int[n][n], down = new int[n][n];\n    for (int r = n - 1; r >= 0; --r) {\n      for (int c = n - 1; c >= 0; --c) {\n        if (matrix[r][c] == 0) {\n          right[r][c] = 1 + (c + 1 < n ? right[r][c + 1] : 0);\n          down[r][c] = 1 + (r + 1 < n ? down[r + 1][c] : 0);\n        }\n      }\n    }\n    for (int size = n; size >= 1; --size) {\n      for (int r = 0; r + size <= n; ++r) {\n        for (int c = 0; c + size <= n; ++c) {\n          if (right[r][c] >= size && down[r][c] >= size && right[r + size - 1][c] >= size\n              && down[r][c + size - 1] >= size)\n            return new int[] {r, c, size};\n        }\n      }\n    }\n    return new int[0];\n  }\n}\n",
+        "prefix": "import java.util.*;\n",
+        "suffix": "",
+        "harness": "import java.util.*;\nimport java.nio.file.*;\nimport epi.test_framework.minimal_json.*;\n\npublic class Harness {\nstatic int[] integers(JsonArray values){int[] output=new int[values.size()];for(int i=0;i<output.length;++i)output[i]=values.get(i).asInt();return output;}\nstatic int[][] matrix(JsonArray values){int[][] output=new int[values.size()][];for(int i=0;i<output.length;++i)output[i]=integers(values.get(i).asArray());return output;}\nstatic boolean sameRows(int[][] values,int[][] before){if(values.length!=before.length)return false;for(int i=0;i<values.length;++i)if(values[i]!=before[i])return false;return true;}\nstatic JsonValue encode(Object value){if(value==null)return Json.NULL;if(value instanceof Integer v)return Json.value(v);if(value instanceof String v)return Json.value(v);var result=new JsonArray();if(value instanceof int[] values){for(int v:values)result.add(v);}else if(value instanceof int[][] values){for(int[] v:values)result.add(encode(v));}else if(value instanceof Iterable<?> values){for(Object v:values)result.add(encode(v));}else throw new IllegalArgumentException(\"Invalid result\");return result;}\nstatic JsonValue execute(JsonObject row){String reference=row.get(\"ref\").asString();var args=row.get(\"arguments\").asArray();if(reference.equals(\"17.23\")){int[][] p0=matrix(args.get(0).asArray());String before0=encode(p0).toString();int[][] rows0=p0.clone();var actual=new Solution().LargestBlackBorder(p0);return new JsonObject().add(\"actual\",encode(actual)).add(\"mutationOk\",(encode(p0).toString().equals(before0)) && (sameRows(p0,rows0)));}throw new RuntimeException(\"Unknown reference\");}\nstatic JsonValue timedExecute(JsonObject row) {\nlong start=System.nanoTime();JsonValue observed;\ntry { observed=execute(row); } catch(Throwable error) { observed=new JsonObject().add(\"error\",error.toString()); }\nreturn new JsonObject().add(\"observation\",observed).add(\"elapsedMs\",(System.nanoTime()-start)/1000000.0);\n}\npublic static void main(String[] ignored)throws Exception{var results=new JsonArray();for(var row:Json.parse(Files.readString(Path.of(\"cases.json\"))).asArray()){try{results.add(timedExecute(row.asObject()));}catch(Throwable error){results.add(new JsonObject().add(\"error\",error.toString()));}}Files.writeString(Path.of(\"results.json\"),results.toString());}\n}\n",
+        "reference": ""
+      }
+    }
+  },
+  {
+    "id": "ctci6_17_24",
+    "ref": "17.24",
+    "title": "Max Submatrix",
+    "description": "Find a nonempty rectangular submatrix with greatest sum and return [sum,top,left,bottom,right], with all bounds zero-based and inclusive. For ties prefer smaller top, then smaller bottom, then smaller left, then smaller right. If either input dimension is empty, return [].",
+    "constraints": [
+      "matrix is nonnull and rectangular, with 0..30 rows and 0..30 columns. Entries are integers in -1000000..1000000, so every rectangle sum fits signed 32-bit range. Preserve outer/row identities, dimensions and values.",
+      "For a nonempty matrix the selected rectangle must be nonempty, even if every entry is negative. Sum all cells in one rectangle; do not choose disconnected positive entries. Return coordinates as well as the sum."
+    ],
+    "method": "MaximumSubmatrix",
+    "params": [
+      [
+        "matrix",
+        "aai"
+      ]
+    ],
+    "result": "ai",
+    "mutation": "none",
+    "testCount": 1566,
+    "batch": 17,
+    "stagingDirectory": "",
+    "example": [
+      [
+        [
+          [
+            1,
+            -2,
+            3
+          ],
+          [
+            -4,
+            5,
+            6
+          ]
+        ]
+      ],
+      [
+        12,
+        0,
+        1,
+        1,
+        2
+      ]
+    ],
+    "languages": {
+      "csharp": {
+        "signature": "int[] MaximumSubmatrix(int[][] matrix)",
+        "starterCode": "public class Solution\n{\n    public int[] MaximumSubmatrix(int[][] matrix)\n    {\n        return [];\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public int[] MaximumSubmatrix(int[][] matrix)\n    {\n        int rows = matrix.Length, columns = rows == 0 ? 0 : matrix[0].Length;\n        if (rows == 0 || columns == 0)\n            return [];\n        int best = -2147483648;\n        int[] answer = new int[5];\n        for (int top = 0; top < rows; ++top)\n        {\n            int[] totals = new int[columns];\n            for (int bottom = top; bottom < rows; ++bottom)\n            {\n                int running = 0, start = 0;\n                for (int c = 0; c < columns; ++c)\n                {\n                    totals[c] += matrix[bottom][c];\n                    if (running < 0)\n                    {\n                        running = totals[c];\n                        start = c;\n                    }\n                    else\n                        running += totals[c];\n                    if (running > best)\n                    {\n                        best = running;\n                        answer = [best, top, start, bottom, c];\n                    }\n                }\n            }\n        }\n        return answer;\n    }\n}\n",
+        "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\n",
+        "suffix": "",
+        "harness": "using System;\nusing System.Collections.Generic;\nusing System.Text;\nusing System.IO;\nusing System.Text.Json;\n\nclass Harness {\nstatic object Execute(JsonElement row){string reference=row.GetProperty(\"ref\").GetString()!;var args=row.GetProperty(\"arguments\");if(reference==\"17.24\"){var p0=JsonSerializer.Deserialize<int[][]>(args[0].GetRawText())!;var before0=JsonSerializer.Serialize(p0);var rows0=p0.ToArray();var actual=new Solution().MaximumSubmatrix(p0);return new {actual,mutationOk=(JsonSerializer.Serialize(p0)==before0) && (p0.Length==rows0.Length && p0.Select((r,j)=>ReferenceEquals(r,rows0[j])).All(v=>v))};}throw new Exception(\"Unknown reference\");}\nstatic object TimedExecute(JsonElement row) {\nvar clock=System.Diagnostics.Stopwatch.StartNew();object observed;\ntry { observed=Execute(row); } catch(Exception error) { observed=new {error=error.ToString()}; }\nreturn new {observation=observed,elapsedMs=clock.Elapsed.TotalMilliseconds};\n}\nstatic void Main(){using var document=JsonDocument.Parse(File.ReadAllText(\"cases.json\"));var results=new List<object>();foreach(var row in document.RootElement.EnumerateArray()){try{results.Add(TimedExecute(row));}catch(Exception error){results.Add(new {error=error.ToString()});}}File.WriteAllText(\"results.json\",JsonSerializer.Serialize(results));}\n}\n",
+        "reference": ""
+      },
+      "javascript": {
+        "signature": "function MaximumSubmatrix(matrix)",
+        "starterCode": "function MaximumSubmatrix(matrix) {\n  return [];\n}\n",
+        "solutionCode": "function MaximumSubmatrix(matrix) {\n  const rows = matrix.length,\n    columns = rows ? matrix[0].length : 0;\n  if (!rows || !columns) return [];\n  let best = -2147483648,\n    answer = [];\n  for (let top = 0; top < rows; ++top) {\n    const totals = Array(columns).fill(0);\n    for (let bottom = top; bottom < rows; ++bottom) {\n      let running = 0,\n        start = 0;\n      for (let c = 0; c < columns; ++c) {\n        totals[c] += matrix[bottom][c];\n        if (running < 0) {\n          running = totals[c];\n          start = c;\n        } else running += totals[c];\n        if (running > best) {\n          best = running;\n          answer = [best, top, start, bottom, c];\n        }\n      }\n    }\n  }\n  return answer;\n}\n",
+        "prefix": "'use strict';\n",
+        "suffix": "\nmodule.exports = {MaximumSubmatrix};\n",
+        "harness": "const user = require('./solution.js');\nconst MaximumSubmatrix = user.MaximumSubmatrix;\n\nconst fs=require('node:fs'),kinds={\"17.24\": \"ai\"};\nfunction invoke(row){const ref=row.ref,args=row.arguments;if(ref===\"17.24\")return MaximumSubmatrix(...args);throw new Error('Unknown reference');}\nfunction execute(row){const args=row.arguments,before=JSON.stringify(args),outer=args.filter(Array.isArray),rows=outer.filter(v=>v.length&&Array.isArray(v[0])).map(v=>[v,v.slice()]);const actual=invoke(row),kind=kinds[row.ref];const valid=kind==='strings'?Array.isArray(actual)&&actual.every(v=>typeof v==='string'):['sets','arrangements','path','aai'].includes(kind)?Array.isArray(actual)&&actual.every(r=>Array.isArray(r)&&r.every(Number.isInteger)):kind==='ai'?Array.isArray(actual)&&actual.every(v=>Number.isInteger(v)&&v>=-2147483648&&v<=2147483647):Number.isInteger(actual)&&actual>=-2147483648&&actual<=2147483647;return {actual,mutationOk:valid&&(row.ref==='8.10'?JSON.stringify(actual)===JSON.stringify(args[0]):JSON.stringify(args)===before)&&outer.every(v=>args.includes(v))&&rows.every(([v,old])=>v.length===old.length&&v.every((r,i)=>r===old[i]))};}\nconst results=JSON.parse(fs.readFileSync('cases.json','utf8')).map(timed(row=>{try{return execute(row);}catch(error){return {error:String(error)};}}));\nfs.writeFileSync('results.json',JSON.stringify(results));\n\nfunction timed(fn) { return row => { const start=performance.now(); let observation; try { observation=fn(row); } catch(error) { observation={error:String(error)}; } return {observation,elapsedMs:performance.now()-start}; }; }\n",
+        "reference": ""
+      },
+      "python": {
+        "signature": "def MaximumSubmatrix(matrix: list[list[int]]) -> list[int]",
+        "starterCode": "def MaximumSubmatrix(matrix: list[list[int]]) -> list[int]:\n    return []\n",
+        "solutionCode": "def MaximumSubmatrix(matrix: list[list[int]]) -> list[int]:\n    rows = len(matrix)\n    columns = len(matrix[0]) if rows else 0\n    if not rows or not columns:\n        return []\n    best = -2147483648\n    answer = []\n    for top in range(rows):\n        totals = [0] * columns\n        for bottom in range(top, rows):\n            running = start = 0\n            for column in range(columns):\n                totals[column] += matrix[bottom][column]\n                if running < 0:\n                    running = totals[column]\n                    start = column\n                else:\n                    running += totals[column]\n                if running > best:\n                    best = running\n                    answer = [best, top, start, bottom, column]\n    return answer\n",
+        "prefix": "",
+        "suffix": "",
+        "harness": "import time\nimport solution as user\nMaximumSubmatrix = user.MaximumSubmatrix\n\nimport json\nKINDS={'17.24': 'ai'}\ndef invoke(row):\n    ref,args=row['ref'],row['arguments']\n    if ref == '17.24': return MaximumSubmatrix(*args)\n    raise ValueError('Unknown reference')\ndef execute(row):\n    args=row['arguments'];before=json.dumps(args);outer=[v for v in args if type(v) is list];rows=[(v,list(v)) for v in outer if v and type(v[0]) is list]\n    actual=invoke(row);kind=KINDS[row['ref']]\n    valid=(type(actual) is list and all(type(v) is str for v in actual)) if kind=='strings' else (type(actual) is list and all(type(r) is list and all(type(v) is int for v in r) for r in actual)) if kind in ('sets','arrangements','path','aai') else (type(actual) is list and all(type(v) is int for v in actual)) if kind=='ai' else type(actual) is int and -2147483648<=actual<=2147483647\n    return dict(actual=actual,mutationOk=valid and (actual==args[0] if row['ref']=='8.10' else json.dumps(args)==before) and all(any(v is original for v in args) for original in outer) and all(len(v)==len(old) and all(a is b for a,b in zip(v,old)) for v,old in rows))\nresults=[]\nfor row in json.load(open('cases.json',encoding='utf-8')):\n    clock = time.perf_counter()\n    try:results.append(execute(row))\n    except Exception as error:results.append(dict(error=repr(error)))\n    results[-1] = dict(observation=results[-1], elapsedMs=(time.perf_counter()-clock)*1000)\njson.dump(results,open('results.json','w',encoding='utf-8'))\n",
+        "reference": ""
+      },
+      "cpp": {
+        "signature": "std::vector<int> MaximumSubmatrix(const std::vector<std::vector<int>>& matrix)",
+        "starterCode": "class Solution {\n public:\n  std::vector<int> MaximumSubmatrix(const std::vector<std::vector<int>>& matrix) {\n    return {};\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  std::vector<int> MaximumSubmatrix(const std::vector<std::vector<int>>& matrix) {\n    int rows = static_cast<int>(matrix.size()),\n        columns = rows == 0 ? 0 : static_cast<int>(matrix[0].size());\n    if (rows == 0 || columns == 0)\n      return {};\n    int best = -2147483648;\n    std::vector<int> answer(5);\n    for (int top = 0; top < rows; ++top) {\n      std::vector<int> totals(columns);\n      for (int bottom = top; bottom < rows; ++bottom) {\n        int running = 0, start = 0;\n        for (int c = 0; c < columns; ++c) {\n          totals[c] += matrix[bottom][c];\n          if (running < 0) {\n            running = totals[c];\n            start = c;\n          } else\n            running += totals[c];\n          if (running > best) {\n            best = running;\n            answer = {best, top, start, bottom, c};\n          }\n        }\n      }\n    }\n    return answer;\n  }\n};\n",
+        "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n",
+        "suffix": "",
+        "harness": "#include <chrono>\n#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include \"solution.cpp\"\n#include <fstream>\n#include \"test_framework/json.h\"\nusing json=nlohmann::json;\n\nbool sameRows(const std::vector<std::vector<int>>& values,const std::vector<const int*>& rows){if(values.size()!=rows.size())return false;for(size_t i=0;i<rows.size();++i)if(values[i].data()!=rows[i])return false;return true;}\njson execute(const json& row){std::string reference=row[\"ref\"].get<std::string>();const auto& args=row[\"arguments\"];if(reference==\"17.24\"){auto p0=args[0].get<std::vector<std::vector<int>>>();auto before0=p0;std::vector<const int*> rows0;for(const auto& row:p0)rows0.push_back(row.data());auto actual=Solution().MaximumSubmatrix(p0);return json{{\"actual\",actual},{\"mutationOk\",(p0==before0) && (sameRows(p0,rows0))}};}throw std::runtime_error(\"Unknown reference\");}\njson timedExecute(const json& row) {\nauto start=std::chrono::steady_clock::now();json observed;\ntry { observed=execute(row); } catch(const std::exception& error) { observed=json{{\"error\",error.what()}}; }\ndouble elapsed=std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-start).count();\nreturn json{{\"observation\",observed},{\"elapsedMs\",elapsed}};\n}\nint main(){std::ifstream input(\"cases.json\");json rows;input>>rows;json results=json::array();for(const auto& row:rows){try{results.push_back(timedExecute(row));}catch(const std::exception& error){results.push_back(json{{\"error\",error.what()}});}}std::ofstream(\"results.json\")<<results;}\n",
+        "reference": ""
+      },
+      "java": {
+        "signature": "int[] MaximumSubmatrix(int[][] matrix)",
+        "starterCode": "class Solution {\n  public int[] MaximumSubmatrix(int[][] matrix) {\n    return new int[0];\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public int[] MaximumSubmatrix(int[][] matrix) {\n    int rows = matrix.length, columns = rows == 0 ? 0 : matrix[0].length;\n    if (rows == 0 || columns == 0)\n      return new int[0];\n    int best = -2147483648;\n    int[] answer = new int[5];\n    for (int top = 0; top < rows; ++top) {\n      int[] totals = new int[columns];\n      for (int bottom = top; bottom < rows; ++bottom) {\n        int running = 0, start = 0;\n        for (int c = 0; c < columns; ++c) {\n          totals[c] += matrix[bottom][c];\n          if (running < 0) {\n            running = totals[c];\n            start = c;\n          } else\n            running += totals[c];\n          if (running > best) {\n            best = running;\n            answer = new int[] {best, top, start, bottom, c};\n          }\n        }\n      }\n    }\n    return answer;\n  }\n}\n",
+        "prefix": "import java.util.*;\n",
+        "suffix": "",
+        "harness": "import java.util.*;\nimport java.nio.file.*;\nimport epi.test_framework.minimal_json.*;\n\npublic class Harness {\nstatic int[] integers(JsonArray values){int[] output=new int[values.size()];for(int i=0;i<output.length;++i)output[i]=values.get(i).asInt();return output;}\nstatic int[][] matrix(JsonArray values){int[][] output=new int[values.size()][];for(int i=0;i<output.length;++i)output[i]=integers(values.get(i).asArray());return output;}\nstatic boolean sameRows(int[][] values,int[][] before){if(values.length!=before.length)return false;for(int i=0;i<values.length;++i)if(values[i]!=before[i])return false;return true;}\nstatic JsonValue encode(Object value){if(value==null)return Json.NULL;if(value instanceof Integer v)return Json.value(v);if(value instanceof String v)return Json.value(v);var result=new JsonArray();if(value instanceof int[] values){for(int v:values)result.add(v);}else if(value instanceof int[][] values){for(int[] v:values)result.add(encode(v));}else if(value instanceof Iterable<?> values){for(Object v:values)result.add(encode(v));}else throw new IllegalArgumentException(\"Invalid result\");return result;}\nstatic JsonValue execute(JsonObject row){String reference=row.get(\"ref\").asString();var args=row.get(\"arguments\").asArray();if(reference.equals(\"17.24\")){int[][] p0=matrix(args.get(0).asArray());String before0=encode(p0).toString();int[][] rows0=p0.clone();var actual=new Solution().MaximumSubmatrix(p0);return new JsonObject().add(\"actual\",encode(actual)).add(\"mutationOk\",(encode(p0).toString().equals(before0)) && (sameRows(p0,rows0)));}throw new RuntimeException(\"Unknown reference\");}\nstatic JsonValue timedExecute(JsonObject row) {\nlong start=System.nanoTime();JsonValue observed;\ntry { observed=execute(row); } catch(Throwable error) { observed=new JsonObject().add(\"error\",error.toString()); }\nreturn new JsonObject().add(\"observation\",observed).add(\"elapsedMs\",(System.nanoTime()-start)/1000000.0);\n}\npublic static void main(String[] ignored)throws Exception{var results=new JsonArray();for(var row:Json.parse(Files.readString(Path.of(\"cases.json\"))).asArray()){try{results.add(timedExecute(row.asObject()));}catch(Throwable error){results.add(new JsonObject().add(\"error\",error.toString()));}}Files.writeString(Path.of(\"results.json\"),results.toString());}\n}\n",
         "reference": ""
       }
     }

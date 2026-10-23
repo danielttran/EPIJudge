@@ -91,3 +91,155 @@ return volume'''
         maximum='Math.Max' if language=='csharp' else 'Math.max' if language=='java' else 'std::max'
         return f'int left=0,right={size}-1,leftMax=0,rightMax=0,volume=0;while(left<=right){{if(leftMax<=rightMax){{leftMax={maximum}(leftMax,heights[left]);volume+=leftMax-heights[left];++left;}}else{{rightMax={maximum}(rightMax,heights[right]);volume+=rightMax-heights[right];--right;}}}}return volume;'
     raise ValueError(ref)
+
+_previous_body=body
+
+def body(ref,language):
+    if ref not in ('17.5','17.14','17.18','17.19','17.23','17.24'):
+        return _previous_body(ref,language)
+    if ref=='17.5':
+        if language=='python':return '''n = len(text)
+first = [-2] * (2 * n + 1)
+first[n] = -1
+balance = best = 0
+start = end = -1
+for index, char in enumerate(text):
+    balance += -1 if '0' <= char <= '9' else 1
+    slot = balance + n
+    if first[slot] == -2:
+        first[slot] = index
+    elif index - first[slot] > best:
+        best = index - first[slot]
+        start, end = first[slot] + 1, index
+return [start, end]'''
+        if language=='javascript':return 'const n=text.length,first=Array(2*n+1).fill(-2);first[n]=-1;let balance=0,best=0,start=-1,end=-1;for(let i=0;i<n;++i){balance+=text[i]>="0"&&text[i]<="9"?-1:1;const slot=balance+n;if(first[slot]===-2)first[slot]=i;else if(i-first[slot]>best){best=i-first[slot];start=first[slot]+1;end=i;}}return [start,end];'
+        size='text.Length' if language=='csharp' else 'text.length()' if language=='java' else 'static_cast<int>(text.size())'
+        setup='int[] first=new int[2*n+1];Array.Fill(first,-2);' if language=='csharp' else 'int[] first=new int[2*n+1];Arrays.fill(first,-2);' if language=='java' else 'std::vector<int> first(2*n+1,-2);'
+        char='text.charAt(i)' if language=='java' else 'text[i]'
+        result='[start,end]' if language=='csharp' else 'new int[]{start,end}' if language=='java' else '{start,end}'
+        return f'int n={size};{setup}first[n]=-1;int balance=0,best=0,start=-1,end=-1;for(int i=0;i<n;++i){{balance+=({char}>=\'0\'&&{char}<=\'9\')?-1:1;int slot=balance+n;if(first[slot]==-2)first[slot]=i;else if(i-first[slot]>best){{best=i-first[slot];start=first[slot]+1;end=i;}}}}return {result};'
+    if ref=='17.14':
+        if language=='python':return '''if k == 0:
+    return []
+import heapq
+heap = [-values[i] for i in range(k)]
+heapq.heapify(heap)
+for index in range(k, len(values)):
+    value = values[index]
+    if value < -heap[0]:
+        heapq.heapreplace(heap, -value)
+return sorted(-value for value in heap)'''
+        if language=='javascript':return '''if(k===0)return [];const heap=values.slice(0,k);function down(index){while(true){let child=2*index+1;if(child>=heap.length)return;if(child+1<heap.length&&heap[child+1]>heap[child])++child;if(heap[index]>=heap[child])return;[heap[index],heap[child]]=[heap[child],heap[index]];index=child;}}for(let i=Math.floor(k/2)-1;i>=0;--i)down(i);for(let i=k;i<values.length;++i){if(values[i]<heap[0]){heap[0]=values[i];down(0);}}heap.sort((a,b)=>a-b);return heap;'''
+        if language=='cpp':return 'if(k==0)return {};std::vector<int> heap(values.begin(),values.begin()+k);std::make_heap(heap.begin(),heap.end());for(int i=k;i<static_cast<int>(values.size());++i){if(values[i]<heap.front()){std::pop_heap(heap.begin(),heap.end());heap.back()=values[i];std::push_heap(heap.begin(),heap.end());}}std::sort_heap(heap.begin(),heap.end());return heap;'
+        if language=='csharp':return 'if(k==0)return [];var heap=new PriorityQueue<int,int>(Comparer<int>.Create((a,b)=>b.CompareTo(a)));for(int i=0;i<k;++i)heap.Enqueue(values[i],values[i]);for(int i=k;i<values.Length;++i){if(values[i]<heap.Peek()){heap.Dequeue();heap.Enqueue(values[i],values[i]);}}int[] result=new int[k];for(int i=k-1;i>=0;--i)result[i]=heap.Dequeue();return result;'
+        return 'if(k==0)return new int[0];var heap=new PriorityQueue<Integer>(Comparator.reverseOrder());for(int i=0;i<k;++i)heap.add(values[i]);for(int i=k;i<values.length;++i){if(values[i]<heap.peek()){heap.remove();heap.add(values[i]);}}int[] result=new int[k];for(int i=k-1;i>=0;--i)result[i]=heap.remove();return result;'
+    if ref=='17.18':
+        if language=='python':return '''if not small:
+    return [-1, -1]
+counts = {value: 0 for value in small}
+missing = len(small)
+left = 0
+best_start = best_end = -1
+for right, value in enumerate(big):
+    if value in counts:
+        if counts[value] == 0:
+            missing -= 1
+        counts[value] += 1
+    while missing == 0:
+        if best_start == -1 or right - left < best_end - best_start:
+            best_start, best_end = left, right
+        removed = big[left]
+        if removed in counts:
+            counts[removed] -= 1
+            if counts[removed] == 0:
+                missing += 1
+        left += 1
+return [best_start, best_end]'''
+        if language=='javascript':return 'if(small.length===0)return [-1,-1];const counts=new Map(small.map(v=>[v,0]));let missing=small.length,left=0,start=-1,end=-1;for(let right=0;right<big.length;++right){const value=big[right];if(counts.has(value)){if(counts.get(value)===0)--missing;counts.set(value,counts.get(value)+1);}while(missing===0){if(start===-1||right-left<end-start){start=left;end=right;}const removed=big[left];if(counts.has(removed)){counts.set(removed,counts.get(removed)-1);if(counts.get(removed)===0)++missing;}++left;}}return [start,end];'
+        smallsize='small.Length' if language=='csharp' else 'small.length' if language=='java' else 'static_cast<int>(small.size())'
+        bigsize='big.Length' if language=='csharp' else 'big.length' if language=='java' else 'static_cast<int>(big.size())'
+        make=lambda a,b:'['+a+','+b+']' if language=='csharp' else 'new int[]{'+a+','+b+'}' if language=='java' else '{'+a+','+b+'}'
+        setup='var counts=new Dictionary<int,int>();foreach(int value in small)counts[value]=0;' if language=='csharp' else 'Map<Integer,Integer> counts=new HashMap<>();for(int value:small)counts.put(value,0);' if language=='java' else 'std::unordered_map<int,int> counts;for(int value:small)counts[value]=0;'
+        has=lambda value:'counts.ContainsKey('+value+')' if language=='csharp' else 'counts.containsKey('+value+')' if language=='java' else 'counts.find('+value+')!=counts.end()'
+        get=lambda value:'counts.get('+value+')' if language=='java' else 'counts['+value+']'
+        add='counts.put(value,counts.get(value)+1);' if language=='java' else '++counts[value];'
+        remove='counts.put(removed,counts.get(removed)-1);' if language=='java' else '--counts[removed];'
+        return f'if({smallsize}==0)return {make("-1","-1")};{setup}int missing={smallsize},left=0,start=-1,end=-1;for(int right=0;right<{bigsize};++right){{int value=big[right];if({has("value")}){{if({get("value")}==0)--missing;{add}}}while(missing==0){{if(start==-1||right-left<end-start){{start=left;end=right;}}int removed=big[left];if({has("removed")}){{{remove}if({get("removed")}==0)++missing;}}++left;}}}}return {make("start","end")};'
+    if ref=='17.19':
+        if language=='python':return '''n = len(values) + 2
+combined = 0
+for value in range(1, n + 1):
+    combined ^= value
+for value in values:
+    combined ^= value
+bit = combined & -combined
+first = second = 0
+for value in range(1, n + 1):
+    if value & bit:
+        first ^= value
+    else:
+        second ^= value
+for value in values:
+    if value & bit:
+        first ^= value
+    else:
+        second ^= value
+return [min(first, second), max(first, second)]'''
+        if language=='javascript':return 'const n=values.length+2;let combined=0;for(let value=1;value<=n;++value)combined^=value;for(const value of values)combined^=value;const bit=combined&-combined;let first=0,second=0;for(let value=1;value<=n;++value){if(value&bit)first^=value;else second^=value;}for(const value of values){if(value&bit)first^=value;else second^=value;}return [Math.min(first,second),Math.max(first,second)];'
+        size='values.Length' if language=='csharp' else 'values.length' if language=='java' else 'static_cast<int>(values.size())'
+        loop='foreach(int value in values)' if language=='csharp' else 'for(int value:values)'
+        minimum='Math.Min' if language=='csharp' else 'Math.min' if language=='java' else 'std::min'
+        maximum='Math.Max' if language=='csharp' else 'Math.max' if language=='java' else 'std::max'
+        result=f'[{minimum}(first,second),{maximum}(first,second)]' if language=='csharp' else f'new int[]{{{minimum}(first,second),{maximum}(first,second)}}' if language=='java' else f'{{{minimum}(first,second),{maximum}(first,second)}}'
+        return f'int n={size}+2,combined=0;for(int value=1;value<=n;++value)combined^=value;{loop}combined^=value;int bit=combined&-combined,first=0,second=0;for(int value=1;value<=n;++value){{if((value&bit)!=0)first^=value;else second^=value;}}{loop}{{if((value&bit)!=0)first^=value;else second^=value;}}return {result};'
+    if ref=='17.23':
+        if language=='python':return '''n = len(matrix)
+right = [[0] * n for _ in range(n)]
+down = [[0] * n for _ in range(n)]
+for row in range(n - 1, -1, -1):
+    for column in range(n - 1, -1, -1):
+        if matrix[row][column] == 0:
+            right[row][column] = 1 + (right[row][column + 1] if column + 1 < n else 0)
+            down[row][column] = 1 + (down[row + 1][column] if row + 1 < n else 0)
+for size in range(n, 0, -1):
+    for row in range(n - size + 1):
+        for column in range(n - size + 1):
+            if right[row][column] >= size and down[row][column] >= size and right[row + size - 1][column] >= size and down[row][column + size - 1] >= size:
+                return [row, column, size]
+return []'''
+        if language=='javascript':return 'const n=matrix.length,right=Array.from({length:n},()=>Array(n).fill(0)),down=Array.from({length:n},()=>Array(n).fill(0));for(let r=n-1;r>=0;--r){for(let c=n-1;c>=0;--c){if(matrix[r][c]===0){right[r][c]=1+(c+1<n?right[r][c+1]:0);down[r][c]=1+(r+1<n?down[r+1][c]:0);}}}for(let size=n;size>=1;--size){for(let r=0;r+size<=n;++r){for(let c=0;c+size<=n;++c){if(right[r][c]>=size&&down[r][c]>=size&&right[r+size-1][c]>=size&&down[r][c+size-1]>=size)return [r,c,size];}}}return [];'
+        size='matrix.Length' if language=='csharp' else 'matrix.length' if language=='java' else 'static_cast<int>(matrix.size())'
+        allocate='int[,] right=new int[n,n],down=new int[n,n];' if language=='csharp' else 'int[][] right=new int[n][n],down=new int[n][n];' if language=='java' else 'std::vector<std::vector<int>> right(n,std::vector<int>(n)),down(n,std::vector<int>(n));'
+        at=lambda name,r,c:f'{name}[{r},{c}]' if language=='csharp' else f'{name}[{r}][{c}]'
+        result='[r,c,size]' if language=='csharp' else 'new int[]{r,c,size}' if language=='java' else '{r,c,size}'
+        empty='[]' if language=='csharp' else 'new int[0]' if language=='java' else '{}'
+        return f'int n={size};{allocate}for(int r=n-1;r>=0;--r){{for(int c=n-1;c>=0;--c){{if(matrix[r][c]==0){{{at("right","r","c")}=1+(c+1<n?{at("right","r","c+1")}:0);{at("down","r","c")}=1+(r+1<n?{at("down","r+1","c")}:0);}}}}}}for(int size=n;size>=1;--size){{for(int r=0;r+size<=n;++r){{for(int c=0;c+size<=n;++c){{if({at("right","r","c")}>=size&&{at("down","r","c")}>=size&&{at("right","r+size-1","c")}>=size&&{at("down","r","c+size-1")}>=size)return {result};}}}}}}return {empty};'
+    if language=='python':return '''rows = len(matrix)
+columns = len(matrix[0]) if rows else 0
+if not rows or not columns:
+    return []
+best = -2147483648
+answer = []
+for top in range(rows):
+    totals = [0] * columns
+    for bottom in range(top, rows):
+        running = start = 0
+        for column in range(columns):
+            totals[column] += matrix[bottom][column]
+            if running < 0:
+                running = totals[column]
+                start = column
+            else:
+                running += totals[column]
+            if running > best:
+                best = running
+                answer = [best, top, start, bottom, column]
+return answer'''
+    if language=='javascript':return 'const rows=matrix.length,columns=rows?matrix[0].length:0;if(!rows||!columns)return [];let best=-2147483648,answer=[];for(let top=0;top<rows;++top){const totals=Array(columns).fill(0);for(let bottom=top;bottom<rows;++bottom){let running=0,start=0;for(let c=0;c<columns;++c){totals[c]+=matrix[bottom][c];if(running<0){running=totals[c];start=c;}else running+=totals[c];if(running>best){best=running;answer=[best,top,start,bottom,c];}}}}return answer;'
+    rows='matrix.Length' if language=='csharp' else 'matrix.length' if language=='java' else 'static_cast<int>(matrix.size())'
+    cols='matrix[0].Length' if language=='csharp' else 'matrix[0].length' if language=='java' else 'static_cast<int>(matrix[0].size())'
+    empty='[]' if language=='csharp' else 'new int[0]' if language=='java' else '{}'
+    allocate='int[] answer=new int[5];' if language!='cpp' else 'std::vector<int> answer(5);'
+    totals='int[] totals=new int[columns];' if language!='cpp' else 'std::vector<int> totals(columns);'
+    result='[best,top,start,bottom,c]' if language=='csharp' else 'new int[]{best,top,start,bottom,c}' if language=='java' else '{best,top,start,bottom,c}'
+    return f'int rows={rows},columns=rows==0?0:{cols};if(rows==0||columns==0)return {empty};int best=-2147483648;{allocate}for(int top=0;top<rows;++top){{{totals}for(int bottom=top;bottom<rows;++bottom){{int running=0,start=0;for(int c=0;c<columns;++c){{totals[c]+=matrix[bottom][c];if(running<0){{running=totals[c];start=c;}}else running+=totals[c];if(running>best){{best=running;answer={result};}}}}}}}}return answer;'

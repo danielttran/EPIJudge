@@ -68,6 +68,72 @@
     }
   },
   {
+    "ref": "17.5",
+    "method": "LongestLettersDigits",
+    "params": [
+      [
+        "text",
+        "s"
+      ]
+    ],
+    "result": "ai",
+    "mutation": "none",
+    "description": "Find the longest contiguous substring containing equally many ASCII letters and decimal digits. Return its inclusive zero-based endpoints [start,end]. If several longest substrings qualify, return the one with the smallest start. Return [-1,-1] when no nonempty balanced substring exists.",
+    "constraints": [
+      "text is nonnull, has length 0..10000, and contains only a..z, A..Z and 0..9. Each letter or digit counts as one character; letter case and digit value do not change its category. Preserve the input.",
+      "Return original-text indices, not a reordered selection or a count. Empty text and an all-letter/all-digit text return [-1,-1]. Punctuation and Unicode category classification are outside this shared ASCII domain."
+    ],
+    "why": "Give each letter weight +1 and each digit weight -1. An interval has equal category counts exactly when its endpoint prefix balances agree. For each balance, keep its earliest prefix position; using a later occurrence could only shorten a future interval. A dense offset array suffices because every balance is between -n and n.",
+    "correctness": "The difference of two prefix balances is the letter count minus digit count in the enclosed substring, so equality is equivalent to balance. At each end position, pairing with the earliest prior equal balance gives the longest balanced substring ending there. Every possible end is examined, so the longest of these candidates is globally optimal. End positions increase; keeping the first equal-length optimum also keeps the smallest start. Initial balance zero at prefix index -1 admits intervals starting at zero. No repeated balance means no qualifying nonempty interval.",
+    "walkthrough": "For A1B2C the successive balances after each character are 1,0,1,0,1. Balance zero at index 3 matches the initial zero at -1, giving [0,3] (A1B2), length four. Balance one at index 4 gives [1,4], also length four; the earlier start wins.",
+    "example": [
+      [
+        "A1B2C"
+      ],
+      [
+        0,
+        3
+      ]
+    ],
+    "time": "O(n) time to scan characters and initialize the 2n+1 balance slots.",
+    "space": "O(n) auxiliary first-occurrence slots, plus two returned indices.",
+    "edges": [
+      "Empty input and a single category.",
+      "An optimum starting at zero, mixed letter cases, equal-length tied windows."
+    ],
+    "related": "Original coordinates replace the public returned character slice; the balanced contiguous-subarray task is unchanged.",
+    "id": "ctci6_17_5",
+    "title": "Letters and Numbers",
+    "testCount": 1101,
+    "languages": {
+      "csharp": {
+        "signature": "int[] LongestLettersDigits(string text)",
+        "starterCode": "public class Solution\n{\n    public int[] LongestLettersDigits(string text)\n    {\n        return [];\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public int[] LongestLettersDigits(string text)\n    {\n        int n = text.Length;\n        int[] first = new int[2 * n + 1];\n        Array.Fill(first, -2);\n        first[n] = -1;\n        int balance = 0, best = 0, start = -1, end = -1;\n        for (int i = 0; i < n; ++i)\n        {\n            balance += (text[i] >= '0' && text[i] <= '9') ? -1 : 1;\n            int slot = balance + n;\n            if (first[slot] == -2)\n                first[slot] = i;\n            else if (i - first[slot] > best)\n            {\n                best = i - first[slot];\n                start = first[slot] + 1;\n                end = i;\n            }\n        }\n        return [start, end];\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function LongestLettersDigits(text)",
+        "starterCode": "function LongestLettersDigits(text) {\n  return [];\n}\n",
+        "solutionCode": "function LongestLettersDigits(text) {\n  const n = text.length,\n    first = Array(2 * n + 1).fill(-2);\n  first[n] = -1;\n  let balance = 0,\n    best = 0,\n    start = -1,\n    end = -1;\n  for (let i = 0; i < n; ++i) {\n    balance += text[i] >= \"0\" && text[i] <= \"9\" ? -1 : 1;\n    const slot = balance + n;\n    if (first[slot] === -2) first[slot] = i;\n    else if (i - first[slot] > best) {\n      best = i - first[slot];\n      start = first[slot] + 1;\n      end = i;\n    }\n  }\n  return [start, end];\n}\n"
+      },
+      "python": {
+        "signature": "def LongestLettersDigits(text: str) -> list[int]",
+        "starterCode": "def LongestLettersDigits(text: str) -> list[int]:\n    return []\n",
+        "solutionCode": "def LongestLettersDigits(text: str) -> list[int]:\n    n = len(text)\n    first = [-2] * (2 * n + 1)\n    first[n] = -1\n    balance = best = 0\n    start = end = -1\n    for index, char in enumerate(text):\n        balance += -1 if \"0\" <= char <= \"9\" else 1\n        slot = balance + n\n        if first[slot] == -2:\n            first[slot] = index\n        elif index - first[slot] > best:\n            best = index - first[slot]\n            start, end = first[slot] + 1, index\n    return [start, end]\n"
+      },
+      "cpp": {
+        "signature": "std::vector<int> LongestLettersDigits(const std::string& text)",
+        "starterCode": "class Solution {\n public:\n  std::vector<int> LongestLettersDigits(const std::string& text) {\n    return {};\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  std::vector<int> LongestLettersDigits(const std::string& text) {\n    int n = static_cast<int>(text.size());\n    std::vector<int> first(2 * n + 1, -2);\n    first[n] = -1;\n    int balance = 0, best = 0, start = -1, end = -1;\n    for (int i = 0; i < n; ++i) {\n      balance += (text[i] >= '0' && text[i] <= '9') ? -1 : 1;\n      int slot = balance + n;\n      if (first[slot] == -2)\n        first[slot] = i;\n      else if (i - first[slot] > best) {\n        best = i - first[slot];\n        start = first[slot] + 1;\n        end = i;\n      }\n    }\n    return {start, end};\n  }\n};\n"
+      },
+      "java": {
+        "signature": "int[] LongestLettersDigits(String text)",
+        "starterCode": "class Solution {\n  public int[] LongestLettersDigits(String text) {\n    return new int[0];\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public int[] LongestLettersDigits(String text) {\n    int n = text.length();\n    int[] first = new int[2 * n + 1];\n    Arrays.fill(first, -2);\n    first[n] = -1;\n    int balance = 0, best = 0, start = -1, end = -1;\n    for (int i = 0; i < n; ++i) {\n      balance += (text.charAt(i) >= '0' && text.charAt(i) <= '9') ? -1 : 1;\n      int slot = balance + n;\n      if (first[slot] == -2)\n        first[slot] = i;\n      else if (i - first[slot] > best) {\n        best = i - first[slot];\n        start = first[slot] + 1;\n        end = i;\n      }\n    }\n    return new int[] {start, end};\n  }\n}\n"
+      }
+    }
+  },
+  {
     "ref": "17.6",
     "method": "CountDigitTwos",
     "params": [
@@ -265,6 +331,91 @@
     }
   },
   {
+    "ref": "17.14",
+    "method": "SmallestK",
+    "params": [
+      [
+        "values",
+        "ai"
+      ],
+      [
+        "k",
+        "i"
+      ]
+    ],
+    "result": "ai",
+    "mutation": "none",
+    "description": "Return the k smallest input values in nondecreasing order, preserving duplicate occurrences. The output has exactly k elements. Do not change the input array or its order.",
+    "constraints": [
+      "values contains 0..10000 signed 32-bit integers, and 0 <= k <= values.length. For k=0 return an empty integer collection. Signed endpoints and repeated equal values are admitted.",
+      "Use an auxiliary max heap of at most k values rather than sorting or partitioning the input. Sorting the retained k result values is allowed. The ascending output order and the k=0 result are explicit bank conventions."
+    ],
+    "why": "The largest retained value is the only one that a new smaller candidate needs to displace. A max heap exposes it immediately while keeping just k values. Values at least as large as the root cannot improve the retained multiset. Extracting largest-first in reverse positions, or sorting the final heap values, produces the required ascending output.",
+    "correctness": "After the first k values, the heap contains exactly their k-smallest multiset. Inductively, a new value no smaller than the root leaves that multiset optimal; a smaller value replaces one largest retained occurrence, yielding precisely the k smallest values of the extended prefix. Equal values are ordinary separate occurrences and are neither deduplicated nor overcounted. At the end the retained multiset is the required answer, and output ordering changes only its order. The zero-k branch returns before accessing a heap root.",
+    "walkthrough": "For [5,1,5,-2,3] and k=3, the initial heap retains [5,1,5]. Reading -2 displaces one 5; reading 3 displaces the remaining 5. The retained values are -2,1,3, returned in that order. For k=4, one 5 must remain: duplicates are not a set.",
+    "example": [
+      [
+        [
+          5,
+          1,
+          5,
+          -2,
+          3
+        ],
+        3
+      ],
+      [
+        -2,
+        1,
+        3
+      ]
+    ],
+    "time": "O(n*log(k+1) + k*log(k+1)) time including heap updates and ordered output; k=0 takes O(1).",
+    "space": "O(k) heap/result storage and no input-sized copy when k is small.",
+    "edges": [
+      "k=0, k equal to input size, empty input.",
+      "Repeated boundary values, negative values, and signed extremes without comparator-subtraction overflow."
+    ],
+    "related": "C#/Java use reversed safe comparers, Python negates arbitrary-precision keys, C++ uses standard heap algorithms and JavaScript implements a local max heap; the explanation must match these concrete bindings.",
+    "languageWhy": {
+      "csharp": "C# PriorityQueue normally removes the lowest priority. A reversed Comparer makes the largest retained value leave first; CompareTo avoids overflowing a subtraction at signed endpoints. Dequeue into output positions from right to left to obtain ascending order.",
+      "java": "Java PriorityQueue is normally a min heap. Comparator.reverseOrder makes its root the largest retained value and avoids a subtraction-based comparator that could overflow. Removing roots into the result from its last index backward gives ascending order.",
+      "python": "Python heapq is a min heap, so store negated values: its smallest key represents the largest retained original value. Python can negate the signed minimum exactly. heapreplace exchanges one root efficiently; unnegating and sorting the retained values produces ascending output.",
+      "cpp": "C++ make_heap/pop_heap/push_heap use a max heap with the default ordering. pop_heap moves its largest item to the back, where it is replaced before push_heap restores the heap. sort_heap finally orders the retained vector ascending. The input is read through a const reference.",
+      "javascript": "JavaScript has no built-in priority queue here. The local down function compares both children, swaps with the larger one, and continues until max-heap order is restored. Build from internal nodes backward; after replacing the root, only that downward path can violate order. A numeric final sort orders the retained values."
+    },
+    "id": "ctci6_17_14",
+    "title": "Smallest K",
+    "testCount": 7197,
+    "languages": {
+      "csharp": {
+        "signature": "int[] SmallestK(int[] values, int k)",
+        "starterCode": "public class Solution\n{\n    public int[] SmallestK(int[] values, int k)\n    {\n        return [];\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public int[] SmallestK(int[] values, int k)\n    {\n        if (k == 0)\n            return [];\n        var heap = new PriorityQueue<int, int>(Comparer<int>.Create((a, b) => b.CompareTo(a)));\n        for (int i = 0; i < k; ++i)\n            heap.Enqueue(values[i], values[i]);\n        for (int i = k; i < values.Length; ++i)\n        {\n            if (values[i] < heap.Peek())\n            {\n                heap.Dequeue();\n                heap.Enqueue(values[i], values[i]);\n            }\n        }\n        int[] result = new int[k];\n        for (int i = k - 1; i >= 0; --i)\n            result[i] = heap.Dequeue();\n        return result;\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function SmallestK(values, k)",
+        "starterCode": "function SmallestK(values, k) {\n  return [];\n}\n",
+        "solutionCode": "function SmallestK(values, k) {\n  if (k === 0) return [];\n  const heap = values.slice(0, k);\n  function down(index) {\n    while (true) {\n      let child = 2 * index + 1;\n      if (child >= heap.length) return;\n      if (child + 1 < heap.length && heap[child + 1] > heap[child]) ++child;\n      if (heap[index] >= heap[child]) return;\n      [heap[index], heap[child]] = [heap[child], heap[index]];\n      index = child;\n    }\n  }\n  for (let i = Math.floor(k / 2) - 1; i >= 0; --i) down(i);\n  for (let i = k; i < values.length; ++i) {\n    if (values[i] < heap[0]) {\n      heap[0] = values[i];\n      down(0);\n    }\n  }\n  heap.sort((a, b) => a - b);\n  return heap;\n}\n"
+      },
+      "python": {
+        "signature": "def SmallestK(values: list[int], k: int) -> list[int]",
+        "starterCode": "def SmallestK(values: list[int], k: int) -> list[int]:\n    return []\n",
+        "solutionCode": "def SmallestK(values: list[int], k: int) -> list[int]:\n    if k == 0:\n        return []\n    import heapq\n\n    heap = [-values[i] for i in range(k)]\n    heapq.heapify(heap)\n    for index in range(k, len(values)):\n        value = values[index]\n        if value < -heap[0]:\n            heapq.heapreplace(heap, -value)\n    return sorted(-value for value in heap)\n"
+      },
+      "cpp": {
+        "signature": "std::vector<int> SmallestK(const std::vector<int>& values, int k)",
+        "starterCode": "class Solution {\n public:\n  std::vector<int> SmallestK(const std::vector<int>& values, int k) {\n    return {};\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  std::vector<int> SmallestK(const std::vector<int>& values, int k) {\n    if (k == 0)\n      return {};\n    std::vector<int> heap(values.begin(), values.begin() + k);\n    std::make_heap(heap.begin(), heap.end());\n    for (int i = k; i < static_cast<int>(values.size()); ++i) {\n      if (values[i] < heap.front()) {\n        std::pop_heap(heap.begin(), heap.end());\n        heap.back() = values[i];\n        std::push_heap(heap.begin(), heap.end());\n      }\n    }\n    std::sort_heap(heap.begin(), heap.end());\n    return heap;\n  }\n};\n"
+      },
+      "java": {
+        "signature": "int[] SmallestK(int[] values, int k)",
+        "starterCode": "class Solution {\n  public int[] SmallestK(int[] values, int k) {\n    return new int[0];\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public int[] SmallestK(int[] values, int k) {\n    if (k == 0)\n      return new int[0];\n    var heap = new PriorityQueue<Integer>(Comparator.reverseOrder());\n    for (int i = 0; i < k; ++i)\n      heap.add(values[i]);\n    for (int i = k; i < values.length; ++i) {\n      if (values[i] < heap.peek()) {\n        heap.remove();\n        heap.add(values[i]);\n      }\n    }\n    int[] result = new int[k];\n    for (int i = k - 1; i >= 0; --i)\n      result[i] = heap.remove();\n    return result;\n  }\n}\n"
+      }
+    }
+  },
+  {
     "ref": "17.16",
     "method": "MaximumMassageMinutes",
     "params": [
@@ -337,6 +488,159 @@
     }
   },
   {
+    "ref": "17.18",
+    "method": "ShortestCoveringRange",
+    "params": [
+      [
+        "big",
+        "ai"
+      ],
+      [
+        "small",
+        "ai"
+      ]
+    ],
+    "result": "ai",
+    "mutation": "none",
+    "description": "Return inclusive zero-based endpoints [start,end] of the shortest contiguous subarray of big containing every value from small at least once. The values of small may appear in any order inside the subarray. Break equal-length ties by the smallest start. Return [-1,-1] if no such subarray exists or small is empty.",
+    "constraints": [
+      "big contains 0..10000 signed 32-bit integers. small contains 0..100 distinct signed 32-bit integers; its entries are a set of required values, not a required sequence. Preserve both arrays and their order.",
+      "Repeated occurrences in big do not require extra matches. An empty target needs no nonempty window and uses [-1,-1] as its explicit representation. A missing target value yields [-1,-1] as well."
+    ],
+    "why": "Expand the right edge until the window contains all required values, then shrink its left edge while that remains true. Track only required-value frequencies and how many required values are still absent. Unneeded values can be skipped at the left, and duplicate needed values can be removed until the last occurrence would disappear.",
+    "correctness": "The frequency map always counts each required value inside the current window; missing equals the number with zero count. Thus missing=0 exactly characterizes a covering window. For each right edge, removing left entries until coverage would fail examines the shortest feasible window ending there. No discarded earlier left edge could give a shorter future window than the surviving one. Every right edge is processed, so the best recorded candidate is globally shortest. Strictly shorter updates during increasing right order preserve the earliest start among ties.",
+    "walkthrough": "For big=[7,5,9,1,5,9,1] and small=[1,5,9], indices 1..3 contain 5,9,1 and cover the target in length three. Later windows 2..4 and 3..5 have the same length, so [1,3] remains the answer. Matching the target in its supplied order would incorrectly reject valid windows.",
+    "example": [
+      [
+        [
+          7,
+          5,
+          9,
+          1,
+          5,
+          9,
+          1
+        ],
+        [
+          1,
+          5,
+          9
+        ]
+      ],
+      [
+        1,
+        3
+      ]
+    ],
+    "time": "Expected O(big.length + small.length) time with hash-map operations; each window edge advances at most big.length times.",
+    "space": "O(small.length) auxiliary map entries, plus the two-index output.",
+    "edges": [
+      "Empty target, empty big array, missing target value.",
+      "Target values in a different order, redundant occurrences, and equal-length ties."
+    ],
+    "related": "The public source describes a subarray covering a distinct required set, not an order-preserving subsequence problem.",
+    "id": "ctci6_17_18",
+    "title": "Shortest Supersequence",
+    "testCount": 2917,
+    "languages": {
+      "csharp": {
+        "signature": "int[] ShortestCoveringRange(int[] big, int[] small)",
+        "starterCode": "public class Solution\n{\n    public int[] ShortestCoveringRange(int[] big, int[] small)\n    {\n        return [];\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public int[] ShortestCoveringRange(int[] big, int[] small)\n    {\n        if (small.Length == 0)\n            return [-1, -1];\n        var counts = new Dictionary<int, int>();\n        foreach (int value in small)\n            counts[value] = 0;\n        int missing = small.Length, left = 0, start = -1, end = -1;\n        for (int right = 0; right < big.Length; ++right)\n        {\n            int value = big[right];\n            if (counts.ContainsKey(value))\n            {\n                if (counts[value] == 0)\n                    --missing;\n                ++counts[value];\n            }\n            while (missing == 0)\n            {\n                if (start == -1 || right - left < end - start)\n                {\n                    start = left;\n                    end = right;\n                }\n                int removed = big[left];\n                if (counts.ContainsKey(removed))\n                {\n                    --counts[removed];\n                    if (counts[removed] == 0)\n                        ++missing;\n                }\n                ++left;\n            }\n        }\n        return [start, end];\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function ShortestCoveringRange(big, small)",
+        "starterCode": "function ShortestCoveringRange(big, small) {\n  return [];\n}\n",
+        "solutionCode": "function ShortestCoveringRange(big, small) {\n  if (small.length === 0) return [-1, -1];\n  const counts = new Map(small.map((v) => [v, 0]));\n  let missing = small.length,\n    left = 0,\n    start = -1,\n    end = -1;\n  for (let right = 0; right < big.length; ++right) {\n    const value = big[right];\n    if (counts.has(value)) {\n      if (counts.get(value) === 0) --missing;\n      counts.set(value, counts.get(value) + 1);\n    }\n    while (missing === 0) {\n      if (start === -1 || right - left < end - start) {\n        start = left;\n        end = right;\n      }\n      const removed = big[left];\n      if (counts.has(removed)) {\n        counts.set(removed, counts.get(removed) - 1);\n        if (counts.get(removed) === 0) ++missing;\n      }\n      ++left;\n    }\n  }\n  return [start, end];\n}\n"
+      },
+      "python": {
+        "signature": "def ShortestCoveringRange(big: list[int], small: list[int]) -> list[int]",
+        "starterCode": "def ShortestCoveringRange(big: list[int], small: list[int]) -> list[int]:\n    return []\n",
+        "solutionCode": "def ShortestCoveringRange(big: list[int], small: list[int]) -> list[int]:\n    if not small:\n        return [-1, -1]\n    counts = {value: 0 for value in small}\n    missing = len(small)\n    left = 0\n    best_start = best_end = -1\n    for right, value in enumerate(big):\n        if value in counts:\n            if counts[value] == 0:\n                missing -= 1\n            counts[value] += 1\n        while missing == 0:\n            if best_start == -1 or right - left < best_end - best_start:\n                best_start, best_end = left, right\n            removed = big[left]\n            if removed in counts:\n                counts[removed] -= 1\n                if counts[removed] == 0:\n                    missing += 1\n            left += 1\n    return [best_start, best_end]\n"
+      },
+      "cpp": {
+        "signature": "std::vector<int> ShortestCoveringRange(const std::vector<int>& big, const std::vector<int>& small)",
+        "starterCode": "#include <unordered_map>\nclass Solution {\n public:\n  std::vector<int> ShortestCoveringRange(const std::vector<int>& big,\n                                         const std::vector<int>& small) {\n    return {};\n  }\n};\n",
+        "solutionCode": "#include <unordered_map>\nclass Solution {\n public:\n  std::vector<int> ShortestCoveringRange(const std::vector<int>& big,\n                                         const std::vector<int>& small) {\n    if (static_cast<int>(small.size()) == 0)\n      return {-1, -1};\n    std::unordered_map<int, int> counts;\n    for (int value : small)\n      counts[value] = 0;\n    int missing = static_cast<int>(small.size()), left = 0, start = -1, end = -1;\n    for (int right = 0; right < static_cast<int>(big.size()); ++right) {\n      int value = big[right];\n      if (counts.find(value) != counts.end()) {\n        if (counts[value] == 0)\n          --missing;\n        ++counts[value];\n      }\n      while (missing == 0) {\n        if (start == -1 || right - left < end - start) {\n          start = left;\n          end = right;\n        }\n        int removed = big[left];\n        if (counts.find(removed) != counts.end()) {\n          --counts[removed];\n          if (counts[removed] == 0)\n            ++missing;\n        }\n        ++left;\n      }\n    }\n    return {start, end};\n  }\n};\n"
+      },
+      "java": {
+        "signature": "int[] ShortestCoveringRange(int[] big, int[] small)",
+        "starterCode": "class Solution {\n  public int[] ShortestCoveringRange(int[] big, int[] small) {\n    return new int[0];\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public int[] ShortestCoveringRange(int[] big, int[] small) {\n    if (small.length == 0)\n      return new int[] {-1, -1};\n    Map<Integer, Integer> counts = new HashMap<>();\n    for (int value : small)\n      counts.put(value, 0);\n    int missing = small.length, left = 0, start = -1, end = -1;\n    for (int right = 0; right < big.length; ++right) {\n      int value = big[right];\n      if (counts.containsKey(value)) {\n        if (counts.get(value) == 0)\n          --missing;\n        counts.put(value, counts.get(value) + 1);\n      }\n      while (missing == 0) {\n        if (start == -1 || right - left < end - start) {\n          start = left;\n          end = right;\n        }\n        int removed = big[left];\n        if (counts.containsKey(removed)) {\n          counts.put(removed, counts.get(removed) - 1);\n          if (counts.get(removed) == 0)\n            ++missing;\n        }\n        ++left;\n      }\n    }\n    return new int[] {start, end};\n  }\n}\n"
+      }
+    }
+  },
+  {
+    "ref": "17.19",
+    "method": "MissingTwo",
+    "params": [
+      [
+        "values",
+        "ai"
+      ]
+    ],
+    "result": "ai",
+    "mutation": "none",
+    "description": "The input contains all integers from 1 through n except two distinct missing values, in arbitrary order, with n=values.length+2. Return the two missing values in increasing order without modifying the input.",
+    "constraints": [
+      "2 <= n <= 100000. Input entries are distinct, lie in 1..n and omit exactly two values. No duplicates or out-of-range entries are admitted. For an empty input n=2 and the answer is [1,2].",
+      "Use O(1) auxiliary storage besides the two returned values. Do not sort or allocate a presence table proportional to n. Increasing result order is an explicit deterministic convention."
+    ],
+    "why": "XOR the full range and the supplied entries: present values cancel, leaving a xor b for the missing pair. Because a and b differ, some bit is set in that XOR. Partition both the full range and input by one such bit; the two missing values land in different groups, and all present values cancel within their own groups.",
+    "correctness": "Each present value appears twice in the full/input XOR and cancels, leaving exactly the two missing values. A set bit of their XOR means one missing value has that bit and the other does not. Repeating XOR separately for the two bit groups therefore leaves one missing value in each accumulator. These are the complete missing pair; ordering them changes no membership. All values and the selected low bit fit the admitted signed range, so no square sums or floating-point roots can overflow or round incorrectly.",
+    "walkthrough": "For [1,3,5], n is 5 and the missing pair is 2,4. The combined XOR is 6 (binary 110); choosing its low set bit 2 separates 2 from 4. Present numbers cancel in each bit group, leaving those two values, returned as [2,4].",
+    "example": [
+      [
+        [
+          1,
+          3,
+          5
+        ]
+      ],
+      [
+        2,
+        4
+      ]
+    ],
+    "time": "O(n) time for full-range and input XOR scans.",
+    "space": "O(1) auxiliary scalar storage, excluding the two-value output.",
+    "edges": [
+      "Empty input, missing endpoints, arbitrary input order.",
+      "The largest n; arithmetic square-sum formulas would exceed ordinary int bounds."
+    ],
+    "related": "This is the two-missing follow-up established by the author source, not a one-missing-value substitution.",
+    "id": "ctci6_17_19",
+    "title": "Missing Two",
+    "testCount": 623,
+    "languages": {
+      "csharp": {
+        "signature": "int[] MissingTwo(int[] values)",
+        "starterCode": "public class Solution\n{\n    public int[] MissingTwo(int[] values)\n    {\n        return [];\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public int[] MissingTwo(int[] values)\n    {\n        int n = values.Length + 2, combined = 0;\n        for (int value = 1; value <= n; ++value)\n            combined ^= value;\n        foreach (int value in values)\n            combined ^= value;\n        int bit = combined & -combined, first = 0, second = 0;\n        for (int value = 1; value <= n; ++value)\n        {\n            if ((value & bit) != 0)\n                first ^= value;\n            else\n                second ^= value;\n        }\n        foreach (int value in values)\n        {\n            if ((value & bit) != 0)\n                first ^= value;\n            else\n                second ^= value;\n        }\n        return [Math.Min(first, second), Math.Max(first, second)];\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function MissingTwo(values)",
+        "starterCode": "function MissingTwo(values) {\n  return [];\n}\n",
+        "solutionCode": "function MissingTwo(values) {\n  const n = values.length + 2;\n  let combined = 0;\n  for (let value = 1; value <= n; ++value) combined ^= value;\n  for (const value of values) combined ^= value;\n  const bit = combined & -combined;\n  let first = 0,\n    second = 0;\n  for (let value = 1; value <= n; ++value) {\n    if (value & bit) first ^= value;\n    else second ^= value;\n  }\n  for (const value of values) {\n    if (value & bit) first ^= value;\n    else second ^= value;\n  }\n  return [Math.min(first, second), Math.max(first, second)];\n}\n"
+      },
+      "python": {
+        "signature": "def MissingTwo(values: list[int]) -> list[int]",
+        "starterCode": "def MissingTwo(values: list[int]) -> list[int]:\n    return []\n",
+        "solutionCode": "def MissingTwo(values: list[int]) -> list[int]:\n    n = len(values) + 2\n    combined = 0\n    for value in range(1, n + 1):\n        combined ^= value\n    for value in values:\n        combined ^= value\n    bit = combined & -combined\n    first = second = 0\n    for value in range(1, n + 1):\n        if value & bit:\n            first ^= value\n        else:\n            second ^= value\n    for value in values:\n        if value & bit:\n            first ^= value\n        else:\n            second ^= value\n    return [min(first, second), max(first, second)]\n"
+      },
+      "cpp": {
+        "signature": "std::vector<int> MissingTwo(const std::vector<int>& values)",
+        "starterCode": "class Solution {\n public:\n  std::vector<int> MissingTwo(const std::vector<int>& values) {\n    return {};\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  std::vector<int> MissingTwo(const std::vector<int>& values) {\n    int n = static_cast<int>(values.size()) + 2, combined = 0;\n    for (int value = 1; value <= n; ++value)\n      combined ^= value;\n    for (int value : values)\n      combined ^= value;\n    int bit = combined & -combined, first = 0, second = 0;\n    for (int value = 1; value <= n; ++value) {\n      if ((value & bit) != 0)\n        first ^= value;\n      else\n        second ^= value;\n    }\n    for (int value : values) {\n      if ((value & bit) != 0)\n        first ^= value;\n      else\n        second ^= value;\n    }\n    return {std::min(first, second), std::max(first, second)};\n  }\n};\n"
+      },
+      "java": {
+        "signature": "int[] MissingTwo(int[] values)",
+        "starterCode": "class Solution {\n  public int[] MissingTwo(int[] values) {\n    return new int[0];\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public int[] MissingTwo(int[] values) {\n    int n = values.length + 2, combined = 0;\n    for (int value = 1; value <= n; ++value)\n      combined ^= value;\n    for (int value : values)\n      combined ^= value;\n    int bit = combined & -combined, first = 0, second = 0;\n    for (int value = 1; value <= n; ++value) {\n      if ((value & bit) != 0)\n        first ^= value;\n      else\n        second ^= value;\n    }\n    for (int value : values) {\n      if ((value & bit) != 0)\n        first ^= value;\n      else\n        second ^= value;\n    }\n    return new int[] {Math.min(first, second), Math.max(first, second)};\n  }\n}\n"
+      }
+    }
+  },
+  {
     "ref": "17.21",
     "method": "HistogramWaterVolume",
     "params": [
@@ -402,6 +706,169 @@
         "signature": "int HistogramWaterVolume(int[] heights)",
         "starterCode": "class Solution {\n  public int HistogramWaterVolume(int[] heights) {\n    return 0;\n  }\n}\n",
         "solutionCode": "class Solution {\n  public int HistogramWaterVolume(int[] heights) {\n    int left = 0, right = heights.length - 1, leftMax = 0, rightMax = 0, volume = 0;\n    while (left <= right) {\n      if (leftMax <= rightMax) {\n        leftMax = Math.max(leftMax, heights[left]);\n        volume += leftMax - heights[left];\n        ++left;\n      } else {\n        rightMax = Math.max(rightMax, heights[right]);\n        volume += rightMax - heights[right];\n        --right;\n      }\n    }\n    return volume;\n  }\n}\n"
+      }
+    }
+  },
+  {
+    "ref": "17.23",
+    "method": "LargestBlackBorder",
+    "params": [
+      [
+        "matrix",
+        "aai"
+      ]
+    ],
+    "result": "ai",
+    "mutation": "none",
+    "description": "Find the largest square submatrix whose entire border is black. Encode black as 0 and white as 1. Interior cells need not be black. Return [topRow,leftColumn,sideLength], using zero-based coordinates, or [] if no black cell exists. Among equal largest squares choose the smallest top row, then smallest left column.",
+    "constraints": [
+      "matrix is nonnull and square with size 0..40 and entries only 0 or 1. An empty matrix has no square. A single black cell is a valid side-one square.",
+      "Preserve the outer array, every row object and every cell value. Check all four full edges, not just corners or the main diagonal. The result describes original coordinates."
+    ],
+    "why": "Precompute how many consecutive black cells begin at each position going right and down. Four run-length checks then verify any candidate border in constant time. Search side lengths from largest to smallest and top-left positions in row order so the first valid candidate also satisfies the tie rule.",
+    "correctness": "Processing cells from bottom-right computes exact right/down black-run lengths: a white cell has zero, while a black cell extends the adjacent run by one. A candidate of side s has an all-black border exactly when its top and bottom horizontal runs and left and right vertical runs each reach s. Interior values do not enter these checks. Descending sizes guarantee maximality of the first valid result; row/column order guarantees the requested earliest top-left tie. If no candidate succeeds, no side-one black cell exists either, so [] is correct.",
+    "walkthrough": "For [[0,0,0],[0,1,0],[0,0,0]], all four length-three edges are black even though the center is white, so return [0,0,3]. Requiring a completely filled black square would incorrectly reject the correct answer.",
+    "example": [
+      [
+        [
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ]
+        ]
+      ],
+      [
+        0,
+        0,
+        3
+      ]
+    ],
+    "time": "O(n^3) time: O(n^2) preprocessing and O(n^3) candidates with four constant-time border checks.",
+    "space": "O(n^2) auxiliary right/down run-length tables.",
+    "edges": [
+      "Empty and all-white input; one black cell.",
+      "A hollow black border, a broken edge with black corners, and tied largest squares."
+    ],
+    "related": "The source uses 0 for black. A maximum all-black filled square solves a different problem.",
+    "id": "ctci6_17_23",
+    "title": "Max Black Square",
+    "testCount": 574,
+    "languages": {
+      "csharp": {
+        "signature": "int[] LargestBlackBorder(int[][] matrix)",
+        "starterCode": "public class Solution\n{\n    public int[] LargestBlackBorder(int[][] matrix)\n    {\n        return [];\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public int[] LargestBlackBorder(int[][] matrix)\n    {\n        int n = matrix.Length;\n        int[,] right = new int[n, n], down = new int[n, n];\n        for (int r = n - 1; r >= 0; --r)\n        {\n            for (int c = n - 1; c >= 0; --c)\n            {\n                if (matrix[r][c] == 0)\n                {\n                    right[r, c] = 1 + (c + 1 < n ? right[r, c + 1] : 0);\n                    down[r, c] = 1 + (r + 1 < n ? down[r + 1, c] : 0);\n                }\n            }\n        }\n        for (int size = n; size >= 1; --size)\n        {\n            for (int r = 0; r + size <= n; ++r)\n            {\n                for (int c = 0; c + size <= n; ++c)\n                {\n                    if (right[r, c] >= size && down[r, c] >= size &&\n                        right[r + size - 1, c] >= size && down[r, c + size - 1] >= size)\n                        return [r, c, size];\n                }\n            }\n        }\n        return [];\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function LargestBlackBorder(matrix)",
+        "starterCode": "function LargestBlackBorder(matrix) {\n  return [];\n}\n",
+        "solutionCode": "function LargestBlackBorder(matrix) {\n  const n = matrix.length,\n    right = Array.from({ length: n }, () => Array(n).fill(0)),\n    down = Array.from({ length: n }, () => Array(n).fill(0));\n  for (let r = n - 1; r >= 0; --r) {\n    for (let c = n - 1; c >= 0; --c) {\n      if (matrix[r][c] === 0) {\n        right[r][c] = 1 + (c + 1 < n ? right[r][c + 1] : 0);\n        down[r][c] = 1 + (r + 1 < n ? down[r + 1][c] : 0);\n      }\n    }\n  }\n  for (let size = n; size >= 1; --size) {\n    for (let r = 0; r + size <= n; ++r) {\n      for (let c = 0; c + size <= n; ++c) {\n        if (\n          right[r][c] >= size &&\n          down[r][c] >= size &&\n          right[r + size - 1][c] >= size &&\n          down[r][c + size - 1] >= size\n        )\n          return [r, c, size];\n      }\n    }\n  }\n  return [];\n}\n"
+      },
+      "python": {
+        "signature": "def LargestBlackBorder(matrix: list[list[int]]) -> list[int]",
+        "starterCode": "def LargestBlackBorder(matrix: list[list[int]]) -> list[int]:\n    return []\n",
+        "solutionCode": "def LargestBlackBorder(matrix: list[list[int]]) -> list[int]:\n    n = len(matrix)\n    right = [[0] * n for _ in range(n)]\n    down = [[0] * n for _ in range(n)]\n    for row in range(n - 1, -1, -1):\n        for column in range(n - 1, -1, -1):\n            if matrix[row][column] == 0:\n                right[row][column] = 1 + (right[row][column + 1] if column + 1 < n else 0)\n                down[row][column] = 1 + (down[row + 1][column] if row + 1 < n else 0)\n    for size in range(n, 0, -1):\n        for row in range(n - size + 1):\n            for column in range(n - size + 1):\n                if (\n                    right[row][column] >= size\n                    and down[row][column] >= size\n                    and right[row + size - 1][column] >= size\n                    and down[row][column + size - 1] >= size\n                ):\n                    return [row, column, size]\n    return []\n"
+      },
+      "cpp": {
+        "signature": "std::vector<int> LargestBlackBorder(const std::vector<std::vector<int>>& matrix)",
+        "starterCode": "class Solution {\n public:\n  std::vector<int> LargestBlackBorder(const std::vector<std::vector<int>>& matrix) {\n    return {};\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  std::vector<int> LargestBlackBorder(const std::vector<std::vector<int>>& matrix) {\n    int n = static_cast<int>(matrix.size());\n    std::vector<std::vector<int>> right(n, std::vector<int>(n)), down(n, std::vector<int>(n));\n    for (int r = n - 1; r >= 0; --r) {\n      for (int c = n - 1; c >= 0; --c) {\n        if (matrix[r][c] == 0) {\n          right[r][c] = 1 + (c + 1 < n ? right[r][c + 1] : 0);\n          down[r][c] = 1 + (r + 1 < n ? down[r + 1][c] : 0);\n        }\n      }\n    }\n    for (int size = n; size >= 1; --size) {\n      for (int r = 0; r + size <= n; ++r) {\n        for (int c = 0; c + size <= n; ++c) {\n          if (right[r][c] >= size && down[r][c] >= size && right[r + size - 1][c] >= size &&\n              down[r][c + size - 1] >= size)\n            return {r, c, size};\n        }\n      }\n    }\n    return {};\n  }\n};\n"
+      },
+      "java": {
+        "signature": "int[] LargestBlackBorder(int[][] matrix)",
+        "starterCode": "class Solution {\n  public int[] LargestBlackBorder(int[][] matrix) {\n    return new int[0];\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public int[] LargestBlackBorder(int[][] matrix) {\n    int n = matrix.length;\n    int[][] right = new int[n][n], down = new int[n][n];\n    for (int r = n - 1; r >= 0; --r) {\n      for (int c = n - 1; c >= 0; --c) {\n        if (matrix[r][c] == 0) {\n          right[r][c] = 1 + (c + 1 < n ? right[r][c + 1] : 0);\n          down[r][c] = 1 + (r + 1 < n ? down[r + 1][c] : 0);\n        }\n      }\n    }\n    for (int size = n; size >= 1; --size) {\n      for (int r = 0; r + size <= n; ++r) {\n        for (int c = 0; c + size <= n; ++c) {\n          if (right[r][c] >= size && down[r][c] >= size && right[r + size - 1][c] >= size\n              && down[r][c + size - 1] >= size)\n            return new int[] {r, c, size};\n        }\n      }\n    }\n    return new int[0];\n  }\n}\n"
+      }
+    }
+  },
+  {
+    "ref": "17.24",
+    "method": "MaximumSubmatrix",
+    "params": [
+      [
+        "matrix",
+        "aai"
+      ]
+    ],
+    "result": "ai",
+    "mutation": "none",
+    "description": "Find a nonempty rectangular submatrix with greatest sum and return [sum,top,left,bottom,right], with all bounds zero-based and inclusive. For ties prefer smaller top, then smaller bottom, then smaller left, then smaller right. If either input dimension is empty, return [].",
+    "constraints": [
+      "matrix is nonnull and rectangular, with 0..30 rows and 0..30 columns. Entries are integers in -1000000..1000000, so every rectangle sum fits signed 32-bit range. Preserve outer/row identities, dimensions and values.",
+      "For a nonempty matrix the selected rectangle must be nonempty, even if every entry is negative. Sum all cells in one rectangle; do not choose disconnected positive entries. Return coordinates as well as the sum."
+    ],
+    "why": "Fix top and bottom rows and add their strip into one column-sum array. Any rectangle with those row bounds becomes a contiguous subarray of column sums. A nonempty Kadane scan finds the best such column interval in linear time. Extending the bottom row incrementally reuses column totals instead of resumming each rectangle.",
+    "correctness": "For each row pair, each column total is exactly the sum between those rows. Therefore a column interval and its corresponding rectangle have identical sums. Kadane keeps the maximum nonempty sum ending at each column: extend a nonnegative preceding sum, or start anew after a negative one. Every possible rectangle has one enumerated row pair and column interval, so maximizing these candidates yields the global optimum. Keeping an equal-zero prefix favors earlier left bounds; strict global improvements with top/bottom iteration order preserve the specified tie priority. Initializing below all admitted sums prevents an empty zero choice from defeating all-negative rectangles.",
+    "walkthrough": "For [[1,-2,3],[-4,5,6]], the bottom row interval columns 1..2 sums to 11. Including both rows over those columns gives -2+3+5+6=12, so return [12,0,1,1,2]. In [[-5,-2]], the correct nonempty answer is [-2,0,1,0,1], not zero.",
+    "example": [
+      [
+        [
+          [
+            1,
+            -2,
+            3
+          ],
+          [
+            -4,
+            5,
+            6
+          ]
+        ]
+      ],
+      [
+        12,
+        0,
+        1,
+        1,
+        2
+      ]
+    ],
+    "time": "O(rows^2*columns) time for all row pairs and their column scans.",
+    "space": "O(columns) auxiliary column totals plus constant scalar bounds and the five-integer result.",
+    "edges": [
+      "Empty dimensions, a single negative cell, all-negative matrices.",
+      "The entire matrix, a strict interior optimum, and ties under the stated top/bottom/left/right priority."
+    ],
+    "related": "The result retains an actual maximizing rectangle, not only its sum; the tie order matches explicit row-pair then column-interval enumeration.",
+    "id": "ctci6_17_24",
+    "title": "Max Submatrix",
+    "testCount": 1566,
+    "languages": {
+      "csharp": {
+        "signature": "int[] MaximumSubmatrix(int[][] matrix)",
+        "starterCode": "public class Solution\n{\n    public int[] MaximumSubmatrix(int[][] matrix)\n    {\n        return [];\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public int[] MaximumSubmatrix(int[][] matrix)\n    {\n        int rows = matrix.Length, columns = rows == 0 ? 0 : matrix[0].Length;\n        if (rows == 0 || columns == 0)\n            return [];\n        int best = -2147483648;\n        int[] answer = new int[5];\n        for (int top = 0; top < rows; ++top)\n        {\n            int[] totals = new int[columns];\n            for (int bottom = top; bottom < rows; ++bottom)\n            {\n                int running = 0, start = 0;\n                for (int c = 0; c < columns; ++c)\n                {\n                    totals[c] += matrix[bottom][c];\n                    if (running < 0)\n                    {\n                        running = totals[c];\n                        start = c;\n                    }\n                    else\n                        running += totals[c];\n                    if (running > best)\n                    {\n                        best = running;\n                        answer = [best, top, start, bottom, c];\n                    }\n                }\n            }\n        }\n        return answer;\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function MaximumSubmatrix(matrix)",
+        "starterCode": "function MaximumSubmatrix(matrix) {\n  return [];\n}\n",
+        "solutionCode": "function MaximumSubmatrix(matrix) {\n  const rows = matrix.length,\n    columns = rows ? matrix[0].length : 0;\n  if (!rows || !columns) return [];\n  let best = -2147483648,\n    answer = [];\n  for (let top = 0; top < rows; ++top) {\n    const totals = Array(columns).fill(0);\n    for (let bottom = top; bottom < rows; ++bottom) {\n      let running = 0,\n        start = 0;\n      for (let c = 0; c < columns; ++c) {\n        totals[c] += matrix[bottom][c];\n        if (running < 0) {\n          running = totals[c];\n          start = c;\n        } else running += totals[c];\n        if (running > best) {\n          best = running;\n          answer = [best, top, start, bottom, c];\n        }\n      }\n    }\n  }\n  return answer;\n}\n"
+      },
+      "python": {
+        "signature": "def MaximumSubmatrix(matrix: list[list[int]]) -> list[int]",
+        "starterCode": "def MaximumSubmatrix(matrix: list[list[int]]) -> list[int]:\n    return []\n",
+        "solutionCode": "def MaximumSubmatrix(matrix: list[list[int]]) -> list[int]:\n    rows = len(matrix)\n    columns = len(matrix[0]) if rows else 0\n    if not rows or not columns:\n        return []\n    best = -2147483648\n    answer = []\n    for top in range(rows):\n        totals = [0] * columns\n        for bottom in range(top, rows):\n            running = start = 0\n            for column in range(columns):\n                totals[column] += matrix[bottom][column]\n                if running < 0:\n                    running = totals[column]\n                    start = column\n                else:\n                    running += totals[column]\n                if running > best:\n                    best = running\n                    answer = [best, top, start, bottom, column]\n    return answer\n"
+      },
+      "cpp": {
+        "signature": "std::vector<int> MaximumSubmatrix(const std::vector<std::vector<int>>& matrix)",
+        "starterCode": "class Solution {\n public:\n  std::vector<int> MaximumSubmatrix(const std::vector<std::vector<int>>& matrix) {\n    return {};\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  std::vector<int> MaximumSubmatrix(const std::vector<std::vector<int>>& matrix) {\n    int rows = static_cast<int>(matrix.size()),\n        columns = rows == 0 ? 0 : static_cast<int>(matrix[0].size());\n    if (rows == 0 || columns == 0)\n      return {};\n    int best = -2147483648;\n    std::vector<int> answer(5);\n    for (int top = 0; top < rows; ++top) {\n      std::vector<int> totals(columns);\n      for (int bottom = top; bottom < rows; ++bottom) {\n        int running = 0, start = 0;\n        for (int c = 0; c < columns; ++c) {\n          totals[c] += matrix[bottom][c];\n          if (running < 0) {\n            running = totals[c];\n            start = c;\n          } else\n            running += totals[c];\n          if (running > best) {\n            best = running;\n            answer = {best, top, start, bottom, c};\n          }\n        }\n      }\n    }\n    return answer;\n  }\n};\n"
+      },
+      "java": {
+        "signature": "int[] MaximumSubmatrix(int[][] matrix)",
+        "starterCode": "class Solution {\n  public int[] MaximumSubmatrix(int[][] matrix) {\n    return new int[0];\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public int[] MaximumSubmatrix(int[][] matrix) {\n    int rows = matrix.length, columns = rows == 0 ? 0 : matrix[0].length;\n    if (rows == 0 || columns == 0)\n      return new int[0];\n    int best = -2147483648;\n    int[] answer = new int[5];\n    for (int top = 0; top < rows; ++top) {\n      int[] totals = new int[columns];\n      for (int bottom = top; bottom < rows; ++bottom) {\n        int running = 0, start = 0;\n        for (int c = 0; c < columns; ++c) {\n          totals[c] += matrix[bottom][c];\n          if (running < 0) {\n            running = totals[c];\n            start = c;\n          } else\n            running += totals[c];\n          if (running > best) {\n            best = running;\n            answer = new int[] {best, top, start, bottom, c};\n          }\n        }\n      }\n    }\n    return answer;\n  }\n}\n"
       }
     }
   }

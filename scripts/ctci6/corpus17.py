@@ -85,3 +85,118 @@ def valid_observation(ref,case,observed):
     if not isinstance(observed,dict) or observed.get('mutationOk') is not True:return False
     actual=observed.get('actual');expected=case['expected']
     return (type(actual) is int and actual==expected) if type(expected) is int else (type(actual) is list and all(type(v) is int for v in actual) and actual==expected)
+
+_previous_oracle=oracle
+_previous_cases=cases
+
+def oracle(ref,args):
+    if ref=='17.5':
+        text=args[0];best=0;answer=[-1,-1]
+        if len(text)>100:
+            groups={0:[-1]};balance=0
+            for i,char in enumerate(text):
+                balance += -1 if char.isdigit() else 1
+                groups.setdefault(balance,[]).append(i)
+            for positions in groups.values():
+                length=positions[-1]-positions[0];start=positions[0]+1
+                if length>best or length==best and length>0 and start<answer[0]:best=length;answer=[start,positions[-1]]
+            return answer
+        for left in range(len(text)):
+            balance=0
+            for right in range(left,len(text)):
+                balance+=-1 if text[right].isdigit() else 1
+                if balance==0 and right-left+1>best:best=right-left+1;answer=[left,right]
+        return answer
+    if ref=='17.14':return sorted(args[0])[:args[1]]
+    if ref=='17.18':
+        big,small=args;needed=set(small);best=len(big)+1;answer=[-1,-1]
+        if not needed:return answer
+        if len(big)>100:
+            from bisect import bisect_left
+            positions={v:[] for v in small}
+            for i,value in enumerate(big):
+                if value in positions:positions[value].append(i)
+            for left in range(len(big)):
+                found=[]
+                for indexes in positions.values():
+                    at=bisect_left(indexes,left)
+                    if at==len(indexes):break
+                    found.append(indexes[at])
+                if len(found)!=len(small):break
+                right=max(found)
+                if right-left+1<best:best=right-left+1;answer=[left,right]
+            return answer
+        for left in range(len(big)):
+            seen=set()
+            for right in range(left,len(big)):
+                seen.add(big[right])
+                if needed<=seen:
+                    if right-left+1<best:best=right-left+1;answer=[left,right]
+                    break
+        return answer
+    if ref=='17.19':return sorted(set(range(1,len(args[0])+3))-set(args[0]))
+    if ref=='17.23':
+        matrix=args[0];n=len(matrix)
+        for size in range(n,0,-1):
+            for row in range(n-size+1):
+                for col in range(n-size+1):
+                    if all(matrix[row][c]==0 and matrix[row+size-1][c]==0 for c in range(col,col+size)) and all(matrix[r][col]==0 and matrix[r][col+size-1]==0 for r in range(row,row+size)):
+                        return [row,col,size]
+        return []
+    if ref=='17.24':
+        matrix=args[0];rows=len(matrix);cols=len(matrix[0]) if rows else 0
+        if not rows or not cols:return []
+        prefix=[[0]*(cols+1) for _ in range(rows+1)]
+        for r in range(rows):
+            for c in range(cols):prefix[r+1][c+1]=matrix[r][c]+prefix[r][c+1]+prefix[r+1][c]-prefix[r][c]
+        best=None;answer=[]
+        for top in range(rows):
+            for bottom in range(top,rows):
+                for left in range(cols):
+                    for right in range(left,cols):
+                        value=prefix[bottom+1][right+1]-prefix[top][right+1]-prefix[bottom+1][left]+prefix[top][left]
+                        if best is None or value>best:best=value;answer=[value,top,left,bottom,right]
+        return answer
+    return _previous_oracle(ref,args)
+
+def cases(spec):
+    ref=spec['ref']
+    if ref not in ('17.5','17.14','17.18','17.19','17.23','17.24'):return _previous_cases(spec)
+    rng=random.Random(171000+int(ref.split('.')[1]));args=[spec['example'][0]]
+    if ref=='17.5':
+        args += [[''.join(chars)] for n in range(10) for chars in itertools.product('A1',repeat=n)]
+        args += [['aZ09B1'],['A'*5000+'1'*5000],['z'*10000],['0'*10000]]
+        args += [[''.join(rng.choice('aBZ019') for _ in range(rng.randrange(35)))] for _ in range(80)]
+    elif ref=='17.14':
+        args += [[list(values),k] for n in range(7) for values in itertools.product((-1,0,1),repeat=n) for k in range(n+1)]
+        args += [[[-2147483648,2147483647,0,-2147483648],k] for k in range(5)]
+        args += [[list(range(9999,-1,-1)),k] for k in (0,1,5000,10000)]
+        for _ in range(80):
+            values=[rng.randrange(-30,31) for _ in range(rng.randrange(35))]
+            args.append([values,rng.randrange(len(values)+1)])
+    elif ref=='17.18':
+        targets=[list(v) for n in range(4) for v in itertools.combinations((0,1,2),n)]
+        args += [[list(big),small] for n in range(6) for big in itertools.product((0,1,2),repeat=n) for small in targets]
+        args += [[list(range(10000)),[9998,9999]],[[0]*10000,[0]],[[0]*10000,[1]], [[2147483647,0,-2147483648],[-2147483648,2147483647]]]
+    elif ref=='17.19':
+        for n in range(2,16):
+            for a,b in itertools.combinations(range(1,n+1),2):
+                values=[v for v in range(1,n+1) if v not in (a,b)];rng.shuffle(values);args.append([values])
+        args += [[[v for v in range(1,100001) if v not in missing]] for missing in ((1,100000),(33333,66666),(99999,100000))]
+        for _ in range(60):
+            n=rng.randrange(2,201);missing=set(rng.sample(range(1,n+1),2));values=[v for v in range(1,n+1) if v not in missing];rng.shuffle(values);args.append([values])
+    elif ref=='17.23':
+        args += [[[]]]
+        for n in range(1,4):
+            args += [[[[cells[r*n+c] for c in range(n)] for r in range(n)]] for cells in itertools.product((0,1),repeat=n*n)]
+        args += [[[[0]*40 for _ in range(40)]],[[[1]*40 for _ in range(40)]]]
+        args += [[[[0 if r in (0,39) or c in (0,39) else 1 for c in range(40)] for r in range(40)]]]
+        args += [[[[rng.randrange(2) for _ in range(7)] for _ in range(7)]] for _ in range(40)]
+    else:
+        args += [[[]],[[[]]]]
+        for rows,cols in ((1,1),(1,3),(3,1),(2,3),(3,2)):
+            args += [[[[cells[r*cols+c] for c in range(cols)] for r in range(rows)]] for cells in itertools.product((-1,0,1),repeat=rows*cols)]
+        args += [[[[1000000]*30 for _ in range(30)]],[[[-1000000]*30 for _ in range(30)]],[[[0]*30 for _ in range(30)]]]
+        args += [[[[rng.randrange(-15,16) for _ in range(5)] for _ in range(4)]] for _ in range(45)]
+    distinct={json.dumps(a):a for a in args}
+    return [dict(arguments=a,expected=oracle(ref,a)) for a in distinct.values()]

@@ -1,0 +1,21 @@
+{
+  "explanation": "Give each letter weight +1 and each digit weight -1. An interval has equal category counts exactly when its endpoint prefix balances agree. For each balance, keep its earliest prefix position; using a later occurrence could only shorten a future interval. A dense offset array suffices because every balance is between -n and n.",
+  "correctness": "The difference of two prefix balances is the letter count minus digit count in the enclosed substring, so equality is equivalent to balance. At each end position, pairing with the earliest prior equal balance gives the longest balanced substring ending there. Every possible end is examined, so the longest of these candidates is globally optimal. End positions increase; keeping the first equal-length optimum also keeps the smallest start. Initial balance zero at prefix index -1 admits intervals starting at zero. No repeated balance means no qualifying nonempty interval.",
+  "walkthrough": "For A1B2C the successive balances after each character are 1,0,1,0,1. Balance zero at index 3 matches the initial zero at -1, giving [0,3] (A1B2), length four. Balance one at index 4 gives [1,4], also length four; the earlier start wins.",
+  "walkthroughCase": {
+    "arguments": [
+      "A1B2C"
+    ],
+    "expected": [
+      0,
+      3
+    ]
+  },
+  "timeComplexity": "O(n) time to scan characters and initialize the 2n+1 balance slots.",
+  "spaceComplexity": "O(n) auxiliary first-occurrence slots, plus two returned indices.",
+  "edgeCases": [
+    "Empty input and a single category.",
+    "An optimum starting at zero, mixed letter cases, equal-length tied windows."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.5. No affiliation is implied."
+}

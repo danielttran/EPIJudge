@@ -1,0 +1,29 @@
+{
+  "explanation": "The largest retained value is the only one that a new smaller candidate needs to displace. A max heap exposes it immediately while keeping just k values. Values at least as large as the root cannot improve the retained multiset. Extracting largest-first in reverse positions, or sorting the final heap values, produces the required ascending output. C# PriorityQueue normally removes the lowest priority. A reversed Comparer makes the largest retained value leave first; CompareTo avoids overflowing a subtraction at signed endpoints. Dequeue into output positions from right to left to obtain ascending order.",
+  "correctness": "After the first k values, the heap contains exactly their k-smallest multiset. Inductively, a new value no smaller than the root leaves that multiset optimal; a smaller value replaces one largest retained occurrence, yielding precisely the k smallest values of the extended prefix. Equal values are ordinary separate occurrences and are neither deduplicated nor overcounted. At the end the retained multiset is the required answer, and output ordering changes only its order. The zero-k branch returns before accessing a heap root.",
+  "walkthrough": "For [5,1,5,-2,3] and k=3, the initial heap retains [5,1,5]. Reading -2 displaces one 5; reading 3 displaces the remaining 5. The retained values are -2,1,3, returned in that order. For k=4, one 5 must remain: duplicates are not a set.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        5,
+        1,
+        5,
+        -2,
+        3
+      ],
+      3
+    ],
+    "expected": [
+      -2,
+      1,
+      3
+    ]
+  },
+  "timeComplexity": "O(n*log(k+1) + k*log(k+1)) time including heap updates and ordered output; k=0 takes O(1).",
+  "spaceComplexity": "O(k) heap/result storage and no input-sized copy when k is small.",
+  "edgeCases": [
+    "k=0, k equal to input size, empty input.",
+    "Repeated boundary values, negative values, and signed extremes without comparator-subtraction overflow."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.14. No affiliation is implied."
+}

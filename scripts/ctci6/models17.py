@@ -10,4 +10,5 @@ def neutral(spec,language):
 def declare(spec,language,body,class_name='Solution'):
     signature,code=typed_declare(spec,language,body,class_name)
     if language=='cpp' and spec['ref']=='17.1':code='#include <cstring>\n'+code
+    if language=='cpp' and spec['ref']=='17.18':code='#include <unordered_map>\n'+code
     return signature,code

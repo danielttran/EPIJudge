@@ -1,0 +1,25 @@
+{
+  "explanation": "XOR the full range and the supplied entries: present values cancel, leaving a xor b for the missing pair. Because a and b differ, some bit is set in that XOR. Partition both the full range and input by one such bit; the two missing values land in different groups, and all present values cancel within their own groups.",
+  "correctness": "Each present value appears twice in the full/input XOR and cancels, leaving exactly the two missing values. A set bit of their XOR means one missing value has that bit and the other does not. Repeating XOR separately for the two bit groups therefore leaves one missing value in each accumulator. These are the complete missing pair; ordering them changes no membership. All values and the selected low bit fit the admitted signed range, so no square sums or floating-point roots can overflow or round incorrectly.",
+  "walkthrough": "For [1,3,5], n is 5 and the missing pair is 2,4. The combined XOR is 6 (binary 110); choosing its low set bit 2 separates 2 from 4. Present numbers cancel in each bit group, leaving those two values, returned as [2,4].",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        1,
+        3,
+        5
+      ]
+    ],
+    "expected": [
+      2,
+      4
+    ]
+  },
+  "timeComplexity": "O(n) time for full-range and input XOR scans.",
+  "spaceComplexity": "O(1) auxiliary scalar storage, excluding the two-value output.",
+  "edgeCases": [
+    "Empty input, missing endpoints, arbitrary input order.",
+    "The largest n; arithmetic square-sum formulas would exceed ordinary int bounds."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.19. No affiliation is implied."
+}

@@ -35,4 +35,32 @@ class HardContractTests(unittest.TestCase):
         self.assertEqual(999800000,oracle('17.21',[[100000]+[0]*9998+[100000]]))
         self.assertFalse(valid_observation('17.21',dict(expected=7),dict(actual=12,mutationOk=True)))
 
+
+class RangeAndMatrixTests(unittest.TestCase):
+    def test_balanced_window_returns_original_earliest_indices(self):
+        self.assertEqual([0,3],oracle('17.5',['A1B2C']))
+        self.assertEqual([-1,-1],oracle('17.5',['ABC']))
+        self.assertFalse(valid_observation('17.5',dict(expected=[0,3]),dict(actual=[1,4],mutationOk=True)))
+    def test_smallest_k_retains_duplicate_occurrences_and_endpoints(self):
+        self.assertEqual([-2147483648,-2147483648],oracle('17.14',[[-2147483648,2147483647,-2147483648],2]))
+        self.assertEqual([],oracle('17.14',[[3,2],0]))
+        self.assertFalse(valid_observation('17.14',dict(expected=[1,1]),dict(actual=[1,2],mutationOk=True)))
+    def test_covering_range_ignores_target_order_but_not_missing_values(self):
+        self.assertEqual([1,3],oracle('17.18',[[7,5,9,1,5,9,1],[1,5,9]]))
+        self.assertEqual([-1,-1],oracle('17.18',[[1,2],[3]]))
+        self.assertEqual([-1,-1],oracle('17.18',[[1,2],[]]))
+    def test_missing_two_is_not_one_missing_or_square_sum_overflow(self):
+        self.assertEqual([1,2],oracle('17.19',[[]]))
+        self.assertEqual([2,4],oracle('17.19',[[1,3,5]]))
+        self.assertEqual([1,100000],oracle('17.19',[[v for v in range(2,100000)]]))
+    def test_black_border_allows_white_interior_and_requires_full_edges(self):
+        self.assertEqual([0,0,3],oracle('17.23',[[[0,0,0],[0,1,0],[0,0,0]]]))
+        self.assertEqual([0,0,1],oracle('17.23',[[[0,1,0],[1,1,1],[0,1,0]]]))
+        self.assertEqual([],oracle('17.23',[[[1,1],[1,1]]]))
+    def test_submatrix_is_nonempty_and_obeys_tie_order(self):
+        self.assertEqual([-2,0,1,0,1],oracle('17.24',[[[-5,-2]]]))
+        self.assertEqual([12,0,1,1,2],oracle('17.24',[[[1,-2,3],[-4,5,6]]]))
+        self.assertEqual([0,0,0,0,0],oracle('17.24',[[[0,0],[0,0]]]))
+        self.assertFalse(valid_observation('17.24',dict(expected=[-2,0,1,0,1]),dict(actual=[0,0,0,0,0],mutationOk=True)))
+
 if __name__=='__main__':unittest.main()

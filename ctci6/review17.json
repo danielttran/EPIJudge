@@ -1,12 +1,17 @@
 {
   "stage": "standalone-authoring-and-separate-module",
   "liveIntegration": "pending-current-module-receipts",
-  "reviewScope": "Six hard coding tasks and thirty actual language bodies, with separately reviewed operation restrictions, index conventions, signed overflow, optional outputs, DP direction and water-volume objective.",
+  "reviewScope": "Twelve hard coding tasks and sixty actual language bodies individually reviewed; operation restrictions, source conventions, heap bindings, contiguous/covering windows, XOR missing pairs, black borders and nonempty rectangles.",
   "questions": [
     {
       "ref": "17.1",
       "algorithm": "Iterative fixed-width XOR sum and shifted-AND carries.",
       "review": "Read all five bodies and operation restrictions: no arithmetic operator or arithmetic helper is used. C#/C++ shift unsigned 32-bit patterns; C++17 memcpy into int32_t reinterprets the final bits without signed overflow. Java/JS use native 32-bit bitwise operations. Python masks operands/carry and reconstructs the signed result using complement. Long carry chains, both signed endpoints and wrapping sums are executed against independent modular mathematical addition."
+    },
+    {
+      "ref": "17.5",
+      "algorithm": "Dense first-prefix-balance table finds the longest equal letter/digit interval and keeps the earliest tie.",
+      "review": "The ASCII-only shared domain removes locale/Unicode category differences. All five map digits to -1 and letters to +1, seed zero balance at index -1, and retain only the earliest occurrence. Returned endpoints refer to original text. Exhaustive binary-category strings, mixed-case/digit strings, no-match inputs and 10000-character bounds agree with independent interval enumeration/batch-grouped balances."
     },
     {
       "ref": "17.6",
@@ -24,14 +29,39 @@
       "review": "The optional zero/one integer collection avoids conflating a true -1 majority with absence. Both passes preserve inputs; empty arrays, exact-half counts and nonmajority surviving candidates are tested. C#/Java/C++ use exact int arrays/vectors and bounded balances; Python/JS concrete arrays are type-checked. Independent Counter results cover all small ternary arrays and 10000-element boundaries."
     },
     {
+      "ref": "17.14",
+      "algorithm": "Retain a logical max heap of k smallest occurrences and return its ordered values.",
+      "review": "All five implement the actual heap requirement, not sorting/partitioning the entire input. C#/Java reversed comparers avoid signed subtraction overflow; Python heapq uses exact negated keys; C++ standard max-heap algorithms update a copied k-vector; JavaScript implements downward repair locally. Selected-language WHY details explain these differences. Duplicate occurrences, k=0/all, signed endpoints and 10000 input elements are checked against independent sorting. Returned order is ascending and inputs remain unchanged."
+    },
+    {
       "ref": "17.16",
       "algorithm": "Rolling-prefix include/skip dynamic programming for nonadjacent duration choices.",
       "review": "All actual implementations keep prefix optima one and two positions back, compute before shifting and permit an empty choice. The public suffix-direction code is not copied into the explanation. Small independent exhaustive valid masks and a larger independent suffix table cover every small duration pattern and maximum admitted totals. No sorting, appointment splitting or cross-pair greedy shortcut occurs."
     },
     {
+      "ref": "17.18",
+      "algorithm": "Expand/shrink a covering window with required-value frequencies and a missing-value count.",
+      "review": "The shorter array is a distinct required set; order inside the big window is irrelevant. All five dictionary implementations ignore unneeded values, track redundant occurrences and shrink until one required value disappears. Empty target and absence use the explicit [-1,-1] convention. Strictly shorter updates retain earliest ties. Independent brute windows/next-occurrence closure checks cover all small ternary big arrays, target subsets, signed extremes and 10000-element boundaries."
+    },
+    {
+      "ref": "17.19",
+      "algorithm": "XOR full range/input, split by one set bit of the missing-pair XOR, then order the two recovered values.",
+      "review": "All languages infer n=input.length+2 and use scalar accumulators rather than a presence table or sorting. The combined XOR is nonzero because missing values are distinct. The n<=100000 bound makes low-bit isolation and all loop increments signed-safe. Independent set difference tests every small missing pair, shuffled input and three maximum-sized ranges. No sum-of-squares precision/overflow assumption remains."
+    },
+    {
       "ref": "17.21",
       "algorithm": "Two inward pointers settle the position adjacent to the lower established barrier.",
       "review": "All five use the same constant-space boundary invariant and leave heights unchanged. Empty input stops before indexing. Independent prefix/suffix maxima count per-position water and cover all small histograms, monotone arrays and the maximum 999800000 basin. This is total rainwater volume, not two-line container area; fixed bounded sums avoid language-specific overflow."
+    },
+    {
+      "ref": "17.23",
+      "algorithm": "Precompute right/down black-run lengths, then test four borders in descending side/row/column order.",
+      "review": "Black is explicitly zero, interior cells are unrestricted, and tie order is deterministic. C# rectangular and other languages nested tables hold run lengths; input matrix rows/content remain original. Independent literal border scans check all binary matrices through size three, 40x40 solid/hollow/white bounds and random squares. Broken edges with black corners fail; a white interior remains valid. O(n^3) candidates and O(n^2) storage match actual bodies."
+    },
+    {
+      "ref": "17.24",
+      "algorithm": "Accumulate column sums for each top/bottom row pair and scan nonempty maximum subarrays.",
+      "review": "All five keep actual sum and inclusive coordinates. Negative running sums restart; zero running sums retain an earlier left endpoint. Strict best updates plus top/bottom traversal preserve the explicitly stated tie priority. An initial signed-minimum best cannot admit a fake empty zero rectangle. Independent 2D-prefix enumeration tests all small signed rectangular inputs, all-negative/zero cases and 30x30 signed bounds. O(rows^2*columns) time and O(columns) auxiliary space match each body."
     }
   ],
   "languagesReviewed": [
@@ -42,11 +72,11 @@
     "java"
   ],
   "languageBindingReview": {
-    "csharp": "Read exact bodies: AddWithoutArithmetic uses unsigned carry shifts and explicit unchecked signed conversions. CountDigitTwos uses long before multiplying place blocks. Array-return expressions match int[]; bounded sums and candidate products stay within int. All arrays supplied to algorithms remain unchanged.",
-    "javascript": "Read exact functions: addition relies on signed 32-bit bitwise coercion, while decimal division uses Math.floor. All ordinary counts/products are safely exact Numbers under shared bounds. Zero/one majority output is an Array; the rolling DP and water scan use local scalars and never rewrite input elements.",
-    "python": "Read exact functions: masked 32-bit addition terminates on negative inputs and complement reconstructs signed output without arithmetic. Majority verification uses a fresh scalar count, not a misleading sentinel. All collection results are concrete lists, and observation rejects bool-as-int. Recursion is absent in all six bodies.",
-    "cpp": "Read exact C++17 methods: uint32_t carry shifts are defined; the visible <cstring> include supports memcpy of the final int32_t bits. Digit counting widens place arithmetic to int64_t. Const vector references preserve inputs; by-value returned vectors own optional majority results. All index arithmetic handles emptiness before access.",
-    "java": "Read exact methods: int carry shifts deliberately discard overflow bits; digit counting uses long intermediates before the justified final cast. int[] and ArrayList-free optional results match signatures. Bit/loop state is per invocation, and bounded DP/water totals fit int; no static state or mutable input side effects."
+    "csharp": "Read exact bodies: AddWithoutArithmetic uses unsigned carry shifts and explicit unchecked signed conversions. CountDigitTwos uses long before multiplying place blocks. Array-return expressions match int[]; bounded sums and candidate products stay within int. All arrays supplied to algorithms remain unchanged. SmallestK reverses PriorityQueue priority with CompareTo and fills output backward. Prefix first-occurrence arrays use -2 as the unseen sentinel. Matrix runs use rectangular int tables; hash windows use Dictionary values counted before/after edge changes.",
+    "javascript": "Read exact functions: addition relies on signed 32-bit bitwise coercion, while decimal division uses Math.floor. All ordinary counts/products are safely exact Numbers under shared bounds. Zero/one majority output is an Array; the rolling DP and water scan use local scalars and never rewrite input elements. SmallestK explicitly builds/repairs a local max heap then numerically sorts its k retained values. Its helper and mutation are inside the visible callable. Map keys remain integer Numbers; nested matrix rows use Array.from, avoiding shared-row aliasing.",
+    "python": "Read exact functions: masked 32-bit addition terminates on negative inputs and complement reconstructs signed output without arithmetic. Majority verification uses a fresh scalar count, not a misleading sentinel. All collection results are concrete lists, and observation rejects bool-as-int. Recursion is absent in all six bodies. SmallestK has a language-specific heapq/negated-key explanation; no input-sized suffix slice is allocated. Matrix tables allocate distinct row lists, and nonempty Kadane restarts only after a negative running sum. Returned ranges are concrete integer lists.",
+    "cpp": "Read exact C++17 methods: uint32_t carry shifts are defined; the visible <cstring> include supports memcpy of the final int32_t bits. Digit counting widens place arithmetic to int64_t. Const vector references preserve inputs; by-value returned vectors own optional majority results. All index arithmetic handles emptiness before access. The visible unordered_map include belongs to the covering-window callable, not a hidden helper. SmallestK uses standard heap algorithms on a k-sized vector; const inputs remain unchanged. Comparator decisions avoid subtraction of extreme signed values.",
+    "java": "Read exact methods: int carry shifts deliberately discard overflow bits; digit counting uses long intermediates before the justified final cast. int[] and ArrayList-free optional results match signatures. Bit/loop state is per invocation, and bounded DP/water totals fit int; no static state or mutable input side effects. SmallestK uses Comparator.reverseOrder safely and fills int[] output backward. Prefix slots use Arrays.fill(-2); matrix tables allocate independent rows. Hash windows use boxed integer keys consistently with primitive input values."
   },
   "executionEvidence": "staged17/validation.json",
   "submissionEvidence": "runtime/validation.json",
