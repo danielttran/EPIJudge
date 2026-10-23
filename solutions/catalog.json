@@ -37200,6 +37200,91 @@
     ]
   },
   {
+    "problemId": "ctci6_17_12",
+    "collection": "ctci6",
+    "language": "csharp",
+    "code": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic class BiNode { public int Data; public BiNode? Node1; public BiNode? Node2; public BiNode(int data){Data=data;} }\npublic class Solution\n{\n    public BiNode? ConvertBiNode(BiNode? root)\n    {\n        var stack = new Stack<BiNode>();\n        BiNode? current = root, previous = null, head = null;\n        while (current is not null || stack.Count > 0)\n        {\n            while (current is not null)\n            {\n                stack.Push(current);\n                current = current.Node1;\n            }\n            var node = stack.Pop();\n            var right = node.Node2;\n            node.Node1 = previous;\n            if (previous is null)\n                head = node;\n            else\n                previous.Node2 = node;\n            previous = node;\n            current = right;\n        }\n        if (previous is not null)\n            previous.Node2 = null;\n        return head;\n    }\n}\n",
+    "explanation": "The BST inorder sequence is exactly the desired list order. An explicit traversal stack saves ancestors while descending left links. When visiting a node, save its original right child before changing links, connect it to the previously visited node, then traverse that saved right subtree. Saving the right child prevents the new list links from destroying the traversal route.",
+    "timeComplexity": "O(n) time: each original node is pushed, popped and linked once.",
+    "spaceComplexity": "O(h) auxiliary original-node references for tree height h; O(n) in a chain. The list reuses all original nodes and allocates no replacement nodes.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.12. No affiliation is implied.",
+    "correctness": "Before each visit, all nodes already visited form a correct doubly linked prefix in original inorder order, and the traversal stack plus saved current subtree contains exactly the unvisited continuation. Left descent reaches the next inorder node. Saving its original right link preserves the continuation; setting its previous link and the prior node next link extends the prefix with that exact original object. The first visited node becomes head with null previous. The last visited node is the original inorder maximum and has no remaining right subtree, so its next is explicitly null. Induction yields every original node once, unchanged Data and mutually consistent adjacent links, sorted by the BST inorder property. Null input performs no visits and returns null.",
+    "walkthrough": "For original nodes A(Data=2) with Node1=B(Data=1) and Node2=C(Data=3), push A then B. Visit B first: head=B, B.Node1=null. Visit A next: B.Node2=A and A.Node1=B, while saved right=C remains available. Visit C: A.Node2=C, C.Node1=A and C.Node2=null. Return B, producing B↔A↔C with the same three objects.",
+    "edgeCases": [
+      "Null, one node, entirely left/right chains and a 1000-node tree.",
+      "Duplicate values with distinct object identities and full signed Data endpoints.",
+      "Original identity preservation, backward links, null endpoints and no cycles."
+    ]
+  },
+  {
+    "problemId": "ctci6_17_12",
+    "collection": "ctci6",
+    "language": "javascript",
+    "code": "'use strict';\nclass BiNode {constructor(data){this.Data=data;this.Node1=null;this.Node2=null;}}\nfunction ConvertBiNode(root) {\n  const stack = [];\n  let current = root,\n    previous = null,\n    head = null;\n  while (current !== null || stack.length) {\n    while (current !== null) {\n      stack.push(current);\n      current = current.Node1;\n    }\n    const node = stack.pop(),\n      right = node.Node2;\n    node.Node1 = previous;\n    if (previous === null) head = node;\n    else previous.Node2 = node;\n    previous = node;\n    current = right;\n  }\n  if (previous !== null) previous.Node2 = null;\n  return head;\n}\n\nmodule.exports = {BiNode,ConvertBiNode};\n",
+    "explanation": "The BST inorder sequence is exactly the desired list order. An explicit traversal stack saves ancestors while descending left links. When visiting a node, save its original right child before changing links, connect it to the previously visited node, then traverse that saved right subtree. Saving the right child prevents the new list links from destroying the traversal route.",
+    "timeComplexity": "O(n) time: each original node is pushed, popped and linked once.",
+    "spaceComplexity": "O(h) auxiliary original-node references for tree height h; O(n) in a chain. The list reuses all original nodes and allocates no replacement nodes.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.12. No affiliation is implied.",
+    "correctness": "Before each visit, all nodes already visited form a correct doubly linked prefix in original inorder order, and the traversal stack plus saved current subtree contains exactly the unvisited continuation. Left descent reaches the next inorder node. Saving its original right link preserves the continuation; setting its previous link and the prior node next link extends the prefix with that exact original object. The first visited node becomes head with null previous. The last visited node is the original inorder maximum and has no remaining right subtree, so its next is explicitly null. Induction yields every original node once, unchanged Data and mutually consistent adjacent links, sorted by the BST inorder property. Null input performs no visits and returns null.",
+    "walkthrough": "For original nodes A(Data=2) with Node1=B(Data=1) and Node2=C(Data=3), push A then B. Visit B first: head=B, B.Node1=null. Visit A next: B.Node2=A and A.Node1=B, while saved right=C remains available. Visit C: A.Node2=C, C.Node1=A and C.Node2=null. Return B, producing B↔A↔C with the same three objects.",
+    "edgeCases": [
+      "Null, one node, entirely left/right chains and a 1000-node tree.",
+      "Duplicate values with distinct object identities and full signed Data endpoints.",
+      "Original identity preservation, backward links, null endpoints and no cycles."
+    ]
+  },
+  {
+    "problemId": "ctci6_17_12",
+    "collection": "ctci6",
+    "language": "python",
+    "code": "class BiNode:\n    def __init__(self,data: int):\n        self.Data=data\n        self.Node1: BiNode | None = None\n        self.Node2: BiNode | None = None\ndef ConvertBiNode(root: BiNode | None) -> BiNode | None:\n    stack = []\n    current = root\n    previous = None\n    head = None\n    while current is not None or stack:\n        while current is not None:\n            stack.append(current)\n            current = current.Node1\n        node = stack.pop()\n        right = node.Node2\n        node.Node1 = previous\n        if previous is None:\n            head = node\n        else:\n            previous.Node2 = node\n        previous = node\n        current = right\n    if previous is not None:\n        previous.Node2 = None\n    return head\n",
+    "explanation": "The BST inorder sequence is exactly the desired list order. An explicit traversal stack saves ancestors while descending left links. When visiting a node, save its original right child before changing links, connect it to the previously visited node, then traverse that saved right subtree. Saving the right child prevents the new list links from destroying the traversal route.",
+    "timeComplexity": "O(n) time: each original node is pushed, popped and linked once.",
+    "spaceComplexity": "O(h) auxiliary original-node references for tree height h; O(n) in a chain. The list reuses all original nodes and allocates no replacement nodes.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.12. No affiliation is implied.",
+    "correctness": "Before each visit, all nodes already visited form a correct doubly linked prefix in original inorder order, and the traversal stack plus saved current subtree contains exactly the unvisited continuation. Left descent reaches the next inorder node. Saving its original right link preserves the continuation; setting its previous link and the prior node next link extends the prefix with that exact original object. The first visited node becomes head with null previous. The last visited node is the original inorder maximum and has no remaining right subtree, so its next is explicitly null. Induction yields every original node once, unchanged Data and mutually consistent adjacent links, sorted by the BST inorder property. Null input performs no visits and returns null.",
+    "walkthrough": "For original nodes A(Data=2) with Node1=B(Data=1) and Node2=C(Data=3), push A then B. Visit B first: head=B, B.Node1=null. Visit A next: B.Node2=A and A.Node1=B, while saved right=C remains available. Visit C: A.Node2=C, C.Node1=A and C.Node2=null. Return B, producing B↔A↔C with the same three objects.",
+    "edgeCases": [
+      "Null, one node, entirely left/right chains and a 1000-node tree.",
+      "Duplicate values with distinct object identities and full signed Data endpoints.",
+      "Original identity preservation, backward links, null endpoints and no cycles."
+    ]
+  },
+  {
+    "problemId": "ctci6_17_12",
+    "collection": "ctci6",
+    "language": "cpp",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\nstruct BiNode { int Data; BiNode* Node1=nullptr; BiNode* Node2=nullptr; explicit BiNode(int data):Data(data){} };\nclass Solution {\n public:\n  BiNode* ConvertBiNode(BiNode* root) {\n    std::vector<BiNode*> stack;\n    BiNode* current = root;\n    BiNode* previous = nullptr;\n    BiNode* head = nullptr;\n    while (current != nullptr || !stack.empty()) {\n      while (current != nullptr) {\n        stack.push_back(current);\n        current = current->Node1;\n      }\n      BiNode* node = stack.back();\n      stack.pop_back();\n      BiNode* right = node->Node2;\n      node->Node1 = previous;\n      if (previous == nullptr)\n        head = node;\n      else\n        previous->Node2 = node;\n      previous = node;\n      current = right;\n    }\n    if (previous != nullptr)\n      previous->Node2 = nullptr;\n    return head;\n  }\n};\n",
+    "explanation": "The BST inorder sequence is exactly the desired list order. An explicit traversal stack saves ancestors while descending left links. When visiting a node, save its original right child before changing links, connect it to the previously visited node, then traverse that saved right subtree. Saving the right child prevents the new list links from destroying the traversal route.",
+    "timeComplexity": "O(n) time: each original node is pushed, popped and linked once.",
+    "spaceComplexity": "O(h) auxiliary original-node references for tree height h; O(n) in a chain. The list reuses all original nodes and allocates no replacement nodes.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.12. No affiliation is implied.",
+    "correctness": "Before each visit, all nodes already visited form a correct doubly linked prefix in original inorder order, and the traversal stack plus saved current subtree contains exactly the unvisited continuation. Left descent reaches the next inorder node. Saving its original right link preserves the continuation; setting its previous link and the prior node next link extends the prefix with that exact original object. The first visited node becomes head with null previous. The last visited node is the original inorder maximum and has no remaining right subtree, so its next is explicitly null. Induction yields every original node once, unchanged Data and mutually consistent adjacent links, sorted by the BST inorder property. Null input performs no visits and returns null.",
+    "walkthrough": "For original nodes A(Data=2) with Node1=B(Data=1) and Node2=C(Data=3), push A then B. Visit B first: head=B, B.Node1=null. Visit A next: B.Node2=A and A.Node1=B, while saved right=C remains available. Visit C: A.Node2=C, C.Node1=A and C.Node2=null. Return B, producing B↔A↔C with the same three objects.",
+    "edgeCases": [
+      "Null, one node, entirely left/right chains and a 1000-node tree.",
+      "Duplicate values with distinct object identities and full signed Data endpoints.",
+      "Original identity preservation, backward links, null endpoints and no cycles."
+    ]
+  },
+  {
+    "problemId": "ctci6_17_12",
+    "collection": "ctci6",
+    "language": "java",
+    "code": "import java.util.*;\nclass BiNode { public int Data; public BiNode Node1; public BiNode Node2; public BiNode(int data){Data=data;} }\nclass Solution {\n  public BiNode ConvertBiNode(BiNode root) {\n    var stack = new ArrayDeque<BiNode>();\n    BiNode current = root, previous = null, head = null;\n    while (current != null || !stack.isEmpty()) {\n      while (current != null) {\n        stack.push(current);\n        current = current.Node1;\n      }\n      BiNode node = stack.pop(), right = node.Node2;\n      node.Node1 = previous;\n      if (previous == null)\n        head = node;\n      else\n        previous.Node2 = node;\n      previous = node;\n      current = right;\n    }\n    if (previous != null)\n      previous.Node2 = null;\n    return head;\n  }\n}\n",
+    "explanation": "The BST inorder sequence is exactly the desired list order. An explicit traversal stack saves ancestors while descending left links. When visiting a node, save its original right child before changing links, connect it to the previously visited node, then traverse that saved right subtree. Saving the right child prevents the new list links from destroying the traversal route.",
+    "timeComplexity": "O(n) time: each original node is pushed, popped and linked once.",
+    "spaceComplexity": "O(h) auxiliary original-node references for tree height h; O(n) in a chain. The list reuses all original nodes and allocates no replacement nodes.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.12. No affiliation is implied.",
+    "correctness": "Before each visit, all nodes already visited form a correct doubly linked prefix in original inorder order, and the traversal stack plus saved current subtree contains exactly the unvisited continuation. Left descent reaches the next inorder node. Saving its original right link preserves the continuation; setting its previous link and the prior node next link extends the prefix with that exact original object. The first visited node becomes head with null previous. The last visited node is the original inorder maximum and has no remaining right subtree, so its next is explicitly null. Induction yields every original node once, unchanged Data and mutually consistent adjacent links, sorted by the BST inorder property. Null input performs no visits and returns null.",
+    "walkthrough": "For original nodes A(Data=2) with Node1=B(Data=1) and Node2=C(Data=3), push A then B. Visit B first: head=B, B.Node1=null. Visit A next: B.Node2=A and A.Node1=B, while saved right=C remains available. Visit C: A.Node2=C, C.Node1=A and C.Node2=null. Return B, producing B↔A↔C with the same three objects.",
+    "edgeCases": [
+      "Null, one node, entirely left/right chains and a 1000-node tree.",
+      "Duplicate values with distinct object identities and full signed Data endpoints.",
+      "Original identity preservation, backward links, null endpoints and no cycles."
+    ]
+  },
+  {
     "problemId": "ctci6_17_13",
     "collection": "ctci6",
     "language": "csharp",

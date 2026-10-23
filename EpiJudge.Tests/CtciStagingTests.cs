@@ -649,4 +649,16 @@ public sealed class CtciStagingTests
         Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = true, mutationOk = true, probes = 5 })));
         Assert.Contains(definition.Callable("python").References, reference => reference.Names.Contains("BitArray"));
     }
+    [Fact]
+    public void BiNodeConversionRequiresOriginalIdentityAndBothLinkDirections()
+    {
+        var definition = Definition("17.12");
+        var expected = new { head = 1, order = new[] { 1, 0, 2 }, values = new[] { 1, 2, 3 }, previous = new[] { -1, 1, 0 }, next = new[] { 0, 2, -1 }, cycle = false };
+        var test = Case([new { nodes = new int[][] { [2, 1, 2], [1, -1, -1], [3, -1, -1] }, selected = 0 }], expected);
+        Assert.Null(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = expected, mutationOk = true })));
+        var bad = new { head = 1, order = expected.order, values = expected.values, previous = new[] { -1, -1, -1 }, next = expected.next, cycle = false };
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = bad, mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = expected, mutationOk = false })));
+        Assert.Contains(definition.Callable("python").References, reference => reference.Names.Contains("BiNode"));
+    }
 }

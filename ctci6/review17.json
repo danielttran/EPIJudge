@@ -1,7 +1,7 @@
 {
   "stage": "standalone-authoring-and-separate-module",
   "liveIntegration": "pending-current-module-receipts",
-  "reviewScope": "Twenty-three hard tasks and 115 actual language bodies, including genuinely opaque single-bit array access.",
+  "reviewScope": "Twenty-four hard tasks and 120 actual language bodies, including in-place original-object BiNode conversion.",
   "questions": [
     {
       "ref": "17.1",
@@ -47,6 +47,11 @@
       "ref": "17.11",
       "algorithm": "One scan retains the last occurrence of each distinct requested word and the least cross-word gap.",
       "review": "Read all five actual bodies. Equality uses whole ASCII tokens and Java equals rather than reference identity. Last indices begin at -1 and are checked before subtraction. Distance counts index steps; missing words return -1 and identical query words are explicitly outside the domain. The independent oracle compares occurrence-index pairs, covering exhaustive short texts, long repeated runs, a far-separated maximum-length pair and absent words. Caller token arrays stay unchanged."
+    },
+    {
+      "ref": "17.12",
+      "algorithm": "Iterative inorder traversal saving each original right link before connecting the current node to the previously visited object.",
+      "review": "Read all five actual bodies and every model/private codec. The callable returns actual BiNode references, mutates only Node1/Node2 and retains Data. It saves the original right child before repurposing links, and explicitly nulls the final next link. C#/Java typed stacks, C++ pointer vector and Python/JS reference arrays visit nodes without recursive-depth dependence. C++ original nodes remain owned by private unique_ptr storage; the solution allocates/deletes no BiNodes. Identity maps use ReferenceEqualityComparer, IdentityHashMap, pointer keys, Python id and JS Map. Private projection records every forward node identity, Data and both neighbor identities, with cycle detection. An independent Morris traversal of fixture copies computes expected original inorder identities. All small BST shapes with duplicate-value assignments, arbitrary row/root IDs, signed endpoints and 1000-node chains are executed. Five compiled corrupted programs each reject a cloned node and a correct-forward-list with missing previous links. No sorted-copy substitute receives credit."
     },
     {
       "ref": "17.13",
@@ -143,7 +148,9 @@
     "scripts/ctci6/test_groups_line.py",
     "scripts/ctci6/test_numeric.py",
     "scripts/ctci6/test_bits17.py",
-    "scripts/ctci6/test_bits_runtime17.py"
+    "scripts/ctci6/test_bits_runtime17.py",
+    "scripts/ctci6/test_binode17.py",
+    "scripts/ctci6/test_binode_runtime17.py"
   ],
   "remainingAcceptance": [
     "remaining known content and classifications",

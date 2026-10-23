@@ -9,9 +9,10 @@ import corpus_names17
 
 import corpus_numeric
 import corpus_bits17
+import corpus_binode17
 
-def cases(spec):return corpus_bits17.cases(spec) if spec["ref"]=="17.4" else corpus_numeric.cases(spec) if spec["ref"]=="17.20" else corpus_names17.cases(spec) if spec["ref"]=="17.7" else base_cases(spec)
-def oracle(reference,args):return corpus_bits17.oracle(reference,args) if reference=="17.4" else corpus_numeric.oracle(reference,args) if reference=="17.20" else corpus_names17.oracle(reference,args) if reference=="17.7" else base_oracle(reference,args)
+def cases(spec):return corpus_binode17.cases(spec) if spec["ref"]=="17.12" else corpus_bits17.cases(spec) if spec["ref"]=="17.4" else corpus_numeric.cases(spec) if spec["ref"]=="17.20" else corpus_names17.cases(spec) if spec["ref"]=="17.7" else base_cases(spec)
+def oracle(reference,args):return corpus_binode17.oracle(reference,args) if reference=="17.12" else corpus_bits17.oracle(reference,args) if reference=="17.4" else corpus_numeric.oracle(reference,args) if reference=="17.20" else corpus_names17.oracle(reference,args) if reference=="17.7" else base_oracle(reference,args)
 from generate import generate
 from models17 import declare,header,neutral
 

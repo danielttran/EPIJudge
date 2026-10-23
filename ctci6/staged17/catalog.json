@@ -671,6 +671,113 @@
     }
   },
   {
+    "ref": "17.12",
+    "method": "ConvertBiNode",
+    "params": [
+      [
+        "root",
+        "binode"
+      ]
+    ],
+    "result": "binode",
+    "mutation": "bi-links",
+    "description": "Convert a binary search tree of provided BiNode objects IN PLACE into a noncircular, sorted doubly linked list, and return its original first node. Before conversion Node1 is the left child and Node2 the right child. After conversion Node1 must be the previous node and Node2 the next node. Preserve every original node object and its Data value; allocate no replacement BiNode objects.",
+    "constraints": [
+      "The input is null or the root of one proper binary search tree with 0..1000 nodes. Every node has signed 32-bit Data and no cycles or shared children. Its inorder Data sequence is nondecreasing, so duplicates are allowed; the final list must preserve the original inorder OBJECT order even among equal values.",
+      "Return null for an empty tree. Otherwise return the original inorder-first node. Its Node1 must be null; the inorder-last Node2 must be null. Each other previous/next field must identify its actual adjacent original node, and both traversal directions must be consistent. Every input node appears exactly once.",
+      "An example/test wire fixture is {nodes:[[data,leftIndex,rightIndex],...],selected:rootIndex}, where -1 denotes null and row position identifies an original object. selected is -1 exactly for no nodes; every row belongs to the selected tree. The callable receives the actual BiNode root, not this fixture. Data is readonly; only Node1/Node2 links may change. C++ callers retain ownership: never delete provided nodes. Auxiliary stacks of original references are allowed."
+    ],
+    "why": "The BST inorder sequence is exactly the desired list order. An explicit traversal stack saves ancestors while descending left links. When visiting a node, save its original right child before changing links, connect it to the previously visited node, then traverse that saved right subtree. Saving the right child prevents the new list links from destroying the traversal route.",
+    "correctness": "Before each visit, all nodes already visited form a correct doubly linked prefix in original inorder order, and the traversal stack plus saved current subtree contains exactly the unvisited continuation. Left descent reaches the next inorder node. Saving its original right link preserves the continuation; setting its previous link and the prior node next link extends the prefix with that exact original object. The first visited node becomes head with null previous. The last visited node is the original inorder maximum and has no remaining right subtree, so its next is explicitly null. Induction yields every original node once, unchanged Data and mutually consistent adjacent links, sorted by the BST inorder property. Null input performs no visits and returns null.",
+    "walkthrough": "For original nodes A(Data=2) with Node1=B(Data=1) and Node2=C(Data=3), push A then B. Visit B first: head=B, B.Node1=null. Visit A next: B.Node2=A and A.Node1=B, while saved right=C remains available. Visit C: A.Node2=C, C.Node1=A and C.Node2=null. Return B, producing B\u2194A\u2194C with the same three objects.",
+    "example": [
+      [
+        {
+          "nodes": [
+            [
+              2,
+              1,
+              2
+            ],
+            [
+              1,
+              -1,
+              -1
+            ],
+            [
+              3,
+              -1,
+              -1
+            ]
+          ],
+          "selected": 0
+        }
+      ],
+      {
+        "head": 1,
+        "order": [
+          1,
+          0,
+          2
+        ],
+        "values": [
+          1,
+          2,
+          3
+        ],
+        "previous": [
+          -1,
+          1,
+          0
+        ],
+        "next": [
+          0,
+          2,
+          -1
+        ],
+        "cycle": false
+      }
+    ],
+    "time": "O(n) time: each original node is pushed, popped and linked once.",
+    "space": "O(h) auxiliary original-node references for tree height h; O(n) in a chain. The list reuses all original nodes and allocates no replacement nodes.",
+    "edges": [
+      "Null, one node, entirely left/right chains and a 1000-node tree.",
+      "Duplicate values with distinct object identities and full signed Data endpoints.",
+      "Original identity preservation, backward links, null endpoints and no cycles."
+    ],
+    "related": "The public BiNode task repurposes its two existing tree fields as doubly linked-list fields and returns the head. Identity and both link directions are observed here; a separately allocated sorted value list is not a valid substitute.",
+    "id": "ctci6_17_12",
+    "title": "BiNode",
+    "testCount": 4959,
+    "languages": {
+      "csharp": {
+        "signature": "BiNode? ConvertBiNode(BiNode? root)",
+        "starterCode": "public class Solution\n{\n    public BiNode? ConvertBiNode(BiNode? root)\n    {\n        return null;\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public BiNode? ConvertBiNode(BiNode? root)\n    {\n        var stack = new Stack<BiNode>();\n        BiNode? current = root, previous = null, head = null;\n        while (current is not null || stack.Count > 0)\n        {\n            while (current is not null)\n            {\n                stack.Push(current);\n                current = current.Node1;\n            }\n            var node = stack.Pop();\n            var right = node.Node2;\n            node.Node1 = previous;\n            if (previous is null)\n                head = node;\n            else\n                previous.Node2 = node;\n            previous = node;\n            current = right;\n        }\n        if (previous is not null)\n            previous.Node2 = null;\n        return head;\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function ConvertBiNode(root)",
+        "starterCode": "function ConvertBiNode(root) {\n  return null;\n}\n",
+        "solutionCode": "function ConvertBiNode(root) {\n  const stack = [];\n  let current = root,\n    previous = null,\n    head = null;\n  while (current !== null || stack.length) {\n    while (current !== null) {\n      stack.push(current);\n      current = current.Node1;\n    }\n    const node = stack.pop(),\n      right = node.Node2;\n    node.Node1 = previous;\n    if (previous === null) head = node;\n    else previous.Node2 = node;\n    previous = node;\n    current = right;\n  }\n  if (previous !== null) previous.Node2 = null;\n  return head;\n}\n"
+      },
+      "python": {
+        "signature": "def ConvertBiNode(root: BiNode | None) -> BiNode | None",
+        "starterCode": "def ConvertBiNode(root: BiNode | None) -> BiNode | None:\n    return None\n",
+        "solutionCode": "def ConvertBiNode(root: BiNode | None) -> BiNode | None:\n    stack = []\n    current = root\n    previous = None\n    head = None\n    while current is not None or stack:\n        while current is not None:\n            stack.append(current)\n            current = current.Node1\n        node = stack.pop()\n        right = node.Node2\n        node.Node1 = previous\n        if previous is None:\n            head = node\n        else:\n            previous.Node2 = node\n        previous = node\n        current = right\n    if previous is not None:\n        previous.Node2 = None\n    return head\n"
+      },
+      "cpp": {
+        "signature": "BiNode* ConvertBiNode(BiNode* root)",
+        "starterCode": "class Solution {\n public:\n  BiNode* ConvertBiNode(BiNode* root) {\n    return nullptr;\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  BiNode* ConvertBiNode(BiNode* root) {\n    std::vector<BiNode*> stack;\n    BiNode* current = root;\n    BiNode* previous = nullptr;\n    BiNode* head = nullptr;\n    while (current != nullptr || !stack.empty()) {\n      while (current != nullptr) {\n        stack.push_back(current);\n        current = current->Node1;\n      }\n      BiNode* node = stack.back();\n      stack.pop_back();\n      BiNode* right = node->Node2;\n      node->Node1 = previous;\n      if (previous == nullptr)\n        head = node;\n      else\n        previous->Node2 = node;\n      previous = node;\n      current = right;\n    }\n    if (previous != nullptr)\n      previous->Node2 = nullptr;\n    return head;\n  }\n};\n"
+      },
+      "java": {
+        "signature": "BiNode ConvertBiNode(BiNode root)",
+        "starterCode": "class Solution {\n  public BiNode ConvertBiNode(BiNode root) {\n    return null;\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public BiNode ConvertBiNode(BiNode root) {\n    var stack = new ArrayDeque<BiNode>();\n    BiNode current = root, previous = null, head = null;\n    while (current != null || !stack.isEmpty()) {\n      while (current != null) {\n        stack.push(current);\n        current = current.Node1;\n      }\n      BiNode node = stack.pop(), right = node.Node2;\n      node.Node1 = previous;\n      if (previous == null)\n        head = node;\n      else\n        previous.Node2 = node;\n      previous = node;\n      current = right;\n    }\n    if (previous != null)\n      previous.Node2 = null;\n    return head;\n  }\n}\n"
+      }
+    }
+  },
+  {
     "ref": "17.13",
     "method": "ReSpace",
     "params": [

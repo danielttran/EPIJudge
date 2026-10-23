@@ -19,7 +19,7 @@ public sealed record CtciStagingDefinition(string Id, string Ref, string Title, 
         var extension = language switch { "csharp" => "cs", "javascript" => "js", "python" => "py", "cpp" => "cpp", _ => "java" };
         var filename = language == "java" && Result == "state" ? Method + ".java" : (language is "csharp" or "java" ? "Solution." : "solution.") + extension;
         CodeReference[] references = string.IsNullOrWhiteSpace(source.Reference) ? [] :
-            [new(Batch == 4 ? "Required tree-node API" : Batch == 2 ? "Required linked-list node API" : Ref == "17.4" ? "Required bit-only API" : Ref == "10.4" ? "Required Listy API" : "Required state and error APIs", source.Reference, Batch == 4 ? (Ref == "4.3" ? ["TreeNode", "DepthLink"] : ["TreeNode"]) : Batch == 2 ? ["LinkedListNode"] : Ref == "17.4" ? ["BitArray"] : Ref == "10.4" ? ["Listy"] : [Method, "BankError", "Animal", "IntStack"])];
+            [new(Batch == 4 ? "Required tree-node API" : Batch == 2 ? "Required linked-list node API" : Ref == "17.12" ? "Required mutable BiNode API" : Ref == "17.4" ? "Required bit-only API" : Ref == "10.4" ? "Required Listy API" : "Required state and error APIs", source.Reference, Batch == 4 ? (Ref == "4.3" ? ["TreeNode", "DepthLink"] : ["TreeNode"]) : Batch == 2 ? ["LinkedListNode"] : Ref == "17.12" ? ["BiNode"] : Ref == "17.4" ? ["BitArray"] : Ref == "10.4" ? ["Listy"] : [Method, "BankError", "Animal", "IntStack"])];
         return new(Id, language, filename, source.Signature, source.StarterCode,
             source.SolutionCode, source.Prefix, source.Suffix, references);
     }

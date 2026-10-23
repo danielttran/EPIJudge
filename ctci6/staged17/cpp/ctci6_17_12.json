@@ -1,0 +1,61 @@
+{
+  "explanation": "The BST inorder sequence is exactly the desired list order. An explicit traversal stack saves ancestors while descending left links. When visiting a node, save its original right child before changing links, connect it to the previously visited node, then traverse that saved right subtree. Saving the right child prevents the new list links from destroying the traversal route.",
+  "correctness": "Before each visit, all nodes already visited form a correct doubly linked prefix in original inorder order, and the traversal stack plus saved current subtree contains exactly the unvisited continuation. Left descent reaches the next inorder node. Saving its original right link preserves the continuation; setting its previous link and the prior node next link extends the prefix with that exact original object. The first visited node becomes head with null previous. The last visited node is the original inorder maximum and has no remaining right subtree, so its next is explicitly null. Induction yields every original node once, unchanged Data and mutually consistent adjacent links, sorted by the BST inorder property. Null input performs no visits and returns null.",
+  "walkthrough": "For original nodes A(Data=2) with Node1=B(Data=1) and Node2=C(Data=3), push A then B. Visit B first: head=B, B.Node1=null. Visit A next: B.Node2=A and A.Node1=B, while saved right=C remains available. Visit C: A.Node2=C, C.Node1=A and C.Node2=null. Return B, producing B\u2194A\u2194C with the same three objects.",
+  "walkthroughCase": {
+    "arguments": [
+      {
+        "nodes": [
+          [
+            2,
+            1,
+            2
+          ],
+          [
+            1,
+            -1,
+            -1
+          ],
+          [
+            3,
+            -1,
+            -1
+          ]
+        ],
+        "selected": 0
+      }
+    ],
+    "expected": {
+      "head": 1,
+      "order": [
+        1,
+        0,
+        2
+      ],
+      "values": [
+        1,
+        2,
+        3
+      ],
+      "previous": [
+        -1,
+        1,
+        0
+      ],
+      "next": [
+        0,
+        2,
+        -1
+      ],
+      "cycle": false
+    }
+  },
+  "timeComplexity": "O(n) time: each original node is pushed, popped and linked once.",
+  "spaceComplexity": "O(h) auxiliary original-node references for tree height h; O(n) in a chain. The list reuses all original nodes and allocates no replacement nodes.",
+  "edgeCases": [
+    "Null, one node, entirely left/right chains and a 1000-node tree.",
+    "Duplicate values with distinct object identities and full signed Data endpoints.",
+    "Original identity preservation, backward links, null endpoints and no cycles."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.12. No affiliation is implied."
+}

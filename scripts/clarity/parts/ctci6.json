@@ -7323,6 +7323,103 @@
         ]
       }
     },
+    "ctci6_17_12": {
+      "description": "Convert a binary search tree of provided BiNode objects IN PLACE into a noncircular, sorted doubly linked list, and return its original first node. Before conversion Node1 is the left child and Node2 the right child. After conversion Node1 must be the previous node and Node2 the next node. Preserve every original node object and its Data value; allocate no replacement BiNode objects.",
+      "constraints": [
+        "The input is null or the root of one proper binary search tree with 0..1000 nodes. Every node has signed 32-bit Data and no cycles or shared children. Its inorder Data sequence is nondecreasing, so duplicates are allowed; the final list must preserve the original inorder OBJECT order even among equal values.",
+        "Return null for an empty tree. Otherwise return the original inorder-first node. Its Node1 must be null; the inorder-last Node2 must be null. Each other previous/next field must identify its actual adjacent original node, and both traversal directions must be consistent. Every input node appears exactly once.",
+        "An example/test wire fixture is {nodes:[[data,leftIndex,rightIndex],...],selected:rootIndex}, where -1 denotes null and row position identifies an original object. selected is -1 exactly for no nodes; every row belongs to the selected tree. The callable receives the actual BiNode root, not this fixture. Data is readonly; only Node1/Node2 links may change. C++ callers retain ownership: never delete provided nodes. Auxiliary stacks of original references are allowed."
+      ],
+      "examples": [
+        {
+          "input": "[{\"nodes\": [[2, 1, 2], [1, -1, -1], [3, -1, -1]], \"selected\": 0}]",
+          "output": "{\"head\": 1, \"order\": [1, 0, 2], \"values\": [1, 2, 3], \"previous\": [-1, 1, 0], \"next\": [0, 2, -1], \"cycle\": false}",
+          "explanation": "For original nodes A(Data=2) with Node1=B(Data=1) and Node2=C(Data=3), push A then B. Visit B first: head=B, B.Node1=null. Visit A next: B.Node2=A and A.Node1=B, while saved right=C remains available. Visit C: A.Node2=C, C.Node1=A and C.Node2=null. Return B, producing B↔A↔C with the same three objects."
+        }
+      ],
+      "exampleCases": [
+        {
+          "arguments": [
+            {
+              "nodes": [
+                [
+                  2,
+                  1,
+                  2
+                ],
+                [
+                  1,
+                  -1,
+                  -1
+                ],
+                [
+                  3,
+                  -1,
+                  -1
+                ]
+              ],
+              "selected": 0
+            }
+          ],
+          "expected": {
+            "head": 1,
+            "order": [
+              1,
+              0,
+              2
+            ],
+            "values": [
+              1,
+              2,
+              3
+            ],
+            "previous": [
+              -1,
+              1,
+              0
+            ],
+            "next": [
+              0,
+              2,
+              -1
+            ],
+            "cycle": false
+          }
+        }
+      ],
+      "contracts": {
+        "csharp": [
+          "Callable: BiNode? ConvertBiNode(BiNode? root)",
+          "The input is null or the root of one proper binary search tree with 0..1000 nodes. Every node has signed 32-bit Data and no cycles or shared children. Its inorder Data sequence is nondecreasing, so duplicates are allowed; the final list must preserve the original inorder OBJECT order even among equal values.",
+          "Return null for an empty tree. Otherwise return the original inorder-first node. Its Node1 must be null; the inorder-last Node2 must be null. Each other previous/next field must identify its actual adjacent original node, and both traversal directions must be consistent. Every input node appears exactly once.",
+          "An example/test wire fixture is {nodes:[[data,leftIndex,rightIndex],...],selected:rootIndex}, where -1 denotes null and row position identifies an original object. selected is -1 exactly for no nodes; every row belongs to the selected tree. The callable receives the actual BiNode root, not this fixture. Data is readonly; only Node1/Node2 links may change. C++ callers retain ownership: never delete provided nodes. Auxiliary stacks of original references are allowed."
+        ],
+        "javascript": [
+          "Callable: function ConvertBiNode(root)",
+          "The input is null or the root of one proper binary search tree with 0..1000 nodes. Every node has signed 32-bit Data and no cycles or shared children. Its inorder Data sequence is nondecreasing, so duplicates are allowed; the final list must preserve the original inorder OBJECT order even among equal values.",
+          "Return null for an empty tree. Otherwise return the original inorder-first node. Its Node1 must be null; the inorder-last Node2 must be null. Each other previous/next field must identify its actual adjacent original node, and both traversal directions must be consistent. Every input node appears exactly once.",
+          "An example/test wire fixture is {nodes:[[data,leftIndex,rightIndex],...],selected:rootIndex}, where -1 denotes null and row position identifies an original object. selected is -1 exactly for no nodes; every row belongs to the selected tree. The callable receives the actual BiNode root, not this fixture. Data is readonly; only Node1/Node2 links may change. C++ callers retain ownership: never delete provided nodes. Auxiliary stacks of original references are allowed."
+        ],
+        "python": [
+          "Callable: def ConvertBiNode(root: BiNode | None) -> BiNode | None",
+          "The input is null or the root of one proper binary search tree with 0..1000 nodes. Every node has signed 32-bit Data and no cycles or shared children. Its inorder Data sequence is nondecreasing, so duplicates are allowed; the final list must preserve the original inorder OBJECT order even among equal values.",
+          "Return null for an empty tree. Otherwise return the original inorder-first node. Its Node1 must be null; the inorder-last Node2 must be null. Each other previous/next field must identify its actual adjacent original node, and both traversal directions must be consistent. Every input node appears exactly once.",
+          "An example/test wire fixture is {nodes:[[data,leftIndex,rightIndex],...],selected:rootIndex}, where -1 denotes null and row position identifies an original object. selected is -1 exactly for no nodes; every row belongs to the selected tree. The callable receives the actual BiNode root, not this fixture. Data is readonly; only Node1/Node2 links may change. C++ callers retain ownership: never delete provided nodes. Auxiliary stacks of original references are allowed."
+        ],
+        "cpp": [
+          "Callable: BiNode* ConvertBiNode(BiNode* root)",
+          "The input is null or the root of one proper binary search tree with 0..1000 nodes. Every node has signed 32-bit Data and no cycles or shared children. Its inorder Data sequence is nondecreasing, so duplicates are allowed; the final list must preserve the original inorder OBJECT order even among equal values.",
+          "Return null for an empty tree. Otherwise return the original inorder-first node. Its Node1 must be null; the inorder-last Node2 must be null. Each other previous/next field must identify its actual adjacent original node, and both traversal directions must be consistent. Every input node appears exactly once.",
+          "An example/test wire fixture is {nodes:[[data,leftIndex,rightIndex],...],selected:rootIndex}, where -1 denotes null and row position identifies an original object. selected is -1 exactly for no nodes; every row belongs to the selected tree. The callable receives the actual BiNode root, not this fixture. Data is readonly; only Node1/Node2 links may change. C++ callers retain ownership: never delete provided nodes. Auxiliary stacks of original references are allowed."
+        ],
+        "java": [
+          "Callable: BiNode ConvertBiNode(BiNode root)",
+          "The input is null or the root of one proper binary search tree with 0..1000 nodes. Every node has signed 32-bit Data and no cycles or shared children. Its inorder Data sequence is nondecreasing, so duplicates are allowed; the final list must preserve the original inorder OBJECT order even among equal values.",
+          "Return null for an empty tree. Otherwise return the original inorder-first node. Its Node1 must be null; the inorder-last Node2 must be null. Each other previous/next field must identify its actual adjacent original node, and both traversal directions must be consistent. Every input node appears exactly once.",
+          "An example/test wire fixture is {nodes:[[data,leftIndex,rightIndex],...],selected:rootIndex}, where -1 denotes null and row position identifies an original object. selected is -1 exactly for no nodes; every row belongs to the selected tree. The callable receives the actual BiNode root, not this fixture. Data is readonly; only Node1/Node2 links may change. C++ callers retain ownership: never delete provided nodes. Auxiliary stacks of original references are allowed."
+        ]
+      }
+    },
     "ctci6_17_13": {
       "description": "Split a spaceless text into nonempty tokens so the total number of characters in unrecognized tokens is as small as possible. A token is recognized exactly when it appears in dictionary. Return the actual token sequence, whose concatenation must equal text. Any minimum-cost tokenization is accepted; no characters may be deleted, changed or reordered.",
       "constraints": [

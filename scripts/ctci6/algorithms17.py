@@ -547,3 +547,32 @@ return answer'''
     if language=='csharp':return 'var current=new List<int>();for(int i=0;i<numbers.Size();++i)current.Add(i);int answer=0,column=0;while(current.Count>0&&column<32){var zeros=new List<int>();var ones=new List<int>();foreach(int index in current)(numbers.FetchBit(index,column)==0?zeros:ones).Add(index);if(zeros.Count<=ones.Count)current=zeros;else{answer|=1<<column;current=ones;}column++;}return answer;'
     if language=='java':return 'var current=new ArrayList<Integer>();for(int i=0;i<numbers.Size();++i)current.add(i);int answer=0,column=0;while(!current.isEmpty()&&column<32){var zeros=new ArrayList<Integer>();var ones=new ArrayList<Integer>();for(int index:current)(numbers.FetchBit(index,column)==0?zeros:ones).add(index);if(zeros.size()<=ones.size())current=zeros;else{answer|=1<<column;current=ones;}column++;}return answer;'
     return 'std::vector<int> current;for(int i=0;i<numbers.Size();++i)current.push_back(i);int answer=0,column=0;while(!current.empty()&&column<32){std::vector<int> zeros,ones;for(int index:current)(numbers.FetchBit(index,column)==0?zeros:ones).push_back(index);if(zeros.size()<=ones.size())current=std::move(zeros);else{answer|=1<<column;current=std::move(ones);}++column;}return answer;'
+
+_previous_binode_body=body
+
+def body(ref,language):
+    if ref!='17.12':return _previous_binode_body(ref,language)
+    if language=='python':return '''stack = []
+current = root
+previous = None
+head = None
+while current is not None or stack:
+    while current is not None:
+        stack.append(current)
+        current = current.Node1
+    node = stack.pop()
+    right = node.Node2
+    node.Node1 = previous
+    if previous is None:
+        head = node
+    else:
+        previous.Node2 = node
+    previous = node
+    current = right
+if previous is not None:
+    previous.Node2 = None
+return head'''
+    if language=='javascript':return 'const stack=[];let current=root,previous=null,head=null;while(current!==null||stack.length){while(current!==null){stack.push(current);current=current.Node1;}const node=stack.pop(),right=node.Node2;node.Node1=previous;if(previous===null)head=node;else previous.Node2=node;previous=node;current=right;}if(previous!==null)previous.Node2=null;return head;'
+    if language=='csharp':return 'var stack=new Stack<BiNode>();BiNode? current=root,previous=null,head=null;while(current is not null||stack.Count>0){while(current is not null){stack.Push(current);current=current.Node1;}var node=stack.Pop();var right=node.Node2;node.Node1=previous;if(previous is null)head=node;else previous.Node2=node;previous=node;current=right;}if(previous is not null)previous.Node2=null;return head;'
+    if language=='java':return 'var stack=new ArrayDeque<BiNode>();BiNode current=root,previous=null,head=null;while(current!=null||!stack.isEmpty()){while(current!=null){stack.push(current);current=current.Node1;}BiNode node=stack.pop(),right=node.Node2;node.Node1=previous;if(previous==null)head=node;else previous.Node2=node;previous=node;current=right;}if(previous!=null)previous.Node2=null;return head;'
+    return 'std::vector<BiNode*> stack;BiNode* current=root;BiNode* previous=nullptr;BiNode* head=nullptr;while(current!=nullptr||!stack.empty()){while(current!=nullptr){stack.push_back(current);current=current->Node1;}BiNode* node=stack.back();stack.pop_back();BiNode* right=node->Node2;node->Node1=previous;if(previous==nullptr)head=node;else previous->Node2=node;previous=node;current=right;}if(previous!=nullptr)previous->Node2=nullptr;return head;'
