@@ -145,5 +145,146 @@
         "solutionCode": "class CircularArray<T> implements Iterable<T> {\n  private final ArrayList<T> items;\n  private int head;\n  public CircularArray(List<T> initialValues) {\n    items = new ArrayList<>(initialValues);\n  }\n  private void checkIndex(int index) {\n    if (index < 0 || index >= items.size())\n      throw new IndexOutOfBoundsException(\"index\");\n  }\n  public T Get(int index) {\n    checkIndex(index);\n    return items.get((head + index) % items.size());\n  }\n  public void Set(int index, T value) {\n    checkIndex(index);\n    items.set((head + index) % items.size(), value);\n  }\n  public void Rotate(int shift) {\n    if (items.isEmpty())\n      return;\n    head = (head + Math.floorMod(shift, items.size())) % items.size();\n  }\n  public Iterator<T> iterator() {\n    return new Iterator<T>() {\n      private int cursor;\n      public boolean hasNext() {\n        return cursor < items.size();\n      }\n      public T next() {\n        if (!hasNext())\n          throw new NoSuchElementException();\n        return Get(cursor++);\n      }\n    };\n  }\n}\n"
       }
     }
+  },
+  {
+    "ref": "7.12",
+    "method": "HashTable",
+    "params": [
+      [
+        "kind",
+        "s"
+      ],
+      [
+        "capacity",
+        "i"
+      ],
+      [
+        "operations",
+        "as"
+      ],
+      [
+        "keys",
+        "items"
+      ],
+      [
+        "values",
+        "items"
+      ]
+    ],
+    "result": "state",
+    "mutation": "state",
+    "description": "Implement a generic HashTable<K,V> using a fixed bucket array and your own singly linked collision chains. Put(key,value) inserts a new key or replaces its current value; it returns void. Get(key) returns the current value or raises the documented missing-key exception. Remove(key) removes one entry and returns whether the key existed. Contains(key) returns whether it is present. Equal keys denote one entry, even when their object identities differ. Different keys with the same hash must remain distinct entries.",
+    "constraints": [
+      "Use ordinary language key hashing and logical key equality, with compatible stable hashes. Do not implement the table by delegating storage or operations to a built-in map/dictionary/set. Standard arrays/lists may hold bucket heads. Nodes and link traversal belong to your implementation. Resizing is not required; collisions must work even when capacity=1.",
+      "capacity is an integer in 1..1000. The class is generic; the judge instantiates string keys/integer values and signed 32-bit integer keys/string values. Strings are nonnull Unicode text of 0..40 characters. Keys/values are nonnull, and equal-content strings are the same key. Hash/index arithmetic must handle the most negative signed integer without an invalid negative bucket index.",
+      "Get on an absent key raises C# KeyNotFoundException, Java NoSuchElementException, C++ std::out_of_range, Python KeyError or JavaScript RangeError. It must not insert a default entry. Get/Contains and unsuccessful Remove preserve the table. Put returns void/None/undefined; Remove/Contains return actual booleans. Instances own independent bucket/link state.",
+      "JSON wire arguments are kind (text-number or number-text), capacity, operations, keys and values. The last three arrays have equal length 1..2005 and begin with operation HashTable; its key/value are ignored. Put uses the corresponding key and value; Get/Remove/Contains use the key and ignore value. Display results contain one item per operation: null for construction/Put, the Get value, a Remove/Contains boolean, or {\"error\":\"missing\"} for an absent Get.",
+      "Displayed finalEntries lists [key,value] for present keys in their first-seen order in the operation input. This is a private observation through Get, not an iteration method to implement or a required bucket order. Every key is compared by logical equality; numeric/string lookalikes occur in separate instantiations. Caller key/value objects remain caller-owned."
+    ],
+    "why": "A hash selects a short candidate chain rather than a unique entry. Equality checks inside that chain distinguish genuine key matches from collisions. Searching before insertion updates an existing node instead of accidentally creating two entries for one key. Removing a node changes only the bucket head or the preceding next link, so colliding neighbors remain reachable.",
+    "correctness": "Maintain the invariant that every present key has exactly one reachable node in its hashed bucket and that node stores its latest value. Initially all heads are empty. Equal keys have compatible hashes, so chain search finds any existing matching key; Put either updates that node or prepends exactly one new node, preserving the invariant. Get/Contains inspect only the corresponding chain and equality, so they return precisely the stored value/presence without changing it. Remove either finds no matching node and leaves all links unchanged, or bypasses exactly its matched node while preserving the remaining chain. Thus every sequence of operations agrees with finite-map semantics, regardless of collisions. Independent bucket storage prevents one table from changing another.",
+    "walkthrough": "Use capacity 1 so every key collides. Put(cedar,4) creates one node; Put(birch,9) prepends a second. Put(cedar,6) follows the chain and updates the cedar node rather than adding a duplicate. Get(cedar) returns 6. Remove(birch) changes the bucket head to cedar and returns true. Contains(birch) is false; Get(birch) raises the missing-key exception. Cedar remains reachable with value 6.",
+    "example": [
+      [
+        "text-number",
+        1,
+        [
+          "HashTable",
+          "Put",
+          "Put",
+          "Put",
+          "Get",
+          "Remove",
+          "Contains",
+          "Get"
+        ],
+        [
+          "",
+          "cedar",
+          "birch",
+          "cedar",
+          "cedar",
+          "birch",
+          "birch",
+          "birch"
+        ],
+        [
+          0,
+          4,
+          9,
+          6,
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      {
+        "results": [
+          null,
+          null,
+          null,
+          null,
+          6,
+          true,
+          false,
+          {
+            "error": "missing"
+          }
+        ],
+        "finalEntries": [
+          [
+            "cedar",
+            6
+          ]
+        ]
+      }
+    ],
+    "time": "Construction O(capacity). Each operation takes O(H(K)+chain_length*E(K)+C) time, where H is key-hash cost, E is key-equality cost and C is any key/value copy or assignment cost. Under well-distributed compatible hashes the expected chain length is O(1+n/capacity) for n present keys; worst-case collisions give O(n). Fixed capacity does not guarantee constant expected time as n grows. C++ Get copies V, so string copying contributes its length.",
+    "space": "O(capacity+n) bucket heads and owned nodes, plus stored key/value data. Managed/dynamic languages retain references/primitive values; C++ owns key/value copies. C++ destruction visits all chains iteratively in O(capacity+n) time without recursive chain deletion.",
+    "edges": [
+      "Capacity 1 with many collisions; update the same equal key without duplicating it.",
+      "Remove head, middle and final nodes; absent Get/Remove, empty keys and default-looking zero/empty-string values.",
+      "Signed integer endpoints, fresh equal-content string instances and independent tables.",
+      "1000 distinct keys, complete deletion and mixed integer/string generic instantiations."
+    ],
+    "related": "The primary Java Hasher<K,V> establishes separate chaining and key lookup/update/removal. This bank uses explicit void Put, missing-key exceptions and boolean Remove/Contains to avoid nullable generic-value ambiguity. Those callable returns are stated rather than inferred from the public answer implementation. Java source key== compares identity and is not copied; keys here use logical equality.",
+    "languageWhy": {
+      "csharp": "C# EqualityComparer<K>.Default provides compatible key hash/equality. The hash is reinterpreted as uint before modulo, avoiding Math.Abs(int.MinValue). Each bucket owns a linked Node chain, and replacement changes only Value. Garbage collection reclaims bypassed nodes; the table never deletes caller objects.",
+      "java": "Java uses Objects.equals for logical key comparison and Math.floorMod(hashCode,capacity) for a nonnegative index. The bucket-head ArrayList contains distinct linked chains; no HashMap backs the implementation. Fresh equal-content String objects therefore update and retrieve the same entry.",
+      "cpp": "C++ std::hash<K> and std::equal_to<K> select/search chains. The bucket vector owns raw Node allocations; removal uses a pointer-to-link to handle head and interior nodes uniformly. The destructor iteratively frees each chain, and shallow copying is disabled to prevent double ownership.",
+      "python": "Python hash(key) % capacity is nonnegative for a positive capacity, including negative integer hashes. Equality uses == rather than is. A list stores bucket heads, while explicit node objects handle collisions; no dict or set implements table storage.",
+      "javascript": "JavaScript uses a bucket array and explicit linked objects. Integer keys use their unsigned 32-bit pattern; text keys use a deterministic character hash, with strict equality distinguishing keys within collisions. Other stable object keys can share a hash and remain distinct by reference equality; supported test keys are primitive strings/integers."
+    },
+    "id": "ctci6_7_12",
+    "title": "Hash Table",
+    "testCount": 5035,
+    "languages": {
+      "csharp": {
+        "signature": "class HashTable<K,V> where K:notnull; HashTable(int capacity); void Put(K key,V value); V Get(K key); bool Remove(K key); bool Contains(K key)",
+        "starterCode": "public class HashTable<K, V>\n    where K : notnull\n{\n    public HashTable(int capacity)\n    {\n    }\n    public void Put(K key, V value)\n    {\n    }\n    public V Get(K key) => throw new KeyNotFoundException();\n    public bool Remove(K key) => false;\n    public bool Contains(K key) => false;\n}\n",
+        "solutionCode": "public class HashTable<K, V>\n    where K : notnull\n{\n    private sealed class Node(K key, V value, Node? next)\n    {\n        public readonly K Key = key;\n        public V Value = value;\n        public Node? Next = next;\n    }\n    private readonly Node?[] buckets;\n    public HashTable(int capacity)\n    {\n        buckets = new Node?[capacity];\n    }\n    private int Index(K key) => (int)((uint)EqualityComparer<K>.Default.GetHashCode(key) %\n                                      (uint)buckets.Length);\n    private Node? Find(K key)\n    {\n        for (var node = buckets[Index(key)]; node is not null; node = node.Next)\n            if (EqualityComparer<K>.Default.Equals(node.Key, key))\n                return node;\n        return null;\n    }\n    public void Put(K key, V value)\n    {\n        var node = Find(key);\n        if (node is not null)\n        {\n            node.Value = value;\n            return;\n        }\n        int index = Index(key);\n        buckets[index] = new Node(key, value, buckets[index]);\n    }\n    public V Get(K key)\n    {\n        var node = Find(key);\n        if (node is null)\n            throw new KeyNotFoundException();\n        return node.Value;\n    }\n    public bool Contains(K key) => Find(key) is not null;\n    public bool Remove(K key)\n    {\n        int index = Index(key);\n        Node? previous = null;\n        var node = buckets[index];\n        while (node is not null)\n        {\n            if (EqualityComparer<K>.Default.Equals(node.Key, key))\n            {\n                if (previous is null)\n                    buckets[index] = node.Next;\n                else\n                    previous.Next = node.Next;\n                return true;\n            }\n            previous = node;\n            node = node.Next;\n        }\n        return false;\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "new HashTable(capacity); Put(key,value); Get(key); Remove(key) -> boolean; Contains(key) -> boolean",
+        "starterCode": "class HashTable {\n  constructor(capacity) {}\n  Put(key, value) {}\n  Get(key) {\n    throw new RangeError(\"missing\");\n  }\n  Remove(key) {\n    return false;\n  }\n  Contains(key) {\n    return false;\n  }\n}\n",
+        "solutionCode": "class HashTable {\n  constructor(capacity) {\n    this.buckets = Array(capacity).fill(null);\n  }\n  index(key) {\n    if (typeof key === \"number\") return (key >>> 0) % this.buckets.length;\n    const text = String(key);\n    let hash = 2166136261;\n    for (let i = 0; i < text.length; ++i)\n      hash = Math.imul(hash ^ text.charCodeAt(i), 16777619) >>> 0;\n    return hash % this.buckets.length;\n  }\n  find(key) {\n    for (let node = this.buckets[this.index(key)]; node !== null; node = node.next)\n      if (node.key === key) return node;\n    return null;\n  }\n  Put(key, value) {\n    const node = this.find(key);\n    if (node !== null) {\n      node.value = value;\n      return;\n    }\n    const slot = this.index(key);\n    this.buckets[slot] = { key, value, next: this.buckets[slot] };\n  }\n  Get(key) {\n    const node = this.find(key);\n    if (node === null) throw new RangeError(\"missing\");\n    return node.value;\n  }\n  Contains(key) {\n    return this.find(key) !== null;\n  }\n  Remove(key) {\n    const slot = this.index(key);\n    let previous = null,\n      node = this.buckets[slot];\n    while (node !== null) {\n      if (node.key === key) {\n        if (previous === null) this.buckets[slot] = node.next;\n        else previous.next = node.next;\n        return true;\n      }\n      previous = node;\n      node = node.next;\n    }\n    return false;\n  }\n}\n"
+      },
+      "python": {
+        "signature": "HashTable[K,V](capacity: int); Put(key: K,value: V) -> None; Get(key: K) -> V; Remove(key: K) -> bool; Contains(key: K) -> bool",
+        "starterCode": "from typing import Generic, TypeVar, Hashable\n\n_K = TypeVar(\"_K\", bound=Hashable)\n_V = TypeVar(\"_V\")\n\n\nclass HashTable(Generic[_K, _V]):\n    def __init__(self, capacity: int):\n        pass\n\n    def Put(self, key: _K, value: _V) -> None:\n        pass\n\n    def Get(self, key: _K) -> _V:\n        raise KeyError(key)\n\n    def Remove(self, key: _K) -> bool:\n        return False\n\n    def Contains(self, key: _K) -> bool:\n        return False\n",
+        "solutionCode": "from typing import Generic, TypeVar, Hashable\n\n_K = TypeVar(\"_K\", bound=Hashable)\n_V = TypeVar(\"_V\")\n\n\nclass HashTable(Generic[_K, _V]):\n    class _Node:\n        def __init__(self, key, value, next_node):\n            self.key = key\n            self.value = value\n            self.next = next_node\n\n    def __init__(self, capacity: int):\n        self._buckets = [None] * capacity\n\n    def _index(self, key: _K) -> int:\n        return hash(key) % len(self._buckets)\n\n    def _find(self, key: _K):\n        node = self._buckets[self._index(key)]\n        while node is not None:\n            if node.key == key:\n                return node\n            node = node.next\n        return None\n\n    def Put(self, key: _K, value: _V) -> None:\n        node = self._find(key)\n        if node is not None:\n            node.value = value\n            return\n        slot = self._index(key)\n        self._buckets[slot] = HashTable._Node(key, value, self._buckets[slot])\n\n    def Get(self, key: _K) -> _V:\n        node = self._find(key)\n        if node is None:\n            raise KeyError(key)\n        return node.value\n\n    def Contains(self, key: _K) -> bool:\n        return self._find(key) is not None\n\n    def Remove(self, key: _K) -> bool:\n        slot = self._index(key)\n        previous = None\n        node = self._buckets[slot]\n        while node is not None:\n            if node.key == key:\n                if previous is None:\n                    self._buckets[slot] = node.next\n                else:\n                    previous.next = node.next\n                return True\n            previous = node\n            node = node.next\n        return False\n"
+      },
+      "cpp": {
+        "signature": "template<class K,class V> HashTable<K,V>(int capacity); void Put(const K& key,const V& value); V Get(const K& key) const; bool Remove(const K& key); bool Contains(const K& key) const",
+        "starterCode": "template <class K, class V>\nclass HashTable {\n public:\n  explicit HashTable(int capacity) {\n  }\n  void Put(const K& key, const V& value) {\n  }\n  V Get(const K& key) const {\n    throw std::out_of_range(\"missing\");\n  }\n  bool Remove(const K& key) {\n    return false;\n  }\n  bool Contains(const K& key) const {\n    return false;\n  }\n};\n",
+        "solutionCode": "template <class K, class V>\nclass HashTable {\n  struct Node {\n    K key;\n    V value;\n    Node* next;\n    Node(K key, V value, Node* next) : key(std::move(key)), value(std::move(value)), next(next) {\n    }\n  };\n  std::vector<Node*> buckets;\n  std::size_t index(const K& key) const {\n    return std::hash<K>{}(key) % buckets.size();\n  }\n  Node* find(const K& key) const {\n    for (Node* node = buckets[index(key)]; node; node = node->next)\n      if (std::equal_to<K>{}(node->key, key))\n        return node;\n    return nullptr;\n  }\n\n public:\n  explicit HashTable(int capacity) : buckets(capacity, nullptr) {\n  }\n  HashTable(const HashTable&) = delete;\n  HashTable& operator=(const HashTable&) = delete;\n  ~HashTable() {\n    for (Node* node : buckets)\n      while (node) {\n        Node* next = node->next;\n        delete node;\n        node = next;\n      }\n  }\n  void Put(const K& key, const V& value) {\n    if (Node* node = find(key)) {\n      node->value = value;\n      return;\n    }\n    auto slot = index(key);\n    buckets[slot] = new Node(key, value, buckets[slot]);\n  }\n  V Get(const K& key) const {\n    Node* node = find(key);\n    if (!node)\n      throw std::out_of_range(\"missing\");\n    return node->value;\n  }\n  bool Contains(const K& key) const {\n    return find(key) != nullptr;\n  }\n  bool Remove(const K& key) {\n    Node** link = &buckets[index(key)];\n    while (*link && !std::equal_to<K>{}((*link)->key, key))\n      link = &(*link)->next;\n    if (!*link)\n      return false;\n    Node* removed = *link;\n    *link = removed->next;\n    delete removed;\n    return true;\n  }\n};\n"
+      },
+      "java": {
+        "signature": "HashTable<K,V>(int capacity); void Put(K key,V value); V Get(K key); boolean Remove(K key); boolean Contains(K key)",
+        "starterCode": "class HashTable<K, V> {\n  public HashTable(int capacity) {\n  }\n  public void Put(K key, V value) {\n  }\n  public V Get(K key) {\n    throw new NoSuchElementException();\n  }\n  public boolean Remove(K key) {\n    return false;\n  }\n  public boolean Contains(K key) {\n    return false;\n  }\n}\n",
+        "solutionCode": "class HashTable<K, V> {\n  private static class Node<K, V> {\n    final K key;\n    V value;\n    Node<K, V> next;\n    Node(K key, V value, Node<K, V> next) {\n      this.key = key;\n      this.value = value;\n      this.next = next;\n    }\n  }\n  private final ArrayList<Node<K, V>> buckets;\n  public HashTable(int capacity) {\n    buckets = new ArrayList<>(Collections.nCopies(capacity, null));\n  }\n  private int index(K key) {\n    return Math.floorMod(key.hashCode(), buckets.size());\n  }\n  private Node<K, V> find(K key) {\n    for (var node = buckets.get(index(key)); node != null; node = node.next)\n      if (Objects.equals(node.key, key))\n        return node;\n    return null;\n  }\n  public void Put(K key, V value) {\n    var node = find(key);\n    if (node != null) {\n      node.value = value;\n      return;\n    }\n    int slot = index(key);\n    buckets.set(slot, new Node<>(key, value, buckets.get(slot)));\n  }\n  public V Get(K key) {\n    var node = find(key);\n    if (node == null)\n      throw new NoSuchElementException();\n    return node.value;\n  }\n  public boolean Contains(K key) {\n    return find(key) != null;\n  }\n  public boolean Remove(K key) {\n    int slot = index(key);\n    Node<K, V> previous = null;\n    var node = buckets.get(slot);\n    while (node != null) {\n      if (Objects.equals(node.key, key)) {\n        if (previous == null)\n          buckets.set(slot, node.next);\n        else\n          previous.next = node.next;\n        return true;\n      }\n      previous = node;\n      node = node.next;\n    }\n    return false;\n  }\n}\n"
+      }
+    }
   }
 ]

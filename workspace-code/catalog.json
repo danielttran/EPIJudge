@@ -34667,6 +34667,126 @@
       }
     },
     {
+      "problemId": "ctci6_7_12",
+      "language": "cpp",
+      "filename": "solution.cpp",
+      "signature": "template<class K,class V> HashTable<K,V>(int capacity); void Put(const K& key,const V& value); V Get(const K& key) const; bool Remove(const K& key); bool Contains(const K& key) const",
+      "starterCode": "template <class K, class V>\nclass HashTable {\n public:\n  explicit HashTable(int capacity) {\n  }\n  void Put(const K& key, const V& value) {\n  }\n  V Get(const K& key) const {\n    throw std::out_of_range(\"missing\");\n  }\n  bool Remove(const K& key) {\n    return false;\n  }\n  bool Contains(const K& key) const {\n    return false;\n  }\n};\n",
+      "solutionCode": "template <class K, class V>\nclass HashTable {\n  struct Node {\n    K key;\n    V value;\n    Node* next;\n    Node(K key, V value, Node* next) : key(std::move(key)), value(std::move(value)), next(next) {\n    }\n  };\n  std::vector<Node*> buckets;\n  std::size_t index(const K& key) const {\n    return std::hash<K>{}(key) % buckets.size();\n  }\n  Node* find(const K& key) const {\n    for (Node* node = buckets[index(key)]; node; node = node->next)\n      if (std::equal_to<K>{}(node->key, key))\n        return node;\n    return nullptr;\n  }\n\n public:\n  explicit HashTable(int capacity) : buckets(capacity, nullptr) {\n  }\n  HashTable(const HashTable&) = delete;\n  HashTable& operator=(const HashTable&) = delete;\n  ~HashTable() {\n    for (Node* node : buckets)\n      while (node) {\n        Node* next = node->next;\n        delete node;\n        node = next;\n      }\n  }\n  void Put(const K& key, const V& value) {\n    if (Node* node = find(key)) {\n      node->value = value;\n      return;\n    }\n    auto slot = index(key);\n    buckets[slot] = new Node(key, value, buckets[slot]);\n  }\n  V Get(const K& key) const {\n    Node* node = find(key);\n    if (!node)\n      throw std::out_of_range(\"missing\");\n    return node->value;\n  }\n  bool Contains(const K& key) const {\n    return find(key) != nullptr;\n  }\n  bool Remove(const K& key) {\n    Node** link = &buckets[index(key)];\n    while (*link && !std::equal_to<K>{}((*link)->key, key))\n      link = &(*link)->next;\n    if (!*link)\n      return false;\n    Node* removed = *link;\n    *link = removed->next;\n    delete removed;\n    return true;\n  }\n};\n",
+      "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n#include <iterator>\n#include <stdexcept>\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "HashTable"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/cpp/ctci6_7_12.cpp"
+      ],
+      "sourceSha256": {
+        "starter": "5ad2fc601117373140c270e252837dc4ef12097d850724d21e8738efb36c8154",
+        "solution": "67af1392094935a1e0a1e1179bfa8983b7354641cc378605f94e2a62449302b9"
+      }
+    },
+    {
+      "problemId": "ctci6_7_12",
+      "language": "csharp",
+      "filename": "Solution.cs",
+      "signature": "class HashTable<K,V> where K:notnull; HashTable(int capacity); void Put(K key,V value); V Get(K key); bool Remove(K key); bool Contains(K key)",
+      "starterCode": "public class HashTable<K, V>\n    where K : notnull\n{\n    public HashTable(int capacity)\n    {\n    }\n    public void Put(K key, V value)\n    {\n    }\n    public V Get(K key) => throw new KeyNotFoundException();\n    public bool Remove(K key) => false;\n    public bool Contains(K key) => false;\n}\n",
+      "solutionCode": "public class HashTable<K, V>\n    where K : notnull\n{\n    private sealed class Node(K key, V value, Node? next)\n    {\n        public readonly K Key = key;\n        public V Value = value;\n        public Node? Next = next;\n    }\n    private readonly Node?[] buckets;\n    public HashTable(int capacity)\n    {\n        buckets = new Node?[capacity];\n    }\n    private int Index(K key) => (int)((uint)EqualityComparer<K>.Default.GetHashCode(key) %\n                                      (uint)buckets.Length);\n    private Node? Find(K key)\n    {\n        for (var node = buckets[Index(key)]; node is not null; node = node.Next)\n            if (EqualityComparer<K>.Default.Equals(node.Key, key))\n                return node;\n        return null;\n    }\n    public void Put(K key, V value)\n    {\n        var node = Find(key);\n        if (node is not null)\n        {\n            node.Value = value;\n            return;\n        }\n        int index = Index(key);\n        buckets[index] = new Node(key, value, buckets[index]);\n    }\n    public V Get(K key)\n    {\n        var node = Find(key);\n        if (node is null)\n            throw new KeyNotFoundException();\n        return node.Value;\n    }\n    public bool Contains(K key) => Find(key) is not null;\n    public bool Remove(K key)\n    {\n        int index = Index(key);\n        Node? previous = null;\n        var node = buckets[index];\n        while (node is not null)\n        {\n            if (EqualityComparer<K>.Default.Equals(node.Key, key))\n            {\n                if (previous is null)\n                    buckets[index] = node.Next;\n                else\n                    previous.Next = node.Next;\n                return true;\n            }\n            previous = node;\n            node = node.Next;\n        }\n        return false;\n    }\n}\n",
+      "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "HashTable"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/csharp/ctci6_7_12.cs"
+      ],
+      "sourceSha256": {
+        "starter": "ebd4f111348c820b4fe8e084e0897c152f6c12ed5a8174e02cd8c3898cb5d527",
+        "solution": "3b53d34f4daaf599fbed6fe2d2e74051aa9c2df8934e424cd655dfedf6a10118"
+      }
+    },
+    {
+      "problemId": "ctci6_7_12",
+      "language": "java",
+      "filename": "HashTable.java",
+      "signature": "HashTable<K,V>(int capacity); void Put(K key,V value); V Get(K key); boolean Remove(K key); boolean Contains(K key)",
+      "starterCode": "class HashTable<K, V> {\n  public HashTable(int capacity) {\n  }\n  public void Put(K key, V value) {\n  }\n  public V Get(K key) {\n    throw new NoSuchElementException();\n  }\n  public boolean Remove(K key) {\n    return false;\n  }\n  public boolean Contains(K key) {\n    return false;\n  }\n}\n",
+      "solutionCode": "class HashTable<K, V> {\n  private static class Node<K, V> {\n    final K key;\n    V value;\n    Node<K, V> next;\n    Node(K key, V value, Node<K, V> next) {\n      this.key = key;\n      this.value = value;\n      this.next = next;\n    }\n  }\n  private final ArrayList<Node<K, V>> buckets;\n  public HashTable(int capacity) {\n    buckets = new ArrayList<>(Collections.nCopies(capacity, null));\n  }\n  private int index(K key) {\n    return Math.floorMod(key.hashCode(), buckets.size());\n  }\n  private Node<K, V> find(K key) {\n    for (var node = buckets.get(index(key)); node != null; node = node.next)\n      if (Objects.equals(node.key, key))\n        return node;\n    return null;\n  }\n  public void Put(K key, V value) {\n    var node = find(key);\n    if (node != null) {\n      node.value = value;\n      return;\n    }\n    int slot = index(key);\n    buckets.set(slot, new Node<>(key, value, buckets.get(slot)));\n  }\n  public V Get(K key) {\n    var node = find(key);\n    if (node == null)\n      throw new NoSuchElementException();\n    return node.value;\n  }\n  public boolean Contains(K key) {\n    return find(key) != null;\n  }\n  public boolean Remove(K key) {\n    int slot = index(key);\n    Node<K, V> previous = null;\n    var node = buckets.get(slot);\n    while (node != null) {\n      if (Objects.equals(node.key, key)) {\n        if (previous == null)\n          buckets.set(slot, node.next);\n        else\n          previous.next = node.next;\n        return true;\n      }\n      previous = node;\n      node = node.next;\n    }\n    return false;\n  }\n}\n",
+      "prefix": "import java.util.*;\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "HashTable"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/java/ctci6_7_12.java"
+      ],
+      "sourceSha256": {
+        "starter": "40eb79470a5e7ecc2322e939220253f8e37262df0bbb5d288461c9bdf6154aba",
+        "solution": "3bea1e21b7abfa0ffead7deacbdbd09dfe77b97eb6d521a362d06875f4c4958a"
+      }
+    },
+    {
+      "problemId": "ctci6_7_12",
+      "language": "javascript",
+      "filename": "solution.js",
+      "signature": "new HashTable(capacity); Put(key,value); Get(key); Remove(key) -> boolean; Contains(key) -> boolean",
+      "starterCode": "class HashTable {\n  constructor(capacity) {}\n  Put(key, value) {}\n  Get(key) {\n    throw new RangeError(\"missing\");\n  }\n  Remove(key) {\n    return false;\n  }\n  Contains(key) {\n    return false;\n  }\n}\n",
+      "solutionCode": "class HashTable {\n  constructor(capacity) {\n    this.buckets = Array(capacity).fill(null);\n  }\n  index(key) {\n    if (typeof key === \"number\") return (key >>> 0) % this.buckets.length;\n    const text = String(key);\n    let hash = 2166136261;\n    for (let i = 0; i < text.length; ++i)\n      hash = Math.imul(hash ^ text.charCodeAt(i), 16777619) >>> 0;\n    return hash % this.buckets.length;\n  }\n  find(key) {\n    for (let node = this.buckets[this.index(key)]; node !== null; node = node.next)\n      if (node.key === key) return node;\n    return null;\n  }\n  Put(key, value) {\n    const node = this.find(key);\n    if (node !== null) {\n      node.value = value;\n      return;\n    }\n    const slot = this.index(key);\n    this.buckets[slot] = { key, value, next: this.buckets[slot] };\n  }\n  Get(key) {\n    const node = this.find(key);\n    if (node === null) throw new RangeError(\"missing\");\n    return node.value;\n  }\n  Contains(key) {\n    return this.find(key) !== null;\n  }\n  Remove(key) {\n    const slot = this.index(key);\n    let previous = null,\n      node = this.buckets[slot];\n    while (node !== null) {\n      if (node.key === key) {\n        if (previous === null) this.buckets[slot] = node.next;\n        else previous.next = node.next;\n        return true;\n      }\n      previous = node;\n      node = node.next;\n    }\n    return false;\n  }\n}\n",
+      "prefix": "'use strict';\n",
+      "suffix": "\nmodule.exports = {HashTable};\n",
+      "references": [],
+      "visibleSymbols": [
+        "HashTable"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/javascript/ctci6_7_12.js"
+      ],
+      "sourceSha256": {
+        "starter": "deb939dbc5172d44c5023e1031fad7d59c9b10f17e875db3985f46a0ebe4737a",
+        "solution": "c08ba0703ed3de4545e49eba2bfa240c46804b9aa3a38fd648a044e1bff8f990"
+      }
+    },
+    {
+      "problemId": "ctci6_7_12",
+      "language": "python",
+      "filename": "solution.py",
+      "signature": "HashTable[K,V](capacity: int); Put(key: K,value: V) -> None; Get(key: K) -> V; Remove(key: K) -> bool; Contains(key: K) -> bool",
+      "starterCode": "from typing import Generic, TypeVar, Hashable\n\n_K = TypeVar(\"_K\", bound=Hashable)\n_V = TypeVar(\"_V\")\n\n\nclass HashTable(Generic[_K, _V]):\n    def __init__(self, capacity: int):\n        pass\n\n    def Put(self, key: _K, value: _V) -> None:\n        pass\n\n    def Get(self, key: _K) -> _V:\n        raise KeyError(key)\n\n    def Remove(self, key: _K) -> bool:\n        return False\n\n    def Contains(self, key: _K) -> bool:\n        return False\n",
+      "solutionCode": "from typing import Generic, TypeVar, Hashable\n\n_K = TypeVar(\"_K\", bound=Hashable)\n_V = TypeVar(\"_V\")\n\n\nclass HashTable(Generic[_K, _V]):\n    class _Node:\n        def __init__(self, key, value, next_node):\n            self.key = key\n            self.value = value\n            self.next = next_node\n\n    def __init__(self, capacity: int):\n        self._buckets = [None] * capacity\n\n    def _index(self, key: _K) -> int:\n        return hash(key) % len(self._buckets)\n\n    def _find(self, key: _K):\n        node = self._buckets[self._index(key)]\n        while node is not None:\n            if node.key == key:\n                return node\n            node = node.next\n        return None\n\n    def Put(self, key: _K, value: _V) -> None:\n        node = self._find(key)\n        if node is not None:\n            node.value = value\n            return\n        slot = self._index(key)\n        self._buckets[slot] = HashTable._Node(key, value, self._buckets[slot])\n\n    def Get(self, key: _K) -> _V:\n        node = self._find(key)\n        if node is None:\n            raise KeyError(key)\n        return node.value\n\n    def Contains(self, key: _K) -> bool:\n        return self._find(key) is not None\n\n    def Remove(self, key: _K) -> bool:\n        slot = self._index(key)\n        previous = None\n        node = self._buckets[slot]\n        while node is not None:\n            if node.key == key:\n                if previous is None:\n                    self._buckets[slot] = node.next\n                else:\n                    previous.next = node.next\n                return True\n            previous = node\n            node = node.next\n        return False\n",
+      "prefix": "",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "HashTable"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/python/ctci6_7_12.py"
+      ],
+      "sourceSha256": {
+        "starter": "7c168cb7e940e79d54b1c41648d72256ca20435c46852f7e308a762d7598096b",
+        "solution": "fa47190d7a5ab0e108bd2a382199a01d4d51a5b327e47a7a87eaf49e0fff4d6d"
+      }
+    },
+    {
       "problemId": "ctci6_7_9",
       "language": "cpp",
       "filename": "solution.cpp",

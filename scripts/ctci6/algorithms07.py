@@ -81,3 +81,10 @@ class CircularArray(Generic[_T]):
     Rotate(shift){const size=this.items.length;if(size===0)return;const step=((shift%size)+size)%size;this.head=(this.head+step)%size;}
     *[Symbol.iterator](){for(let index=0;index<this.items.length;++index)yield this.items[(this.head+index)%this.items.length];}
 }'''}[language]
+
+_previous_body=body
+def body(ref,language):
+    if ref=='7.12':
+        from algorithms_hash07 import body as run
+        return run(language)
+    return _previous_body(ref,language)

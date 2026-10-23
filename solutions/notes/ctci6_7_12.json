@@ -1,0 +1,70 @@
+{
+  "explanation": "A hash selects a short candidate chain rather than a unique entry. Equality checks inside that chain distinguish genuine key matches from collisions. Searching before insertion updates an existing node instead of accidentally creating two entries for one key. Removing a node changes only the bucket head or the preceding next link, so colliding neighbors remain reachable. C# EqualityComparer<K>.Default provides compatible key hash/equality. The hash is reinterpreted as uint before modulo, avoiding Math.Abs(int.MinValue). Each bucket owns a linked Node chain, and replacement changes only Value. Garbage collection reclaims bypassed nodes; the table never deletes caller objects.",
+  "correctness": "Maintain the invariant that every present key has exactly one reachable node in its hashed bucket and that node stores its latest value. Initially all heads are empty. Equal keys have compatible hashes, so chain search finds any existing matching key; Put either updates that node or prepends exactly one new node, preserving the invariant. Get/Contains inspect only the corresponding chain and equality, so they return precisely the stored value/presence without changing it. Remove either finds no matching node and leaves all links unchanged, or bypasses exactly its matched node while preserving the remaining chain. Thus every sequence of operations agrees with finite-map semantics, regardless of collisions. Independent bucket storage prevents one table from changing another.",
+  "walkthrough": "Use capacity 1 so every key collides. Put(cedar,4) creates one node; Put(birch,9) prepends a second. Put(cedar,6) follows the chain and updates the cedar node rather than adding a duplicate. Get(cedar) returns 6. Remove(birch) changes the bucket head to cedar and returns true. Contains(birch) is false; Get(birch) raises the missing-key exception. Cedar remains reachable with value 6.",
+  "walkthroughCase": {
+    "arguments": [
+      "text-number",
+      1,
+      [
+        "HashTable",
+        "Put",
+        "Put",
+        "Put",
+        "Get",
+        "Remove",
+        "Contains",
+        "Get"
+      ],
+      [
+        "",
+        "cedar",
+        "birch",
+        "cedar",
+        "cedar",
+        "birch",
+        "birch",
+        "birch"
+      ],
+      [
+        0,
+        4,
+        9,
+        6,
+        0,
+        0,
+        0,
+        0
+      ]
+    ],
+    "expected": {
+      "results": [
+        null,
+        null,
+        null,
+        null,
+        6,
+        true,
+        false,
+        {
+          "error": "missing"
+        }
+      ],
+      "finalEntries": [
+        [
+          "cedar",
+          6
+        ]
+      ]
+    }
+  },
+  "timeComplexity": "Construction O(capacity). Each operation takes O(H(K)+chain_length*E(K)+C) time, where H is key-hash cost, E is key-equality cost and C is any key/value copy or assignment cost. Under well-distributed compatible hashes the expected chain length is O(1+n/capacity) for n present keys; worst-case collisions give O(n). Fixed capacity does not guarantee constant expected time as n grows. C++ Get copies V, so string copying contributes its length.",
+  "spaceComplexity": "O(capacity+n) bucket heads and owned nodes, plus stored key/value data. Managed/dynamic languages retain references/primitive values; C++ owns key/value copies. C++ destruction visits all chains iteratively in O(capacity+n) time without recursive chain deletion.",
+  "edgeCases": [
+    "Capacity 1 with many collisions; update the same equal key without duplicating it.",
+    "Remove head, middle and final nodes; absent Get/Remove, empty keys and default-looking zero/empty-string values.",
+    "Signed integer endpoints, fresh equal-content string instances and independent tables.",
+    "1000 distinct keys, complete deletion and mixed integer/string generic instantiations."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 7.12. No affiliation is implied."
+}

@@ -20,3 +20,17 @@ def neutral(spec,language):
 'cpp':'template<class T> class CircularArray {std::vector<T> empty;public:explicit CircularArray(const std::vector<T>& initialValues){}T Get(int index)const{throw std::out_of_range("index");}void Set(int index,const T& value){throw std::out_of_range("index");}void Rotate(int shift){}auto begin()const{return empty.begin();}auto end()const{return empty.end();}};',
 'python':'_T=TypeVar("_T")\nclass CircularArray(Generic[_T]):\n    def __init__(self,initialValues: list[_T]):\n        pass\n    def Get(self,index: int) -> _T:\n        raise IndexError(index)\n    def Set(self,index: int,value: _T) -> None:\n        raise IndexError(index)\n    def Rotate(self,shift: int) -> None:\n        pass\n    def __iter__(self) -> Iterator[_T]:\n        return iter([])\n',
 'javascript':'class CircularArray {constructor(initialValues){}Get(index){throw new RangeError("index");}Set(index,value){throw new RangeError("index");}Rotate(shift){}*[Symbol.iterator](){}}'}[language]
+
+_previous_declare=declare
+_previous_neutral=neutral
+def declare(spec,language,body,class_name='Solution'):
+    if spec['ref']=='7.12':
+        from models_hash07 import SIGNATURE as HASH_SIGNATURE
+        if language=='python':body='from typing import Generic,TypeVar,Hashable\n'+body
+        return HASH_SIGNATURE[language],body
+    return _previous_declare(spec,language,body,class_name)
+def neutral(spec,language):
+    if spec['ref']=='7.12':
+        from models_hash07 import neutral as run
+        return run(language)
+    return _previous_neutral(spec,language)

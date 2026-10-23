@@ -45,3 +45,22 @@ def cases(spec):
     unique={json.dumps(a):a for a in args}
     return [dict(arguments=a,expected=oracle(spec['ref'],a)) for a in unique.values()]
 def valid_observation(ref,case,observed):return isinstance(observed,dict) and observed.get('mutationOk') is True and type(observed.get('actual')) is dict and observed['actual']==case['expected']
+
+_previous_oracle=oracle
+_previous_cases=cases
+_previous_observation=valid_observation
+def oracle(ref,args):
+    if ref=='7.12':
+        from corpus_hash07 import oracle as run
+        return run(ref,args)
+    return _previous_oracle(ref,args)
+def cases(spec):
+    if spec['ref']=='7.12':
+        from corpus_hash07 import cases as run
+        return run(spec)
+    return _previous_cases(spec)
+def valid_observation(ref,case,observed):
+    if ref=='7.12':
+        from corpus_hash07 import valid_observation as run
+        return run(ref,case,observed)
+    return _previous_observation(ref,case,observed)
