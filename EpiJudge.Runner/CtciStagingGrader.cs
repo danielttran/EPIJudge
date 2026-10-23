@@ -373,6 +373,15 @@ public static class CtciStagingGrader
         return Integers(actual.GetProperty("finalValues")).SequenceEqual(finalValues) ? null : "Preserve all remaining occurrences in BST order.";
     }
 
+    private static string? DiningFailure(TestCase test, JsonElement observed)
+    {
+        if (observed.GetProperty("mutationOk").ValueKind != JsonValueKind.True) return "Complete every requested bite with both adjacent fork locks held, then release all forks.";
+        int philosophers = test.Arguments[0].GetInt32(), bites = test.Arguments[1].GetInt32();
+        var actual = Integers(observed.GetProperty("actual"));
+        if (actual.Length != philosophers * bites || actual.Any(role => role < 0 || role >= philosophers)) return "Complete exactly the requested number of actual eating operations.";
+        return Enumerable.Range(0, philosophers).All(role => actual.Count(value => value == role) == bites) ? null : "Every role must eat exactly its requested number of bites; safe interleaving order is unrestricted.";
+    }
+
     private static string? JigsawFailure(TestCase test, JsonElement observed)
     {
         if (observed.GetProperty("mutationOk").ValueKind != JsonValueKind.True) return "Preserve the input puzzle and its rows.";
@@ -453,6 +462,7 @@ public static class CtciStagingGrader
             if (definition.Ref is "16.3" or "16.13") return GeometryFailure(definition, test, observed);
             if (definition.Ref is "16.26" or "17.20") return NumericFailure(definition, test, observed);
             if (definition.Ref is "16.14" or "17.7") return GroupOrLineFailure(definition, test, observed);
+            if (definition.Ref == "15.3") return DiningFailure(test, observed);
             if (definition.Ref == "7.6") return JigsawFailure(test, observed);
             if (definition.Ref == "10.6") return ExternalFileFailure(test, observed);
             if (definition.Batch == 10) return SortingFailure(definition, test, observed);

@@ -31,6 +31,7 @@ from corpus_file10 import valid_observation as file_match
 from corpus_rand16 import valid_observation as rand_match
 from corpus_external10 import valid_observation as external_match
 from corpus_jigsaw07 import valid_observation as jigsaw_match
+from corpus_dining15 import valid_observation as dining_match
 from corpus_subset13 import valid_observation as subset_match
 from corpus_random04 import valid_observation as random_bst_match
 from corpus_random17 import valid_observation as random_match
@@ -81,6 +82,7 @@ def verify(only_ref=None, only_language=None, starters=False):
     completed = {row["key"]: row for row in previous.get("executions", [])}
     tools = tool_versions()
     grader_hashes = dict(
+        dining=hashlib.sha256((ROOT / "scripts/ctci6/corpus_dining15.py").read_bytes()).hexdigest(),
         jigsaw=hashlib.sha256((ROOT / "scripts/ctci6/corpus_jigsaw07.py").read_bytes()).hexdigest(),
         external=hashlib.sha256((ROOT / "scripts/ctci6/corpus_external10.py").read_bytes()).hexdigest(),
         subset=hashlib.sha256((ROOT / "scripts/ctci6/corpus_subset13.py").read_bytes()).hexdigest(),
@@ -164,7 +166,7 @@ def verify(only_ref=None, only_language=None, starters=False):
                         cases=cases,
                         tool=tools[language],
                         grader=grader_hashes[
-                            "jigsaw" if entry["ref"]=="7.6" else "external" if entry["ref"]=="10.6" else "subset" if entry["ref"]=="13.8" else "random_bst" if entry["ref"]=="4.11" else "random" if entry["ref"] in ("17.2","17.3") else "rand" if entry["ref"]=="16.23" else "file" if entry["ref"]=="10.7" else "bits" if entry["ref"]=="17.4" else "geometry" if entry["ref"] in ("16.3","16.13") else "numeric" if entry["ref"] in ("16.26","17.20") else "line" if entry["ref"] == "16.14" else "names" if entry["ref"] == "17.7" else
+                            "dining" if entry["ref"]=="15.3" else "jigsaw" if entry["ref"]=="7.6" else "external" if entry["ref"]=="10.6" else "subset" if entry["ref"]=="13.8" else "random_bst" if entry["ref"]=="4.11" else "random" if entry["ref"] in ("17.2","17.3") else "rand" if entry["ref"]=="16.23" else "file" if entry["ref"]=="10.7" else "bits" if entry["ref"]=="17.4" else "geometry" if entry["ref"] in ("16.3","16.13") else "numeric" if entry["ref"] in ("16.26","17.20") else "line" if entry["ref"] == "16.14" else "names" if entry["ref"] == "17.7" else
                             "hard" if entry["batch"] == 17 and entry["ref"] in STRUCTURED_REFS else
                             "searching" if entry["batch"] == 10 else
                             "combinatorial"
@@ -238,6 +240,7 @@ def verify(only_ref=None, only_language=None, starters=False):
                 elapsed += value["elapsedMs"]
                 try:
                     accepted = (
+                        dining_match(entry["ref"], case, observed) if entry["ref"]=="15.3" else
                         jigsaw_match(entry["ref"], case, observed) if entry["ref"]=="7.6" else
                         external_match(entry["ref"], case, observed) if entry["ref"]=="10.6" else
                         subset_match(entry["ref"], case, observed) if entry["ref"]=="13.8" else

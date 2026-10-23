@@ -6321,6 +6321,85 @@
         ]
       }
     },
+    "ctci6_15_3": {
+      "description": "Implement deadlock-free dining philosophers with real competing workers and exclusive adjacent fork locks. Philosophers 0..philosophers-1 sit in a ring; philosopher p needs forks p and (p+1)%philosophers simultaneously to eat. Implement Dine(role,philosophers,bites,context), called once by each worker, so every philosopher finishes exactly bites eating operations and releases both forks before returning. Any safe eating order is accepted.",
+      "constraints": [
+        "philosophers is 2..6 and bites is 0..4. Each philosopher runs in its own real native thread (Node worker_threads for JavaScript). Forks 0..philosophers-1 start unheld. All workers start independently, with varied launch order and entry delays. No philosopher may eat without both of its own adjacent forks, use a fork held by another philosopher, or return holding a fork.",
+        "context.Take(fork) blocks until the specified exclusive fork lock is acquired; context.Drop(fork) releases a fork held by the current worker. Only the two adjacent fork indices for that role are allowed. context.Eat() performs that worker actual eating operation and may take time before returning; it is valid only while both adjacent forks are held. Exactly bites Eat calls per role are required. All context objects are opaque and bound to their own worker; do not inspect or mutate their internals.",
+        "Use the supplied blocking fork API; no extra threads, guessed sleeps, polling, or extra synchronization resources. Each worker may make at most 10000*(bites+1) total Take/Drop/Eat calls. Invalid fork indices, dropping an unheld fork, extra/missing eating calls and noncompletion fail. Zero bites requires no eating and permits immediate return.",
+        "JSON fixtures contain philosophers, bites, a permutation launchOrder of all role indices, a scheduling delayMask in 0..2^philosophers-1, and [] for the context. The callable receives role, philosophers, bites and its provided context, not the scheduling arrays. Cases own independent forks and worker state.",
+        "The displayed result is a private transcript of roles calling Eat, not your return value. Its length is philosophers*bites and each role appears exactly bites times; any safe interleaving is accepted. A concrete example gives one possible transcript, not a required scheduling order. Return void/None/undefined. Assume runnable workers are eventually scheduled; no real-time fairness bound is required."
+      ],
+      "examples": [
+        {
+          "input": "[3, 1, [2, 1, 0], 0, []]",
+          "output": "[0, 1, 2]",
+          "explanation": "For three philosophers and one bite each, role 0 needs forks 0 and 1; role 1 needs 1 and 2; role 2 needs 2 and 0. All use increasing physical order, so role 2 takes 0 before 2. One possible schedule lets role 0 take 0/1, eat and release; then role 1 takes 1/2 and eats; then role 2 takes 0/2 and eats. The observed transcript [0,1,2] is valid, but [2,1,0] or another safe order is also accepted. With four philosophers, roles 0 and 2 may eat concurrently because their fork pairs are disjoint."
+        }
+      ],
+      "exampleCases": [
+        {
+          "arguments": [
+            3,
+            1,
+            [
+              2,
+              1,
+              0
+            ],
+            0,
+            []
+          ],
+          "expected": [
+            0,
+            1,
+            2
+          ]
+        }
+      ],
+      "contracts": {
+        "csharp": [
+          "Callable: void Dine(int role, int philosophers, int bites, ForkContext context)",
+          "philosophers is 2..6 and bites is 0..4. Each philosopher runs in its own real native thread (Node worker_threads for JavaScript). Forks 0..philosophers-1 start unheld. All workers start independently, with varied launch order and entry delays. No philosopher may eat without both of its own adjacent forks, use a fork held by another philosopher, or return holding a fork.",
+          "context.Take(fork) blocks until the specified exclusive fork lock is acquired; context.Drop(fork) releases a fork held by the current worker. Only the two adjacent fork indices for that role are allowed. context.Eat() performs that worker actual eating operation and may take time before returning; it is valid only while both adjacent forks are held. Exactly bites Eat calls per role are required. All context objects are opaque and bound to their own worker; do not inspect or mutate their internals.",
+          "Use the supplied blocking fork API; no extra threads, guessed sleeps, polling, or extra synchronization resources. Each worker may make at most 10000*(bites+1) total Take/Drop/Eat calls. Invalid fork indices, dropping an unheld fork, extra/missing eating calls and noncompletion fail. Zero bites requires no eating and permits immediate return.",
+          "JSON fixtures contain philosophers, bites, a permutation launchOrder of all role indices, a scheduling delayMask in 0..2^philosophers-1, and [] for the context. The callable receives role, philosophers, bites and its provided context, not the scheduling arrays. Cases own independent forks and worker state.",
+          "The displayed result is a private transcript of roles calling Eat, not your return value. Its length is philosophers*bites and each role appears exactly bites times; any safe interleaving is accepted. A concrete example gives one possible transcript, not a required scheduling order. Return void/None/undefined. Assume runnable workers are eventually scheduled; no real-time fairness bound is required."
+        ],
+        "javascript": [
+          "Callable: function Dine(role, philosophers, bites, context)",
+          "philosophers is 2..6 and bites is 0..4. Each philosopher runs in its own real native thread (Node worker_threads for JavaScript). Forks 0..philosophers-1 start unheld. All workers start independently, with varied launch order and entry delays. No philosopher may eat without both of its own adjacent forks, use a fork held by another philosopher, or return holding a fork.",
+          "context.Take(fork) blocks until the specified exclusive fork lock is acquired; context.Drop(fork) releases a fork held by the current worker. Only the two adjacent fork indices for that role are allowed. context.Eat() performs that worker actual eating operation and may take time before returning; it is valid only while both adjacent forks are held. Exactly bites Eat calls per role are required. All context objects are opaque and bound to their own worker; do not inspect or mutate their internals.",
+          "Use the supplied blocking fork API; no extra threads, guessed sleeps, polling, or extra synchronization resources. Each worker may make at most 10000*(bites+1) total Take/Drop/Eat calls. Invalid fork indices, dropping an unheld fork, extra/missing eating calls and noncompletion fail. Zero bites requires no eating and permits immediate return.",
+          "JSON fixtures contain philosophers, bites, a permutation launchOrder of all role indices, a scheduling delayMask in 0..2^philosophers-1, and [] for the context. The callable receives role, philosophers, bites and its provided context, not the scheduling arrays. Cases own independent forks and worker state.",
+          "The displayed result is a private transcript of roles calling Eat, not your return value. Its length is philosophers*bites and each role appears exactly bites times; any safe interleaving is accepted. A concrete example gives one possible transcript, not a required scheduling order. Return void/None/undefined. Assume runnable workers are eventually scheduled; no real-time fairness bound is required."
+        ],
+        "python": [
+          "Callable: def Dine(role: int, philosophers: int, bites: int, context: ForkContext) -> None",
+          "philosophers is 2..6 and bites is 0..4. Each philosopher runs in its own real native thread (Node worker_threads for JavaScript). Forks 0..philosophers-1 start unheld. All workers start independently, with varied launch order and entry delays. No philosopher may eat without both of its own adjacent forks, use a fork held by another philosopher, or return holding a fork.",
+          "context.Take(fork) blocks until the specified exclusive fork lock is acquired; context.Drop(fork) releases a fork held by the current worker. Only the two adjacent fork indices for that role are allowed. context.Eat() performs that worker actual eating operation and may take time before returning; it is valid only while both adjacent forks are held. Exactly bites Eat calls per role are required. All context objects are opaque and bound to their own worker; do not inspect or mutate their internals.",
+          "Use the supplied blocking fork API; no extra threads, guessed sleeps, polling, or extra synchronization resources. Each worker may make at most 10000*(bites+1) total Take/Drop/Eat calls. Invalid fork indices, dropping an unheld fork, extra/missing eating calls and noncompletion fail. Zero bites requires no eating and permits immediate return.",
+          "JSON fixtures contain philosophers, bites, a permutation launchOrder of all role indices, a scheduling delayMask in 0..2^philosophers-1, and [] for the context. The callable receives role, philosophers, bites and its provided context, not the scheduling arrays. Cases own independent forks and worker state.",
+          "The displayed result is a private transcript of roles calling Eat, not your return value. Its length is philosophers*bites and each role appears exactly bites times; any safe interleaving is accepted. A concrete example gives one possible transcript, not a required scheduling order. Return void/None/undefined. Assume runnable workers are eventually scheduled; no real-time fairness bound is required."
+        ],
+        "cpp": [
+          "Callable: void Dine(int role, int philosophers, int bites, ForkContext& context)",
+          "philosophers is 2..6 and bites is 0..4. Each philosopher runs in its own real native thread (Node worker_threads for JavaScript). Forks 0..philosophers-1 start unheld. All workers start independently, with varied launch order and entry delays. No philosopher may eat without both of its own adjacent forks, use a fork held by another philosopher, or return holding a fork.",
+          "context.Take(fork) blocks until the specified exclusive fork lock is acquired; context.Drop(fork) releases a fork held by the current worker. Only the two adjacent fork indices for that role are allowed. context.Eat() performs that worker actual eating operation and may take time before returning; it is valid only while both adjacent forks are held. Exactly bites Eat calls per role are required. All context objects are opaque and bound to their own worker; do not inspect or mutate their internals.",
+          "Use the supplied blocking fork API; no extra threads, guessed sleeps, polling, or extra synchronization resources. Each worker may make at most 10000*(bites+1) total Take/Drop/Eat calls. Invalid fork indices, dropping an unheld fork, extra/missing eating calls and noncompletion fail. Zero bites requires no eating and permits immediate return.",
+          "JSON fixtures contain philosophers, bites, a permutation launchOrder of all role indices, a scheduling delayMask in 0..2^philosophers-1, and [] for the context. The callable receives role, philosophers, bites and its provided context, not the scheduling arrays. Cases own independent forks and worker state.",
+          "The displayed result is a private transcript of roles calling Eat, not your return value. Its length is philosophers*bites and each role appears exactly bites times; any safe interleaving is accepted. A concrete example gives one possible transcript, not a required scheduling order. Return void/None/undefined. Assume runnable workers are eventually scheduled; no real-time fairness bound is required."
+        ],
+        "java": [
+          "Callable: void Dine(int role, int philosophers, int bites, ForkContext context)",
+          "philosophers is 2..6 and bites is 0..4. Each philosopher runs in its own real native thread (Node worker_threads for JavaScript). Forks 0..philosophers-1 start unheld. All workers start independently, with varied launch order and entry delays. No philosopher may eat without both of its own adjacent forks, use a fork held by another philosopher, or return holding a fork.",
+          "context.Take(fork) blocks until the specified exclusive fork lock is acquired; context.Drop(fork) releases a fork held by the current worker. Only the two adjacent fork indices for that role are allowed. context.Eat() performs that worker actual eating operation and may take time before returning; it is valid only while both adjacent forks are held. Exactly bites Eat calls per role are required. All context objects are opaque and bound to their own worker; do not inspect or mutate their internals.",
+          "Use the supplied blocking fork API; no extra threads, guessed sleeps, polling, or extra synchronization resources. Each worker may make at most 10000*(bites+1) total Take/Drop/Eat calls. Invalid fork indices, dropping an unheld fork, extra/missing eating calls and noncompletion fail. Zero bites requires no eating and permits immediate return.",
+          "JSON fixtures contain philosophers, bites, a permutation launchOrder of all role indices, a scheduling delayMask in 0..2^philosophers-1, and [] for the context. The callable receives role, philosophers, bites and its provided context, not the scheduling arrays. Cases own independent forks and worker state.",
+          "The displayed result is a private transcript of roles calling Eat, not your return value. Its length is philosophers*bites and each role appears exactly bites times; any safe interleaving is accepted. A concrete example gives one possible transcript, not a required scheduling order. Return void/None/undefined. Assume runnable workers are eventually scheduled; no real-time fairness bound is required."
+        ]
+      }
+    },
     "ctci6_15_5": {
       "description": "Coordinate three independently running workers so their work completes in role order 0, 1, 2, regardless of thread launch or scheduling order. Implement RunOrdered(role,context), called once by each worker with its role. Call that worker context.Work() exactly once. Work for role 1 must not begin until role 0 work finishes; role 2 must wait for role 1 work to finish. Returning or sorting a list does not perform the work.",
       "constraints": [

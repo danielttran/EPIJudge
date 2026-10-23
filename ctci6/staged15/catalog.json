@@ -192,5 +192,109 @@
         "solutionCode": "class Solution {\n  public void RunFizzBuzz(int role, int limit, FizzContext context) {\n    java.util.function.IntUnaryOperator owner = value\n        -> value % 15 == 0 ? 3\n        : value % 3 == 0   ? 1\n        : value % 5 == 0   ? 2\n                           : 0;\n    for (int value = 1; value <= limit; ++value) {\n      if (owner.applyAsInt(value) != role)\n        continue;\n      context.Wait(role);\n      context.Print(value);\n      if (value < limit)\n        context.Signal(owner.applyAsInt(value + 1));\n    }\n  }\n}\n"
       }
     }
+  },
+  {
+    "ref": "15.3",
+    "method": "Dine",
+    "params": [
+      [
+        "philosophers",
+        "i"
+      ],
+      [
+        "bites",
+        "i"
+      ],
+      [
+        "launchOrder",
+        "ai"
+      ],
+      [
+        "delayMask",
+        "i"
+      ],
+      [
+        "context",
+        "forksync"
+      ]
+    ],
+    "result": "ai",
+    "mutation": "none",
+    "description": "Implement deadlock-free dining philosophers with real competing workers and exclusive adjacent fork locks. Philosophers 0..philosophers-1 sit in a ring; philosopher p needs forks p and (p+1)%philosophers simultaneously to eat. Implement Dine(role,philosophers,bites,context), called once by each worker, so every philosopher finishes exactly bites eating operations and releases both forks before returning. Any safe eating order is accepted.",
+    "constraints": [
+      "philosophers is 2..6 and bites is 0..4. Each philosopher runs in its own real native thread (Node worker_threads for JavaScript). Forks 0..philosophers-1 start unheld. All workers start independently, with varied launch order and entry delays. No philosopher may eat without both of its own adjacent forks, use a fork held by another philosopher, or return holding a fork.",
+      "context.Take(fork) blocks until the specified exclusive fork lock is acquired; context.Drop(fork) releases a fork held by the current worker. Only the two adjacent fork indices for that role are allowed. context.Eat() performs that worker actual eating operation and may take time before returning; it is valid only while both adjacent forks are held. Exactly bites Eat calls per role are required. All context objects are opaque and bound to their own worker; do not inspect or mutate their internals.",
+      "Use the supplied blocking fork API; no extra threads, guessed sleeps, polling, or extra synchronization resources. Each worker may make at most 10000*(bites+1) total Take/Drop/Eat calls. Invalid fork indices, dropping an unheld fork, extra/missing eating calls and noncompletion fail. Zero bites requires no eating and permits immediate return.",
+      "JSON fixtures contain philosophers, bites, a permutation launchOrder of all role indices, a scheduling delayMask in 0..2^philosophers-1, and [] for the context. The callable receives role, philosophers, bites and its provided context, not the scheduling arrays. Cases own independent forks and worker state.",
+      "The displayed result is a private transcript of roles calling Eat, not your return value. Its length is philosophers*bites and each role appears exactly bites times; any safe interleaving is accepted. A concrete example gives one possible transcript, not a required scheduling order. Return void/None/undefined. Assume runnable workers are eventually scheduled; no real-time fairness bound is required."
+    ],
+    "why": "If every philosopher takes a differently named left fork first, a circular wait is possible. Numbering the physical forks gives every worker one common order: acquire the lower-numbered needed fork, then the higher-numbered one. A waiting chain must then move strictly toward larger fork numbers, which cannot form a cycle. Hold both through Eat, then release both; independent nonadjacent philosophers may still eat concurrently.",
+    "correctness": "Every successful iteration acquires both distinct adjacent forks through exclusive locks before Eat, and releases each afterward, so mutual exclusion and per-philosopher fork requirements hold. When a worker blocks holding one fork, it holds the lower and waits for the higher. A circular wait would require strictly increasing fork numbers around a cycle, impossible in a finite ordered set. Thus deadlock cannot occur. Under eventual scheduling, a worker at the end of any waiting chain completes its finite Eat and releases forks; repeated progress with finitely many requested iterations lets every worker finish. The loop calls Eat exactly bites times for its own role and zero times when bites=0. Release order does not affect the increasing acquisition invariant.",
+    "walkthrough": "For three philosophers and one bite each, role 0 needs forks 0 and 1; role 1 needs 1 and 2; role 2 needs 2 and 0. All use increasing physical order, so role 2 takes 0 before 2. One possible schedule lets role 0 take 0/1, eat and release; then role 1 takes 1/2 and eats; then role 2 takes 0/2 and eats. The observed transcript [0,1,2] is valid, but [2,1,0] or another safe order is also accepted. With four philosophers, roles 0 and 2 may eat concurrently because their fork pairs are disjoint.",
+    "example": [
+      [
+        3,
+        1,
+        [
+          2,
+          1,
+          0
+        ],
+        0,
+        []
+      ],
+      [
+        0,
+        1,
+        2
+      ]
+    ],
+    "time": "O(bites) fixed synchronization/eating calls per worker, O(philosophers*bites) total algorithmic calls. Blocking/scheduler waiting and opaque eating duration are excluded; no fixed elapsed-time or starvation-latency bound is claimed.",
+    "space": "O(philosophers) shared fork-lock state provided by the judge, O(1) local algorithm storage per worker, excluding native thread stacks and private observed transcript.",
+    "edges": [
+      "Two philosophers need the same pair of distinct forks.",
+      "Zero bites and repeated independent cases.",
+      "Wraparound role must order forks 0 and philosophers-1 by physical number.",
+      "Only adjacent fork ownership permits eating; all locks must be released at return.",
+      "Different eating/release orders remain valid if safety and completion hold."
+    ],
+    "related": "The primary QuestionB orders Chopstick objects by their physical numbers to break circular wait. QuestionA uses try-lock attempts that may give up without eating; this explicitly stated blocking-API variant requires every requested bite to complete and does not count failed attempts as meals.",
+    "languageWhy": {
+      "csharp": "C# computes Math.Min/Math.Max of the two physical fork indices and calls the supplied blocking context from a real managed Thread. The loop owns no shared counters and releases both locks only after Eat returns.",
+      "java": "Java uses Math.min/Math.max to give every native Thread the same physical acquisition order. Per-worker scalar locals avoid static bite/counter state; the provided semaphores enforce actual exclusive ownership.",
+      "cpp": "C++ borrows ForkContext& and uses std::min/std::max on distinct adjacent indices. Actual std::thread workers share only the provided locked fork state; the user method neither deletes the context nor owns its lifetime.",
+      "python": "Python min/max order physical indices, including the wraparound philosopher. Explicit blocking Take calls are required even with the GIL. Each threading.Thread performs its own bounded bite loop and returns None after dropping both locks.",
+      "javascript": "JavaScript Dine executes inside separate Node worker_threads. Provided Take/Drop use shared-memory Atomics permits and ownership checks; ordinary JS variables are local to each isolate and cannot serve as the fork mutexes."
+    },
+    "id": "ctci6_15_3",
+    "title": "Dining Philosophers",
+    "testCount": 47,
+    "languages": {
+      "csharp": {
+        "signature": "void Dine(int role, int philosophers, int bites, ForkContext context)",
+        "starterCode": "public class Solution\n{\n    public void Dine(int role, int philosophers, int bites, ForkContext context)\n    {\n        return;\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public void Dine(int role, int philosophers, int bites, ForkContext context)\n    {\n        int left = role, right = (role + 1) % philosophers, lower = Math.Min(left, right),\n            higher = Math.Max(left, right);\n        for (int bite = 0; bite < bites; ++bite)\n        {\n            context.Take(lower);\n            context.Take(higher);\n            context.Eat();\n            context.Drop(higher);\n            context.Drop(lower);\n        }\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function Dine(role, philosophers, bites, context)",
+        "starterCode": "function Dine(role, philosophers, bites, context) {\n  return;\n}\n",
+        "solutionCode": "function Dine(role, philosophers, bites, context) {\n  const left = role,\n    right = (role + 1) % philosophers,\n    lower = Math.min(left, right),\n    higher = Math.max(left, right);\n  for (let bite = 0; bite < bites; ++bite) {\n    context.Take(lower);\n    context.Take(higher);\n    context.Eat();\n    context.Drop(higher);\n    context.Drop(lower);\n  }\n}\n"
+      },
+      "python": {
+        "signature": "def Dine(role: int, philosophers: int, bites: int, context: ForkContext) -> None",
+        "starterCode": "def Dine(role: int, philosophers: int, bites: int, context: ForkContext) -> None:\n    return\n",
+        "solutionCode": "def Dine(role: int, philosophers: int, bites: int, context: ForkContext) -> None:\n    left, right = role, (role + 1) % philosophers\n    lower, higher = min(left, right), max(left, right)\n    for _ in range(bites):\n        context.Take(lower)\n        context.Take(higher)\n        context.Eat()\n        context.Drop(higher)\n        context.Drop(lower)\n"
+      },
+      "cpp": {
+        "signature": "void Dine(int role, int philosophers, int bites, ForkContext& context)",
+        "starterCode": "class Solution {\n public:\n  void Dine(int role, int philosophers, int bites, ForkContext& context) {\n    return;\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  void Dine(int role, int philosophers, int bites, ForkContext& context) {\n    int left = role, right = (role + 1) % philosophers, lower = std::min(left, right),\n        higher = std::max(left, right);\n    for (int bite = 0; bite < bites; ++bite) {\n      context.Take(lower);\n      context.Take(higher);\n      context.Eat();\n      context.Drop(higher);\n      context.Drop(lower);\n    }\n  }\n};\n"
+      },
+      "java": {
+        "signature": "void Dine(int role, int philosophers, int bites, ForkContext context)",
+        "starterCode": "class Solution {\n  public void Dine(int role, int philosophers, int bites, ForkContext context) {\n    return;\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public void Dine(int role, int philosophers, int bites, ForkContext context) {\n    int left = role, right = (role + 1) % philosophers, lower = Math.min(left, right),\n        higher = Math.max(left, right);\n    for (int bite = 0; bite < bites; ++bite) {\n      context.Take(lower);\n      context.Take(higher);\n      context.Eat();\n      context.Drop(higher);\n      context.Drop(lower);\n    }\n  }\n}\n"
+      }
+    }
   }
 ]

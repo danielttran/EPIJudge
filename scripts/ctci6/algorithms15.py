@@ -16,3 +16,10 @@ def body(ref,language):
         from algorithms_fizz15 import body as run
         return run(language)
     return _order_body(ref,language)
+
+_fizz_body=body
+def body(ref,language):
+    if ref=='15.3':
+        from algorithms_dining15 import body as run
+        return run(language)
+    return _fizz_body(ref,language)

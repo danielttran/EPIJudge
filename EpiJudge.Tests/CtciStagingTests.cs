@@ -843,4 +843,16 @@ public sealed class CtciStagingTests
             Assert.Equal(new[] {"FizzContext"}, Assert.Single(definition.Callable(language).References).Names);
     }
 
+    [Fact]
+    public void DiningAcceptsAnySafeInterleavingButRequiresAllMealsAndReleasedForks()
+    {
+        var definition = Definition("15.3");
+        var test = new TestCase(definition.Example[0].EnumerateArray().Select(value => value.Clone()).ToArray(), definition.Example[1].Clone());
+        Assert.Null(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new[] {2,1,0}, mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new[] {2,1,0}, mutationOk = false })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new[] {0,0,1}, mutationOk = true })));
+        foreach (string language in SolutionCatalog.Languages)
+            Assert.Equal(new[] {"ForkContext"}, Assert.Single(definition.Callable(language).References).Names);
+    }
+
 }

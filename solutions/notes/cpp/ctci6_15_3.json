@@ -1,0 +1,33 @@
+{
+  "explanation": "If every philosopher takes a differently named left fork first, a circular wait is possible. Numbering the physical forks gives every worker one common order: acquire the lower-numbered needed fork, then the higher-numbered one. A waiting chain must then move strictly toward larger fork numbers, which cannot form a cycle. Hold both through Eat, then release both; independent nonadjacent philosophers may still eat concurrently. C++ borrows ForkContext& and uses std::min/std::max on distinct adjacent indices. Actual std::thread workers share only the provided locked fork state; the user method neither deletes the context nor owns its lifetime.",
+  "correctness": "Every successful iteration acquires both distinct adjacent forks through exclusive locks before Eat, and releases each afterward, so mutual exclusion and per-philosopher fork requirements hold. When a worker blocks holding one fork, it holds the lower and waits for the higher. A circular wait would require strictly increasing fork numbers around a cycle, impossible in a finite ordered set. Thus deadlock cannot occur. Under eventual scheduling, a worker at the end of any waiting chain completes its finite Eat and releases forks; repeated progress with finitely many requested iterations lets every worker finish. The loop calls Eat exactly bites times for its own role and zero times when bites=0. Release order does not affect the increasing acquisition invariant.",
+  "walkthrough": "For three philosophers and one bite each, role 0 needs forks 0 and 1; role 1 needs 1 and 2; role 2 needs 2 and 0. All use increasing physical order, so role 2 takes 0 before 2. One possible schedule lets role 0 take 0/1, eat and release; then role 1 takes 1/2 and eats; then role 2 takes 0/2 and eats. The observed transcript [0,1,2] is valid, but [2,1,0] or another safe order is also accepted. With four philosophers, roles 0 and 2 may eat concurrently because their fork pairs are disjoint.",
+  "walkthroughCase": {
+    "arguments": [
+      3,
+      1,
+      [
+        2,
+        1,
+        0
+      ],
+      0,
+      []
+    ],
+    "expected": [
+      0,
+      1,
+      2
+    ]
+  },
+  "timeComplexity": "O(bites) fixed synchronization/eating calls per worker, O(philosophers*bites) total algorithmic calls. Blocking/scheduler waiting and opaque eating duration are excluded; no fixed elapsed-time or starvation-latency bound is claimed.",
+  "spaceComplexity": "O(philosophers) shared fork-lock state provided by the judge, O(1) local algorithm storage per worker, excluding native thread stacks and private observed transcript.",
+  "edgeCases": [
+    "Two philosophers need the same pair of distinct forks.",
+    "Zero bites and repeated independent cases.",
+    "Wraparound role must order forks 0 and philosophers-1 by physical number.",
+    "Only adjacent fork ownership permits eating; all locks must be released at return.",
+    "Different eating/release orders remain valid if safety and completion hold."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 15.3. No affiliation is implied."
+}

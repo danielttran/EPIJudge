@@ -35325,6 +35325,101 @@
     ]
   },
   {
+    "problemId": "ctci6_15_3",
+    "collection": "ctci6",
+    "language": "csharp",
+    "code": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic abstract class ForkContext {public abstract void Take(int fork);public abstract void Drop(int fork);public abstract void Eat();}\npublic class Solution\n{\n    public void Dine(int role, int philosophers, int bites, ForkContext context)\n    {\n        int left = role, right = (role + 1) % philosophers, lower = Math.Min(left, right),\n            higher = Math.Max(left, right);\n        for (int bite = 0; bite < bites; ++bite)\n        {\n            context.Take(lower);\n            context.Take(higher);\n            context.Eat();\n            context.Drop(higher);\n            context.Drop(lower);\n        }\n    }\n}\n",
+    "explanation": "If every philosopher takes a differently named left fork first, a circular wait is possible. Numbering the physical forks gives every worker one common order: acquire the lower-numbered needed fork, then the higher-numbered one. A waiting chain must then move strictly toward larger fork numbers, which cannot form a cycle. Hold both through Eat, then release both; independent nonadjacent philosophers may still eat concurrently. C# computes Math.Min/Math.Max of the two physical fork indices and calls the supplied blocking context from a real managed Thread. The loop owns no shared counters and releases both locks only after Eat returns.",
+    "timeComplexity": "O(bites) fixed synchronization/eating calls per worker, O(philosophers*bites) total algorithmic calls. Blocking/scheduler waiting and opaque eating duration are excluded; no fixed elapsed-time or starvation-latency bound is claimed.",
+    "spaceComplexity": "O(philosophers) shared fork-lock state provided by the judge, O(1) local algorithm storage per worker, excluding native thread stacks and private observed transcript.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 15.3. No affiliation is implied.",
+    "correctness": "Every successful iteration acquires both distinct adjacent forks through exclusive locks before Eat, and releases each afterward, so mutual exclusion and per-philosopher fork requirements hold. When a worker blocks holding one fork, it holds the lower and waits for the higher. A circular wait would require strictly increasing fork numbers around a cycle, impossible in a finite ordered set. Thus deadlock cannot occur. Under eventual scheduling, a worker at the end of any waiting chain completes its finite Eat and releases forks; repeated progress with finitely many requested iterations lets every worker finish. The loop calls Eat exactly bites times for its own role and zero times when bites=0. Release order does not affect the increasing acquisition invariant.",
+    "walkthrough": "For three philosophers and one bite each, role 0 needs forks 0 and 1; role 1 needs 1 and 2; role 2 needs 2 and 0. All use increasing physical order, so role 2 takes 0 before 2. One possible schedule lets role 0 take 0/1, eat and release; then role 1 takes 1/2 and eats; then role 2 takes 0/2 and eats. The observed transcript [0,1,2] is valid, but [2,1,0] or another safe order is also accepted. With four philosophers, roles 0 and 2 may eat concurrently because their fork pairs are disjoint.",
+    "edgeCases": [
+      "Two philosophers need the same pair of distinct forks.",
+      "Zero bites and repeated independent cases.",
+      "Wraparound role must order forks 0 and philosophers-1 by physical number.",
+      "Only adjacent fork ownership permits eating; all locks must be released at return.",
+      "Different eating/release orders remain valid if safety and completion hold."
+    ]
+  },
+  {
+    "problemId": "ctci6_15_3",
+    "collection": "ctci6",
+    "language": "javascript",
+    "code": "'use strict';\nclass ForkContext {Take(fork){throw new Error('Provided fork lock');}Drop(fork){throw new Error('Provided fork lock');}Eat(){throw new Error('Provided eating callback');}}\nfunction Dine(role, philosophers, bites, context) {\n  const left = role,\n    right = (role + 1) % philosophers,\n    lower = Math.min(left, right),\n    higher = Math.max(left, right);\n  for (let bite = 0; bite < bites; ++bite) {\n    context.Take(lower);\n    context.Take(higher);\n    context.Eat();\n    context.Drop(higher);\n    context.Drop(lower);\n  }\n}\n\nmodule.exports = {ForkContext,Dine};\n",
+    "explanation": "If every philosopher takes a differently named left fork first, a circular wait is possible. Numbering the physical forks gives every worker one common order: acquire the lower-numbered needed fork, then the higher-numbered one. A waiting chain must then move strictly toward larger fork numbers, which cannot form a cycle. Hold both through Eat, then release both; independent nonadjacent philosophers may still eat concurrently. JavaScript Dine executes inside separate Node worker_threads. Provided Take/Drop use shared-memory Atomics permits and ownership checks; ordinary JS variables are local to each isolate and cannot serve as the fork mutexes.",
+    "timeComplexity": "O(bites) fixed synchronization/eating calls per worker, O(philosophers*bites) total algorithmic calls. Blocking/scheduler waiting and opaque eating duration are excluded; no fixed elapsed-time or starvation-latency bound is claimed.",
+    "spaceComplexity": "O(philosophers) shared fork-lock state provided by the judge, O(1) local algorithm storage per worker, excluding native thread stacks and private observed transcript.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 15.3. No affiliation is implied.",
+    "correctness": "Every successful iteration acquires both distinct adjacent forks through exclusive locks before Eat, and releases each afterward, so mutual exclusion and per-philosopher fork requirements hold. When a worker blocks holding one fork, it holds the lower and waits for the higher. A circular wait would require strictly increasing fork numbers around a cycle, impossible in a finite ordered set. Thus deadlock cannot occur. Under eventual scheduling, a worker at the end of any waiting chain completes its finite Eat and releases forks; repeated progress with finitely many requested iterations lets every worker finish. The loop calls Eat exactly bites times for its own role and zero times when bites=0. Release order does not affect the increasing acquisition invariant.",
+    "walkthrough": "For three philosophers and one bite each, role 0 needs forks 0 and 1; role 1 needs 1 and 2; role 2 needs 2 and 0. All use increasing physical order, so role 2 takes 0 before 2. One possible schedule lets role 0 take 0/1, eat and release; then role 1 takes 1/2 and eats; then role 2 takes 0/2 and eats. The observed transcript [0,1,2] is valid, but [2,1,0] or another safe order is also accepted. With four philosophers, roles 0 and 2 may eat concurrently because their fork pairs are disjoint.",
+    "edgeCases": [
+      "Two philosophers need the same pair of distinct forks.",
+      "Zero bites and repeated independent cases.",
+      "Wraparound role must order forks 0 and philosophers-1 by physical number.",
+      "Only adjacent fork ownership permits eating; all locks must be released at return.",
+      "Different eating/release orders remain valid if safety and completion hold."
+    ]
+  },
+  {
+    "problemId": "ctci6_15_3",
+    "collection": "ctci6",
+    "language": "python",
+    "code": "class ForkContext:\n    def Take(self,fork: int) -> None:\n        raise RuntimeError(\"Provided fork lock\")\n    def Drop(self,fork: int) -> None:\n        raise RuntimeError(\"Provided fork lock\")\n    def Eat(self) -> None:\n        raise RuntimeError(\"Provided eating callback\")\ndef Dine(role: int, philosophers: int, bites: int, context: ForkContext) -> None:\n    left, right = role, (role + 1) % philosophers\n    lower, higher = min(left, right), max(left, right)\n    for _ in range(bites):\n        context.Take(lower)\n        context.Take(higher)\n        context.Eat()\n        context.Drop(higher)\n        context.Drop(lower)\n",
+    "explanation": "If every philosopher takes a differently named left fork first, a circular wait is possible. Numbering the physical forks gives every worker one common order: acquire the lower-numbered needed fork, then the higher-numbered one. A waiting chain must then move strictly toward larger fork numbers, which cannot form a cycle. Hold both through Eat, then release both; independent nonadjacent philosophers may still eat concurrently. Python min/max order physical indices, including the wraparound philosopher. Explicit blocking Take calls are required even with the GIL. Each threading.Thread performs its own bounded bite loop and returns None after dropping both locks.",
+    "timeComplexity": "O(bites) fixed synchronization/eating calls per worker, O(philosophers*bites) total algorithmic calls. Blocking/scheduler waiting and opaque eating duration are excluded; no fixed elapsed-time or starvation-latency bound is claimed.",
+    "spaceComplexity": "O(philosophers) shared fork-lock state provided by the judge, O(1) local algorithm storage per worker, excluding native thread stacks and private observed transcript.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 15.3. No affiliation is implied.",
+    "correctness": "Every successful iteration acquires both distinct adjacent forks through exclusive locks before Eat, and releases each afterward, so mutual exclusion and per-philosopher fork requirements hold. When a worker blocks holding one fork, it holds the lower and waits for the higher. A circular wait would require strictly increasing fork numbers around a cycle, impossible in a finite ordered set. Thus deadlock cannot occur. Under eventual scheduling, a worker at the end of any waiting chain completes its finite Eat and releases forks; repeated progress with finitely many requested iterations lets every worker finish. The loop calls Eat exactly bites times for its own role and zero times when bites=0. Release order does not affect the increasing acquisition invariant.",
+    "walkthrough": "For three philosophers and one bite each, role 0 needs forks 0 and 1; role 1 needs 1 and 2; role 2 needs 2 and 0. All use increasing physical order, so role 2 takes 0 before 2. One possible schedule lets role 0 take 0/1, eat and release; then role 1 takes 1/2 and eats; then role 2 takes 0/2 and eats. The observed transcript [0,1,2] is valid, but [2,1,0] or another safe order is also accepted. With four philosophers, roles 0 and 2 may eat concurrently because their fork pairs are disjoint.",
+    "edgeCases": [
+      "Two philosophers need the same pair of distinct forks.",
+      "Zero bites and repeated independent cases.",
+      "Wraparound role must order forks 0 and philosophers-1 by physical number.",
+      "Only adjacent fork ownership permits eating; all locks must be released at return.",
+      "Different eating/release orders remain valid if safety and completion hold."
+    ]
+  },
+  {
+    "problemId": "ctci6_15_3",
+    "collection": "ctci6",
+    "language": "cpp",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\nclass ForkContext {public:virtual void Take(int fork)=0;virtual void Drop(int fork)=0;virtual void Eat()=0;protected:virtual ~ForkContext()=default;};\nclass Solution {\n public:\n  void Dine(int role, int philosophers, int bites, ForkContext& context) {\n    int left = role, right = (role + 1) % philosophers, lower = std::min(left, right),\n        higher = std::max(left, right);\n    for (int bite = 0; bite < bites; ++bite) {\n      context.Take(lower);\n      context.Take(higher);\n      context.Eat();\n      context.Drop(higher);\n      context.Drop(lower);\n    }\n  }\n};\n",
+    "explanation": "If every philosopher takes a differently named left fork first, a circular wait is possible. Numbering the physical forks gives every worker one common order: acquire the lower-numbered needed fork, then the higher-numbered one. A waiting chain must then move strictly toward larger fork numbers, which cannot form a cycle. Hold both through Eat, then release both; independent nonadjacent philosophers may still eat concurrently. C++ borrows ForkContext& and uses std::min/std::max on distinct adjacent indices. Actual std::thread workers share only the provided locked fork state; the user method neither deletes the context nor owns its lifetime.",
+    "timeComplexity": "O(bites) fixed synchronization/eating calls per worker, O(philosophers*bites) total algorithmic calls. Blocking/scheduler waiting and opaque eating duration are excluded; no fixed elapsed-time or starvation-latency bound is claimed.",
+    "spaceComplexity": "O(philosophers) shared fork-lock state provided by the judge, O(1) local algorithm storage per worker, excluding native thread stacks and private observed transcript.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 15.3. No affiliation is implied.",
+    "correctness": "Every successful iteration acquires both distinct adjacent forks through exclusive locks before Eat, and releases each afterward, so mutual exclusion and per-philosopher fork requirements hold. When a worker blocks holding one fork, it holds the lower and waits for the higher. A circular wait would require strictly increasing fork numbers around a cycle, impossible in a finite ordered set. Thus deadlock cannot occur. Under eventual scheduling, a worker at the end of any waiting chain completes its finite Eat and releases forks; repeated progress with finitely many requested iterations lets every worker finish. The loop calls Eat exactly bites times for its own role and zero times when bites=0. Release order does not affect the increasing acquisition invariant.",
+    "walkthrough": "For three philosophers and one bite each, role 0 needs forks 0 and 1; role 1 needs 1 and 2; role 2 needs 2 and 0. All use increasing physical order, so role 2 takes 0 before 2. One possible schedule lets role 0 take 0/1, eat and release; then role 1 takes 1/2 and eats; then role 2 takes 0/2 and eats. The observed transcript [0,1,2] is valid, but [2,1,0] or another safe order is also accepted. With four philosophers, roles 0 and 2 may eat concurrently because their fork pairs are disjoint.",
+    "edgeCases": [
+      "Two philosophers need the same pair of distinct forks.",
+      "Zero bites and repeated independent cases.",
+      "Wraparound role must order forks 0 and philosophers-1 by physical number.",
+      "Only adjacent fork ownership permits eating; all locks must be released at return.",
+      "Different eating/release orders remain valid if safety and completion hold."
+    ]
+  },
+  {
+    "problemId": "ctci6_15_3",
+    "collection": "ctci6",
+    "language": "java",
+    "code": "import java.util.*;\nabstract class ForkContext {public abstract void Take(int fork);public abstract void Drop(int fork);public abstract void Eat();}\nclass Solution {\n  public void Dine(int role, int philosophers, int bites, ForkContext context) {\n    int left = role, right = (role + 1) % philosophers, lower = Math.min(left, right),\n        higher = Math.max(left, right);\n    for (int bite = 0; bite < bites; ++bite) {\n      context.Take(lower);\n      context.Take(higher);\n      context.Eat();\n      context.Drop(higher);\n      context.Drop(lower);\n    }\n  }\n}\n",
+    "explanation": "If every philosopher takes a differently named left fork first, a circular wait is possible. Numbering the physical forks gives every worker one common order: acquire the lower-numbered needed fork, then the higher-numbered one. A waiting chain must then move strictly toward larger fork numbers, which cannot form a cycle. Hold both through Eat, then release both; independent nonadjacent philosophers may still eat concurrently. Java uses Math.min/Math.max to give every native Thread the same physical acquisition order. Per-worker scalar locals avoid static bite/counter state; the provided semaphores enforce actual exclusive ownership.",
+    "timeComplexity": "O(bites) fixed synchronization/eating calls per worker, O(philosophers*bites) total algorithmic calls. Blocking/scheduler waiting and opaque eating duration are excluded; no fixed elapsed-time or starvation-latency bound is claimed.",
+    "spaceComplexity": "O(philosophers) shared fork-lock state provided by the judge, O(1) local algorithm storage per worker, excluding native thread stacks and private observed transcript.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 15.3. No affiliation is implied.",
+    "correctness": "Every successful iteration acquires both distinct adjacent forks through exclusive locks before Eat, and releases each afterward, so mutual exclusion and per-philosopher fork requirements hold. When a worker blocks holding one fork, it holds the lower and waits for the higher. A circular wait would require strictly increasing fork numbers around a cycle, impossible in a finite ordered set. Thus deadlock cannot occur. Under eventual scheduling, a worker at the end of any waiting chain completes its finite Eat and releases forks; repeated progress with finitely many requested iterations lets every worker finish. The loop calls Eat exactly bites times for its own role and zero times when bites=0. Release order does not affect the increasing acquisition invariant.",
+    "walkthrough": "For three philosophers and one bite each, role 0 needs forks 0 and 1; role 1 needs 1 and 2; role 2 needs 2 and 0. All use increasing physical order, so role 2 takes 0 before 2. One possible schedule lets role 0 take 0/1, eat and release; then role 1 takes 1/2 and eats; then role 2 takes 0/2 and eats. The observed transcript [0,1,2] is valid, but [2,1,0] or another safe order is also accepted. With four philosophers, roles 0 and 2 may eat concurrently because their fork pairs are disjoint.",
+    "edgeCases": [
+      "Two philosophers need the same pair of distinct forks.",
+      "Zero bites and repeated independent cases.",
+      "Wraparound role must order forks 0 and philosophers-1 by physical number.",
+      "Only adjacent fork ownership permits eating; all locks must be released at return.",
+      "Different eating/release orders remain valid if safety and completion hold."
+    ]
+  },
+  {
     "problemId": "ctci6_15_5",
     "collection": "ctci6",
     "language": "csharp",
