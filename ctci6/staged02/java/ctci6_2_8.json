@@ -1,0 +1,26 @@
+{
+  "explanation": "A fast pointer gains one position per step on a slow pointer inside a cycle, guaranteeing a collision. Their first collision is generally not the cycle entry. Resetting one pointer to the head and then advancing both at equal speed removes the prefix offset and locates the entry.",
+  "correctness": "If the fast pointer or its next link reaches null, there is no cycle. Otherwise let the noncyclic prefix have length mu and the cycle length lambda. At collision, slow has traveled t steps and fast 2t, so t is a multiple of lambda. The collision's cycle offset is therefore -mu modulo lambda. A pointer reset to the head reaches the entry after mu steps, while the other advances from that offset by mu and also reaches the entry. Before that point the reset pointer lies in the noncyclic prefix, so this is their first meeting. No field is written.",
+  "walkthrough": "For values [6,1,6,4,8] and cycleIndex=2, the tail returns to the original second 6 node. With prefix length 2 and cycle length 3, the pointers first collide inside the cycle. Reset one to index 0 and take equal steps; after two steps both reach original index 2. Return that original object, despite the equal-valued head.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        6,
+        1,
+        6,
+        4,
+        8
+      ],
+      2
+    ],
+    "expected": 2
+  },
+  "timeComplexity": "O(n) time in the number of reachable original nodes: detection and entry alignment each use a linear number of advances.",
+  "spaceComplexity": "O(1) auxiliary space.",
+  "edgeCases": [
+    "Empty and acyclic lists return null.",
+    "Self-loop, cycle at the head, and a long prefix before a short cycle.",
+    "Repeated payloads must not be mistaken for repeated node identities."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 2.8. No affiliation is implied."
+}

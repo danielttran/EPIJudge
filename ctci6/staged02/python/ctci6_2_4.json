@@ -1,0 +1,34 @@
+{
+  "explanation": "Separate head/tail pointers for the two partitions let each node be appended to its proper side in constant time. Detach a node before appending it so old links cannot retain nodes in the wrong side or form cycles.",
+  "correctness": "After each original node is processed, the two temporary lists contain disjoint processed original nodes, exactly partitioned by the comparison, with unchanged values. Appending the current node to the corresponding tail preserves this property. Joining the first list's tail to the second list's head places all smaller nodes before all remaining nodes and contains every original node exactly once. Empty sides are handled by returning the other head.",
+  "walkthrough": "For [5,1,4,2,4,0] with pivot 4, appending to the two sides builds [1,2,0] and [5,4,4]. Joining them yields [1,2,0,5,4,4]. An unstable implementation may return another ordering; either 4 may appear before 5 within the second side.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        5,
+        1,
+        4,
+        2,
+        4,
+        0
+      ],
+      4
+    ],
+    "expected": [
+      1,
+      2,
+      0,
+      5,
+      4,
+      4
+    ]
+  },
+  "timeComplexity": "O(n) time with one pass and constant-time tail appends.",
+  "spaceComplexity": "O(1) auxiliary space; only a fixed number of node pointers is kept.",
+  "edgeCases": [
+    "Empty input and either partition being empty.",
+    "All values equal to the pivot belong to the second side.",
+    "Repeated values require a node multiset/identity check, not only value counts."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 2.4. No affiliation is implied."
+}

@@ -48,48 +48,75 @@ def audit(publication=False):
         row["classification"] == "algorithm-candidate" for row in rows
     ):
         raise ValueError("Candidate count is stale")
-    review = json.loads((ROOT / "ctci6/review01.json").read_text())
-    reviewed = {row["ref"] for row in review["questions"]}
-    staged = json.loads((ROOT / "ctci6/staged/catalog.json").read_text())
-    staged_refs = {row["ref"] for row in staged}
-    if staged_refs != reviewed or len(staged_refs) != len(staged):
-        raise ValueError(
-            "Staged chapter-one references differ from explicit content review"
-        )
-    report = json.loads((ROOT / "ctci6/staged/validation.json").read_text())
-    for name, expected in report["sourceHashes"].items():
-        path = ROOT / name
-        if (
-            not path.is_file()
-            or hashlib.sha256(path.read_bytes()).hexdigest() != expected
-        ):
-            raise ValueError("Stale execution evidence: " + name)
-    executed = {
-        (row["ref"], row["language"])
-        for row in report["executions"]
-        if row["variant"] == "solution" and row["outcome"] == "passed"
-    }
-    rejected = {
-        (row["ref"], row["language"])
-        for row in report["executions"]
-        if row["variant"] == "starter" and row["outcome"] == "rejected"
-    }
-    languages = set(review["languagesReviewed"])
-    expected = {(ref, language) for ref in staged_refs for language in languages}
-    if (
-        executed != expected
-        or rejected != expected
-        or report["stage"] != "standalone-authoring-only"
+    reviewed = set()
+    executed = set()
+    for staging_name, review_file in (
+        ("staged", "review01.json"),
+        ("staged02", "review02.json"),
     ):
-        raise ValueError("Incomplete or misclassified standalone execution evidence")
-    for row in staged:
-        if set(row["languages"]) != languages:
-            raise ValueError("Missing staged language: " + row["ref"])
-        cases = json.loads(
-            (ROOT / "ctci6/staged/cases" / (row["id"] + ".json")).read_text()
-        )
-        if len(cases) != row["testCount"]:
-            raise ValueError("Staged case count differs: " + row["ref"])
+        review = json.loads((ROOT / "ctci6" / review_file).read_text())
+        batch_reviewed = {row["ref"] for row in review["questions"]}
+        staged_root = ROOT / "ctci6" / staging_name
+        staged = json.loads((staged_root / "catalog.json").read_text())
+        staged_refs = {row["ref"] for row in staged}
+        if (
+            staged_refs != batch_reviewed
+            or len(staged_refs) != len(staged)
+            or reviewed & batch_reviewed
+        ):
+            raise ValueError("Staged references differ from explicit content review")
+        reviewed.update(batch_reviewed)
+        report = json.loads((staged_root / "validation.json").read_text())
+        for name, expected_hash in report["sourceHashes"].items():
+            path = ROOT / name
+            if (
+                not path.is_file()
+                or hashlib.sha256(path.read_bytes()).hexdigest() != expected_hash
+            ):
+                raise ValueError("Stale execution evidence: " + name)
+        batch_executed = {
+            (row["ref"], row["language"])
+            for row in report["executions"]
+            if row["variant"] == "solution" and row["outcome"] == "passed"
+        }
+        rejected = {
+            (row["ref"], row["language"])
+            for row in report["executions"]
+            if row["variant"] == "starter" and row["outcome"] == "rejected"
+        }
+        languages = set(review["languagesReviewed"])
+        expected = {(ref, language) for ref in staged_refs for language in languages}
+        if (
+            batch_executed != expected
+            or rejected != expected
+            or report["status"] != "passed"
+            or report["stage"] != "standalone-authoring-only"
+        ):
+            raise ValueError(
+                "Incomplete or misclassified standalone execution evidence"
+            )
+        if (
+            sum(
+                row["cases"]
+                for row in report["executions"]
+                if row["variant"] == "solution"
+            )
+            != report["solutionCaseExecutions"]
+        ):
+            raise ValueError("Execution totals differ from individual pair records")
+        executed.update(batch_executed)
+        for row in staged:
+            if set(row["languages"]) != languages:
+                raise ValueError("Missing staged language: " + row["ref"])
+            cases = json.loads(
+                (staged_root / "cases" / (row["id"] + ".json")).read_text()
+            )
+            if len(cases) != row["testCount"]:
+                raise ValueError("Staged case count differs: " + row["ref"])
+    if scope["stagedExercises"] != len(reviewed) or scope[
+        "stagedLanguageSolutions"
+    ] != len(executed):
+        raise ValueError("Staged scope totals are stale")
     result = dict(
         inventoryIntegrity="passed",
         identifiedReferences=len(rows),

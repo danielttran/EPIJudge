@@ -1,0 +1,32 @@
+{
+  "explanation": "Without a predecessor reference, the incoming link to target cannot be changed. Moving the successor's payload into target removes the requested value from the reachable sequence while allowing target's own outgoing link to bypass the now-redundant successor object.",
+  "correctness": "If target has a successor S, replacing target.Value with S.Value and target.Next with S.Next changes the local sequence [targetValue,SValue,...] into [SValue,...]. The predecessor still reaches the same target object; every other object retains its fields. A tail has no successor to supply a replacement, so this technique cannot delete it, and returning false preserves the list.",
+  "walkthrough": "In [8,4,7,2], target is the original index-1 object containing 4. Copy 7 into that object and point it to the original node containing 2. Reachable values become [8,7,2] and success is true. An alias to the original index-2 node still sees its value 7 and its original successor.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        8,
+        4,
+        7,
+        2
+      ],
+      1
+    ],
+    "expected": {
+      "success": true,
+      "values": [
+        8,
+        7,
+        2
+      ]
+    }
+  },
+  "timeComplexity": "O(1) time once the target reference is supplied. Adapter list construction is not part of the callable cost.",
+  "spaceComplexity": "O(1) auxiliary space; no replacement nodes are allocated.",
+  "edgeCases": [
+    "Null and tail targets fail without mutation.",
+    "Equal target and successor values still require the successor to be bypassed.",
+    "External successor aliases must remain valid."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 2.3. No affiliation is implied."
+}

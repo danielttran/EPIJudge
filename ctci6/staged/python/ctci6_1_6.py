@@ -8,5 +8,5 @@ def Compress(text: str) -> str:
         parts.append(text[start])
         parts.append(str(end - start))
         start = end
-    output = ''.join(parts)
+    output = "".join(parts)
     return output if len(output) < len(text) else text

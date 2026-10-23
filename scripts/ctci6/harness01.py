@@ -7,18 +7,26 @@ later acceptance stage must execute the exact published callable envelopes too.
 import json
 from textwrap import indent
 
-from algorithms01 import body
 from chapter01 import SPECS
-from core import HEADERS, TYPES, declaration, starter_body
+from core import HEADERS, ROOT, TYPES
 
 
 def source(language, starters=False):
     sources = [HEADERS[language]]
+    catalog = json.loads((ROOT / "ctci6/staged/catalog.json").read_text())
     for spec in SPECS:
-        code = starter_body(spec, language) if starters else body(spec["ref"], language)
-        _, code = declaration(
-            spec, language, code, "Solution_" + spec["ref"].replace(".", "_")
-        )
+        entry = next(row for row in catalog if row["ref"] == spec["ref"])
+        code = entry["languages"][language][
+            "starterCode" if starters else "solutionCode"
+        ]
+        if language not in ("python", "javascript"):
+            # Rename only the known bank-owned outer class for batch execution.
+            # Execute the staged algorithm's exact formatted body unchanged.
+            if code.count("class Solution") != 1:
+                raise ValueError("Unexpected staged class declaration")
+            code = code.replace(
+                "class Solution", "class Solution_" + spec["ref"].replace(".", "_"), 1
+            )
         # The Java batch has several package-private classes in one file.
         sources.append(code)
     if language in ("python", "javascript"):

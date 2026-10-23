@@ -32,7 +32,7 @@ def run(command, directory, timeout=90):
         )
 
 
-def execute(language, starters, rows, directory):
+def execute(language, starters, rows, directory, source_builder=source):
     directory.mkdir(parents=True, exist_ok=True)
     (directory / "cases.json").write_text(json.dumps(rows), encoding="utf-8")
     filename = (
@@ -40,7 +40,9 @@ def execute(language, starters, rows, directory):
         if language in ("java", "csharp")
         else "harness." + EXT[language]
     )
-    (directory / filename).write_text(source(language, starters), encoding="utf-8")
+    (directory / filename).write_text(
+        source_builder(language, starters), encoding="utf-8"
+    )
     if language == "csharp":
         (directory / "Submission.csproj").write_text(
             '<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net10.0</TargetFramework><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable><StartupObject>Harness</StartupObject></PropertyGroup></Project>'
