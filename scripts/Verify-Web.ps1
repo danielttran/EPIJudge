@@ -109,7 +109,10 @@ try {
     Write-Output 'Cross-origin form protection: 403'
 }
 $catalog = Invoke-RestMethod "$BaseUrl/api/problems" -NoProxy
-if ($catalog.Count -ne 334 -or @($catalog.id | Sort-Object -Unique).Count -ne 334) { throw 'Expected 334 unique web problems.' }
+$ctciPath = Join-Path (Split-Path $PSScriptRoot -Parent) 'ctci6/catalog.json'
+$ctciCount = if (Test-Path $ctciPath) { @(Get-Content $ctciPath -Raw | ConvertFrom-Json).Count } else { 0 }
+$expectedCount = 334 + $ctciCount
+if ($catalog.Count -ne $expectedCount -or @($catalog.id | Sort-Object -Unique).Count -ne $expectedCount) { throw "Expected $expectedCount unique web problems." }
 foreach ($problem in $catalog) {
     if ($problem.testCount -le 0 -or -not $problem.starterCode -or -not $problem.description -or $problem.invocation -or $problem.codeFormat -ne 'callable-v1') {
         throw "Incomplete or internal metadata for $($problem.id)."
@@ -121,7 +124,7 @@ foreach ($problem in $catalog) {
 foreach ($collection in @(@('epi',218), @('blind75',75), @('interviewcake',41))) {
     if (@($catalog | Where-Object collection -eq $collection[0]).Count -ne $collection[1]) { throw "Incorrect collection count for $($collection[0])." }
 }
-Write-Output 'Catalog API: 334 unique exercises with test counts; internal invocations excluded'
+Write-Output "Catalog API: $expectedCount unique exercises with test counts; internal invocations excluded"
 $callable = Invoke-RestMethod "$BaseUrl/api/problems/count_bits/solution?language=csharp" -NoProxy
 if ($callable.codeFormat -ne 'callable-v1' -or -not $callable.code) { throw 'Callable solution format is missing.' }
 Assert-Status (Invoke-Judge 'count_bits' $callable.code 'submit' 'csharp' $callable.codeFormat) 'Accepted' 'Callable C# Count Bits full corpus alongside legacy fixtures'

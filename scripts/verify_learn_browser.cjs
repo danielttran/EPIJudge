@@ -5,6 +5,10 @@ const { chromium } = require("../epijudge.client/node_modules/playwright-core");
 const base = process.argv[2];
 if (!base) throw new Error("Pass an isolated local server URL.");
 const root = path.resolve(__dirname, "..");
+const ctciPath = path.join(root, "ctci6/catalog.json");
+const ctciCount = fs.existsSync(ctciPath)
+  ? JSON.parse(fs.readFileSync(ctciPath, "utf8")).length
+  : 0;
 const inventory = require("../epijudge.client/src/reading/learnInventory.json");
 const folder = path.join(root, ".epi-runs/learn-views");
 fs.mkdirSync(folder, { recursive: true });
@@ -77,9 +81,9 @@ const pauseUntil = async (predicate, label) => {
   try {
     const problems = await api("/api/problems");
     check(
-      problems.length === 334 &&
+      problems.length === 334 + ctciCount &&
         problems.filter((p) => p.collection === "interviewcake").length === 41,
-      "all334 coding questions and41 Interview Cake tasks remain in Practice",
+      "the original coding bank and every registered CtCI exercise remain in Practice",
     );
     await page.goto(base + "/learn");
     await page.getByRole("heading", { name: "Learn", exact: true }).waitFor();

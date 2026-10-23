@@ -7,13 +7,13 @@ All **189 numbered references** are accounted for in `inventory.json` and
   **655 language solutions** and starters (C#, JavaScript, Python, C++, Java).
 - **33 conceptual** and **17 design** references remain outside callable practice.
   Individual classification evidence is in `classification-review.json`.
-- **8 coding candidates** remain outside practice: **12.2, 12.8, 12.9, 12.10,
-  12.11, 14.1, 14.2, 14.3**. Their numbered titles are established, but a title
-  does not establish detailed input/output, ownership, schema or error contracts.
-  Native allocation/lifetime tasks and SQL queries must retain their actual
-  technical task; managed simulations or array-processing substitutes would
-  not complete those exercises. These are explicit remaining work, not excluded
-  conceptual questions or completed implementations.
+- **8 unimplemented coding references** are explicitly excluded from this supported
+  publication: **12.2, 12.8–12.11, 14.1–14.3**. `exclusions.json` records each
+  source, compatibility finding and exact limitation. Reverse String and Copy
+  Node remain specification-unverified rather than being replaced with similar
+  problems. The native ownership/allocation and SQL tasks receive no misleading
+  managed/array equivalents. This publication adds no new runtime infrastructure.
+
 
 The author repository and official contents page are the primary references.
 Pinned author-linked language ports support implementation-interface research.
@@ -73,7 +73,15 @@ Reproduction uses `scripts/ctci6/audit.py` for evidence integrity,
 `verify_runtime.py --starters` for fingerprinted submitted modules, the chapter
 verifiers for standalone authoring, targeted `test_*` grader regressions, and
 `scripts/SolutionsAudit` for actual displayed application-callable corpus runs.
-The audit's publication gate remains closed for the eight pending candidate
-contracts. Registered-bank execution and rendered acceptance are complete. No
-CTCI changes have been pushed; remote master was verified at
-`65af1869ed4be12f60158668525e7246880c1747`.
+The supported-publication gate requires current execution/integration evidence
+and explicit disposition of all eight excluded coding references. The authoring
+export's `collectionPublicationReady` flag does not grant publication acceptance;
+`scripts/ctci6/audit.py --publication` is the final supported-scope integrity gate.
+Full book coding coverage remains incomplete. Publication and exact-commit CI
+are tracked separately in `checkpoint.json`.
+
+The final integration audit also replaced POSIX-only temporary-file calls in the
+C++ file-tail observer with atomically created standard C++ filesystem directories.
+The Windows native HTTP check now covers the actual CTCI file exercise. Catalog
+checks require the original 334 problems plus the registered CTCI collection,
+with the original collection counts and IDs still checked.

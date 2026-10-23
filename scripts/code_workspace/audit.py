@@ -102,6 +102,16 @@ def walk(node):
 
 
 def declared_name(node, source: str) -> str | None:
+    if node.type == "template_declaration":
+        declaration = next(
+            (
+                child
+                for child in node.named_children
+                if child.type != "template_parameter_list"
+            ),
+            None,
+        )
+        return declared_name(declaration, source) if declaration is not None else None
     name = node.child_by_field_name("name")
     if name is not None:
         return text_of(name, source)
@@ -515,21 +525,29 @@ def expected_references(entry: dict) -> set[str] | None:
         row = ctci_contracts()[problem_id]
         if row["batch"] == 2:
             return {"LinkedListNode"}
-        if row["ref"]=="10.6":
+        if row["ref"] == "10.6":
             return {"LineRecord", "TextFile", "TextWorkspace"}
         if row["batch"] == 15:
-            return {"ResourceLock", "LockPool"} if row["ref"]=="15.4" else {"ForkContext"} if row["ref"]=="15.3" else {"FizzContext"} if row["ref"]=="15.7" else {"SyncContext"}
+            return (
+                {"ResourceLock", "LockPool"}
+                if row["ref"] == "15.4"
+                else {"ForkContext"}
+                if row["ref"] == "15.3"
+                else {"FizzContext"}
+                if row["ref"] == "15.7"
+                else {"SyncContext"}
+            )
         if row["batch"] == 13:
-            return {"FairCoinSource"} if row["ref"]=="13.8" else {"Country"}
+            return {"FairCoinSource"} if row["ref"] == "13.8" else {"Country"}
         if row["ref"] == "4.11":
             return {"RandomNode", "RandomSource"}
         if row["batch"] == 4 and row["ref"] not in ("4.1", "4.7"):
-            return {"TreeNode", "DepthLink"} if row["ref"]=="4.3" else {"TreeNode"}
+            return {"TreeNode", "DepthLink"} if row["ref"] == "4.3" else {"TreeNode"}
         if row["ref"] == "17.12":
             return {"BiNode"}
         if row["ref"] == "17.4":
             return {"BitArray"}
-        if row["ref"] in ("17.2","17.3"):
+        if row["ref"] in ("17.2", "17.3"):
             return {"RandomSource"}
         if row["ref"] == "16.23":
             return {"Rand5Source"}
@@ -698,7 +716,27 @@ def isolated_global_dependencies(
         errors.append(
             "Unrelated top-level algorithm declarations: " + ", ".join(sorted(extra))
         )
-    if role == "starter" and definitions.keys() != roots:
+    type_parameters = set()
+    if entry["language"] == "python":
+        module = ast.parse(code)
+        typevar_names = {
+            alias.asname or alias.name
+            for node in module.body
+            if isinstance(node, ast.ImportFrom) and node.module == "typing"
+            for alias in node.names
+            if alias.name == "TypeVar"
+        }
+        type_parameters = {
+            node.targets[0].id
+            for node in module.body
+            if isinstance(node, ast.Assign)
+            and len(node.targets) == 1
+            and isinstance(node.targets[0], ast.Name)
+            and isinstance(node.value, ast.Call)
+            and isinstance(node.value.func, ast.Name)
+            and node.value.func.id in typevar_names
+        } & reachable
+    if role == "starter" and definitions.keys() != roots | type_parameters:
         errors.append("Starter must contain only the callable task class/functions")
     # These known bank algorithm helpers must be visible when referenced, not
     # silently moved into an execution envelope to make an incomplete view run.
@@ -779,7 +817,20 @@ def audit_artifact(
             if entry["problemId"].startswith("blind75_")
             else CAKE_MODELS
             if entry["problemId"].startswith("interviewcake_")
-            else {"LinkedListNode", "IntStack", "Animal", "BankError", "Listy", "TreeNode", "DepthLink", "BitArray", "BiNode", "NumberFile", "Rand5Source", "RandomSource"}
+            else {
+                "LinkedListNode",
+                "IntStack",
+                "Animal",
+                "BankError",
+                "Listy",
+                "TreeNode",
+                "DepthLink",
+                "BitArray",
+                "BiNode",
+                "NumberFile",
+                "Rand5Source",
+                "RandomSource",
+            }
             if entry["problemId"].startswith("ctci6_")
             else set()
         )

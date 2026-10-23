@@ -502,15 +502,15 @@ class CtciInventoryExtensionTests(unittest.TestCase):
             root = Path(directory)
             (root / "ctci6").mkdir()
             rows = [
-                dict(id="ctci6_1_1", collection="ctci6"),
-                dict(id="ctci6_8_11", collection="ctci6"),
+                {"id": "ctci6_1_1", "collection": "ctci6"},
+                {"id": "ctci6_8_11", "collection": "ctci6"},
             ]
             (root / "ctci6/catalog.json").write_text(json.dumps(rows))
             self.assertEqual(2, evidence.expected_collections(root)["ctci6"])
             for invalid in (
                 rows + [rows[0]],
-                [dict(id="ctci6_bad", collection="ctci6")],
-                [dict(id="ctci6_1_1", collection="epi")],
+                [{"id": "ctci6_bad", "collection": "ctci6"}],
+                [{"id": "ctci6_1_1", "collection": "epi"}],
                 [],
             ):
                 (root / "ctci6/catalog.json").write_text(json.dumps(invalid))

@@ -54,14 +54,17 @@ finally{if(path!=null)try{java.nio.file.Files.deleteIfExists(path);}catch(java.i
 '''
         return value.replace('public class Harness {',outside+'\npublic class Harness {\n'+inside,1).replace('static JsonValue execute(JsonObject row){','static JsonValue execute(JsonObject row){if(row.get("ref").asString().equals("12.1"))return executeTail12(row);',1)
     outside=code+'''
-#include <unistd.h>
-struct TailCleanup12 {std::string path;~TailCleanup12(){std::error_code ignored;std::filesystem::remove(path,ignored);}};
+#include <atomic>
+#include <chrono>
+struct TailCleanup12 {std::filesystem::path directory;~TailCleanup12(){std::error_code ignored;std::filesystem::remove_all(directory,ignored);}};
 json executeTail12(const json& row){
 auto lines=row["arguments"][0].get<std::vector<std::string>>();std::string content;for(const auto& line:lines)content+=line+"\\n";
-auto pattern=(std::filesystem::temp_directory_path()/"epijudge-tail-XXXXXX").string();std::vector<char> name(pattern.begin(),pattern.end());name.push_back('\\0');int fd=mkstemp(name.data());if(fd<0)throw std::runtime_error("temporary file creation failed");close(fd);TailCleanup12 cleanup{std::string(name.data())};
-{std::ofstream file(cleanup.path,std::ios::binary);file<<content;if(!file)throw std::runtime_error("temporary file write failed");}
-auto actual=Solution_12_1().LastKLines(cleanup.path,row["arguments"][1].get<int>());
-std::ifstream file(cleanup.path,std::ios::binary);std::string after((std::istreambuf_iterator<char>(file)),std::istreambuf_iterator<char>());bool preserved=std::filesystem::is_regular_file(cleanup.path)&&after==content;
+static std::atomic<unsigned long long> serial{0};std::filesystem::path directory;
+for(int attempt=0;attempt<128;++attempt){auto stamp=std::chrono::steady_clock::now().time_since_epoch().count();auto candidate=std::filesystem::path("epijudge-tail-"+std::to_string(stamp)+"-"+std::to_string(serial.fetch_add(1)));std::error_code error;if(std::filesystem::create_directory(candidate,error)){directory=candidate;break;}if(error)throw std::runtime_error("temporary directory creation failed: "+error.message());}
+if(directory.empty())throw std::runtime_error("temporary directory collision limit reached");TailCleanup12 cleanup{directory};auto filePath=(directory/"input.txt").string();
+{std::ofstream file(filePath,std::ios::binary);file<<content;if(!file)throw std::runtime_error("temporary file write failed");}
+auto actual=Solution_12_1().LastKLines(filePath,row["arguments"][1].get<int>());
+std::ifstream file(filePath,std::ios::binary);std::string after((std::istreambuf_iterator<char>(file)),std::istreambuf_iterator<char>());bool preserved=std::filesystem::is_regular_file(filePath)&&after==content;
 return json{{"actual",actual},{"mutationOk",preserved}};}
 '''
     return value.replace('json execute(const json& row){',outside+'\njson execute(const json& row){if(row["ref"]=="12.1")return executeTail12(row);',1)

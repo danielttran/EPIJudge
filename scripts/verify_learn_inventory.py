@@ -43,7 +43,10 @@ def audit(root=ROOT):
     assert {
         item.get("Id", item.get("id")) for items in catalogs for item in items
     } <= problems
-    assert len(problems) == 334
+    ctci_path = root / "ctci6/catalog.json"
+    ctci = json.loads(ctci_path.read_text(encoding="utf-8")) if ctci_path.is_file() else []
+    assert len(problems) == 334 + len(ctci)
+    assert {item["id"] for item in ctci} <= problems
     topics = {}
     relations = 0
     for lesson, article in zip(lessons, articles, strict=True):
@@ -78,7 +81,7 @@ def audit(root=ROOT):
         "passed": True,
         "articles": 12,
         "topics": topics,
-        "codingQuestions": 334,
+        "codingQuestions": len(problems),
         "relatedLinks": relations,
         "missingInterviewCakeArticles": True,
         "newExternalArticleImports": 0,

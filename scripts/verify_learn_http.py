@@ -53,7 +53,7 @@ def main():
             status, body, _ = request(server.base, route)
             assert status == 200 and b"<html" in body.lower(), route
         status, problems, _ = request(server.base, "/api/problems")
-        assert status == 200 and len(problems) == 334
+        assert status == 200 and len(problems) == result["codingQuestions"]
         if args.browser:
             subprocess.run(
                 ["node", str(ROOT / "scripts/verify_learn_browser.cjs"), server.base],

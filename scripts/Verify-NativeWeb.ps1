@@ -54,11 +54,20 @@ try {
         if (!$ready) { throw 'Temporary native audit server did not start.' }
     }
     $problems = Invoke-RestMethod "$BaseUrl/api/problems" -NoProxy -TimeoutSec 20
+    $ctciPath = Join-Path $root 'ctci6/catalog.json'
+    $ctciCount = if (Test-Path $ctciPath) { @(Get-Content $ctciPath -Raw | ConvertFrom-Json).Count } else { 0 }
+    $expectedCount = 334 + $ctciCount
     foreach ($language in @('cpp','java')) {
         $starters = @($problems | Where-Object { $_.starters.$language.starterCode })
-        if ($starters.Count -ne 334) { throw "$language requires 334 starters, got $($starters.Count)" }
+        if ($starters.Count -ne $expectedCount) { throw "$language requires $expectedCount starters, got $($starters.Count)" }
         if (@($starters | Where-Object { $_.starters.$language.codeFormat -ne 'callable-v1' }).Count) { throw "$language starters require an explicit callable format" }
-        Write-Output "PASS $language catalog: 334 starters"
+        Write-Output "PASS $language catalog: $expectedCount starters"
+        $tail = $problems | Where-Object id -eq 'ctci6_12_1'
+        if ($tail) {
+            $tailSolution = Invoke-RestMethod "$BaseUrl/api/problems/ctci6_12_1/solution?language=$language" -NoProxy -TimeoutSec 20
+            Check-Submission $language 'ctci6_12_1' $tailSolution.code 'submit' 'Accepted' -CheckHidden -CodeFormat 'callable-v1'
+            Check-Submission $language 'ctci6_12_1' $tail.starters.$language.starterCode 'submit' 'Wrong answer' -CheckHidden -CodeFormat 'callable-v1'
+        }
         $folder = Join-Path $PSScriptRoot "NativeWebFixtures\$language"
         $countFile = if ($language -eq 'cpp') {'count_bits.cc'} else {'CountBits.java'}
         $accepted = Get-Content (Join-Path $folder $countFile) -Raw

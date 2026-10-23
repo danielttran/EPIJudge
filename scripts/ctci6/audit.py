@@ -217,11 +217,25 @@ def audit(publication=False):
         )
 
     pending = [row["ref"] for row in rows if row["classification"] in ("algorithm-candidate", "coding-candidate")]
+    exclusions_path = ROOT / "ctci6/exclusions.json"
+    excluded_publication = set()
+    if exclusions_path.is_file():
+        exclusions = json.loads(exclusions_path.read_text())
+        entries = exclusions["exclusions"]
+        excluded_publication = {row["ref"] for row in entries}
+        if (excluded_publication != {"12.2", "12.8", "12.9", "12.10", "12.11", "14.1", "14.2", "14.3"}
+            or len(entries) != len(excluded_publication)
+            or excluded_publication != set(pending)
+            or exclusions["supportedExercises"] != len(reviewed)
+            or exclusions["supportedSolutionPairs"] != len(executed)
+            or exclusions["completeBookCodingCoverage"] is not False
+            or any(row["disposition"] != "excluded-from-supported-publication" or not row["reason"] or not row["evidenceUrls"] for row in entries)):
+            raise ValueError("Supported-publication exclusions must explicitly reconcile every unresolved reference")
     bank_current = current_evidence("whole-bank-validation.json", "passed-current-registered-bank")
     integration_current = current_evidence("integration-validation.json", "passed-current-registered-bank-integration")
     remaining = []
-    if pending:
-        remaining.append("Verified faithful coding contracts/platform support: " + ", ".join(pending))
+    if set(pending) - excluded_publication:
+        remaining.append("Unresolved coding references without reviewed publication disposition")
     if not bank_current:
         remaining.append("Current whole-bank application-callable execution evidence")
     if not integration_current:
@@ -235,11 +249,14 @@ def audit(publication=False):
         standaloneValidatedPairs=len(executed),
         liveCtciExercises=scope["liveExercises"],
         publicationReady=ready,
+        publicationScope="audited-supported-five-language-coding-collection",
+        completeBookCodingCoverage=not pending,
+        excludedFromSupportedPublication=sorted(excluded_publication, key=lambda value: tuple(map(int, value.split(".")))),
         wholeBankCallableEvidence="passed-current" if bank_current else "missing-or-stale",
         integrationAndRenderedEvidence="passed-current" if integration_current else "missing-or-stale",
         pendingCodingReferences=pending,
         remaining=remaining,
-        publicationStatus="Not pushed; exact-commit CI is checked after an accepted publication.",
+        publicationStatus="Source-bound supported-collection acceptance; remote publication and exact-commit CI are tracked separately.",
     )
     print(json.dumps(result, indent=2))
     if publication and not ready:

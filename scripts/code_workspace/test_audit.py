@@ -2,6 +2,7 @@
 
 import copy
 import unittest
+from unittest.mock import patch
 
 from audit import (
     audit_artifact,
@@ -139,6 +140,37 @@ class CallableContentGateTests(unittest.TestCase):
             isolated_global_dependencies(fixture, needed, "solution")[0], []
         )
         self.assertTrue(isolated_global_dependencies(fixture, needed, "starter")[0])
+
+    def test_cpp_generic_task_class_is_a_visible_definition(self):
+        fixture = entry("", "cpp")
+        code = "template<class T> class Box { public: T value; };"
+        with patch("audit.isolated_roots", return_value={"Box"}):
+            self.assertEqual(
+                isolated_global_dependencies(fixture, code, "starter")[0], []
+            )
+            self.assertTrue(
+                isolated_global_dependencies(
+                    fixture, code + " int unrelated(){return 0;}", "starter"
+                )[0]
+            )
+
+    def test_python_generic_type_parameters_are_not_unrelated_algorithms(self):
+        fixture = entry("", "python")
+        code = 'from typing import Generic, TypeVar\nT = TypeVar("T")\nclass Box(Generic[T]):\n    pass\n'
+        with patch("audit.isolated_roots", return_value={"Box"}):
+            self.assertEqual(
+                isolated_global_dependencies(fixture, code, "starter")[0], []
+            )
+            self.assertTrue(
+                isolated_global_dependencies(
+                    fixture, code + '\nUnused = TypeVar("Unused")\n', "starter"
+                )[0]
+            )
+            helper = (
+                code.replace("pass", "def run(self):\n        return helper()")
+                + "\ndef helper():\n    return 0\n"
+            )
+            self.assertTrue(isolated_global_dependencies(fixture, helper, "starter")[0])
 
     def test_cpp_function_pointer_helper_reference_is_checked(self):
         code = "int Run(int x) { return Apply(TreeAlgorithms::same, x); }\nnamespace TreeAlgorithms { int same(int x) { return x; } }\n"
