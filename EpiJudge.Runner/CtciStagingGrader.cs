@@ -58,6 +58,22 @@ public static class CtciStagingGrader
         return height == minimum ? null : "The returned BST must have the smallest possible height.";
     }
 
+    private static string? NumericFailure(CtciStagingDefinition definition, TestCase test, JsonElement observed)
+    {
+        if (observed.GetProperty("mutationOk").ValueKind != JsonValueKind.True) return "Preserve input values and return finite numeric results.";
+        var actual = observed.GetProperty("actual");
+        if (definition.Ref == "16.26")
+        {
+            if (actual.ValueKind != JsonValueKind.Number || !actual.TryGetDouble(out double value) || !double.IsFinite(value)) return "Return a finite numeric expression value.";
+            double expected = test.Expected.GetDouble();
+            return Math.Abs(value - expected) <= Math.Max(0.000001, 0.000000001 * Math.Abs(expected)) ? null : "Respect precedence, left associativity and real division within the stated tolerance.";
+        }
+        if (actual.ValueKind != JsonValueKind.Array || actual.GetArrayLength() != test.Expected.GetArrayLength()) return "Return one median per inserted stream value.";
+        for (int i = 0; i < actual.GetArrayLength(); i++)
+            if (actual[i].ValueKind != JsonValueKind.Number || !actual[i].TryGetDouble(out double median) || !double.IsFinite(median) || median != test.Expected[i].GetDouble()) return "Return the actual median of every prefix, including exact half-integer means.";
+        return null;
+    }
+
     private static string? GroupOrLineFailure(CtciStagingDefinition definition, TestCase test, JsonElement observed)
     {
         if (observed.GetProperty("mutationOk").ValueKind != JsonValueKind.True) return "Preserve all input arrays, row identities and values.";
@@ -257,6 +273,7 @@ public static class CtciStagingGrader
         {
             if (observed.ValueKind != JsonValueKind.Object || observed.TryGetProperty("error", out var error) && error.ValueKind != JsonValueKind.Null)
                 return "Your code did not finish this case successfully.";
+            if (definition.Ref is "16.26" or "17.20") return NumericFailure(definition, test, observed);
             if (definition.Ref is "16.14" or "17.7") return GroupOrLineFailure(definition, test, observed);
             if (definition.Batch == 10) return SortingFailure(definition, test, observed);
             if (definition.Batch == 17 && definition.Ref is ("17.8" or "17.13" or "17.22" or "17.25" or "17.26")) return StructuredHardFailure(definition, test, observed);

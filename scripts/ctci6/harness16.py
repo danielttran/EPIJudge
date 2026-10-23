@@ -4,6 +4,7 @@ from models08 import header as base_header
 from models16 import header
 import json
 from core import ROOT
+from numeric import adapt
 from harness_cache16 import attach
 
 def source(language,starters=False,only_ref=None):
@@ -28,4 +29,5 @@ def source(language,starters=False,only_ref=None):
     if caches:
         cache=caches[0]
         value=attach(value,language,cache['languages'][language]['starterCode' if starters else 'solutionCode'])
-    return value
+    kinds={e["result"] for e in entries if only_ref is None or e["ref"]==only_ref}
+    return adapt(value,language,kinds)

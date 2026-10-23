@@ -462,3 +462,64 @@ return result'''
     if language=='cpp':return 'int n=static_cast<int>(names.size());std::vector<std::vector<int>> adjacent(n),result;for(const auto& edge:synonyms){adjacent[edge[0]].push_back(edge[1]);adjacent[edge[1]].push_back(edge[0]);}std::vector<bool> visited(n,false);for(int start=0;start<n;++start){if(visited[start])continue;visited[start]=true;std::vector<int> queue{start};int total=0;for(size_t head=0;head<queue.size();++head){int name=queue[head];total+=frequencies[name];for(int other:adjacent[name])if(!visited[other]){visited[other]=true;queue.push_back(other);}}result.push_back({start,total});}return result;'
     if language=='csharp':return 'int n=names.Length;var adjacent=new List<int>[n];for(int i=0;i<n;++i)adjacent[i]=new List<int>();foreach(var edge in synonyms){adjacent[edge[0]].Add(edge[1]);adjacent[edge[1]].Add(edge[0]);}bool[] visited=new bool[n];var result=new List<int[]>();for(int start=0;start<n;++start){if(visited[start])continue;visited[start]=true;var queue=new List<int>{start};int total=0;for(int head=0;head<queue.Count;++head){int name=queue[head];total+=frequencies[name];foreach(int other in adjacent[name])if(!visited[other]){visited[other]=true;queue.Add(other);}}result.Add([start,total]);}return result.ToArray();'
     return 'int n=names.length;List<List<Integer>> adjacent=new ArrayList<>();for(int i=0;i<n;++i)adjacent.add(new ArrayList<>());for(int[] edge:synonyms){adjacent.get(edge[0]).add(edge[1]);adjacent.get(edge[1]).add(edge[0]);}boolean[] visited=new boolean[n];List<int[]> result=new ArrayList<>();for(int start=0;start<n;++start){if(visited[start])continue;visited[start]=true;List<Integer> queue=new ArrayList<>();queue.add(start);int total=0;for(int head=0;head<queue.size();++head){int name=queue.get(head);total+=frequencies[name];for(int other:adjacent.get(name))if(!visited[other]){visited[other]=true;queue.add(other);}}result.add(new int[]{start,total});}return result.toArray(new int[0][]);'
+
+_previous_median_body=body
+
+def body(ref,language):
+    if ref!='17.20':return _previous_median_body(ref,language)
+    if language=='python':return '''from heapq import heappush, heappop
+lower = []
+upper = []
+medians = []
+for value in values:
+    if not lower or value <= -lower[0]:
+        heappush(lower, -value)
+    else:
+        heappush(upper, value)
+    if len(lower) > len(upper) + 1:
+        heappush(upper, -heappop(lower))
+    elif len(upper) > len(lower):
+        heappush(lower, -heappop(upper))
+    medians.append(float(-lower[0]) if len(lower) > len(upper) else (-lower[0] + upper[0]) / 2.0)
+return medians'''
+    if language=='csharp':return 'var lower=new PriorityQueue<int,long>();var upper=new PriorityQueue<int,long>();var medians=new double[values.Length];for(int i=0;i<values.Length;++i){int value=values[i];if(lower.Count==0||value<=lower.Peek())lower.Enqueue(value,-(long)value);else upper.Enqueue(value,value);if(lower.Count>upper.Count+1){int moved=lower.Dequeue();upper.Enqueue(moved,moved);}else if(upper.Count>lower.Count){int moved=upper.Dequeue();lower.Enqueue(moved,-(long)moved);}medians[i]=lower.Count>upper.Count?lower.Peek():((double)lower.Peek()+upper.Peek())/2.0;}return medians;'
+    if language=='java':return 'var lower=new PriorityQueue<Integer>(Comparator.reverseOrder());var upper=new PriorityQueue<Integer>();double[] medians=new double[values.length];for(int i=0;i<values.length;++i){int value=values[i];if(lower.isEmpty()||value<=lower.peek())lower.add(value);else upper.add(value);if(lower.size()>upper.size()+1)upper.add(lower.remove());else if(upper.size()>lower.size())lower.add(upper.remove());medians[i]=lower.size()>upper.size()?lower.peek():((double)lower.peek()+upper.peek())/2.0;}return medians;'
+    if language=='cpp':return 'std::priority_queue<int> lower;std::priority_queue<int,std::vector<int>,std::greater<int>> upper;std::vector<double> medians;medians.reserve(values.size());for(int value:values){if(lower.empty()||value<=lower.top())lower.push(value);else upper.push(value);if(lower.size()>upper.size()+1){upper.push(lower.top());lower.pop();}else if(upper.size()>lower.size()){lower.push(upper.top());upper.pop();}medians.push_back(lower.size()>upper.size()?lower.top():(static_cast<double>(lower.top())+upper.top())/2.0);}return medians;'
+    return '''class Heap {
+  constructor(before) { this.data = []; this.before = before; }
+  push(value) {
+    const data = this.data;
+    data.push(value);
+    let index = data.length - 1;
+    while (index > 0) {
+      const parent = Math.floor((index - 1) / 2);
+      if (!this.before(data[index], data[parent])) break;
+      [data[index], data[parent]] = [data[parent], data[index]];
+      index = parent;
+    }
+  }
+  pop() {
+    const data = this.data, result = data[0], last = data.pop();
+    if (data.length !== 0) {
+      data[0] = last;
+      let index = 0;
+      while (2 * index + 1 < data.length) {
+        let child = 2 * index + 1;
+        if (child + 1 < data.length && this.before(data[child + 1], data[child])) ++child;
+        if (!this.before(data[child], data[index])) break;
+        [data[index], data[child]] = [data[child], data[index]];
+        index = child;
+      }
+    }
+    return result;
+  }
+}
+const lower = new Heap((a,b) => a > b), upper = new Heap((a,b) => a < b), medians = [];
+for (const value of values) {
+  if (lower.data.length === 0 || value <= lower.data[0]) lower.push(value);
+  else upper.push(value);
+  if (lower.data.length > upper.data.length + 1) upper.push(lower.pop());
+  else if (upper.data.length > lower.data.length) lower.push(upper.pop());
+  medians.push(lower.data.length > upper.data.length ? lower.data[0] : (lower.data[0] + upper.data[0]) / 2);
+}
+return medians;'''

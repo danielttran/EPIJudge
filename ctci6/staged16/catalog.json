@@ -1610,5 +1610,69 @@
         "solutionCode": "class LRUCache {\n  private final int capacity;\n  private final LinkedHashMap<Integer, String> entries = new LinkedHashMap<>(16, 0.75f, true);\n  public LRUCache(int capacity) {\n    this.capacity = capacity;\n  }\n  public String Get(int key) {\n    return entries.get(key);\n  }\n  public void Set(int key, String value) {\n    entries.put(key, value);\n    if (entries.size() > capacity)\n      entries.remove(entries.keySet().iterator().next());\n  }\n}\n"
       }
     }
+  },
+  {
+    "ref": "16.26",
+    "method": "Calculate",
+    "params": [
+      [
+        "expression",
+        "s"
+      ]
+    ],
+    "result": "d",
+    "mutation": "none",
+    "description": "Evaluate an arithmetic expression containing nonnegative decimal integer literals and the binary operators +, -, * and /. Multiplication and division take precedence over addition and subtraction; operators of equal precedence associate left to right. Division is real division, not integer truncation. Return the finite numeric result.",
+    "constraints": [
+      "expression has grammar integer (operator integer)*, with 1..51 literals, each 0..100. An integer is 0 or a digit 1..9 followed by digits; leading zeros, whitespace, parentheses, unary signs and decimal literals are outside this input domain. Every divisor literal is positive.",
+      "Every multiplication/division chain intermediate and every left-to-right addition/subtraction subtotal has absolute value at most 1000000. Return a number within max(0.000001, 0.000000001*abs(exactResult)) of the mathematical result. Preserve the input string."
+    ],
+    "why": "Addition and subtraction separate an expression into signed multiplication/division chains. Keep the current chain in term and the sum of completed chains in total. A high-precedence operator extends term; a + or - commits the completed term and begins a new signed term. This preserves precedence without a stack or eval.",
+    "correctness": "After each parsed literal, total is the sum of all completed additive chains and term is the value of the current chain, with its leading additive sign. Multiplication or division applies to term immediately, preserving left associativity. At an additive boundary, the chain is complete, so transferring it to total cannot be affected by later high-precedence operations. Starting the next literal with its additive sign maintains the invariant. At end, total+term includes every chain exactly once and equals the required expression value. The stated magnitude bounds control floating-point error; division by zero is excluded.",
+    "walkthrough": "For 8/4/2+3*5-6, term becomes 8, then 2, then 1: division is left associative. The + commits 1 and starts 3; * extends it to 15. The - commits 15 and starts -6. The result is 1+15-6=10. For 1/2, the result is 0.5, not 0.",
+    "example": [
+      [
+        "8/4/2+3*5-6"
+      ],
+      10.0
+    ],
+    "time": "O(L) time for L expression characters; each digit/operator is read once.",
+    "space": "O(1) auxiliary scalar state beyond the immutable input and scalar result.",
+    "edges": [
+      "One literal, zero numerators and fractional division.",
+      "Mixed precedence, consecutive divisions and subtraction before a multiplication/division chain.",
+      "Maximum literals and bounded intermediate values; invalid syntax and zero divisors are outside the admitted expression domain."
+    ],
+    "related": "The public calculator returns double and parses binary arithmetic on integer literals without parentheses. This independent binding states grammar, real division, associativity and numeric tolerance explicitly.",
+    "id": "ctci6_16_26",
+    "title": "Calculator",
+    "testCount": 2177,
+    "languages": {
+      "csharp": {
+        "signature": "double Calculate(string expression)",
+        "starterCode": "public class Solution\n{\n    public double Calculate(string expression)\n    {\n        return 0.0;\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public double Calculate(string expression)\n    {\n        double total = 0, term = 0;\n        char op = '+';\n        int index = 0;\n        while (index < expression.Length)\n        {\n            int number = 0;\n            while (index < expression.Length && expression[index] >= '0' &&\n                   expression[index] <= '9')\n            {\n                number = number * 10 + expression[index] - '0';\n                index++;\n            }\n            if (op == '+')\n            {\n                total += term;\n                term = number;\n            }\n            else if (op == '-')\n            {\n                total += term;\n                term = -number;\n            }\n            else if (op == '*')\n                term *= number;\n            else\n                term /= number;\n            if (index < expression.Length)\n                op = expression[index++];\n        }\n        return total + term;\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function Calculate(expression)",
+        "starterCode": "function Calculate(expression) {\n  return 0.0;\n}\n",
+        "solutionCode": "function Calculate(expression) {\n  let total = 0,\n    term = 0,\n    operator = \"+\",\n    index = 0;\n  while (index < expression.length) {\n    let number = 0;\n    while (index < expression.length && expression[index] >= \"0\" && expression[index] <= \"9\") {\n      number = number * 10 + expression.charCodeAt(index) - 48;\n      ++index;\n    }\n    if (operator === \"+\") {\n      total += term;\n      term = number;\n    } else if (operator === \"-\") {\n      total += term;\n      term = -number;\n    } else if (operator === \"*\") term *= number;\n    else term /= number;\n    if (index < expression.length) operator = expression[index++];\n  }\n  return total + term;\n}\n"
+      },
+      "python": {
+        "signature": "def Calculate(expression: str) -> float",
+        "starterCode": "def Calculate(expression: str) -> float:\n    return 0.0\n",
+        "solutionCode": "def Calculate(expression: str) -> float:\n    total = 0.0\n    term = 0.0\n    operator = \"+\"\n    index = 0\n    while index < len(expression):\n        number = 0\n        while index < len(expression) and \"0\" <= expression[index] <= \"9\":\n            number = number * 10 + ord(expression[index]) - ord(\"0\")\n            index += 1\n        if operator == \"+\":\n            total += term\n            term = float(number)\n        elif operator == \"-\":\n            total += term\n            term = -float(number)\n        elif operator == \"*\":\n            term *= number\n        else:\n            term /= number\n        if index < len(expression):\n            operator = expression[index]\n            index += 1\n    return total + term\n"
+      },
+      "cpp": {
+        "signature": "double Calculate(const std::string& expression)",
+        "starterCode": "class Solution {\n public:\n  double Calculate(const std::string& expression) {\n    return 0.0;\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  double Calculate(const std::string& expression) {\n    double total = 0, term = 0;\n    char op = '+';\n    size_t index = 0;\n    while (index < expression.size()) {\n      int number = 0;\n      while (index < expression.size() && expression[index] >= '0' && expression[index] <= '9') {\n        number = number * 10 + expression[index] - '0';\n        ++index;\n      }\n      if (op == '+') {\n        total += term;\n        term = number;\n      } else if (op == '-') {\n        total += term;\n        term = -number;\n      } else if (op == '*')\n        term *= number;\n      else\n        term /= number;\n      if (index < expression.size())\n        op = expression[index++];\n    }\n    return total + term;\n  }\n};\n"
+      },
+      "java": {
+        "signature": "double Calculate(String expression)",
+        "starterCode": "class Solution {\n  public double Calculate(String expression) {\n    return 0.0;\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public double Calculate(String expression) {\n    double total = 0, term = 0;\n    char op = '+';\n    int index = 0;\n    while (index < expression.length()) {\n      int number = 0;\n      while (index < expression.length() && expression.charAt(index) >= '0'\n          && expression.charAt(index) <= '9') {\n        number = number * 10 + expression.charAt(index) - '0';\n        index++;\n      }\n      if (op == '+') {\n        total += term;\n        term = number;\n      } else if (op == '-') {\n        total += term;\n        term = -number;\n      } else if (op == '*')\n        term *= number;\n      else\n        term /= number;\n      if (index < expression.length())\n        op = expression.charAt(index++);\n    }\n    return total + term;\n  }\n}\n"
+      }
+    }
   }
 ]

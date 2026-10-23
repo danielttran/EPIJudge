@@ -1,7 +1,7 @@
 {
   "stage": "standalone-authoring-and-separate-module",
   "liveIntegration": "pending-current-module-receipts",
-  "reviewScope": "Twenty-one chapter-17 tasks and 105 actual language bodies, reviewed against explicit callable contracts.",
+  "reviewScope": "Twenty-two chapter-17 tasks and 110 actual language bodies, with real numeric result contracts.",
   "questions": [
     {
       "ref": "17.1",
@@ -79,6 +79,11 @@
       "review": "All languages infer n=input.length+2 and use scalar accumulators rather than a presence table or sorting. The combined XOR is nonzero because missing values are distinct. The n<=100000 bound makes low-bit isolation and all loop increments signed-safe. Independent set difference tests every small missing pair, shuffled input and three maximum-sized ranges. No sum-of-squares precision/overflow assumption remains."
     },
     {
+      "ref": "17.20",
+      "algorithm": "Two ordered heaps retaining all occurrences and producing one exact median after each insertion.",
+      "review": "Read all five actual bodies. C# PriorityQueue uses long negative priorities so int.MinValue is never negated as int. Java uses Comparator.reverseOrder rather than subtraction; C++ exposes the required queue header in visible source. Python negated heap keys are arbitrary-precision integers. JS implements both sift-up and sift-down locally because the language supplies no standard binary heap; it chooses the better child and handles the last-item pop. All five widen before the even-prefix sum; JS Number remains exact for sums of signed ints. Independent sorted-prefix insertion checks every prefix, full signed endpoints and 10000-value increasing/decreasing/duplicate/extreme streams. Returned arrays contain actual medians, not doubled integers."
+    },
+    {
       "ref": "17.21",
       "algorithm": "Two inward pointers settle the position adjacent to the lower established barrier.",
       "review": "All five use the same constant-space boundary invariant and leave heights unchanged. Empty input stops before indexing. Independent prefix/suffix maxima count per-position water and cover all small histograms, monotone arrays and the maximum 999800000 basin. This is total rainwater volume, not two-line container area; fixed bounded sums avoid language-specific overflow."
@@ -130,7 +135,8 @@
     "scripts/ctci6/test_text17.py",
     "scripts/ctci6/test_structured17.py",
     "EpiJudge.Tests/CtciStagingTests.cs",
-    "scripts/ctci6/test_groups_line.py"
+    "scripts/ctci6/test_groups_line.py",
+    "scripts/ctci6/test_numeric.py"
   ],
   "remainingAcceptance": [
     "remaining known content and classifications",

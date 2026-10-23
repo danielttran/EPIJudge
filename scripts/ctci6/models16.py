@@ -1,9 +1,12 @@
 """Reuse established typed bindings; the moderate batch adds integer-array results."""
 from models08 import declare as typed_declare, header as base_header, TYPES
 from models08 import neutral as collection_neutral
+import numeric
 from core import starter_body
 
 def neutral(spec,language):
+    if spec["result"]=="d":return "return 0.0" if language=="python" else "return 0.0;"
+    if spec["result"]=="ad":return "return new double[0];" if language=="java" else "return []" if language=="python" else "return [];" if language in ("csharp","javascript") else "return {};"
     if spec['ref']=='16.25':
         if language=='python':return 'class LRUCache:\n    def __init__(self, capacity: int):\n        pass\n    def Get(self, key: int) -> str | None:\n        return None\n    def Set(self, key: int, value: str) -> None:\n        pass\n'
         if language=='javascript':return 'class LRUCache {constructor(capacity){}Get(key){return null;}Set(key,value){}}'

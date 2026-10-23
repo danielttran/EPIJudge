@@ -36130,6 +36130,91 @@
     ]
   },
   {
+    "problemId": "ctci6_16_26",
+    "collection": "ctci6",
+    "language": "csharp",
+    "code": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic class Solution\n{\n    public double Calculate(string expression)\n    {\n        double total = 0, term = 0;\n        char op = '+';\n        int index = 0;\n        while (index < expression.Length)\n        {\n            int number = 0;\n            while (index < expression.Length && expression[index] >= '0' &&\n                   expression[index] <= '9')\n            {\n                number = number * 10 + expression[index] - '0';\n                index++;\n            }\n            if (op == '+')\n            {\n                total += term;\n                term = number;\n            }\n            else if (op == '-')\n            {\n                total += term;\n                term = -number;\n            }\n            else if (op == '*')\n                term *= number;\n            else\n                term /= number;\n            if (index < expression.Length)\n                op = expression[index++];\n        }\n        return total + term;\n    }\n}\n",
+    "explanation": "Addition and subtraction separate an expression into signed multiplication/division chains. Keep the current chain in term and the sum of completed chains in total. A high-precedence operator extends term; a + or - commits the completed term and begins a new signed term. This preserves precedence without a stack or eval.",
+    "timeComplexity": "O(L) time for L expression characters; each digit/operator is read once.",
+    "spaceComplexity": "O(1) auxiliary scalar state beyond the immutable input and scalar result.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.26. No affiliation is implied.",
+    "correctness": "After each parsed literal, total is the sum of all completed additive chains and term is the value of the current chain, with its leading additive sign. Multiplication or division applies to term immediately, preserving left associativity. At an additive boundary, the chain is complete, so transferring it to total cannot be affected by later high-precedence operations. Starting the next literal with its additive sign maintains the invariant. At end, total+term includes every chain exactly once and equals the required expression value. The stated magnitude bounds control floating-point error; division by zero is excluded.",
+    "walkthrough": "For 8/4/2+3*5-6, term becomes 8, then 2, then 1: division is left associative. The + commits 1 and starts 3; * extends it to 15. The - commits 15 and starts -6. The result is 1+15-6=10. For 1/2, the result is 0.5, not 0.",
+    "edgeCases": [
+      "One literal, zero numerators and fractional division.",
+      "Mixed precedence, consecutive divisions and subtraction before a multiplication/division chain.",
+      "Maximum literals and bounded intermediate values; invalid syntax and zero divisors are outside the admitted expression domain."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_26",
+    "collection": "ctci6",
+    "language": "javascript",
+    "code": "'use strict';\nfunction Calculate(expression) {\n  let total = 0,\n    term = 0,\n    operator = \"+\",\n    index = 0;\n  while (index < expression.length) {\n    let number = 0;\n    while (index < expression.length && expression[index] >= \"0\" && expression[index] <= \"9\") {\n      number = number * 10 + expression.charCodeAt(index) - 48;\n      ++index;\n    }\n    if (operator === \"+\") {\n      total += term;\n      term = number;\n    } else if (operator === \"-\") {\n      total += term;\n      term = -number;\n    } else if (operator === \"*\") term *= number;\n    else term /= number;\n    if (index < expression.length) operator = expression[index++];\n  }\n  return total + term;\n}\n\nmodule.exports = {Calculate};\n",
+    "explanation": "Addition and subtraction separate an expression into signed multiplication/division chains. Keep the current chain in term and the sum of completed chains in total. A high-precedence operator extends term; a + or - commits the completed term and begins a new signed term. This preserves precedence without a stack or eval.",
+    "timeComplexity": "O(L) time for L expression characters; each digit/operator is read once.",
+    "spaceComplexity": "O(1) auxiliary scalar state beyond the immutable input and scalar result.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.26. No affiliation is implied.",
+    "correctness": "After each parsed literal, total is the sum of all completed additive chains and term is the value of the current chain, with its leading additive sign. Multiplication or division applies to term immediately, preserving left associativity. At an additive boundary, the chain is complete, so transferring it to total cannot be affected by later high-precedence operations. Starting the next literal with its additive sign maintains the invariant. At end, total+term includes every chain exactly once and equals the required expression value. The stated magnitude bounds control floating-point error; division by zero is excluded.",
+    "walkthrough": "For 8/4/2+3*5-6, term becomes 8, then 2, then 1: division is left associative. The + commits 1 and starts 3; * extends it to 15. The - commits 15 and starts -6. The result is 1+15-6=10. For 1/2, the result is 0.5, not 0.",
+    "edgeCases": [
+      "One literal, zero numerators and fractional division.",
+      "Mixed precedence, consecutive divisions and subtraction before a multiplication/division chain.",
+      "Maximum literals and bounded intermediate values; invalid syntax and zero divisors are outside the admitted expression domain."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_26",
+    "collection": "ctci6",
+    "language": "python",
+    "code": "def Calculate(expression: str) -> float:\n    total = 0.0\n    term = 0.0\n    operator = \"+\"\n    index = 0\n    while index < len(expression):\n        number = 0\n        while index < len(expression) and \"0\" <= expression[index] <= \"9\":\n            number = number * 10 + ord(expression[index]) - ord(\"0\")\n            index += 1\n        if operator == \"+\":\n            total += term\n            term = float(number)\n        elif operator == \"-\":\n            total += term\n            term = -float(number)\n        elif operator == \"*\":\n            term *= number\n        else:\n            term /= number\n        if index < len(expression):\n            operator = expression[index]\n            index += 1\n    return total + term\n",
+    "explanation": "Addition and subtraction separate an expression into signed multiplication/division chains. Keep the current chain in term and the sum of completed chains in total. A high-precedence operator extends term; a + or - commits the completed term and begins a new signed term. This preserves precedence without a stack or eval.",
+    "timeComplexity": "O(L) time for L expression characters; each digit/operator is read once.",
+    "spaceComplexity": "O(1) auxiliary scalar state beyond the immutable input and scalar result.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.26. No affiliation is implied.",
+    "correctness": "After each parsed literal, total is the sum of all completed additive chains and term is the value of the current chain, with its leading additive sign. Multiplication or division applies to term immediately, preserving left associativity. At an additive boundary, the chain is complete, so transferring it to total cannot be affected by later high-precedence operations. Starting the next literal with its additive sign maintains the invariant. At end, total+term includes every chain exactly once and equals the required expression value. The stated magnitude bounds control floating-point error; division by zero is excluded.",
+    "walkthrough": "For 8/4/2+3*5-6, term becomes 8, then 2, then 1: division is left associative. The + commits 1 and starts 3; * extends it to 15. The - commits 15 and starts -6. The result is 1+15-6=10. For 1/2, the result is 0.5, not 0.",
+    "edgeCases": [
+      "One literal, zero numerators and fractional division.",
+      "Mixed precedence, consecutive divisions and subtraction before a multiplication/division chain.",
+      "Maximum literals and bounded intermediate values; invalid syntax and zero divisors are outside the admitted expression domain."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_26",
+    "collection": "ctci6",
+    "language": "cpp",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n#include <unordered_map>\n#include <unordered_set>\nclass Solution {\n public:\n  double Calculate(const std::string& expression) {\n    double total = 0, term = 0;\n    char op = '+';\n    size_t index = 0;\n    while (index < expression.size()) {\n      int number = 0;\n      while (index < expression.size() && expression[index] >= '0' && expression[index] <= '9') {\n        number = number * 10 + expression[index] - '0';\n        ++index;\n      }\n      if (op == '+') {\n        total += term;\n        term = number;\n      } else if (op == '-') {\n        total += term;\n        term = -number;\n      } else if (op == '*')\n        term *= number;\n      else\n        term /= number;\n      if (index < expression.size())\n        op = expression[index++];\n    }\n    return total + term;\n  }\n};\n",
+    "explanation": "Addition and subtraction separate an expression into signed multiplication/division chains. Keep the current chain in term and the sum of completed chains in total. A high-precedence operator extends term; a + or - commits the completed term and begins a new signed term. This preserves precedence without a stack or eval.",
+    "timeComplexity": "O(L) time for L expression characters; each digit/operator is read once.",
+    "spaceComplexity": "O(1) auxiliary scalar state beyond the immutable input and scalar result.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.26. No affiliation is implied.",
+    "correctness": "After each parsed literal, total is the sum of all completed additive chains and term is the value of the current chain, with its leading additive sign. Multiplication or division applies to term immediately, preserving left associativity. At an additive boundary, the chain is complete, so transferring it to total cannot be affected by later high-precedence operations. Starting the next literal with its additive sign maintains the invariant. At end, total+term includes every chain exactly once and equals the required expression value. The stated magnitude bounds control floating-point error; division by zero is excluded.",
+    "walkthrough": "For 8/4/2+3*5-6, term becomes 8, then 2, then 1: division is left associative. The + commits 1 and starts 3; * extends it to 15. The - commits 15 and starts -6. The result is 1+15-6=10. For 1/2, the result is 0.5, not 0.",
+    "edgeCases": [
+      "One literal, zero numerators and fractional division.",
+      "Mixed precedence, consecutive divisions and subtraction before a multiplication/division chain.",
+      "Maximum literals and bounded intermediate values; invalid syntax and zero divisors are outside the admitted expression domain."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_26",
+    "collection": "ctci6",
+    "language": "java",
+    "code": "import java.util.*;\nclass Solution {\n  public double Calculate(String expression) {\n    double total = 0, term = 0;\n    char op = '+';\n    int index = 0;\n    while (index < expression.length()) {\n      int number = 0;\n      while (index < expression.length() && expression.charAt(index) >= '0'\n          && expression.charAt(index) <= '9') {\n        number = number * 10 + expression.charAt(index) - '0';\n        index++;\n      }\n      if (op == '+') {\n        total += term;\n        term = number;\n      } else if (op == '-') {\n        total += term;\n        term = -number;\n      } else if (op == '*')\n        term *= number;\n      else\n        term /= number;\n      if (index < expression.length())\n        op = expression.charAt(index++);\n    }\n    return total + term;\n  }\n}\n",
+    "explanation": "Addition and subtraction separate an expression into signed multiplication/division chains. Keep the current chain in term and the sum of completed chains in total. A high-precedence operator extends term; a + or - commits the completed term and begins a new signed term. This preserves precedence without a stack or eval.",
+    "timeComplexity": "O(L) time for L expression characters; each digit/operator is read once.",
+    "spaceComplexity": "O(1) auxiliary scalar state beyond the immutable input and scalar result.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.26. No affiliation is implied.",
+    "correctness": "After each parsed literal, total is the sum of all completed additive chains and term is the value of the current chain, with its leading additive sign. Multiplication or division applies to term immediately, preserving left associativity. At an additive boundary, the chain is complete, so transferring it to total cannot be affected by later high-precedence operations. Starting the next literal with its additive sign maintains the invariant. At end, total+term includes every chain exactly once and equals the required expression value. The stated magnitude bounds control floating-point error; division by zero is excluded.",
+    "walkthrough": "For 8/4/2+3*5-6, term becomes 8, then 2, then 1: division is left associative. The + commits 1 and starts 3; * extends it to 15. The - commits 15 and starts -6. The result is 1+15-6=10. For 1/2, the result is 0.5, not 0.",
+    "edgeCases": [
+      "One literal, zero numerators and fractional division.",
+      "Mixed precedence, consecutive divisions and subtraction before a multiplication/division chain.",
+      "Maximum literals and bounded intermediate values; invalid syntax and zero divisors are outside the admitted expression domain."
+    ]
+  },
+  {
     "problemId": "ctci6_17_1",
     "collection": "ctci6",
     "language": "csharp",
@@ -37332,6 +37417,91 @@
     "edgeCases": [
       "Empty input, missing endpoints, arbitrary input order.",
       "The largest n; arithmetic square-sum formulas would exceed ordinary int bounds."
+    ]
+  },
+  {
+    "problemId": "ctci6_17_20",
+    "collection": "ctci6",
+    "language": "csharp",
+    "code": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic class Solution\n{\n    public double[] ContinuousMedians(int[] values)\n    {\n        var lower = new PriorityQueue<int, long>();\n        var upper = new PriorityQueue<int, long>();\n        var medians = new double[values.Length];\n        for (int i = 0; i < values.Length; ++i)\n        {\n            int value = values[i];\n            if (lower.Count == 0 || value <= lower.Peek())\n                lower.Enqueue(value, -(long)value);\n            else\n                upper.Enqueue(value, value);\n            if (lower.Count > upper.Count + 1)\n            {\n                int moved = lower.Dequeue();\n                upper.Enqueue(moved, moved);\n            }\n            else if (upper.Count > lower.Count)\n            {\n                int moved = upper.Dequeue();\n                lower.Enqueue(moved, -(long)moved);\n            }\n            medians[i] = lower.Count > upper.Count ? lower.Peek()\n                                                   : ((double)lower.Peek() + upper.Peek()) / 2.0;\n        }\n        return medians;\n    }\n}\n",
+    "explanation": "Keep the smaller half in a max heap and the larger half in a min heap. Their roots expose the two values surrounding the middle, so a median query needs no sorting. Balance sizes so the lower heap has either the same count or one extra occurrence; its root alone is then the odd median.",
+    "timeComplexity": "O(n log(n+1)) total insertion time and O(1) median work per prefix.",
+    "spaceComplexity": "O(n) heap storage plus O(n) returned medians; both heaps retain every inserted occurrence.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.20. No affiliation is implied.",
+    "correctness": "Insert each new value into the lower heap when it is no larger than its maximum, otherwise into the upper heap. This preserves that every lower value is at most every upper value. Moving a root between heaps restores size difference zero or one while preserving that order. For odd prefix length, the lower root has exactly half the other occurrences on either side and is the median. For even length, the lower maximum and upper minimum are the two central occurrences, so their widened average is the required median. Each insertion contributes one occurrence and each output observes the invariant after rebalancing.",
+    "walkthrough": "For [5,1,9,2], the prefixes have sorted forms [5], [1,5], [1,5,9] and [1,2,5,9]. Medians are [5,3,5,3.5]. For [-2147483648,2147483647], the second median is -0.5; widening before summing prevents overflow.",
+    "edgeCases": [
+      "Empty stream, single element and equal repeated values.",
+      "Increasing/decreasing streams, alternating extremes and negative half-integer medians.",
+      "Full signed endpoints and 10000 insertions."
+    ]
+  },
+  {
+    "problemId": "ctci6_17_20",
+    "collection": "ctci6",
+    "language": "javascript",
+    "code": "'use strict';\nfunction ContinuousMedians(values) {\n  class Heap {\n    constructor(before) {\n      this.data = [];\n      this.before = before;\n    }\n    push(value) {\n      const data = this.data;\n      data.push(value);\n      let index = data.length - 1;\n      while (index > 0) {\n        const parent = Math.floor((index - 1) / 2);\n        if (!this.before(data[index], data[parent])) break;\n        [data[index], data[parent]] = [data[parent], data[index]];\n        index = parent;\n      }\n    }\n    pop() {\n      const data = this.data,\n        result = data[0],\n        last = data.pop();\n      if (data.length !== 0) {\n        data[0] = last;\n        let index = 0;\n        while (2 * index + 1 < data.length) {\n          let child = 2 * index + 1;\n          if (child + 1 < data.length && this.before(data[child + 1], data[child])) ++child;\n          if (!this.before(data[child], data[index])) break;\n          [data[index], data[child]] = [data[child], data[index]];\n          index = child;\n        }\n      }\n      return result;\n    }\n  }\n  const lower = new Heap((a, b) => a > b),\n    upper = new Heap((a, b) => a < b),\n    medians = [];\n  for (const value of values) {\n    if (lower.data.length === 0 || value <= lower.data[0]) lower.push(value);\n    else upper.push(value);\n    if (lower.data.length > upper.data.length + 1) upper.push(lower.pop());\n    else if (upper.data.length > lower.data.length) lower.push(upper.pop());\n    medians.push(\n      lower.data.length > upper.data.length ? lower.data[0] : (lower.data[0] + upper.data[0]) / 2,\n    );\n  }\n  return medians;\n}\n\nmodule.exports = {ContinuousMedians};\n",
+    "explanation": "Keep the smaller half in a max heap and the larger half in a min heap. Their roots expose the two values surrounding the middle, so a median query needs no sorting. Balance sizes so the lower heap has either the same count or one extra occurrence; its root alone is then the odd median.",
+    "timeComplexity": "O(n log(n+1)) total insertion time and O(1) median work per prefix.",
+    "spaceComplexity": "O(n) heap storage plus O(n) returned medians; both heaps retain every inserted occurrence.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.20. No affiliation is implied.",
+    "correctness": "Insert each new value into the lower heap when it is no larger than its maximum, otherwise into the upper heap. This preserves that every lower value is at most every upper value. Moving a root between heaps restores size difference zero or one while preserving that order. For odd prefix length, the lower root has exactly half the other occurrences on either side and is the median. For even length, the lower maximum and upper minimum are the two central occurrences, so their widened average is the required median. Each insertion contributes one occurrence and each output observes the invariant after rebalancing.",
+    "walkthrough": "For [5,1,9,2], the prefixes have sorted forms [5], [1,5], [1,5,9] and [1,2,5,9]. Medians are [5,3,5,3.5]. For [-2147483648,2147483647], the second median is -0.5; widening before summing prevents overflow.",
+    "edgeCases": [
+      "Empty stream, single element and equal repeated values.",
+      "Increasing/decreasing streams, alternating extremes and negative half-integer medians.",
+      "Full signed endpoints and 10000 insertions."
+    ]
+  },
+  {
+    "problemId": "ctci6_17_20",
+    "collection": "ctci6",
+    "language": "python",
+    "code": "def ContinuousMedians(values: list[int]) -> list[float]:\n    from heapq import heappush, heappop\n\n    lower = []\n    upper = []\n    medians = []\n    for value in values:\n        if not lower or value <= -lower[0]:\n            heappush(lower, -value)\n        else:\n            heappush(upper, value)\n        if len(lower) > len(upper) + 1:\n            heappush(upper, -heappop(lower))\n        elif len(upper) > len(lower):\n            heappush(lower, -heappop(upper))\n        medians.append(\n            float(-lower[0]) if len(lower) > len(upper) else (-lower[0] + upper[0]) / 2.0\n        )\n    return medians\n",
+    "explanation": "Keep the smaller half in a max heap and the larger half in a min heap. Their roots expose the two values surrounding the middle, so a median query needs no sorting. Balance sizes so the lower heap has either the same count or one extra occurrence; its root alone is then the odd median.",
+    "timeComplexity": "O(n log(n+1)) total insertion time and O(1) median work per prefix.",
+    "spaceComplexity": "O(n) heap storage plus O(n) returned medians; both heaps retain every inserted occurrence.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.20. No affiliation is implied.",
+    "correctness": "Insert each new value into the lower heap when it is no larger than its maximum, otherwise into the upper heap. This preserves that every lower value is at most every upper value. Moving a root between heaps restores size difference zero or one while preserving that order. For odd prefix length, the lower root has exactly half the other occurrences on either side and is the median. For even length, the lower maximum and upper minimum are the two central occurrences, so their widened average is the required median. Each insertion contributes one occurrence and each output observes the invariant after rebalancing.",
+    "walkthrough": "For [5,1,9,2], the prefixes have sorted forms [5], [1,5], [1,5,9] and [1,2,5,9]. Medians are [5,3,5,3.5]. For [-2147483648,2147483647], the second median is -0.5; widening before summing prevents overflow.",
+    "edgeCases": [
+      "Empty stream, single element and equal repeated values.",
+      "Increasing/decreasing streams, alternating extremes and negative half-integer medians.",
+      "Full signed endpoints and 10000 insertions."
+    ]
+  },
+  {
+    "problemId": "ctci6_17_20",
+    "collection": "ctci6",
+    "language": "cpp",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n#include <queue>\nclass Solution {\n public:\n  std::vector<double> ContinuousMedians(const std::vector<int>& values) {\n    std::priority_queue<int> lower;\n    std::priority_queue<int, std::vector<int>, std::greater<int>> upper;\n    std::vector<double> medians;\n    medians.reserve(values.size());\n    for (int value : values) {\n      if (lower.empty() || value <= lower.top())\n        lower.push(value);\n      else\n        upper.push(value);\n      if (lower.size() > upper.size() + 1) {\n        upper.push(lower.top());\n        lower.pop();\n      } else if (upper.size() > lower.size()) {\n        lower.push(upper.top());\n        upper.pop();\n      }\n      medians.push_back(lower.size() > upper.size()\n                            ? lower.top()\n                            : (static_cast<double>(lower.top()) + upper.top()) / 2.0);\n    }\n    return medians;\n  }\n};\n",
+    "explanation": "Keep the smaller half in a max heap and the larger half in a min heap. Their roots expose the two values surrounding the middle, so a median query needs no sorting. Balance sizes so the lower heap has either the same count or one extra occurrence; its root alone is then the odd median.",
+    "timeComplexity": "O(n log(n+1)) total insertion time and O(1) median work per prefix.",
+    "spaceComplexity": "O(n) heap storage plus O(n) returned medians; both heaps retain every inserted occurrence.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.20. No affiliation is implied.",
+    "correctness": "Insert each new value into the lower heap when it is no larger than its maximum, otherwise into the upper heap. This preserves that every lower value is at most every upper value. Moving a root between heaps restores size difference zero or one while preserving that order. For odd prefix length, the lower root has exactly half the other occurrences on either side and is the median. For even length, the lower maximum and upper minimum are the two central occurrences, so their widened average is the required median. Each insertion contributes one occurrence and each output observes the invariant after rebalancing.",
+    "walkthrough": "For [5,1,9,2], the prefixes have sorted forms [5], [1,5], [1,5,9] and [1,2,5,9]. Medians are [5,3,5,3.5]. For [-2147483648,2147483647], the second median is -0.5; widening before summing prevents overflow.",
+    "edgeCases": [
+      "Empty stream, single element and equal repeated values.",
+      "Increasing/decreasing streams, alternating extremes and negative half-integer medians.",
+      "Full signed endpoints and 10000 insertions."
+    ]
+  },
+  {
+    "problemId": "ctci6_17_20",
+    "collection": "ctci6",
+    "language": "java",
+    "code": "import java.util.*;\nclass Solution {\n  public double[] ContinuousMedians(int[] values) {\n    var lower = new PriorityQueue<Integer>(Comparator.reverseOrder());\n    var upper = new PriorityQueue<Integer>();\n    double[] medians = new double[values.length];\n    for (int i = 0; i < values.length; ++i) {\n      int value = values[i];\n      if (lower.isEmpty() || value <= lower.peek())\n        lower.add(value);\n      else\n        upper.add(value);\n      if (lower.size() > upper.size() + 1)\n        upper.add(lower.remove());\n      else if (upper.size() > lower.size())\n        lower.add(upper.remove());\n      medians[i] =\n          lower.size() > upper.size() ? lower.peek() : ((double) lower.peek() + upper.peek()) / 2.0;\n    }\n    return medians;\n  }\n}\n",
+    "explanation": "Keep the smaller half in a max heap and the larger half in a min heap. Their roots expose the two values surrounding the middle, so a median query needs no sorting. Balance sizes so the lower heap has either the same count or one extra occurrence; its root alone is then the odd median.",
+    "timeComplexity": "O(n log(n+1)) total insertion time and O(1) median work per prefix.",
+    "spaceComplexity": "O(n) heap storage plus O(n) returned medians; both heaps retain every inserted occurrence.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.20. No affiliation is implied.",
+    "correctness": "Insert each new value into the lower heap when it is no larger than its maximum, otherwise into the upper heap. This preserves that every lower value is at most every upper value. Moving a root between heaps restores size difference zero or one while preserving that order. For odd prefix length, the lower root has exactly half the other occurrences on either side and is the median. For even length, the lower maximum and upper minimum are the two central occurrences, so their widened average is the required median. Each insertion contributes one occurrence and each output observes the invariant after rebalancing.",
+    "walkthrough": "For [5,1,9,2], the prefixes have sorted forms [5], [1,5], [1,5,9] and [1,2,5,9]. Medians are [5,3,5,3.5]. For [-2147483648,2147483647], the second median is -0.5; widening before summing prevents overflow.",
+    "edgeCases": [
+      "Empty stream, single element and equal repeated values.",
+      "Increasing/decreasing streams, alternating extremes and negative half-integer medians.",
+      "Full signed endpoints and 10000 insertions."
     ]
   },
   {

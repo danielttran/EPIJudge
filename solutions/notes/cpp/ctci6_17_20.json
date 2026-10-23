@@ -1,0 +1,29 @@
+{
+  "explanation": "Keep the smaller half in a max heap and the larger half in a min heap. Their roots expose the two values surrounding the middle, so a median query needs no sorting. Balance sizes so the lower heap has either the same count or one extra occurrence; its root alone is then the odd median.",
+  "correctness": "Insert each new value into the lower heap when it is no larger than its maximum, otherwise into the upper heap. This preserves that every lower value is at most every upper value. Moving a root between heaps restores size difference zero or one while preserving that order. For odd prefix length, the lower root has exactly half the other occurrences on either side and is the median. For even length, the lower maximum and upper minimum are the two central occurrences, so their widened average is the required median. Each insertion contributes one occurrence and each output observes the invariant after rebalancing.",
+  "walkthrough": "For [5,1,9,2], the prefixes have sorted forms [5], [1,5], [1,5,9] and [1,2,5,9]. Medians are [5,3,5,3.5]. For [-2147483648,2147483647], the second median is -0.5; widening before summing prevents overflow.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        5,
+        1,
+        9,
+        2
+      ]
+    ],
+    "expected": [
+      5,
+      3,
+      5,
+      3.5
+    ]
+  },
+  "timeComplexity": "O(n log(n+1)) total insertion time and O(1) median work per prefix.",
+  "spaceComplexity": "O(n) heap storage plus O(n) returned medians; both heaps retain every inserted occurrence.",
+  "edgeCases": [
+    "Empty stream, single element and equal repeated values.",
+    "Increasing/decreasing streams, alternating extremes and negative half-integer medians.",
+    "Full signed endpoints and 10000 insertions."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.20. No affiliation is implied."
+}

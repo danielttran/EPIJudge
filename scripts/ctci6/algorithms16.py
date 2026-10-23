@@ -455,3 +455,35 @@ return best'''
     if language=='csharp':return 'if(points.Length==0)return [];int Gcd(int a,int b){while(b!=0){int next=a%b;a=b;b=next;}return a;}int[] best=[1,0,-points[0][0]];int bestCount=0;for(int anchor=0;anchor<points.Length;++anchor){var groups=new Dictionary<(int Dy,int Dx),int>();int duplicates=0,x=points[anchor][0],y=points[anchor][1];for(int other=anchor+1;other<points.Length;++other){int dx=points[other][0]-x,dy=points[other][1]-y;if(dx==0&&dy==0){++duplicates;continue;}int divisor=Gcd(Math.Abs(dx),Math.Abs(dy));dx/=divisor;dy/=divisor;if(dx<0||(dx==0&&dy<0)){dx=-dx;dy=-dy;}groups.TryGetValue((dy,dx),out int count);groups[(dy,dx)]=count+1;}foreach(var entry in groups)if(entry.Value+duplicates+1>bestCount){bestCount=entry.Value+duplicates+1;int a=entry.Key.Dy,b=-entry.Key.Dx,c=-a*x-b*y;if(a<0||(a==0&&b<0)){a=-a;b=-b;c=-c;}best=[a,b,c];}}return best;'
     if language=='java':return 'if(points.length==0)return new int[0];class MathHelper {int gcd(int a,int b){while(b!=0){int next=a%b;a=b;b=next;}return a;}}var math=new MathHelper();int[] best={1,0,-points[0][0]};int bestCount=0;for(int anchor=0;anchor<points.length;++anchor){Map<Integer,Integer> groups=new HashMap<>();int duplicates=0,x=points[anchor][0],y=points[anchor][1];for(int other=anchor+1;other<points.length;++other){int dx=points[other][0]-x,dy=points[other][1]-y;if(dx==0&&dy==0){++duplicates;continue;}int divisor=math.gcd(Math.abs(dx),Math.abs(dy));dx/=divisor;dy/=divisor;if(dx<0||(dx==0&&dy<0)){dx=-dx;dy=-dy;}int key=(dy+2000)*4001+dx;groups.put(key,groups.getOrDefault(key,0)+1);}for(var entry:groups.entrySet())if(entry.getValue()+duplicates+1>bestCount){bestCount=entry.getValue()+duplicates+1;int a=entry.getKey()/4001-2000,b=-(entry.getKey()%4001),c=-a*x-b*y;if(a<0||(a==0&&b<0)){a=-a;b=-b;c=-c;}best=new int[]{a,b,c};}}return best;'
     return 'if(points.empty())return {};auto gcd=[](int a,int b){while(b!=0){int next=a%b;a=b;b=next;}return a;};std::vector<int> best{1,0,-points[0][0]};int bestCount=0;for(size_t anchor=0;anchor<points.size();++anchor){std::unordered_map<int,int> groups;int duplicates=0,x=points[anchor][0],y=points[anchor][1];for(size_t other=anchor+1;other<points.size();++other){int dx=points[other][0]-x,dy=points[other][1]-y;if(dx==0&&dy==0){++duplicates;continue;}int divisor=gcd(dx<0?-dx:dx,dy<0?-dy:dy);dx/=divisor;dy/=divisor;if(dx<0||(dx==0&&dy<0)){dx=-dx;dy=-dy;}++groups[(dy+2000)*4001+dx];}for(const auto& entry:groups)if(entry.second+duplicates+1>bestCount){bestCount=entry.second+duplicates+1;int a=entry.first/4001-2000,b=-(entry.first%4001),c=-a*x-b*y;if(a<0||(a==0&&b<0)){a=-a;b=-b;c=-c;}best={a,b,c};}}return best;'
+
+_previous_numeric_body=body
+
+def body(ref,language):
+    if ref!='16.26':return _previous_numeric_body(ref,language)
+    if language=='python':return '''total = 0.0
+term = 0.0
+operator = '+'
+index = 0
+while index < len(expression):
+    number = 0
+    while index < len(expression) and '0' <= expression[index] <= '9':
+        number = number * 10 + ord(expression[index]) - ord('0')
+        index += 1
+    if operator == '+':
+        total += term
+        term = float(number)
+    elif operator == '-':
+        total += term
+        term = -float(number)
+    elif operator == '*':
+        term *= number
+    else:
+        term /= number
+    if index < len(expression):
+        operator = expression[index]
+        index += 1
+return total + term'''
+    if language=='javascript':return "let total=0,term=0,operator='+',index=0;while(index<expression.length){let number=0;while(index<expression.length&&expression[index]>='0'&&expression[index]<='9'){number=number*10+expression.charCodeAt(index)-48;++index;}if(operator==='+'){total+=term;term=number;}else if(operator==='-'){total+=term;term=-number;}else if(operator==='*')term*=number;else term/=number;if(index<expression.length)operator=expression[index++];}return total+term;"
+    if language=='csharp':return "double total=0,term=0;char op='+';int index=0;while(index<expression.Length){int number=0;while(index<expression.Length&&expression[index]>='0'&&expression[index]<='9'){number=number*10+expression[index]-'0';index++;}if(op=='+'){total+=term;term=number;}else if(op=='-'){total+=term;term=-number;}else if(op=='*')term*=number;else term/=number;if(index<expression.Length)op=expression[index++];}return total+term;"
+    if language=='java':return "double total=0,term=0;char op='+';int index=0;while(index<expression.length()){int number=0;while(index<expression.length()&&expression.charAt(index)>='0'&&expression.charAt(index)<='9'){number=number*10+expression.charAt(index)-'0';index++;}if(op=='+'){total+=term;term=number;}else if(op=='-'){total+=term;term=-number;}else if(op=='*')term*=number;else term/=number;if(index<expression.length())op=expression.charAt(index++);}return total+term;"
+    return "double total=0,term=0;char op='+';size_t index=0;while(index<expression.size()){int number=0;while(index<expression.size()&&expression[index]>='0'&&expression[index]<='9'){number=number*10+expression[index]-'0';++index;}if(op=='+'){total+=term;term=number;}else if(op=='-'){total+=term;term=-number;}else if(op=='*')term*=number;else term/=number;if(index<expression.size())op=expression[index++];}return total+term;"

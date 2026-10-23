@@ -1,0 +1,19 @@
+{
+  "explanation": "Addition and subtraction separate an expression into signed multiplication/division chains. Keep the current chain in term and the sum of completed chains in total. A high-precedence operator extends term; a + or - commits the completed term and begins a new signed term. This preserves precedence without a stack or eval.",
+  "correctness": "After each parsed literal, total is the sum of all completed additive chains and term is the value of the current chain, with its leading additive sign. Multiplication or division applies to term immediately, preserving left associativity. At an additive boundary, the chain is complete, so transferring it to total cannot be affected by later high-precedence operations. Starting the next literal with its additive sign maintains the invariant. At end, total+term includes every chain exactly once and equals the required expression value. The stated magnitude bounds control floating-point error; division by zero is excluded.",
+  "walkthrough": "For 8/4/2+3*5-6, term becomes 8, then 2, then 1: division is left associative. The + commits 1 and starts 3; * extends it to 15. The - commits 15 and starts -6. The result is 1+15-6=10. For 1/2, the result is 0.5, not 0.",
+  "walkthroughCase": {
+    "arguments": [
+      "8/4/2+3*5-6"
+    ],
+    "expected": 10.0
+  },
+  "timeComplexity": "O(L) time for L expression characters; each digit/operator is read once.",
+  "spaceComplexity": "O(1) auxiliary scalar state beyond the immutable input and scalar result.",
+  "edgeCases": [
+    "One literal, zero numerators and fractional division.",
+    "Mixed precedence, consecutive divisions and subtraction before a multiplication/division chain.",
+    "Maximum literals and bounded intermediate values; invalid syntax and zero divisors are outside the admitted expression domain."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.26. No affiliation is implied."
+}

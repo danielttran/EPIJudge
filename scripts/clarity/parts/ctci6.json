@@ -6504,6 +6504,55 @@
         ]
       }
     },
+    "ctci6_16_26": {
+      "description": "Evaluate an arithmetic expression containing nonnegative decimal integer literals and the binary operators +, -, * and /. Multiplication and division take precedence over addition and subtraction; operators of equal precedence associate left to right. Division is real division, not integer truncation. Return the finite numeric result.",
+      "constraints": [
+        "expression has grammar integer (operator integer)*, with 1..51 literals, each 0..100. An integer is 0 or a digit 1..9 followed by digits; leading zeros, whitespace, parentheses, unary signs and decimal literals are outside this input domain. Every divisor literal is positive.",
+        "Every multiplication/division chain intermediate and every left-to-right addition/subtraction subtotal has absolute value at most 1000000. Return a number within max(0.000001, 0.000000001*abs(exactResult)) of the mathematical result. Preserve the input string."
+      ],
+      "examples": [
+        {
+          "input": "[\"8/4/2+3*5-6\"]",
+          "output": "10.0",
+          "explanation": "For 8/4/2+3*5-6, term becomes 8, then 2, then 1: division is left associative. The + commits 1 and starts 3; * extends it to 15. The - commits 15 and starts -6. The result is 1+15-6=10. For 1/2, the result is 0.5, not 0."
+        }
+      ],
+      "exampleCases": [
+        {
+          "arguments": [
+            "8/4/2+3*5-6"
+          ],
+          "expected": 10.0
+        }
+      ],
+      "contracts": {
+        "csharp": [
+          "Callable: double Calculate(string expression)",
+          "expression has grammar integer (operator integer)*, with 1..51 literals, each 0..100. An integer is 0 or a digit 1..9 followed by digits; leading zeros, whitespace, parentheses, unary signs and decimal literals are outside this input domain. Every divisor literal is positive.",
+          "Every multiplication/division chain intermediate and every left-to-right addition/subtraction subtotal has absolute value at most 1000000. Return a number within max(0.000001, 0.000000001*abs(exactResult)) of the mathematical result. Preserve the input string."
+        ],
+        "javascript": [
+          "Callable: function Calculate(expression)",
+          "expression has grammar integer (operator integer)*, with 1..51 literals, each 0..100. An integer is 0 or a digit 1..9 followed by digits; leading zeros, whitespace, parentheses, unary signs and decimal literals are outside this input domain. Every divisor literal is positive.",
+          "Every multiplication/division chain intermediate and every left-to-right addition/subtraction subtotal has absolute value at most 1000000. Return a number within max(0.000001, 0.000000001*abs(exactResult)) of the mathematical result. Preserve the input string."
+        ],
+        "python": [
+          "Callable: def Calculate(expression: str) -> float",
+          "expression has grammar integer (operator integer)*, with 1..51 literals, each 0..100. An integer is 0 or a digit 1..9 followed by digits; leading zeros, whitespace, parentheses, unary signs and decimal literals are outside this input domain. Every divisor literal is positive.",
+          "Every multiplication/division chain intermediate and every left-to-right addition/subtraction subtotal has absolute value at most 1000000. Return a number within max(0.000001, 0.000000001*abs(exactResult)) of the mathematical result. Preserve the input string."
+        ],
+        "cpp": [
+          "Callable: double Calculate(const std::string& expression)",
+          "expression has grammar integer (operator integer)*, with 1..51 literals, each 0..100. An integer is 0 or a digit 1..9 followed by digits; leading zeros, whitespace, parentheses, unary signs and decimal literals are outside this input domain. Every divisor literal is positive.",
+          "Every multiplication/division chain intermediate and every left-to-right addition/subtraction subtotal has absolute value at most 1000000. Return a number within max(0.000001, 0.000000001*abs(exactResult)) of the mathematical result. Preserve the input string."
+        ],
+        "java": [
+          "Callable: double Calculate(String expression)",
+          "expression has grammar integer (operator integer)*, with 1..51 literals, each 0..100. An integer is 0 or a digit 1..9 followed by digits; leading zeros, whitespace, parentheses, unary signs and decimal literals are outside this input domain. Every divisor literal is positive.",
+          "Every multiplication/division chain intermediate and every left-to-right addition/subtraction subtotal has absolute value at most 1000000. Return a number within max(0.000001, 0.000000001*abs(exactResult)) of the mathematical result. Preserve the input string."
+        ]
+      }
+    },
     "ctci6_17_1": {
       "description": "Add two signed 32-bit integers without using arithmetic operators or an arithmetic helper. Return the signed 32-bit two's-complement sum: overflow wraps modulo 2^32, exactly as ordinary Java int addition. Use bit operations to combine sum bits and carries.",
       "constraints": [
@@ -7391,6 +7440,65 @@
           "Callable: int[] MissingTwo(int[] values)",
           "2 <= n <= 100000. Input entries are distinct, lie in 1..n and omit exactly two values. No duplicates or out-of-range entries are admitted. For an empty input n=2 and the answer is [1,2].",
           "Use O(1) auxiliary storage besides the two returned values. Do not sort or allocate a presence table proportional to n. Increasing result order is an explicit deterministic convention."
+        ]
+      }
+    },
+    "ctci6_17_20": {
+      "description": "Process an integer stream in its given order and return the median immediately after each insertion. The median of an odd-sized prefix is its middle value in sorted order. For an even-sized prefix it is the arithmetic mean of the two middle values, using real arithmetic. Return one numeric value per input element; empty input returns [].",
+      "constraints": [
+        "values is a nonnull array of 0..10000 signed 32-bit integers. Duplicates count as separate stream occurrences. Preserve the input array, order and every value.",
+        "Return actual medians, not doubled medians or truncated integers. Each admitted median is an integer or half-integer and is exactly representable as a double/Number/float. The result must match these values exactly. Compute even-prefix means without overflowing a signed 32-bit sum."
+      ],
+      "examples": [
+        {
+          "input": "[[5, 1, 9, 2]]",
+          "output": "[5, 3, 5, 3.5]",
+          "explanation": "For [5,1,9,2], the prefixes have sorted forms [5], [1,5], [1,5,9] and [1,2,5,9]. Medians are [5,3,5,3.5]. For [-2147483648,2147483647], the second median is -0.5; widening before summing prevents overflow."
+        }
+      ],
+      "exampleCases": [
+        {
+          "arguments": [
+            [
+              5,
+              1,
+              9,
+              2
+            ]
+          ],
+          "expected": [
+            5,
+            3,
+            5,
+            3.5
+          ]
+        }
+      ],
+      "contracts": {
+        "csharp": [
+          "Callable: double[] ContinuousMedians(int[] values)",
+          "values is a nonnull array of 0..10000 signed 32-bit integers. Duplicates count as separate stream occurrences. Preserve the input array, order and every value.",
+          "Return actual medians, not doubled medians or truncated integers. Each admitted median is an integer or half-integer and is exactly representable as a double/Number/float. The result must match these values exactly. Compute even-prefix means without overflowing a signed 32-bit sum."
+        ],
+        "javascript": [
+          "Callable: function ContinuousMedians(values)",
+          "values is a nonnull array of 0..10000 signed 32-bit integers. Duplicates count as separate stream occurrences. Preserve the input array, order and every value.",
+          "Return actual medians, not doubled medians or truncated integers. Each admitted median is an integer or half-integer and is exactly representable as a double/Number/float. The result must match these values exactly. Compute even-prefix means without overflowing a signed 32-bit sum."
+        ],
+        "python": [
+          "Callable: def ContinuousMedians(values: list[int]) -> list[float]",
+          "values is a nonnull array of 0..10000 signed 32-bit integers. Duplicates count as separate stream occurrences. Preserve the input array, order and every value.",
+          "Return actual medians, not doubled medians or truncated integers. Each admitted median is an integer or half-integer and is exactly representable as a double/Number/float. The result must match these values exactly. Compute even-prefix means without overflowing a signed 32-bit sum."
+        ],
+        "cpp": [
+          "Callable: std::vector<double> ContinuousMedians(const std::vector<int>& values)",
+          "values is a nonnull array of 0..10000 signed 32-bit integers. Duplicates count as separate stream occurrences. Preserve the input array, order and every value.",
+          "Return actual medians, not doubled medians or truncated integers. Each admitted median is an integer or half-integer and is exactly representable as a double/Number/float. The result must match these values exactly. Compute even-prefix means without overflowing a signed 32-bit sum."
+        ],
+        "java": [
+          "Callable: double[] ContinuousMedians(int[] values)",
+          "values is a nonnull array of 0..10000 signed 32-bit integers. Duplicates count as separate stream occurrences. Preserve the input array, order and every value.",
+          "Return actual medians, not doubled medians or truncated integers. Each admitted median is an integer or half-integer and is exactly representable as a double/Number/float. The result must match these values exactly. Compute even-prefix means without overflowing a signed 32-bit sum."
         ]
       }
     },

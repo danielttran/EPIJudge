@@ -589,4 +589,23 @@ public sealed class CtciStagingTests
         Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new int[][] { [0, 13] }, mutationOk = true })));
         Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new int[][] { [0, 13], [1, 13], [3, 0] }, mutationOk = true })));
     }
+    [Fact]
+    public void CalculatorRequiresRealDivisionAndFiniteValuesWithinTolerance()
+    {
+        var definition = Definition("16.26");
+        var test = Case(["1/3"], 1.0 / 3);
+        Assert.Null(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = 1.0 / 3 + 0.0000005, mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = 0, mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = true, mutationOk = true })));
+    }
+
+    [Fact]
+    public void ContinuousMediansRequireEveryActualHalfIntegerValue()
+    {
+        var definition = Definition("17.20");
+        var test = Case([new[] { int.MinValue, int.MaxValue }], new[] { (double)int.MinValue, -0.5 });
+        Assert.Null(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new[] { (double)int.MinValue, -0.5 }, mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new[] { (double)int.MinValue, 0.0 }, mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new[] { -0.5 }, mutationOk = true })));
+    }
 }
