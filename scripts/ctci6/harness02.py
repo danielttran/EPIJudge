@@ -7,8 +7,10 @@ from core import ROOT
 from models02 import header
 
 
-def source(language, starters=False):
+def source(language, starters=False, only_ref=None):
+    specs = [s for s in SPECS if only_ref is None or s["ref"] == only_ref]
     catalog = json.loads((ROOT / "ctci6/staged02/catalog.json").read_text())
+    catalog = [row for row in catalog if only_ref is None or row["ref"] == only_ref]
     pieces = [header(language)]
     for entry in catalog:
         code = entry["languages"][language][
@@ -22,7 +24,7 @@ def source(language, starters=False):
     if language == "python":
         pieces.append(
             PYTHON.replace(
-                "METHODS_VALUE", repr({s["ref"]: s["method"] for s in SPECS})
+                "METHODS_VALUE", repr({s["ref"]: s["method"] for s in specs})
             )
         )
     elif language == "javascript":
@@ -30,7 +32,7 @@ def source(language, starters=False):
             JAVASCRIPT.replace(
                 "FUNCTIONS_VALUE",
                 "{"
-                + ",".join(json.dumps(s["ref"]) + ":" + s["method"] for s in SPECS)
+                + ",".join(json.dumps(s["ref"]) + ":" + s["method"] for s in specs)
                 + "}",
             )
         )
@@ -44,7 +46,7 @@ def source(language, starters=False):
                 "new Dictionary<string,string>{"
                 + ",".join(
                     "{" + json.dumps(s["ref"]) + "," + json.dumps(s["method"]) + "}"
-                    for s in SPECS
+                    for s in specs
                 )
                 + "}",
             )
@@ -58,7 +60,7 @@ def source(language, starters=False):
                 "METHODS_VALUE",
                 "Map.of("
                 + ",".join(
-                    json.dumps(s["ref"]) + "," + json.dumps(s["method"]) for s in SPECS
+                    json.dumps(s["ref"]) + "," + json.dumps(s["method"]) for s in specs
                 )
                 + ")",
             )
@@ -69,7 +71,7 @@ def source(language, starters=False):
             '#include <fstream>\n#include <memory>\n#include <unordered_map>\n#include "test_framework/json.h"\nusing json=nlohmann::json;\n',
         )
         dispatch = []
-        for s in SPECS:
+        for s in specs:
             arguments = {
                 "2.1": "p.head",
                 "2.2": "p.head, raw[1].get<int>()",
@@ -134,12 +136,13 @@ def execute(row):
         a=make(raw[0]); h=head(a)
         if ref == '2.3': target=a[raw[1]] if raw[1]>=0 else None
         if ref == '2.8' and a and raw[1]>=0: a[-1].Next=a[raw[1]]
-    ids={node:i for i,node in enumerate(originals)}
+    ids={id(node):i for i,node in enumerate(originals)}
     def identify(node):
         if node is None: return None
         if not isinstance(node,LinkedListNode): raise TypeError('Return an actual node object')
-        if node not in ids: ids[node]=len(ids)
-        return ids[node]
+        key=id(node)
+        if key not in ids: ids[key]=len(ids)
+        return ids[key]
     def snapshot(): return [[n.Value,identify(n.Next)] for n in originals]
     before=snapshot()
     args = [h]
@@ -212,7 +215,7 @@ static object Execute(JsonElement row) {
     if(reference=="2.7"){var a=Make(raw[0]);var b=Make(raw[1]);var c=Make(raw[2]);if(a.Length>0)a[^1].Next=Head(c);if(b.Length>0)b[^1].Next=Head(c);first=a.Length>0?Head(a):Head(c);second=b.Length>0?Head(b):Head(c);h=first;}
     else if(reference=="2.5"){first=Head(Make(raw[0]));second=Head(Make(raw[1]));h=first;}
     else{var a=Make(raw[0]);h=Head(a);if(reference=="2.3")target=raw[1].GetInt32()<0?null:a[raw[1].GetInt32()];if(reference=="2.8"&&a.Length>0&&raw[1].GetInt32()>=0)a[^1].Next=a[raw[1].GetInt32()];}
-    var ids=new Dictionary<LinkedListNode,int>();for(int i=0;i<originals.Count;i++)ids[originals[i]]=i;
+    var ids=new Dictionary<LinkedListNode,int>(System.Collections.Generic.ReferenceEqualityComparer.Instance);for(int i=0;i<originals.Count;i++)ids[originals[i]]=i;
     int? Identify(LinkedListNode? n){if(n is null)return null;if(!ids.TryGetValue(n,out int index)){index=ids.Count;ids[n]=index;}return index;}
     int?[][] Snapshot()=>originals.Select(n=>new int?[]{n.Value,Identify(n.Next)}).ToArray();
     var before=Snapshot();

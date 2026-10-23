@@ -9,7 +9,7 @@ from core import LANGUAGES, ROOT
 from corpus02 import cases, valid_observation
 from generate02 import generate02
 from harness02 import source
-from verify01 import execute
+from verify01 import execute, standalone_paths
 
 
 def verify():
@@ -70,9 +70,7 @@ def verify():
                 f"Passed list {language} {label} expectations across {len(SPECS)} exercises",
                 flush=True,
             )
-    paths = sorted((ROOT / "scripts/ctci6").glob("*.py")) + sorted(
-        (ROOT / "ctci6/staged02").rglob("*")
-    )
+    paths = standalone_paths(2, "staged02")
     hashes = {
         str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest()
         for p in paths

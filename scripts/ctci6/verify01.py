@@ -32,7 +32,9 @@ def run(command, directory, timeout=90):
         )
 
 
-def execute(language, starters, rows, directory, source_builder=source):
+def execute(
+    language, starters, rows, directory, source_builder=source, companion_files=None
+):
     directory.mkdir(parents=True, exist_ok=True)
     (directory / "cases.json").write_text(json.dumps(rows), encoding="utf-8")
     filename = (
@@ -43,6 +45,10 @@ def execute(language, starters, rows, directory, source_builder=source):
     (directory / filename).write_text(
         source_builder(language, starters), encoding="utf-8"
     )
+    for name, contents in (companion_files or {}).items():
+        if Path(name).name != name:
+            raise ValueError("Companion source must be a local filename")
+        (directory / name).write_text(contents, encoding="utf-8")
     if language == "csharp":
         (directory / "Submission.csproj").write_text(
             '<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net10.0</TargetFramework><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable><StartupObject>Harness</StartupObject></PropertyGroup></Project>'
@@ -71,6 +77,7 @@ def execute(language, starters, rows, directory, source_builder=source):
                 "-d",
                 "classes",
                 filename,
+                *[name for name in (companion_files or {}) if name.endswith(".java")],
             ],
             directory,
         )
@@ -97,6 +104,27 @@ def execute(language, starters, rows, directory, source_builder=source):
         command = ["python3" if language == "python" else "node", filename]
     run(command, directory, 30)
     return json.loads((directory / "results.json").read_text())
+
+
+def standalone_paths(batch, staging_name):
+    """Fingerprint the batch's execution inputs, not unrelated future chapters."""
+    names = {"core.py", "generate.py", "verify01.py"}
+    suffix = f"{batch:02}"
+    names.update(
+        f"{stem}{suffix}.py"
+        for stem in ("chapter", "algorithms", "corpus", "harness", "verify")
+    )
+    names.update(
+        name
+        for name in (f"models{suffix}.py", f"generate{suffix}.py")
+        if (ROOT / "scripts/ctci6" / name).is_file()
+    )
+    paths = [ROOT / "scripts/ctci6" / name for name in sorted(names)]
+    paths.append(ROOT / "scripts/code_workspace/common.py")
+    if batch == 3:
+        paths.extend(sorted((ROOT / "scripts/ctci6/templates03").glob("*")))
+    paths.extend(sorted((ROOT / "ctci6" / staging_name).rglob("*")))
+    return paths
 
 
 def verify():
@@ -156,9 +184,7 @@ def verify():
                 f"Passed {language} {label} expectations across {len(SPECS)} exercises",
                 flush=True,
             )
-    paths = sorted((ROOT / "scripts/ctci6").glob("*.py")) + sorted(
-        (ROOT / "ctci6/staged").rglob("*")
-    )
+    paths = standalone_paths(1, "staged")
     fingerprints = {
         str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest()
         for p in paths

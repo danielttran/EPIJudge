@@ -1,0 +1,56 @@
+{
+  "explanation": "The input stack reverses arrival order once. Transferring it into the output stack reverses that order again, exposing the oldest value. Transfer only when output is empty, because its remaining values are older than every value still in input.",
+  "correctness": "At all times, the queue order is output read top-to-bottom followed by input read bottom-to-top. Add appends to the latter sequence. When output is empty, transferring all input values reverses its stack order and preserves that same queue sequence. Remove or Peek then reads exactly the oldest value. Size is the sum of the two stack sizes. Every item transfers at most once from input to output.",
+  "walkthrough": "Add 6 and 2. The first Remove transfers them and returns 6, leaving 2 in output. Add 9 places it in input; Peek must still return 2. Subsequent Removes return 2 and then 9. Transferring input while output still contains 2 would incorrectly put 9 first.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        "TwoStackQueue",
+        "Add",
+        "Add",
+        "Remove",
+        "Add",
+        "Peek",
+        "Remove",
+        "Remove",
+        "Size"
+      ],
+      [
+        [],
+        [
+          6
+        ],
+        [
+          2
+        ],
+        [],
+        [
+          9
+        ],
+        [],
+        [],
+        [],
+        []
+      ]
+    ],
+    "expected": [
+      null,
+      null,
+      null,
+      6,
+      null,
+      2,
+      2,
+      9,
+      0
+    ]
+  },
+  "timeComplexity": "O(1) amortized time for Add, Remove and Peek: each value is pushed, transferred at most once and removed at most once. A single transfer can take O(n). Size takes O(1). Growable-stack resizing is included in the amortized bound.",
+  "spaceComplexity": "O(n) storage, where n is the maximum number of values simultaneously queued during the transcript.",
+  "edgeCases": [
+    "Interleaved additions while output remains nonempty.",
+    "Repeated Peek does not consume values.",
+    "Empty failures followed by valid additions; duplicate and negative values."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 3.4. No affiliation is implied."
+}

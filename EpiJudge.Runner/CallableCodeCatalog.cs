@@ -72,6 +72,20 @@ public static class CallableCodeCatalog
         language = NormalizeLanguage(language);
         var entry = Find(problemId, language)
             ?? throw new ArgumentException("No callable code contract exists for this question and language.");
+        return PrepareCallable(entry, code);
+    }
+
+    // Also used to execute explicitly supplied, unpublished collection entries
+    // through the same envelope without changing the live catalog inventory.
+    public static PreparedCode PrepareCallable(CallableCodeDefinition entry, string code)
+    {
+        ArgumentNullException.ThrowIfNull(entry);
+        var language = entry.Language;
+        if (!SolutionCatalog.Languages.Contains(language, StringComparer.Ordinal) ||
+            string.IsNullOrWhiteSpace(entry.Filename) || entry.Prefix is null || entry.Suffix is null ||
+            Path.GetFileName(entry.Filename) != entry.Filename ||
+            entry.Filename.IndexOfAny(['"', '\r', '\n']) >= 0)
+            throw new ArgumentException("Invalid callable code definition.", nameof(entry));
         var prefix = entry.Prefix;
         Dictionary<int, int>? lineMap = null;
         if (prefix.Length > 0 && !prefix.EndsWith('\n')) prefix += "\n";

@@ -53,6 +53,7 @@ def audit(publication=False):
     for staging_name, review_file in (
         ("staged", "review01.json"),
         ("staged02", "review02.json"),
+        ("staged03", "review03.json"),
     ):
         review = json.loads((ROOT / "ctci6" / review_file).read_text())
         batch_reviewed = {row["ref"] for row in review["questions"]}

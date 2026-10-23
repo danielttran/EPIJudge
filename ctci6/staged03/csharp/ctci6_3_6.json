@@ -1,0 +1,54 @@
+{
+  "explanation": "Within one species, only its queue head can be that species' oldest remaining animal. The globally oldest animal must therefore be one of the two heads. Assigning an increasing admission number lets a constant-time comparison choose between them without using the arbitrary Id labels.",
+  "correctness": "Each species queue maintains exactly its unadopted original animals in admission order. Enqueue appends to the matching queue with a newer order number; a species adoption removes its head. For DequeueAny or Peek, every non-head animal has an older same-species animal ahead of it, so comparing the two available heads identifies the global oldest. Removal returns the stored original reference and does not write Animal fields. Invalid species is checked before admission, preserving state.",
+  "walkthrough": "Admit dog 50, cat 2, then dog -3. Their arrival numbers are 0,1,2 regardless of Id. DequeueAny returns original dog 50. DequeueDog returns original dog -3, while cat 2 is still waiting. DequeueAny then returns original cat 2. Choosing the smallest Id would violate arrival order.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        "AnimalShelter",
+        "Enqueue",
+        "Enqueue",
+        "Enqueue",
+        "DequeueAny",
+        "DequeueDog",
+        "DequeueAny"
+      ],
+      [
+        [],
+        [
+          50,
+          "dog"
+        ],
+        [
+          2,
+          "cat"
+        ],
+        [
+          -3,
+          "dog"
+        ],
+        [],
+        [],
+        []
+      ]
+    ],
+    "expected": [
+      null,
+      null,
+      null,
+      null,
+      50,
+      -3,
+      2
+    ]
+  },
+  "timeComplexity": "O(1) algorithmic time per admission, adoption, Peek or Size under the usual constant-time node-allocation model.",
+  "spaceComplexity": "O(n) live queue-entry storage for n animals currently in the shelter, plus two head/tail pairs and counters. Animal objects remain caller-owned.",
+  "edgeCases": [
+    "One species absent and the entire shelter empty.",
+    "Negative/nonmonotone Ids must not influence age.",
+    "Interleaved species-specific and unrestricted adoption.",
+    "Invalid admission preserves the queue; copied animal returns fail identity checks."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 3.6. No affiliation is implied."
+}

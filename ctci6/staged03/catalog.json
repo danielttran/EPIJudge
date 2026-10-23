@@ -1,0 +1,582 @@
+[
+  {
+    "ref": "3.1",
+    "method": "ThreeStacks",
+    "params": [
+      [
+        "capacity",
+        "i"
+      ]
+    ],
+    "result": "state",
+    "mutation": "three-stacks",
+    "description": "Implement three independent fixed-capacity integer stacks in one payload array. ThreeStacks(capacity) reserves exactly capacity slots per stack. Push, Pop, Peek, IsEmpty and IsFull take a zero-based stack number 0, 1 or 2. Pop removes and returns that stack's most recently pushed value; Peek returns it without removing it. Stacks cannot borrow another stack's unused slots.",
+    "constraints": [
+      "Examples are [operations,arguments]: the first operation constructs the class; each later operation calls that method on the same object. The output has one entry per operation: null for construction/void, a returned value otherwise, or {\"error\":\"code\"} for the documented BankError. The judge continues after a method error, so failure must leave state unchanged. A failing-constructor transcript contains only construction because no instance exists afterward. There are 1..2001 operations; integer values and indices fit signed 32 bits.",
+      "Capacity must be 1..256; otherwise throw BankError('capacity'). Check stack number first on every operation: outside 0..2 throws BankError('index'). Push on a full stack throws BankError('full'); Pop or Peek on an empty stack throws BankError('empty').",
+      "Keep all stack payloads in one integer array of length 3*capacity. Three counters and other constant-sized metadata are allowed. This is the fixed-partition variant established by the public FixedMultiStack interface."
+    ],
+    "why": "Giving stack s the disjoint interval starting at s*capacity makes its next free cell depend only on its size. Separate counters let a pop on one stack leave the other two stacks' payloads and tops unchanged.",
+    "correctness": "For each stack s, its occupied prefix of its reserved interval contains exactly its current bottom-to-top sequence, and size[s] is its length. Push writes at the next free offset and increases only that size. Pop reads the last occupied offset and decreases only that size; Peek reads without changing it. The intervals are disjoint, so these changes cannot affect another stack. Checks occur before writes, preserving state on every error.",
+    "walkthrough": "With capacity 2, push 8 then 3 onto stack 0 and push 7 onto stack 2. Stack 0 is full and its Peek returns 3; stack 2's Peek returns 7. Popping stack 0 returns 3 and leaves 8 at its top. A push to a full stack fails even if stack 1 is empty, because this variant reserves fixed slots.",
+    "example": [
+      [
+        [
+          "ThreeStacks",
+          "Push",
+          "Push",
+          "Push",
+          "IsFull",
+          "Peek",
+          "Pop",
+          "Peek"
+        ],
+        [
+          [
+            2
+          ],
+          [
+            0,
+            8
+          ],
+          [
+            0,
+            3
+          ],
+          [
+            2,
+            7
+          ],
+          [
+            0
+          ],
+          [
+            2
+          ],
+          [
+            0
+          ],
+          [
+            0
+          ]
+        ]
+      ],
+      [
+        null,
+        null,
+        null,
+        null,
+        true,
+        7,
+        3,
+        8
+      ]
+    ],
+    "time": "O(1) time per stack operation; construction takes O(capacity) time to initialize storage.",
+    "space": "O(capacity) storage for the single 3*capacity payload array and constant-sized counters.",
+    "edges": [
+      "Capacity one; all three stacks used in interleaved order.",
+      "Full/empty errors followed by successful operations proving unchanged state.",
+      "Negative/too-large stack numbers; minimum and maximum integer payloads."
+    ],
+    "related": "circular_queue is a different data structure and is not a duplicate.",
+    "id": "ctci6_3_1",
+    "title": "Three in One",
+    "testCount": 52,
+    "languages": {
+      "csharp": {
+        "signature": "ThreeStacks(int capacity); void Push(int stack, int value); int Pop(int stack); int Peek(int stack); bool IsEmpty(int stack); bool IsFull(int stack)",
+        "starterCode": "public class ThreeStacks\n{\n    public ThreeStacks(int capacity)\n    {\n    }\n    public void Push(int stack, int value)\n    { // Write your solution here.\n    }\n    public int Pop(int stack)\n    {\n        return 0;\n    }\n    public int Peek(int stack)\n    {\n        return 0;\n    }\n    public bool IsEmpty(int stack)\n    {\n        return false;\n    }\n    public bool IsFull(int stack)\n    {\n        return false;\n    }\n}\n",
+        "solutionCode": "public class ThreeStacks\n{\n    private readonly int capacity;\n    private readonly int[] values;\n    private readonly int[] sizes = new int[3];\n    private void Check(int stack)\n    {\n        if (stack < 0 || stack >= 3)\n            throw new BankError(\"index\");\n    }\n    public ThreeStacks(int supplied)\n    {\n        if (supplied < 1 || supplied > 256)\n            throw new BankError(\"capacity\");\n        capacity = supplied;\n        values = new int[3 * supplied];\n    }\n    public void Push(int stack, int value)\n    {\n        Check(stack);\n        if (sizes[stack] == capacity)\n            throw new BankError(\"full\");\n        values[stack * capacity + sizes[stack]] = value;\n        ++sizes[stack];\n    }\n    public int Pop(int stack)\n    {\n        Check(stack);\n        if (sizes[stack] == 0)\n            throw new BankError(\"empty\");\n        --sizes[stack];\n        return values[stack * capacity + sizes[stack]];\n    }\n    public int Peek(int stack)\n    {\n        Check(stack);\n        if (sizes[stack] == 0)\n            throw new BankError(\"empty\");\n        return values[stack * capacity + sizes[stack] - 1];\n    }\n    public bool IsEmpty(int stack)\n    {\n        Check(stack);\n        return sizes[stack] == 0;\n    }\n    public bool IsFull(int stack)\n    {\n        Check(stack);\n        return sizes[stack] == capacity;\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "ThreeStacks(capacity); Push(stack, value); Pop(stack); Peek(stack); IsEmpty(stack); IsFull(stack)",
+        "starterCode": "class ThreeStacks {\n  constructor(capacity) {}\n  Push(stack, value) {\n    // Write your solution here.\n  }\n  Pop(stack) {\n    return 0;\n  }\n  Peek(stack) {\n    return 0;\n  }\n  IsEmpty(stack) {\n    return false;\n  }\n  IsFull(stack) {\n    return false;\n  }\n}\n",
+        "solutionCode": "class ThreeStacks {\n  constructor(capacity) {\n    if (capacity < 1 || capacity > 256) throw new BankError(\"capacity\");\n    this._capacity = capacity;\n    this._values = Array(3 * capacity).fill(0);\n    this._sizes = [0, 0, 0];\n  }\n  _check(stack) {\n    if (stack < 0 || stack >= 3) throw new BankError(\"index\");\n  }\n  Push(stack, value) {\n    this._check(stack);\n    if (this._sizes[stack] === this._capacity) throw new BankError(\"full\");\n    this._values[stack * this._capacity + this._sizes[stack]] = value;\n    ++this._sizes[stack];\n  }\n  Pop(stack) {\n    this._check(stack);\n    if (!this._sizes[stack]) throw new BankError(\"empty\");\n    --this._sizes[stack];\n    return this._values[stack * this._capacity + this._sizes[stack]];\n  }\n  Peek(stack) {\n    this._check(stack);\n    if (!this._sizes[stack]) throw new BankError(\"empty\");\n    return this._values[stack * this._capacity + this._sizes[stack] - 1];\n  }\n  IsEmpty(stack) {\n    this._check(stack);\n    return this._sizes[stack] === 0;\n  }\n  IsFull(stack) {\n    this._check(stack);\n    return this._sizes[stack] === this._capacity;\n  }\n}\n"
+      },
+      "python": {
+        "signature": "ThreeStacks(capacity: i); def Push(self, stack: int, value: int) -> None:; def Pop(self, stack: int) -> int:; def Peek(self, stack: int) -> int:; def IsEmpty(self, stack: int) -> bool:; def IsFull(self, stack: int) -> bool:",
+        "starterCode": "class ThreeStacks:\n    def __init__(self, capacity):\n        pass\n\n    def Push(self, stack: int, value: int) -> None:\n        pass\n\n    def Pop(self, stack: int) -> int:\n        return 0\n\n    def Peek(self, stack: int) -> int:\n        return 0\n\n    def IsEmpty(self, stack: int) -> bool:\n        return False\n\n    def IsFull(self, stack: int) -> bool:\n        return False\n",
+        "solutionCode": "class ThreeStacks:\n    def __init__(self, capacity: int):\n        if not 1 <= capacity <= 256:\n            raise BankError(\"capacity\")\n        self._capacity = capacity\n        self._values = [0] * (3 * capacity)\n        self._sizes = [0, 0, 0]\n\n    def _check(self, stack: int):\n        if not 0 <= stack < 3:\n            raise BankError(\"index\")\n\n    def Push(self, stack: int, value: int):\n        self._check(stack)\n        if self._sizes[stack] == self._capacity:\n            raise BankError(\"full\")\n        self._values[stack * self._capacity + self._sizes[stack]] = value\n        self._sizes[stack] += 1\n\n    def Pop(self, stack: int) -> int:\n        self._check(stack)\n        if self._sizes[stack] == 0:\n            raise BankError(\"empty\")\n        self._sizes[stack] -= 1\n        return self._values[stack * self._capacity + self._sizes[stack]]\n\n    def Peek(self, stack: int) -> int:\n        self._check(stack)\n        if self._sizes[stack] == 0:\n            raise BankError(\"empty\")\n        return self._values[stack * self._capacity + self._sizes[stack] - 1]\n\n    def IsEmpty(self, stack: int) -> bool:\n        self._check(stack)\n        return self._sizes[stack] == 0\n\n    def IsFull(self, stack: int) -> bool:\n        self._check(stack)\n        return self._sizes[stack] == self._capacity\n"
+      },
+      "cpp": {
+        "signature": "ThreeStacks(int capacity); void Push(int stack, int value); int Pop(int stack); int Peek(int stack); bool IsEmpty(int stack); bool IsFull(int stack)",
+        "starterCode": "class ThreeStacks {\n public:\n  ThreeStacks(int capacity) {\n  }\n  void Push(int stack, int value) {  // Write your solution here.\n  }\n  int Pop(int stack) {\n    return 0;\n  }\n  int Peek(int stack) {\n    return 0;\n  }\n  bool IsEmpty(int stack) {\n    return false;\n  }\n  bool IsFull(int stack) {\n    return false;\n  }\n};\n",
+        "solutionCode": "class ThreeStacks {\n  int capacity;\n  std::vector<int> values;\n  std::array<int, 3> sizes{};\n  void Check(int stack) {\n    if (stack < 0 || stack >= 3)\n      throw BankError(\"index\");\n  }\n\n public:\n  ThreeStacks(int supplied) : capacity(supplied) {\n    if (supplied < 1 || supplied > 256)\n      throw BankError(\"capacity\");\n    values.resize(3 * supplied);\n  }\n  void Push(int stack, int value) {\n    Check(stack);\n    if (sizes[stack] == capacity)\n      throw BankError(\"full\");\n    values[stack * capacity + sizes[stack]] = value;\n    ++sizes[stack];\n  }\n  int Pop(int stack) {\n    Check(stack);\n    if (sizes[stack] == 0)\n      throw BankError(\"empty\");\n    --sizes[stack];\n    return values[stack * capacity + sizes[stack]];\n  }\n  int Peek(int stack) {\n    Check(stack);\n    if (sizes[stack] == 0)\n      throw BankError(\"empty\");\n    return values[stack * capacity + sizes[stack] - 1];\n  }\n  bool IsEmpty(int stack) {\n    Check(stack);\n    return sizes[stack] == 0;\n  }\n  bool IsFull(int stack) {\n    Check(stack);\n    return sizes[stack] == capacity;\n  }\n};\n"
+      },
+      "java": {
+        "signature": "ThreeStacks(int capacity); void Push(int stack, int value); int Pop(int stack); int Peek(int stack); boolean IsEmpty(int stack); boolean IsFull(int stack)",
+        "starterCode": "class ThreeStacks {\n  public ThreeStacks(int capacity) {\n  }\n  public void Push(int stack, int value) { // Write your solution here.\n  }\n  public int Pop(int stack) {\n    return 0;\n  }\n  public int Peek(int stack) {\n    return 0;\n  }\n  public boolean IsEmpty(int stack) {\n    return false;\n  }\n  public boolean IsFull(int stack) {\n    return false;\n  }\n}\n",
+        "solutionCode": "class ThreeStacks {\n  private final int capacity;\n  private final int[] values;\n  private final int[] sizes = new int[3];\n  private void Check(int stack) {\n    if (stack < 0 || stack >= 3)\n      throw new BankError(\"index\");\n  }\n  public ThreeStacks(int supplied) {\n    if (supplied < 1 || supplied > 256)\n      throw new BankError(\"capacity\");\n    capacity = supplied;\n    values = new int[3 * supplied];\n  }\n  public void Push(int stack, int value) {\n    Check(stack);\n    if (sizes[stack] == capacity)\n      throw new BankError(\"full\");\n    values[stack * capacity + sizes[stack]] = value;\n    ++sizes[stack];\n  }\n  public int Pop(int stack) {\n    Check(stack);\n    if (sizes[stack] == 0)\n      throw new BankError(\"empty\");\n    --sizes[stack];\n    return values[stack * capacity + sizes[stack]];\n  }\n  public int Peek(int stack) {\n    Check(stack);\n    if (sizes[stack] == 0)\n      throw new BankError(\"empty\");\n    return values[stack * capacity + sizes[stack] - 1];\n  }\n  public boolean IsEmpty(int stack) {\n    Check(stack);\n    return sizes[stack] == 0;\n  }\n  public boolean IsFull(int stack) {\n    Check(stack);\n    return sizes[stack] == capacity;\n  }\n}\n"
+      }
+    }
+  },
+  {
+    "ref": "3.2",
+    "method": "MinStack",
+    "params": [],
+    "result": "state",
+    "mutation": "min-stack",
+    "description": "Implement an integer stack with Push(value), Pop(), Peek(), GetMin() and IsEmpty(). GetMin returns the smallest value currently in the stack, including duplicates, without removing it. Keep constant algorithmic work per operation by storing enough information when each value is pushed.",
+    "constraints": [
+      "Examples are [operations,arguments]: the first operation constructs the class; each later operation calls that method on the same object. The output has one entry per operation: null for construction/void, a returned value otherwise, or {\"error\":\"code\"} for the documented BankError. The judge continues after a method error, so failure must leave state unchanged. A failing-constructor transcript contains only construction because no instance exists afterward. There are 1..2001 operations; integer values and indices fit signed 32 bits.",
+      "MinStack() starts empty. Pop, Peek and GetMin on an empty stack throw BankError('empty'). IsEmpty returns a boolean and never throws.",
+      "All signed 32-bit values are valid, so no payload value is reserved as an empty-stack sentinel. The explicit BankError policy is this bank's choice; the public alternative implementation uses a sentinel for an empty minimum."
+    ],
+    "why": "The minimum after popping a value is the minimum of the prefix that existed before that push. Store that prefix minimum beside each entry, so removing the top automatically restores the earlier minimum without rescanning.",
+    "correctness": "Each entry stores its own value and the minimum over that entry and every entry below it. A push computes the new minimum from the new value and the old top's stored minimum. A pop exposes the preceding entry, whose minimum already describes exactly the remaining stack. Therefore Peek, Pop and GetMin return the specified values, including repeated minima. An empty check precedes each access.",
+    "walkthrough": "Push 9, then 4, then another 4. The stored prefix minima are 9,4,4. Popping one 4 leaves the previous entry's minimum 4; popping the second leaves 9. Keeping only a single uncounted minimum would lose that distinction.",
+    "example": [
+      [
+        [
+          "MinStack",
+          "Push",
+          "Push",
+          "Push",
+          "GetMin",
+          "Pop",
+          "GetMin",
+          "Pop",
+          "GetMin"
+        ],
+        [
+          [],
+          [
+            9
+          ],
+          [
+            4
+          ],
+          [
+            4
+          ],
+          [],
+          [],
+          [],
+          [],
+          []
+        ]
+      ],
+      [
+        null,
+        null,
+        null,
+        null,
+        4,
+        4,
+        4,
+        4,
+        9
+      ]
+    ],
+    "time": "O(1) algorithmic time per operation under the usual constant-time node-allocation model. Destruction/garbage collection is separate from these stack operations.",
+    "space": "O(n) live storage for n stack entries, each holding a value, prefix minimum and next link.",
+    "edges": [
+      "Repeated minima must survive removal of only one copy.",
+      "Empty-stack failures do not change state.",
+      "All-negative values and both signed 32-bit endpoints."
+    ],
+    "related": "stack_with_max and interviewcake_largest-stack expose maximum APIs, not this minimum contract.",
+    "id": "ctci6_3_2",
+    "title": "Stack Min",
+    "testCount": 47,
+    "languages": {
+      "csharp": {
+        "signature": "MinStack(); void Push(int value); int Pop(); int Peek(); int GetMin(); bool IsEmpty()",
+        "starterCode": "public class MinStack\n{\n    public MinStack()\n    {\n    }\n    public void Push(int value)\n    { // Write your solution here.\n    }\n    public int Pop()\n    {\n        return 0;\n    }\n    public int Peek()\n    {\n        return 0;\n    }\n    public int GetMin()\n    {\n        return 0;\n    }\n    public bool IsEmpty()\n    {\n        return false;\n    }\n}\n",
+        "solutionCode": "public class MinStack\n{\n    private sealed class Entry\n    {\n        public int Value, Minimum;\n        public Entry? Next;\n        public Entry(int value, int minimum, Entry? next)\n        {\n            Value = value;\n            Minimum = minimum;\n            Next = next;\n        }\n    }\n    private Entry? top;\n\n    public MinStack()\n    {\n    }\n    public void Push(int value)\n    {\n        int minimum = top == null ? value : Math.Min(value, top.Minimum);\n        top = new Entry(value, minimum, top);\n    }\n    public int Pop()\n    {\n        if (top == null)\n            throw new BankError(\"empty\");\n        int value = top.Value;\n        top = top.Next;\n        return value;\n    }\n    public int Peek()\n    {\n        if (top == null)\n            throw new BankError(\"empty\");\n        return top.Value;\n    }\n    public int GetMin()\n    {\n        if (top == null)\n            throw new BankError(\"empty\");\n        return top.Minimum;\n    }\n    public bool IsEmpty()\n    {\n        return top == null;\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "MinStack(); Push(value); Pop(); Peek(); GetMin(); IsEmpty()",
+        "starterCode": "class MinStack {\n  constructor() {}\n  Push(value) {\n    // Write your solution here.\n  }\n  Pop() {\n    return 0;\n  }\n  Peek() {\n    return 0;\n  }\n  GetMin() {\n    return 0;\n  }\n  IsEmpty() {\n    return false;\n  }\n}\n",
+        "solutionCode": "class MinStack {\n  constructor() {\n    this._top = null;\n  }\n  Push(value) {\n    const minimum = this._top === null ? value : Math.min(value, this._top.minimum);\n    this._top = { value, minimum, next: this._top };\n  }\n  Pop() {\n    if (this._top === null) throw new BankError(\"empty\");\n    const value = this._top.value;\n    this._top = this._top.next;\n    return value;\n  }\n  Peek() {\n    if (this._top === null) throw new BankError(\"empty\");\n    return this._top.value;\n  }\n  GetMin() {\n    if (this._top === null) throw new BankError(\"empty\");\n    return this._top.minimum;\n  }\n  IsEmpty() {\n    return this._top === null;\n  }\n}\n"
+      },
+      "python": {
+        "signature": "MinStack(); def Push(self, value: int) -> None:; def Pop(self) -> int:; def Peek(self) -> int:; def GetMin(self) -> int:; def IsEmpty(self) -> bool:",
+        "starterCode": "class MinStack:\n    def __init__(self):\n        pass\n\n    def Push(self, value: int) -> None:\n        pass\n\n    def Pop(self) -> int:\n        return 0\n\n    def Peek(self) -> int:\n        return 0\n\n    def GetMin(self) -> int:\n        return 0\n\n    def IsEmpty(self) -> bool:\n        return False\n",
+        "solutionCode": "class MinStack:\n    class _Entry:\n        def __init__(self, value, minimum, next):\n            self.value, self.minimum, self.next = value, minimum, next\n\n    def __init__(self):\n        self._top = None\n\n    def Push(self, value: int):\n        minimum = value if self._top is None else min(value, self._top.minimum)\n        self._top = self._Entry(value, minimum, self._top)\n\n    def Pop(self) -> int:\n        if self._top is None:\n            raise BankError(\"empty\")\n        value = self._top.value\n        self._top = self._top.next\n        return value\n\n    def Peek(self) -> int:\n        if self._top is None:\n            raise BankError(\"empty\")\n        return self._top.value\n\n    def GetMin(self) -> int:\n        if self._top is None:\n            raise BankError(\"empty\")\n        return self._top.minimum\n\n    def IsEmpty(self) -> bool:\n        return self._top is None\n"
+      },
+      "cpp": {
+        "signature": "MinStack(); void Push(int value); int Pop(); int Peek(); int GetMin(); bool IsEmpty()",
+        "starterCode": "class MinStack {\n public:\n  MinStack() {\n  }\n  void Push(int value) {  // Write your solution here.\n  }\n  int Pop() {\n    return 0;\n  }\n  int Peek() {\n    return 0;\n  }\n  int GetMin() {\n    return 0;\n  }\n  bool IsEmpty() {\n    return false;\n  }\n};\n",
+        "solutionCode": "class MinStack {\n  struct Entry {\n    int Value, Minimum;\n    std::unique_ptr<Entry> Next;\n    Entry(int value, int minimum, std::unique_ptr<Entry> next)\n        : Value(value), Minimum(minimum), Next(std::move(next)) {\n    }\n  };\n  std::unique_ptr<Entry> top;\n\n public:\n  MinStack() = default;\n  void Push(int value) {\n    int minimum = top ? std::min(value, top->Minimum) : value;\n    top = std::make_unique<Entry>(value, minimum, std::move(top));\n  }\n  int Pop() {\n    if (!top)\n      throw BankError(\"empty\");\n    auto removed = std::move(top);\n    int value = removed->Value;\n    top = std::move(removed->Next);\n    return value;\n  }\n  int Peek() {\n    if (!top)\n      throw BankError(\"empty\");\n    return top->Value;\n  }\n  int GetMin() {\n    if (!top)\n      throw BankError(\"empty\");\n    return top->Minimum;\n  }\n  bool IsEmpty() {\n    return !top;\n  }\n};\n"
+      },
+      "java": {
+        "signature": "MinStack(); void Push(int value); int Pop(); int Peek(); int GetMin(); boolean IsEmpty()",
+        "starterCode": "class MinStack {\n  public MinStack() {\n  }\n  public void Push(int value) { // Write your solution here.\n  }\n  public int Pop() {\n    return 0;\n  }\n  public int Peek() {\n    return 0;\n  }\n  public int GetMin() {\n    return 0;\n  }\n  public boolean IsEmpty() {\n    return false;\n  }\n}\n",
+        "solutionCode": "class MinStack {\n  private static class Entry {\n    public int Value, Minimum;\n    public Entry Next;\n    public Entry(int value, int minimum, Entry next) {\n      Value = value;\n      Minimum = minimum;\n      Next = next;\n    }\n  }\n  private Entry top;\n\n  public MinStack() {\n  }\n  public void Push(int value) {\n    int minimum = top == null ? value : Math.min(value, top.Minimum);\n    top = new Entry(value, minimum, top);\n  }\n  public int Pop() {\n    if (top == null)\n      throw new BankError(\"empty\");\n    int value = top.Value;\n    top = top.Next;\n    return value;\n  }\n  public int Peek() {\n    if (top == null)\n      throw new BankError(\"empty\");\n    return top.Value;\n  }\n  public int GetMin() {\n    if (top == null)\n      throw new BankError(\"empty\");\n    return top.Minimum;\n  }\n  public boolean IsEmpty() {\n    return top == null;\n  }\n}\n"
+      }
+    }
+  },
+  {
+    "ref": "3.3",
+    "method": "SetOfStacks",
+    "params": [
+      [
+        "capacity",
+        "i"
+      ]
+    ],
+    "result": "state",
+    "mutation": "set-of-stacks",
+    "description": "Implement a stack split into smaller stacks of at most capacity values. Push adds to the last small stack, creating one if needed. Pop removes the globally newest value. PopAt(index) removes the top of the selected zero-based small stack, then rolls over the bottom value of each following stack to fill the preceding gap. Remove an empty final stack and compact stack indices. IsEmpty reports whether any values remain.",
+    "constraints": [
+      "Examples are [operations,arguments]: the first operation constructs the class; each later operation calls that method on the same object. The output has one entry per operation: null for construction/void, a returned value otherwise, or {\"error\":\"code\"} for the documented BankError. The judge continues after a method error, so failure must leave state unchanged. A failing-constructor transcript contains only construction because no instance exists afterward. There are 1..2001 operations; integer values and indices fit signed 32 bits.",
+      "SetOfStacks(capacity) requires capacity in 1..256; otherwise throw BankError('capacity'). Pop on an empty collection throws BankError('empty'). PopAt with a nonexistent or negative stack index throws BankError('index'), including PopAt(0) on an empty collection.",
+      "After each successful operation, all small stacks except possibly the last are full. Rollover preserves the relative order of all values other than the removed value when the small stacks are concatenated bottom-to-top. Failed operations preserve all contents and indices."
+    ],
+    "why": "Capacity-limited stacks make the end behave like a normal stack. PopAt creates an internal gap; moving each following bottom value backward preserves the logical sequence and restores the full-prefix layout. That layout makes future stack indices predictable.",
+    "correctness": "Represent the logical contents by concatenating small stacks from oldest to newest, each bottom-to-top. Push appends one value and Pop removes its last value. PopAt removes exactly the last value of the selected segment. Moving the next segment's bottom into the gap keeps every other value's relative position; repeating this propagates the gap to the final segment, which is removed if empty. Thus the resulting contents and segmentation obey the contract after every operation.",
+    "walkthrough": "With capacity 2, pushes 1,2,3,4 create [1,2] and [3,4]. PopAt(0) returns 2, moves 3 into the first stack and leaves [1,3] and [4]. Pop then returns 4 and removes the last small stack; the next Pop returns 3.",
+    "example": [
+      [
+        [
+          "SetOfStacks",
+          "Push",
+          "Push",
+          "Push",
+          "Push",
+          "PopAt",
+          "Pop",
+          "Pop"
+        ],
+        [
+          [
+            2
+          ],
+          [
+            1
+          ],
+          [
+            2
+          ],
+          [
+            3
+          ],
+          [
+            4
+          ],
+          [
+            0
+          ],
+          [],
+          []
+        ]
+      ],
+      [
+        null,
+        null,
+        null,
+        null,
+        null,
+        2,
+        4,
+        3
+      ]
+    ],
+    "time": "Push and Pop take O(1) amortized time with growable arrays. PopAt takes O(s*capacity) worst-case time in these implementations, where s is the number of affected small stacks; removing a bottom array element shifts its remaining elements.",
+    "space": "O(n) payload storage, plus O(s) small-stack metadata, for a maximum of n simultaneously stored values.",
+    "edges": [
+      "Capacity one and removal from the first or last stack.",
+      "Repeated PopAt operations after rollover change later indices.",
+      "Invalid indices and empty operations must not consume a value."
+    ],
+    "related": "A single ordinary stack lacks PopAt and rollover; it is not an exact duplicate.",
+    "id": "ctci6_3_3",
+    "title": "Stack of Plates",
+    "testCount": 52,
+    "languages": {
+      "csharp": {
+        "signature": "SetOfStacks(int capacity); void Push(int value); int Pop(); int PopAt(int index); bool IsEmpty()",
+        "starterCode": "public class SetOfStacks\n{\n    public SetOfStacks(int capacity)\n    {\n    }\n    public void Push(int value)\n    { // Write your solution here.\n    }\n    public int Pop()\n    {\n        return 0;\n    }\n    public int PopAt(int index)\n    {\n        return 0;\n    }\n    public bool IsEmpty()\n    {\n        return false;\n    }\n}\n",
+        "solutionCode": "public class SetOfStacks\n{\n    private readonly int capacity;\n    private readonly List<List<int>> stacks = new();\n    public SetOfStacks(int supplied)\n    {\n        if (supplied < 1 || supplied > 256)\n            throw new BankError(\"capacity\");\n        capacity = supplied;\n    }\n    public void Push(int value)\n    {\n        int last = stacks.Count - 1;\n        if (last < 0 || stacks[last].Count == capacity)\n        {\n            stacks.Add(new List<int>());\n            ++last;\n        }\n        stacks[last].Add(value);\n    }\n    public int Pop()\n    {\n        if (stacks.Count == 0)\n            throw new BankError(\"empty\");\n        int last = stacks.Count - 1;\n        int value = stacks[last][stacks[last].Count - 1];\n        stacks[last].RemoveAt(stacks[last].Count - 1);\n        if (stacks[last].Count == 0)\n        {\n            stacks.RemoveAt(last);\n        }\n        return value;\n    }\n    public int PopAt(int index)\n    {\n        if (index < 0 || index >= stacks.Count)\n            throw new BankError(\"index\");\n        int value = stacks[index][stacks[index].Count - 1];\n        stacks[index].RemoveAt(stacks[index].Count - 1);\n        for (int i = index; i + 1 < stacks.Count; ++i)\n        {\n            int bottom = stacks[i + 1][0];\n            stacks[i + 1].RemoveAt(0);\n            stacks[i].Add(bottom);\n        }\n        int last = stacks.Count - 1;\n        if (stacks[last].Count == 0)\n        {\n            stacks.RemoveAt(last);\n        }\n        return value;\n    }\n    public bool IsEmpty()\n    {\n        return stacks.Count == 0;\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "SetOfStacks(capacity); Push(value); Pop(); PopAt(index); IsEmpty()",
+        "starterCode": "class SetOfStacks {\n  constructor(capacity) {}\n  Push(value) {\n    // Write your solution here.\n  }\n  Pop() {\n    return 0;\n  }\n  PopAt(index) {\n    return 0;\n  }\n  IsEmpty() {\n    return false;\n  }\n}\n",
+        "solutionCode": "class SetOfStacks {\n  constructor(capacity) {\n    if (capacity < 1 || capacity > 256) throw new BankError(\"capacity\");\n    this._capacity = capacity;\n    this._stacks = [];\n  }\n  Push(value) {\n    if (!this._stacks.length || this._stacks.at(-1).length === this._capacity)\n      this._stacks.push([]);\n    this._stacks.at(-1).push(value);\n  }\n  Pop() {\n    if (!this._stacks.length) throw new BankError(\"empty\");\n    const value = this._stacks.at(-1).pop();\n    if (!this._stacks.at(-1).length) this._stacks.pop();\n    return value;\n  }\n  PopAt(index) {\n    if (index < 0 || index >= this._stacks.length) throw new BankError(\"index\");\n    const value = this._stacks[index].pop();\n    for (let i = index; i + 1 < this._stacks.length; ++i)\n      this._stacks[i].push(this._stacks[i + 1].shift());\n    if (!this._stacks.at(-1).length) this._stacks.pop();\n    return value;\n  }\n  IsEmpty() {\n    return this._stacks.length === 0;\n  }\n}\n"
+      },
+      "python": {
+        "signature": "SetOfStacks(capacity: i); def Push(self, value: int) -> None:; def Pop(self) -> int:; def PopAt(self, index: int) -> int:; def IsEmpty(self) -> bool:",
+        "starterCode": "class SetOfStacks:\n    def __init__(self, capacity):\n        pass\n\n    def Push(self, value: int) -> None:\n        pass\n\n    def Pop(self) -> int:\n        return 0\n\n    def PopAt(self, index: int) -> int:\n        return 0\n\n    def IsEmpty(self) -> bool:\n        return False\n",
+        "solutionCode": "class SetOfStacks:\n    def __init__(self, capacity: int):\n        if not 1 <= capacity <= 256:\n            raise BankError(\"capacity\")\n        self._capacity, self._stacks = capacity, []\n\n    def Push(self, value: int):\n        if not self._stacks or len(self._stacks[-1]) == self._capacity:\n            self._stacks.append([])\n        self._stacks[-1].append(value)\n\n    def Pop(self) -> int:\n        if not self._stacks:\n            raise BankError(\"empty\")\n        value = self._stacks[-1].pop()\n        if not self._stacks[-1]:\n            self._stacks.pop()\n        return value\n\n    def PopAt(self, index: int) -> int:\n        if not 0 <= index < len(self._stacks):\n            raise BankError(\"index\")\n        value = self._stacks[index].pop()\n        for i in range(index, len(self._stacks) - 1):\n            self._stacks[i].append(self._stacks[i + 1].pop(0))\n        if not self._stacks[-1]:\n            self._stacks.pop()\n        return value\n\n    def IsEmpty(self) -> bool:\n        return not self._stacks\n"
+      },
+      "cpp": {
+        "signature": "SetOfStacks(int capacity); void Push(int value); int Pop(); int PopAt(int index); bool IsEmpty()",
+        "starterCode": "class SetOfStacks {\n public:\n  SetOfStacks(int capacity) {\n  }\n  void Push(int value) {  // Write your solution here.\n  }\n  int Pop() {\n    return 0;\n  }\n  int PopAt(int index) {\n    return 0;\n  }\n  bool IsEmpty() {\n    return false;\n  }\n};\n",
+        "solutionCode": "class SetOfStacks {\n  int capacity;\n  std::vector<std::vector<int>> stacks;\n\n public:\n  SetOfStacks(int supplied) : capacity(supplied) {\n    if (supplied < 1 || supplied > 256)\n      throw BankError(\"capacity\");\n  }\n  void Push(int value) {\n    int last = static_cast<int>(stacks.size()) - 1;\n    if (last < 0 || stacks[last].size() == capacity) {\n      stacks.push_back(std::vector<int>());\n      ++last;\n    }\n    stacks[last].push_back(value);\n  }\n  int Pop() {\n    if (static_cast<int>(stacks.size()) == 0)\n      throw BankError(\"empty\");\n    int last = static_cast<int>(stacks.size()) - 1;\n    int value = stacks[last][stacks[last].size() - 1];\n    stacks[last].erase(stacks[last].begin() + stacks[last].size() - 1);\n    if (stacks[last].size() == 0) {\n      stacks.erase(stacks.begin() + last);\n    }\n    return value;\n  }\n  int PopAt(int index) {\n    if (index < 0 || index >= static_cast<int>(stacks.size()))\n      throw BankError(\"index\");\n    int value = stacks[index][stacks[index].size() - 1];\n    stacks[index].erase(stacks[index].begin() + stacks[index].size() - 1);\n    for (int i = index; i + 1 < static_cast<int>(stacks.size()); ++i) {\n      int bottom = stacks[i + 1][0];\n      stacks[i + 1].erase(stacks[i + 1].begin() + 0);\n      stacks[i].push_back(bottom);\n    }\n    int last = static_cast<int>(stacks.size()) - 1;\n    if (stacks[last].size() == 0) {\n      stacks.erase(stacks.begin() + last);\n    }\n    return value;\n  }\n  bool IsEmpty() {\n    return static_cast<int>(stacks.size()) == 0;\n  }\n};\n"
+      },
+      "java": {
+        "signature": "SetOfStacks(int capacity); void Push(int value); int Pop(); int PopAt(int index); boolean IsEmpty()",
+        "starterCode": "class SetOfStacks {\n  public SetOfStacks(int capacity) {\n  }\n  public void Push(int value) { // Write your solution here.\n  }\n  public int Pop() {\n    return 0;\n  }\n  public int PopAt(int index) {\n    return 0;\n  }\n  public boolean IsEmpty() {\n    return false;\n  }\n}\n",
+        "solutionCode": "class SetOfStacks {\n  private final int capacity;\n  private final ArrayList<ArrayList<Integer>> stacks = new ArrayList<>();\n  public SetOfStacks(int supplied) {\n    if (supplied < 1 || supplied > 256)\n      throw new BankError(\"capacity\");\n    capacity = supplied;\n  }\n  public void Push(int value) {\n    int last = stacks.size() - 1;\n    if (last < 0 || stacks.get(last).size() == capacity) {\n      stacks.add(new ArrayList<>());\n      ++last;\n    }\n    stacks.get(last).add(value);\n  }\n  public int Pop() {\n    if (stacks.size() == 0)\n      throw new BankError(\"empty\");\n    int last = stacks.size() - 1;\n    int value = stacks.get(last).get(stacks.get(last).size() - 1);\n    stacks.get(last).remove(stacks.get(last).size() - 1);\n    if (stacks.get(last).size() == 0) {\n      stacks.remove(last);\n    }\n    return value;\n  }\n  public int PopAt(int index) {\n    if (index < 0 || index >= stacks.size())\n      throw new BankError(\"index\");\n    int value = stacks.get(index).get(stacks.get(index).size() - 1);\n    stacks.get(index).remove(stacks.get(index).size() - 1);\n    for (int i = index; i + 1 < stacks.size(); ++i) {\n      int bottom = stacks.get(i + 1).get(0);\n      stacks.get(i + 1).remove(0);\n      stacks.get(i).add(bottom);\n    }\n    int last = stacks.size() - 1;\n    if (stacks.get(last).size() == 0) {\n      stacks.remove(last);\n    }\n    return value;\n  }\n  public boolean IsEmpty() {\n    return stacks.size() == 0;\n  }\n}\n"
+      }
+    }
+  },
+  {
+    "ref": "3.4",
+    "method": "TwoStackQueue",
+    "params": [],
+    "result": "state",
+    "mutation": "two-stack-queue",
+    "description": "Implement a FIFO integer queue using only two stacks for payload storage. Add(value) appends at the queue's back, Remove() removes and returns its oldest value, Peek() returns the oldest value without removing it, and Size() returns the current count. Only stack push, pop, top/peek, emptiness and size operations may access the stored payloads.",
+    "constraints": [
+      "Examples are [operations,arguments]: the first operation constructs the class; each later operation calls that method on the same object. The output has one entry per operation: null for construction/void, a returned value otherwise, or {\"error\":\"code\"} for the documented BankError. The judge continues after a method error, so failure must leave state unchanged. A failing-constructor transcript contains only construction because no instance exists afterward. There are 1..2001 operations; integer values and indices fit signed 32 bits.",
+      "TwoStackQueue() starts empty. Remove and Peek on an empty queue throw BankError('empty'); Size returns zero.",
+      "Calls are sequential. New additions must not jump ahead of values already waiting in the output stack. Do not use array-front removal, a dequeuing primitive, or a third payload container."
+    ],
+    "why": "The input stack reverses arrival order once. Transferring it into the output stack reverses that order again, exposing the oldest value. Transfer only when output is empty, because its remaining values are older than every value still in input.",
+    "correctness": "At all times, the queue order is output read top-to-bottom followed by input read bottom-to-top. Add appends to the latter sequence. When output is empty, transferring all input values reverses its stack order and preserves that same queue sequence. Remove or Peek then reads exactly the oldest value. Size is the sum of the two stack sizes. Every item transfers at most once from input to output.",
+    "walkthrough": "Add 6 and 2. The first Remove transfers them and returns 6, leaving 2 in output. Add 9 places it in input; Peek must still return 2. Subsequent Removes return 2 and then 9. Transferring input while output still contains 2 would incorrectly put 9 first.",
+    "example": [
+      [
+        [
+          "TwoStackQueue",
+          "Add",
+          "Add",
+          "Remove",
+          "Add",
+          "Peek",
+          "Remove",
+          "Remove",
+          "Size"
+        ],
+        [
+          [],
+          [
+            6
+          ],
+          [
+            2
+          ],
+          [],
+          [
+            9
+          ],
+          [],
+          [],
+          [],
+          []
+        ]
+      ],
+      [
+        null,
+        null,
+        null,
+        6,
+        null,
+        2,
+        2,
+        9,
+        0
+      ]
+    ],
+    "time": "O(1) amortized time for Add, Remove and Peek: each value is pushed, transferred at most once and removed at most once. A single transfer can take O(n). Size takes O(1). Growable-stack resizing is included in the amortized bound.",
+    "space": "O(n) storage, where n is the maximum number of values simultaneously queued during the transcript.",
+    "edges": [
+      "Interleaved additions while output remains nonempty.",
+      "Repeated Peek does not consume values.",
+      "Empty failures followed by valid additions; duplicate and negative values."
+    ],
+    "related": "queue_from_stacks and interviewcake_queue-two-stacks share the main idea; their complete APIs and error behavior require comparison before reuse.",
+    "id": "ctci6_3_4",
+    "title": "Queue via Stacks",
+    "testCount": 47,
+    "languages": {
+      "csharp": {
+        "signature": "TwoStackQueue(); void Add(int value); int Remove(); int Peek(); int Size()",
+        "starterCode": "public class TwoStackQueue\n{\n    public TwoStackQueue()\n    {\n    }\n    public void Add(int value)\n    { // Write your solution here.\n    }\n    public int Remove()\n    {\n        return 0;\n    }\n    public int Peek()\n    {\n        return 0;\n    }\n    public int Size()\n    {\n        return 0;\n    }\n}\n",
+        "solutionCode": "public class TwoStackQueue\n{\n    private readonly Stack<int> newest = new(), oldest = new();\n    private void Shift()\n    {\n        if (oldest.Count == 0)\n        {\n            while (!(newest.Count == 0))\n            {\n                oldest.Push(newest.Pop());\n            }\n        }\n    }\n    public TwoStackQueue()\n    {\n    }\n    public void Add(int value)\n    {\n        newest.Push(value);\n    }\n    public int Remove()\n    {\n        Shift();\n        if (oldest.Count == 0)\n            throw new BankError(\"empty\");\n        return oldest.Pop();\n    }\n    public int Peek()\n    {\n        Shift();\n        if (oldest.Count == 0)\n            throw new BankError(\"empty\");\n        return oldest.Peek();\n    }\n    public int Size()\n    {\n        return newest.Count + oldest.Count;\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "TwoStackQueue(); Add(value); Remove(); Peek(); Size()",
+        "starterCode": "class TwoStackQueue {\n  constructor() {}\n  Add(value) {\n    // Write your solution here.\n  }\n  Remove() {\n    return 0;\n  }\n  Peek() {\n    return 0;\n  }\n  Size() {\n    return 0;\n  }\n}\n",
+        "solutionCode": "class TwoStackQueue {\n  constructor() {\n    this._newest = [];\n    this._oldest = [];\n  }\n  _shift() {\n    if (!this._oldest.length) while (this._newest.length) this._oldest.push(this._newest.pop());\n  }\n  Add(value) {\n    this._newest.push(value);\n  }\n  Remove() {\n    this._shift();\n    if (!this._oldest.length) throw new BankError(\"empty\");\n    return this._oldest.pop();\n  }\n  Peek() {\n    this._shift();\n    if (!this._oldest.length) throw new BankError(\"empty\");\n    return this._oldest.at(-1);\n  }\n  Size() {\n    return this._newest.length + this._oldest.length;\n  }\n}\n"
+      },
+      "python": {
+        "signature": "TwoStackQueue(); def Add(self, value: int) -> None:; def Remove(self) -> int:; def Peek(self) -> int:; def Size(self) -> int:",
+        "starterCode": "class TwoStackQueue:\n    def __init__(self):\n        pass\n\n    def Add(self, value: int) -> None:\n        pass\n\n    def Remove(self) -> int:\n        return 0\n\n    def Peek(self) -> int:\n        return 0\n\n    def Size(self) -> int:\n        return 0\n",
+        "solutionCode": "class TwoStackQueue:\n    def __init__(self):\n        self._newest, self._oldest = [], []\n\n    def _shift(self):\n        if not self._oldest:\n            while self._newest:\n                self._oldest.append(self._newest.pop())\n\n    def Add(self, value: int):\n        self._newest.append(value)\n\n    def Remove(self) -> int:\n        self._shift()\n        if not self._oldest:\n            raise BankError(\"empty\")\n        return self._oldest.pop()\n\n    def Peek(self) -> int:\n        self._shift()\n        if not self._oldest:\n            raise BankError(\"empty\")\n        return self._oldest[-1]\n\n    def Size(self) -> int:\n        return len(self._newest) + len(self._oldest)\n"
+      },
+      "cpp": {
+        "signature": "TwoStackQueue(); void Add(int value); int Remove(); int Peek(); int Size()",
+        "starterCode": "class TwoStackQueue {\n public:\n  TwoStackQueue() {\n  }\n  void Add(int value) {  // Write your solution here.\n  }\n  int Remove() {\n    return 0;\n  }\n  int Peek() {\n    return 0;\n  }\n  int Size() {\n    return 0;\n  }\n};\n",
+        "solutionCode": "class TwoStackQueue {\n  std::vector<int> newest, oldest;\n  void Shift() {\n    if (oldest.size() == 0) {\n      while (!(newest.size() == 0)) {\n        oldest.push_back(newest.back());\n        newest.pop_back();\n      }\n    }\n  }\n\n public:\n  TwoStackQueue() = default;\n  void Add(int value) {\n    newest.push_back(value);\n  }\n  int Remove() {\n    Shift();\n    if (oldest.size() == 0)\n      throw BankError(\"empty\");\n    int value = oldest.back();\n    oldest.pop_back();\n    return value;\n  }\n  int Peek() {\n    Shift();\n    if (oldest.size() == 0)\n      throw BankError(\"empty\");\n    return oldest.back();\n  }\n  int Size() {\n    return static_cast<int>(newest.size() + oldest.size());\n  }\n};\n"
+      },
+      "java": {
+        "signature": "TwoStackQueue(); void Add(int value); int Remove(); int Peek(); int Size()",
+        "starterCode": "class TwoStackQueue {\n  public TwoStackQueue() {\n  }\n  public void Add(int value) { // Write your solution here.\n  }\n  public int Remove() {\n    return 0;\n  }\n  public int Peek() {\n    return 0;\n  }\n  public int Size() {\n    return 0;\n  }\n}\n",
+        "solutionCode": "class TwoStackQueue {\n  private final ArrayDeque<Integer> newest = new ArrayDeque<>(), oldest = new ArrayDeque<>();\n  private void Shift() {\n    if (oldest.size() == 0) {\n      while (!(newest.size() == 0)) {\n        oldest.push(newest.pop());\n      }\n    }\n  }\n  public TwoStackQueue() {\n  }\n  public void Add(int value) {\n    newest.push(value);\n  }\n  public int Remove() {\n    Shift();\n    if (oldest.size() == 0)\n      throw new BankError(\"empty\");\n    return oldest.pop();\n  }\n  public int Peek() {\n    Shift();\n    if (oldest.size() == 0)\n      throw new BankError(\"empty\");\n    return oldest.peek();\n  }\n  public int Size() {\n    return newest.size() + oldest.size();\n  }\n}\n"
+      }
+    }
+  },
+  {
+    "ref": "3.5",
+    "method": "SortStack",
+    "params": [
+      [
+        "stack",
+        "stack"
+      ]
+    ],
+    "result": "void",
+    "mutation": "sort-stack",
+    "description": "Sort the supplied IntStack in place so repeated Pop calls return values in nondecreasing order, with the smallest value at the top. Return no value. Use at most one additional IntStack plus scalar variables; access payloads only through Push, Pop, Peek and IsEmpty. Do not copy payloads into an array, list or other container and do not call a library sort.",
+    "constraints": [
+      "The provided stack has 0..2000 signed 32-bit values. Duplicates are permitted. Preserve all values and their multiplicities.",
+      "The bank supplies IntStack() with Push(int), Pop()->int, Peek()->int and IsEmpty()->bool. Empty Pop/Peek throws BankError('empty'). Its implementation is shown as a required API.",
+      "Example input arrays show the initial stack bottom-to-top. Example output arrays show values obtained by popping the same supplied stack after SortStack returns. The callable receives the stack object, not the example array."
+    ],
+    "why": "Keep the auxiliary stack sorted with its largest value on top. To insert a smaller value, temporarily move larger top values back to the input. Those displaced values are immediately reprocessed in increasing order and placed above the inserted value before another original unprocessed value is reached. A final transfer puts the smallest value on the original stack's top.",
+    "correctness": "Each insertion removes only values larger than the held value from the auxiliary stack, so pushing that value preserves the auxiliary stack's nondecreasing bottom-to-top order. Displaced values return in increasing order, restoring their place above it. Every operation moves an existing value between the two stacks or a scalar temporary, preserving the multiset. Once all original values have been inserted, the auxiliary stack contains the complete sorted multiset; transferring it reverses the orientation so the original stack pops values from smallest to largest. The strict greater-than comparison prevents equal values from being endlessly displaced.",
+    "walkthrough": "For bottom-to-top [7,1,5], insert 5 into the auxiliary stack. Inserting 1 temporarily moves 5 back, then the next step replaces 5 above 1. Insert 7 above them. The auxiliary stack is [1,5,7] bottom-to-top; transferring it back makes the original stack [7,5,1], so popping returns [1,5,7].",
+    "example": [
+      [
+        [
+          7,
+          1,
+          5
+        ]
+      ],
+      [
+        1,
+        5,
+        7
+      ]
+    ],
+    "time": "O(n^2) stack operations in the worst input order: each original insertion can displace O(n) earlier values. With amortized O(1) stack operations, total time is O(n^2).",
+    "space": "O(n) auxiliary storage in exactly one additional stack, plus O(1) scalar variables.",
+    "edges": [
+      "Empty, one-element and already correctly oriented stacks.",
+      "Equal values require a strict comparison, not >=.",
+      "Reverse order and both signed 32-bit endpoints."
+    ],
+    "related": "sort_list sorts a linked list and is not a substitute for the restricted stack API.",
+    "id": "ctci6_3_5",
+    "title": "Sort Stack",
+    "testCount": 48,
+    "languages": {
+      "csharp": {
+        "signature": "void SortStack(IntStack stack)",
+        "starterCode": "public class Solution\n{\n    public void SortStack(IntStack stack)\n    {\n        // Write your solution here.\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public void SortStack(IntStack stack)\n    {\n        var spare = new IntStack();\n        while (!stack.IsEmpty())\n        {\n            int value = stack.Pop();\n            while (!spare.IsEmpty() && spare.Peek() > value)\n                stack.Push(spare.Pop());\n            spare.Push(value);\n        }\n        while (!spare.IsEmpty())\n            stack.Push(spare.Pop());\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function SortStack(stack)",
+        "starterCode": "function SortStack(stack) {\n  // Write your solution here.\n}\n",
+        "solutionCode": "function SortStack(stack) {\n  const spare = new IntStack();\n  while (!stack.IsEmpty()) {\n    const value = stack.Pop();\n    while (!spare.IsEmpty() && spare.Peek() > value) stack.Push(spare.Pop());\n    spare.Push(value);\n  }\n  while (!spare.IsEmpty()) stack.Push(spare.Pop());\n}\n"
+      },
+      "python": {
+        "signature": "def SortStack(stack: IntStack) -> None",
+        "starterCode": "def SortStack(stack: IntStack) -> None:\n    pass\n",
+        "solutionCode": "def SortStack(stack: IntStack) -> None:\n    spare = IntStack()\n    while not stack.IsEmpty():\n        value = stack.Pop()\n        while not spare.IsEmpty() and spare.Peek() > value:\n            stack.Push(spare.Pop())\n        spare.Push(value)\n    while not spare.IsEmpty():\n        stack.Push(spare.Pop())\n"
+      },
+      "cpp": {
+        "signature": "void SortStack(IntStack& stack)",
+        "starterCode": "class Solution {\n public:\n  void SortStack(IntStack& stack) {\n    // Write your solution here.\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  void SortStack(IntStack& stack) {\n    IntStack spare;\n    while (!stack.IsEmpty()) {\n      int value = stack.Pop();\n      while (!spare.IsEmpty() && spare.Peek() > value)\n        stack.Push(spare.Pop());\n      spare.Push(value);\n    }\n    while (!spare.IsEmpty())\n      stack.Push(spare.Pop());\n  }\n};\n"
+      },
+      "java": {
+        "signature": "void SortStack(IntStack stack)",
+        "starterCode": "class Solution {\n  public void SortStack(IntStack stack) {\n    // Write your solution here.\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public void SortStack(IntStack stack) {\n    var spare = new IntStack();\n    while (!stack.IsEmpty()) {\n      int value = stack.Pop();\n      while (!spare.IsEmpty() && spare.Peek() > value)\n        stack.Push(spare.Pop());\n      spare.Push(value);\n    }\n    while (!spare.IsEmpty())\n      stack.Push(spare.Pop());\n  }\n}\n"
+      }
+    }
+  },
+  {
+    "ref": "3.6",
+    "method": "AnimalShelter",
+    "params": [],
+    "result": "state",
+    "mutation": "animal-shelter",
+    "description": "Implement a shelter that adopts dogs and cats in arrival order. Enqueue(animal) admits a supplied Animal object. DequeueAny returns the oldest remaining animal; DequeueDog and DequeueCat return the oldest remaining animal of that species. Remove and return that exact original object. Return null when the requested category is empty. Peek returns the oldest animal without removing it, and Size returns the number remaining.",
+    "constraints": [
+      "Examples are [operations,arguments]: the first operation constructs the class; each later operation calls that method on the same object. The output has one entry per operation: null for construction/void, a returned value otherwise, or {\"error\":\"code\"} for the documented BankError. The judge continues after a method error, so failure must leave state unchanged. A failing-constructor transcript contains only construction because no instance exists afterward. There are 1..2001 operations; integer values and indices fit signed 32 bits.",
+      "The bank supplies Animal(Id,Species). Id is a unique signed 32-bit label within the transcript; Species is exactly 'dog' or 'cat' for valid admissions. Age is arrival order, never the numerical Id. Preserve every Animal object's Id and Species.",
+      "An invalid Species must throw BankError('species') without changing shelter contents. Empty adoption and Peek return null rather than throwing. Admission objects are fresh and never enqueued twice.",
+      "For examples, Enqueue arguments encode [Id,Species]; the adapter constructs that Animal and passes only the object. Adoption/Peek output displays its Id after verifying original-object identity. The implementation must not return an Id or an equal-valued copy."
+    ],
+    "why": "Within one species, only its queue head can be that species' oldest remaining animal. The globally oldest animal must therefore be one of the two heads. Assigning an increasing admission number lets a constant-time comparison choose between them without using the arbitrary Id labels.",
+    "correctness": "Each species queue maintains exactly its unadopted original animals in admission order. Enqueue appends to the matching queue with a newer order number; a species adoption removes its head. For DequeueAny or Peek, every non-head animal has an older same-species animal ahead of it, so comparing the two available heads identifies the global oldest. Removal returns the stored original reference and does not write Animal fields. Invalid species is checked before admission, preserving state.",
+    "walkthrough": "Admit dog 50, cat 2, then dog -3. Their arrival numbers are 0,1,2 regardless of Id. DequeueAny returns original dog 50. DequeueDog returns original dog -3, while cat 2 is still waiting. DequeueAny then returns original cat 2. Choosing the smallest Id would violate arrival order.",
+    "example": [
+      [
+        [
+          "AnimalShelter",
+          "Enqueue",
+          "Enqueue",
+          "Enqueue",
+          "DequeueAny",
+          "DequeueDog",
+          "DequeueAny"
+        ],
+        [
+          [],
+          [
+            50,
+            "dog"
+          ],
+          [
+            2,
+            "cat"
+          ],
+          [
+            -3,
+            "dog"
+          ],
+          [],
+          [],
+          []
+        ]
+      ],
+      [
+        null,
+        null,
+        null,
+        null,
+        50,
+        -3,
+        2
+      ]
+    ],
+    "time": "O(1) algorithmic time per admission, adoption, Peek or Size under the usual constant-time node-allocation model.",
+    "space": "O(n) live queue-entry storage for n animals currently in the shelter, plus two head/tail pairs and counters. Animal objects remain caller-owned.",
+    "edges": [
+      "One species absent and the entire shelter empty.",
+      "Negative/nonmonotone Ids must not influence age.",
+      "Interleaved species-specific and unrestricted adoption.",
+      "Invalid admission preserves the queue; copied animal returns fail identity checks."
+    ],
+    "related": "A plain FIFO queue cannot implement the species-specific adoption operations.",
+    "id": "ctci6_3_6",
+    "title": "Animal Shelter",
+    "testCount": 47,
+    "languages": {
+      "csharp": {
+        "signature": "AnimalShelter(); void Enqueue(Animal animal); Animal? DequeueAny(); Animal? DequeueDog(); Animal? DequeueCat(); Animal? Peek(); int Size()",
+        "starterCode": "public class AnimalShelter\n{\n    public AnimalShelter()\n    {\n    }\n    public void Enqueue(Animal animal)\n    { // Write your solution here.\n    }\n    public Animal? DequeueAny()\n    {\n        return null;\n    }\n    public Animal? DequeueDog()\n    {\n        return null;\n    }\n    public Animal? DequeueCat()\n    {\n        return null;\n    }\n    public Animal? Peek()\n    {\n        return null;\n    }\n    public int Size()\n    {\n        return 0;\n    }\n}\n",
+        "solutionCode": "public class AnimalShelter\n{\n    private sealed class Entry\n    {\n        public Animal Value;\n        public int Order;\n        public Entry? Next;\n        public Entry(Animal value, int order)\n        {\n            Value = value;\n            Order = order;\n        }\n    }\n    private readonly Entry?[] heads = new Entry?[2], tails = new Entry?[2];\n    private int order = 0, count = 0;\n    private int Oldest()\n    {\n        if (heads[0] == null)\n            return 1;\n        if (heads[1] == null)\n            return 0;\n        return heads[0]!.Order < heads[1]!.Order ? 0 : 1;\n    }\n    private Animal? Take(int slot)\n    {\n        var entry = heads[slot];\n        if (entry == null)\n            return null;\n        heads[slot] = entry.Next;\n        if (heads[slot] == null)\n            tails[slot] = null;\n        --count;\n        return entry.Value;\n    }\n\n    public AnimalShelter()\n    {\n    }\n    public void Enqueue(Animal animal)\n    {\n        int slot;\n        if (animal.Species == \"dog\")\n            slot = 0;\n        else if (animal.Species == \"cat\")\n            slot = 1;\n        else\n            throw new BankError(\"species\");\n        var entry = new Entry(animal, order++);\n        if (tails[slot] == null)\n            heads[slot] = entry;\n        else\n            tails[slot]!.Next = entry;\n        tails[slot] = entry;\n        ++count;\n    }\n    public Animal? DequeueAny()\n    {\n        return Take(Oldest());\n    }\n    public Animal? DequeueDog()\n    {\n        return Take(0);\n    }\n    public Animal? DequeueCat()\n    {\n        return Take(1);\n    }\n    public Animal? Peek()\n    {\n        return heads[Oldest()]?.Value;\n    }\n    public int Size()\n    {\n        return count;\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "AnimalShelter(); Enqueue(animal); DequeueAny(); DequeueDog(); DequeueCat(); Peek(); Size()",
+        "starterCode": "class AnimalShelter {\n  constructor() {}\n  Enqueue(animal) {\n    // Write your solution here.\n  }\n  DequeueAny() {\n    return null;\n  }\n  DequeueDog() {\n    return null;\n  }\n  DequeueCat() {\n    return null;\n  }\n  Peek() {\n    return null;\n  }\n  Size() {\n    return 0;\n  }\n}\n",
+        "solutionCode": "class AnimalShelter {\n  constructor() {\n    this._heads = [null, null];\n    this._tails = [null, null];\n    this._order = 0;\n    this._count = 0;\n  }\n  _oldest() {\n    if (this._heads[0] === null) return 1;\n    if (this._heads[1] === null) return 0;\n    return this._heads[0].order < this._heads[1].order ? 0 : 1;\n  }\n  _take(slot) {\n    const entry = this._heads[slot];\n    if (entry === null) return null;\n    this._heads[slot] = entry.next;\n    if (this._heads[slot] === null) this._tails[slot] = null;\n    --this._count;\n    return entry.value;\n  }\n  Enqueue(animal) {\n    let slot;\n    if (animal.Species === \"dog\") slot = 0;\n    else if (animal.Species === \"cat\") slot = 1;\n    else throw new BankError(\"species\");\n    const entry = { value: animal, order: this._order++, next: null };\n    if (this._tails[slot] === null) this._heads[slot] = entry;\n    else this._tails[slot].next = entry;\n    this._tails[slot] = entry;\n    ++this._count;\n  }\n  DequeueAny() {\n    return this._take(this._oldest());\n  }\n  DequeueDog() {\n    return this._take(0);\n  }\n  DequeueCat() {\n    return this._take(1);\n  }\n  Peek() {\n    return this._heads[this._oldest()]?.value ?? null;\n  }\n  Size() {\n    return this._count;\n  }\n}\n"
+      },
+      "python": {
+        "signature": "AnimalShelter(); def Enqueue(self, animal: Animal) -> None:; def DequeueAny(self) -> Animal | None:; def DequeueDog(self) -> Animal | None:; def DequeueCat(self) -> Animal | None:; def Peek(self) -> Animal | None:; def Size(self) -> int:",
+        "starterCode": "class AnimalShelter:\n    def __init__(self):\n        pass\n\n    def Enqueue(self, animal: Animal) -> None:\n        pass\n\n    def DequeueAny(self) -> Animal | None:\n        return None\n\n    def DequeueDog(self) -> Animal | None:\n        return None\n\n    def DequeueCat(self) -> Animal | None:\n        return None\n\n    def Peek(self) -> Animal | None:\n        return None\n\n    def Size(self) -> int:\n        return 0\n",
+        "solutionCode": "class AnimalShelter:\n    class _Entry:\n        def __init__(self, value, order):\n            self.value, self.order, self.next = value, order, None\n\n    def __init__(self):\n        self._heads, self._tails = [None, None], [None, None]\n        self._order = self._count = 0\n\n    def _oldest(self):\n        if self._heads[0] is None:\n            return 1\n        if self._heads[1] is None:\n            return 0\n        return 0 if self._heads[0].order < self._heads[1].order else 1\n\n    def _take(self, slot):\n        entry = self._heads[slot]\n        if entry is None:\n            return None\n        self._heads[slot] = entry.next\n        if self._heads[slot] is None:\n            self._tails[slot] = None\n        self._count -= 1\n        return entry.value\n\n    def Enqueue(self, animal: Animal):\n        if animal.Species == \"dog\":\n            slot = 0\n        elif animal.Species == \"cat\":\n            slot = 1\n        else:\n            raise BankError(\"species\")\n        entry = self._Entry(animal, self._order)\n        self._order += 1\n        if self._tails[slot] is None:\n            self._heads[slot] = entry\n        else:\n            self._tails[slot].next = entry\n        self._tails[slot] = entry\n        self._count += 1\n\n    def DequeueAny(self) -> Animal | None:\n        return self._take(self._oldest())\n\n    def DequeueDog(self) -> Animal | None:\n        return self._take(0)\n\n    def DequeueCat(self) -> Animal | None:\n        return self._take(1)\n\n    def Peek(self) -> Animal | None:\n        entry = self._heads[self._oldest()]\n        return None if entry is None else entry.value\n\n    def Size(self) -> int:\n        return self._count\n"
+      },
+      "cpp": {
+        "signature": "AnimalShelter(); void Enqueue(Animal* animal); Animal* DequeueAny(); Animal* DequeueDog(); Animal* DequeueCat(); Animal* Peek(); int Size()",
+        "starterCode": "class AnimalShelter {\n public:\n  AnimalShelter() {\n  }\n  void Enqueue(Animal* animal) {  // Write your solution here.\n  }\n  Animal* DequeueAny() {\n    return nullptr;\n  }\n  Animal* DequeueDog() {\n    return nullptr;\n  }\n  Animal* DequeueCat() {\n    return nullptr;\n  }\n  Animal* Peek() {\n    return nullptr;\n  }\n  int Size() {\n    return 0;\n  }\n};\n",
+        "solutionCode": "class AnimalShelter {\n  struct Entry {\n    Animal* Value;\n    int Order;\n    std::unique_ptr<Entry> Next;\n    Entry(Animal* value, int order) : Value(value), Order(order) {\n    }\n  };\n  std::array<std::unique_ptr<Entry>, 2> heads;\n  std::array<Entry*, 2> tails{};\n  int order = 0, count = 0;\n  int Oldest() {\n    if (!heads[0])\n      return 1;\n    if (!heads[1])\n      return 0;\n    return heads[0]->Order < heads[1]->Order ? 0 : 1;\n  }\n  Animal* Take(int slot) {\n    if (!heads[slot])\n      return nullptr;\n    auto removed = std::move(heads[slot]);\n    Animal* value = removed->Value;\n    heads[slot] = std::move(removed->Next);\n    if (!heads[slot])\n      tails[slot] = nullptr;\n    --count;\n    return value;\n  }\n\n public:\n  AnimalShelter() = default;\n  void Enqueue(Animal* animal) {\n    int slot;\n    if (animal->Species == \"dog\")\n      slot = 0;\n    else if (animal->Species == \"cat\")\n      slot = 1;\n    else\n      throw BankError(\"species\");\n    auto entry = std::make_unique<Entry>(animal, order++);\n    auto raw = entry.get();\n    if (tails[slot])\n      tails[slot]->Next = std::move(entry);\n    else\n      heads[slot] = std::move(entry);\n    tails[slot] = raw;\n    ++count;\n  }\n  Animal* DequeueAny() {\n    return Take(Oldest());\n  }\n  Animal* DequeueDog() {\n    return Take(0);\n  }\n  Animal* DequeueCat() {\n    return Take(1);\n  }\n  Animal* Peek() {\n    auto& entry = heads[Oldest()];\n    return entry ? entry->Value : nullptr;\n  }\n  int Size() {\n    return count;\n  }\n};\n"
+      },
+      "java": {
+        "signature": "AnimalShelter(); void Enqueue(Animal animal); Animal DequeueAny(); Animal DequeueDog(); Animal DequeueCat(); Animal Peek(); int Size()",
+        "starterCode": "class AnimalShelter {\n  public AnimalShelter() {\n  }\n  public void Enqueue(Animal animal) { // Write your solution here.\n  }\n  public Animal DequeueAny() {\n    return null;\n  }\n  public Animal DequeueDog() {\n    return null;\n  }\n  public Animal DequeueCat() {\n    return null;\n  }\n  public Animal Peek() {\n    return null;\n  }\n  public int Size() {\n    return 0;\n  }\n}\n",
+        "solutionCode": "class AnimalShelter {\n  private static class Entry {\n    public Animal Value;\n    public int Order;\n    public Entry Next;\n    public Entry(Animal value, int order) {\n      Value = value;\n      Order = order;\n    }\n  }\n  private final Entry[] heads = new Entry[2], tails = new Entry[2];\n  private int order = 0, count = 0;\n  private int Oldest() {\n    if (heads[0] == null)\n      return 1;\n    if (heads[1] == null)\n      return 0;\n    return heads[0].Order < heads[1].Order ? 0 : 1;\n  }\n  private Animal Take(int slot) {\n    var entry = heads[slot];\n    if (entry == null)\n      return null;\n    heads[slot] = entry.Next;\n    if (heads[slot] == null)\n      tails[slot] = null;\n    --count;\n    return entry.Value;\n  }\n\n  public AnimalShelter() {\n  }\n  public void Enqueue(Animal animal) {\n    int slot;\n    if (animal.Species.equals(\"dog\"))\n      slot = 0;\n    else if (animal.Species.equals(\"cat\"))\n      slot = 1;\n    else\n      throw new BankError(\"species\");\n    var entry = new Entry(animal, order++);\n    if (tails[slot] == null)\n      heads[slot] = entry;\n    else\n      tails[slot].Next = entry;\n    tails[slot] = entry;\n    ++count;\n  }\n  public Animal DequeueAny() {\n    return Take(Oldest());\n  }\n  public Animal DequeueDog() {\n    return Take(0);\n  }\n  public Animal DequeueCat() {\n    return Take(1);\n  }\n  public Animal Peek() {\n    return heads[Oldest()] == null ? null : heads[Oldest()].Value;\n  }\n  public int Size() {\n    return count;\n  }\n}\n"
+      }
+    }
+  }
+]

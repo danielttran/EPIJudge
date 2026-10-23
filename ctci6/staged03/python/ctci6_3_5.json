@@ -1,0 +1,27 @@
+{
+  "explanation": "Keep the auxiliary stack sorted with its largest value on top. To insert a smaller value, temporarily move larger top values back to the input. Those displaced values are immediately reprocessed in increasing order and placed above the inserted value before another original unprocessed value is reached. A final transfer puts the smallest value on the original stack's top.",
+  "correctness": "Each insertion removes only values larger than the held value from the auxiliary stack, so pushing that value preserves the auxiliary stack's nondecreasing bottom-to-top order. Displaced values return in increasing order, restoring their place above it. Every operation moves an existing value between the two stacks or a scalar temporary, preserving the multiset. Once all original values have been inserted, the auxiliary stack contains the complete sorted multiset; transferring it reverses the orientation so the original stack pops values from smallest to largest. The strict greater-than comparison prevents equal values from being endlessly displaced.",
+  "walkthrough": "For bottom-to-top [7,1,5], insert 5 into the auxiliary stack. Inserting 1 temporarily moves 5 back, then the next step replaces 5 above 1. Insert 7 above them. The auxiliary stack is [1,5,7] bottom-to-top; transferring it back makes the original stack [7,5,1], so popping returns [1,5,7].",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        7,
+        1,
+        5
+      ]
+    ],
+    "expected": [
+      1,
+      5,
+      7
+    ]
+  },
+  "timeComplexity": "O(n^2) stack operations in the worst input order: each original insertion can displace O(n) earlier values. With amortized O(1) stack operations, total time is O(n^2).",
+  "spaceComplexity": "O(n) auxiliary storage in exactly one additional stack, plus O(1) scalar variables.",
+  "edgeCases": [
+    "Empty, one-element and already correctly oriented stacks.",
+    "Equal values require a strict comparison, not >=.",
+    "Reverse order and both signed 32-bit endpoints."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 3.5. No affiliation is implied."
+}

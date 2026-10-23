@@ -11,10 +11,11 @@ from chapter01 import SPECS
 from core import HEADERS, ROOT, TYPES
 
 
-def source(language, starters=False):
+def source(language, starters=False, only_ref=None):
+    specs = [s for s in SPECS if only_ref is None or s["ref"] == only_ref]
     sources = [HEADERS[language]]
     catalog = json.loads((ROOT / "ctci6/staged/catalog.json").read_text())
-    for spec in SPECS:
+    for spec in specs:
         entry = next(row for row in catalog if row["ref"] == spec["ref"])
         code = entry["languages"][language][
             "starterCode" if starters else "solutionCode"
@@ -31,7 +32,7 @@ def source(language, starters=False):
         sources.append(code)
     if language in ("python", "javascript"):
         modes = {
-            s["ref"]: dict(method=s["method"], mutation=s["mutation"]) for s in SPECS
+            s["ref"]: dict(method=s["method"], mutation=s["mutation"]) for s in specs
         }
         if language == "python":
             sources.append(
@@ -78,13 +79,13 @@ fs.writeFileSync('results.json', JSON.stringify(results));
 """.replace("MODES_VALUE", json.dumps(modes)).replace(
                     "FUNCTIONS_VALUE",
                     "{"
-                    + ",".join(json.dumps(s["ref"]) + ":" + s["method"] for s in SPECS)
+                    + ",".join(json.dumps(s["ref"]) + ":" + s["method"] for s in specs)
                     + "}",
                 )
             )
         return "\n".join(sources)
     dispatch = []
-    for spec in SPECS:
+    for spec in specs:
         ref = spec["ref"]
         declarations = []
         for index, (_, kind) in enumerate(spec["params"]):
@@ -236,7 +237,7 @@ Files.writeString(Path.of("results.json"),results.toString());
             '#include <fstream>\n#include <stdexcept>\n#include "test_framework/json.h"\nusing json = nlohmann::json;\n',
         )
         # C++ cannot switch on a string.
-        for spec in SPECS:
+        for spec in specs:
             cases = cases.replace(
                 "case " + json.dumps(spec["ref"]) + ":",
                 "if(reference == " + json.dumps(spec["ref"]) + ")",
