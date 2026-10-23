@@ -1,0 +1,199 @@
+[
+  {
+    "ref": "8.1",
+    "method": "CountTripleSteps",
+    "params": [
+      [
+        "steps",
+        "i"
+      ]
+    ],
+    "result": "i",
+    "mutation": "none",
+    "description": "Count the ordered sequences of hops that climb exactly steps stairs when each hop has size 1, 2 or 3. Sequences with the same hop sizes in different orders count separately. Return the exact integer count.",
+    "constraints": [
+      "steps is a signed 32-bit integer no greater than 36. For a negative value return zero. For zero return one, representing the empty sequence. The upper bound keeps the exact result within signed 32-bit range.",
+      "Preserve inputs. This exercise asks for a count, not an enumeration or the minimum number of hops."
+    ],
+    "why": "Every nonempty route has a unique last hop, so routes divide into three disjoint groups by that hop. Their preceding routes climb one, two or three fewer stairs. Only those three preceding counts affect the next count, so older counts can be discarded.",
+    "correctness": "Let W(n) be the required count, with W(0)=1 and W(n)=0 for n<0. Removing a route's last hop gives exactly one route counted by W(n-1), W(n-2) or W(n-3), and appending that hop reverses the mapping. Thus W(n) is their sum with no overlap or omission. Before each loop iteration, the three stored counts represent precisely those three preceding arguments. Updating them after the sum preserves the invariant and returns W(steps). Negative inputs are rejected before iteration.",
+    "walkthrough": "For four stairs, the counts W(0)..W(4) are 1,1,2,4,7. The final value is W(3)+W(2)+W(1)=4+2+1. For example [1,3] and [3,1] are distinct routes; treating hop sizes as an unordered coin combination would undercount.",
+    "example": [
+      [
+        4
+      ],
+      7
+    ],
+    "time": "O(steps) time for nonnegative steps, with constant time for negative inputs.",
+    "space": "O(1) auxiliary space: three preceding counts and a temporary sum.",
+    "edges": [
+      "Negative signed endpoint, zero and one stair.",
+      "Three-hop routes must not be confused with two-hop stair problems.",
+      "The largest admitted steps value, 36, still fits the signed result type."
+    ],
+    "related": "A staircase problem allowing only hops of size one or two has a different recurrence and cannot be substituted.",
+    "id": "ctci6_8_1",
+    "title": "Triple Step",
+    "testCount": 42,
+    "languages": {
+      "csharp": {
+        "signature": "int CountTripleSteps(int steps)",
+        "starterCode": "public class Solution\n{\n    public int CountTripleSteps(int steps)\n    {\n        return 0;\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public int CountTripleSteps(int steps)\n    {\n        if (steps < 0)\n            return 0;\n        int previous = 1, older = 0, oldest = 0;\n        for (int i = 0; i < steps; ++i)\n        {\n            int current = previous + older + oldest;\n            oldest = older;\n            older = previous;\n            previous = current;\n        }\n        return previous;\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function CountTripleSteps(steps)",
+        "starterCode": "function CountTripleSteps(steps) {\n  return 0;\n}\n",
+        "solutionCode": "function CountTripleSteps(steps) {\n  if (steps < 0) return 0;\n  let previous = 1,\n    older = 0,\n    oldest = 0;\n  for (let i = 0; i < steps; ++i) {\n    const current = previous + older + oldest;\n    oldest = older;\n    older = previous;\n    previous = current;\n  }\n  return previous;\n}\n"
+      },
+      "python": {
+        "signature": "def CountTripleSteps(steps: int) -> int",
+        "starterCode": "def CountTripleSteps(steps: int) -> int:\n    return 0\n",
+        "solutionCode": "def CountTripleSteps(steps: int) -> int:\n    if steps < 0:\n        return 0\n    previous, older, oldest = 1, 0, 0\n    for _ in range(steps):\n        current = previous + older + oldest\n        oldest, older, previous = older, previous, current\n    return previous\n"
+      },
+      "cpp": {
+        "signature": "int CountTripleSteps(int steps)",
+        "starterCode": "class Solution {\n public:\n  int CountTripleSteps(int steps) {\n    return 0;\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  int CountTripleSteps(int steps) {\n    if (steps < 0)\n      return 0;\n    int previous = 1, older = 0, oldest = 0;\n    for (int i = 0; i < steps; ++i) {\n      int current = previous + older + oldest;\n      oldest = older;\n      older = previous;\n      previous = current;\n    }\n    return previous;\n  }\n};\n"
+      },
+      "java": {
+        "signature": "int CountTripleSteps(int steps)",
+        "starterCode": "class Solution {\n  public int CountTripleSteps(int steps) {\n    return 0;\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public int CountTripleSteps(int steps) {\n    if (steps < 0)\n      return 0;\n    int previous = 1, older = 0, oldest = 0;\n    for (int i = 0; i < steps; ++i) {\n      int current = previous + older + oldest;\n      oldest = older;\n      older = previous;\n      previous = current;\n    }\n    return previous;\n  }\n}\n"
+      }
+    }
+  },
+  {
+    "ref": "8.5",
+    "method": "RecursiveMultiply",
+    "params": [
+      [
+        "first",
+        "i"
+      ],
+      [
+        "second",
+        "i"
+      ]
+    ],
+    "result": "i",
+    "mutation": "none",
+    "description": "Compute first times second recursively using addition and bit operations instead of a multiplication operation. Halve the smaller operand to reduce recursive work; preserve the exact nonnegative result.",
+    "constraints": [
+      "0 <= first,second <= 46340, so the product fits signed 32-bit range. Zero is admitted explicitly and returns zero, matching the public helper's zero base case.",
+      "Do not use multiplication or division operators, a multiplication library, repeated addition proportional to the larger operand, or conversion to a representation that delegates multiplication. Addition, subtraction, shifts, bit tests, comparisons and recursion are allowed; a parity remainder test is also allowed. Preserve inputs."
+    ],
+    "why": "If the smaller operand is 2q, its product is twice q times the larger operand. If it is 2q+1, add one more larger operand. Computing the half product once avoids branching into two independent recursive multiplications, and choosing the smaller operand bounds recursion by its bit length.",
+    "correctness": "Zero gives the specified product immediately. For a positive smaller operand s, the recursive call receives floor(s/2), which is smaller and therefore terminates. By induction it returns floor(s/2) times the larger operand. Adding that value to itself and adding one larger operand exactly when s is odd gives s times that operand. Reordering the two original operands preserves multiplication, so this is the original requested product. All intermediate sums are nonnegative and no greater than the admitted final product.",
+    "walkthrough": "For 7 and 12, recursively compute the product for 3 and 12, then for 1 and 12, then zero. Unwinding gives 12, then 12+12+12=36, then 36+36+12=84. Each half product is computed once, rather than multiplying both halves independently.",
+    "example": [
+      [
+        7,
+        12
+      ],
+      84
+    ],
+    "time": "O(log(s+1)) recursive calls and additions, where s is the smaller operand; zero takes constant time.",
+    "space": "O(log(s+1)) recursion stack space, with no memo table or operand-sized sequence.",
+    "edges": [
+      "Either operand zero; either operand one.",
+      "Odd and even smaller operands, reversed argument order.",
+      "Both operands at the admitted maximum and highly unequal operands."
+    ],
+    "related": "A generic multiplication callable without the recursive operation restrictions is not an exact replacement.",
+    "id": "ctci6_8_5",
+    "title": "Recursive Multiply",
+    "testCount": 1140,
+    "languages": {
+      "csharp": {
+        "signature": "int RecursiveMultiply(int first, int second)",
+        "starterCode": "public class Solution\n{\n    public int RecursiveMultiply(int first, int second)\n    {\n        return 0;\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public int RecursiveMultiply(int first, int second)\n    {\n        int smaller = Math.Min(first, second), larger = Math.Max(first, second);\n        if (smaller == 0)\n            return 0;\n        int half = RecursiveMultiply(smaller >> 1, larger);\n        return half + half + ((smaller & 1) != 0 ? larger : 0);\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function RecursiveMultiply(first, second)",
+        "starterCode": "function RecursiveMultiply(first, second) {\n  return 0;\n}\n",
+        "solutionCode": "function RecursiveMultiply(first, second) {\n  const smaller = Math.min(first, second),\n    larger = Math.max(first, second);\n  if (smaller === 0) return 0;\n  const half = RecursiveMultiply(smaller >>> 1, larger);\n  return half + half + ((smaller & 1) !== 0 ? larger : 0);\n}\n"
+      },
+      "python": {
+        "signature": "def RecursiveMultiply(first: int, second: int) -> int",
+        "starterCode": "def RecursiveMultiply(first: int, second: int) -> int:\n    return 0\n",
+        "solutionCode": "def RecursiveMultiply(first: int, second: int) -> int:\n    smaller, larger = min(first, second), max(first, second)\n    if smaller == 0:\n        return 0\n    half = RecursiveMultiply(smaller >> 1, larger)\n    return half + half + (larger if smaller & 1 else 0)\n"
+      },
+      "cpp": {
+        "signature": "int RecursiveMultiply(int first, int second)",
+        "starterCode": "class Solution {\n public:\n  int RecursiveMultiply(int first, int second) {\n    return 0;\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  int RecursiveMultiply(int first, int second) {\n    int smaller = std::min(first, second), larger = std::max(first, second);\n    if (smaller == 0)\n      return 0;\n    int half = RecursiveMultiply(smaller >> 1, larger);\n    return half + half + ((smaller & 1) != 0 ? larger : 0);\n  }\n};\n"
+      },
+      "java": {
+        "signature": "int RecursiveMultiply(int first, int second)",
+        "starterCode": "class Solution {\n  public int RecursiveMultiply(int first, int second) {\n    return 0;\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public int RecursiveMultiply(int first, int second) {\n    int smaller = Math.min(first, second), larger = Math.max(first, second);\n    if (smaller == 0)\n      return 0;\n    int half = RecursiveMultiply(smaller >> 1, larger);\n    return half + half + ((smaller & 1) != 0 ? larger : 0);\n  }\n}\n"
+      }
+    }
+  },
+  {
+    "ref": "8.11",
+    "method": "CountCoinCombinations",
+    "params": [
+      [
+        "amount",
+        "i"
+      ]
+    ],
+    "result": "i",
+    "mutation": "none",
+    "description": "Count the unordered combinations of US coin denominations 1, 5, 10 and 25 cents that sum exactly to amount. Each denomination is available without limit. A combination is determined by its four coin counts; rearranging the same coins does not make a new combination.",
+    "constraints": [
+      "0 <= amount <= 10000 cents. Return the exact signed 32-bit count. Amount zero has one combination: using no coins.",
+      "Denominations are fixed by this exercise, not supplied as another argument. Preserve inputs. This asks for the number of combinations, not the fewest coins or ordered sequences."
+    ],
+    "why": "Process denominations one at a time so each combination acquires one canonical construction order. When adding a denomination, reusing the newly updated smaller amount permits any number of that coin. Reversing the nesting to process amounts before coins would count multiple orders of the same collection.",
+    "correctness": "Before processing a coin c, ways[a] counts combinations of a using only earlier denominations. During the increasing amount pass, the old ways[a] counts combinations using no c, while ways[a-c] already counts combinations using earlier coins and any number of c. Appending one c bijectively produces the combinations of a using at least one c. These two groups are disjoint and exhaustive. Initial ways[0]=1 gives the empty combination, and all other entries start at zero. After all four denominations, ways[amount] is the requested count.",
+    "walkthrough": "For 10 cents there are four combinations: ten pennies; one nickel and five pennies; two nickels; or one dime. The nickel pass extends ways[5] into ways[10], allowing two nickels. Neither the order of the pennies nor placing a nickel before versus after them creates another combination.",
+    "example": [
+      [
+        10
+      ],
+      4
+    ],
+    "time": "O(d*amount) time for d=4 fixed denominations, hence O(amount).",
+    "space": "O(amount) auxiliary storage for the amount-indexed count array.",
+    "edges": [
+      "Zero and amounts below the smallest non-penny denomination.",
+      "Exact denomination boundaries and combinations using repeated coins.",
+      "The upper amount bound; exact counts remain within signed 32-bit range."
+    ],
+    "related": "Minimum-coin change and ordered coin-sequence counting have different objectives and recurrences.",
+    "id": "ctci6_8_11",
+    "title": "Coins",
+    "testCount": 225,
+    "languages": {
+      "csharp": {
+        "signature": "int CountCoinCombinations(int amount)",
+        "starterCode": "public class Solution\n{\n    public int CountCoinCombinations(int amount)\n    {\n        return 0;\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public int CountCoinCombinations(int amount)\n    {\n        int[] ways = new int[amount + 1];\n        ways[0] = 1;\n        foreach (int coin in new[] { 1, 5, 10, 25 })\n        {\n            for (int value = coin; value <= amount; ++value)\n                ways[value] += ways[value - coin];\n        }\n        return ways[amount];\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function CountCoinCombinations(amount)",
+        "starterCode": "function CountCoinCombinations(amount) {\n  return 0;\n}\n",
+        "solutionCode": "function CountCoinCombinations(amount) {\n  const ways = Array(amount + 1).fill(0);\n  ways[0] = 1;\n  for (const coin of [1, 5, 10, 25]) {\n    for (let value = coin; value <= amount; ++value) ways[value] += ways[value - coin];\n  }\n  return ways[amount];\n}\n"
+      },
+      "python": {
+        "signature": "def CountCoinCombinations(amount: int) -> int",
+        "starterCode": "def CountCoinCombinations(amount: int) -> int:\n    return 0\n",
+        "solutionCode": "def CountCoinCombinations(amount: int) -> int:\n    ways = [0] * (amount + 1)\n    ways[0] = 1\n    for coin in (1, 5, 10, 25):\n        for value in range(coin, amount + 1):\n            ways[value] += ways[value - coin]\n    return ways[amount]\n"
+      },
+      "cpp": {
+        "signature": "int CountCoinCombinations(int amount)",
+        "starterCode": "class Solution {\n public:\n  int CountCoinCombinations(int amount) {\n    return 0;\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  int CountCoinCombinations(int amount) {\n    std::vector<int> ways(amount + 1);\n    ways[0] = 1;\n    for (int coin : std::array<int, 4>{1, 5, 10, 25}) {\n      for (int value = coin; value <= amount; ++value)\n        ways[value] += ways[value - coin];\n    }\n    return ways[amount];\n  }\n};\n"
+      },
+      "java": {
+        "signature": "int CountCoinCombinations(int amount)",
+        "starterCode": "class Solution {\n  public int CountCoinCombinations(int amount) {\n    return 0;\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public int CountCoinCombinations(int amount) {\n    int[] ways = new int[amount + 1];\n    ways[0] = 1;\n    for (int coin : new int[] {1, 5, 10, 25}) {\n      for (int value = coin; value <= amount; ++value)\n        ways[value] += ways[value - coin];\n    }\n    return ways[amount];\n  }\n}\n"
+      }
+    }
+  }
+]

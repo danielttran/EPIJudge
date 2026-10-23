@@ -36,6 +36,52 @@ class BitContractTests(unittest.TestCase):
         for bit in range(32):
             self.assertEqual(signed(1 << (bit ^ 1)), oracle("5.7", [signed(1 << bit)]))
 
+    def test_binary_fraction_boundary_and_exactness(self):
+        from fractions import Fraction
+
+        self.assertEqual("." + "0" * 30 + "1", oracle("5.2", [2.0**-31]))
+        self.assertEqual("ERROR", oracle("5.2", [2.0**-32]))
+        self.assertEqual("ERROR", oracle("5.2", [0.1]))
+        for value in (0.5, 0.625, 0.125, 1.0 - 2.0**-31):
+            rendered = oracle("5.2", [value])
+            self.assertEqual(
+                Fraction(*value.as_integer_ratio()),
+                Fraction(int(rendered[1:], 2), 2 ** (len(rendered) - 1)),
+            )
+            self.assertLessEqual(len(rendered), 32)
+
+    def test_one_flip_respects_the_word_boundary(self):
+        for word, expected in (
+            (0, 1),
+            (-1, 32),
+            (-2147483648, 2),
+            (2147483647, 32),
+            (1775, 8),
+        ):
+            self.assertEqual(expected, oracle("5.3", [word]))
+
+    def test_neighbor_reference_agrees_with_bounded_exhaustive_search(self):
+        for number in range(1, 257):
+            candidates = [
+                value
+                for value in range(1, 1025)
+                if value.bit_count() == number.bit_count()
+            ]
+            smaller = max((v for v in candidates if v < number), default=-1)
+            larger = min((v for v in candidates if v > number), default=-1)
+            self.assertEqual([smaller, larger], oracle("5.4", [number]))
+        self.assertEqual([-1, -1], oracle("5.4", [2147483647]))
+        self.assertEqual([536870912, -1], oracle("5.4", [1073741824]))
+
+    def test_line_preserves_other_pixels_and_supports_repeated_drawing(self):
+        initial = [128, 1, 64, 2]
+        once = oracle("5.8", [initial, 16, 3, 10, 0])
+        self.assertEqual([159, 225, 64, 2], once)
+        self.assertEqual(initial, [128, 1, 64, 2])
+        self.assertEqual(once, oracle("5.8", [once, 16, 3, 10, 0]))
+        self.assertEqual([159, 225, 192, 2], oracle("5.8", [once, 16, 0, 0, 1]))
+        self.assertEqual([28], oracle("5.8", [[0], 8, 3, 5, 0]))
+
     def test_grading_does_not_accept_bool_or_unsigned_alias(self):
         self.assertFalse(
             valid_observation(dict(expected=1), dict(actual=True, mutationOk=True))

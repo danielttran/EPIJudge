@@ -12,6 +12,7 @@ import harness01
 import harness02
 import harness03
 import harness05
+import harness08
 import models03
 from core import HEADERS, LANGUAGES, ROOT
 from models02 import MODELS, header
@@ -103,9 +104,9 @@ return json{{{{"observation",observed}},{{"elapsedMs",elapsed}}}};
 
 
 def submission_prefix(batch, language):
-    if batch in (1, 5):
+    if batch in (1, 5, 8):
         return HEADERS[language] + (
-            "#include <cstdint>\n" if batch == 5 and language == "cpp" else ""
+            "#include <cstdint>\n" if batch in (5, 8) and language == "cpp" else ""
         )
     if batch == 2:
         return header(language)
@@ -115,7 +116,9 @@ def submission_prefix(batch, language):
 
 
 def adapter(entry, language, batch):
-    module = {1: harness01, 2: harness02, 3: harness03, 5: harness05}[batch]
+    module = {1: harness01, 2: harness02, 3: harness03, 5: harness05, 8: harness08}[
+        batch
+    ]
     bank = module.source(language, only_ref=entry["ref"])
     code = entry["languages"][language]["solutionCode"]
     name = "Solution_" + entry["ref"].replace(".", "_")
@@ -176,6 +179,7 @@ def generate_runtime():
         (2, "staged02"),
         (3, "staged03"),
         (5, "staged05"),
+        (8, "staged08"),
     ):
         for entry in json.loads((ROOT / "ctci6" / folder / "catalog.json").read_text()):
             item = {

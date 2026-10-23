@@ -1,22 +1,69 @@
 {
   "stage": "standalone-authoring",
   "liveIntegration": "pending",
-  "reviewScope": "Only three established chapter-five exercises: insertion, conversion and pairwise swapping. Fifteen independently authored implementations and their independent per-position oracles were reviewed and executed. This is not a claim that the chapter is complete.",
+  "reviewScope": "All seven established coding exercises in chapter five, thirty-five independently authored language bodies, exact floating-point limits, signed/packed-byte bindings, independent oracles and mutation observations. The conceptual Debugger reference is classified separately; it is not an eighth executable problem.",
   "questions": [
-    {"ref":"5.1","algorithm":"Clear an inclusive interval with a width mask, then OR the fitting replacement shifted to low.","review":"Signed 32-bit words are treated as fixed patterns in every language. The fitting-insertion precondition is explicit. The full-width interval and bit 31 are valid and do not perform a 32-bit shift by 32. Every inclusive interval is exercised with zero, full and random fitting replacements. Negative insertion is permitted only for width 32."},
-    {"ref":"5.6","algorithm":"XOR the two 32-bit patterns, then clear the lowest set bit once per counted difference.","review":"Every actual implementation clears bits rather than scanning all positions, matching its O(k), k<=32 explanation. Negative values have exactly 32 bits. The independent reference compares individual positions, including the sign bit. Zero versus minus one yields 32."},
-    {"ref":"5.7","algorithm":"Mask even and odd positions separately, move each group into its paired positions, and OR.","review":"All sixteen adjacent pairs are swapped simultaneously. Each one-bit input, sign-bit movement, alternating masks and random signed words are covered. The independent reference gathers each output bit from position i XOR 1. Involution and population-preservation properties are checked separately."}
+    {
+      "ref": "5.1",
+      "algorithm": "Clear an inclusive interval with a width mask, then OR the fitting replacement shifted to low.",
+      "review": "Signed 32-bit words are treated as fixed patterns in every language. The fitting-insertion precondition is explicit. The full-width interval and bit 31 are valid and do not perform a 32-bit shift by 32. Every inclusive interval is exercised with zero, full and random fitting replacements. Negative insertion is permitted only for width 32."
+    },
+    {
+      "ref": "5.2",
+      "algorithm": "Emit at most 31 digits by exact doubling and subtracting each units bit.",
+      "review": "The point counts toward the 32-character limit. Binary64 input rather than an exact decimal rational is explicit. Powers of two at 2^-31 and 2^-32 enforce the boundary, and 0.1 returns ERROR. C#/Java use builders, C++ appends chars, Python/JavaScript collect digits then join; O(b) construction matches every implementation."
+    },
+    {
+      "ref": "5.3",
+      "algorithm": "Sliding bit window containing at most one zero.",
+      "review": "The right endpoint visits all 32 bits, and left advances until a second zero is excluded. Word boundaries, all-zero/all-one words, sign-bit-only words and separated/adjacent zeros are covered. The independent oracle tries each possible flip and counts textual runs."
+    },
+    {
+      "ref": "5.4",
+      "algorithm": "Carry the lowest set-bit run upward, repack remaining ones low, and use 31-bit complementation to reverse the search for the predecessor.",
+      "review": "Zero is only an internal no-successor case, not an admitted positive input. Wider arithmetic prevents overflow before checking the 31-bit maximum. Output is [smaller,larger] with independent -1 sentinels. The oracle uses constrained digit search and is cross-checked against exhaustive integer enumeration on a bounded domain."
+    },
+    {
+      "ref": "5.6",
+      "algorithm": "XOR the two 32-bit patterns, then clear the lowest set bit once per counted difference.",
+      "review": "Every actual implementation clears bits rather than scanning all positions, matching its O(k), k<=32 explanation. Negative values have exactly 32 bits. The independent reference compares individual positions, including the sign bit. Zero versus minus one yields 32."
+    },
+    {
+      "ref": "5.7",
+      "algorithm": "Mask even and odd positions separately, move each group into its paired positions, and OR.",
+      "review": "All sixteen adjacent pairs are swapped simultaneously. Each one-bit input, sign-bit movement, alternating masks and random signed words are covered. The independent reference gathers each output bit from position i XOR 1. Involution and population-preservation properties are checked separately."
+    },
+    {
+      "ref": "5.8",
+      "algorithm": "Intersect endpoint masks per affected byte and OR them into the original packed buffer.",
+      "review": "The same-byte case uses mask intersection; other pixels and rows retain their original bits. All languages receive native byte containers; Java observations normalize signed bytes to 0..255. C++ additionally checks original data pointer and length. Maximum screen dimensions, every endpoint pair in a two-byte row, nonzero initial data and repeated-drawing oracle properties are covered."
+    }
   ],
-  "languagesReviewed": ["csharp","javascript","python","cpp","java"],
+  "languagesReviewed": [
+    "csharp",
+    "javascript",
+    "python",
+    "cpp",
+    "java"
+  ],
   "languageBindingReview": {
-    "csharp":"uint masks give logical shifts; explicit unchecked conversions preserve signed patterns. The insertion width-32 branch avoids C# shift-count wrapping. CountBitChanges subtracts only from a nonzero uint, so its decrement cannot underflow.",
-    "javascript":"Bitwise operations operate on signed 32-bit values; >>> supplies logical shifts and unsigned normalization where needed. The insertion mask uses exact powers of two up to 2^32 before coercion, avoiding shift-count wrapping. Results are checked as signed 32-bit integers.",
-    "python":"Inputs are masked to 32 bits before XOR counting and mask movement, and high-bit results are converted back by subtracting 2^32. Thus unbounded sign extension cannot create an infinite bit-clearing loop or an unsigned result alias.",
-    "cpp":"Unsigned uint32_t patterns avoid signed-shift overflow. Insertion uses uint64_t so a shift by width 32 is defined. Conversion to a negative signed result first subtracts 2^32 in signed long long, then narrows only a value already in int range. This avoids relying on implementation-defined unsigned-to-signed narrowing.",
-    "java":"Insertion uses a 64-bit mask for width 32 and explicitly masks signed inputs into their 32-bit patterns. Pairwise swapping uses >>> rather than >>. Java's defined two's-complement int arithmetic makes lowest-bit clearing correct even when the sign bit is set."
+    "csharp": "uint masks give logical shifts; explicit unchecked conversions preserve signed patterns. The insertion width-32 branch avoids C# shift-count wrapping. CountBitChanges subtracts only from a nonzero uint, so its decrement cannot underflow. BinaryFraction uses double and StringBuilder; neighbor arithmetic uses long; drawing receives byte[] and reports numeric bytes rather than JSON base64.",
+    "javascript": "Bitwise operations operate on signed 32-bit values; >>> supplies logical shifts and unsigned normalization where needed. The insertion mask uses exact powers of two up to 2^32 before coercion, avoiding shift-count wrapping. Results are checked as signed 32-bit integers. BinaryFraction now collects digits in an array to justify linear output construction. Drawing uses Uint8Array; neighbor arithmetic stays exact below 2^32.",
+    "python": "Inputs are masked to 32 bits before XOR counting and mask movement, and high-bit results are converted back by subtracting 2^32. Thus unbounded sign extension cannot create an infinite bit-clearing loop or an unsigned result alias. BinaryFraction accepts the actual float; the oracle uses as_integer_ratio. Drawing receives bytearray and checks the void result and original length.",
+    "cpp": "Unsigned uint32_t patterns avoid signed-shift overflow. Insertion uses uint64_t so a shift by width 32 is defined. Conversion to a negative signed result first subtracts 2^32 in signed long long, then narrows only a value already in int range. This avoids relying on implementation-defined unsigned-to-signed narrowing. BinaryFraction uses double and string appends, neighbor intermediates use long long, and packed screen data uses vector<uint8_t>& with pointer preservation.",
+    "java": "Insertion uses a 64-bit mask for width 32 and explicitly masks signed inputs into their 32-bit patterns. Pairwise swapping uses >>> rather than >>. Java's defined two's-complement int arithmetic makes lowest-bit clearing correct even when the sign bit is set. BinaryFraction uses double/StringBuilder; a LongUnaryOperator carries neighbor intermediates in long. Drawing masks/normalizes signed byte observations and returns void."
   },
-  "executionEvidence":"staged05/validation.json",
-  "graderRegressions":"scripts/ctci6/test_bits05.py",
-  "remainingChapterReferences":["5.2","5.3","5.4","5.5","5.8"],
-  "remainingAcceptance":["separate-module submission and application callable/legacy execution","remaining chapter exercises and conceptual classification","live collection integration","whole-bank final-source solution and boundary execution","browser integration","push and exact-commit CI"]
+  "executionEvidence": "staged05/validation.json",
+  "graderRegressions": "scripts/ctci6/test_bits05.py",
+  "remainingChapterReferences": [
+    "5.5: classified conceptual; excluded from callable practice"
+  ],
+  "remainingAcceptance": [
+    "new four exercises through application callable and legacy execution",
+    "remaining eligible collection content and classifications",
+    "live collection integration",
+    "whole-bank final-source execution and boundaries",
+    "browser integration",
+    "push and exact-commit CI"
+  ]
 }

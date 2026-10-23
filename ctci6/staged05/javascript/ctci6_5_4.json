@@ -1,0 +1,22 @@
+{
+  "explanation": "Adding the lowest set bit carries the lowest movable run of ones into its next zero position. To get the smallest larger word with the same weight, put all remaining ones into the lowest available positions. Complementing within 31 bits reverses numeric order, so the same successor operation on the complement yields the predecessor without another complicated bit-case algorithm.",
+  "correctness": "For a nonzero value, let its lowest run of ones have r bits after z trailing zeros. Adding its lowest set bit moves that run into the first zero above it. Changing a higher position would produce a larger candidate, while no smaller-position change can increase the number with the same weight. The XOR/divide/shift expression reconstructs exactly r-1 low ones below the moved bit, giving the minimum possible suffix. Reject a carried value beyond the positive 31-bit maximum. For the smaller neighbor, complementation maps k set bits to 31-k and reverses order; the least greater valid complement therefore maps back to the greatest smaller original. A zero complement has no same-weight greater word.",
+  "walkthrough": "For 12 (01100), its lowest set bit is 4. Adding it gives 10000; the two original ones require one remaining low one, producing 10001, or 17, as the nearest larger value. The nearest smaller value is 01010, or 10. The result is [10,17]; closest absolute distance alone would not answer both requested sides.",
+  "walkthroughCase": {
+    "arguments": [
+      12
+    ],
+    "expected": [
+      10,
+      17
+    ]
+  },
+  "timeComplexity": "O(1) word operations in the fixed 31-bit domain, including two successor computations; there is no scan across integer values.",
+  "spaceComplexity": "O(1) auxiliary space plus the two-entry result.",
+  "edgeCases": [
+    "A single set bit at either end of the permitted range.",
+    "All low bits one, no smaller neighbor, or no larger neighbor.",
+    "Long runs of trailing zeros/ones and the signed maximum."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 5.4. No affiliation is implied."
+}

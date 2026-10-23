@@ -1,0 +1,23 @@
+{
+  "stage":"standalone-authoring-and-separate-module",
+  "liveIntegration":"pending",
+  "reviewScope":"Only Triple Step, Recursive Multiply and Coins: three actual contracts and fifteen language bodies, with independent references and boundary corpora. The other eleven chapter-eight exercises remain pending.",
+  "questions":[
+    {"ref":"8.1","algorithm":"Iterate the three-term last-hop recurrence while retaining only the three preceding counts.","review":"Counts ordered hop sequences, including the empty route for zero. Negative signed inputs return zero before a loop or allocation. Every steps value through 36 is executed, including the largest signed-safe result 2082876103. No two-hop staircase function is substituted.","complexity":"O(steps) time for nonnegative inputs and O(1) space match every rolling-state implementation; no recursive stack or memo array is claimed."},
+    {"ref":"8.5","algorithm":"Recursively multiply the halved smaller operand once, double that partial result by addition, and add the larger operand for an odd smaller operand.","review":"All five actual bodies use no multiplication or division operation. Their recursive call reduces the smaller operand and computes one half only. Zero, odd/even values, swapped arguments, every pair 0..31 and the maximum product are covered. Every intermediate sum stays within the admitted exact signed result range."},
+    {"ref":"8.11","algorithm":"Denomination-first one-dimensional combination DP, increasing amounts within each denomination pass.","review":"The fixed denominations are 1,5,10,25 cents. Empty amount counts once. The loop nesting counts unordered combinations with unlimited reuse, not sequences or minimum coins. The independent oracle enumerates quarter and dime counts and directly counts feasible nickel/penny choices. The admitted maximum is executed in all five languages.","complexity":"O(4*amount) time and O(amount) storage match the actual DP arrays. Counts are exact, not reduced modulo another number."}
+  ],
+  "languagesReviewed":["csharp","javascript","python","cpp","java"],
+  "languageBindingReview":{
+    "csharp":"Signed int bounds are justified by the explicit domains and executed endpoints. Arrays are zero-initialized, ways[0] is set before the denomination passes, and recursive multiplication uses ordinary method self-calls without hidden helper state.",
+    "javascript":"All results and intermediate sums stay below signed 32-bit maximum and therefore are exact Numbers. The smaller multiplication operand is below 2^16, making its unsigned right shift well-defined for this domain. Each call creates its own DP array.",
+    "python":"The recursive function's module-global name refers to itself even when invoked through the exported adapter alias. Rolling assignment evaluates previous values before rebinding. Arbitrary-size ints do not mask another language's overflow because shared admitted bounds are verified.",
+    "cpp":"vector<int> zero-initializes the coin counts; std::array enumerates the four denominations. The recursive method calls itself on a strictly smaller nonnegative operand, and all signed additions remain in range. Primitive parameters are passed by value.",
+    "java":"int arithmetic is exact within the admitted count/product bounds. The recurrence and coin arrays are local to each invocation; no static cached result leaks across tests. Recursive multiplication calls the same instance method with reduced arguments."
+  },
+  "executionEvidence":"staged08/validation.json",
+  "submissionEvidence":"runtime/validation.json",
+  "graderRegressions":"scripts/ctci6/test_dp08.py",
+  "remainingChapterReferences":["8.2","8.3","8.4","8.6","8.7","8.8","8.9","8.10","8.12","8.13","8.14"],
+  "remainingAcceptance":["selected application-format checks","remaining collection content and classifications","live integration","final whole-bank execution and browser audit","push and exact-commit CI"]
+}

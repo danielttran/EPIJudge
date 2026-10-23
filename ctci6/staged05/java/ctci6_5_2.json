@@ -1,0 +1,19 @@
+{
+  "explanation": "Multiplying a binary fraction by two moves its next digit to the units position. Emit that zero or one and remove it, leaving exactly the still-unrepresented suffix. A zero suffix proves the representation is complete; a nonzero suffix after 31 digits proves that returning the accumulated prefix would truncate it.",
+  "correctness": "After emitting k digits, the original value equals their fractional value plus the current remainder divided by 2^k. Doubling and subtracting the emitted units digit preserves this invariant, with remainder in [0,1). These operations are exact for the admitted binary64 values: doubling shifts the exponent, and subtracting one from a value in [1,2) loses no fractional information. Zero remainder gives the exact value with no trailing zeros. If the remainder is nonzero after 31 steps, at least another digit is necessary, so ERROR is required.",
+  "walkthrough": "For 0.625, doubling yields 1.25: emit 1 and keep .25. Doubling .25 yields .5: emit 0. Doubling .5 yields 1: emit 1 and the remainder is zero. The result is .101. The value 2^-31 yields a point, 30 zeros and one; 2^-32 exceeds this bank's 32-character limit.",
+  "walkthroughCase": {
+    "arguments": [
+      0.625
+    ],
+    "expected": ".101"
+  },
+  "timeComplexity": "O(b) time for b emitted fractional digits, with b <= 31. The fixed limit makes worst-case time O(1); no unbounded search for termination occurs.",
+  "spaceComplexity": "O(b) output/builder space, bounded by 32 characters.",
+  "edgeCases": [
+    "Exact powers of two at the final accepted and first rejected bit positions.",
+    "A nonterminating-within-limit binary64 fraction such as 0.1.",
+    "Zero, one and other finite out-of-range values."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 5.2. No affiliation is implied."
+}

@@ -2198,6 +2198,235 @@
     }
   },
   {
+    "id": "ctci6_5_2",
+    "ref": "5.2",
+    "title": "Binary to String",
+    "description": "Return the exact terminating binary fraction for number, beginning with a binary point and no leading zero, or the literal string ERROR if the input is outside (0,1) or needs more than 31 fractional bits. Stop after the last one; do not append trailing zeros, round or truncate.",
+    "constraints": [
+      "number is a finite IEEE-754 binary64 value. Convert that actual value, not an imagined exact rational inferred from its decimal spelling. For example the binary64 value written 0.1 needs more than the allowed bits and returns ERROR.",
+      "The output limit is 32 characters INCLUDING the initial point, hence at most 31 fractional bits. This bank uses the strict boundary of the public second implementation; the two public implementations disagree by one at that boundary. A representation requiring 32 fractional bits must fail.",
+      "0.5 returns .1; zero, one, negative values and values above one return ERROR. Preserve the input."
+    ],
+    "method": "BinaryFraction",
+    "params": [
+      [
+        "number",
+        "d"
+      ]
+    ],
+    "result": "s",
+    "mutation": "none",
+    "testCount": 260,
+    "batch": 5,
+    "stagingDirectory": "staged05",
+    "example": [
+      [
+        0.625
+      ],
+      ".101"
+    ],
+    "languages": {
+      "csharp": {
+        "signature": "string BinaryFraction(double number)",
+        "starterCode": "public class Solution\n{\n    public string BinaryFraction(double number)\n    {\n        return \"\";\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public string BinaryFraction(double number)\n    {\n        if (number <= 0 || number >= 1)\n            return \"ERROR\";\n        var result = new StringBuilder(\".\");\n        for (int i = 0; i < 31; ++i)\n        {\n            number *= 2;\n            bool bit = number >= 1;\n            result.Append(bit ? '1' : '0');\n            if (bit)\n                --number;\n            if (number == 0)\n                return result.ToString();\n        }\n        return \"ERROR\";\n    }\n}\n",
+        "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\n",
+        "suffix": "",
+        "harness": "using System;\nusing System.Collections.Generic;\nusing System.Text;\nusing System.IO;\nusing System.Text.Json;\n\nclass Harness {\nstatic object Invoke(JsonElement row){string reference=row.GetProperty(\"ref\").GetString()!;var args=row.GetProperty(\"arguments\");if(reference==\"5.2\")return new Solution().BinaryFraction(args[0].GetDouble());throw new Exception(\"Unknown reference\");}\nstatic object Execute(JsonElement row){return new {actual=Invoke(row),mutationOk=true};}\nstatic object TimedExecute(JsonElement row) {\nvar clock=System.Diagnostics.Stopwatch.StartNew();object observed;\ntry { observed=Execute(row); } catch(Exception error) { observed=new {error=error.ToString()}; }\nreturn new {observation=observed,elapsedMs=clock.Elapsed.TotalMilliseconds};\n}\nstatic void Main(){using var document=JsonDocument.Parse(File.ReadAllText(\"cases.json\"));var results=new List<object>();foreach(var row in document.RootElement.EnumerateArray()){try{results.Add(TimedExecute(row));}catch(Exception error){results.Add(new {error=error.ToString()});}}File.WriteAllText(\"results.json\",JsonSerializer.Serialize(results));}\n}\n",
+        "reference": ""
+      },
+      "javascript": {
+        "signature": "function BinaryFraction(number)",
+        "starterCode": "function BinaryFraction(number) {\n  return \"\";\n}\n",
+        "solutionCode": "function BinaryFraction(number) {\n  if (number <= 0 || number >= 1) return \"ERROR\";\n  const digits = [];\n  for (let i = 0; i < 31; ++i) {\n    number *= 2;\n    const bit = number >= 1;\n    digits.push(bit ? \"1\" : \"0\");\n    if (bit) --number;\n    if (number === 0) return \".\" + digits.join(\"\");\n  }\n  return \"ERROR\";\n}\n",
+        "prefix": "'use strict';\n",
+        "suffix": "\nmodule.exports = {BinaryFraction};\n",
+        "harness": "const user = require('./solution.js');\nconst BinaryFraction = user.BinaryFraction;\n\nconst fs=require('node:fs'),kinds={\"5.2\": \"s\"};\nfunction invoke(row){const ref=row.ref,args=row.arguments;if(ref===\"5.2\")return BinaryFraction(...args);throw new Error('Unknown reference');}\nfunction execute(row){if(row.ref==='5.8'){const screen=new Uint8Array(row.arguments[0]),length=screen.length,returned=invoke({ref:row.ref,arguments:[screen,...row.arguments.slice(1)]});return {actual:Array.from(screen),mutationOk:returned===undefined&&screen.length===length};}\nconst actual=invoke(row),kind=kinds[row.ref],integer=v=>Number.isInteger(v)&&v>=-2147483648&&v<=2147483647;return {actual,mutationOk:kind==='s'?typeof actual==='string':kind==='ai'?Array.isArray(actual)&&actual.length===2&&actual.every(integer):integer(actual)};}\nconst results=JSON.parse(fs.readFileSync('cases.json','utf8')).map(timed(row=>{try{return execute(row);}catch(error){return {error:String(error)};}}));\nfs.writeFileSync('results.json',JSON.stringify(results));\n\nfunction timed(fn) { return row => { const start=performance.now(); let observation; try { observation=fn(row); } catch(error) { observation={error:String(error)}; } return {observation,elapsedMs:performance.now()-start}; }; }\n",
+        "reference": ""
+      },
+      "python": {
+        "signature": "def BinaryFraction(number: float) -> str",
+        "starterCode": "def BinaryFraction(number: float) -> str:\n    return \"\"\n",
+        "solutionCode": "def BinaryFraction(number: float) -> str:\n    if not 0 < number < 1:\n        return \"ERROR\"\n    digits = []\n    for _ in range(31):\n        number *= 2\n        bit = number >= 1\n        digits.append(\"1\" if bit else \"0\")\n        if bit:\n            number -= 1\n        if number == 0:\n            return \".\" + \"\".join(digits)\n    return \"ERROR\"\n",
+        "prefix": "",
+        "suffix": "",
+        "harness": "import time\nimport solution as user\nBinaryFraction = user.BinaryFraction\n\nimport json\nKINDS={'5.2': 's'}\ndef invoke(row):\n    ref,args=row['ref'],row['arguments']\n    if ref == '5.2': return BinaryFraction(*args)\n    raise ValueError('Unknown reference')\ndef execute(row):\n    if row['ref']=='5.8':\n        screen=bytearray(row['arguments'][0]);length=len(screen)\n        returned=invoke(dict(ref=row['ref'],arguments=[screen,*row['arguments'][1:]]))\n        return dict(actual=list(screen),mutationOk=returned is None and len(screen)==length)\n    actual=invoke(row);kind=KINDS[row['ref']]\n    valid=(type(actual) is str if kind=='s' else type(actual) is list and len(actual)==2 and all(type(v) is int and -2147483648<=v<=2147483647 for v in actual) if kind=='ai' else type(actual) is int and -2147483648<=actual<=2147483647)\n    return dict(actual=actual,mutationOk=valid)\nresults=[]\nfor row in json.load(open('cases.json',encoding='utf-8')):\n    clock = time.perf_counter()\n    try:results.append(execute(row))\n    except Exception as error:results.append(dict(error=repr(error)))\n    results[-1] = dict(observation=results[-1], elapsedMs=(time.perf_counter()-clock)*1000)\njson.dump(results,open('results.json','w',encoding='utf-8'))\n",
+        "reference": ""
+      },
+      "cpp": {
+        "signature": "std::string BinaryFraction(double number)",
+        "starterCode": "class Solution {\n public:\n  std::string BinaryFraction(double number) {\n    return \"\";\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  std::string BinaryFraction(double number) {\n    if (number <= 0 || number >= 1)\n      return \"ERROR\";\n    std::string result = \".\";\n    for (int i = 0; i < 31; ++i) {\n      number *= 2;\n      bool bit = number >= 1;\n      result.push_back(bit ? '1' : '0');\n      if (bit)\n        --number;\n      if (number == 0)\n        return result;\n    }\n    return \"ERROR\";\n  }\n};\n",
+        "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n",
+        "suffix": "",
+        "harness": "#include <chrono>\n#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include \"solution.cpp\"\n#include <fstream>\n#include \"test_framework/json.h\"\nusing json=nlohmann::json;\n\njson invoke(const json& row){std::string reference=row[\"ref\"].get<std::string>();const auto& args=row[\"arguments\"];if(reference==\"5.2\")return Solution().BinaryFraction(args[0].get<double>());throw std::runtime_error(\"Unknown reference\");}\njson execute(const json& row){return json{{\"actual\",invoke(row)},{\"mutationOk\",true}};}\njson timedExecute(const json& row) {\nauto start=std::chrono::steady_clock::now();json observed;\ntry { observed=execute(row); } catch(const std::exception& error) { observed=json{{\"error\",error.what()}}; }\ndouble elapsed=std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-start).count();\nreturn json{{\"observation\",observed},{\"elapsedMs\",elapsed}};\n}\nint main(){std::ifstream input(\"cases.json\");json rows;input>>rows;json results=json::array();for(const auto& row:rows){try{results.push_back(timedExecute(row));}catch(const std::exception& error){results.push_back(json{{\"error\",error.what()}});}}std::ofstream(\"results.json\")<<results;}\n",
+        "reference": ""
+      },
+      "java": {
+        "signature": "String BinaryFraction(double number)",
+        "starterCode": "class Solution {\n  public String BinaryFraction(double number) {\n    return \"\";\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public String BinaryFraction(double number) {\n    if (number <= 0 || number >= 1)\n      return \"ERROR\";\n    var result = new StringBuilder(\".\");\n    for (int i = 0; i < 31; ++i) {\n      number *= 2;\n      boolean bit = number >= 1;\n      result.append(bit ? '1' : '0');\n      if (bit)\n        --number;\n      if (number == 0)\n        return result.toString();\n    }\n    return \"ERROR\";\n  }\n}\n",
+        "prefix": "import java.util.*;\n",
+        "suffix": "",
+        "harness": "import java.util.*;\nimport java.nio.file.*;\nimport epi.test_framework.minimal_json.*;\n\npublic class Harness {\nstatic JsonValue invoke(JsonObject row){String reference=row.get(\"ref\").asString();var args=row.get(\"arguments\").asArray();if(reference.equals(\"5.2\")){return Json.value(new Solution().BinaryFraction(args.get(0).asDouble()));}throw new RuntimeException(\"Unknown reference\");}\nstatic JsonValue execute(JsonObject row){return new JsonObject().add(\"actual\",invoke(row)).add(\"mutationOk\",true);}\nstatic JsonValue timedExecute(JsonObject row) {\nlong start=System.nanoTime();JsonValue observed;\ntry { observed=execute(row); } catch(Throwable error) { observed=new JsonObject().add(\"error\",error.toString()); }\nreturn new JsonObject().add(\"observation\",observed).add(\"elapsedMs\",(System.nanoTime()-start)/1000000.0);\n}\npublic static void main(String[] ignored)throws Exception{var results=new JsonArray();for(var row:Json.parse(Files.readString(Path.of(\"cases.json\"))).asArray()){try{results.add(timedExecute(row.asObject()));}catch(Throwable error){results.add(new JsonObject().add(\"error\",error.toString()));}}Files.writeString(Path.of(\"results.json\"),results.toString());}\n}\n",
+        "reference": ""
+      }
+    }
+  },
+  {
+    "id": "ctci6_5_3",
+    "ref": "5.3",
+    "title": "Flip Bit to Win",
+    "description": "Return the largest length of a consecutive run of one bits obtainable by changing at most one zero bit to one in word's fixed 32-bit representation. The run cannot extend outside positions 0..31. If all 32 bits are already one, return 32.",
+    "constraints": [
+      "Inputs and results are signed 32-bit integers. Interpret them as exactly 32 two's-complement bits, numbered 0 (least significant) through 31. Convert the resulting pattern back to its signed 32-bit value. Do not sign-extend into an unbounded Python integer or an extra JavaScript bit.",
+      "All signed 32-bit inputs are valid. Leading zero bits are part of the word, so zero can become a run of length one. No flip is required when it cannot improve the run. Preserve the input."
+    ],
+    "method": "LongestOnesAfterFlip",
+    "params": [
+      [
+        "word",
+        "i"
+      ]
+    ],
+    "result": "i",
+    "mutation": "none",
+    "testCount": 269,
+    "batch": 5,
+    "stagingDirectory": "staged05",
+    "example": [
+      [
+        1775
+      ],
+      8
+    ],
+    "languages": {
+      "csharp": {
+        "signature": "int LongestOnesAfterFlip(int word)",
+        "starterCode": "public class Solution\n{\n    public int LongestOnesAfterFlip(int word)\n    {\n        return 0;\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public int LongestOnesAfterFlip(int word)\n    {\n        uint bits = unchecked((uint)word);\n        int left = 0, zeros = 0, best = 0;\n        for (int right = 0; right < 32; ++right)\n        {\n            if (((bits >> right) & 1) == 0)\n                ++zeros;\n            while (zeros > 1)\n            {\n                if (((bits >> left) & 1) == 0)\n                    --zeros;\n                ++left;\n            }\n            best = Math.Max(best, right - left + 1);\n        }\n        return best;\n    }\n}\n",
+        "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\n",
+        "suffix": "",
+        "harness": "using System;\nusing System.Collections.Generic;\nusing System.Text;\nusing System.IO;\nusing System.Text.Json;\n\nclass Harness {\nstatic object Invoke(JsonElement row){string reference=row.GetProperty(\"ref\").GetString()!;var args=row.GetProperty(\"arguments\");if(reference==\"5.3\")return new Solution().LongestOnesAfterFlip(args[0].GetInt32());throw new Exception(\"Unknown reference\");}\nstatic object Execute(JsonElement row){return new {actual=Invoke(row),mutationOk=true};}\nstatic object TimedExecute(JsonElement row) {\nvar clock=System.Diagnostics.Stopwatch.StartNew();object observed;\ntry { observed=Execute(row); } catch(Exception error) { observed=new {error=error.ToString()}; }\nreturn new {observation=observed,elapsedMs=clock.Elapsed.TotalMilliseconds};\n}\nstatic void Main(){using var document=JsonDocument.Parse(File.ReadAllText(\"cases.json\"));var results=new List<object>();foreach(var row in document.RootElement.EnumerateArray()){try{results.Add(TimedExecute(row));}catch(Exception error){results.Add(new {error=error.ToString()});}}File.WriteAllText(\"results.json\",JsonSerializer.Serialize(results));}\n}\n",
+        "reference": ""
+      },
+      "javascript": {
+        "signature": "function LongestOnesAfterFlip(word)",
+        "starterCode": "function LongestOnesAfterFlip(word) {\n  return 0;\n}\n",
+        "solutionCode": "function LongestOnesAfterFlip(word) {\n  const bits = word >>> 0;\n  let left = 0,\n    zeros = 0,\n    best = 0;\n  for (let right = 0; right < 32; ++right) {\n    if (((bits >>> right) & 1) === 0) ++zeros;\n    while (zeros > 1) {\n      if (((bits >>> left) & 1) === 0) --zeros;\n      ++left;\n    }\n    best = Math.max(best, right - left + 1);\n  }\n  return best;\n}\n",
+        "prefix": "'use strict';\n",
+        "suffix": "\nmodule.exports = {LongestOnesAfterFlip};\n",
+        "harness": "const user = require('./solution.js');\nconst LongestOnesAfterFlip = user.LongestOnesAfterFlip;\n\nconst fs=require('node:fs'),kinds={\"5.3\": \"i\"};\nfunction invoke(row){const ref=row.ref,args=row.arguments;if(ref===\"5.3\")return LongestOnesAfterFlip(...args);throw new Error('Unknown reference');}\nfunction execute(row){if(row.ref==='5.8'){const screen=new Uint8Array(row.arguments[0]),length=screen.length,returned=invoke({ref:row.ref,arguments:[screen,...row.arguments.slice(1)]});return {actual:Array.from(screen),mutationOk:returned===undefined&&screen.length===length};}\nconst actual=invoke(row),kind=kinds[row.ref],integer=v=>Number.isInteger(v)&&v>=-2147483648&&v<=2147483647;return {actual,mutationOk:kind==='s'?typeof actual==='string':kind==='ai'?Array.isArray(actual)&&actual.length===2&&actual.every(integer):integer(actual)};}\nconst results=JSON.parse(fs.readFileSync('cases.json','utf8')).map(timed(row=>{try{return execute(row);}catch(error){return {error:String(error)};}}));\nfs.writeFileSync('results.json',JSON.stringify(results));\n\nfunction timed(fn) { return row => { const start=performance.now(); let observation; try { observation=fn(row); } catch(error) { observation={error:String(error)}; } return {observation,elapsedMs:performance.now()-start}; }; }\n",
+        "reference": ""
+      },
+      "python": {
+        "signature": "def LongestOnesAfterFlip(word: int) -> int",
+        "starterCode": "def LongestOnesAfterFlip(word: int) -> int:\n    return 0\n",
+        "solutionCode": "def LongestOnesAfterFlip(word: int) -> int:\n    bits = word & 0xFFFFFFFF\n    left = zeros = best = 0\n    for right in range(32):\n        if ((bits >> right) & 1) == 0:\n            zeros += 1\n        while zeros > 1:\n            if ((bits >> left) & 1) == 0:\n                zeros -= 1\n            left += 1\n        best = max(best, right - left + 1)\n    return best\n",
+        "prefix": "",
+        "suffix": "",
+        "harness": "import time\nimport solution as user\nLongestOnesAfterFlip = user.LongestOnesAfterFlip\n\nimport json\nKINDS={'5.3': 'i'}\ndef invoke(row):\n    ref,args=row['ref'],row['arguments']\n    if ref == '5.3': return LongestOnesAfterFlip(*args)\n    raise ValueError('Unknown reference')\ndef execute(row):\n    if row['ref']=='5.8':\n        screen=bytearray(row['arguments'][0]);length=len(screen)\n        returned=invoke(dict(ref=row['ref'],arguments=[screen,*row['arguments'][1:]]))\n        return dict(actual=list(screen),mutationOk=returned is None and len(screen)==length)\n    actual=invoke(row);kind=KINDS[row['ref']]\n    valid=(type(actual) is str if kind=='s' else type(actual) is list and len(actual)==2 and all(type(v) is int and -2147483648<=v<=2147483647 for v in actual) if kind=='ai' else type(actual) is int and -2147483648<=actual<=2147483647)\n    return dict(actual=actual,mutationOk=valid)\nresults=[]\nfor row in json.load(open('cases.json',encoding='utf-8')):\n    clock = time.perf_counter()\n    try:results.append(execute(row))\n    except Exception as error:results.append(dict(error=repr(error)))\n    results[-1] = dict(observation=results[-1], elapsedMs=(time.perf_counter()-clock)*1000)\njson.dump(results,open('results.json','w',encoding='utf-8'))\n",
+        "reference": ""
+      },
+      "cpp": {
+        "signature": "int LongestOnesAfterFlip(int word)",
+        "starterCode": "class Solution {\n public:\n  int LongestOnesAfterFlip(int word) {\n    return 0;\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  int LongestOnesAfterFlip(int word) {\n    std::uint32_t bits = static_cast<std::uint32_t>(word);\n    int left = 0, zeros = 0, best = 0;\n    for (int right = 0; right < 32; ++right) {\n      if (((bits >> right) & 1) == 0)\n        ++zeros;\n      while (zeros > 1) {\n        if (((bits >> left) & 1) == 0)\n          --zeros;\n        ++left;\n      }\n      best = std::max(best, right - left + 1);\n    }\n    return best;\n  }\n};\n",
+        "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n",
+        "suffix": "",
+        "harness": "#include <chrono>\n#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include \"solution.cpp\"\n#include <fstream>\n#include \"test_framework/json.h\"\nusing json=nlohmann::json;\n\njson invoke(const json& row){std::string reference=row[\"ref\"].get<std::string>();const auto& args=row[\"arguments\"];if(reference==\"5.3\")return Solution().LongestOnesAfterFlip(args[0].get<int>());throw std::runtime_error(\"Unknown reference\");}\njson execute(const json& row){return json{{\"actual\",invoke(row)},{\"mutationOk\",true}};}\njson timedExecute(const json& row) {\nauto start=std::chrono::steady_clock::now();json observed;\ntry { observed=execute(row); } catch(const std::exception& error) { observed=json{{\"error\",error.what()}}; }\ndouble elapsed=std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-start).count();\nreturn json{{\"observation\",observed},{\"elapsedMs\",elapsed}};\n}\nint main(){std::ifstream input(\"cases.json\");json rows;input>>rows;json results=json::array();for(const auto& row:rows){try{results.push_back(timedExecute(row));}catch(const std::exception& error){results.push_back(json{{\"error\",error.what()}});}}std::ofstream(\"results.json\")<<results;}\n",
+        "reference": ""
+      },
+      "java": {
+        "signature": "int LongestOnesAfterFlip(int word)",
+        "starterCode": "class Solution {\n  public int LongestOnesAfterFlip(int word) {\n    return 0;\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public int LongestOnesAfterFlip(int word) {\n    int bits = word;\n    int left = 0, zeros = 0, best = 0;\n    for (int right = 0; right < 32; ++right) {\n      if (((bits >>> right) & 1) == 0)\n        ++zeros;\n      while (zeros > 1) {\n        if (((bits >>> left) & 1) == 0)\n          --zeros;\n        ++left;\n      }\n      best = Math.max(best, right - left + 1);\n    }\n    return best;\n  }\n}\n",
+        "prefix": "import java.util.*;\n",
+        "suffix": "",
+        "harness": "import java.util.*;\nimport java.nio.file.*;\nimport epi.test_framework.minimal_json.*;\n\npublic class Harness {\nstatic JsonValue invoke(JsonObject row){String reference=row.get(\"ref\").asString();var args=row.get(\"arguments\").asArray();if(reference.equals(\"5.3\")){return Json.value(new Solution().LongestOnesAfterFlip(args.get(0).asInt()));}throw new RuntimeException(\"Unknown reference\");}\nstatic JsonValue execute(JsonObject row){return new JsonObject().add(\"actual\",invoke(row)).add(\"mutationOk\",true);}\nstatic JsonValue timedExecute(JsonObject row) {\nlong start=System.nanoTime();JsonValue observed;\ntry { observed=execute(row); } catch(Throwable error) { observed=new JsonObject().add(\"error\",error.toString()); }\nreturn new JsonObject().add(\"observation\",observed).add(\"elapsedMs\",(System.nanoTime()-start)/1000000.0);\n}\npublic static void main(String[] ignored)throws Exception{var results=new JsonArray();for(var row:Json.parse(Files.readString(Path.of(\"cases.json\"))).asArray()){try{results.add(timedExecute(row.asObject()));}catch(Throwable error){results.add(new JsonObject().add(\"error\",error.toString()));}}Files.writeString(Path.of(\"results.json\"),results.toString());}\n}\n",
+        "reference": ""
+      }
+    }
+  },
+  {
+    "id": "ctci6_5_4",
+    "ref": "5.4",
+    "title": "Next Number",
+    "description": "Return [smaller,larger], the nearest strictly smaller and strictly larger positive signed 32-bit integers having the same number of set bits as number. Use -1 independently for a side with no such integer. Do not wrap into the sign bit or include zero as a positive neighbor.",
+    "constraints": [
+      "1 <= number <= 2147483647. Search only the positive 31-bit range 1..2147483647. A result has exactly two entries, smaller first. Preserve the input.",
+      "For 1 return [-1,2]. For 2147483647 return [-1,-1], because there is no other positive 31-bit word with 31 set bits."
+    ],
+    "method": "SameWeightNeighbors",
+    "params": [
+      [
+        "number",
+        "i"
+      ]
+    ],
+    "result": "ai",
+    "mutation": "none",
+    "testCount": 530,
+    "batch": 5,
+    "stagingDirectory": "staged05",
+    "example": [
+      [
+        12
+      ],
+      [
+        10,
+        17
+      ]
+    ],
+    "languages": {
+      "csharp": {
+        "signature": "int[] SameWeightNeighbors(int number)",
+        "starterCode": "public class Solution\n{\n    public int[] SameWeightNeighbors(int number)\n    {\n        return [];\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public int[] SameWeightNeighbors(int number)\n    {\n        long Successor(long value)\n        {\n            if (value == 0)\n                return -1L;\n            long lowest = value & -value, raised = value + lowest;\n            if (raised > 2147483647)\n                return -1L;\n            return raised | (((raised ^ value) / lowest) >> 2);\n        }\n        long larger = Successor(number), reverse = Successor(2147483647 ^ number),\n             smaller = reverse == -1 ? -1 : (2147483647 ^ reverse);\n        return new int[] { (int)(smaller), (int)(larger) };\n    }\n}\n",
+        "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\n",
+        "suffix": "",
+        "harness": "using System;\nusing System.Collections.Generic;\nusing System.Text;\nusing System.IO;\nusing System.Text.Json;\n\nclass Harness {\nstatic object Invoke(JsonElement row){string reference=row.GetProperty(\"ref\").GetString()!;var args=row.GetProperty(\"arguments\");if(reference==\"5.4\")return new Solution().SameWeightNeighbors(args[0].GetInt32());throw new Exception(\"Unknown reference\");}\nstatic object Execute(JsonElement row){return new {actual=Invoke(row),mutationOk=true};}\nstatic object TimedExecute(JsonElement row) {\nvar clock=System.Diagnostics.Stopwatch.StartNew();object observed;\ntry { observed=Execute(row); } catch(Exception error) { observed=new {error=error.ToString()}; }\nreturn new {observation=observed,elapsedMs=clock.Elapsed.TotalMilliseconds};\n}\nstatic void Main(){using var document=JsonDocument.Parse(File.ReadAllText(\"cases.json\"));var results=new List<object>();foreach(var row in document.RootElement.EnumerateArray()){try{results.Add(TimedExecute(row));}catch(Exception error){results.Add(new {error=error.ToString()});}}File.WriteAllText(\"results.json\",JsonSerializer.Serialize(results));}\n}\n",
+        "reference": ""
+      },
+      "javascript": {
+        "signature": "function SameWeightNeighbors(number)",
+        "starterCode": "function SameWeightNeighbors(number) {\n  return [];\n}\n",
+        "solutionCode": "function SameWeightNeighbors(number) {\n  function successor(value) {\n    if (value === 0) return -1;\n    const lowest = value & -value,\n      raised = value + lowest;\n    if (raised > 2147483647) return -1;\n    return raised | (Math.floor((raised ^ value) / lowest) >>> 2);\n  }\n  const larger = successor(number),\n    reverse = successor(2147483647 ^ number);\n  return [reverse === -1 ? -1 : 2147483647 ^ reverse, larger];\n}\n",
+        "prefix": "'use strict';\n",
+        "suffix": "\nmodule.exports = {SameWeightNeighbors};\n",
+        "harness": "const user = require('./solution.js');\nconst SameWeightNeighbors = user.SameWeightNeighbors;\n\nconst fs=require('node:fs'),kinds={\"5.4\": \"ai\"};\nfunction invoke(row){const ref=row.ref,args=row.arguments;if(ref===\"5.4\")return SameWeightNeighbors(...args);throw new Error('Unknown reference');}\nfunction execute(row){if(row.ref==='5.8'){const screen=new Uint8Array(row.arguments[0]),length=screen.length,returned=invoke({ref:row.ref,arguments:[screen,...row.arguments.slice(1)]});return {actual:Array.from(screen),mutationOk:returned===undefined&&screen.length===length};}\nconst actual=invoke(row),kind=kinds[row.ref],integer=v=>Number.isInteger(v)&&v>=-2147483648&&v<=2147483647;return {actual,mutationOk:kind==='s'?typeof actual==='string':kind==='ai'?Array.isArray(actual)&&actual.length===2&&actual.every(integer):integer(actual)};}\nconst results=JSON.parse(fs.readFileSync('cases.json','utf8')).map(timed(row=>{try{return execute(row);}catch(error){return {error:String(error)};}}));\nfs.writeFileSync('results.json',JSON.stringify(results));\n\nfunction timed(fn) { return row => { const start=performance.now(); let observation; try { observation=fn(row); } catch(error) { observation={error:String(error)}; } return {observation,elapsedMs:performance.now()-start}; }; }\n",
+        "reference": ""
+      },
+      "python": {
+        "signature": "def SameWeightNeighbors(number: int) -> list[int]",
+        "starterCode": "def SameWeightNeighbors(number: int) -> list[int]:\n    return []\n",
+        "solutionCode": "def SameWeightNeighbors(number: int) -> list[int]:\n    def successor(value):\n        if value == 0:\n            return -1\n        lowest = value & -value\n        raised = value + lowest\n        if raised > 2147483647:\n            return -1\n        return raised | (((raised ^ value) // lowest) >> 2)\n\n    larger = successor(number)\n    reverse = successor(2147483647 ^ number)\n    smaller = -1 if reverse == -1 else 2147483647 ^ reverse\n    return [smaller, larger]\n",
+        "prefix": "",
+        "suffix": "",
+        "harness": "import time\nimport solution as user\nSameWeightNeighbors = user.SameWeightNeighbors\n\nimport json\nKINDS={'5.4': 'ai'}\ndef invoke(row):\n    ref,args=row['ref'],row['arguments']\n    if ref == '5.4': return SameWeightNeighbors(*args)\n    raise ValueError('Unknown reference')\ndef execute(row):\n    if row['ref']=='5.8':\n        screen=bytearray(row['arguments'][0]);length=len(screen)\n        returned=invoke(dict(ref=row['ref'],arguments=[screen,*row['arguments'][1:]]))\n        return dict(actual=list(screen),mutationOk=returned is None and len(screen)==length)\n    actual=invoke(row);kind=KINDS[row['ref']]\n    valid=(type(actual) is str if kind=='s' else type(actual) is list and len(actual)==2 and all(type(v) is int and -2147483648<=v<=2147483647 for v in actual) if kind=='ai' else type(actual) is int and -2147483648<=actual<=2147483647)\n    return dict(actual=actual,mutationOk=valid)\nresults=[]\nfor row in json.load(open('cases.json',encoding='utf-8')):\n    clock = time.perf_counter()\n    try:results.append(execute(row))\n    except Exception as error:results.append(dict(error=repr(error)))\n    results[-1] = dict(observation=results[-1], elapsedMs=(time.perf_counter()-clock)*1000)\njson.dump(results,open('results.json','w',encoding='utf-8'))\n",
+        "reference": ""
+      },
+      "cpp": {
+        "signature": "std::vector<int> SameWeightNeighbors(int number)",
+        "starterCode": "class Solution {\n public:\n  std::vector<int> SameWeightNeighbors(int number) {\n    return {};\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  std::vector<int> SameWeightNeighbors(int number) {\n    auto successor = [](long long value) -> long long {\n      if (value == 0)\n        return -1LL;\n      long long lowest = value & -value, raised = value + lowest;\n      if (raised > 2147483647)\n        return -1LL;\n      return raised | (((raised ^ value) / lowest) >> 2);\n    };\n    long long larger = successor(number), reverse = successor(2147483647 ^ number),\n              smaller = reverse == -1 ? -1 : (2147483647 ^ reverse);\n    return {static_cast<int>(smaller), static_cast<int>(larger)};\n  }\n};\n",
+        "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n",
+        "suffix": "",
+        "harness": "#include <chrono>\n#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include \"solution.cpp\"\n#include <fstream>\n#include \"test_framework/json.h\"\nusing json=nlohmann::json;\n\njson invoke(const json& row){std::string reference=row[\"ref\"].get<std::string>();const auto& args=row[\"arguments\"];if(reference==\"5.4\")return Solution().SameWeightNeighbors(args[0].get<int>());throw std::runtime_error(\"Unknown reference\");}\njson execute(const json& row){return json{{\"actual\",invoke(row)},{\"mutationOk\",true}};}\njson timedExecute(const json& row) {\nauto start=std::chrono::steady_clock::now();json observed;\ntry { observed=execute(row); } catch(const std::exception& error) { observed=json{{\"error\",error.what()}}; }\ndouble elapsed=std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-start).count();\nreturn json{{\"observation\",observed},{\"elapsedMs\",elapsed}};\n}\nint main(){std::ifstream input(\"cases.json\");json rows;input>>rows;json results=json::array();for(const auto& row:rows){try{results.push_back(timedExecute(row));}catch(const std::exception& error){results.push_back(json{{\"error\",error.what()}});}}std::ofstream(\"results.json\")<<results;}\n",
+        "reference": ""
+      },
+      "java": {
+        "signature": "int[] SameWeightNeighbors(int number)",
+        "starterCode": "class Solution {\n  public int[] SameWeightNeighbors(int number) {\n    return new int[0];\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public int[] SameWeightNeighbors(int number) {\n    java.util.function.LongUnaryOperator successor = value -> {\n      if (value == 0)\n        return -1L;\n      long lowest = value & -value, raised = value + lowest;\n      if (raised > 2147483647)\n        return -1L;\n      return raised | (((raised ^ value) / lowest) >> 2);\n    };\n    long larger = successor.applyAsLong(number),\n         reverse = successor.applyAsLong(2147483647 ^ number),\n         smaller = reverse == -1 ? -1 : (2147483647 ^ reverse);\n    return new int[] {(int) (smaller), (int) (larger)};\n  }\n}\n",
+        "prefix": "import java.util.*;\n",
+        "suffix": "",
+        "harness": "import java.util.*;\nimport java.nio.file.*;\nimport epi.test_framework.minimal_json.*;\n\npublic class Harness {\nstatic JsonValue invoke(JsonObject row){String reference=row.get(\"ref\").asString();var args=row.get(\"arguments\").asArray();if(reference.equals(\"5.4\")){var actual=new Solution().SameWeightNeighbors(args.get(0).asInt());var output=new JsonArray();for(int value:actual)output.add(value);return output;}throw new RuntimeException(\"Unknown reference\");}\nstatic JsonValue execute(JsonObject row){return new JsonObject().add(\"actual\",invoke(row)).add(\"mutationOk\",true);}\nstatic JsonValue timedExecute(JsonObject row) {\nlong start=System.nanoTime();JsonValue observed;\ntry { observed=execute(row); } catch(Throwable error) { observed=new JsonObject().add(\"error\",error.toString()); }\nreturn new JsonObject().add(\"observation\",observed).add(\"elapsedMs\",(System.nanoTime()-start)/1000000.0);\n}\npublic static void main(String[] ignored)throws Exception{var results=new JsonArray();for(var row:Json.parse(Files.readString(Path.of(\"cases.json\"))).asArray()){try{results.add(timedExecute(row.asObject()));}catch(Throwable error){results.add(new JsonObject().add(\"error\",error.toString()));}}Files.writeString(Path.of(\"results.json\"),results.toString());}\n}\n",
+        "reference": ""
+      }
+    }
+  },
+  {
     "id": "ctci6_5_6",
     "ref": "5.6",
     "title": "Conversion",
@@ -2348,6 +2577,338 @@
         "prefix": "import java.util.*;\n",
         "suffix": "",
         "harness": "import java.util.*;\nimport java.nio.file.*;\nimport epi.test_framework.minimal_json.*;\n\npublic class Harness {\nstatic JsonValue invoke(JsonObject row){String reference=row.get(\"ref\").asString();var args=row.get(\"arguments\").asArray();if (reference.equals(\"5.7\")) return Json.value(new Solution().SwapAdjacentBits(args.get(0).asInt()));throw new RuntimeException(\"Unknown reference\");}\nstatic JsonValue execute(JsonObject row){return new JsonObject().add(\"actual\",invoke(row)).add(\"mutationOk\",true);}\nstatic JsonValue timedExecute(JsonObject row) {\nlong start=System.nanoTime();JsonValue observed;\ntry { observed=execute(row); } catch(Throwable error) { observed=new JsonObject().add(\"error\",error.toString()); }\nreturn new JsonObject().add(\"observation\",observed).add(\"elapsedMs\",(System.nanoTime()-start)/1000000.0);\n}\npublic static void main(String[] ignored)throws Exception{var results=new JsonArray();for(var row:Json.parse(Files.readString(Path.of(\"cases.json\"))).asArray()){try{results.add(timedExecute(row.asObject()));}catch(Throwable error){results.add(new JsonObject().add(\"error\",error.toString()));}}Files.writeString(Path.of(\"results.json\"),results.toString());}\n}\n",
+        "reference": ""
+      }
+    }
+  },
+  {
+    "id": "ctci6_5_8",
+    "ref": "5.8",
+    "title": "Draw Line",
+    "description": "Set to one every pixel from x1 through x2 inclusively on row y of a byte-packed monochrome screen. Mutate the supplied byte buffer in place, preserve its length, and preserve every other pixel. Existing ones stay set; this operation draws onto the screen rather than replacing its row.",
+    "constraints": [
+      "width is in pixels, is divisible by eight and lies in 8..4096. Height is 1..256 and screen contains exactly (width/8)*height bytes. Coordinates satisfy 0 <= x1 <= x2 < width and 0 <= y < height. Inputs meet these shape/range preconditions.",
+      "Rows are stored top-to-bottom, bytes left-to-right. Within a byte, its most significant bit is the leftmost pixel. Pixel (x,y) uses byte y*(width/8)+floor(x/8) and bit 7-(x mod 8).",
+      "The callable receives byte[] in C#/Java, Uint8Array in JavaScript, bytearray in Python, or vector<uint8_t>& in C++. Examples encode bytes as integers 0..255, including Java bytes whose signed display would otherwise be negative. Return void; the displayed result is the original mutated buffer. Do not resize, replace or reorder the buffer."
+    ],
+    "method": "DrawHorizontalLine",
+    "params": [
+      [
+        "screen",
+        "bytes"
+      ],
+      [
+        "width",
+        "i"
+      ],
+      [
+        "x1",
+        "i"
+      ],
+      [
+        "x2",
+        "i"
+      ],
+      [
+        "y",
+        "i"
+      ]
+    ],
+    "result": "void",
+    "mutation": "bytes",
+    "testCount": 219,
+    "batch": 5,
+    "stagingDirectory": "staged05",
+    "example": [
+      [
+        [
+          128,
+          1
+        ],
+        16,
+        3,
+        10,
+        0
+      ],
+      [
+        159,
+        225
+      ]
+    ],
+    "languages": {
+      "csharp": {
+        "signature": "void DrawHorizontalLine(byte[] screen, int width, int x1, int x2, int y)",
+        "starterCode": "public class Solution\n{\n    public void DrawHorizontalLine(byte[] screen, int width, int x1, int x2, int y)\n    {\n        // Write your solution here.\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public void DrawHorizontalLine(byte[] screen, int width, int x1, int x2, int y)\n    {\n        int first = x1 / 8, last = x2 / 8, row = y * (width / 8);\n        for (int cell = first; cell <= last; ++cell)\n        {\n            int start = cell == first ? x1 % 8 : 0, end = cell == last ? x2 % 8 : 7,\n                mask = (255 >> start) & ((255 << (7 - end)) & 255);\n            screen[row + cell] = (byte)(screen[row + cell] | mask);\n        }\n    }\n}\n",
+        "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\n",
+        "suffix": "",
+        "harness": "using System;\nusing System.Collections.Generic;\nusing System.Text;\nusing System.IO;\nusing System.Text.Json;\n\nclass Harness {\nstatic object Invoke(JsonElement row){string reference=row.GetProperty(\"ref\").GetString()!;var args=row.GetProperty(\"arguments\");throw new Exception(\"Unknown reference\");}\nstatic object Execute(JsonElement row){if(row.GetProperty(\"ref\").GetString()==\"5.8\") {var args=row.GetProperty(\"arguments\");var screen=args[0].EnumerateArray().Select(v=>v.GetByte()).ToArray();int length=screen.Length;new Solution().DrawHorizontalLine(screen,args[1].GetInt32(),args[2].GetInt32(),args[3].GetInt32(),args[4].GetInt32());return new {actual=screen.Select(v=>(int)v).ToArray(),mutationOk=screen.Length==length};}return new {actual=Invoke(row),mutationOk=true};}\nstatic object TimedExecute(JsonElement row) {\nvar clock=System.Diagnostics.Stopwatch.StartNew();object observed;\ntry { observed=Execute(row); } catch(Exception error) { observed=new {error=error.ToString()}; }\nreturn new {observation=observed,elapsedMs=clock.Elapsed.TotalMilliseconds};\n}\nstatic void Main(){using var document=JsonDocument.Parse(File.ReadAllText(\"cases.json\"));var results=new List<object>();foreach(var row in document.RootElement.EnumerateArray()){try{results.Add(TimedExecute(row));}catch(Exception error){results.Add(new {error=error.ToString()});}}File.WriteAllText(\"results.json\",JsonSerializer.Serialize(results));}\n}\n",
+        "reference": ""
+      },
+      "javascript": {
+        "signature": "function DrawHorizontalLine(screen, width, x1, x2, y)",
+        "starterCode": "function DrawHorizontalLine(screen, width, x1, x2, y) {\n  // Write your solution here.\n}\n",
+        "solutionCode": "function DrawHorizontalLine(screen, width, x1, x2, y) {\n  const first = Math.floor(x1 / 8),\n    last = Math.floor(x2 / 8),\n    row = y * (width / 8);\n  for (let byte = first; byte <= last; ++byte) {\n    const start = byte === first ? x1 % 8 : 0,\n      end = byte === last ? x2 % 8 : 7,\n      mask = (255 >>> start) & ((255 << (7 - end)) & 255);\n    screen[row + byte] |= mask;\n  }\n}\n",
+        "prefix": "'use strict';\n",
+        "suffix": "\nmodule.exports = {DrawHorizontalLine};\n",
+        "harness": "const user = require('./solution.js');\nconst DrawHorizontalLine = user.DrawHorizontalLine;\n\nconst fs=require('node:fs'),kinds={\"5.8\": \"void\"};\nfunction invoke(row){const ref=row.ref,args=row.arguments;if(ref===\"5.8\")return DrawHorizontalLine(...args);throw new Error('Unknown reference');}\nfunction execute(row){if(row.ref==='5.8'){const screen=new Uint8Array(row.arguments[0]),length=screen.length,returned=invoke({ref:row.ref,arguments:[screen,...row.arguments.slice(1)]});return {actual:Array.from(screen),mutationOk:returned===undefined&&screen.length===length};}\nconst actual=invoke(row),kind=kinds[row.ref],integer=v=>Number.isInteger(v)&&v>=-2147483648&&v<=2147483647;return {actual,mutationOk:kind==='s'?typeof actual==='string':kind==='ai'?Array.isArray(actual)&&actual.length===2&&actual.every(integer):integer(actual)};}\nconst results=JSON.parse(fs.readFileSync('cases.json','utf8')).map(timed(row=>{try{return execute(row);}catch(error){return {error:String(error)};}}));\nfs.writeFileSync('results.json',JSON.stringify(results));\n\nfunction timed(fn) { return row => { const start=performance.now(); let observation; try { observation=fn(row); } catch(error) { observation={error:String(error)}; } return {observation,elapsedMs:performance.now()-start}; }; }\n",
+        "reference": ""
+      },
+      "python": {
+        "signature": "def DrawHorizontalLine(screen: bytearray, width: int, x1: int, x2: int, y: int) -> None",
+        "starterCode": "def DrawHorizontalLine(screen: bytearray, width: int, x1: int, x2: int, y: int) -> None:\n    pass\n",
+        "solutionCode": "def DrawHorizontalLine(screen: bytearray, width: int, x1: int, x2: int, y: int) -> None:\n    first, last = x1 // 8, x2 // 8\n    row = y * (width // 8)\n    for byte in range(first, last + 1):\n        start = x1 % 8 if byte == first else 0\n        end = x2 % 8 if byte == last else 7\n        mask = (255 >> start) & ((255 << (7 - end)) & 255)\n        screen[row + byte] |= mask\n",
+        "prefix": "",
+        "suffix": "",
+        "harness": "import time\nimport solution as user\nDrawHorizontalLine = user.DrawHorizontalLine\n\nimport json\nKINDS={'5.8': 'void'}\ndef invoke(row):\n    ref,args=row['ref'],row['arguments']\n    if ref == '5.8': return DrawHorizontalLine(*args)\n    raise ValueError('Unknown reference')\ndef execute(row):\n    if row['ref']=='5.8':\n        screen=bytearray(row['arguments'][0]);length=len(screen)\n        returned=invoke(dict(ref=row['ref'],arguments=[screen,*row['arguments'][1:]]))\n        return dict(actual=list(screen),mutationOk=returned is None and len(screen)==length)\n    actual=invoke(row);kind=KINDS[row['ref']]\n    valid=(type(actual) is str if kind=='s' else type(actual) is list and len(actual)==2 and all(type(v) is int and -2147483648<=v<=2147483647 for v in actual) if kind=='ai' else type(actual) is int and -2147483648<=actual<=2147483647)\n    return dict(actual=actual,mutationOk=valid)\nresults=[]\nfor row in json.load(open('cases.json',encoding='utf-8')):\n    clock = time.perf_counter()\n    try:results.append(execute(row))\n    except Exception as error:results.append(dict(error=repr(error)))\n    results[-1] = dict(observation=results[-1], elapsedMs=(time.perf_counter()-clock)*1000)\njson.dump(results,open('results.json','w',encoding='utf-8'))\n",
+        "reference": ""
+      },
+      "cpp": {
+        "signature": "void DrawHorizontalLine(std::vector<std::uint8_t>& screen, int width, int x1, int x2, int y)",
+        "starterCode": "class Solution {\n public:\n  void DrawHorizontalLine(std::vector<std::uint8_t>& screen, int width, int x1, int x2, int y) {\n    // Write your solution here.\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  void DrawHorizontalLine(std::vector<std::uint8_t>& screen, int width, int x1, int x2, int y) {\n    int first = x1 / 8, last = x2 / 8, row = y * (width / 8);\n    for (int cell = first; cell <= last; ++cell) {\n      int start = cell == first ? x1 % 8 : 0, end = cell == last ? x2 % 8 : 7,\n          mask = (255 >> start) & ((255 << (7 - end)) & 255);\n      screen[row + cell] = static_cast<std::uint8_t>(screen[row + cell] | mask);\n    }\n  }\n};\n",
+        "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n",
+        "suffix": "",
+        "harness": "#include <chrono>\n#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include \"solution.cpp\"\n#include <fstream>\n#include \"test_framework/json.h\"\nusing json=nlohmann::json;\n\njson invoke(const json& row){std::string reference=row[\"ref\"].get<std::string>();const auto& args=row[\"arguments\"];throw std::runtime_error(\"Unknown reference\");}\njson execute(const json& row){if(row[\"ref\"]==\"5.8\"){const auto& args=row[\"arguments\"];auto screen=args[0].get<std::vector<std::uint8_t>>();auto pointer=screen.data();auto length=screen.size();Solution().DrawHorizontalLine(screen,args[1].get<int>(),args[2].get<int>(),args[3].get<int>(),args[4].get<int>());return json{{\"actual\",screen},{\"mutationOk\",screen.size()==length && screen.data()==pointer}};}return json{{\"actual\",invoke(row)},{\"mutationOk\",true}};}\njson timedExecute(const json& row) {\nauto start=std::chrono::steady_clock::now();json observed;\ntry { observed=execute(row); } catch(const std::exception& error) { observed=json{{\"error\",error.what()}}; }\ndouble elapsed=std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-start).count();\nreturn json{{\"observation\",observed},{\"elapsedMs\",elapsed}};\n}\nint main(){std::ifstream input(\"cases.json\");json rows;input>>rows;json results=json::array();for(const auto& row:rows){try{results.push_back(timedExecute(row));}catch(const std::exception& error){results.push_back(json{{\"error\",error.what()}});}}std::ofstream(\"results.json\")<<results;}\n",
+        "reference": ""
+      },
+      "java": {
+        "signature": "void DrawHorizontalLine(byte[] screen, int width, int x1, int x2, int y)",
+        "starterCode": "class Solution {\n  public void DrawHorizontalLine(byte[] screen, int width, int x1, int x2, int y) {\n    // Write your solution here.\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public void DrawHorizontalLine(byte[] screen, int width, int x1, int x2, int y) {\n    int first = x1 / 8, last = x2 / 8, row = y * (width / 8);\n    for (int cell = first; cell <= last; ++cell) {\n      int start = cell == first ? x1 % 8 : 0, end = cell == last ? x2 % 8 : 7,\n          mask = (255 >> start) & ((255 << (7 - end)) & 255);\n      screen[row + cell] = (byte) (screen[row + cell] | mask);\n    }\n  }\n}\n",
+        "prefix": "import java.util.*;\n",
+        "suffix": "",
+        "harness": "import java.util.*;\nimport java.nio.file.*;\nimport epi.test_framework.minimal_json.*;\n\npublic class Harness {\nstatic JsonValue invoke(JsonObject row){String reference=row.get(\"ref\").asString();var args=row.get(\"arguments\").asArray();throw new RuntimeException(\"Unknown reference\");}\nstatic JsonValue execute(JsonObject row){if(row.get(\"ref\").asString().equals(\"5.8\")){var args=row.get(\"arguments\").asArray();var raw=args.get(0).asArray();byte[] screen=new byte[raw.size()];for(int i=0;i<screen.length;i++)screen[i]=(byte)raw.get(i).asInt();new Solution().DrawHorizontalLine(screen,args.get(1).asInt(),args.get(2).asInt(),args.get(3).asInt(),args.get(4).asInt());var output=new JsonArray();for(byte value:screen)output.add(value & 255);return new JsonObject().add(\"actual\",output).add(\"mutationOk\",screen.length==raw.size());}return new JsonObject().add(\"actual\",invoke(row)).add(\"mutationOk\",true);}\nstatic JsonValue timedExecute(JsonObject row) {\nlong start=System.nanoTime();JsonValue observed;\ntry { observed=execute(row); } catch(Throwable error) { observed=new JsonObject().add(\"error\",error.toString()); }\nreturn new JsonObject().add(\"observation\",observed).add(\"elapsedMs\",(System.nanoTime()-start)/1000000.0);\n}\npublic static void main(String[] ignored)throws Exception{var results=new JsonArray();for(var row:Json.parse(Files.readString(Path.of(\"cases.json\"))).asArray()){try{results.add(timedExecute(row.asObject()));}catch(Throwable error){results.add(new JsonObject().add(\"error\",error.toString()));}}Files.writeString(Path.of(\"results.json\"),results.toString());}\n}\n",
+        "reference": ""
+      }
+    }
+  },
+  {
+    "id": "ctci6_8_1",
+    "ref": "8.1",
+    "title": "Triple Step",
+    "description": "Count the ordered sequences of hops that climb exactly steps stairs when each hop has size 1, 2 or 3. Sequences with the same hop sizes in different orders count separately. Return the exact integer count.",
+    "constraints": [
+      "steps is a signed 32-bit integer no greater than 36. For a negative value return zero. For zero return one, representing the empty sequence. The upper bound keeps the exact result within signed 32-bit range.",
+      "Preserve inputs. This exercise asks for a count, not an enumeration or the minimum number of hops."
+    ],
+    "method": "CountTripleSteps",
+    "params": [
+      [
+        "steps",
+        "i"
+      ]
+    ],
+    "result": "i",
+    "mutation": "none",
+    "testCount": 42,
+    "batch": 8,
+    "stagingDirectory": "staged08",
+    "example": [
+      [
+        4
+      ],
+      7
+    ],
+    "languages": {
+      "csharp": {
+        "signature": "int CountTripleSteps(int steps)",
+        "starterCode": "public class Solution\n{\n    public int CountTripleSteps(int steps)\n    {\n        return 0;\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public int CountTripleSteps(int steps)\n    {\n        if (steps < 0)\n            return 0;\n        int previous = 1, older = 0, oldest = 0;\n        for (int i = 0; i < steps; ++i)\n        {\n            int current = previous + older + oldest;\n            oldest = older;\n            older = previous;\n            previous = current;\n        }\n        return previous;\n    }\n}\n",
+        "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\n",
+        "suffix": "",
+        "harness": "using System;\nusing System.Collections.Generic;\nusing System.Text;\nusing System.IO;\nusing System.Text.Json;\n\nclass Harness {\nstatic int Invoke(JsonElement row){string reference=row.GetProperty(\"ref\").GetString()!;var args=row.GetProperty(\"arguments\");if (reference == \"8.1\") return new Solution().CountTripleSteps(args[0].GetInt32());throw new Exception(\"Unknown reference\");}\nstatic object Execute(JsonElement row){return new {actual=Invoke(row),mutationOk=true};}\nstatic object TimedExecute(JsonElement row) {\nvar clock=System.Diagnostics.Stopwatch.StartNew();object observed;\ntry { observed=Execute(row); } catch(Exception error) { observed=new {error=error.ToString()}; }\nreturn new {observation=observed,elapsedMs=clock.Elapsed.TotalMilliseconds};\n}\nstatic void Main(){using var document=JsonDocument.Parse(File.ReadAllText(\"cases.json\"));var results=new List<object>();foreach(var row in document.RootElement.EnumerateArray()){try{results.Add(TimedExecute(row));}catch(Exception error){results.Add(new {error=error.ToString()});}}File.WriteAllText(\"results.json\",JsonSerializer.Serialize(results));}\n}\n",
+        "reference": ""
+      },
+      "javascript": {
+        "signature": "function CountTripleSteps(steps)",
+        "starterCode": "function CountTripleSteps(steps) {\n  return 0;\n}\n",
+        "solutionCode": "function CountTripleSteps(steps) {\n  if (steps < 0) return 0;\n  let previous = 1,\n    older = 0,\n    oldest = 0;\n  for (let i = 0; i < steps; ++i) {\n    const current = previous + older + oldest;\n    oldest = older;\n    older = previous;\n    previous = current;\n  }\n  return previous;\n}\n",
+        "prefix": "'use strict';\n",
+        "suffix": "\nmodule.exports = {CountTripleSteps};\n",
+        "harness": "const user = require('./solution.js');\nconst CountTripleSteps = user.CountTripleSteps;\n\nconst fs=require('node:fs');\nfunction invoke(row){const ref=row.ref,args=row.arguments;if(ref===\"8.1\")return CountTripleSteps(...args);throw new Error('Unknown reference');}\nconst results=JSON.parse(fs.readFileSync('cases.json','utf8')).map(timed(row=>{try{const actual=invoke(row);return {actual,mutationOk:Number.isInteger(actual)&&actual>=-2147483648&&actual<=2147483647};}catch(error){return {error:String(error)};}}));\nfs.writeFileSync('results.json',JSON.stringify(results));\n\nfunction timed(fn) { return row => { const start=performance.now(); let observation; try { observation=fn(row); } catch(error) { observation={error:String(error)}; } return {observation,elapsedMs:performance.now()-start}; }; }\n",
+        "reference": ""
+      },
+      "python": {
+        "signature": "def CountTripleSteps(steps: int) -> int",
+        "starterCode": "def CountTripleSteps(steps: int) -> int:\n    return 0\n",
+        "solutionCode": "def CountTripleSteps(steps: int) -> int:\n    if steps < 0:\n        return 0\n    previous, older, oldest = 1, 0, 0\n    for _ in range(steps):\n        current = previous + older + oldest\n        oldest, older, previous = older, previous, current\n    return previous\n",
+        "prefix": "",
+        "suffix": "",
+        "harness": "import time\nimport solution as user\nCountTripleSteps = user.CountTripleSteps\n\nimport json\ndef invoke(row):\n    ref,args=row['ref'],row['arguments']\n    if ref == '8.1': return CountTripleSteps(*args)\n    raise ValueError('Unknown reference')\ndef execute(row):\n    value=invoke(row)\n    return dict(actual=value,mutationOk=type(value) is int and -2147483648<=value<=2147483647)\nresults=[]\nfor row in json.load(open('cases.json',encoding='utf-8')):\n    clock = time.perf_counter()\n    try:results.append(execute(row))\n    except Exception as error:results.append(dict(error=repr(error)))\n    results[-1] = dict(observation=results[-1], elapsedMs=(time.perf_counter()-clock)*1000)\njson.dump(results,open('results.json','w',encoding='utf-8'))\n",
+        "reference": ""
+      },
+      "cpp": {
+        "signature": "int CountTripleSteps(int steps)",
+        "starterCode": "class Solution {\n public:\n  int CountTripleSteps(int steps) {\n    return 0;\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  int CountTripleSteps(int steps) {\n    if (steps < 0)\n      return 0;\n    int previous = 1, older = 0, oldest = 0;\n    for (int i = 0; i < steps; ++i) {\n      int current = previous + older + oldest;\n      oldest = older;\n      older = previous;\n      previous = current;\n    }\n    return previous;\n  }\n};\n",
+        "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n",
+        "suffix": "",
+        "harness": "#include <chrono>\n#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include \"solution.cpp\"\n#include <fstream>\n#include \"test_framework/json.h\"\nusing json=nlohmann::json;\n\nint invoke(const json& row){std::string reference=row[\"ref\"].get<std::string>();const auto& args=row[\"arguments\"];if (reference == \"8.1\") return Solution().CountTripleSteps(args[0].get<int>());throw std::runtime_error(\"Unknown reference\");}\njson execute(const json& row){return json{{\"actual\",invoke(row)},{\"mutationOk\",true}};}\njson timedExecute(const json& row) {\nauto start=std::chrono::steady_clock::now();json observed;\ntry { observed=execute(row); } catch(const std::exception& error) { observed=json{{\"error\",error.what()}}; }\ndouble elapsed=std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-start).count();\nreturn json{{\"observation\",observed},{\"elapsedMs\",elapsed}};\n}\nint main(){std::ifstream input(\"cases.json\");json rows;input>>rows;json results=json::array();for(const auto& row:rows){try{results.push_back(timedExecute(row));}catch(const std::exception& error){results.push_back(json{{\"error\",error.what()}});}}std::ofstream(\"results.json\")<<results;}\n",
+        "reference": ""
+      },
+      "java": {
+        "signature": "int CountTripleSteps(int steps)",
+        "starterCode": "class Solution {\n  public int CountTripleSteps(int steps) {\n    return 0;\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public int CountTripleSteps(int steps) {\n    if (steps < 0)\n      return 0;\n    int previous = 1, older = 0, oldest = 0;\n    for (int i = 0; i < steps; ++i) {\n      int current = previous + older + oldest;\n      oldest = older;\n      older = previous;\n      previous = current;\n    }\n    return previous;\n  }\n}\n",
+        "prefix": "import java.util.*;\n",
+        "suffix": "",
+        "harness": "import java.util.*;\nimport java.nio.file.*;\nimport epi.test_framework.minimal_json.*;\n\npublic class Harness {\nstatic JsonValue invoke(JsonObject row){String reference=row.get(\"ref\").asString();var args=row.get(\"arguments\").asArray();if (reference.equals(\"8.1\")) return Json.value(new Solution().CountTripleSteps(args.get(0).asInt()));throw new RuntimeException(\"Unknown reference\");}\nstatic JsonValue execute(JsonObject row){return new JsonObject().add(\"actual\",invoke(row)).add(\"mutationOk\",true);}\nstatic JsonValue timedExecute(JsonObject row) {\nlong start=System.nanoTime();JsonValue observed;\ntry { observed=execute(row); } catch(Throwable error) { observed=new JsonObject().add(\"error\",error.toString()); }\nreturn new JsonObject().add(\"observation\",observed).add(\"elapsedMs\",(System.nanoTime()-start)/1000000.0);\n}\npublic static void main(String[] ignored)throws Exception{var results=new JsonArray();for(var row:Json.parse(Files.readString(Path.of(\"cases.json\"))).asArray()){try{results.add(timedExecute(row.asObject()));}catch(Throwable error){results.add(new JsonObject().add(\"error\",error.toString()));}}Files.writeString(Path.of(\"results.json\"),results.toString());}\n}\n",
+        "reference": ""
+      }
+    }
+  },
+  {
+    "id": "ctci6_8_5",
+    "ref": "8.5",
+    "title": "Recursive Multiply",
+    "description": "Compute first times second recursively using addition and bit operations instead of a multiplication operation. Halve the smaller operand to reduce recursive work; preserve the exact nonnegative result.",
+    "constraints": [
+      "0 <= first,second <= 46340, so the product fits signed 32-bit range. Zero is admitted explicitly and returns zero, matching the public helper's zero base case.",
+      "Do not use multiplication or division operators, a multiplication library, repeated addition proportional to the larger operand, or conversion to a representation that delegates multiplication. Addition, subtraction, shifts, bit tests, comparisons and recursion are allowed; a parity remainder test is also allowed. Preserve inputs."
+    ],
+    "method": "RecursiveMultiply",
+    "params": [
+      [
+        "first",
+        "i"
+      ],
+      [
+        "second",
+        "i"
+      ]
+    ],
+    "result": "i",
+    "mutation": "none",
+    "testCount": 1140,
+    "batch": 8,
+    "stagingDirectory": "staged08",
+    "example": [
+      [
+        7,
+        12
+      ],
+      84
+    ],
+    "languages": {
+      "csharp": {
+        "signature": "int RecursiveMultiply(int first, int second)",
+        "starterCode": "public class Solution\n{\n    public int RecursiveMultiply(int first, int second)\n    {\n        return 0;\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public int RecursiveMultiply(int first, int second)\n    {\n        int smaller = Math.Min(first, second), larger = Math.Max(first, second);\n        if (smaller == 0)\n            return 0;\n        int half = RecursiveMultiply(smaller >> 1, larger);\n        return half + half + ((smaller & 1) != 0 ? larger : 0);\n    }\n}\n",
+        "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\n",
+        "suffix": "",
+        "harness": "using System;\nusing System.Collections.Generic;\nusing System.Text;\nusing System.IO;\nusing System.Text.Json;\n\nclass Harness {\nstatic int Invoke(JsonElement row){string reference=row.GetProperty(\"ref\").GetString()!;var args=row.GetProperty(\"arguments\");if (reference == \"8.5\") return new Solution().RecursiveMultiply(args[0].GetInt32(),args[1].GetInt32());throw new Exception(\"Unknown reference\");}\nstatic object Execute(JsonElement row){return new {actual=Invoke(row),mutationOk=true};}\nstatic object TimedExecute(JsonElement row) {\nvar clock=System.Diagnostics.Stopwatch.StartNew();object observed;\ntry { observed=Execute(row); } catch(Exception error) { observed=new {error=error.ToString()}; }\nreturn new {observation=observed,elapsedMs=clock.Elapsed.TotalMilliseconds};\n}\nstatic void Main(){using var document=JsonDocument.Parse(File.ReadAllText(\"cases.json\"));var results=new List<object>();foreach(var row in document.RootElement.EnumerateArray()){try{results.Add(TimedExecute(row));}catch(Exception error){results.Add(new {error=error.ToString()});}}File.WriteAllText(\"results.json\",JsonSerializer.Serialize(results));}\n}\n",
+        "reference": ""
+      },
+      "javascript": {
+        "signature": "function RecursiveMultiply(first, second)",
+        "starterCode": "function RecursiveMultiply(first, second) {\n  return 0;\n}\n",
+        "solutionCode": "function RecursiveMultiply(first, second) {\n  const smaller = Math.min(first, second),\n    larger = Math.max(first, second);\n  if (smaller === 0) return 0;\n  const half = RecursiveMultiply(smaller >>> 1, larger);\n  return half + half + ((smaller & 1) !== 0 ? larger : 0);\n}\n",
+        "prefix": "'use strict';\n",
+        "suffix": "\nmodule.exports = {RecursiveMultiply};\n",
+        "harness": "const user = require('./solution.js');\nconst RecursiveMultiply = user.RecursiveMultiply;\n\nconst fs=require('node:fs');\nfunction invoke(row){const ref=row.ref,args=row.arguments;if(ref===\"8.5\")return RecursiveMultiply(...args);throw new Error('Unknown reference');}\nconst results=JSON.parse(fs.readFileSync('cases.json','utf8')).map(timed(row=>{try{const actual=invoke(row);return {actual,mutationOk:Number.isInteger(actual)&&actual>=-2147483648&&actual<=2147483647};}catch(error){return {error:String(error)};}}));\nfs.writeFileSync('results.json',JSON.stringify(results));\n\nfunction timed(fn) { return row => { const start=performance.now(); let observation; try { observation=fn(row); } catch(error) { observation={error:String(error)}; } return {observation,elapsedMs:performance.now()-start}; }; }\n",
+        "reference": ""
+      },
+      "python": {
+        "signature": "def RecursiveMultiply(first: int, second: int) -> int",
+        "starterCode": "def RecursiveMultiply(first: int, second: int) -> int:\n    return 0\n",
+        "solutionCode": "def RecursiveMultiply(first: int, second: int) -> int:\n    smaller, larger = min(first, second), max(first, second)\n    if smaller == 0:\n        return 0\n    half = RecursiveMultiply(smaller >> 1, larger)\n    return half + half + (larger if smaller & 1 else 0)\n",
+        "prefix": "",
+        "suffix": "",
+        "harness": "import time\nimport solution as user\nRecursiveMultiply = user.RecursiveMultiply\n\nimport json\ndef invoke(row):\n    ref,args=row['ref'],row['arguments']\n    if ref == '8.5': return RecursiveMultiply(*args)\n    raise ValueError('Unknown reference')\ndef execute(row):\n    value=invoke(row)\n    return dict(actual=value,mutationOk=type(value) is int and -2147483648<=value<=2147483647)\nresults=[]\nfor row in json.load(open('cases.json',encoding='utf-8')):\n    clock = time.perf_counter()\n    try:results.append(execute(row))\n    except Exception as error:results.append(dict(error=repr(error)))\n    results[-1] = dict(observation=results[-1], elapsedMs=(time.perf_counter()-clock)*1000)\njson.dump(results,open('results.json','w',encoding='utf-8'))\n",
+        "reference": ""
+      },
+      "cpp": {
+        "signature": "int RecursiveMultiply(int first, int second)",
+        "starterCode": "class Solution {\n public:\n  int RecursiveMultiply(int first, int second) {\n    return 0;\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  int RecursiveMultiply(int first, int second) {\n    int smaller = std::min(first, second), larger = std::max(first, second);\n    if (smaller == 0)\n      return 0;\n    int half = RecursiveMultiply(smaller >> 1, larger);\n    return half + half + ((smaller & 1) != 0 ? larger : 0);\n  }\n};\n",
+        "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n",
+        "suffix": "",
+        "harness": "#include <chrono>\n#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include \"solution.cpp\"\n#include <fstream>\n#include \"test_framework/json.h\"\nusing json=nlohmann::json;\n\nint invoke(const json& row){std::string reference=row[\"ref\"].get<std::string>();const auto& args=row[\"arguments\"];if (reference == \"8.5\") return Solution().RecursiveMultiply(args[0].get<int>(),args[1].get<int>());throw std::runtime_error(\"Unknown reference\");}\njson execute(const json& row){return json{{\"actual\",invoke(row)},{\"mutationOk\",true}};}\njson timedExecute(const json& row) {\nauto start=std::chrono::steady_clock::now();json observed;\ntry { observed=execute(row); } catch(const std::exception& error) { observed=json{{\"error\",error.what()}}; }\ndouble elapsed=std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-start).count();\nreturn json{{\"observation\",observed},{\"elapsedMs\",elapsed}};\n}\nint main(){std::ifstream input(\"cases.json\");json rows;input>>rows;json results=json::array();for(const auto& row:rows){try{results.push_back(timedExecute(row));}catch(const std::exception& error){results.push_back(json{{\"error\",error.what()}});}}std::ofstream(\"results.json\")<<results;}\n",
+        "reference": ""
+      },
+      "java": {
+        "signature": "int RecursiveMultiply(int first, int second)",
+        "starterCode": "class Solution {\n  public int RecursiveMultiply(int first, int second) {\n    return 0;\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public int RecursiveMultiply(int first, int second) {\n    int smaller = Math.min(first, second), larger = Math.max(first, second);\n    if (smaller == 0)\n      return 0;\n    int half = RecursiveMultiply(smaller >> 1, larger);\n    return half + half + ((smaller & 1) != 0 ? larger : 0);\n  }\n}\n",
+        "prefix": "import java.util.*;\n",
+        "suffix": "",
+        "harness": "import java.util.*;\nimport java.nio.file.*;\nimport epi.test_framework.minimal_json.*;\n\npublic class Harness {\nstatic JsonValue invoke(JsonObject row){String reference=row.get(\"ref\").asString();var args=row.get(\"arguments\").asArray();if (reference.equals(\"8.5\")) return Json.value(new Solution().RecursiveMultiply(args.get(0).asInt(),args.get(1).asInt()));throw new RuntimeException(\"Unknown reference\");}\nstatic JsonValue execute(JsonObject row){return new JsonObject().add(\"actual\",invoke(row)).add(\"mutationOk\",true);}\nstatic JsonValue timedExecute(JsonObject row) {\nlong start=System.nanoTime();JsonValue observed;\ntry { observed=execute(row); } catch(Throwable error) { observed=new JsonObject().add(\"error\",error.toString()); }\nreturn new JsonObject().add(\"observation\",observed).add(\"elapsedMs\",(System.nanoTime()-start)/1000000.0);\n}\npublic static void main(String[] ignored)throws Exception{var results=new JsonArray();for(var row:Json.parse(Files.readString(Path.of(\"cases.json\"))).asArray()){try{results.add(timedExecute(row.asObject()));}catch(Throwable error){results.add(new JsonObject().add(\"error\",error.toString()));}}Files.writeString(Path.of(\"results.json\"),results.toString());}\n}\n",
+        "reference": ""
+      }
+    }
+  },
+  {
+    "id": "ctci6_8_11",
+    "ref": "8.11",
+    "title": "Coins",
+    "description": "Count the unordered combinations of US coin denominations 1, 5, 10 and 25 cents that sum exactly to amount. Each denomination is available without limit. A combination is determined by its four coin counts; rearranging the same coins does not make a new combination.",
+    "constraints": [
+      "0 <= amount <= 10000 cents. Return the exact signed 32-bit count. Amount zero has one combination: using no coins.",
+      "Denominations are fixed by this exercise, not supplied as another argument. Preserve inputs. This asks for the number of combinations, not the fewest coins or ordered sequences."
+    ],
+    "method": "CountCoinCombinations",
+    "params": [
+      [
+        "amount",
+        "i"
+      ]
+    ],
+    "result": "i",
+    "mutation": "none",
+    "testCount": 225,
+    "batch": 8,
+    "stagingDirectory": "staged08",
+    "example": [
+      [
+        10
+      ],
+      4
+    ],
+    "languages": {
+      "csharp": {
+        "signature": "int CountCoinCombinations(int amount)",
+        "starterCode": "public class Solution\n{\n    public int CountCoinCombinations(int amount)\n    {\n        return 0;\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public int CountCoinCombinations(int amount)\n    {\n        int[] ways = new int[amount + 1];\n        ways[0] = 1;\n        foreach (int coin in new[] { 1, 5, 10, 25 })\n        {\n            for (int value = coin; value <= amount; ++value)\n                ways[value] += ways[value - coin];\n        }\n        return ways[amount];\n    }\n}\n",
+        "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\n",
+        "suffix": "",
+        "harness": "using System;\nusing System.Collections.Generic;\nusing System.Text;\nusing System.IO;\nusing System.Text.Json;\n\nclass Harness {\nstatic int Invoke(JsonElement row){string reference=row.GetProperty(\"ref\").GetString()!;var args=row.GetProperty(\"arguments\");if (reference == \"8.11\") return new Solution().CountCoinCombinations(args[0].GetInt32());throw new Exception(\"Unknown reference\");}\nstatic object Execute(JsonElement row){return new {actual=Invoke(row),mutationOk=true};}\nstatic object TimedExecute(JsonElement row) {\nvar clock=System.Diagnostics.Stopwatch.StartNew();object observed;\ntry { observed=Execute(row); } catch(Exception error) { observed=new {error=error.ToString()}; }\nreturn new {observation=observed,elapsedMs=clock.Elapsed.TotalMilliseconds};\n}\nstatic void Main(){using var document=JsonDocument.Parse(File.ReadAllText(\"cases.json\"));var results=new List<object>();foreach(var row in document.RootElement.EnumerateArray()){try{results.Add(TimedExecute(row));}catch(Exception error){results.Add(new {error=error.ToString()});}}File.WriteAllText(\"results.json\",JsonSerializer.Serialize(results));}\n}\n",
+        "reference": ""
+      },
+      "javascript": {
+        "signature": "function CountCoinCombinations(amount)",
+        "starterCode": "function CountCoinCombinations(amount) {\n  return 0;\n}\n",
+        "solutionCode": "function CountCoinCombinations(amount) {\n  const ways = Array(amount + 1).fill(0);\n  ways[0] = 1;\n  for (const coin of [1, 5, 10, 25]) {\n    for (let value = coin; value <= amount; ++value) ways[value] += ways[value - coin];\n  }\n  return ways[amount];\n}\n",
+        "prefix": "'use strict';\n",
+        "suffix": "\nmodule.exports = {CountCoinCombinations};\n",
+        "harness": "const user = require('./solution.js');\nconst CountCoinCombinations = user.CountCoinCombinations;\n\nconst fs=require('node:fs');\nfunction invoke(row){const ref=row.ref,args=row.arguments;if(ref===\"8.11\")return CountCoinCombinations(...args);throw new Error('Unknown reference');}\nconst results=JSON.parse(fs.readFileSync('cases.json','utf8')).map(timed(row=>{try{const actual=invoke(row);return {actual,mutationOk:Number.isInteger(actual)&&actual>=-2147483648&&actual<=2147483647};}catch(error){return {error:String(error)};}}));\nfs.writeFileSync('results.json',JSON.stringify(results));\n\nfunction timed(fn) { return row => { const start=performance.now(); let observation; try { observation=fn(row); } catch(error) { observation={error:String(error)}; } return {observation,elapsedMs:performance.now()-start}; }; }\n",
+        "reference": ""
+      },
+      "python": {
+        "signature": "def CountCoinCombinations(amount: int) -> int",
+        "starterCode": "def CountCoinCombinations(amount: int) -> int:\n    return 0\n",
+        "solutionCode": "def CountCoinCombinations(amount: int) -> int:\n    ways = [0] * (amount + 1)\n    ways[0] = 1\n    for coin in (1, 5, 10, 25):\n        for value in range(coin, amount + 1):\n            ways[value] += ways[value - coin]\n    return ways[amount]\n",
+        "prefix": "",
+        "suffix": "",
+        "harness": "import time\nimport solution as user\nCountCoinCombinations = user.CountCoinCombinations\n\nimport json\ndef invoke(row):\n    ref,args=row['ref'],row['arguments']\n    if ref == '8.11': return CountCoinCombinations(*args)\n    raise ValueError('Unknown reference')\ndef execute(row):\n    value=invoke(row)\n    return dict(actual=value,mutationOk=type(value) is int and -2147483648<=value<=2147483647)\nresults=[]\nfor row in json.load(open('cases.json',encoding='utf-8')):\n    clock = time.perf_counter()\n    try:results.append(execute(row))\n    except Exception as error:results.append(dict(error=repr(error)))\n    results[-1] = dict(observation=results[-1], elapsedMs=(time.perf_counter()-clock)*1000)\njson.dump(results,open('results.json','w',encoding='utf-8'))\n",
+        "reference": ""
+      },
+      "cpp": {
+        "signature": "int CountCoinCombinations(int amount)",
+        "starterCode": "class Solution {\n public:\n  int CountCoinCombinations(int amount) {\n    return 0;\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  int CountCoinCombinations(int amount) {\n    std::vector<int> ways(amount + 1);\n    ways[0] = 1;\n    for (int coin : std::array<int, 4>{1, 5, 10, 25}) {\n      for (int value = coin; value <= amount; ++value)\n        ways[value] += ways[value - coin];\n    }\n    return ways[amount];\n  }\n};\n",
+        "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n",
+        "suffix": "",
+        "harness": "#include <chrono>\n#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include \"solution.cpp\"\n#include <fstream>\n#include \"test_framework/json.h\"\nusing json=nlohmann::json;\n\nint invoke(const json& row){std::string reference=row[\"ref\"].get<std::string>();const auto& args=row[\"arguments\"];if (reference == \"8.11\") return Solution().CountCoinCombinations(args[0].get<int>());throw std::runtime_error(\"Unknown reference\");}\njson execute(const json& row){return json{{\"actual\",invoke(row)},{\"mutationOk\",true}};}\njson timedExecute(const json& row) {\nauto start=std::chrono::steady_clock::now();json observed;\ntry { observed=execute(row); } catch(const std::exception& error) { observed=json{{\"error\",error.what()}}; }\ndouble elapsed=std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-start).count();\nreturn json{{\"observation\",observed},{\"elapsedMs\",elapsed}};\n}\nint main(){std::ifstream input(\"cases.json\");json rows;input>>rows;json results=json::array();for(const auto& row:rows){try{results.push_back(timedExecute(row));}catch(const std::exception& error){results.push_back(json{{\"error\",error.what()}});}}std::ofstream(\"results.json\")<<results;}\n",
+        "reference": ""
+      },
+      "java": {
+        "signature": "int CountCoinCombinations(int amount)",
+        "starterCode": "class Solution {\n  public int CountCoinCombinations(int amount) {\n    return 0;\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public int CountCoinCombinations(int amount) {\n    int[] ways = new int[amount + 1];\n    ways[0] = 1;\n    for (int coin : new int[] {1, 5, 10, 25}) {\n      for (int value = coin; value <= amount; ++value)\n        ways[value] += ways[value - coin];\n    }\n    return ways[amount];\n  }\n}\n",
+        "prefix": "import java.util.*;\n",
+        "suffix": "",
+        "harness": "import java.util.*;\nimport java.nio.file.*;\nimport epi.test_framework.minimal_json.*;\n\npublic class Harness {\nstatic JsonValue invoke(JsonObject row){String reference=row.get(\"ref\").asString();var args=row.get(\"arguments\").asArray();if (reference.equals(\"8.11\")) return Json.value(new Solution().CountCoinCombinations(args.get(0).asInt()));throw new RuntimeException(\"Unknown reference\");}\nstatic JsonValue execute(JsonObject row){return new JsonObject().add(\"actual\",invoke(row)).add(\"mutationOk\",true);}\nstatic JsonValue timedExecute(JsonObject row) {\nlong start=System.nanoTime();JsonValue observed;\ntry { observed=execute(row); } catch(Throwable error) { observed=new JsonObject().add(\"error\",error.toString()); }\nreturn new JsonObject().add(\"observation\",observed).add(\"elapsedMs\",(System.nanoTime()-start)/1000000.0);\n}\npublic static void main(String[] ignored)throws Exception{var results=new JsonArray();for(var row:Json.parse(Files.readString(Path.of(\"cases.json\"))).asArray()){try{results.add(timedExecute(row.asObject()));}catch(Throwable error){results.add(new JsonObject().add(\"error\",error.toString()));}}Files.writeString(Path.of(\"results.json\"),results.toString());}\n}\n",
         "reference": ""
       }
     }

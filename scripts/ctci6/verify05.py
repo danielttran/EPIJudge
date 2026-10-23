@@ -1,4 +1,4 @@
-"""Execute all three staged fixed-width bit tasks in all five languages."""
+"""Execute all seven staged bit coding tasks in all five languages."""
 
 import hashlib
 import json

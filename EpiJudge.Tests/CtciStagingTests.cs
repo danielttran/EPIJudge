@@ -21,7 +21,7 @@ public sealed class CtciStagingTests
     {
         Assert.DoesNotContain(new ProblemCatalog().Problems, problem => problem.Collection == "ctci6");
         var staged = CtciStagingCatalog.Load(Root);
-        Assert.Equal(26, staged.Count);
+        Assert.Equal(33, staged.Count);
         Assert.All(staged, definition => Assert.Equal(5, definition.Languages.Count));
     }
 

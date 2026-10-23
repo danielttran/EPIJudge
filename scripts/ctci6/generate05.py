@@ -1,10 +1,11 @@
-"""Stage three established bit exercises; other chapter-five tasks remain pending."""
+"""Stage the seven established bit coding exercises; Debugger is conceptual."""
 
 from algorithms05 import body
 from chapter05 import SPECS
 from core import HEADERS
 from corpus05 import cases, oracle
 from generate import generate
+from models05 import declare, neutral
 
 
 def generate05():
@@ -17,6 +18,8 @@ def generate05():
         reference=oracle,
         headers=headers,
         staging_name="staged05",
+        declare=declare,
+        neutral=neutral,
     )
 
 

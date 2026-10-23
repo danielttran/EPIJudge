@@ -53,6 +53,32 @@ def audit(publication=False):
     ):
         raise ValueError("Individual-classification count is stale")
     metadata = {row["ref"]: row for row in rows}
+    classifications = json.loads(
+        (ROOT / "ctci6/classification-review.json").read_text()
+    )["reviews"]
+    excluded = {
+        row["ref"] for row in rows if row["classification"] in ("conceptual", "design")
+    }
+    if len(classifications) != len(
+        {row["ref"] for row in classifications}
+    ) or excluded != {row["ref"] for row in classifications}:
+        raise ValueError("Noncallable classifications differ from explicit review")
+    for category, field in (
+        ("conceptual", "conceptualReferences"),
+        ("design", "designReferences"),
+    ):
+        if scope[field] != sum(row["classification"] == category for row in rows):
+            raise ValueError("Noncallable classification count is stale")
+    for review in classifications:
+        if metadata[review["ref"]]["classification"] != review["classification"]:
+            raise ValueError("Classification differs from its reviewed category")
+        if not any(
+            source["repository"] == review["repository"]
+            and source["commit"] == review["commit"]
+            and review["path"] in source["files"]
+            for source in metadata[review["ref"]]["sources"]
+        ):
+            raise ValueError("Classification evidence is not a pinned inventory source")
     reviewed = set()
     executed = set()
     for staging_name, review_file in (
@@ -60,6 +86,7 @@ def audit(publication=False):
         ("staged02", "review02.json"),
         ("staged03", "review03.json"),
         ("staged05", "review05.json"),
+        ("staged08", "review08.json"),
     ):
         review = json.loads((ROOT / "ctci6" / review_file).read_text())
         batch_reviewed = {row["ref"] for row in review["questions"]}

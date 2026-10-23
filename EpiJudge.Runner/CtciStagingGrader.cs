@@ -39,7 +39,7 @@ public static class CtciStagingGrader
         {
             if (observed.ValueKind != JsonValueKind.Object || observed.TryGetProperty("error", out var error) && error.ValueKind != JsonValueKind.Null)
                 return "Your code did not finish this case successfully.";
-            if (definition.Batch is 1 or 3 or 5)
+            if (definition.Batch is 1 or 3 or 5 or 8)
             {
                 if (observed.GetProperty("mutationOk").ValueKind != JsonValueKind.True)
                     return definition.Batch == 3 ? "Preserve the required stack and original Animal identities, fields and return types." : "Preserve the required input, row, or buffer identities.";
@@ -128,7 +128,7 @@ public static class CtciStagingGrader
     {
         try
         {
-            if (definition.Batch is 1 or 3 or 5) return observed.GetProperty("actual").Clone();
+            if (definition.Batch is 1 or 3 or 5 or 8) return observed.GetProperty("actual").Clone();
             if (definition.Ref is "2.1" or "2.4" or "2.5") return observed.GetProperty("reachableValues").Clone();
             if (definition.Ref == "2.3") return Encode(new { success = observed.GetProperty("returnedBool"), values = observed.GetProperty("reachableValues") });
             if (definition.Ref == "2.6") return observed.GetProperty("returnedBool").Clone();

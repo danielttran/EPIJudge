@@ -1,0 +1,20 @@
+{
+  "explanation": "If the smaller operand is 2q, its product is twice q times the larger operand. If it is 2q+1, add one more larger operand. Computing the half product once avoids branching into two independent recursive multiplications, and choosing the smaller operand bounds recursion by its bit length.",
+  "correctness": "Zero gives the specified product immediately. For a positive smaller operand s, the recursive call receives floor(s/2), which is smaller and therefore terminates. By induction it returns floor(s/2) times the larger operand. Adding that value to itself and adding one larger operand exactly when s is odd gives s times that operand. Reordering the two original operands preserves multiplication, so this is the original requested product. All intermediate sums are nonnegative and no greater than the admitted final product.",
+  "walkthrough": "For 7 and 12, recursively compute the product for 3 and 12, then for 1 and 12, then zero. Unwinding gives 12, then 12+12+12=36, then 36+36+12=84. Each half product is computed once, rather than multiplying both halves independently.",
+  "walkthroughCase": {
+    "arguments": [
+      7,
+      12
+    ],
+    "expected": 84
+  },
+  "timeComplexity": "O(log(s+1)) recursive calls and additions, where s is the smaller operand; zero takes constant time.",
+  "spaceComplexity": "O(log(s+1)) recursion stack space, with no memo table or operand-sized sequence.",
+  "edgeCases": [
+    "Either operand zero; either operand one.",
+    "Odd and even smaller operands, reversed argument order.",
+    "Both operands at the admitted maximum and highly unequal operands."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 8.5. No affiliation is implied."
+}

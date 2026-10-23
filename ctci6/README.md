@@ -41,23 +41,26 @@ It does **not** prove statement clarity, solution correctness, test adequacy, or
 completed semantic review. Those are separately recorded and executed before the
 collection is published.
 
-The current local checkpoint stages 26 exercises (chapters 1–3 plus 5.1, 5.6 and
-5.7), with 130 language implementations. Their standalone and separate-submission
-runs each cover 20,430 positive cases and the same number of starter observations.
-A starter passes its negative check only when at least one case rejects it; this
-is not a claim that every starter fails every case.
+The current local checkpoint stages 33 coding exercises: chapters 1–3, all seven
+coding tasks of chapter 5, and 8.1, 8.5 and 8.11. Their 165 language implementations
+pass standalone and separate-submission runs with 33,855 positive cases per stage
+and the same number of starter observations. A starter passes its negative check
+only when at least one case rejects it; this does not mean every starter fails
+every case. Five conceptual and eight system-design references are explicitly
+classified outside callable practice. No noncoding product UI is being added.
 
-`review01.json`, `review02.json`, `review03.json` and `review05.json` record the
-specific algorithms, bindings and semantic review scope. The independently
-computed case oracles are under `scripts/ctci6/corpus*.py`. Inventory/evidence
-integrity is checked by `python3 scripts/ctci6/audit.py`; its `--publication` mode
-intentionally fails until full acceptance is complete.
+The `review*.json` files record actual algorithms, bindings and semantic review
+scope. Independent case oracles live under `scripts/ctci6/corpus*.py`.
+`classification-review.json` records the evidence for noncallable classifications.
+Inventory/evidence integrity is checked by `python3 scripts/ctci6/audit.py`;
+`--publication` intentionally fails while full acceptance remains incomplete.
+Structural checks are not semantic review or execution credit.
 
-Application-runner evidence is scoped by compiled source fingerprint. The first
-23 exercises passed both submission formats at checkpoint `d0c604a8`, recorded in
-`runtime/application-validation-through03.json`. The three new bit exercises
-passed both formats on the later runner build in `runtime/application-validation.json`.
-These historical/current batches must not be described as one final combined
-current-build acceptance run. Full final collection integration, whole-bank runs,
-rendered checks and publication remain pending. Nothing in staging changes the
+Application evidence is preserved in separate source/build scopes: the first 23
+exercises, three initial bit exercises, four further bit exercises, and three
+recursion/DP exercises. Each batch passed both submission formats. The individual
+reports under `runtime/application-validation*.json` and `checkpoint.json` retain
+these scopes. They are not one final combined current-build acceptance run.
+Final collection integration, remaining known content/classifications, whole-bank
+runs, rendered checks and publication remain pending. Staging does not change the
 live library, progress or drafts.
