@@ -22947,6 +22947,126 @@
       }
     },
     {
+      "problemId": "ctci6_16_25",
+      "language": "cpp",
+      "filename": "solution.cpp",
+      "signature": "LRUCache(int capacity); std::optional<std::string> Get(int key); void Set(int key, const std::string& value)",
+      "starterCode": "#include <optional>\nclass LRUCache {\n public:\n  explicit LRUCache(int capacity) {\n  }\n  std::optional<std::string> Get(int key) {\n    return std::nullopt;\n  }\n  void Set(int key, const std::string& value) {\n  }\n};\n",
+      "solutionCode": "#include <iterator>\n#include <list>\n#include <optional>\n#include <unordered_map>\nclass LRUCache {\n  using Entry = std::pair<int, std::string>;\n  int capacity;\n  std::list<Entry> order;\n  std::unordered_map<int, std::list<Entry>::iterator> index;\n\n public:\n  explicit LRUCache(int capacity) : capacity(capacity) {\n  }\n  std::optional<std::string> Get(int key) {\n    auto found = index.find(key);\n    if (found == index.end())\n      return std::nullopt;\n    order.splice(order.end(), order, found->second);\n    return found->second->second;\n  }\n  void Set(int key, const std::string& value) {\n    auto found = index.find(key);\n    if (found != index.end()) {\n      found->second->second = value;\n      order.splice(order.end(), order, found->second);\n    } else {\n      order.emplace_back(key, value);\n      index[key] = std::prev(order.end());\n      if (order.size() > static_cast<size_t>(capacity)) {\n        index.erase(order.front().first);\n        order.pop_front();\n      }\n    }\n  }\n};\n",
+      "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n#include <unordered_map>\n#include <unordered_set>\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "LRUCache"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/cpp/ctci6_16_25.cpp"
+      ],
+      "sourceSha256": {
+        "starter": "985f720c296b9cee2b43ef7966f5fdbde900ebea174aff5bbc6e9e8f669b1bb2",
+        "solution": "8e5663d98879f1ce443a7baf419fa50f4e03c745a668b4566211ce8b20f9c430"
+      }
+    },
+    {
+      "problemId": "ctci6_16_25",
+      "language": "csharp",
+      "filename": "Solution.cs",
+      "signature": "LRUCache(int capacity); string? Get(int key); void Set(int key, string value)",
+      "starterCode": "public class LRUCache\n{\n    public LRUCache(int capacity)\n    {\n    }\n    public string? Get(int key)\n    {\n        return null;\n    }\n    public void Set(int key, string value)\n    {\n    }\n}\n",
+      "solutionCode": "public class LRUCache\n{\n    private readonly int capacity;\n    private readonly LinkedList<(int Key, string Text)> order = new();\n    private readonly Dictionary<int, LinkedListNode<(int Key, string Text)>> index = new();\n    public LRUCache(int capacity)\n    {\n        this.capacity = capacity;\n    }\n    public string? Get(int key)\n    {\n        if (!index.TryGetValue(key, out var node))\n            return null;\n        order.Remove(node);\n        order.AddLast(node);\n        return node.Value.Text;\n    }\n    public void Set(int key, string value)\n    {\n        if (index.TryGetValue(key, out var node))\n        {\n            node.Value = (key, value);\n            order.Remove(node);\n            order.AddLast(node);\n        }\n        else\n        {\n            index[key] = order.AddLast((key, value));\n            if (index.Count > capacity)\n            {\n                var oldest = order.First!;\n                order.RemoveFirst();\n                index.Remove(oldest.Value.Key);\n            }\n        }\n    }\n}\n",
+      "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "LRUCache"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/csharp/ctci6_16_25.cs"
+      ],
+      "sourceSha256": {
+        "starter": "c4cd2185035ed3377014c14798874bf031d899275ae077756c61e1233aa70875",
+        "solution": "1953cc850b68694e5221b99cb52b8ea6baf10db48d80f47fae1ccbaff9eb929d"
+      }
+    },
+    {
+      "problemId": "ctci6_16_25",
+      "language": "java",
+      "filename": "LRUCache.java",
+      "signature": "LRUCache(int capacity); String Get(int key); void Set(int key, String value)",
+      "starterCode": "class LRUCache {\n  public LRUCache(int capacity) {\n  }\n  public String Get(int key) {\n    return null;\n  }\n  public void Set(int key, String value) {\n  }\n}\n",
+      "solutionCode": "class LRUCache {\n  private final int capacity;\n  private final LinkedHashMap<Integer, String> entries = new LinkedHashMap<>(16, 0.75f, true);\n  public LRUCache(int capacity) {\n    this.capacity = capacity;\n  }\n  public String Get(int key) {\n    return entries.get(key);\n  }\n  public void Set(int key, String value) {\n    entries.put(key, value);\n    if (entries.size() > capacity)\n      entries.remove(entries.keySet().iterator().next());\n  }\n}\n",
+      "prefix": "import java.util.*;\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "LRUCache"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/java/ctci6_16_25.java"
+      ],
+      "sourceSha256": {
+        "starter": "e4c96112e0575d431fdb9664d90c0fd76879522d2781a31011bbaa1cb7e64d50",
+        "solution": "dee518f25cfbb899664f55f9b8daa71b4319d34757dc5829110f93a1162adc39"
+      }
+    },
+    {
+      "problemId": "ctci6_16_25",
+      "language": "javascript",
+      "filename": "solution.js",
+      "signature": "new LRUCache(capacity); Get(key) -> string | null; Set(key, value)",
+      "starterCode": "class LRUCache {\n  constructor(capacity) {}\n  Get(key) {\n    return null;\n  }\n  Set(key, value) {}\n}\n",
+      "solutionCode": "class LRUCache {\n  constructor(capacity) {\n    this.capacity = capacity;\n    this.entries = new Map();\n  }\n  Get(key) {\n    if (!this.entries.has(key)) return null;\n    const value = this.entries.get(key);\n    this.entries.delete(key);\n    this.entries.set(key, value);\n    return value;\n  }\n  Set(key, value) {\n    this.entries.delete(key);\n    this.entries.set(key, value);\n    if (this.entries.size > this.capacity) this.entries.delete(this.entries.keys().next().value);\n  }\n}\n",
+      "prefix": "'use strict';\n",
+      "suffix": "\nmodule.exports = {LRUCache};\n",
+      "references": [],
+      "visibleSymbols": [
+        "LRUCache"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/javascript/ctci6_16_25.js"
+      ],
+      "sourceSha256": {
+        "starter": "602c8ca46d5139f05ddf6efd5433c80e78044c39adfa098b5b596ffdc1638ac7",
+        "solution": "b0ee6bf2ee660ecf0ad49f4e8734dd8e1bbc3c08b8dea9359d921b38c8b076ae"
+      }
+    },
+    {
+      "problemId": "ctci6_16_25",
+      "language": "python",
+      "filename": "solution.py",
+      "signature": "LRUCache(capacity: int); Get(key: int) -> str | None; Set(key: int, value: str) -> None",
+      "starterCode": "class LRUCache:\n    def __init__(self, capacity: int):\n        pass\n\n    def Get(self, key: int) -> str | None:\n        return None\n\n    def Set(self, key: int, value: str) -> None:\n        pass\n",
+      "solutionCode": "from collections import OrderedDict\n\n\nclass LRUCache:\n    def __init__(self, capacity: int):\n        self._capacity = capacity\n        self._entries = OrderedDict()\n\n    def Get(self, key: int) -> str | None:\n        if key not in self._entries:\n            return None\n        self._entries.move_to_end(key)\n        return self._entries[key]\n\n    def Set(self, key: int, value: str) -> None:\n        self._entries[key] = value\n        self._entries.move_to_end(key)\n        if len(self._entries) > self._capacity:\n            self._entries.popitem(last=False)\n",
+      "prefix": "",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "LRUCache"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/python/ctci6_16_25.py"
+      ],
+      "sourceSha256": {
+        "starter": "c7a8c3c374db841eb5b1a2e84396611bee371f3861efa7954715ea046c2440d7",
+        "solution": "caf33455852f35f2b4fb8f66fb4bc616f7d58abe32499cc1d2ec13ecc2d93f71"
+      }
+    },
+    {
       "problemId": "ctci6_16_4",
       "language": "cpp",
       "filename": "solution.cpp",

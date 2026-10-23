@@ -66,6 +66,7 @@ public sealed class CtciStagingTests
     [InlineData("3.4")]
     [InlineData("3.6")]
     [InlineData("10.10")]
+    [InlineData("16.25")]
     public void JavaStateClassUsesItsOwnMatchingFilename(string reference)
     {
         var definition = Definition(reference);
@@ -152,6 +153,15 @@ public sealed class CtciStagingTests
         var test = Case([-7, 3, "divide"], -2);
         Assert.Null(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = -2, mutationOk = true })));
         Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = -3, mutationOk = true })));
+    }
+
+    [Fact]
+    public void CacheResultsDistinguishMissingValuesFromStoredEmptyStrings()
+    {
+        var definition = Definition("16.25");
+        var test = Case([1, new[] { "LRUCache", "Set", "Get", "Get" }, new[] { 0, 7, 7, 8 }, new[] { "", "", "", "" }], new object?[] { null, null, "", null });
+        Assert.Null(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new object?[] { null, null, "", null }, mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new object?[] { null, null, null, null }, mutationOk = true })));
     }
 
     [Fact]

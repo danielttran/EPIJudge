@@ -315,3 +315,45 @@ _previous_simulation_observation=valid_observation
 def valid_observation(ref,case,observed):
     if ref!='16.22':return _previous_simulation_observation(ref,case,observed)
     return isinstance(observed,dict) and observed.get('mutationOk') is True and type(observed.get('actual')) is list and all(type(row) is str for row in observed['actual']) and observed['actual']==case['expected']
+
+_previous_cache_oracle=oracle
+_previous_cache_cases=cases
+
+def oracle(ref,args):
+    if ref!='16.25':return _previous_cache_oracle(ref,args)
+    capacity,operations,keys,values=args;stored={};order=[];output=[None]
+    for operation,key,value in zip(operations[1:],keys[1:],values[1:]):
+        if operation=='Get':
+            output.append(stored.get(key))
+            if key in stored:order.remove(key);order.append(key)
+        else:
+            if key in stored:order.remove(key)
+            stored[key]=value;order.append(key)
+            if len(order)>capacity:del stored[order.pop(0)]
+            output.append(None)
+    return output
+
+def cache_transcript(capacity,actions):
+    return [capacity,['LRUCache']+[a[0] for a in actions],[0]+[a[1] for a in actions],['']+[a[2] for a in actions]]
+
+def cases(spec):
+    if spec['ref']!='16.25':return _previous_cache_cases(spec)
+    rng=random.Random(1625);args=[spec['example'][0]]
+    actions=[('Set',0,'A'),('Set',1,'B'),('Get',0,''),('Get',1,''),('Get',2,'')]
+    args += [cache_transcript(capacity,sequence) for capacity in (1,2,3) for n in range(5) for sequence in itertools.product(actions,repeat=n)]
+    args += [cache_transcript(1,[('Set',7,''),('Get',7,''),('Set',8,'x'),('Get',7,''),('Get',8,'')]),cache_transcript(2,[('Set',-2147483648,'"quoted"'),('Set',2147483647,'\\slash'),('Get',-2147483648,''),('Set',0,'last'),('Get',2147483647,'')])]
+    args += [cache_transcript(1000,[('Set',i,'value') for i in range(1000)]+[('Get',i,'') for i in range(1000)]),cache_transcript(1,[action for i in range(1000) for action in (('Set',i,'x'),('Get',i,''))])]
+    for _ in range(100):
+        actions=[]
+        for _ in range(rng.randrange(1,100)):
+            key=rng.randrange(-10,11)
+            actions.append(('Get',key,'') if rng.randrange(2) else ('Set',key,rng.choice(['','a','b','"x"','q'*20])))
+        args.append(cache_transcript(rng.randrange(1,11),actions))
+    distinct={json.dumps(a):a for a in args}
+    return [dict(arguments=a,expected=oracle('16.25',a)) for a in distinct.values()]
+
+_previous_cache_observation=valid_observation
+
+def valid_observation(ref,case,observed):
+    if ref!='16.25':return _previous_cache_observation(ref,case,observed)
+    return isinstance(observed,dict) and observed.get('mutationOk') is True and type(observed.get('actual')) is list and all(value is None or type(value) is str for value in observed['actual']) and observed['actual']==case['expected']

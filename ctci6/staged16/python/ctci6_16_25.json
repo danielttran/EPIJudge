@@ -1,0 +1,54 @@
+{
+  "explanation": "Lookup needs a key index, while eviction needs a recency order that supports removing an arbitrary accessed entry and adding it at the most-recent end. A dictionary plus doubly linked list provides both. Languages with an ordered-map facility can use its equivalent movement operations; an ordinary successful lookup alone does not necessarily refresh recency. Python OrderedDict keeps the recency order. Assignment alone does not move an existing key, so Set explicitly calls move_to_end, as does successful Get. popitem(last=False) removes the least-recent entry. Missing None differs from a stored empty string.",
+  "correctness": "Maintain exactly one indexed entry for each cached key and an order from least to most recently used. A missing Get changes neither structure. An existing Get or Set moves its one entry to the most-recent end; Set also stores the new value. A new Set appends one entry and, only when capacity is exceeded, removes the oldest entry from both index and order. These updates preserve one-to-one membership, correct values and recency after every operation. Thus each eviction selects precisely the least recently used surviving key, and every Get returns the current value or null exactly when absent.",
+  "walkthrough": "With capacity 2, Set(1,A), Set(2,B) orders keys [1,2]. Get(1) returns A and changes order to [2,1]. Set(3,C) evicts 2, leaving [1,3]. Get(2) returns null without refreshing anything; Get(1) still returns A. With capacity 1, Set(7,\"\") followed by Get(7) returns an empty string, not null.",
+  "walkthroughCase": {
+    "arguments": [
+      2,
+      [
+        "LRUCache",
+        "Set",
+        "Set",
+        "Get",
+        "Set",
+        "Get",
+        "Get"
+      ],
+      [
+        0,
+        1,
+        2,
+        1,
+        3,
+        2,
+        1
+      ],
+      [
+        "",
+        "A",
+        "B",
+        "",
+        "C",
+        "",
+        ""
+      ]
+    ],
+    "expected": [
+      null,
+      null,
+      null,
+      "A",
+      null,
+      null,
+      "A"
+    ]
+  },
+  "timeComplexity": "Expected O(1) per Get/Set under conventional hash/ordered-map implementations; hash collisions can worsen access. JavaScript Map specifies average sublinear access rather than a strict constant-time guarantee. Value copying costs O(value.length) where applicable.",
+  "spaceComplexity": "O(capacity) entries plus stored key/value data; the returned transcript uses O(operationCount) slots. Values are at most 20 characters.",
+  "edgeCases": [
+    "Capacity one, absent Get, repeated Set of an existing key and successful Get recency refresh.",
+    "Empty stored strings versus missing null; signed-endpoint keys.",
+    "Repeated evictions and fresh instances with independent capacities and state."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.25. No affiliation is implied."
+}

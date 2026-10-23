@@ -35065,6 +35065,91 @@
     ]
   },
   {
+    "problemId": "ctci6_16_25",
+    "collection": "ctci6",
+    "language": "csharp",
+    "code": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic class LRUCache\n{\n    private readonly int capacity;\n    private readonly LinkedList<(int Key, string Text)> order = new();\n    private readonly Dictionary<int, LinkedListNode<(int Key, string Text)>> index = new();\n    public LRUCache(int capacity)\n    {\n        this.capacity = capacity;\n    }\n    public string? Get(int key)\n    {\n        if (!index.TryGetValue(key, out var node))\n            return null;\n        order.Remove(node);\n        order.AddLast(node);\n        return node.Value.Text;\n    }\n    public void Set(int key, string value)\n    {\n        if (index.TryGetValue(key, out var node))\n        {\n            node.Value = (key, value);\n            order.Remove(node);\n            order.AddLast(node);\n        }\n        else\n        {\n            index[key] = order.AddLast((key, value));\n            if (index.Count > capacity)\n            {\n                var oldest = order.First!;\n                order.RemoveFirst();\n                index.Remove(oldest.Value.Key);\n            }\n        }\n    }\n}\n",
+    "explanation": "Lookup needs a key index, while eviction needs a recency order that supports removing an arbitrary accessed entry and adding it at the most-recent end. A dictionary plus doubly linked list provides both. Languages with an ordered-map facility can use its equivalent movement operations; an ordinary successful lookup alone does not necessarily refresh recency. C# indexes LinkedListNode<(int Key,string Text)> objects in a Dictionary. Removing and re-adding the same node at the list tail refreshes recency without a linear key search. Replacing a value updates that node rather than creating a duplicate entry.",
+    "timeComplexity": "Expected O(1) per Get/Set under conventional hash/ordered-map implementations; hash collisions can worsen access. JavaScript Map specifies average sublinear access rather than a strict constant-time guarantee. Value copying costs O(value.length) where applicable.",
+    "spaceComplexity": "O(capacity) entries plus stored key/value data; the returned transcript uses O(operationCount) slots. Values are at most 20 characters.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.25. No affiliation is implied.",
+    "correctness": "Maintain exactly one indexed entry for each cached key and an order from least to most recently used. A missing Get changes neither structure. An existing Get or Set moves its one entry to the most-recent end; Set also stores the new value. A new Set appends one entry and, only when capacity is exceeded, removes the oldest entry from both index and order. These updates preserve one-to-one membership, correct values and recency after every operation. Thus each eviction selects precisely the least recently used surviving key, and every Get returns the current value or null exactly when absent.",
+    "walkthrough": "With capacity 2, Set(1,A), Set(2,B) orders keys [1,2]. Get(1) returns A and changes order to [2,1]. Set(3,C) evicts 2, leaving [1,3]. Get(2) returns null without refreshing anything; Get(1) still returns A. With capacity 1, Set(7,\"\") followed by Get(7) returns an empty string, not null.",
+    "edgeCases": [
+      "Capacity one, absent Get, repeated Set of an existing key and successful Get recency refresh.",
+      "Empty stored strings versus missing null; signed-endpoint keys.",
+      "Repeated evictions and fresh instances with independent capacities and state."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_25",
+    "collection": "ctci6",
+    "language": "javascript",
+    "code": "'use strict';\nclass LRUCache {\n  constructor(capacity) {\n    this.capacity = capacity;\n    this.entries = new Map();\n  }\n  Get(key) {\n    if (!this.entries.has(key)) return null;\n    const value = this.entries.get(key);\n    this.entries.delete(key);\n    this.entries.set(key, value);\n    return value;\n  }\n  Set(key, value) {\n    this.entries.delete(key);\n    this.entries.set(key, value);\n    if (this.entries.size > this.capacity) this.entries.delete(this.entries.keys().next().value);\n  }\n}\n\nmodule.exports = {LRUCache};\n",
+    "explanation": "Lookup needs a key index, while eviction needs a recency order that supports removing an arbitrary accessed entry and adding it at the most-recent end. A dictionary plus doubly linked list provides both. Languages with an ordered-map facility can use its equivalent movement operations; an ordinary successful lookup alone does not necessarily refresh recency. JavaScript Map preserves insertion order, but get does not move a key. Successful Get deletes and reinserts the same key/value, and Set also deletes before insertion. The first keys() iterator entry is therefore the eviction candidate; missing Get returns null explicitly.",
+    "timeComplexity": "Expected O(1) per Get/Set under conventional hash/ordered-map implementations; hash collisions can worsen access. JavaScript Map specifies average sublinear access rather than a strict constant-time guarantee. Value copying costs O(value.length) where applicable.",
+    "spaceComplexity": "O(capacity) entries plus stored key/value data; the returned transcript uses O(operationCount) slots. Values are at most 20 characters.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.25. No affiliation is implied.",
+    "correctness": "Maintain exactly one indexed entry for each cached key and an order from least to most recently used. A missing Get changes neither structure. An existing Get or Set moves its one entry to the most-recent end; Set also stores the new value. A new Set appends one entry and, only when capacity is exceeded, removes the oldest entry from both index and order. These updates preserve one-to-one membership, correct values and recency after every operation. Thus each eviction selects precisely the least recently used surviving key, and every Get returns the current value or null exactly when absent.",
+    "walkthrough": "With capacity 2, Set(1,A), Set(2,B) orders keys [1,2]. Get(1) returns A and changes order to [2,1]. Set(3,C) evicts 2, leaving [1,3]. Get(2) returns null without refreshing anything; Get(1) still returns A. With capacity 1, Set(7,\"\") followed by Get(7) returns an empty string, not null.",
+    "edgeCases": [
+      "Capacity one, absent Get, repeated Set of an existing key and successful Get recency refresh.",
+      "Empty stored strings versus missing null; signed-endpoint keys.",
+      "Repeated evictions and fresh instances with independent capacities and state."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_25",
+    "collection": "ctci6",
+    "language": "python",
+    "code": "from collections import OrderedDict\n\n\nclass LRUCache:\n    def __init__(self, capacity: int):\n        self._capacity = capacity\n        self._entries = OrderedDict()\n\n    def Get(self, key: int) -> str | None:\n        if key not in self._entries:\n            return None\n        self._entries.move_to_end(key)\n        return self._entries[key]\n\n    def Set(self, key: int, value: str) -> None:\n        self._entries[key] = value\n        self._entries.move_to_end(key)\n        if len(self._entries) > self._capacity:\n            self._entries.popitem(last=False)\n",
+    "explanation": "Lookup needs a key index, while eviction needs a recency order that supports removing an arbitrary accessed entry and adding it at the most-recent end. A dictionary plus doubly linked list provides both. Languages with an ordered-map facility can use its equivalent movement operations; an ordinary successful lookup alone does not necessarily refresh recency. Python OrderedDict keeps the recency order. Assignment alone does not move an existing key, so Set explicitly calls move_to_end, as does successful Get. popitem(last=False) removes the least-recent entry. Missing None differs from a stored empty string.",
+    "timeComplexity": "Expected O(1) per Get/Set under conventional hash/ordered-map implementations; hash collisions can worsen access. JavaScript Map specifies average sublinear access rather than a strict constant-time guarantee. Value copying costs O(value.length) where applicable.",
+    "spaceComplexity": "O(capacity) entries plus stored key/value data; the returned transcript uses O(operationCount) slots. Values are at most 20 characters.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.25. No affiliation is implied.",
+    "correctness": "Maintain exactly one indexed entry for each cached key and an order from least to most recently used. A missing Get changes neither structure. An existing Get or Set moves its one entry to the most-recent end; Set also stores the new value. A new Set appends one entry and, only when capacity is exceeded, removes the oldest entry from both index and order. These updates preserve one-to-one membership, correct values and recency after every operation. Thus each eviction selects precisely the least recently used surviving key, and every Get returns the current value or null exactly when absent.",
+    "walkthrough": "With capacity 2, Set(1,A), Set(2,B) orders keys [1,2]. Get(1) returns A and changes order to [2,1]. Set(3,C) evicts 2, leaving [1,3]. Get(2) returns null without refreshing anything; Get(1) still returns A. With capacity 1, Set(7,\"\") followed by Get(7) returns an empty string, not null.",
+    "edgeCases": [
+      "Capacity one, absent Get, repeated Set of an existing key and successful Get recency refresh.",
+      "Empty stored strings versus missing null; signed-endpoint keys.",
+      "Repeated evictions and fresh instances with independent capacities and state."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_25",
+    "collection": "ctci6",
+    "language": "cpp",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n#include <unordered_map>\n#include <unordered_set>\n#include <iterator>\n#include <list>\n#include <optional>\n#include <unordered_map>\nclass LRUCache {\n  using Entry = std::pair<int, std::string>;\n  int capacity;\n  std::list<Entry> order;\n  std::unordered_map<int, std::list<Entry>::iterator> index;\n\n public:\n  explicit LRUCache(int capacity) : capacity(capacity) {\n  }\n  std::optional<std::string> Get(int key) {\n    auto found = index.find(key);\n    if (found == index.end())\n      return std::nullopt;\n    order.splice(order.end(), order, found->second);\n    return found->second->second;\n  }\n  void Set(int key, const std::string& value) {\n    auto found = index.find(key);\n    if (found != index.end()) {\n      found->second->second = value;\n      order.splice(order.end(), order, found->second);\n    } else {\n      order.emplace_back(key, value);\n      index[key] = std::prev(order.end());\n      if (order.size() > static_cast<size_t>(capacity)) {\n        index.erase(order.front().first);\n        order.pop_front();\n      }\n    }\n  }\n};\n",
+    "explanation": "Lookup needs a key index, while eviction needs a recency order that supports removing an arbitrary accessed entry and adding it at the most-recent end. A dictionary plus doubly linked list provides both. Languages with an ordered-map facility can use its equivalent movement operations; an ordinary successful lookup alone does not necessarily refresh recency. C++ indexes std::list iterators in an unordered_map. list::splice moves an accessed node to the tail in constant time while preserving its iterator, avoiding rescanning or rebuilding the index. std::optional<string> distinguishes absence from a stored empty string.",
+    "timeComplexity": "Expected O(1) per Get/Set under conventional hash/ordered-map implementations; hash collisions can worsen access. JavaScript Map specifies average sublinear access rather than a strict constant-time guarantee. Value copying costs O(value.length) where applicable.",
+    "spaceComplexity": "O(capacity) entries plus stored key/value data; the returned transcript uses O(operationCount) slots. Values are at most 20 characters.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.25. No affiliation is implied.",
+    "correctness": "Maintain exactly one indexed entry for each cached key and an order from least to most recently used. A missing Get changes neither structure. An existing Get or Set moves its one entry to the most-recent end; Set also stores the new value. A new Set appends one entry and, only when capacity is exceeded, removes the oldest entry from both index and order. These updates preserve one-to-one membership, correct values and recency after every operation. Thus each eviction selects precisely the least recently used surviving key, and every Get returns the current value or null exactly when absent.",
+    "walkthrough": "With capacity 2, Set(1,A), Set(2,B) orders keys [1,2]. Get(1) returns A and changes order to [2,1]. Set(3,C) evicts 2, leaving [1,3]. Get(2) returns null without refreshing anything; Get(1) still returns A. With capacity 1, Set(7,\"\") followed by Get(7) returns an empty string, not null.",
+    "edgeCases": [
+      "Capacity one, absent Get, repeated Set of an existing key and successful Get recency refresh.",
+      "Empty stored strings versus missing null; signed-endpoint keys.",
+      "Repeated evictions and fresh instances with independent capacities and state."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_25",
+    "collection": "ctci6",
+    "language": "java",
+    "code": "import java.util.*;\nclass LRUCache {\n  private final int capacity;\n  private final LinkedHashMap<Integer, String> entries = new LinkedHashMap<>(16, 0.75f, true);\n  public LRUCache(int capacity) {\n    this.capacity = capacity;\n  }\n  public String Get(int key) {\n    return entries.get(key);\n  }\n  public void Set(int key, String value) {\n    entries.put(key, value);\n    if (entries.size() > capacity)\n      entries.remove(entries.keySet().iterator().next());\n  }\n}\n",
+    "explanation": "Lookup needs a key index, while eviction needs a recency order that supports removing an arbitrary accessed entry and adding it at the most-recent end. A dictionary plus doubly linked list provides both. Languages with an ordered-map facility can use its equivalent movement operations; an ordinary successful lookup alone does not necessarily refresh recency. Java LinkedHashMap is constructed with accessOrder=true. Its successful get and put refresh order; after a new insertion exceeds capacity, the first key iterator entry is the least recently used and is removed. Default insertion-order LinkedHashMap would not implement Get refresh.",
+    "timeComplexity": "Expected O(1) per Get/Set under conventional hash/ordered-map implementations; hash collisions can worsen access. JavaScript Map specifies average sublinear access rather than a strict constant-time guarantee. Value copying costs O(value.length) where applicable.",
+    "spaceComplexity": "O(capacity) entries plus stored key/value data; the returned transcript uses O(operationCount) slots. Values are at most 20 characters.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.25. No affiliation is implied.",
+    "correctness": "Maintain exactly one indexed entry for each cached key and an order from least to most recently used. A missing Get changes neither structure. An existing Get or Set moves its one entry to the most-recent end; Set also stores the new value. A new Set appends one entry and, only when capacity is exceeded, removes the oldest entry from both index and order. These updates preserve one-to-one membership, correct values and recency after every operation. Thus each eviction selects precisely the least recently used surviving key, and every Get returns the current value or null exactly when absent.",
+    "walkthrough": "With capacity 2, Set(1,A), Set(2,B) orders keys [1,2]. Get(1) returns A and changes order to [2,1]. Set(3,C) evicts 2, leaving [1,3]. Get(2) returns null without refreshing anything; Get(1) still returns A. With capacity 1, Set(7,\"\") followed by Get(7) returns an empty string, not null.",
+    "edgeCases": [
+      "Capacity one, absent Get, repeated Set of an existing key and successful Get recency refresh.",
+      "Empty stored strings versus missing null; signed-endpoint keys.",
+      "Repeated evictions and fresh instances with independent capacities and state."
+    ]
+  },
+  {
     "problemId": "ctci6_17_1",
     "collection": "ctci6",
     "language": "csharp",

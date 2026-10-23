@@ -389,3 +389,31 @@ return result'''
         cs=language=='csharp';setup='var black=new HashSet<int>();' if cs else 'Set<Integer> black=new HashSet<>();';contains='black.Contains' if cs else 'black.contains';remove='black.Remove' if cs else 'black.remove';add='black.Add' if cs else 'black.add';minimum='Math.Min' if cs else 'Math.min';maximum='Math.Max' if cs else 'Math.max';result='var result=new List<string>();' if cs else 'List<String> result=new ArrayList<>();';append='Append' if cs else 'append';finish='result.Add(line.ToString());' if cs else 'result.add(line.toString());';marker='"RDLU"[direction]' if cs else '"RDLU".charAt(direction)'
         return f'int width=2*steps+1,row=0,column=0,direction=0,minRow=0,maxRow=0,minColumn=0,maxColumn=0;{setup}int[] dr={{0,1,0,-1}},dc={{1,0,-1,0}};for(int turn=0;turn<steps;++turn){{int key=(row+steps)*width+column+steps;if({contains}(key)){{direction=(direction+3)%4;{remove}(key);}}else{{direction=(direction+1)%4;{add}(key);}}row+=dr[direction];column+=dc[direction];minRow={minimum}(minRow,row);maxRow={maximum}(maxRow,row);minColumn={minimum}(minColumn,column);maxColumn={maximum}(maxColumn,column);}}{result}for(int r=minRow;r<=maxRow;++r){{var line=new StringBuilder();for(int c=minColumn;c<=maxColumn;++c)line.{append}(r==row&&c==column?{marker}:{contains}((r+steps)*width+c+steps)?\'#\':\'.\');{finish}}}return result;'
     return _previous_simulation_body(ref,language)
+
+_previous_cache_body=body
+
+def body(ref,language):
+    if ref!='16.25':return _previous_cache_body(ref,language)
+    if language=='python':return '''from collections import OrderedDict
+
+class LRUCache:
+    def __init__(self, capacity: int):
+        self._capacity = capacity
+        self._entries = OrderedDict()
+
+    def Get(self, key: int) -> str | None:
+        if key not in self._entries:
+            return None
+        self._entries.move_to_end(key)
+        return self._entries[key]
+
+    def Set(self, key: int, value: str) -> None:
+        self._entries[key] = value
+        self._entries.move_to_end(key)
+        if len(self._entries) > self._capacity:
+            self._entries.popitem(last=False)
+'''
+    if language=='javascript':return 'class LRUCache {constructor(capacity){this.capacity=capacity;this.entries=new Map();}Get(key){if(!this.entries.has(key))return null;const value=this.entries.get(key);this.entries.delete(key);this.entries.set(key,value);return value;}Set(key,value){this.entries.delete(key);this.entries.set(key,value);if(this.entries.size>this.capacity)this.entries.delete(this.entries.keys().next().value);}}'
+    if language=='csharp':return 'public class LRUCache {private readonly int capacity;private readonly LinkedList<(int Key,string Text)> order=new();private readonly Dictionary<int,LinkedListNode<(int Key,string Text)>> index=new();public LRUCache(int capacity){this.capacity=capacity;}public string? Get(int key){if(!index.TryGetValue(key,out var node))return null;order.Remove(node);order.AddLast(node);return node.Value.Text;}public void Set(int key,string value){if(index.TryGetValue(key,out var node)){node.Value=(key,value);order.Remove(node);order.AddLast(node);}else{index[key]=order.AddLast((key,value));if(index.Count>capacity){var oldest=order.First!;order.RemoveFirst();index.Remove(oldest.Value.Key);}}}}'
+    if language=='java':return 'class LRUCache {private final int capacity;private final LinkedHashMap<Integer,String> entries=new LinkedHashMap<>(16,0.75f,true);public LRUCache(int capacity){this.capacity=capacity;}public String Get(int key){return entries.get(key);}public void Set(int key,String value){entries.put(key,value);if(entries.size()>capacity)entries.remove(entries.keySet().iterator().next());}}'
+    return '#include <list>\n#include <optional>\n#include <iterator>\n#include <unordered_map>\nclass LRUCache {using Entry=std::pair<int,std::string>;int capacity;std::list<Entry> order;std::unordered_map<int,std::list<Entry>::iterator> index;public:explicit LRUCache(int capacity):capacity(capacity){}std::optional<std::string> Get(int key){auto found=index.find(key);if(found==index.end())return std::nullopt;order.splice(order.end(),order,found->second);return found->second->second;}void Set(int key,const std::string& value){auto found=index.find(key);if(found!=index.end()){found->second->second=value;order.splice(order.end(),order,found->second);}else{order.emplace_back(key,value);index[key]=std::prev(order.end());if(order.size()>static_cast<size_t>(capacity)){index.erase(order.front().first);order.pop_front();}}}};'
