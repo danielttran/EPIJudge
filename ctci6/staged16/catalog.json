@@ -1712,6 +1712,76 @@
     }
   },
   {
+    "ref": "16.23",
+    "method": "UniformSeven",
+    "params": [
+      [
+        "source",
+        "rand5"
+      ]
+    ],
+    "result": "i",
+    "mutation": "none",
+    "description": "Using only the supplied Rand5Source, return a uniformly random integer from 0 through 6 inclusive. Each source.Next() independently returns a uniform integer from 0 through 4 inclusive. All seven output values must have probability 1/7 on each call, with independent outcomes across repeated calls. Do not use another random generator, clocks or cached/correlated output cycles.",
+    "constraints": [
+      "The callable receives a provided Rand5Source object with one method: int Next(). Do not redeclare the API or inspect its private state. Rejection sampling and repeated draws are allowed; no fixed number of source calls per completed attempt is required. Source and output ranges are ZERO-based.",
+      "Example/test wire input is an array of forced initial source draws, each in 0..4. It initializes the private test stream; additional draws come from the injected source. The judge also explores source-choice branches and runs repeated seeded trials. It checks uniformity, source use, result range and successive-result correlations rather than requiring every algorithm to map a source prefix to the reference output.",
+      "The example output is one valid result from the described reference algorithm; another correct uniform algorithm may return a different value for the same draw prefix. Finite randomized checks are evidence, not a mathematical proof for arbitrary submitted programs. An excessively long/nonterminating random computation is subject to ordinary execution limits."
+    ],
+    "why": "Two independent five-way draws encode 25 equally likely states as 5*a+b. Twenty-five is not divisible by seven, so applying %7 immediately would favor four outputs. Keep only states 0..20: the retained 21 states split into seven equally sized groups. Reject the four extras and try again, preserving equal output probabilities.",
+    "correctness": "Every ordered draw pair has probability 1/25. In an accepted attempt, each result r in 0..6 has exactly the three preimages r,r+7,r+14, so its unconditional probability in that attempt is 3/25. The attempt rejects with probability 4/25, independent of earlier attempts. Thus eventual probability of each result is sum over k>=0 of (4/25)^k*(3/25)=1/7. Repeating independent source draws gives independent completed calls without retained algorithm state. Acceptance probability 21/25 implies almost-sure termination and expected 25/21 attempts; the worst-case number of attempts is unbounded.",
+    "walkthrough": "For source prefix [4,4,0,0], the first pair encodes 24 and is rejected. The next pair encodes 0 and returns 0. Accepted states 2,9,16 all return 2, giving it exactly three equally likely accepted preimages. Returning 24%7 without rejection would give output 3 an extra preimage and bias the distribution.",
+    "example": [
+      [
+        [
+          4,
+          4,
+          0,
+          0
+        ]
+      ],
+      0
+    ],
+    "time": "Expected O(1) time: 25/21 attempts and 50/21 primitive calls. Worst-case running time is unbounded because any finite run of rejections has positive probability.",
+    "space": "O(1) auxiliary scalar state, with iteration instead of recursive retry.",
+    "edges": [
+      "Every accepted residue, rejection states 21..24 and repeated rejections.",
+      "Zero-based source/result bounds and repeated independent calls.",
+      "Alternative valid rejection schemes must not be rejected solely for using three draws per attempt or a larger rejected mass."
+    ],
+    "related": "The public implementations use a uniform 0..4 primitive and return 0..6. This binding preserves those bounds and accepts equivalent unbiased algorithms rather than imposing the first implementation exact source-prefix mapping.",
+    "id": "ctci6_16_23",
+    "title": "Rand7 From Rand5",
+    "testCount": 30,
+    "languages": {
+      "csharp": {
+        "signature": "int UniformSeven(Rand5Source source)",
+        "starterCode": "public class Solution\n{\n    public int UniformSeven(Rand5Source source)\n    {\n        return 0;\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public int UniformSeven(Rand5Source source)\n    {\n        while (true)\n        {\n            int state = 5 * source.Next() + source.Next();\n            if (state < 21)\n                return state % 7;\n        }\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function UniformSeven(source)",
+        "starterCode": "function UniformSeven(source) {\n  return 0;\n}\n",
+        "solutionCode": "function UniformSeven(source) {\n  while (true) {\n    const state = 5 * source.Next() + source.Next();\n    if (state < 21) return state % 7;\n  }\n}\n"
+      },
+      "python": {
+        "signature": "def UniformSeven(source: Rand5Source) -> int",
+        "starterCode": "def UniformSeven(source: Rand5Source) -> int:\n    return 0\n",
+        "solutionCode": "def UniformSeven(source: Rand5Source) -> int:\n    while True:\n        state = 5 * source.Next() + source.Next()\n        if state < 21:\n            return state % 7\n"
+      },
+      "cpp": {
+        "signature": "int UniformSeven(Rand5Source& source)",
+        "starterCode": "class Solution {\n public:\n  int UniformSeven(Rand5Source& source) {\n    return 0;\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  int UniformSeven(Rand5Source& source) {\n    while (true) {\n      int first = source.Next();\n      int state = 5 * first + source.Next();\n      if (state < 21)\n        return state % 7;\n    }\n  }\n};\n"
+      },
+      "java": {
+        "signature": "int UniformSeven(Rand5Source source)",
+        "starterCode": "class Solution {\n  public int UniformSeven(Rand5Source source) {\n    return 0;\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public int UniformSeven(Rand5Source source) {\n    while (true) {\n      int state = 5 * source.Next() + source.Next();\n      if (state < 21)\n        return state % 7;\n    }\n  }\n}\n"
+      }
+    }
+  },
+  {
     "ref": "16.24",
     "method": "PairsWithSum",
     "params": [

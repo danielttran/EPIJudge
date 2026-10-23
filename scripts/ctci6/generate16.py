@@ -9,9 +9,10 @@ import corpus_line16
 import corpus_numeric
 import corpus_geometry
 import corpus_xml16
+import corpus_rand16
 
-def cases(spec):return corpus_xml16.cases(spec) if spec["ref"]=="16.12" else corpus_geometry.cases(spec) if spec["ref"] in ("16.3","16.13") else corpus_numeric.cases(spec) if spec["ref"]=="16.26" else corpus_line16.cases(spec) if spec["ref"]=="16.14" else base_cases(spec)
-def oracle(reference,args):return corpus_xml16.oracle(reference,args) if reference=="16.12" else corpus_geometry.oracle(reference,args) if reference in ("16.3","16.13") else corpus_numeric.oracle(reference,args) if reference=="16.26" else corpus_line16.oracle(reference,args) if reference=="16.14" else base_oracle(reference,args)
+def cases(spec):return corpus_rand16.cases(spec) if spec["ref"]=="16.23" else corpus_xml16.cases(spec) if spec["ref"]=="16.12" else corpus_geometry.cases(spec) if spec["ref"] in ("16.3","16.13") else corpus_numeric.cases(spec) if spec["ref"]=="16.26" else corpus_line16.cases(spec) if spec["ref"]=="16.14" else base_cases(spec)
+def oracle(reference,args):return corpus_rand16.oracle(reference,args) if reference=="16.23" else corpus_xml16.oracle(reference,args) if reference=="16.12" else corpus_geometry.oracle(reference,args) if reference in ("16.3","16.13") else corpus_numeric.oracle(reference,args) if reference=="16.26" else corpus_line16.oracle(reference,args) if reference=="16.14" else base_oracle(reference,args)
 from generate import generate
 from models16 import declare,header,neutral
 
@@ -19,7 +20,11 @@ def generate16():
     for spec in SPECS:
         if oracle(spec['ref'],spec['example'][0])!=spec['example'][1]:raise ValueError('Incorrect example '+spec['ref'])
         cases(spec)
-    generate(specs=SPECS,algorithm=body,corpus=cases,reference=oracle,headers={language:header('16',language) for language in LANGUAGES},declare=declare,neutral=neutral,staging_name='staged16')
+    rows=[]
+    for spec in SPECS:
+        generate(specs=[spec],algorithm=body,corpus=cases,reference=oracle,headers={language:header(spec['ref'],language) for language in LANGUAGES},declare=declare,neutral=neutral,staging_name='staged16')
+        rows.extend(json.loads((ROOT/'ctci6/staged16/catalog.json').read_text()))
+    (ROOT/'ctci6/staged16/catalog.json').write_text(json.dumps(rows,indent=2)+'\n')
 
     for spec in SPECS:
         for language,detail in spec.get('languageWhy',{}).items():

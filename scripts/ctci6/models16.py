@@ -3,6 +3,7 @@ from models08 import declare as typed_declare, header as base_header, TYPES
 from models08 import neutral as collection_neutral
 import numeric
 from core import starter_body
+from models_rand16 import RAND5
 
 def neutral(spec,language):
     if spec["result"]=="d":return "return 0.0" if language=="python" else "return 0.0;"
@@ -22,7 +23,7 @@ def neutral(spec,language):
 for _language,_type in {'csharp':'long','java':'long','cpp':'long long','python':'int'}.items():TYPES[_language]['l']=_type
 
 def header(ref,language):
-    return base_header(ref,language)+('#include <unordered_map>\n#include <unordered_set>\n' if language=='cpp' else '')
+    return base_header(ref,language)+(RAND5[language] if ref=='16.23' else '')+('#include <unordered_map>\n#include <unordered_set>\n' if language=='cpp' else '')
 
 def declare(spec,language,body,class_name='Solution'):
     if spec['ref']=='16.25':

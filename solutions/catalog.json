@@ -36305,6 +36305,91 @@
     ]
   },
   {
+    "problemId": "ctci6_16_23",
+    "collection": "ctci6",
+    "language": "csharp",
+    "code": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic abstract class Rand5Source { public abstract int Next(); }\npublic class Solution\n{\n    public int UniformSeven(Rand5Source source)\n    {\n        while (true)\n        {\n            int state = 5 * source.Next() + source.Next();\n            if (state < 21)\n                return state % 7;\n        }\n    }\n}\n",
+    "explanation": "Two independent five-way draws encode 25 equally likely states as 5*a+b. Twenty-five is not divisible by seven, so applying %7 immediately would favor four outputs. Keep only states 0..20: the retained 21 states split into seven equally sized groups. Reject the four extras and try again, preserving equal output probabilities.",
+    "timeComplexity": "Expected O(1) time: 25/21 attempts and 50/21 primitive calls. Worst-case running time is unbounded because any finite run of rejections has positive probability.",
+    "spaceComplexity": "O(1) auxiliary scalar state, with iteration instead of recursive retry.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.23. No affiliation is implied.",
+    "correctness": "Every ordered draw pair has probability 1/25. In an accepted attempt, each result r in 0..6 has exactly the three preimages r,r+7,r+14, so its unconditional probability in that attempt is 3/25. The attempt rejects with probability 4/25, independent of earlier attempts. Thus eventual probability of each result is sum over k>=0 of (4/25)^k*(3/25)=1/7. Repeating independent source draws gives independent completed calls without retained algorithm state. Acceptance probability 21/25 implies almost-sure termination and expected 25/21 attempts; the worst-case number of attempts is unbounded.",
+    "walkthrough": "For source prefix [4,4,0,0], the first pair encodes 24 and is rejected. The next pair encodes 0 and returns 0. Accepted states 2,9,16 all return 2, giving it exactly three equally likely accepted preimages. Returning 24%7 without rejection would give output 3 an extra preimage and bias the distribution.",
+    "edgeCases": [
+      "Every accepted residue, rejection states 21..24 and repeated rejections.",
+      "Zero-based source/result bounds and repeated independent calls.",
+      "Alternative valid rejection schemes must not be rejected solely for using three draws per attempt or a larger rejected mass."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_23",
+    "collection": "ctci6",
+    "language": "javascript",
+    "code": "'use strict';\nclass Rand5Source {Next(){throw new Error(\"Provided by the judge\");}}\nfunction UniformSeven(source) {\n  while (true) {\n    const state = 5 * source.Next() + source.Next();\n    if (state < 21) return state % 7;\n  }\n}\n\nmodule.exports = {Rand5Source,UniformSeven};\n",
+    "explanation": "Two independent five-way draws encode 25 equally likely states as 5*a+b. Twenty-five is not divisible by seven, so applying %7 immediately would favor four outputs. Keep only states 0..20: the retained 21 states split into seven equally sized groups. Reject the four extras and try again, preserving equal output probabilities.",
+    "timeComplexity": "Expected O(1) time: 25/21 attempts and 50/21 primitive calls. Worst-case running time is unbounded because any finite run of rejections has positive probability.",
+    "spaceComplexity": "O(1) auxiliary scalar state, with iteration instead of recursive retry.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.23. No affiliation is implied.",
+    "correctness": "Every ordered draw pair has probability 1/25. In an accepted attempt, each result r in 0..6 has exactly the three preimages r,r+7,r+14, so its unconditional probability in that attempt is 3/25. The attempt rejects with probability 4/25, independent of earlier attempts. Thus eventual probability of each result is sum over k>=0 of (4/25)^k*(3/25)=1/7. Repeating independent source draws gives independent completed calls without retained algorithm state. Acceptance probability 21/25 implies almost-sure termination and expected 25/21 attempts; the worst-case number of attempts is unbounded.",
+    "walkthrough": "For source prefix [4,4,0,0], the first pair encodes 24 and is rejected. The next pair encodes 0 and returns 0. Accepted states 2,9,16 all return 2, giving it exactly three equally likely accepted preimages. Returning 24%7 without rejection would give output 3 an extra preimage and bias the distribution.",
+    "edgeCases": [
+      "Every accepted residue, rejection states 21..24 and repeated rejections.",
+      "Zero-based source/result bounds and repeated independent calls.",
+      "Alternative valid rejection schemes must not be rejected solely for using three draws per attempt or a larger rejected mass."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_23",
+    "collection": "ctci6",
+    "language": "python",
+    "code": "class Rand5Source:\n    def Next(self) -> int:\n        raise RuntimeError(\"Provided by the judge\")\ndef UniformSeven(source: Rand5Source) -> int:\n    while True:\n        state = 5 * source.Next() + source.Next()\n        if state < 21:\n            return state % 7\n",
+    "explanation": "Two independent five-way draws encode 25 equally likely states as 5*a+b. Twenty-five is not divisible by seven, so applying %7 immediately would favor four outputs. Keep only states 0..20: the retained 21 states split into seven equally sized groups. Reject the four extras and try again, preserving equal output probabilities.",
+    "timeComplexity": "Expected O(1) time: 25/21 attempts and 50/21 primitive calls. Worst-case running time is unbounded because any finite run of rejections has positive probability.",
+    "spaceComplexity": "O(1) auxiliary scalar state, with iteration instead of recursive retry.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.23. No affiliation is implied.",
+    "correctness": "Every ordered draw pair has probability 1/25. In an accepted attempt, each result r in 0..6 has exactly the three preimages r,r+7,r+14, so its unconditional probability in that attempt is 3/25. The attempt rejects with probability 4/25, independent of earlier attempts. Thus eventual probability of each result is sum over k>=0 of (4/25)^k*(3/25)=1/7. Repeating independent source draws gives independent completed calls without retained algorithm state. Acceptance probability 21/25 implies almost-sure termination and expected 25/21 attempts; the worst-case number of attempts is unbounded.",
+    "walkthrough": "For source prefix [4,4,0,0], the first pair encodes 24 and is rejected. The next pair encodes 0 and returns 0. Accepted states 2,9,16 all return 2, giving it exactly three equally likely accepted preimages. Returning 24%7 without rejection would give output 3 an extra preimage and bias the distribution.",
+    "edgeCases": [
+      "Every accepted residue, rejection states 21..24 and repeated rejections.",
+      "Zero-based source/result bounds and repeated independent calls.",
+      "Alternative valid rejection schemes must not be rejected solely for using three draws per attempt or a larger rejected mass."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_23",
+    "collection": "ctci6",
+    "language": "cpp",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\nclass Rand5Source { public: virtual int Next()=0; virtual ~Rand5Source()=default; };\n#include <unordered_map>\n#include <unordered_set>\nclass Solution {\n public:\n  int UniformSeven(Rand5Source& source) {\n    while (true) {\n      int first = source.Next();\n      int state = 5 * first + source.Next();\n      if (state < 21)\n        return state % 7;\n    }\n  }\n};\n",
+    "explanation": "Two independent five-way draws encode 25 equally likely states as 5*a+b. Twenty-five is not divisible by seven, so applying %7 immediately would favor four outputs. Keep only states 0..20: the retained 21 states split into seven equally sized groups. Reject the four extras and try again, preserving equal output probabilities.",
+    "timeComplexity": "Expected O(1) time: 25/21 attempts and 50/21 primitive calls. Worst-case running time is unbounded because any finite run of rejections has positive probability.",
+    "spaceComplexity": "O(1) auxiliary scalar state, with iteration instead of recursive retry.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.23. No affiliation is implied.",
+    "correctness": "Every ordered draw pair has probability 1/25. In an accepted attempt, each result r in 0..6 has exactly the three preimages r,r+7,r+14, so its unconditional probability in that attempt is 3/25. The attempt rejects with probability 4/25, independent of earlier attempts. Thus eventual probability of each result is sum over k>=0 of (4/25)^k*(3/25)=1/7. Repeating independent source draws gives independent completed calls without retained algorithm state. Acceptance probability 21/25 implies almost-sure termination and expected 25/21 attempts; the worst-case number of attempts is unbounded.",
+    "walkthrough": "For source prefix [4,4,0,0], the first pair encodes 24 and is rejected. The next pair encodes 0 and returns 0. Accepted states 2,9,16 all return 2, giving it exactly three equally likely accepted preimages. Returning 24%7 without rejection would give output 3 an extra preimage and bias the distribution.",
+    "edgeCases": [
+      "Every accepted residue, rejection states 21..24 and repeated rejections.",
+      "Zero-based source/result bounds and repeated independent calls.",
+      "Alternative valid rejection schemes must not be rejected solely for using three draws per attempt or a larger rejected mass."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_23",
+    "collection": "ctci6",
+    "language": "java",
+    "code": "import java.util.*;\nabstract class Rand5Source { public abstract int Next(); }\nclass Solution {\n  public int UniformSeven(Rand5Source source) {\n    while (true) {\n      int state = 5 * source.Next() + source.Next();\n      if (state < 21)\n        return state % 7;\n    }\n  }\n}\n",
+    "explanation": "Two independent five-way draws encode 25 equally likely states as 5*a+b. Twenty-five is not divisible by seven, so applying %7 immediately would favor four outputs. Keep only states 0..20: the retained 21 states split into seven equally sized groups. Reject the four extras and try again, preserving equal output probabilities.",
+    "timeComplexity": "Expected O(1) time: 25/21 attempts and 50/21 primitive calls. Worst-case running time is unbounded because any finite run of rejections has positive probability.",
+    "spaceComplexity": "O(1) auxiliary scalar state, with iteration instead of recursive retry.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.23. No affiliation is implied.",
+    "correctness": "Every ordered draw pair has probability 1/25. In an accepted attempt, each result r in 0..6 has exactly the three preimages r,r+7,r+14, so its unconditional probability in that attempt is 3/25. The attempt rejects with probability 4/25, independent of earlier attempts. Thus eventual probability of each result is sum over k>=0 of (4/25)^k*(3/25)=1/7. Repeating independent source draws gives independent completed calls without retained algorithm state. Acceptance probability 21/25 implies almost-sure termination and expected 25/21 attempts; the worst-case number of attempts is unbounded.",
+    "walkthrough": "For source prefix [4,4,0,0], the first pair encodes 24 and is rejected. The next pair encodes 0 and returns 0. Accepted states 2,9,16 all return 2, giving it exactly three equally likely accepted preimages. Returning 24%7 without rejection would give output 3 an extra preimage and bias the distribution.",
+    "edgeCases": [
+      "Every accepted residue, rejection states 21..24 and repeated rejections.",
+      "Zero-based source/result bounds and repeated independent calls.",
+      "Alternative valid rejection schemes must not be rejected solely for using three draws per attempt or a larger rejected mass."
+    ]
+  },
+  {
     "problemId": "ctci6_16_24",
     "collection": "ctci6",
     "language": "csharp",

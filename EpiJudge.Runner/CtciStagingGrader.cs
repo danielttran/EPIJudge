@@ -332,6 +332,11 @@ public static class CtciStagingGrader
         {
             if (observed.ValueKind != JsonValueKind.Object || observed.TryGetProperty("error", out var error) && error.ValueKind != JsonValueKind.Null)
                 return "Your code did not finish this case successfully.";
+            if (definition.Ref == "16.23")
+            {
+                var actual = observed.GetProperty("actual");
+                return observed.GetProperty("mutationOk").ValueKind == JsonValueKind.True && observed.GetProperty("uniformOk").ValueKind == JsonValueKind.True && actual.ValueKind == JsonValueKind.Number && actual.TryGetInt32(out int outcome) && outcome >= 0 && outcome <= 6 ? null : "Use the uniform primitive to produce independent uniform integers in 0..6; a fixed source-prefix mapping is not required.";
+            }
             if (definition.Ref == "10.7") return MissingFileFailure(test, observed);
             if (definition.Ref == "17.4")
             {

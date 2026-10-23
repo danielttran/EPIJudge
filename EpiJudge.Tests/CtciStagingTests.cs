@@ -672,4 +672,14 @@ public sealed class CtciStagingTests
         Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = 3, mutationOk = true, reads = 10L, resets = 2 })));
         Assert.Contains(definition.Callable("python").References, reference => reference.Names.Contains("NumberFile"));
     }
+    [Fact]
+    public void UniformSevenGradesUniformityWithoutForcingOneSourcePrefixMapping()
+    {
+        var definition = Definition("16.23");
+        var test = Case([new[] { 4, 4, 0, 0 }], 0);
+        Assert.Null(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = 6, mutationOk = true, uniformOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = 0, mutationOk = true, uniformOk = false })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = 7, mutationOk = true, uniformOk = true })));
+        Assert.Contains(definition.Callable("python").References, reference => reference.Names.Contains("Rand5Source"));
+    }
 }

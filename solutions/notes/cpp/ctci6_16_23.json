@@ -1,0 +1,24 @@
+{
+  "explanation": "Two independent five-way draws encode 25 equally likely states as 5*a+b. Twenty-five is not divisible by seven, so applying %7 immediately would favor four outputs. Keep only states 0..20: the retained 21 states split into seven equally sized groups. Reject the four extras and try again, preserving equal output probabilities.",
+  "correctness": "Every ordered draw pair has probability 1/25. In an accepted attempt, each result r in 0..6 has exactly the three preimages r,r+7,r+14, so its unconditional probability in that attempt is 3/25. The attempt rejects with probability 4/25, independent of earlier attempts. Thus eventual probability of each result is sum over k>=0 of (4/25)^k*(3/25)=1/7. Repeating independent source draws gives independent completed calls without retained algorithm state. Acceptance probability 21/25 implies almost-sure termination and expected 25/21 attempts; the worst-case number of attempts is unbounded.",
+  "walkthrough": "For source prefix [4,4,0,0], the first pair encodes 24 and is rejected. The next pair encodes 0 and returns 0. Accepted states 2,9,16 all return 2, giving it exactly three equally likely accepted preimages. Returning 24%7 without rejection would give output 3 an extra preimage and bias the distribution.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        4,
+        4,
+        0,
+        0
+      ]
+    ],
+    "expected": 0
+  },
+  "timeComplexity": "Expected O(1) time: 25/21 attempts and 50/21 primitive calls. Worst-case running time is unbounded because any finite run of rejections has positive probability.",
+  "spaceComplexity": "O(1) auxiliary scalar state, with iteration instead of recursive retry.",
+  "edgeCases": [
+    "Every accepted residue, rejection states 21..24 and repeated rejections.",
+    "Zero-based source/result bounds and repeated independent calls.",
+    "Alternative valid rejection schemes must not be rejected solely for using three draws per attempt or a larger rejected mass."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.23. No affiliation is implied."
+}
