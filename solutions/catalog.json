@@ -31695,6 +31695,91 @@
     ]
   },
   {
+    "problemId": "ctci6_8_2",
+    "collection": "ctci6",
+    "language": "csharp",
+    "code": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic class Solution\n{\n    public List<List<int>> FindRobotPath(int[][] grid)\n    {\n        int rows = grid.Length, columns = rows == 0 ? 0 : grid[0].Length;\n        if (rows == 0 || columns == 0)\n        {\n            return [];\n        }\n        int[,] parent = new int[rows, columns];\n        var path = new List<List<int>>();\n        for (int r = 0; r < rows; ++r)\n        {\n            for (int c = 0; c < columns; ++c)\n            {\n                if (grid[r][c] == 0)\n                    continue;\n                if (r == 0 && c == 0)\n                    parent[r, c] = 3;\n                else if (r > 0 && parent[r - 1, c] != 0)\n                    parent[r, c] = 1;\n                else if (c > 0 && parent[r, c - 1] != 0)\n                    parent[r, c] = 2;\n            }\n        }\n        if (parent[rows - 1, columns - 1] == 0)\n        {\n            return [];\n        }\n        int row = rows - 1, col = columns - 1;\n        while (true)\n        {\n            path.Add([row, col]);\n            if (row == 0 && col == 0)\n                break;\n            if (parent[row, col] == 1)\n                --row;\n            else\n                --col;\n        }\n        path.Reverse();\n        return path;\n    }\n}\n",
+    "explanation": "A cell can be reached only from its upper or left neighbor. Store one predecessor for each reachable open cell while scanning rows. This avoids revisiting the same failed subproblem and provides enough information to reconstruct one path without copying a growing path for every candidate.",
+    "timeComplexity": "O(rows*columns) time to scan the grid, plus O(rows+columns) path reconstruction when a path exists.",
+    "spaceComplexity": "O(rows*columns) predecessor storage, excluding the returned O(rows+columns) coordinate pairs. No recursion stack is used.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 8.2. No affiliation is implied.",
+    "correctness": "The origin is reachable exactly when it is open. At every later open cell, the only possible incoming moves are from its upper or left neighbor. By induction in row order, their reachability is already correct, so recording one reachable predecessor marks precisely the reachable cells. A blocked cell is never marked. If the destination is unmarked, no path exists. Otherwise following predecessors reaches the origin and decreases the row or column at each step. Reversing those coordinates produces a legal forward path with both endpoints, using only open cells.",
+    "walkthrough": "For [[1,1,0],[0,1,1]], the origin reaches (0,1), which reaches (1,1), then (1,2). The returned path is [[0,0],[0,1],[1,1],[1,2]]. Cell (1,0) is blocked, so a diagonal jump from the origin to (1,1) would not be a valid alternative.",
+    "edgeCases": [
+      "Empty dimensions, blocked origin or destination, one open cell.",
+      "A unique narrow corridor, multiple valid paths, and an unreachable region.",
+      "Right/down moves only: diagonal and backward steps are invalid."
+    ]
+  },
+  {
+    "problemId": "ctci6_8_2",
+    "collection": "ctci6",
+    "language": "javascript",
+    "code": "'use strict';\nfunction FindRobotPath(grid) {\n  const rows = grid.length,\n    columns = rows ? grid[0].length : 0;\n  if (!rows || !columns) return [];\n  const parent = Array.from({ length: rows }, () => Array(columns).fill(0));\n  for (let r = 0; r < rows; ++r) {\n    for (let c = 0; c < columns; ++c) {\n      if (grid[r][c] === 0) continue;\n      if (r === 0 && c === 0) parent[r][c] = 3;\n      else if (r > 0 && parent[r - 1][c]) parent[r][c] = 1;\n      else if (c > 0 && parent[r][c - 1]) parent[r][c] = 2;\n    }\n  }\n  if (!parent[rows - 1][columns - 1]) return [];\n  const path = [];\n  let r = rows - 1,\n    c = columns - 1;\n  while (true) {\n    path.push([r, c]);\n    if (r === 0 && c === 0) break;\n    if (parent[r][c] === 1) --r;\n    else --c;\n  }\n  path.reverse();\n  return path;\n}\n\nmodule.exports = {FindRobotPath};\n",
+    "explanation": "A cell can be reached only from its upper or left neighbor. Store one predecessor for each reachable open cell while scanning rows. This avoids revisiting the same failed subproblem and provides enough information to reconstruct one path without copying a growing path for every candidate.",
+    "timeComplexity": "O(rows*columns) time to scan the grid, plus O(rows+columns) path reconstruction when a path exists.",
+    "spaceComplexity": "O(rows*columns) predecessor storage, excluding the returned O(rows+columns) coordinate pairs. No recursion stack is used.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 8.2. No affiliation is implied.",
+    "correctness": "The origin is reachable exactly when it is open. At every later open cell, the only possible incoming moves are from its upper or left neighbor. By induction in row order, their reachability is already correct, so recording one reachable predecessor marks precisely the reachable cells. A blocked cell is never marked. If the destination is unmarked, no path exists. Otherwise following predecessors reaches the origin and decreases the row or column at each step. Reversing those coordinates produces a legal forward path with both endpoints, using only open cells.",
+    "walkthrough": "For [[1,1,0],[0,1,1]], the origin reaches (0,1), which reaches (1,1), then (1,2). The returned path is [[0,0],[0,1],[1,1],[1,2]]. Cell (1,0) is blocked, so a diagonal jump from the origin to (1,1) would not be a valid alternative.",
+    "edgeCases": [
+      "Empty dimensions, blocked origin or destination, one open cell.",
+      "A unique narrow corridor, multiple valid paths, and an unreachable region.",
+      "Right/down moves only: diagonal and backward steps are invalid."
+    ]
+  },
+  {
+    "problemId": "ctci6_8_2",
+    "collection": "ctci6",
+    "language": "python",
+    "code": "def FindRobotPath(grid: list[list[int]]) -> list[list[int]]:\n    rows = len(grid)\n    columns = len(grid[0]) if rows else 0\n    if not rows or not columns:\n        return []\n    parent = [[0] * columns for _ in range(rows)]\n    for r in range(rows):\n        for c in range(columns):\n            if grid[r][c] == 0:\n                continue\n            if r == 0 and c == 0:\n                parent[r][c] = 3\n            elif r > 0 and parent[r - 1][c]:\n                parent[r][c] = 1\n            elif c > 0 and parent[r][c - 1]:\n                parent[r][c] = 2\n    if not parent[-1][-1]:\n        return []\n    path = []\n    r, c = rows - 1, columns - 1\n    while True:\n        path.append([r, c])\n        if r == 0 and c == 0:\n            break\n        if parent[r][c] == 1:\n            r -= 1\n        else:\n            c -= 1\n    path.reverse()\n    return path\n",
+    "explanation": "A cell can be reached only from its upper or left neighbor. Store one predecessor for each reachable open cell while scanning rows. This avoids revisiting the same failed subproblem and provides enough information to reconstruct one path without copying a growing path for every candidate.",
+    "timeComplexity": "O(rows*columns) time to scan the grid, plus O(rows+columns) path reconstruction when a path exists.",
+    "spaceComplexity": "O(rows*columns) predecessor storage, excluding the returned O(rows+columns) coordinate pairs. No recursion stack is used.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 8.2. No affiliation is implied.",
+    "correctness": "The origin is reachable exactly when it is open. At every later open cell, the only possible incoming moves are from its upper or left neighbor. By induction in row order, their reachability is already correct, so recording one reachable predecessor marks precisely the reachable cells. A blocked cell is never marked. If the destination is unmarked, no path exists. Otherwise following predecessors reaches the origin and decreases the row or column at each step. Reversing those coordinates produces a legal forward path with both endpoints, using only open cells.",
+    "walkthrough": "For [[1,1,0],[0,1,1]], the origin reaches (0,1), which reaches (1,1), then (1,2). The returned path is [[0,0],[0,1],[1,1],[1,2]]. Cell (1,0) is blocked, so a diagonal jump from the origin to (1,1) would not be a valid alternative.",
+    "edgeCases": [
+      "Empty dimensions, blocked origin or destination, one open cell.",
+      "A unique narrow corridor, multiple valid paths, and an unreachable region.",
+      "Right/down moves only: diagonal and backward steps are invalid."
+    ]
+  },
+  {
+    "problemId": "ctci6_8_2",
+    "collection": "ctci6",
+    "language": "cpp",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\nclass Solution {\n public:\n  std::vector<std::vector<int>> FindRobotPath(const std::vector<std::vector<int>>& grid) {\n    int rows = static_cast<int>(grid.size()),\n        columns = rows == 0 ? 0 : static_cast<int>(grid[0].size());\n    if (rows == 0 || columns == 0) {\n      return {};\n    }\n    std::vector<std::vector<int>> parent(rows, std::vector<int>(columns)), path;\n    for (int r = 0; r < rows; ++r) {\n      for (int c = 0; c < columns; ++c) {\n        if (grid[r][c] == 0)\n          continue;\n        if (r == 0 && c == 0)\n          parent[r][c] = 3;\n        else if (r > 0 && parent[r - 1][c] != 0)\n          parent[r][c] = 1;\n        else if (c > 0 && parent[r][c - 1] != 0)\n          parent[r][c] = 2;\n      }\n    }\n    if (parent[rows - 1][columns - 1] == 0) {\n      return {};\n    }\n    int row = rows - 1, col = columns - 1;\n    while (true) {\n      path.push_back({row, col});\n      if (row == 0 && col == 0)\n        break;\n      if (parent[row][col] == 1)\n        --row;\n      else\n        --col;\n    }\n    std::reverse(path.begin(), path.end());\n    return path;\n  }\n};\n",
+    "explanation": "A cell can be reached only from its upper or left neighbor. Store one predecessor for each reachable open cell while scanning rows. This avoids revisiting the same failed subproblem and provides enough information to reconstruct one path without copying a growing path for every candidate.",
+    "timeComplexity": "O(rows*columns) time to scan the grid, plus O(rows+columns) path reconstruction when a path exists.",
+    "spaceComplexity": "O(rows*columns) predecessor storage, excluding the returned O(rows+columns) coordinate pairs. No recursion stack is used.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 8.2. No affiliation is implied.",
+    "correctness": "The origin is reachable exactly when it is open. At every later open cell, the only possible incoming moves are from its upper or left neighbor. By induction in row order, their reachability is already correct, so recording one reachable predecessor marks precisely the reachable cells. A blocked cell is never marked. If the destination is unmarked, no path exists. Otherwise following predecessors reaches the origin and decreases the row or column at each step. Reversing those coordinates produces a legal forward path with both endpoints, using only open cells.",
+    "walkthrough": "For [[1,1,0],[0,1,1]], the origin reaches (0,1), which reaches (1,1), then (1,2). The returned path is [[0,0],[0,1],[1,1],[1,2]]. Cell (1,0) is blocked, so a diagonal jump from the origin to (1,1) would not be a valid alternative.",
+    "edgeCases": [
+      "Empty dimensions, blocked origin or destination, one open cell.",
+      "A unique narrow corridor, multiple valid paths, and an unreachable region.",
+      "Right/down moves only: diagonal and backward steps are invalid."
+    ]
+  },
+  {
+    "problemId": "ctci6_8_2",
+    "collection": "ctci6",
+    "language": "java",
+    "code": "import java.util.*;\nclass Solution {\n  public List<List<Integer>> FindRobotPath(int[][] grid) {\n    int rows = grid.length, columns = rows == 0 ? 0 : grid[0].length;\n    if (rows == 0 || columns == 0) {\n      return new ArrayList<>();\n    }\n    int[][] parent = new int[rows][columns];\n    List<List<Integer>> path = new ArrayList<>();\n    for (int r = 0; r < rows; ++r) {\n      for (int c = 0; c < columns; ++c) {\n        if (grid[r][c] == 0)\n          continue;\n        if (r == 0 && c == 0)\n          parent[r][c] = 3;\n        else if (r > 0 && parent[r - 1][c] != 0)\n          parent[r][c] = 1;\n        else if (c > 0 && parent[r][c - 1] != 0)\n          parent[r][c] = 2;\n      }\n    }\n    if (parent[rows - 1][columns - 1] == 0) {\n      return new ArrayList<>();\n    }\n    int row = rows - 1, col = columns - 1;\n    while (true) {\n      path.add(new ArrayList<>(List.of(row, col)));\n      if (row == 0 && col == 0)\n        break;\n      if (parent[row][col] == 1)\n        --row;\n      else\n        --col;\n    }\n    Collections.reverse(path);\n    return path;\n  }\n}\n",
+    "explanation": "A cell can be reached only from its upper or left neighbor. Store one predecessor for each reachable open cell while scanning rows. This avoids revisiting the same failed subproblem and provides enough information to reconstruct one path without copying a growing path for every candidate.",
+    "timeComplexity": "O(rows*columns) time to scan the grid, plus O(rows+columns) path reconstruction when a path exists.",
+    "spaceComplexity": "O(rows*columns) predecessor storage, excluding the returned O(rows+columns) coordinate pairs. No recursion stack is used.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 8.2. No affiliation is implied.",
+    "correctness": "The origin is reachable exactly when it is open. At every later open cell, the only possible incoming moves are from its upper or left neighbor. By induction in row order, their reachability is already correct, so recording one reachable predecessor marks precisely the reachable cells. A blocked cell is never marked. If the destination is unmarked, no path exists. Otherwise following predecessors reaches the origin and decreases the row or column at each step. Reversing those coordinates produces a legal forward path with both endpoints, using only open cells.",
+    "walkthrough": "For [[1,1,0],[0,1,1]], the origin reaches (0,1), which reaches (1,1), then (1,2). The returned path is [[0,0],[0,1],[1,1],[1,2]]. Cell (1,0) is blocked, so a diagonal jump from the origin to (1,1) would not be a valid alternative.",
+    "edgeCases": [
+      "Empty dimensions, blocked origin or destination, one open cell.",
+      "A unique narrow corridor, multiple valid paths, and an unreachable region.",
+      "Right/down moves only: diagonal and backward steps are invalid."
+    ]
+  },
+  {
     "problemId": "ctci6_8_3",
     "collection": "ctci6",
     "language": "csharp",
@@ -31950,6 +32035,91 @@
     ]
   },
   {
+    "problemId": "ctci6_8_6",
+    "collection": "ctci6",
+    "language": "csharp",
+    "code": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic class Solution\n{\n    public List<List<int>> SolveHanoi(int disks)\n    {\n        var towers = new Stack<int>[] { new(), new(), new() };\n        for (int disk = disks; disk >= 1; --disk)\n            towers[0].Push(disk);\n        var moves = new List<List<int>>();\n        void Transfer(int count, int source, int buffer, int destination)\n        {\n            if (count == 0)\n                return;\n            Transfer(count - 1, source, destination, buffer);\n            int disk = towers[source].Pop();\n            towers[destination].Push(disk);\n            moves.Add([disk, source, destination]);\n            Transfer(count - 1, buffer, source, destination);\n        }\n        Transfer(disks, 0, 1, 2);\n        return moves;\n    }\n}\n",
+    "explanation": "The largest disk cannot move to the destination until all smaller disks have been moved to the buffer. After that largest-disk move, the smaller stack must move from the buffer onto it. The same three-tower task appears twice with one fewer disk, so swapping the source, buffer and destination roles gives the recursive procedure.",
+    "timeComplexity": "O(2^disks) time: one constant-time stack move and transcript append per required move.",
+    "spaceComplexity": "O(disks) auxiliary space for three stacks and recursion depth, excluding O(2^disks) returned move triples.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 8.6. No affiliation is implied.",
+    "correctness": "Zero disks require no move. Assume the procedure correctly transfers a legal stack of k-1 disks. It first transfers those smaller disks to the buffer, exposing disk k and leaving the destination free of smaller disks. Moving disk k is legal. The second recursive transfer places the smaller stack on disk k, preserving its legal order. Thus induction transfers the whole stack. Any solution must move the largest disk and move all smaller disks away before it and onto it afterward, requiring at least 2*T(k-1)+1 moves. The procedure meets this bound with T(0)=0, giving exactly 2^k-1 moves. Actual stack pops supply the recorded disk identity.",
+    "walkthrough": "For two disks, move [1,0,1], then [2,0,2], then [1,1,2]. Disk 2 becomes exposed only after disk 1 leaves tower 0. Returning just the final tower contents would omit the legal sequence that solves the puzzle.",
+    "edgeCases": [
+      "Zero and one disk; repeated calls start from fresh towers.",
+      "Every move must use the source top and preserve the smaller-on-larger rule.",
+      "Twelve disks require 4095 moves; an output-size exponential bound is essential."
+    ]
+  },
+  {
+    "problemId": "ctci6_8_6",
+    "collection": "ctci6",
+    "language": "javascript",
+    "code": "'use strict';\nfunction SolveHanoi(disks) {\n  const towers = [Array.from({ length: disks }, (_, i) => disks - i), [], []],\n    moves = [];\n  function transfer(count, source, buffer, destination) {\n    if (count === 0) return;\n    transfer(count - 1, source, destination, buffer);\n    const disk = towers[source].pop();\n    towers[destination].push(disk);\n    moves.push([disk, source, destination]);\n    transfer(count - 1, buffer, source, destination);\n  }\n  transfer(disks, 0, 1, 2);\n  return moves;\n}\n\nmodule.exports = {SolveHanoi};\n",
+    "explanation": "The largest disk cannot move to the destination until all smaller disks have been moved to the buffer. After that largest-disk move, the smaller stack must move from the buffer onto it. The same three-tower task appears twice with one fewer disk, so swapping the source, buffer and destination roles gives the recursive procedure.",
+    "timeComplexity": "O(2^disks) time: one constant-time stack move and transcript append per required move.",
+    "spaceComplexity": "O(disks) auxiliary space for three stacks and recursion depth, excluding O(2^disks) returned move triples.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 8.6. No affiliation is implied.",
+    "correctness": "Zero disks require no move. Assume the procedure correctly transfers a legal stack of k-1 disks. It first transfers those smaller disks to the buffer, exposing disk k and leaving the destination free of smaller disks. Moving disk k is legal. The second recursive transfer places the smaller stack on disk k, preserving its legal order. Thus induction transfers the whole stack. Any solution must move the largest disk and move all smaller disks away before it and onto it afterward, requiring at least 2*T(k-1)+1 moves. The procedure meets this bound with T(0)=0, giving exactly 2^k-1 moves. Actual stack pops supply the recorded disk identity.",
+    "walkthrough": "For two disks, move [1,0,1], then [2,0,2], then [1,1,2]. Disk 2 becomes exposed only after disk 1 leaves tower 0. Returning just the final tower contents would omit the legal sequence that solves the puzzle.",
+    "edgeCases": [
+      "Zero and one disk; repeated calls start from fresh towers.",
+      "Every move must use the source top and preserve the smaller-on-larger rule.",
+      "Twelve disks require 4095 moves; an output-size exponential bound is essential."
+    ]
+  },
+  {
+    "problemId": "ctci6_8_6",
+    "collection": "ctci6",
+    "language": "python",
+    "code": "def SolveHanoi(disks: int) -> list[list[int]]:\n    towers = [list(range(disks, 0, -1)), [], []]\n    moves = []\n\n    def transfer(count, source, buffer, destination):\n        if count == 0:\n            return\n        transfer(count - 1, source, destination, buffer)\n        disk = towers[source].pop()\n        towers[destination].append(disk)\n        moves.append([disk, source, destination])\n        transfer(count - 1, buffer, source, destination)\n\n    transfer(disks, 0, 1, 2)\n    return moves\n",
+    "explanation": "The largest disk cannot move to the destination until all smaller disks have been moved to the buffer. After that largest-disk move, the smaller stack must move from the buffer onto it. The same three-tower task appears twice with one fewer disk, so swapping the source, buffer and destination roles gives the recursive procedure.",
+    "timeComplexity": "O(2^disks) time: one constant-time stack move and transcript append per required move.",
+    "spaceComplexity": "O(disks) auxiliary space for three stacks and recursion depth, excluding O(2^disks) returned move triples.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 8.6. No affiliation is implied.",
+    "correctness": "Zero disks require no move. Assume the procedure correctly transfers a legal stack of k-1 disks. It first transfers those smaller disks to the buffer, exposing disk k and leaving the destination free of smaller disks. Moving disk k is legal. The second recursive transfer places the smaller stack on disk k, preserving its legal order. Thus induction transfers the whole stack. Any solution must move the largest disk and move all smaller disks away before it and onto it afterward, requiring at least 2*T(k-1)+1 moves. The procedure meets this bound with T(0)=0, giving exactly 2^k-1 moves. Actual stack pops supply the recorded disk identity.",
+    "walkthrough": "For two disks, move [1,0,1], then [2,0,2], then [1,1,2]. Disk 2 becomes exposed only after disk 1 leaves tower 0. Returning just the final tower contents would omit the legal sequence that solves the puzzle.",
+    "edgeCases": [
+      "Zero and one disk; repeated calls start from fresh towers.",
+      "Every move must use the source top and preserve the smaller-on-larger rule.",
+      "Twelve disks require 4095 moves; an output-size exponential bound is essential."
+    ]
+  },
+  {
+    "problemId": "ctci6_8_6",
+    "collection": "ctci6",
+    "language": "cpp",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\nclass Solution {\n public:\n  std::vector<std::vector<int>> SolveHanoi(int disks) {\n    std::array<std::vector<int>, 3> towers;\n    for (int disk = disks; disk >= 1; --disk)\n      towers[0].push_back(disk);\n    std::vector<std::vector<int>> moves;\n    std::function<void(int, int, int, int)> transfer = [&](int count, int source, int buffer,\n                                                           int destination) {\n      if (count == 0)\n        return;\n      transfer(count - 1, source, destination, buffer);\n      int disk = towers[source].back();\n      towers[source].pop_back();\n      towers[destination].push_back(disk);\n      moves.push_back({disk, source, destination});\n      transfer(count - 1, buffer, source, destination);\n    };\n    transfer(disks, 0, 1, 2);\n    return moves;\n  }\n};\n",
+    "explanation": "The largest disk cannot move to the destination until all smaller disks have been moved to the buffer. After that largest-disk move, the smaller stack must move from the buffer onto it. The same three-tower task appears twice with one fewer disk, so swapping the source, buffer and destination roles gives the recursive procedure.",
+    "timeComplexity": "O(2^disks) time: one constant-time stack move and transcript append per required move.",
+    "spaceComplexity": "O(disks) auxiliary space for three stacks and recursion depth, excluding O(2^disks) returned move triples.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 8.6. No affiliation is implied.",
+    "correctness": "Zero disks require no move. Assume the procedure correctly transfers a legal stack of k-1 disks. It first transfers those smaller disks to the buffer, exposing disk k and leaving the destination free of smaller disks. Moving disk k is legal. The second recursive transfer places the smaller stack on disk k, preserving its legal order. Thus induction transfers the whole stack. Any solution must move the largest disk and move all smaller disks away before it and onto it afterward, requiring at least 2*T(k-1)+1 moves. The procedure meets this bound with T(0)=0, giving exactly 2^k-1 moves. Actual stack pops supply the recorded disk identity.",
+    "walkthrough": "For two disks, move [1,0,1], then [2,0,2], then [1,1,2]. Disk 2 becomes exposed only after disk 1 leaves tower 0. Returning just the final tower contents would omit the legal sequence that solves the puzzle.",
+    "edgeCases": [
+      "Zero and one disk; repeated calls start from fresh towers.",
+      "Every move must use the source top and preserve the smaller-on-larger rule.",
+      "Twelve disks require 4095 moves; an output-size exponential bound is essential."
+    ]
+  },
+  {
+    "problemId": "ctci6_8_6",
+    "collection": "ctci6",
+    "language": "java",
+    "code": "import java.util.*;\nclass Solution {\n  public List<List<Integer>> SolveHanoi(int disks) {\n    List<Deque<Integer>> towers =\n        List.of(new ArrayDeque<>(), new ArrayDeque<>(), new ArrayDeque<>());\n    for (int disk = disks; disk >= 1; --disk)\n      towers.get(0).push(disk);\n    List<List<Integer>> moves = new ArrayList<>();\n    class Solver {\n      void Transfer(int count, int source, int buffer, int destination) {\n        if (count == 0)\n          return;\n        Transfer(count - 1, source, destination, buffer);\n        int disk = towers.get(source).pop();\n        towers.get(destination).push(disk);\n        moves.add(new ArrayList<>(List.of(disk, source, destination)));\n        Transfer(count - 1, buffer, source, destination);\n      }\n    }\n    new Solver().Transfer(disks, 0, 1, 2);\n    return moves;\n  }\n}\n",
+    "explanation": "The largest disk cannot move to the destination until all smaller disks have been moved to the buffer. After that largest-disk move, the smaller stack must move from the buffer onto it. The same three-tower task appears twice with one fewer disk, so swapping the source, buffer and destination roles gives the recursive procedure.",
+    "timeComplexity": "O(2^disks) time: one constant-time stack move and transcript append per required move.",
+    "spaceComplexity": "O(disks) auxiliary space for three stacks and recursion depth, excluding O(2^disks) returned move triples.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 8.6. No affiliation is implied.",
+    "correctness": "Zero disks require no move. Assume the procedure correctly transfers a legal stack of k-1 disks. It first transfers those smaller disks to the buffer, exposing disk k and leaving the destination free of smaller disks. Moving disk k is legal. The second recursive transfer places the smaller stack on disk k, preserving its legal order. Thus induction transfers the whole stack. Any solution must move the largest disk and move all smaller disks away before it and onto it afterward, requiring at least 2*T(k-1)+1 moves. The procedure meets this bound with T(0)=0, giving exactly 2^k-1 moves. Actual stack pops supply the recorded disk identity.",
+    "walkthrough": "For two disks, move [1,0,1], then [2,0,2], then [1,1,2]. Disk 2 becomes exposed only after disk 1 leaves tower 0. Returning just the final tower contents would omit the legal sequence that solves the puzzle.",
+    "edgeCases": [
+      "Zero and one disk; repeated calls start from fresh towers.",
+      "Every move must use the source top and preserve the smaller-on-larger rule.",
+      "Twelve disks require 4095 moves; an output-size exponential bound is essential."
+    ]
+  },
+  {
     "problemId": "ctci6_8_7",
     "collection": "ctci6",
     "language": "csharp",
@@ -32202,6 +32372,91 @@
       "Zero and one pair.",
       "Nesting and adjacent groups must both appear.",
       "Eight pairs yields 1430 unique balanced strings; prefixes that close too early are invalid."
+    ]
+  },
+  {
+    "problemId": "ctci6_8_10",
+    "collection": "ctci6",
+    "language": "csharp",
+    "code": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic class Solution\n{\n    public int[][] PaintFill(int[][] screen, int row, int column, int newColor)\n    {\n        int rows = screen.Length, columns = rows == 0 ? 0 : screen[0].Length;\n        if (row < 0 || row >= rows || column < 0 || column >= columns)\n            return screen;\n        int oldColor = screen[row][column];\n        if (oldColor == newColor)\n            return screen;\n        var work = new Stack<(int, int)>();\n        work.Push((row, column));\n        screen[row][column] = newColor;\n        int[] dr = { -1, 1, 0, 0 }, dc = { 0, 0, -1, 1 };\n        while (work.Count > 0)\n        {\n            var (r, c) = work.Pop();\n            for (int i = 0; i < 4; ++i)\n            {\n                int nr = r + dr[i], nc = c + dc[i];\n                if (nr >= 0 && nr < rows && nc >= 0 && nc < columns && screen[nr][nc] == oldColor)\n                {\n                    screen[nr][nc] = newColor;\n                    work.Push((nr, nc));\n                }\n            }\n        }\n        return screen;\n    }\n}\n",
+    "explanation": "Starting at one cell, only matching neighbors can extend its original-color component. Mark a matching cell by recoloring it before adding it to a work stack. This makes every cell enter the work stack once and avoids a separate visited matrix. The same-color early return is necessary because recoloring would otherwise fail to mark visits.",
+    "timeComplexity": "O(k) fill time for a changed component of k cells, with four neighbor checks per cell; O(1) fill work for invalid coordinates or equal colors. The C++ by-value result adds O(rows*columns) return-copy time even for a no-op.",
+    "spaceComplexity": "O(k) auxiliary work-stack storage, at most O(rows*columns). The C++ by-value return additionally copies the O(rows*columns) screen values; other languages return the existing screen object.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 8.10. No affiliation is implied.",
+    "correctness": "After the initial bounds and same-color checks, the start cell belongs to the required component and is marked. Every later pushed cell is an original-color neighbor of an already reached cell, so it belongs to that component. Recoloring at discovery prevents a second push. Conversely, take any cell in the component and a connecting path from the start: induction along that path ensures each next original-color neighbor is eventually discovered. Thus every and only component cells are recolored. No row or outer array is replaced, and all other cell values are untouched.",
+    "walkthrough": "With [[1,0,1],[0,1,1],[1,1,0]], start (0,0) and newColor 2. Its right and lower neighbors are both 0, so only that one cell changes, giving [[2,0,1],[0,1,1],[1,1,0]]. The 1 at (1,1) touches diagonally but is outside the region.",
+    "edgeCases": [
+      "Diagonal-only contact must not spread paint.",
+      "Same-color request, empty screen, zero-width rows, and out-of-bounds signed coordinates.",
+      "Whole-screen component, isolated cell, and adjacent different-color regions."
+    ]
+  },
+  {
+    "problemId": "ctci6_8_10",
+    "collection": "ctci6",
+    "language": "javascript",
+    "code": "'use strict';\nfunction PaintFill(screen, row, column, newColor) {\n  const rows = screen.length,\n    columns = rows ? screen[0].length : 0;\n  if (row < 0 || row >= rows || column < 0 || column >= columns) return screen;\n  const oldColor = screen[row][column];\n  if (oldColor === newColor) return screen;\n  const work = [[row, column]];\n  screen[row][column] = newColor;\n  while (work.length) {\n    const [r, c] = work.pop();\n    for (const [nr, nc] of [\n      [r - 1, c],\n      [r + 1, c],\n      [r, c - 1],\n      [r, c + 1],\n    ]) {\n      if (nr >= 0 && nr < rows && nc >= 0 && nc < columns && screen[nr][nc] === oldColor) {\n        screen[nr][nc] = newColor;\n        work.push([nr, nc]);\n      }\n    }\n  }\n  return screen;\n}\n\nmodule.exports = {PaintFill};\n",
+    "explanation": "Starting at one cell, only matching neighbors can extend its original-color component. Mark a matching cell by recoloring it before adding it to a work stack. This makes every cell enter the work stack once and avoids a separate visited matrix. The same-color early return is necessary because recoloring would otherwise fail to mark visits.",
+    "timeComplexity": "O(k) fill time for a changed component of k cells, with four neighbor checks per cell; O(1) fill work for invalid coordinates or equal colors. The C++ by-value result adds O(rows*columns) return-copy time even for a no-op.",
+    "spaceComplexity": "O(k) auxiliary work-stack storage, at most O(rows*columns). The C++ by-value return additionally copies the O(rows*columns) screen values; other languages return the existing screen object.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 8.10. No affiliation is implied.",
+    "correctness": "After the initial bounds and same-color checks, the start cell belongs to the required component and is marked. Every later pushed cell is an original-color neighbor of an already reached cell, so it belongs to that component. Recoloring at discovery prevents a second push. Conversely, take any cell in the component and a connecting path from the start: induction along that path ensures each next original-color neighbor is eventually discovered. Thus every and only component cells are recolored. No row or outer array is replaced, and all other cell values are untouched.",
+    "walkthrough": "With [[1,0,1],[0,1,1],[1,1,0]], start (0,0) and newColor 2. Its right and lower neighbors are both 0, so only that one cell changes, giving [[2,0,1],[0,1,1],[1,1,0]]. The 1 at (1,1) touches diagonally but is outside the region.",
+    "edgeCases": [
+      "Diagonal-only contact must not spread paint.",
+      "Same-color request, empty screen, zero-width rows, and out-of-bounds signed coordinates.",
+      "Whole-screen component, isolated cell, and adjacent different-color regions."
+    ]
+  },
+  {
+    "problemId": "ctci6_8_10",
+    "collection": "ctci6",
+    "language": "python",
+    "code": "def PaintFill(screen: list[list[int]], row: int, column: int, newColor: int) -> list[list[int]]:\n    rows = len(screen)\n    columns = len(screen[0]) if rows else 0\n    if row < 0 or row >= rows or column < 0 or column >= columns:\n        return screen\n    old_color = screen[row][column]\n    if old_color == newColor:\n        return screen\n    work = [(row, column)]\n    screen[row][column] = newColor\n    while work:\n        r, c = work.pop()\n        for nr, nc in ((r - 1, c), (r + 1, c), (r, c - 1), (r, c + 1)):\n            if 0 <= nr < rows and 0 <= nc < columns and screen[nr][nc] == old_color:\n                screen[nr][nc] = newColor\n                work.append((nr, nc))\n    return screen\n",
+    "explanation": "Starting at one cell, only matching neighbors can extend its original-color component. Mark a matching cell by recoloring it before adding it to a work stack. This makes every cell enter the work stack once and avoids a separate visited matrix. The same-color early return is necessary because recoloring would otherwise fail to mark visits.",
+    "timeComplexity": "O(k) fill time for a changed component of k cells, with four neighbor checks per cell; O(1) fill work for invalid coordinates or equal colors. The C++ by-value result adds O(rows*columns) return-copy time even for a no-op.",
+    "spaceComplexity": "O(k) auxiliary work-stack storage, at most O(rows*columns). The C++ by-value return additionally copies the O(rows*columns) screen values; other languages return the existing screen object.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 8.10. No affiliation is implied.",
+    "correctness": "After the initial bounds and same-color checks, the start cell belongs to the required component and is marked. Every later pushed cell is an original-color neighbor of an already reached cell, so it belongs to that component. Recoloring at discovery prevents a second push. Conversely, take any cell in the component and a connecting path from the start: induction along that path ensures each next original-color neighbor is eventually discovered. Thus every and only component cells are recolored. No row or outer array is replaced, and all other cell values are untouched.",
+    "walkthrough": "With [[1,0,1],[0,1,1],[1,1,0]], start (0,0) and newColor 2. Its right and lower neighbors are both 0, so only that one cell changes, giving [[2,0,1],[0,1,1],[1,1,0]]. The 1 at (1,1) touches diagonally but is outside the region.",
+    "edgeCases": [
+      "Diagonal-only contact must not spread paint.",
+      "Same-color request, empty screen, zero-width rows, and out-of-bounds signed coordinates.",
+      "Whole-screen component, isolated cell, and adjacent different-color regions."
+    ]
+  },
+  {
+    "problemId": "ctci6_8_10",
+    "collection": "ctci6",
+    "language": "cpp",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\nclass Solution {\n public:\n  std::vector<std::vector<int>> PaintFill(std::vector<std::vector<int>>& screen, int row,\n                                          int column, int newColor) {\n    int rows = static_cast<int>(screen.size()),\n        columns = rows == 0 ? 0 : static_cast<int>(screen[0].size());\n    if (row < 0 || row >= rows || column < 0 || column >= columns)\n      return screen;\n    int oldColor = screen[row][column];\n    if (oldColor == newColor)\n      return screen;\n    std::vector<std::pair<int, int>> work{{row, column}};\n    screen[row][column] = newColor;\n    int dr[] = {-1, 1, 0, 0}, dc[] = {0, 0, -1, 1};\n    while (!work.empty()) {\n      auto [r, c] = work.back();\n      work.pop_back();\n      for (int i = 0; i < 4; ++i) {\n        int nr = r + dr[i], nc = c + dc[i];\n        if (nr >= 0 && nr < rows && nc >= 0 && nc < columns && screen[nr][nc] == oldColor) {\n          screen[nr][nc] = newColor;\n          work.push_back({nr, nc});\n        }\n      }\n    }\n    return screen;\n  }\n};\n",
+    "explanation": "Starting at one cell, only matching neighbors can extend its original-color component. Mark a matching cell by recoloring it before adding it to a work stack. This makes every cell enter the work stack once and avoids a separate visited matrix. The same-color early return is necessary because recoloring would otherwise fail to mark visits.",
+    "timeComplexity": "O(k) fill time for a changed component of k cells, with four neighbor checks per cell; O(1) fill work for invalid coordinates or equal colors. The C++ by-value result adds O(rows*columns) return-copy time even for a no-op.",
+    "spaceComplexity": "O(k) auxiliary work-stack storage, at most O(rows*columns). The C++ by-value return additionally copies the O(rows*columns) screen values; other languages return the existing screen object.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 8.10. No affiliation is implied.",
+    "correctness": "After the initial bounds and same-color checks, the start cell belongs to the required component and is marked. Every later pushed cell is an original-color neighbor of an already reached cell, so it belongs to that component. Recoloring at discovery prevents a second push. Conversely, take any cell in the component and a connecting path from the start: induction along that path ensures each next original-color neighbor is eventually discovered. Thus every and only component cells are recolored. No row or outer array is replaced, and all other cell values are untouched.",
+    "walkthrough": "With [[1,0,1],[0,1,1],[1,1,0]], start (0,0) and newColor 2. Its right and lower neighbors are both 0, so only that one cell changes, giving [[2,0,1],[0,1,1],[1,1,0]]. The 1 at (1,1) touches diagonally but is outside the region.",
+    "edgeCases": [
+      "Diagonal-only contact must not spread paint.",
+      "Same-color request, empty screen, zero-width rows, and out-of-bounds signed coordinates.",
+      "Whole-screen component, isolated cell, and adjacent different-color regions."
+    ]
+  },
+  {
+    "problemId": "ctci6_8_10",
+    "collection": "ctci6",
+    "language": "java",
+    "code": "import java.util.*;\nclass Solution {\n  public int[][] PaintFill(int[][] screen, int row, int column, int newColor) {\n    int rows = screen.length, columns = rows == 0 ? 0 : screen[0].length;\n    if (row < 0 || row >= rows || column < 0 || column >= columns)\n      return screen;\n    int oldColor = screen[row][column];\n    if (oldColor == newColor)\n      return screen;\n    Deque<int[]> work = new ArrayDeque<>();\n    work.push(new int[] {row, column});\n    screen[row][column] = newColor;\n    int[] dr = {-1, 1, 0, 0}, dc = {0, 0, -1, 1};\n    while (!work.isEmpty()) {\n      var cell = work.pop();\n      int r = cell[0], c = cell[1];\n      for (int i = 0; i < 4; ++i) {\n        int nr = r + dr[i], nc = c + dc[i];\n        if (nr >= 0 && nr < rows && nc >= 0 && nc < columns && screen[nr][nc] == oldColor) {\n          screen[nr][nc] = newColor;\n          work.push(new int[] {nr, nc});\n        }\n      }\n    }\n    return screen;\n  }\n}\n",
+    "explanation": "Starting at one cell, only matching neighbors can extend its original-color component. Mark a matching cell by recoloring it before adding it to a work stack. This makes every cell enter the work stack once and avoids a separate visited matrix. The same-color early return is necessary because recoloring would otherwise fail to mark visits.",
+    "timeComplexity": "O(k) fill time for a changed component of k cells, with four neighbor checks per cell; O(1) fill work for invalid coordinates or equal colors. The C++ by-value result adds O(rows*columns) return-copy time even for a no-op.",
+    "spaceComplexity": "O(k) auxiliary work-stack storage, at most O(rows*columns). The C++ by-value return additionally copies the O(rows*columns) screen values; other languages return the existing screen object.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 8.10. No affiliation is implied.",
+    "correctness": "After the initial bounds and same-color checks, the start cell belongs to the required component and is marked. Every later pushed cell is an original-color neighbor of an already reached cell, so it belongs to that component. Recoloring at discovery prevents a second push. Conversely, take any cell in the component and a connecting path from the start: induction along that path ensures each next original-color neighbor is eventually discovered. Thus every and only component cells are recolored. No row or outer array is replaced, and all other cell values are untouched.",
+    "walkthrough": "With [[1,0,1],[0,1,1],[1,1,0]], start (0,0) and newColor 2. Its right and lower neighbors are both 0, so only that one cell changes, giving [[2,0,1],[0,1,1],[1,1,0]]. The 1 at (1,1) touches diagonally but is outside the region.",
+    "edgeCases": [
+      "Diagonal-only contact must not spread paint.",
+      "Same-color request, empty screen, zero-width rows, and out-of-bounds signed coordinates.",
+      "Whole-screen component, isolated cell, and adjacent different-color regions."
     ]
   },
   {
@@ -32542,6 +32797,486 @@
       "Empty expression and single true/false literals.",
       "Different groupings of the same symbols can have different values.",
       "All-one OR chains at 13 literals hit the maximum grouping count; both desired values are tested."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_5",
+    "collection": "ctci6",
+    "language": "csharp",
+    "code": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic class Solution\n{\n    public int CountFactorialZeros(int n)\n    {\n        int count = 0;\n        while (n != 0)\n        {\n            n /= 5;\n            count += n;\n        }\n        return count;\n    }\n}\n",
+    "explanation": "A decimal trailing zero consumes one factor 2 and one factor 5. Factorials supply more twos than fives, so only the number of fives matters. Multiples of 25 contribute a second five, multiples of 125 a third, and so on. Repeatedly dividing n by five counts each contribution without growing a power that might overflow.",
+    "timeComplexity": "O(log_5(n+1)) integer divisions and additions; zero takes constant time.",
+    "spaceComplexity": "O(1) auxiliary space; the factorial and powers of five are never stored.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.5. No affiliation is implied.",
+    "correctness": "For every exponent k>=1, floor(n/5^k) counts exactly the factors among 1..n supplying at least k copies of five. A factor containing t fives appears in exactly t such counts, so their sum is precisely the total five exponent. Twos are at least as numerous, hence this exponent equals the number of factors of ten. Replacing n by floor(n/5) at each iteration produces these successive quotients. Once it reaches zero, no higher power contributes.",
+    "walkthrough": "For 25!, multiples 5,10,15,20,25 supply five copies of five, and 25 supplies one extra. The successive quotients are 5,1,0, so the result is 6. Counting multiples of five only would incorrectly return 5.",
+    "edgeCases": [
+      "Zero and numbers below five.",
+      "Just below, at and above powers of five; the maximum signed input."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_5",
+    "collection": "ctci6",
+    "language": "javascript",
+    "code": "'use strict';\nfunction CountFactorialZeros(n) {\n  let count = 0;\n  while (n !== 0) {\n    n = Math.floor(n / 5);\n    count += n;\n  }\n  return count;\n}\n\nmodule.exports = {CountFactorialZeros};\n",
+    "explanation": "A decimal trailing zero consumes one factor 2 and one factor 5. Factorials supply more twos than fives, so only the number of fives matters. Multiples of 25 contribute a second five, multiples of 125 a third, and so on. Repeatedly dividing n by five counts each contribution without growing a power that might overflow.",
+    "timeComplexity": "O(log_5(n+1)) integer divisions and additions; zero takes constant time.",
+    "spaceComplexity": "O(1) auxiliary space; the factorial and powers of five are never stored.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.5. No affiliation is implied.",
+    "correctness": "For every exponent k>=1, floor(n/5^k) counts exactly the factors among 1..n supplying at least k copies of five. A factor containing t fives appears in exactly t such counts, so their sum is precisely the total five exponent. Twos are at least as numerous, hence this exponent equals the number of factors of ten. Replacing n by floor(n/5) at each iteration produces these successive quotients. Once it reaches zero, no higher power contributes.",
+    "walkthrough": "For 25!, multiples 5,10,15,20,25 supply five copies of five, and 25 supplies one extra. The successive quotients are 5,1,0, so the result is 6. Counting multiples of five only would incorrectly return 5.",
+    "edgeCases": [
+      "Zero and numbers below five.",
+      "Just below, at and above powers of five; the maximum signed input."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_5",
+    "collection": "ctci6",
+    "language": "python",
+    "code": "def CountFactorialZeros(n: int) -> int:\n    count = 0\n    while n:\n        n //= 5\n        count += n\n    return count\n",
+    "explanation": "A decimal trailing zero consumes one factor 2 and one factor 5. Factorials supply more twos than fives, so only the number of fives matters. Multiples of 25 contribute a second five, multiples of 125 a third, and so on. Repeatedly dividing n by five counts each contribution without growing a power that might overflow.",
+    "timeComplexity": "O(log_5(n+1)) integer divisions and additions; zero takes constant time.",
+    "spaceComplexity": "O(1) auxiliary space; the factorial and powers of five are never stored.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.5. No affiliation is implied.",
+    "correctness": "For every exponent k>=1, floor(n/5^k) counts exactly the factors among 1..n supplying at least k copies of five. A factor containing t fives appears in exactly t such counts, so their sum is precisely the total five exponent. Twos are at least as numerous, hence this exponent equals the number of factors of ten. Replacing n by floor(n/5) at each iteration produces these successive quotients. Once it reaches zero, no higher power contributes.",
+    "walkthrough": "For 25!, multiples 5,10,15,20,25 supply five copies of five, and 25 supplies one extra. The successive quotients are 5,1,0, so the result is 6. Counting multiples of five only would incorrectly return 5.",
+    "edgeCases": [
+      "Zero and numbers below five.",
+      "Just below, at and above powers of five; the maximum signed input."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_5",
+    "collection": "ctci6",
+    "language": "cpp",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\nclass Solution {\n public:\n  int CountFactorialZeros(int n) {\n    int count = 0;\n    while (n != 0) {\n      n /= 5;\n      count += n;\n    }\n    return count;\n  }\n};\n",
+    "explanation": "A decimal trailing zero consumes one factor 2 and one factor 5. Factorials supply more twos than fives, so only the number of fives matters. Multiples of 25 contribute a second five, multiples of 125 a third, and so on. Repeatedly dividing n by five counts each contribution without growing a power that might overflow.",
+    "timeComplexity": "O(log_5(n+1)) integer divisions and additions; zero takes constant time.",
+    "spaceComplexity": "O(1) auxiliary space; the factorial and powers of five are never stored.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.5. No affiliation is implied.",
+    "correctness": "For every exponent k>=1, floor(n/5^k) counts exactly the factors among 1..n supplying at least k copies of five. A factor containing t fives appears in exactly t such counts, so their sum is precisely the total five exponent. Twos are at least as numerous, hence this exponent equals the number of factors of ten. Replacing n by floor(n/5) at each iteration produces these successive quotients. Once it reaches zero, no higher power contributes.",
+    "walkthrough": "For 25!, multiples 5,10,15,20,25 supply five copies of five, and 25 supplies one extra. The successive quotients are 5,1,0, so the result is 6. Counting multiples of five only would incorrectly return 5.",
+    "edgeCases": [
+      "Zero and numbers below five.",
+      "Just below, at and above powers of five; the maximum signed input."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_5",
+    "collection": "ctci6",
+    "language": "java",
+    "code": "import java.util.*;\nclass Solution {\n  public int CountFactorialZeros(int n) {\n    int count = 0;\n    while (n != 0) {\n      n /= 5;\n      count += n;\n    }\n    return count;\n  }\n}\n",
+    "explanation": "A decimal trailing zero consumes one factor 2 and one factor 5. Factorials supply more twos than fives, so only the number of fives matters. Multiples of 25 contribute a second five, multiples of 125 a third, and so on. Repeatedly dividing n by five counts each contribution without growing a power that might overflow.",
+    "timeComplexity": "O(log_5(n+1)) integer divisions and additions; zero takes constant time.",
+    "spaceComplexity": "O(1) auxiliary space; the factorial and powers of five are never stored.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.5. No affiliation is implied.",
+    "correctness": "For every exponent k>=1, floor(n/5^k) counts exactly the factors among 1..n supplying at least k copies of five. A factor containing t fives appears in exactly t such counts, so their sum is precisely the total five exponent. Twos are at least as numerous, hence this exponent equals the number of factors of ten. Replacing n by floor(n/5) at each iteration produces these successive quotients. Once it reaches zero, no higher power contributes.",
+    "walkthrough": "For 25!, multiples 5,10,15,20,25 supply five copies of five, and 25 supplies one extra. The successive quotients are 5,1,0, so the result is 6. Counting multiples of five only would incorrectly return 5.",
+    "edgeCases": [
+      "Zero and numbers below five.",
+      "Just below, at and above powers of five; the maximum signed input."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_7",
+    "collection": "ctci6",
+    "language": "csharp",
+    "code": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic class Solution\n{\n    public int MaximumWithoutComparison(int first, int second)\n    {\n        int negativeFirst = (int)((uint)first >> 31), negativeSecond = (int)((uint)second >> 31),\n            negativeDifference = (int)(unchecked((uint)first - (uint)second) >> 31);\n        int different = negativeFirst ^ negativeSecond,\n            chooseFirst =\n                different * (negativeFirst ^ 1) + (different ^ 1) * (negativeDifference ^ 1),\n            mask = -chooseFirst;\n        return (first & mask) | (second & ~mask);\n    }\n}\n",
+    "explanation": "The sign of first-second decides which input is larger only when subtraction cannot overflow. If signs differ, the nonnegative input is larger regardless of the wrapped difference. If signs agree, the difference fits signed range and its sign is reliable. Combine those two choices as zero/one selectors instead of branching.",
+    "timeComplexity": "O(1) fixed-width arithmetic and bit operations.",
+    "spaceComplexity": "O(1) auxiliary scalar storage.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.7. No affiliation is implied.",
+    "correctness": "Let a and b be bits indicating negative inputs, and d indicate a negative 32-bit difference. When a xor b is one, choose first exactly when a is zero. When their xor is zero, choose first exactly when d is zero; equal inputs may choose first. These two cases are disjoint and exhaustive. The computed selector is therefore zero or one and selects precisely a maximum input. A mask derived from the selector copies the chosen input bits. C++ computes the difference in uint32_t and converts the selected exact signed operand arithmetically, avoiding signed-overflow and implementation-defined unsigned-to-signed conversion.",
+    "walkthrough": "For first=-2147483648 and second=2147483647, subtraction wraps to the positive bit pattern 1. Its sign alone would select the wrong input. The argument signs differ, so the selector instead chooses the nonnegative second input. For 9 and 4, signs agree and the positive difference correctly chooses 9.",
+    "edgeCases": [
+      "Opposite signed endpoints, equal values, zero and negatives.",
+      "A subtraction that wraps must not influence the opposite-sign choice."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_7",
+    "collection": "ctci6",
+    "language": "javascript",
+    "code": "'use strict';\nfunction MaximumWithoutComparison(first, second) {\n  const negativeFirst = first >>> 31,\n    negativeSecond = second >>> 31,\n    negativeDifference = (first - second) >>> 31,\n    different = negativeFirst ^ negativeSecond,\n    chooseFirst = different * (negativeFirst ^ 1) + (different ^ 1) * (negativeDifference ^ 1),\n    mask = -chooseFirst;\n  return (first & mask) | (second & ~mask);\n}\n\nmodule.exports = {MaximumWithoutComparison};\n",
+    "explanation": "The sign of first-second decides which input is larger only when subtraction cannot overflow. If signs differ, the nonnegative input is larger regardless of the wrapped difference. If signs agree, the difference fits signed range and its sign is reliable. Combine those two choices as zero/one selectors instead of branching.",
+    "timeComplexity": "O(1) fixed-width arithmetic and bit operations.",
+    "spaceComplexity": "O(1) auxiliary scalar storage.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.7. No affiliation is implied.",
+    "correctness": "Let a and b be bits indicating negative inputs, and d indicate a negative 32-bit difference. When a xor b is one, choose first exactly when a is zero. When their xor is zero, choose first exactly when d is zero; equal inputs may choose first. These two cases are disjoint and exhaustive. The computed selector is therefore zero or one and selects precisely a maximum input. A mask derived from the selector copies the chosen input bits. C++ computes the difference in uint32_t and converts the selected exact signed operand arithmetically, avoiding signed-overflow and implementation-defined unsigned-to-signed conversion.",
+    "walkthrough": "For first=-2147483648 and second=2147483647, subtraction wraps to the positive bit pattern 1. Its sign alone would select the wrong input. The argument signs differ, so the selector instead chooses the nonnegative second input. For 9 and 4, signs agree and the positive difference correctly chooses 9.",
+    "edgeCases": [
+      "Opposite signed endpoints, equal values, zero and negatives.",
+      "A subtraction that wraps must not influence the opposite-sign choice."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_7",
+    "collection": "ctci6",
+    "language": "python",
+    "code": "def MaximumWithoutComparison(first: int, second: int) -> int:\n    negative_first = (first >> 31) & 1\n    negative_second = (second >> 31) & 1\n    negative_difference = ((first - second) & 0xFFFFFFFF) >> 31\n    different = negative_first ^ negative_second\n    choose_first = different * (negative_first ^ 1) + (different ^ 1) * (negative_difference ^ 1)\n    mask = -choose_first\n    return (first & mask) | (second & ~mask)\n",
+    "explanation": "The sign of first-second decides which input is larger only when subtraction cannot overflow. If signs differ, the nonnegative input is larger regardless of the wrapped difference. If signs agree, the difference fits signed range and its sign is reliable. Combine those two choices as zero/one selectors instead of branching.",
+    "timeComplexity": "O(1) fixed-width arithmetic and bit operations.",
+    "spaceComplexity": "O(1) auxiliary scalar storage.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.7. No affiliation is implied.",
+    "correctness": "Let a and b be bits indicating negative inputs, and d indicate a negative 32-bit difference. When a xor b is one, choose first exactly when a is zero. When their xor is zero, choose first exactly when d is zero; equal inputs may choose first. These two cases are disjoint and exhaustive. The computed selector is therefore zero or one and selects precisely a maximum input. A mask derived from the selector copies the chosen input bits. C++ computes the difference in uint32_t and converts the selected exact signed operand arithmetically, avoiding signed-overflow and implementation-defined unsigned-to-signed conversion.",
+    "walkthrough": "For first=-2147483648 and second=2147483647, subtraction wraps to the positive bit pattern 1. Its sign alone would select the wrong input. The argument signs differ, so the selector instead chooses the nonnegative second input. For 9 and 4, signs agree and the positive difference correctly chooses 9.",
+    "edgeCases": [
+      "Opposite signed endpoints, equal values, zero and negatives.",
+      "A subtraction that wraps must not influence the opposite-sign choice."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_7",
+    "collection": "ctci6",
+    "language": "cpp",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\nclass Solution {\n public:\n  int MaximumWithoutComparison(int first, int second) {\n    auto a = static_cast<std::uint32_t>(first), b = static_cast<std::uint32_t>(second);\n    int negativeFirst = a >> 31, negativeSecond = b >> 31, negativeDifference = (a - b) >> 31,\n        different = negativeFirst ^ negativeSecond,\n        chooseFirst = different * (negativeFirst ^ 1) + (different ^ 1) * (negativeDifference ^ 1);\n    return first * chooseFirst + second * (chooseFirst ^ 1);\n  }\n};\n",
+    "explanation": "The sign of first-second decides which input is larger only when subtraction cannot overflow. If signs differ, the nonnegative input is larger regardless of the wrapped difference. If signs agree, the difference fits signed range and its sign is reliable. Combine those two choices as zero/one selectors instead of branching.",
+    "timeComplexity": "O(1) fixed-width arithmetic and bit operations.",
+    "spaceComplexity": "O(1) auxiliary scalar storage.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.7. No affiliation is implied.",
+    "correctness": "Let a and b be bits indicating negative inputs, and d indicate a negative 32-bit difference. When a xor b is one, choose first exactly when a is zero. When their xor is zero, choose first exactly when d is zero; equal inputs may choose first. These two cases are disjoint and exhaustive. The computed selector is therefore zero or one and selects precisely a maximum input. A mask derived from the selector copies the chosen input bits. C++ computes the difference in uint32_t and converts the selected exact signed operand arithmetically, avoiding signed-overflow and implementation-defined unsigned-to-signed conversion.",
+    "walkthrough": "For first=-2147483648 and second=2147483647, subtraction wraps to the positive bit pattern 1. Its sign alone would select the wrong input. The argument signs differ, so the selector instead chooses the nonnegative second input. For 9 and 4, signs agree and the positive difference correctly chooses 9.",
+    "edgeCases": [
+      "Opposite signed endpoints, equal values, zero and negatives.",
+      "A subtraction that wraps must not influence the opposite-sign choice."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_7",
+    "collection": "ctci6",
+    "language": "java",
+    "code": "import java.util.*;\nclass Solution {\n  public int MaximumWithoutComparison(int first, int second) {\n    int negativeFirst = first >>> 31, negativeSecond = second >>> 31,\n        negativeDifference = (first - second) >>> 31;\n    int different = negativeFirst ^ negativeSecond,\n        chooseFirst = different * (negativeFirst ^ 1) + (different ^ 1) * (negativeDifference ^ 1),\n        mask = -chooseFirst;\n    return (first & mask) | (second & ~mask);\n  }\n}\n",
+    "explanation": "The sign of first-second decides which input is larger only when subtraction cannot overflow. If signs differ, the nonnegative input is larger regardless of the wrapped difference. If signs agree, the difference fits signed range and its sign is reliable. Combine those two choices as zero/one selectors instead of branching.",
+    "timeComplexity": "O(1) fixed-width arithmetic and bit operations.",
+    "spaceComplexity": "O(1) auxiliary scalar storage.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.7. No affiliation is implied.",
+    "correctness": "Let a and b be bits indicating negative inputs, and d indicate a negative 32-bit difference. When a xor b is one, choose first exactly when a is zero. When their xor is zero, choose first exactly when d is zero; equal inputs may choose first. These two cases are disjoint and exhaustive. The computed selector is therefore zero or one and selects precisely a maximum input. A mask derived from the selector copies the chosen input bits. C++ computes the difference in uint32_t and converts the selected exact signed operand arithmetically, avoiding signed-overflow and implementation-defined unsigned-to-signed conversion.",
+    "walkthrough": "For first=-2147483648 and second=2147483647, subtraction wraps to the positive bit pattern 1. Its sign alone would select the wrong input. The argument signs differ, so the selector instead chooses the nonnegative second input. For 9 and 4, signs agree and the positive difference correctly chooses 9.",
+    "edgeCases": [
+      "Opposite signed endpoints, equal values, zero and negatives.",
+      "A subtraction that wraps must not influence the opposite-sign choice."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_11",
+    "collection": "ctci6",
+    "language": "csharp",
+    "code": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic class Solution\n{\n    public int[] DivingBoardLengths(int planks, int shorter, int longer)\n    {\n        if (shorter == longer)\n            return [planks * shorter];\n        int[] result = new int[planks + 1];\n        for (int count = 0; count <= planks; ++count)\n            result[count] = planks * shorter + count * (longer - shorter);\n        return result;\n    }\n}\n",
+    "explanation": "Only the number of long planks affects the total; the ordering of those planks does not. For k long planks, total length is planks*shorter+k*(longer-shorter). Enumerating k from zero through planks covers all choices without exploring 2^planks arrangements. Equal plank lengths collapse all counts to one answer.",
+    "timeComplexity": "O(planks+1) time when lengths differ, matching output size; O(1) when equal.",
+    "spaceComplexity": "O(1) auxiliary space excluding the returned O(planks+1) integer values, or one value for equal lengths.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.11. No affiliation is implied.",
+    "correctness": "Every board uses a unique count k of long planks between zero and planks, so its total has the stated formula. Conversely every such k is feasible by choosing k long planks and the rest short. When longer>shorter, increasing k strictly increases the total, proving the generated list is sorted and contains no duplicates. When lengths agree, all choices yield the single emitted total. The k=0 empty-board case yields zero.",
+    "walkthrough": "For 3 planks of lengths 2 and 5, choose 0,1,2,3 long planks to get 6,9,12,15. Short-long-short and long-short-short both have length 9 and appear once. With equal lengths 2 and 2, only 6 is returned.",
+    "edgeCases": [
+      "Zero planks, equal lengths, one plank.",
+      "Maximum count and lengths, without integer overflow or duplicate totals."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_11",
+    "collection": "ctci6",
+    "language": "javascript",
+    "code": "'use strict';\nfunction DivingBoardLengths(planks, shorter, longer) {\n  if (shorter === longer) return [planks * shorter];\n  return Array.from(\n    { length: planks + 1 },\n    (_, count) => planks * shorter + count * (longer - shorter),\n  );\n}\n\nmodule.exports = {DivingBoardLengths};\n",
+    "explanation": "Only the number of long planks affects the total; the ordering of those planks does not. For k long planks, total length is planks*shorter+k*(longer-shorter). Enumerating k from zero through planks covers all choices without exploring 2^planks arrangements. Equal plank lengths collapse all counts to one answer.",
+    "timeComplexity": "O(planks+1) time when lengths differ, matching output size; O(1) when equal.",
+    "spaceComplexity": "O(1) auxiliary space excluding the returned O(planks+1) integer values, or one value for equal lengths.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.11. No affiliation is implied.",
+    "correctness": "Every board uses a unique count k of long planks between zero and planks, so its total has the stated formula. Conversely every such k is feasible by choosing k long planks and the rest short. When longer>shorter, increasing k strictly increases the total, proving the generated list is sorted and contains no duplicates. When lengths agree, all choices yield the single emitted total. The k=0 empty-board case yields zero.",
+    "walkthrough": "For 3 planks of lengths 2 and 5, choose 0,1,2,3 long planks to get 6,9,12,15. Short-long-short and long-short-short both have length 9 and appear once. With equal lengths 2 and 2, only 6 is returned.",
+    "edgeCases": [
+      "Zero planks, equal lengths, one plank.",
+      "Maximum count and lengths, without integer overflow or duplicate totals."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_11",
+    "collection": "ctci6",
+    "language": "python",
+    "code": "def DivingBoardLengths(planks: int, shorter: int, longer: int) -> list[int]:\n    if shorter == longer:\n        return [planks * shorter]\n    return [planks * shorter + count * (longer - shorter) for count in range(planks + 1)]\n",
+    "explanation": "Only the number of long planks affects the total; the ordering of those planks does not. For k long planks, total length is planks*shorter+k*(longer-shorter). Enumerating k from zero through planks covers all choices without exploring 2^planks arrangements. Equal plank lengths collapse all counts to one answer.",
+    "timeComplexity": "O(planks+1) time when lengths differ, matching output size; O(1) when equal.",
+    "spaceComplexity": "O(1) auxiliary space excluding the returned O(planks+1) integer values, or one value for equal lengths.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.11. No affiliation is implied.",
+    "correctness": "Every board uses a unique count k of long planks between zero and planks, so its total has the stated formula. Conversely every such k is feasible by choosing k long planks and the rest short. When longer>shorter, increasing k strictly increases the total, proving the generated list is sorted and contains no duplicates. When lengths agree, all choices yield the single emitted total. The k=0 empty-board case yields zero.",
+    "walkthrough": "For 3 planks of lengths 2 and 5, choose 0,1,2,3 long planks to get 6,9,12,15. Short-long-short and long-short-short both have length 9 and appear once. With equal lengths 2 and 2, only 6 is returned.",
+    "edgeCases": [
+      "Zero planks, equal lengths, one plank.",
+      "Maximum count and lengths, without integer overflow or duplicate totals."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_11",
+    "collection": "ctci6",
+    "language": "cpp",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\nclass Solution {\n public:\n  std::vector<int> DivingBoardLengths(int planks, int shorter, int longer) {\n    if (shorter == longer)\n      return {planks * shorter};\n    std::vector<int> result;\n    result.reserve(planks + 1);\n    for (int count = 0; count <= planks; ++count)\n      result.push_back(planks * shorter + count * (longer - shorter));\n    return result;\n  }\n};\n",
+    "explanation": "Only the number of long planks affects the total; the ordering of those planks does not. For k long planks, total length is planks*shorter+k*(longer-shorter). Enumerating k from zero through planks covers all choices without exploring 2^planks arrangements. Equal plank lengths collapse all counts to one answer.",
+    "timeComplexity": "O(planks+1) time when lengths differ, matching output size; O(1) when equal.",
+    "spaceComplexity": "O(1) auxiliary space excluding the returned O(planks+1) integer values, or one value for equal lengths.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.11. No affiliation is implied.",
+    "correctness": "Every board uses a unique count k of long planks between zero and planks, so its total has the stated formula. Conversely every such k is feasible by choosing k long planks and the rest short. When longer>shorter, increasing k strictly increases the total, proving the generated list is sorted and contains no duplicates. When lengths agree, all choices yield the single emitted total. The k=0 empty-board case yields zero.",
+    "walkthrough": "For 3 planks of lengths 2 and 5, choose 0,1,2,3 long planks to get 6,9,12,15. Short-long-short and long-short-short both have length 9 and appear once. With equal lengths 2 and 2, only 6 is returned.",
+    "edgeCases": [
+      "Zero planks, equal lengths, one plank.",
+      "Maximum count and lengths, without integer overflow or duplicate totals."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_11",
+    "collection": "ctci6",
+    "language": "java",
+    "code": "import java.util.*;\nclass Solution {\n  public int[] DivingBoardLengths(int planks, int shorter, int longer) {\n    if (shorter == longer)\n      return new int[] {planks * shorter};\n    int[] result = new int[planks + 1];\n    for (int count = 0; count <= planks; ++count)\n      result[count] = planks * shorter + count * (longer - shorter);\n    return result;\n  }\n}\n",
+    "explanation": "Only the number of long planks affects the total; the ordering of those planks does not. For k long planks, total length is planks*shorter+k*(longer-shorter). Enumerating k from zero through planks covers all choices without exploring 2^planks arrangements. Equal plank lengths collapse all counts to one answer.",
+    "timeComplexity": "O(planks+1) time when lengths differ, matching output size; O(1) when equal.",
+    "spaceComplexity": "O(1) auxiliary space excluding the returned O(planks+1) integer values, or one value for equal lengths.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.11. No affiliation is implied.",
+    "correctness": "Every board uses a unique count k of long planks between zero and planks, so its total has the stated formula. Conversely every such k is feasible by choosing k long planks and the rest short. When longer>shorter, increasing k strictly increases the total, proving the generated list is sorted and contains no duplicates. When lengths agree, all choices yield the single emitted total. The k=0 empty-board case yields zero.",
+    "walkthrough": "For 3 planks of lengths 2 and 5, choose 0,1,2,3 long planks to get 6,9,12,15. Short-long-short and long-short-short both have length 9 and appear once. With equal lengths 2 and 2, only 6 is returned.",
+    "edgeCases": [
+      "Zero planks, equal lengths, one plank.",
+      "Maximum count and lengths, without integer overflow or duplicate totals."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_15",
+    "collection": "ctci6",
+    "language": "csharp",
+    "code": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic class Solution\n{\n    public int[] ScoreMasterMind(string guess, string secret)\n    {\n        int[] remaining = new int[4];\n        int hits = 0, pseudoHits = 0;\n        for (int i = 0; i < 4; ++i)\n        {\n            if (guess[i] == secret[i])\n                ++hits;\n            else\n                ++remaining[\"RGBY\".IndexOf(secret[i])];\n        }\n        for (int i = 0; i < 4; ++i)\n        {\n            if (guess[i] == secret[i])\n                continue;\n            int color = \"RGBY\".IndexOf(guess[i]);\n            if (remaining[color] > 0)\n            {\n                --remaining[color];\n                ++pseudoHits;\n            }\n        }\n        return [hits, pseudoHits];\n    }\n}\n",
+    "explanation": "Reserve exact matches first so their occurrences cannot be reused. Among the unmatched positions, only remaining color multiplicities matter: each unmatched guess can consume one occurrence of its color if available. A frequency table implements this matching without pairing the same secret slot twice.",
+    "timeComplexity": "O(1) for the fixed four slots; two passes and a fixed four-color table.",
+    "spaceComplexity": "O(1) auxiliary space and a two-integer result.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.15. No affiliation is implied.",
+    "correctness": "The first pass counts every exact match and excludes both its occurrences from later matching. For each other secret slot, it adds one available occurrence of that color. The second pass ignores hit slots and consumes an available matching color for each unmatched guess. For every color this creates exactly the minimum of its unmatched guess and secret multiplicities, which is the greatest possible one-to-one matching count. Colors are disjoint, so their sum is the pseudo-hit count.",
+    "walkthrough": "For guess GGRR and secret RGBY, slot 1 is a G hit. Remaining secret colors are R,B,Y; remaining guesses are G,R,R. Only one R can consume the single remaining R, so the score is [1,1], not [1,2].",
+    "edgeCases": [
+      "All hits, no matches, all one color.",
+      "Repeated guessed colors cannot consume one unmatched secret occurrence twice."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_15",
+    "collection": "ctci6",
+    "language": "javascript",
+    "code": "'use strict';\nfunction ScoreMasterMind(guess, secret) {\n  const remaining = Array(4).fill(0);\n  let hits = 0,\n    pseudoHits = 0;\n  for (let i = 0; i < 4; ++i) {\n    if (guess[i] === secret[i]) ++hits;\n    else ++remaining[\"RGBY\".indexOf(secret[i])];\n  }\n  for (let i = 0; i < 4; ++i) {\n    if (guess[i] === secret[i]) continue;\n    const color = \"RGBY\".indexOf(guess[i]);\n    if (remaining[color] > 0) {\n      --remaining[color];\n      ++pseudoHits;\n    }\n  }\n  return [hits, pseudoHits];\n}\n\nmodule.exports = {ScoreMasterMind};\n",
+    "explanation": "Reserve exact matches first so their occurrences cannot be reused. Among the unmatched positions, only remaining color multiplicities matter: each unmatched guess can consume one occurrence of its color if available. A frequency table implements this matching without pairing the same secret slot twice.",
+    "timeComplexity": "O(1) for the fixed four slots; two passes and a fixed four-color table.",
+    "spaceComplexity": "O(1) auxiliary space and a two-integer result.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.15. No affiliation is implied.",
+    "correctness": "The first pass counts every exact match and excludes both its occurrences from later matching. For each other secret slot, it adds one available occurrence of that color. The second pass ignores hit slots and consumes an available matching color for each unmatched guess. For every color this creates exactly the minimum of its unmatched guess and secret multiplicities, which is the greatest possible one-to-one matching count. Colors are disjoint, so their sum is the pseudo-hit count.",
+    "walkthrough": "For guess GGRR and secret RGBY, slot 1 is a G hit. Remaining secret colors are R,B,Y; remaining guesses are G,R,R. Only one R can consume the single remaining R, so the score is [1,1], not [1,2].",
+    "edgeCases": [
+      "All hits, no matches, all one color.",
+      "Repeated guessed colors cannot consume one unmatched secret occurrence twice."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_15",
+    "collection": "ctci6",
+    "language": "python",
+    "code": "def ScoreMasterMind(guess: str, secret: str) -> list[int]:\n    remaining = [0] * 4\n    hits = 0\n    for index in range(4):\n        if guess[index] == secret[index]:\n            hits += 1\n        else:\n            remaining[\"RGBY\".index(secret[index])] += 1\n    pseudo_hits = 0\n    for index in range(4):\n        if guess[index] == secret[index]:\n            continue\n        color = \"RGBY\".index(guess[index])\n        if remaining[color]:\n            remaining[color] -= 1\n            pseudo_hits += 1\n    return [hits, pseudo_hits]\n",
+    "explanation": "Reserve exact matches first so their occurrences cannot be reused. Among the unmatched positions, only remaining color multiplicities matter: each unmatched guess can consume one occurrence of its color if available. A frequency table implements this matching without pairing the same secret slot twice.",
+    "timeComplexity": "O(1) for the fixed four slots; two passes and a fixed four-color table.",
+    "spaceComplexity": "O(1) auxiliary space and a two-integer result.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.15. No affiliation is implied.",
+    "correctness": "The first pass counts every exact match and excludes both its occurrences from later matching. For each other secret slot, it adds one available occurrence of that color. The second pass ignores hit slots and consumes an available matching color for each unmatched guess. For every color this creates exactly the minimum of its unmatched guess and secret multiplicities, which is the greatest possible one-to-one matching count. Colors are disjoint, so their sum is the pseudo-hit count.",
+    "walkthrough": "For guess GGRR and secret RGBY, slot 1 is a G hit. Remaining secret colors are R,B,Y; remaining guesses are G,R,R. Only one R can consume the single remaining R, so the score is [1,1], not [1,2].",
+    "edgeCases": [
+      "All hits, no matches, all one color.",
+      "Repeated guessed colors cannot consume one unmatched secret occurrence twice."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_15",
+    "collection": "ctci6",
+    "language": "cpp",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\nclass Solution {\n public:\n  std::vector<int> ScoreMasterMind(const std::string& guess, const std::string& secret) {\n    int remaining[4] = {};\n    int hits = 0, pseudoHits = 0;\n    for (int i = 0; i < 4; ++i) {\n      if (guess[i] == secret[i])\n        ++hits;\n      else\n        ++remaining[static_cast<int>(std::string(\"RGBY\").find(secret[i]))];\n    }\n    for (int i = 0; i < 4; ++i) {\n      if (guess[i] == secret[i])\n        continue;\n      int color = static_cast<int>(std::string(\"RGBY\").find(guess[i]));\n      if (remaining[color] > 0) {\n        --remaining[color];\n        ++pseudoHits;\n      }\n    }\n    return {hits, pseudoHits};\n  }\n};\n",
+    "explanation": "Reserve exact matches first so their occurrences cannot be reused. Among the unmatched positions, only remaining color multiplicities matter: each unmatched guess can consume one occurrence of its color if available. A frequency table implements this matching without pairing the same secret slot twice.",
+    "timeComplexity": "O(1) for the fixed four slots; two passes and a fixed four-color table.",
+    "spaceComplexity": "O(1) auxiliary space and a two-integer result.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.15. No affiliation is implied.",
+    "correctness": "The first pass counts every exact match and excludes both its occurrences from later matching. For each other secret slot, it adds one available occurrence of that color. The second pass ignores hit slots and consumes an available matching color for each unmatched guess. For every color this creates exactly the minimum of its unmatched guess and secret multiplicities, which is the greatest possible one-to-one matching count. Colors are disjoint, so their sum is the pseudo-hit count.",
+    "walkthrough": "For guess GGRR and secret RGBY, slot 1 is a G hit. Remaining secret colors are R,B,Y; remaining guesses are G,R,R. Only one R can consume the single remaining R, so the score is [1,1], not [1,2].",
+    "edgeCases": [
+      "All hits, no matches, all one color.",
+      "Repeated guessed colors cannot consume one unmatched secret occurrence twice."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_15",
+    "collection": "ctci6",
+    "language": "java",
+    "code": "import java.util.*;\nclass Solution {\n  public int[] ScoreMasterMind(String guess, String secret) {\n    int[] remaining = new int[4];\n    int hits = 0, pseudoHits = 0;\n    for (int i = 0; i < 4; ++i) {\n      if (guess.charAt(i) == secret.charAt(i))\n        ++hits;\n      else\n        ++remaining[\"RGBY\".indexOf(secret.charAt(i))];\n    }\n    for (int i = 0; i < 4; ++i) {\n      if (guess.charAt(i) == secret.charAt(i))\n        continue;\n      int color = \"RGBY\".indexOf(guess.charAt(i));\n      if (remaining[color] > 0) {\n        --remaining[color];\n        ++pseudoHits;\n      }\n    }\n    return new int[] {hits, pseudoHits};\n  }\n}\n",
+    "explanation": "Reserve exact matches first so their occurrences cannot be reused. Among the unmatched positions, only remaining color multiplicities matter: each unmatched guess can consume one occurrence of its color if available. A frequency table implements this matching without pairing the same secret slot twice.",
+    "timeComplexity": "O(1) for the fixed four slots; two passes and a fixed four-color table.",
+    "spaceComplexity": "O(1) auxiliary space and a two-integer result.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.15. No affiliation is implied.",
+    "correctness": "The first pass counts every exact match and excludes both its occurrences from later matching. For each other secret slot, it adds one available occurrence of that color. The second pass ignores hit slots and consumes an available matching color for each unmatched guess. For every color this creates exactly the minimum of its unmatched guess and secret multiplicities, which is the greatest possible one-to-one matching count. Colors are disjoint, so their sum is the pseudo-hit count.",
+    "walkthrough": "For guess GGRR and secret RGBY, slot 1 is a G hit. Remaining secret colors are R,B,Y; remaining guesses are G,R,R. Only one R can consume the single remaining R, so the score is [1,1], not [1,2].",
+    "edgeCases": [
+      "All hits, no matches, all one color.",
+      "Repeated guessed colors cannot consume one unmatched secret occurrence twice."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_16",
+    "collection": "ctci6",
+    "language": "csharp",
+    "code": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic class Solution\n{\n    public int[] ShortestSortWindow(int[] values)\n    {\n        int n = values.Length;\n        if (n == 0)\n            return [-1, -1];\n        int right = -1, maximum = values[0];\n        for (int i = 0; i < n; ++i)\n        {\n            if (values[i] < maximum)\n                right = i;\n            maximum = Math.Max(maximum, values[i]);\n        }\n        if (right == -1)\n            return [-1, -1];\n        int left = -1, minimum = values[n - 1];\n        for (int i = n - 1; i >= 0; --i)\n        {\n            if (values[i] > minimum)\n                left = i;\n            minimum = Math.Min(minimum, values[i]);\n        }\n        return [left, right];\n    }\n}\n",
+    "explanation": "Scanning left to right, any value below the largest earlier value is too far right and must lie inside the sorting window. Its last occurrence of such a violation fixes the right endpoint. Symmetrically, a value above the smallest later value is too far left; scanning backward locates the left endpoint. This avoids sorting a full copy just to find mismatches.",
+    "timeComplexity": "O(n) time for two scans.",
+    "spaceComplexity": "O(1) auxiliary storage, excluding the two-integer output.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.16. No affiliation is implied.",
+    "correctness": "At each forward position, the running maximum equals the maximum of the prefix. A value smaller than that maximum cannot be fixed without including its position, so the last such position is a necessary right bound. The reverse argument makes the first position above its suffix minimum a necessary left bound. Outside those bounds, values are ordered consistently with all preceding or following values. Sorting the enclosed region therefore removes all cross-order violations and makes the whole array nondecreasing. Since neither bound can be excluded, the resulting window is shortest. No forward violation means no inversion and hence an already sorted array.",
+    "walkthrough": "For [1,2,4,3,3,5], the running maximum becomes 4 at index 2; indices 3 and 4 are below it, so right=4. Scanning backward, the suffix minimum is 3 when index 2 is reached, giving left=2. Sorting indices 2..4 produces [1,2,3,3,4,5].",
+    "edgeCases": [
+      "Empty, singleton, already sorted, all equal.",
+      "Reverse order, duplicates around both endpoints, signed extremes."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_16",
+    "collection": "ctci6",
+    "language": "javascript",
+    "code": "'use strict';\nfunction ShortestSortWindow(values) {\n  if (values.length === 0) return [-1, -1];\n  let right = -1,\n    maximum = values[0];\n  for (let i = 0; i < values.length; ++i) {\n    if (values[i] < maximum) right = i;\n    maximum = Math.max(maximum, values[i]);\n  }\n  if (right === -1) return [-1, -1];\n  let left = -1,\n    minimum = values[values.length - 1];\n  for (let i = values.length - 1; i >= 0; --i) {\n    if (values[i] > minimum) left = i;\n    minimum = Math.min(minimum, values[i]);\n  }\n  return [left, right];\n}\n\nmodule.exports = {ShortestSortWindow};\n",
+    "explanation": "Scanning left to right, any value below the largest earlier value is too far right and must lie inside the sorting window. Its last occurrence of such a violation fixes the right endpoint. Symmetrically, a value above the smallest later value is too far left; scanning backward locates the left endpoint. This avoids sorting a full copy just to find mismatches.",
+    "timeComplexity": "O(n) time for two scans.",
+    "spaceComplexity": "O(1) auxiliary storage, excluding the two-integer output.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.16. No affiliation is implied.",
+    "correctness": "At each forward position, the running maximum equals the maximum of the prefix. A value smaller than that maximum cannot be fixed without including its position, so the last such position is a necessary right bound. The reverse argument makes the first position above its suffix minimum a necessary left bound. Outside those bounds, values are ordered consistently with all preceding or following values. Sorting the enclosed region therefore removes all cross-order violations and makes the whole array nondecreasing. Since neither bound can be excluded, the resulting window is shortest. No forward violation means no inversion and hence an already sorted array.",
+    "walkthrough": "For [1,2,4,3,3,5], the running maximum becomes 4 at index 2; indices 3 and 4 are below it, so right=4. Scanning backward, the suffix minimum is 3 when index 2 is reached, giving left=2. Sorting indices 2..4 produces [1,2,3,3,4,5].",
+    "edgeCases": [
+      "Empty, singleton, already sorted, all equal.",
+      "Reverse order, duplicates around both endpoints, signed extremes."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_16",
+    "collection": "ctci6",
+    "language": "python",
+    "code": "def ShortestSortWindow(values: list[int]) -> list[int]:\n    if not values:\n        return [-1, -1]\n    right = -1\n    maximum = values[0]\n    for index, value in enumerate(values):\n        if value < maximum:\n            right = index\n        maximum = max(maximum, value)\n    if right == -1:\n        return [-1, -1]\n    left = -1\n    minimum = values[-1]\n    for index in range(len(values) - 1, -1, -1):\n        if values[index] > minimum:\n            left = index\n        minimum = min(minimum, values[index])\n    return [left, right]\n",
+    "explanation": "Scanning left to right, any value below the largest earlier value is too far right and must lie inside the sorting window. Its last occurrence of such a violation fixes the right endpoint. Symmetrically, a value above the smallest later value is too far left; scanning backward locates the left endpoint. This avoids sorting a full copy just to find mismatches.",
+    "timeComplexity": "O(n) time for two scans.",
+    "spaceComplexity": "O(1) auxiliary storage, excluding the two-integer output.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.16. No affiliation is implied.",
+    "correctness": "At each forward position, the running maximum equals the maximum of the prefix. A value smaller than that maximum cannot be fixed without including its position, so the last such position is a necessary right bound. The reverse argument makes the first position above its suffix minimum a necessary left bound. Outside those bounds, values are ordered consistently with all preceding or following values. Sorting the enclosed region therefore removes all cross-order violations and makes the whole array nondecreasing. Since neither bound can be excluded, the resulting window is shortest. No forward violation means no inversion and hence an already sorted array.",
+    "walkthrough": "For [1,2,4,3,3,5], the running maximum becomes 4 at index 2; indices 3 and 4 are below it, so right=4. Scanning backward, the suffix minimum is 3 when index 2 is reached, giving left=2. Sorting indices 2..4 produces [1,2,3,3,4,5].",
+    "edgeCases": [
+      "Empty, singleton, already sorted, all equal.",
+      "Reverse order, duplicates around both endpoints, signed extremes."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_16",
+    "collection": "ctci6",
+    "language": "cpp",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\nclass Solution {\n public:\n  std::vector<int> ShortestSortWindow(const std::vector<int>& values) {\n    int n = static_cast<int>(values.size());\n    if (n == 0)\n      return {-1, -1};\n    int right = -1, maximum = values[0];\n    for (int i = 0; i < n; ++i) {\n      if (values[i] < maximum)\n        right = i;\n      maximum = std::max(maximum, values[i]);\n    }\n    if (right == -1)\n      return {-1, -1};\n    int left = -1, minimum = values[n - 1];\n    for (int i = n - 1; i >= 0; --i) {\n      if (values[i] > minimum)\n        left = i;\n      minimum = std::min(minimum, values[i]);\n    }\n    return {left, right};\n  }\n};\n",
+    "explanation": "Scanning left to right, any value below the largest earlier value is too far right and must lie inside the sorting window. Its last occurrence of such a violation fixes the right endpoint. Symmetrically, a value above the smallest later value is too far left; scanning backward locates the left endpoint. This avoids sorting a full copy just to find mismatches.",
+    "timeComplexity": "O(n) time for two scans.",
+    "spaceComplexity": "O(1) auxiliary storage, excluding the two-integer output.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.16. No affiliation is implied.",
+    "correctness": "At each forward position, the running maximum equals the maximum of the prefix. A value smaller than that maximum cannot be fixed without including its position, so the last such position is a necessary right bound. The reverse argument makes the first position above its suffix minimum a necessary left bound. Outside those bounds, values are ordered consistently with all preceding or following values. Sorting the enclosed region therefore removes all cross-order violations and makes the whole array nondecreasing. Since neither bound can be excluded, the resulting window is shortest. No forward violation means no inversion and hence an already sorted array.",
+    "walkthrough": "For [1,2,4,3,3,5], the running maximum becomes 4 at index 2; indices 3 and 4 are below it, so right=4. Scanning backward, the suffix minimum is 3 when index 2 is reached, giving left=2. Sorting indices 2..4 produces [1,2,3,3,4,5].",
+    "edgeCases": [
+      "Empty, singleton, already sorted, all equal.",
+      "Reverse order, duplicates around both endpoints, signed extremes."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_16",
+    "collection": "ctci6",
+    "language": "java",
+    "code": "import java.util.*;\nclass Solution {\n  public int[] ShortestSortWindow(int[] values) {\n    int n = values.length;\n    if (n == 0)\n      return new int[] {-1, -1};\n    int right = -1, maximum = values[0];\n    for (int i = 0; i < n; ++i) {\n      if (values[i] < maximum)\n        right = i;\n      maximum = Math.max(maximum, values[i]);\n    }\n    if (right == -1)\n      return new int[] {-1, -1};\n    int left = -1, minimum = values[n - 1];\n    for (int i = n - 1; i >= 0; --i) {\n      if (values[i] > minimum)\n        left = i;\n      minimum = Math.min(minimum, values[i]);\n    }\n    return new int[] {left, right};\n  }\n}\n",
+    "explanation": "Scanning left to right, any value below the largest earlier value is too far right and must lie inside the sorting window. Its last occurrence of such a violation fixes the right endpoint. Symmetrically, a value above the smallest later value is too far left; scanning backward locates the left endpoint. This avoids sorting a full copy just to find mismatches.",
+    "timeComplexity": "O(n) time for two scans.",
+    "spaceComplexity": "O(1) auxiliary storage, excluding the two-integer output.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.16. No affiliation is implied.",
+    "correctness": "At each forward position, the running maximum equals the maximum of the prefix. A value smaller than that maximum cannot be fixed without including its position, so the last such position is a necessary right bound. The reverse argument makes the first position above its suffix minimum a necessary left bound. Outside those bounds, values are ordered consistently with all preceding or following values. Sorting the enclosed region therefore removes all cross-order violations and makes the whole array nondecreasing. Since neither bound can be excluded, the resulting window is shortest. No forward violation means no inversion and hence an already sorted array.",
+    "walkthrough": "For [1,2,4,3,3,5], the running maximum becomes 4 at index 2; indices 3 and 4 are below it, so right=4. Scanning backward, the suffix minimum is 3 when index 2 is reached, giving left=2. Sorting indices 2..4 produces [1,2,3,3,4,5].",
+    "edgeCases": [
+      "Empty, singleton, already sorted, all equal.",
+      "Reverse order, duplicates around both endpoints, signed extremes."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_17",
+    "collection": "ctci6",
+    "language": "csharp",
+    "code": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic class Solution\n{\n    public int MaximumContiguousSum(int[] values)\n    {\n        int running = 0, best = 0;\n        foreach (int value in values)\n        {\n            running = Math.Max(0, running + value);\n            best = Math.Max(best, running);\n        }\n        return best;\n    }\n}\n",
+    "explanation": "For any next element, a best suffix either extends a nonnegative previous suffix or starts afresh. A negative running prefix can never improve a future sum, so discard it. Retain a separate best-so-far total so ending a promising sequence does not lose its result.",
+    "timeComplexity": "O(n) time in one scan.",
+    "spaceComplexity": "O(1) auxiliary scalar storage.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.17. No affiliation is implied.",
+    "correctness": "After processing a prefix, running is the maximum of zero and the sums of all suffixes of that prefix. Appending the next value extends every nonempty candidate suffix; taking max(0,running+value) also permits the empty suffix and subsumes starting with this value alone. Induction preserves that invariant. Every contiguous sequence ends at some position, so updating best with every running value finds the greatest of all sequence sums, including the empty sequence.",
+    "walkthrough": "For [2,-8,3,-2,4,-10], running totals after discarding negative suffixes are 2,0,3,1,5,0. The best is 5 from [3,-2,4]. Adding all positive elements would incorrectly return 9 because those positions are not contiguous.",
+    "edgeCases": [
+      "Empty and all-negative inputs return zero.",
+      "Zeros, all-positive input, a best interval strictly inside the array."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_17",
+    "collection": "ctci6",
+    "language": "javascript",
+    "code": "'use strict';\nfunction MaximumContiguousSum(values) {\n  let running = 0,\n    best = 0;\n  for (const value of values) {\n    running = Math.max(0, running + value);\n    best = Math.max(best, running);\n  }\n  return best;\n}\n\nmodule.exports = {MaximumContiguousSum};\n",
+    "explanation": "For any next element, a best suffix either extends a nonnegative previous suffix or starts afresh. A negative running prefix can never improve a future sum, so discard it. Retain a separate best-so-far total so ending a promising sequence does not lose its result.",
+    "timeComplexity": "O(n) time in one scan.",
+    "spaceComplexity": "O(1) auxiliary scalar storage.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.17. No affiliation is implied.",
+    "correctness": "After processing a prefix, running is the maximum of zero and the sums of all suffixes of that prefix. Appending the next value extends every nonempty candidate suffix; taking max(0,running+value) also permits the empty suffix and subsumes starting with this value alone. Induction preserves that invariant. Every contiguous sequence ends at some position, so updating best with every running value finds the greatest of all sequence sums, including the empty sequence.",
+    "walkthrough": "For [2,-8,3,-2,4,-10], running totals after discarding negative suffixes are 2,0,3,1,5,0. The best is 5 from [3,-2,4]. Adding all positive elements would incorrectly return 9 because those positions are not contiguous.",
+    "edgeCases": [
+      "Empty and all-negative inputs return zero.",
+      "Zeros, all-positive input, a best interval strictly inside the array."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_17",
+    "collection": "ctci6",
+    "language": "python",
+    "code": "def MaximumContiguousSum(values: list[int]) -> int:\n    running = 0\n    best = 0\n    for value in values:\n        running = max(0, running + value)\n        best = max(best, running)\n    return best\n",
+    "explanation": "For any next element, a best suffix either extends a nonnegative previous suffix or starts afresh. A negative running prefix can never improve a future sum, so discard it. Retain a separate best-so-far total so ending a promising sequence does not lose its result.",
+    "timeComplexity": "O(n) time in one scan.",
+    "spaceComplexity": "O(1) auxiliary scalar storage.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.17. No affiliation is implied.",
+    "correctness": "After processing a prefix, running is the maximum of zero and the sums of all suffixes of that prefix. Appending the next value extends every nonempty candidate suffix; taking max(0,running+value) also permits the empty suffix and subsumes starting with this value alone. Induction preserves that invariant. Every contiguous sequence ends at some position, so updating best with every running value finds the greatest of all sequence sums, including the empty sequence.",
+    "walkthrough": "For [2,-8,3,-2,4,-10], running totals after discarding negative suffixes are 2,0,3,1,5,0. The best is 5 from [3,-2,4]. Adding all positive elements would incorrectly return 9 because those positions are not contiguous.",
+    "edgeCases": [
+      "Empty and all-negative inputs return zero.",
+      "Zeros, all-positive input, a best interval strictly inside the array."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_17",
+    "collection": "ctci6",
+    "language": "cpp",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\nclass Solution {\n public:\n  int MaximumContiguousSum(const std::vector<int>& values) {\n    int running = 0, best = 0;\n    for (int value : values) {\n      running = std::max(0, running + value);\n      best = std::max(best, running);\n    }\n    return best;\n  }\n};\n",
+    "explanation": "For any next element, a best suffix either extends a nonnegative previous suffix or starts afresh. A negative running prefix can never improve a future sum, so discard it. Retain a separate best-so-far total so ending a promising sequence does not lose its result.",
+    "timeComplexity": "O(n) time in one scan.",
+    "spaceComplexity": "O(1) auxiliary scalar storage.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.17. No affiliation is implied.",
+    "correctness": "After processing a prefix, running is the maximum of zero and the sums of all suffixes of that prefix. Appending the next value extends every nonempty candidate suffix; taking max(0,running+value) also permits the empty suffix and subsumes starting with this value alone. Induction preserves that invariant. Every contiguous sequence ends at some position, so updating best with every running value finds the greatest of all sequence sums, including the empty sequence.",
+    "walkthrough": "For [2,-8,3,-2,4,-10], running totals after discarding negative suffixes are 2,0,3,1,5,0. The best is 5 from [3,-2,4]. Adding all positive elements would incorrectly return 9 because those positions are not contiguous.",
+    "edgeCases": [
+      "Empty and all-negative inputs return zero.",
+      "Zeros, all-positive input, a best interval strictly inside the array."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_17",
+    "collection": "ctci6",
+    "language": "java",
+    "code": "import java.util.*;\nclass Solution {\n  public int MaximumContiguousSum(int[] values) {\n    int running = 0, best = 0;\n    for (int value : values) {\n      running = Math.max(0, running + value);\n      best = Math.max(best, running);\n    }\n    return best;\n  }\n}\n",
+    "explanation": "For any next element, a best suffix either extends a nonnegative previous suffix or starts afresh. A negative running prefix can never improve a future sum, so discard it. Retain a separate best-so-far total so ending a promising sequence does not lose its result.",
+    "timeComplexity": "O(n) time in one scan.",
+    "spaceComplexity": "O(1) auxiliary scalar storage.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.17. No affiliation is implied.",
+    "correctness": "After processing a prefix, running is the maximum of zero and the sums of all suffixes of that prefix. Appending the next value extends every nonempty candidate suffix; taking max(0,running+value) also permits the empty suffix and subsumes starting with this value alone. Induction preserves that invariant. Every contiguous sequence ends at some position, so updating best with every running value finds the greatest of all sequence sums, including the empty sequence.",
+    "walkthrough": "For [2,-8,3,-2,4,-10], running totals after discarding negative suffixes are 2,0,3,1,5,0. The best is 5 from [3,-2,4]. Adding all positive elements would incorrectly return 9 because those positions are not contiguous.",
+    "edgeCases": [
+      "Empty and all-negative inputs return zero.",
+      "Zeros, all-positive input, a best interval strictly inside the array."
     ]
   }
 ]

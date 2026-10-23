@@ -1,0 +1,22 @@
+{
+  "explanation": "Reserve exact matches first so their occurrences cannot be reused. Among the unmatched positions, only remaining color multiplicities matter: each unmatched guess can consume one occurrence of its color if available. A frequency table implements this matching without pairing the same secret slot twice.",
+  "correctness": "The first pass counts every exact match and excludes both its occurrences from later matching. For each other secret slot, it adds one available occurrence of that color. The second pass ignores hit slots and consumes an available matching color for each unmatched guess. For every color this creates exactly the minimum of its unmatched guess and secret multiplicities, which is the greatest possible one-to-one matching count. Colors are disjoint, so their sum is the pseudo-hit count.",
+  "walkthrough": "For guess GGRR and secret RGBY, slot 1 is a G hit. Remaining secret colors are R,B,Y; remaining guesses are G,R,R. Only one R can consume the single remaining R, so the score is [1,1], not [1,2].",
+  "walkthroughCase": {
+    "arguments": [
+      "GGRR",
+      "RGBY"
+    ],
+    "expected": [
+      1,
+      1
+    ]
+  },
+  "timeComplexity": "O(1) for the fixed four slots; two passes and a fixed four-color table.",
+  "spaceComplexity": "O(1) auxiliary space and a two-integer result.",
+  "edgeCases": [
+    "All hits, no matches, all one color.",
+    "Repeated guessed colors cannot consume one unmatched secret occurrence twice."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.15. No affiliation is implied."
+}

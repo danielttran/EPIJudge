@@ -1,0 +1,62 @@
+{
+  "stage": "standalone-authoring-and-separate-module",
+  "liveIntegration": "pending-current-module-receipts",
+  "reviewScope": "Six moderate coding exercises and thirty actual language bodies; individually reviewed restrictions, domains, proof, trace, complexity and counterexamples.",
+  "questions": [
+    {
+      "ref": "16.5",
+      "algorithm": "Repeated quotient division by five accumulates the prime-five valuation of n!.",
+      "review": "No factorial or growing fixed-width power is computed. The independently authored oracle directly inspects factorial decimal endings for small n and uses arbitrary-precision powers for large n. Boundaries around every representable power of five and int.MaxValue are executed. JavaScript uses Math.floor rather than real division; all totals fit signed int."
+    },
+    {
+      "ref": "16.7",
+      "algorithm": "Choose by operand sign when signs differ and by wrapped difference sign only when signs agree, then select the original operand.",
+      "review": "Read all five bodies: no comparison operator, if/switch, conditional expression or max/min helper appears in the solution. C#/Java/JS explicitly observe 32-bit difference bits; Python masks to 32 bits. C++ subtraction uses uint32_t, not overflowing signed subtraction, and chooses via 0/1 products of exact original operands rather than unsigned-to-signed narrowing. Extreme opposite signs and all small signed pairs are executed against host max."
+    },
+    {
+      "ref": "16.11",
+      "algorithm": "Enumerate long-plank count once in increasing order; collapse equal plank lengths to one total.",
+      "review": "Each actual body emits n+1 strictly increasing lengths only when lengths differ. Zero planks returns [0]. C#/Java allocate exact int arrays, JavaScript uses Array.from, Python a concrete comprehension and C++ reserves a vector. The bound ensures every product/sum is at most 10^9. The independent small oracle builds reachable length sets by repeated plank addition."
+    },
+    {
+      "ref": "16.15",
+      "algorithm": "Count exact hits, then consume only unmatched secret-color frequencies for unmatched guesses.",
+      "review": "All five bodies use the same four-color alphabet order consistently for both passes. A hit is excluded from the frequency table and from pseudo-hit consumption; repeated guesses cannot consume one slot twice. Independent permutation matching of unmatched positions, all-color strings, monochrome guesses, reversals, rotations and two-color exhaustive pairs cover multiplicity errors."
+    },
+    {
+      "ref": "16.16",
+      "algorithm": "Locate the last prefix-maximum violation and the first suffix-minimum violation without sorting or mutating input.",
+      "review": "Strict comparisons treat equal values as already ordered. Empty input is checked before indexing; no forward violation returns [-1,-1]. All five return inclusive original endpoints and preserve input. Independent sorted-copy mismatch endpoints agree for all small repeated-value arrays, signed extremes and 10000-element sorted/reverse inputs."
+    },
+    {
+      "ref": "16.17",
+      "algorithm": "Keep the best nonnegative suffix sum and global maximum in one scan.",
+      "review": "Empty/all-negative input returns zero, as in the author source; a nonempty-only variant is not substituted. The oracle directly enumerates contiguous intervals. The shared domain bounds all sums by 10^9, so Java/C#/C++ arithmetic and JS Number results are exact. Python arbitrary precision does not hide a cross-language overflow. Inputs are not modified."
+    }
+  ],
+  "languagesReviewed": [
+    "csharp",
+    "javascript",
+    "python",
+    "cpp",
+    "java"
+  ],
+  "languageBindingReview": {
+    "csharp": "Read all actual signed-int bodies. Array return expressions match int[] signatures. NumberMax uses uint sign extraction and an explicit unchecked difference, then signed masks; no conditional comparison helper. MasterMind IndexOf uses the admitted ASCII alphabet. Mutable array inputs are read only in this batch.",
+    "javascript": "Read all actual functions. Factorial division is floored, NumberMax bit operations coerce the intended signed 32-bit patterns, and bounded ordinary arithmetic stays exactly representable. All array results are materialized, not generators. Inputs remain unchanged.",
+    "python": "Read all actual function bodies and exact annotations. NumberMax masks the potentially wider difference before extracting its 32-bit sign; the signed selection mask works with arbitrary-width bitwise operations. Arrays are concrete lists and bool is not an integer observation. The admitted numeric bounds remain shared.",
+    "cpp": "Read all actual methods with const vector/string references. NumberMax difference is uint32_t and final operand multiplication by 0/1 cannot overflow. No undefined signed subtraction or implementation-defined unsigned narrowing is used. Returned vectors own their values; prefix/suffix scans index only nonempty input.",
+    "java": "Read all actual methods. Integer arithmetic uses justified bounds, except the intentionally wrapping subtraction whose bit pattern is observed with >>>. Returned int[] arrays match declared types, String indexing uses charAt, and the frequency table is local per call. Inputs are unchanged."
+  },
+  "executionEvidence": "staged16/validation.json",
+  "submissionEvidence": "runtime/validation.json",
+  "graderRegressions": [
+    "scripts/ctci6/test_moderate16.py"
+  ],
+  "remainingAcceptance": [
+    "remaining known collection content and classification",
+    "final whole-bank executable acceptance",
+    "final visual/integration audit",
+    "authorized push and exact-commit CI"
+  ]
+}

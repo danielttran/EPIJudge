@@ -2020,6 +2020,83 @@
         ]
       }
     },
+    "ctci6_8_2": {
+      "description": "Find one path from the top-left cell to the bottom-right cell of a rectangular grid, moving only one cell right or one cell down at each step. A 1 is open and a 0 is blocked. Return the visited [row,column] pairs in travel order, including both endpoints, or an empty collection when no path exists. Any valid path is accepted; this asks for one path, not all paths or a count.",
+      "constraints": [
+        "The nonnull grid has 0..50 rows and 0..50 columns, all rows have equal length, and entries are 0 or 1. An empty dimension has no path. Coordinates are zero-based.",
+        "Preserve the outer array, every row object, all cell contents and row order. The start and destination must both be open. A one-cell open grid returns [[0,0]]. Return concrete materialized integer lists/vectors, not an iterator."
+      ],
+      "examples": [
+        {
+          "input": "[[[1, 1, 0], [0, 1, 1]]]",
+          "output": "[[0, 0], [0, 1], [1, 1], [1, 2]]",
+          "explanation": "For [[1,1,0],[0,1,1]], the origin reaches (0,1), which reaches (1,1), then (1,2). The returned path is [[0,0],[0,1],[1,1],[1,2]]. Cell (1,0) is blocked, so a diagonal jump from the origin to (1,1) would not be a valid alternative."
+        }
+      ],
+      "exampleCases": [
+        {
+          "arguments": [
+            [
+              [
+                1,
+                1,
+                0
+              ],
+              [
+                0,
+                1,
+                1
+              ]
+            ]
+          ],
+          "expected": [
+            [
+              0,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ]
+        }
+      ],
+      "contracts": {
+        "csharp": [
+          "Callable: List<List<int>> FindRobotPath(int[][] grid)",
+          "The nonnull grid has 0..50 rows and 0..50 columns, all rows have equal length, and entries are 0 or 1. An empty dimension has no path. Coordinates are zero-based.",
+          "Preserve the outer array, every row object, all cell contents and row order. The start and destination must both be open. A one-cell open grid returns [[0,0]]. Return concrete materialized integer lists/vectors, not an iterator."
+        ],
+        "javascript": [
+          "Callable: function FindRobotPath(grid)",
+          "The nonnull grid has 0..50 rows and 0..50 columns, all rows have equal length, and entries are 0 or 1. An empty dimension has no path. Coordinates are zero-based.",
+          "Preserve the outer array, every row object, all cell contents and row order. The start and destination must both be open. A one-cell open grid returns [[0,0]]. Return concrete materialized integer lists/vectors, not an iterator."
+        ],
+        "python": [
+          "Callable: def FindRobotPath(grid: list[list[int]]) -> list[list[int]]",
+          "The nonnull grid has 0..50 rows and 0..50 columns, all rows have equal length, and entries are 0 or 1. An empty dimension has no path. Coordinates are zero-based.",
+          "Preserve the outer array, every row object, all cell contents and row order. The start and destination must both be open. A one-cell open grid returns [[0,0]]. Return concrete materialized integer lists/vectors, not an iterator."
+        ],
+        "cpp": [
+          "Callable: std::vector<std::vector<int>> FindRobotPath(const std::vector<std::vector<int>>& grid)",
+          "The nonnull grid has 0..50 rows and 0..50 columns, all rows have equal length, and entries are 0 or 1. An empty dimension has no path. Coordinates are zero-based.",
+          "Preserve the outer array, every row object, all cell contents and row order. The start and destination must both be open. A one-cell open grid returns [[0,0]]. Return concrete materialized integer lists/vectors, not an iterator."
+        ],
+        "java": [
+          "Callable: List<List<Integer>> FindRobotPath(int[][] grid)",
+          "The nonnull grid has 0..50 rows and 0..50 columns, all rows have equal length, and entries are 0 or 1. An empty dimension has no path. Coordinates are zero-based.",
+          "Preserve the outer array, every row object, all cell contents and row order. The start and destination must both be open. A one-cell open grid returns [[0,0]]. Return concrete materialized integer lists/vectors, not an iterator."
+        ]
+      }
+    },
     "ctci6_8_3": {
       "description": "Return any zero-based index i for which values[i] equals i, or -1 if none exists. The array is sorted. The distinctValues flag selects the original distinct-value case or the duplicate-allowed follow-up, allowing the promised distinct case to use logarithmic search.",
       "constraints": [
@@ -2207,6 +2284,71 @@
         ]
       }
     },
+    "ctci6_8_6": {
+      "description": "Solve the three-tower Hanoi puzzle using three stacks. Initially tower 0 holds disks disks..1 from bottom to top, and towers 1 and 2 are empty. Move all disks to tower 2 using tower 1 as a buffer. Return the ordered moves as [disk,fromTower,toTower] triples. Each move transfers one exposed top disk and may not place a larger disk on a smaller disk. Produce the minimum number of moves.",
+      "constraints": [
+        "0 <= disks <= 12. Disk 1 is smallest; tower indices are 0,1,2. For zero disks return an empty move list. For positive disks return exactly 2^disks-1 legal moves ending with all disks on tower 2.",
+        "Maintain three stack representations and perform their pop/push operations when generating the transcript; do not return a count in place of solving the puzzle. A stack may use the end of a list/vector/array as its top. Each returned triple is a materialized integer list/vector."
+      ],
+      "examples": [
+        {
+          "input": "[2]",
+          "output": "[[1, 0, 1], [2, 0, 2], [1, 1, 2]]",
+          "explanation": "For two disks, move [1,0,1], then [2,0,2], then [1,1,2]. Disk 2 becomes exposed only after disk 1 leaves tower 0. Returning just the final tower contents would omit the legal sequence that solves the puzzle."
+        }
+      ],
+      "exampleCases": [
+        {
+          "arguments": [
+            2
+          ],
+          "expected": [
+            [
+              1,
+              0,
+              1
+            ],
+            [
+              2,
+              0,
+              2
+            ],
+            [
+              1,
+              1,
+              2
+            ]
+          ]
+        }
+      ],
+      "contracts": {
+        "csharp": [
+          "Callable: List<List<int>> SolveHanoi(int disks)",
+          "0 <= disks <= 12. Disk 1 is smallest; tower indices are 0,1,2. For zero disks return an empty move list. For positive disks return exactly 2^disks-1 legal moves ending with all disks on tower 2.",
+          "Maintain three stack representations and perform their pop/push operations when generating the transcript; do not return a count in place of solving the puzzle. A stack may use the end of a list/vector/array as its top. Each returned triple is a materialized integer list/vector."
+        ],
+        "javascript": [
+          "Callable: function SolveHanoi(disks)",
+          "0 <= disks <= 12. Disk 1 is smallest; tower indices are 0,1,2. For zero disks return an empty move list. For positive disks return exactly 2^disks-1 legal moves ending with all disks on tower 2.",
+          "Maintain three stack representations and perform their pop/push operations when generating the transcript; do not return a count in place of solving the puzzle. A stack may use the end of a list/vector/array as its top. Each returned triple is a materialized integer list/vector."
+        ],
+        "python": [
+          "Callable: def SolveHanoi(disks: int) -> list[list[int]]",
+          "0 <= disks <= 12. Disk 1 is smallest; tower indices are 0,1,2. For zero disks return an empty move list. For positive disks return exactly 2^disks-1 legal moves ending with all disks on tower 2.",
+          "Maintain three stack representations and perform their pop/push operations when generating the transcript; do not return a count in place of solving the puzzle. A stack may use the end of a list/vector/array as its top. Each returned triple is a materialized integer list/vector."
+        ],
+        "cpp": [
+          "Callable: std::vector<std::vector<int>> SolveHanoi(int disks)",
+          "0 <= disks <= 12. Disk 1 is smallest; tower indices are 0,1,2. For zero disks return an empty move list. For positive disks return exactly 2^disks-1 legal moves ending with all disks on tower 2.",
+          "Maintain three stack representations and perform their pop/push operations when generating the transcript; do not return a count in place of solving the puzzle. A stack may use the end of a list/vector/array as its top. Each returned triple is a materialized integer list/vector."
+        ],
+        "java": [
+          "Callable: List<List<Integer>> SolveHanoi(int disks)",
+          "0 <= disks <= 12. Disk 1 is smallest; tower indices are 0,1,2. For zero disks return an empty move list. For positive disks return exactly 2^disks-1 legal moves ending with all disks on tower 2.",
+          "Maintain three stack representations and perform their pop/push operations when generating the transcript; do not return a count in place of solving the puzzle. A stack may use the end of a list/vector/array as its top. Each returned triple is a materialized integer list/vector."
+        ]
+      }
+    },
     "ctci6_8_7": {
       "description": "Return every permutation of text exactly once. Input characters are all distinct, so different choices of which character occupies a position produce different strings. Output order is unrestricted.",
       "constraints": [
@@ -2379,6 +2521,96 @@
           "0 <= pairs <= 8. Only the two characters ( and ) are used. Return one empty string for zero pairs.",
           "Every output has length 2*pairs and is properly balanced, and there are no repeated outputs. This is generation of all strings, not a count or validation of one supplied string.",
           "Return the concrete lists/vectors in the selected callable signature: a List in C#/Java, an Array in JavaScript, a list in Python, or a vector in C++. A generator or iterator alone is not the return value. "
+        ]
+      }
+    },
+    "ctci6_8_10": {
+      "description": "Recolor the four-directionally connected region containing (row,column) in screen. The region consists of cells with the starting cell's original color, connected through shared horizontal or vertical edges. Change exactly that region to newColor in place, preserve all other cells, and return the filled screen values. Diagonal contact alone does not connect regions.",
+      "constraints": [
+        "The nonnull rectangular screen has 0..50 rows and 0..50 columns with integer colors 0..4; newColor is also 0..4. Row and column are signed 32-bit integers. An out-of-range coordinate or empty dimension leaves the screen unchanged.",
+        "Preserve the outer array, original row objects, dimensions and row order. Only cell values in the specified original-color component may change. If the old and new colors agree, return immediately without repeatedly visiting the region.",
+        "C#/Java/JavaScript/Python may return the same screen object; the C++ signature returns its values by value after mutating the supplied reference. Returning a changed copy while leaving the input unmodified is incorrect."
+      ],
+      "examples": [
+        {
+          "input": "[[[1, 0, 1], [0, 1, 1], [1, 1, 0]], 0, 0, 2]",
+          "output": "[[2, 0, 1], [0, 1, 1], [1, 1, 0]]",
+          "explanation": "With [[1,0,1],[0,1,1],[1,1,0]], start (0,0) and newColor 2. Its right and lower neighbors are both 0, so only that one cell changes, giving [[2,0,1],[0,1,1],[1,1,0]]. The 1 at (1,1) touches diagonally but is outside the region."
+        }
+      ],
+      "exampleCases": [
+        {
+          "arguments": [
+            [
+              [
+                1,
+                0,
+                1
+              ],
+              [
+                0,
+                1,
+                1
+              ],
+              [
+                1,
+                1,
+                0
+              ]
+            ],
+            0,
+            0,
+            2
+          ],
+          "expected": [
+            [
+              2,
+              0,
+              1
+            ],
+            [
+              0,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              0
+            ]
+          ]
+        }
+      ],
+      "contracts": {
+        "csharp": [
+          "Callable: int[][] PaintFill(int[][] screen, int row, int column, int newColor)",
+          "The nonnull rectangular screen has 0..50 rows and 0..50 columns with integer colors 0..4; newColor is also 0..4. Row and column are signed 32-bit integers. An out-of-range coordinate or empty dimension leaves the screen unchanged.",
+          "Preserve the outer array, original row objects, dimensions and row order. Only cell values in the specified original-color component may change. If the old and new colors agree, return immediately without repeatedly visiting the region.",
+          "C#/Java/JavaScript/Python may return the same screen object; the C++ signature returns its values by value after mutating the supplied reference. Returning a changed copy while leaving the input unmodified is incorrect."
+        ],
+        "javascript": [
+          "Callable: function PaintFill(screen, row, column, newColor)",
+          "The nonnull rectangular screen has 0..50 rows and 0..50 columns with integer colors 0..4; newColor is also 0..4. Row and column are signed 32-bit integers. An out-of-range coordinate or empty dimension leaves the screen unchanged.",
+          "Preserve the outer array, original row objects, dimensions and row order. Only cell values in the specified original-color component may change. If the old and new colors agree, return immediately without repeatedly visiting the region.",
+          "C#/Java/JavaScript/Python may return the same screen object; the C++ signature returns its values by value after mutating the supplied reference. Returning a changed copy while leaving the input unmodified is incorrect."
+        ],
+        "python": [
+          "Callable: def PaintFill(screen: list[list[int]], row: int, column: int, newColor: int) -> list[list[int]]",
+          "The nonnull rectangular screen has 0..50 rows and 0..50 columns with integer colors 0..4; newColor is also 0..4. Row and column are signed 32-bit integers. An out-of-range coordinate or empty dimension leaves the screen unchanged.",
+          "Preserve the outer array, original row objects, dimensions and row order. Only cell values in the specified original-color component may change. If the old and new colors agree, return immediately without repeatedly visiting the region.",
+          "C#/Java/JavaScript/Python may return the same screen object; the C++ signature returns its values by value after mutating the supplied reference. Returning a changed copy while leaving the input unmodified is incorrect."
+        ],
+        "cpp": [
+          "Callable: std::vector<std::vector<int>> PaintFill(std::vector<std::vector<int>>& screen, int row, int column, int newColor)",
+          "The nonnull rectangular screen has 0..50 rows and 0..50 columns with integer colors 0..4; newColor is also 0..4. Row and column are signed 32-bit integers. An out-of-range coordinate or empty dimension leaves the screen unchanged.",
+          "Preserve the outer array, original row objects, dimensions and row order. Only cell values in the specified original-color component may change. If the old and new colors agree, return immediately without repeatedly visiting the region.",
+          "C#/Java/JavaScript/Python may return the same screen object; the C++ signature returns its values by value after mutating the supplied reference. Returning a changed copy while leaving the input unmodified is incorrect."
+        ],
+        "java": [
+          "Callable: int[][] PaintFill(int[][] screen, int row, int column, int newColor)",
+          "The nonnull rectangular screen has 0..50 rows and 0..50 columns with integer colors 0..4; newColor is also 0..4. Row and column are signed 32-bit integers. An out-of-range coordinate or empty dimension leaves the screen unchanged.",
+          "Preserve the outer array, original row objects, dimensions and row order. Only cell values in the specified original-color component may change. If the old and new colors agree, return immediately without repeatedly visiting the region.",
+          "C#/Java/JavaScript/Python may return the same screen object; the C++ signature returns its values by value after mutating the supplied reference. Returning a changed copy while leaving the input unmodified is incorrect."
         ]
       }
     },
@@ -3522,6 +3754,323 @@
           "The expression is empty, or alternates single literals 0/1 and operators &/|/^ with no whitespace or existing parentheses. There are at most 13 literals. desired is a boolean. Return the exact integer count.",
           "An empty expression has zero parenthesizations for either desired value. A single literal has one when it matches desired and zero otherwise. Count different binary grouping structures separately, even if their evaluations agree.",
           "The limit gives at most Catalan(12)=208012 groupings, so all counts fit signed 32-bit integers. Do not reorder symbols or count short-circuit execution paths. Preserve inputs."
+        ]
+      }
+    },
+    "ctci6_16_5": {
+      "description": "Return the number of trailing decimal zero digits in n factorial, without constructing the factorial. A trailing zero means a factor of ten at the end of the integer, not any zero digit inside its representation.",
+      "constraints": [
+        "0 <= n <= 2147483647. Define 0! as 1, which has zero trailing zeros. Return the exact signed 32-bit count. Preserve inputs."
+      ],
+      "examples": [
+        {
+          "input": "[25]",
+          "output": "6",
+          "explanation": "For 25!, multiples 5,10,15,20,25 supply five copies of five, and 25 supplies one extra. The successive quotients are 5,1,0, so the result is 6. Counting multiples of five only would incorrectly return 5."
+        }
+      ],
+      "exampleCases": [
+        {
+          "arguments": [
+            25
+          ],
+          "expected": 6
+        }
+      ],
+      "contracts": {
+        "csharp": [
+          "Callable: int CountFactorialZeros(int n)",
+          "0 <= n <= 2147483647. Define 0! as 1, which has zero trailing zeros. Return the exact signed 32-bit count. Preserve inputs."
+        ],
+        "javascript": [
+          "Callable: function CountFactorialZeros(n)",
+          "0 <= n <= 2147483647. Define 0! as 1, which has zero trailing zeros. Return the exact signed 32-bit count. Preserve inputs."
+        ],
+        "python": [
+          "Callable: def CountFactorialZeros(n: int) -> int",
+          "0 <= n <= 2147483647. Define 0! as 1, which has zero trailing zeros. Return the exact signed 32-bit count. Preserve inputs."
+        ],
+        "cpp": [
+          "Callable: int CountFactorialZeros(int n)",
+          "0 <= n <= 2147483647. Define 0! as 1, which has zero trailing zeros. Return the exact signed 32-bit count. Preserve inputs."
+        ],
+        "java": [
+          "Callable: int CountFactorialZeros(int n)",
+          "0 <= n <= 2147483647. Define 0! as 1, which has zero trailing zeros. Return the exact signed 32-bit count. Preserve inputs."
+        ]
+      }
+    },
+    "ctci6_16_7": {
+      "description": "Return the larger of two signed 32-bit integers without using comparison operators, conditional branches, conditional expressions, or a max/min/sorting helper. Use their sign bits and arithmetic/bit operations to select the answer. Either copy is valid when the arguments are equal.",
+      "constraints": [
+        "Both inputs may be any signed 32-bit integer, including -2147483648 and 2147483647. The result is one original input. Preserve inputs.",
+        "Do not use <,>,<=,>=,==,!=, if/switch, a ternary expression, or a helper that performs the comparison for you. Fixed-width unsigned conversion/masking and sign-bit extraction are allowed."
+      ],
+      "examples": [
+        {
+          "input": "[-2147483648, 2147483647]",
+          "output": "2147483647",
+          "explanation": "For first=-2147483648 and second=2147483647, subtraction wraps to the positive bit pattern 1. Its sign alone would select the wrong input. The argument signs differ, so the selector instead chooses the nonnegative second input. For 9 and 4, signs agree and the positive difference correctly chooses 9."
+        }
+      ],
+      "exampleCases": [
+        {
+          "arguments": [
+            -2147483648,
+            2147483647
+          ],
+          "expected": 2147483647
+        }
+      ],
+      "contracts": {
+        "csharp": [
+          "Callable: int MaximumWithoutComparison(int first, int second)",
+          "Both inputs may be any signed 32-bit integer, including -2147483648 and 2147483647. The result is one original input. Preserve inputs.",
+          "Do not use <,>,<=,>=,==,!=, if/switch, a ternary expression, or a helper that performs the comparison for you. Fixed-width unsigned conversion/masking and sign-bit extraction are allowed."
+        ],
+        "javascript": [
+          "Callable: function MaximumWithoutComparison(first, second)",
+          "Both inputs may be any signed 32-bit integer, including -2147483648 and 2147483647. The result is one original input. Preserve inputs.",
+          "Do not use <,>,<=,>=,==,!=, if/switch, a ternary expression, or a helper that performs the comparison for you. Fixed-width unsigned conversion/masking and sign-bit extraction are allowed."
+        ],
+        "python": [
+          "Callable: def MaximumWithoutComparison(first: int, second: int) -> int",
+          "Both inputs may be any signed 32-bit integer, including -2147483648 and 2147483647. The result is one original input. Preserve inputs.",
+          "Do not use <,>,<=,>=,==,!=, if/switch, a ternary expression, or a helper that performs the comparison for you. Fixed-width unsigned conversion/masking and sign-bit extraction are allowed."
+        ],
+        "cpp": [
+          "Callable: int MaximumWithoutComparison(int first, int second)",
+          "Both inputs may be any signed 32-bit integer, including -2147483648 and 2147483647. The result is one original input. Preserve inputs.",
+          "Do not use <,>,<=,>=,==,!=, if/switch, a ternary expression, or a helper that performs the comparison for you. Fixed-width unsigned conversion/masking and sign-bit extraction are allowed."
+        ],
+        "java": [
+          "Callable: int MaximumWithoutComparison(int first, int second)",
+          "Both inputs may be any signed 32-bit integer, including -2147483648 and 2147483647. The result is one original input. Preserve inputs.",
+          "Do not use <,>,<=,>=,==,!=, if/switch, a ternary expression, or a helper that performs the comparison for you. Fixed-width unsigned conversion/masking and sign-bit extraction are allowed."
+        ]
+      }
+    },
+    "ctci6_16_11": {
+      "description": "Return every distinct total length obtainable by placing exactly planks wooden planks end to end. Each plank independently has length shorter or longer, with unlimited availability of each kind. Arrangement order does not make a new length. Return the lengths in strictly increasing order.",
+      "constraints": [
+        "0 <= planks <= 10000 and 1 <= shorter <= longer <= 100000. The largest total is at most 1000000000 and fits signed 32-bit range. Inputs are preserved.",
+        "For zero planks return [0], the length of the empty board. When the two lengths agree, return one length, not repeated copies. Return a concrete integer array/list/vector."
+      ],
+      "examples": [
+        {
+          "input": "[3, 2, 5]",
+          "output": "[6, 9, 12, 15]",
+          "explanation": "For 3 planks of lengths 2 and 5, choose 0,1,2,3 long planks to get 6,9,12,15. Short-long-short and long-short-short both have length 9 and appear once. With equal lengths 2 and 2, only 6 is returned."
+        }
+      ],
+      "exampleCases": [
+        {
+          "arguments": [
+            3,
+            2,
+            5
+          ],
+          "expected": [
+            6,
+            9,
+            12,
+            15
+          ]
+        }
+      ],
+      "contracts": {
+        "csharp": [
+          "Callable: int[] DivingBoardLengths(int planks, int shorter, int longer)",
+          "0 <= planks <= 10000 and 1 <= shorter <= longer <= 100000. The largest total is at most 1000000000 and fits signed 32-bit range. Inputs are preserved.",
+          "For zero planks return [0], the length of the empty board. When the two lengths agree, return one length, not repeated copies. Return a concrete integer array/list/vector."
+        ],
+        "javascript": [
+          "Callable: function DivingBoardLengths(planks, shorter, longer)",
+          "0 <= planks <= 10000 and 1 <= shorter <= longer <= 100000. The largest total is at most 1000000000 and fits signed 32-bit range. Inputs are preserved.",
+          "For zero planks return [0], the length of the empty board. When the two lengths agree, return one length, not repeated copies. Return a concrete integer array/list/vector."
+        ],
+        "python": [
+          "Callable: def DivingBoardLengths(planks: int, shorter: int, longer: int) -> list[int]",
+          "0 <= planks <= 10000 and 1 <= shorter <= longer <= 100000. The largest total is at most 1000000000 and fits signed 32-bit range. Inputs are preserved.",
+          "For zero planks return [0], the length of the empty board. When the two lengths agree, return one length, not repeated copies. Return a concrete integer array/list/vector."
+        ],
+        "cpp": [
+          "Callable: std::vector<int> DivingBoardLengths(int planks, int shorter, int longer)",
+          "0 <= planks <= 10000 and 1 <= shorter <= longer <= 100000. The largest total is at most 1000000000 and fits signed 32-bit range. Inputs are preserved.",
+          "For zero planks return [0], the length of the empty board. When the two lengths agree, return one length, not repeated copies. Return a concrete integer array/list/vector."
+        ],
+        "java": [
+          "Callable: int[] DivingBoardLengths(int planks, int shorter, int longer)",
+          "0 <= planks <= 10000 and 1 <= shorter <= longer <= 100000. The largest total is at most 1000000000 and fits signed 32-bit range. Inputs are preserved.",
+          "For zero planks return [0], the length of the empty board. When the two lengths agree, return one length, not repeated copies. Return a concrete integer array/list/vector."
+        ]
+      }
+    },
+    "ctci6_16_15": {
+      "description": "Score a four-slot Master Mind guess against a secret. Both strings contain only R,G,B,Y. A hit is a matching color in the same slot. A pseudo-hit is a correct color in a different slot after hits have been removed. Each remaining secret occurrence may be used at most once. Return [hits,pseudoHits].",
+      "constraints": [
+        "guess and secret are nonnull strings of exactly four uppercase ASCII characters from R,G,B,Y. Repeated colors are allowed. Preserve both inputs.",
+        "A hit cannot also be a pseudo-hit. Excess guessed occurrences of a color receive no credit beyond the unmatched secret count."
+      ],
+      "examples": [
+        {
+          "input": "[\"GGRR\", \"RGBY\"]",
+          "output": "[1, 1]",
+          "explanation": "For guess GGRR and secret RGBY, slot 1 is a G hit. Remaining secret colors are R,B,Y; remaining guesses are G,R,R. Only one R can consume the single remaining R, so the score is [1,1], not [1,2]."
+        }
+      ],
+      "exampleCases": [
+        {
+          "arguments": [
+            "GGRR",
+            "RGBY"
+          ],
+          "expected": [
+            1,
+            1
+          ]
+        }
+      ],
+      "contracts": {
+        "csharp": [
+          "Callable: int[] ScoreMasterMind(string guess, string secret)",
+          "guess and secret are nonnull strings of exactly four uppercase ASCII characters from R,G,B,Y. Repeated colors are allowed. Preserve both inputs.",
+          "A hit cannot also be a pseudo-hit. Excess guessed occurrences of a color receive no credit beyond the unmatched secret count."
+        ],
+        "javascript": [
+          "Callable: function ScoreMasterMind(guess, secret)",
+          "guess and secret are nonnull strings of exactly four uppercase ASCII characters from R,G,B,Y. Repeated colors are allowed. Preserve both inputs.",
+          "A hit cannot also be a pseudo-hit. Excess guessed occurrences of a color receive no credit beyond the unmatched secret count."
+        ],
+        "python": [
+          "Callable: def ScoreMasterMind(guess: str, secret: str) -> list[int]",
+          "guess and secret are nonnull strings of exactly four uppercase ASCII characters from R,G,B,Y. Repeated colors are allowed. Preserve both inputs.",
+          "A hit cannot also be a pseudo-hit. Excess guessed occurrences of a color receive no credit beyond the unmatched secret count."
+        ],
+        "cpp": [
+          "Callable: std::vector<int> ScoreMasterMind(const std::string& guess, const std::string& secret)",
+          "guess and secret are nonnull strings of exactly four uppercase ASCII characters from R,G,B,Y. Repeated colors are allowed. Preserve both inputs.",
+          "A hit cannot also be a pseudo-hit. Excess guessed occurrences of a color receive no credit beyond the unmatched secret count."
+        ],
+        "java": [
+          "Callable: int[] ScoreMasterMind(String guess, String secret)",
+          "guess and secret are nonnull strings of exactly four uppercase ASCII characters from R,G,B,Y. Repeated colors are allowed. Preserve both inputs.",
+          "A hit cannot also be a pseudo-hit. Excess guessed occurrences of a color receive no credit beyond the unmatched secret count."
+        ]
+      }
+    },
+    "ctci6_16_16": {
+      "description": "Return the inclusive zero-based endpoints [left,right] of the shortest contiguous window which, if sorted in nondecreasing order, would make the entire array nondecreasing. Do not actually change the input. If it is already sorted, including an empty or singleton array, return [-1,-1].",
+      "constraints": [
+        "values contains 0..10000 signed 32-bit integers. Duplicates are allowed. Preserve the input array and order.",
+        "Equal adjacent values are already in sorted order. The returned endpoints describe the window in the original array."
+      ],
+      "examples": [
+        {
+          "input": "[[1, 2, 4, 3, 3, 5]]",
+          "output": "[2, 4]",
+          "explanation": "For [1,2,4,3,3,5], the running maximum becomes 4 at index 2; indices 3 and 4 are below it, so right=4. Scanning backward, the suffix minimum is 3 when index 2 is reached, giving left=2. Sorting indices 2..4 produces [1,2,3,3,4,5]."
+        }
+      ],
+      "exampleCases": [
+        {
+          "arguments": [
+            [
+              1,
+              2,
+              4,
+              3,
+              3,
+              5
+            ]
+          ],
+          "expected": [
+            2,
+            4
+          ]
+        }
+      ],
+      "contracts": {
+        "csharp": [
+          "Callable: int[] ShortestSortWindow(int[] values)",
+          "values contains 0..10000 signed 32-bit integers. Duplicates are allowed. Preserve the input array and order.",
+          "Equal adjacent values are already in sorted order. The returned endpoints describe the window in the original array."
+        ],
+        "javascript": [
+          "Callable: function ShortestSortWindow(values)",
+          "values contains 0..10000 signed 32-bit integers. Duplicates are allowed. Preserve the input array and order.",
+          "Equal adjacent values are already in sorted order. The returned endpoints describe the window in the original array."
+        ],
+        "python": [
+          "Callable: def ShortestSortWindow(values: list[int]) -> list[int]",
+          "values contains 0..10000 signed 32-bit integers. Duplicates are allowed. Preserve the input array and order.",
+          "Equal adjacent values are already in sorted order. The returned endpoints describe the window in the original array."
+        ],
+        "cpp": [
+          "Callable: std::vector<int> ShortestSortWindow(const std::vector<int>& values)",
+          "values contains 0..10000 signed 32-bit integers. Duplicates are allowed. Preserve the input array and order.",
+          "Equal adjacent values are already in sorted order. The returned endpoints describe the window in the original array."
+        ],
+        "java": [
+          "Callable: int[] ShortestSortWindow(int[] values)",
+          "values contains 0..10000 signed 32-bit integers. Duplicates are allowed. Preserve the input array and order.",
+          "Equal adjacent values are already in sorted order. The returned endpoints describe the window in the original array."
+        ]
+      }
+    },
+    "ctci6_16_17": {
+      "description": "Return the largest sum of a contiguous sequence of values. The empty sequence is allowed and has sum zero, so an empty array or all-negative array returns zero. Preserve the input; return the sum rather than sequence endpoints.",
+      "constraints": [
+        "values has 0..1000 integers, each in -1000000..1000000. Every contiguous sum is within signed 32-bit range. The input is nonnull and unchanged.",
+        "A sequence must use consecutive positions in their original order. Do not select separated positive values. Empty-sequence permission is intentional and matches the public source's zero result for all-negative input."
+      ],
+      "examples": [
+        {
+          "input": "[[2, -8, 3, -2, 4, -10]]",
+          "output": "5",
+          "explanation": "For [2,-8,3,-2,4,-10], running totals after discarding negative suffixes are 2,0,3,1,5,0. The best is 5 from [3,-2,4]. Adding all positive elements would incorrectly return 9 because those positions are not contiguous."
+        }
+      ],
+      "exampleCases": [
+        {
+          "arguments": [
+            [
+              2,
+              -8,
+              3,
+              -2,
+              4,
+              -10
+            ]
+          ],
+          "expected": 5
+        }
+      ],
+      "contracts": {
+        "csharp": [
+          "Callable: int MaximumContiguousSum(int[] values)",
+          "values has 0..1000 integers, each in -1000000..1000000. Every contiguous sum is within signed 32-bit range. The input is nonnull and unchanged.",
+          "A sequence must use consecutive positions in their original order. Do not select separated positive values. Empty-sequence permission is intentional and matches the public source's zero result for all-negative input."
+        ],
+        "javascript": [
+          "Callable: function MaximumContiguousSum(values)",
+          "values has 0..1000 integers, each in -1000000..1000000. Every contiguous sum is within signed 32-bit range. The input is nonnull and unchanged.",
+          "A sequence must use consecutive positions in their original order. Do not select separated positive values. Empty-sequence permission is intentional and matches the public source's zero result for all-negative input."
+        ],
+        "python": [
+          "Callable: def MaximumContiguousSum(values: list[int]) -> int",
+          "values has 0..1000 integers, each in -1000000..1000000. Every contiguous sum is within signed 32-bit range. The input is nonnull and unchanged.",
+          "A sequence must use consecutive positions in their original order. Do not select separated positive values. Empty-sequence permission is intentional and matches the public source's zero result for all-negative input."
+        ],
+        "cpp": [
+          "Callable: int MaximumContiguousSum(const std::vector<int>& values)",
+          "values has 0..1000 integers, each in -1000000..1000000. Every contiguous sum is within signed 32-bit range. The input is nonnull and unchanged.",
+          "A sequence must use consecutive positions in their original order. Do not select separated positive values. Empty-sequence permission is intentional and matches the public source's zero result for all-negative input."
+        ],
+        "java": [
+          "Callable: int MaximumContiguousSum(int[] values)",
+          "values has 0..1000 integers, each in -1000000..1000000. Every contiguous sum is within signed 32-bit range. The input is nonnull and unchanged.",
+          "A sequence must use consecutive positions in their original order. Do not select separated positive values. Empty-sequence permission is intentional and matches the public source's zero result for all-negative input."
         ]
       }
     }

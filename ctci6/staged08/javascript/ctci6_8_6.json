@@ -1,0 +1,35 @@
+{
+  "explanation": "The largest disk cannot move to the destination until all smaller disks have been moved to the buffer. After that largest-disk move, the smaller stack must move from the buffer onto it. The same three-tower task appears twice with one fewer disk, so swapping the source, buffer and destination roles gives the recursive procedure.",
+  "correctness": "Zero disks require no move. Assume the procedure correctly transfers a legal stack of k-1 disks. It first transfers those smaller disks to the buffer, exposing disk k and leaving the destination free of smaller disks. Moving disk k is legal. The second recursive transfer places the smaller stack on disk k, preserving its legal order. Thus induction transfers the whole stack. Any solution must move the largest disk and move all smaller disks away before it and onto it afterward, requiring at least 2*T(k-1)+1 moves. The procedure meets this bound with T(0)=0, giving exactly 2^k-1 moves. Actual stack pops supply the recorded disk identity.",
+  "walkthrough": "For two disks, move [1,0,1], then [2,0,2], then [1,1,2]. Disk 2 becomes exposed only after disk 1 leaves tower 0. Returning just the final tower contents would omit the legal sequence that solves the puzzle.",
+  "walkthroughCase": {
+    "arguments": [
+      2
+    ],
+    "expected": [
+      [
+        1,
+        0,
+        1
+      ],
+      [
+        2,
+        0,
+        2
+      ],
+      [
+        1,
+        1,
+        2
+      ]
+    ]
+  },
+  "timeComplexity": "O(2^disks) time: one constant-time stack move and transcript append per required move.",
+  "spaceComplexity": "O(disks) auxiliary space for three stacks and recursion depth, excluding O(2^disks) returned move triples.",
+  "edgeCases": [
+    "Zero and one disk; repeated calls start from fresh towers.",
+    "Every move must use the source top and preserve the smaller-on-larger rule.",
+    "Twelve disks require 4095 moves; an output-size exponential bound is essential."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 8.6. No affiliation is implied."
+}

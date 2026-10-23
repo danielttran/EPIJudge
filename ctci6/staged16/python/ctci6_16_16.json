@@ -1,0 +1,28 @@
+{
+  "explanation": "Scanning left to right, any value below the largest earlier value is too far right and must lie inside the sorting window. Its last occurrence of such a violation fixes the right endpoint. Symmetrically, a value above the smallest later value is too far left; scanning backward locates the left endpoint. This avoids sorting a full copy just to find mismatches.",
+  "correctness": "At each forward position, the running maximum equals the maximum of the prefix. A value smaller than that maximum cannot be fixed without including its position, so the last such position is a necessary right bound. The reverse argument makes the first position above its suffix minimum a necessary left bound. Outside those bounds, values are ordered consistently with all preceding or following values. Sorting the enclosed region therefore removes all cross-order violations and makes the whole array nondecreasing. Since neither bound can be excluded, the resulting window is shortest. No forward violation means no inversion and hence an already sorted array.",
+  "walkthrough": "For [1,2,4,3,3,5], the running maximum becomes 4 at index 2; indices 3 and 4 are below it, so right=4. Scanning backward, the suffix minimum is 3 when index 2 is reached, giving left=2. Sorting indices 2..4 produces [1,2,3,3,4,5].",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        1,
+        2,
+        4,
+        3,
+        3,
+        5
+      ]
+    ],
+    "expected": [
+      2,
+      4
+    ]
+  },
+  "timeComplexity": "O(n) time for two scans.",
+  "spaceComplexity": "O(1) auxiliary storage, excluding the two-integer output.",
+  "edgeCases": [
+    "Empty, singleton, already sorted, all equal.",
+    "Reverse order, duplicates around both endpoints, signed extremes."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.16. No affiliation is implied."
+}

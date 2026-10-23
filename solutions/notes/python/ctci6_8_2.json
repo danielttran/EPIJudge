@@ -1,0 +1,47 @@
+{
+  "explanation": "A cell can be reached only from its upper or left neighbor. Store one predecessor for each reachable open cell while scanning rows. This avoids revisiting the same failed subproblem and provides enough information to reconstruct one path without copying a growing path for every candidate.",
+  "correctness": "The origin is reachable exactly when it is open. At every later open cell, the only possible incoming moves are from its upper or left neighbor. By induction in row order, their reachability is already correct, so recording one reachable predecessor marks precisely the reachable cells. A blocked cell is never marked. If the destination is unmarked, no path exists. Otherwise following predecessors reaches the origin and decreases the row or column at each step. Reversing those coordinates produces a legal forward path with both endpoints, using only open cells.",
+  "walkthrough": "For [[1,1,0],[0,1,1]], the origin reaches (0,1), which reaches (1,1), then (1,2). The returned path is [[0,0],[0,1],[1,1],[1,2]]. Cell (1,0) is blocked, so a diagonal jump from the origin to (1,1) would not be a valid alternative.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          1,
+          1,
+          0
+        ],
+        [
+          0,
+          1,
+          1
+        ]
+      ]
+    ],
+    "expected": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        2
+      ]
+    ]
+  },
+  "timeComplexity": "O(rows*columns) time to scan the grid, plus O(rows+columns) path reconstruction when a path exists.",
+  "spaceComplexity": "O(rows*columns) predecessor storage, excluding the returned O(rows+columns) coordinate pairs. No recursion stack is used.",
+  "edgeCases": [
+    "Empty dimensions, blocked origin or destination, one open cell.",
+    "A unique narrow corridor, multiple valid paths, and an unreachable region.",
+    "Right/down moves only: diagonal and backward steps are invalid."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 8.2. No affiliation is implied."
+}

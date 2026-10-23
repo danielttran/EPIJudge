@@ -29,6 +29,7 @@ TYPES = {
 
 for _language in TYPES:
     TYPES[_language]["arrangements"] = TYPES[_language]["sets"]
+    TYPES[_language]["path"] = TYPES[_language]["sets"]
     TYPES[_language]["b"] = {
         "csharp": "bool",
         "java": "boolean",
@@ -72,7 +73,7 @@ def declare(spec, language, body, class_name="Solution"):
         + spec["method"]
         + "("
         + ", ".join(
-            ("const " if language == "cpp" and t in ("s", "ai", "aai") else "")
+            ("const " if language == "cpp" and t in ("s", "ai", "aai") and spec["mutation"] != "screen" else "")
             + types[t]
             + ("&" if language == "cpp" and t in ("s", "ai", "aai") else "")
             + " "
@@ -96,8 +97,10 @@ def declare(spec, language, body, class_name="Solution"):
 
 
 def neutral(spec, language):
-    if spec["result"] not in ("sets", "strings", "arrangements"):
+    if spec["result"] not in ("sets", "strings", "arrangements", "path", "aai"):
         return starter_body(spec, language)
+    if spec["result"] == "aai" and language == "java":
+        return "return new int[0][];"
     return {
         "csharp": "return [];",
         "java": "return new ArrayList<>();",

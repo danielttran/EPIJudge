@@ -124,7 +124,7 @@ int main(){{std::ifstream input("cases.json");json rows;input>>rows;json results
 def source(language, starters=False, only_ref=None):
     from models08 import header
 
-    if only_ref is None or only_ref in ("8.3", "8.12", "8.13", "8.14"):
+    if only_ref is None or only_ref in ("8.2", "8.3", "8.6", "8.10", "8.12", "8.13", "8.14"):
         from harness08_typed import source as typed_source
         return typed_source(language, starters, only_ref)
     if only_ref in ("8.1", "8.5", "8.11"):

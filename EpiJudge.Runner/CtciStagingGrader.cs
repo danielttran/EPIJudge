@@ -69,6 +69,24 @@ public static class CtciStagingGrader
         {
             if (observed.ValueKind != JsonValueKind.Object || observed.TryGetProperty("error", out var error) && error.ValueKind != JsonValueKind.Null)
                 return "Your code did not finish this case successfully.";
+            if (definition.Batch == 8 && definition.Ref == "8.2")
+            {
+                if (observed.GetProperty("mutationOk").ValueKind != JsonValueKind.True) return "Preserve the grid and its original rows.";
+                var path = observed.GetProperty("actual").EnumerateArray().Select(Integers).ToArray();
+                if (path.Length == 0) return test.Expected.GetArrayLength() == 0 ? null : "A path exists; return one legal path.";
+                var grid = test.Arguments[0];
+                int rows = grid.GetArrayLength(), columns = rows == 0 ? 0 : grid[0].GetArrayLength();
+                if (path.Any(p => p.Length != 2) || !path[0].SequenceEqual(new[] { 0, 0 }) || !path[^1].SequenceEqual(new[] { rows - 1, columns - 1 }))
+                    return "Include the origin and destination in travel order.";
+                for (int i = 0; i < path.Length; i++)
+                {
+                    int r = path[i][0], c = path[i][1];
+                    if (r < 0 || r >= rows || c < 0 || c >= columns || grid[r][c].GetInt32() != 1) return "Visit only open cells within the grid.";
+                    if (i > 0 && !((r == path[i - 1][0] + 1 && c == path[i - 1][1]) || (r == path[i - 1][0] && c == path[i - 1][1] + 1)))
+                        return "Each move must be exactly one cell right or down.";
+                }
+                return null;
+            }
             if (definition.Batch == 8 && definition.Ref == "8.3")
             {
                 if (observed.GetProperty("mutationOk").ValueKind != JsonValueKind.True) return "Preserve the sorted input array.";
@@ -84,7 +102,7 @@ public static class CtciStagingGrader
                 return CanonicalCollection(definition.Result, observed.GetProperty("actual")).SequenceEqual(CanonicalCollection(definition.Result, test.Expected), StringComparer.Ordinal)
                     ? null : "Return every required subset or string exactly once. Output order is unrestricted.";
             }
-            if (definition.Batch is 1 or 3 or 5 or 8)
+            if (definition.Batch is 1 or 3 or 5 or 8 or 16)
             {
                 if (observed.GetProperty("mutationOk").ValueKind != JsonValueKind.True)
                     return definition.Batch == 3 ? "Preserve the required stack and original Animal identities, fields and return types." : "Preserve the required input, row, or buffer identities.";
@@ -173,7 +191,7 @@ public static class CtciStagingGrader
     {
         try
         {
-            if (definition.Batch is 1 or 3 or 5 or 8) return observed.GetProperty("actual").Clone();
+            if (definition.Batch is 1 or 3 or 5 or 8 or 16) return observed.GetProperty("actual").Clone();
             if (definition.Ref is "2.1" or "2.4" or "2.5") return observed.GetProperty("reachableValues").Clone();
             if (definition.Ref == "2.3") return Encode(new { success = observed.GetProperty("returnedBool"), values = observed.GetProperty("reachableValues") });
             if (definition.Ref == "2.6") return observed.GetProperty("returnedBool").Clone();

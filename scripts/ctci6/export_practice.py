@@ -43,6 +43,7 @@ def export():
         "review03.json",
         "review05.json",
         "review08.json",
+        "review16.json",
     ):
         review = json.loads((ROOT / "ctci6" / filename).read_text())
         if set(review["languagesReviewed"]) != set(LANGUAGES):
@@ -67,6 +68,7 @@ def export():
         3: "Stacks and queues",
         5: "Bit manipulation",
         8: "Recursion and dynamic programming",
+        16: "Moderate interview problems",
     }
     source_report = []
     for position, ref in enumerate(
@@ -104,7 +106,7 @@ def export():
                 ).hexdigest()
                 if row["batch"] in (2, 3)
                 or row["batch"] == 8
-                and (row["result"] in ("sets", "strings", "arrangements") or ref == "8.3")
+                and (row["result"] in ("sets", "strings", "arrangements") or ref in ("8.2", "8.3"))
                 else digest(inspect.getsource(core_match))
             )
             for variant, field, outcome in (

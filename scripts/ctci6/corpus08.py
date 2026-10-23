@@ -68,6 +68,49 @@ def oracle(ref, args):
 
     if ref in ("8.1", "8.5", "8.11"):
         return basic_oracle(ref, args)
+    if ref == "8.2":
+        # Breadth-first coordinate search, independent of the predecessor scan.
+        from collections import deque
+        grid = args[0]
+        if not grid or not grid[0] or not grid[0][0]:
+            return []
+        pending = deque([[[0, 0]]])
+        visited = {(0, 0)}
+        while pending:
+            path = pending.popleft()
+            r, c = path[-1]
+            if (r, c) == (len(grid)-1, len(grid[0])-1):
+                return path
+            for nr, nc in ((r+1, c), (r, c+1)):
+                if nr < len(grid) and nc < len(grid[0]) and grid[nr][nc] and (nr,nc) not in visited:
+                    visited.add((nr,nc)); pending.append(path + [[nr,nc]])
+        return []
+    if ref == "8.6":
+        # Iterative legal-move cycle, not the recursive transfer implementation.
+        count = args[0]
+        towers = [list(range(count,0,-1)), [], []]
+        pairs = [(0,2),(0,1),(1,2)] if count % 2 else [(0,1),(0,2),(1,2)]
+        result = []
+        for move in range((1 << count)-1):
+            a,b = pairs[move % 3]
+            if not towers[a] or towers[b] and towers[b][-1] < towers[a][-1]:
+                a,b = b,a
+            disk = towers[a].pop(); towers[b].append(disk); result.append([disk,a,b])
+        return result
+    if ref == "8.10":
+        # Discover the entire original-color component before writing any color.
+        screen, row, column, color = args
+        result = [r.copy() for r in screen]
+        if not screen or not screen[0] or not (0 <= row < len(screen) and 0 <= column < len(screen[0])):
+            return result
+        component, pending = {(row,column)}, [(row,column)]
+        for r,c in pending:
+            for nr,nc in ((r-1,c),(r+1,c),(r,c-1),(r,c+1)):
+                if 0 <= nr < len(screen) and 0 <= nc < len(screen[0]) and screen[nr][nc] == screen[row][column] and (nr,nc) not in component:
+                    component.add((nr,nc));pending.append((nr,nc))
+        for r,c in component:
+            result[r][c] = color
+        return result
     if ref == "8.3":
         return next((i for i, value in enumerate(args[0]) if i == value), -1)
     if ref == "8.12":
@@ -132,7 +175,24 @@ def cases(spec):
         return basic_cases(spec)
     rng = random.Random(68000 + int(ref.split(".")[1]))
     args = [spec["example"][0]]
-    if ref == "8.3":
+    if ref == "8.2":
+        args += [[[]], [[[]]], [[[0]]], [[[1]]]]
+        args += [[[[bits[r*columns+c] for c in range(columns)] for r in range(rows)]]
+                 for rows, columns in ((1,4),(4,1),(2,3),(3,3))
+                 for bits in product((0,1), repeat=rows*columns)]
+        args += [[[[1]*50 for _ in range(50)]], [[[0]*50 for _ in range(50)]]]
+        args += [[[[rng.randrange(2) for _ in range(7)] for _ in range(8)]] for _ in range(30)]
+    elif ref == "8.6":
+        args += [[n] for n in range(13)]
+        args += [[3], [3]]
+    elif ref == "8.10":
+        args += [[[],0,0,1], [[[]],0,0,2], [[[1]],0,0,1], [[[1]],0,0,3]]
+        args += [[[[bits[r*3+c] for c in range(3)] for r in range(3)], row, col, color]
+                 for bits in product((0,1),repeat=9) for row,col in ((0,0),(1,1),(2,2)) for color in (0,1,2)]
+        args += [[[[3]*50 for _ in range(50)],r,c,color]
+                 for r,c,color in ((0,0,4),(49,49,3),(-2147483648,0,1),(0,2147483647,2))]
+        args += [[[[rng.randrange(5) for _ in range(8)] for _ in range(7)],rng.randrange(7),rng.randrange(8),rng.randrange(5)] for _ in range(40)]
+    elif ref == "8.3":
         args += [[list(values), False] for n in range(6)
                  for values in combinations_with_replacement(range(-2, 5), n)]
         args += [[list(values), True] for n in range(7)
@@ -224,6 +284,22 @@ def canonical(ref, value):
 
 
 def valid_observation(ref, case, observed):
+    if ref in ("8.2", "8.6", "8.10"):
+        if not isinstance(observed, dict) or observed.get("mutationOk") is not True:
+            return False
+        actual = observed.get("actual")
+        if type(actual) is not list or any(type(row) is not list or any(type(v) is not int for v in row) for row in actual):
+            return False
+        if ref != "8.2":
+            return actual == case["expected"]
+        grid = case["arguments"][0]
+        if not actual:
+            return not case["expected"]
+        if not grid or not grid[0] or any(len(cell) != 2 for cell in actual):
+            return False
+        return (actual[0] == [0,0] and actual[-1] == [len(grid)-1,len(grid[0])-1]
+                and all(0 <= r < len(grid) and 0 <= c < len(grid[0]) and grid[r][c] == 1 for r,c in actual)
+                and all((b[0]-a[0],b[1]-a[1]) in ((1,0),(0,1)) for a,b in zip(actual,actual[1:])))
     if ref == "8.3":
         if not isinstance(observed, dict) or observed.get("mutationOk") is not True:
             return False

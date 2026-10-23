@@ -74,6 +74,18 @@ public sealed class CtciStagingTests
     }
 
     [Fact]
+    public void RobotAcceptsAlternativePathsButRejectsDiagonalAndBlockedSteps()
+    {
+        var definition = Definition("8.2");
+        var test = Case([new int[][] { [1, 1], [1, 1] }], new int[][] { [0, 0], [1, 0], [1, 1] });
+        Assert.Null(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new int[][] { [0, 0], [0, 1], [1, 1] }, mutationOk = true })));
+        foreach (var path in new int[][][] { [], [[0, 0], [1, 1]], [[0, 0], [0, 1], [0, 0], [1, 0], [1, 1]] })
+            Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = path, mutationOk = true })));
+        var blocked = Case([new int[][] { [1, 0], [0, 1] }], Array.Empty<int[]>());
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, blocked, Json(new { actual = new int[][] { [0, 0], [1, 1] }, mutationOk = true })));
+    }
+
+    [Fact]
     public void MagicIndexAcceptsAnyValidIndexAndRejectsFalseAbsence()
     {
         var definition = Definition("8.3");

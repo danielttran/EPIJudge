@@ -87,6 +87,7 @@ def audit(publication=False):
         ("staged03", "review03.json"),
         ("staged05", "review05.json"),
         ("staged08", "review08.json"),
+        ("staged16", "review16.json"),
     ):
         review = json.loads((ROOT / "ctci6" / review_file).read_text())
         batch_reviewed = {row["ref"] for row in review["questions"]}

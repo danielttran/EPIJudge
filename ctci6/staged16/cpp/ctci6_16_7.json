@@ -1,0 +1,19 @@
+{
+  "explanation": "The sign of first-second decides which input is larger only when subtraction cannot overflow. If signs differ, the nonnegative input is larger regardless of the wrapped difference. If signs agree, the difference fits signed range and its sign is reliable. Combine those two choices as zero/one selectors instead of branching.",
+  "correctness": "Let a and b be bits indicating negative inputs, and d indicate a negative 32-bit difference. When a xor b is one, choose first exactly when a is zero. When their xor is zero, choose first exactly when d is zero; equal inputs may choose first. These two cases are disjoint and exhaustive. The computed selector is therefore zero or one and selects precisely a maximum input. A mask derived from the selector copies the chosen input bits. C++ computes the difference in uint32_t and converts the selected exact signed operand arithmetically, avoiding signed-overflow and implementation-defined unsigned-to-signed conversion.",
+  "walkthrough": "For first=-2147483648 and second=2147483647, subtraction wraps to the positive bit pattern 1. Its sign alone would select the wrong input. The argument signs differ, so the selector instead chooses the nonnegative second input. For 9 and 4, signs agree and the positive difference correctly chooses 9.",
+  "walkthroughCase": {
+    "arguments": [
+      -2147483648,
+      2147483647
+    ],
+    "expected": 2147483647
+  },
+  "timeComplexity": "O(1) fixed-width arithmetic and bit operations.",
+  "spaceComplexity": "O(1) auxiliary scalar storage.",
+  "edgeCases": [
+    "Opposite signed endpoints, equal values, zero and negatives.",
+    "A subtraction that wraps must not influence the opposite-sign choice."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.7. No affiliation is implied."
+}

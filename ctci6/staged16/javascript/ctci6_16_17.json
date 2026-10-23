@@ -1,0 +1,25 @@
+{
+  "explanation": "For any next element, a best suffix either extends a nonnegative previous suffix or starts afresh. A negative running prefix can never improve a future sum, so discard it. Retain a separate best-so-far total so ending a promising sequence does not lose its result.",
+  "correctness": "After processing a prefix, running is the maximum of zero and the sums of all suffixes of that prefix. Appending the next value extends every nonempty candidate suffix; taking max(0,running+value) also permits the empty suffix and subsumes starting with this value alone. Induction preserves that invariant. Every contiguous sequence ends at some position, so updating best with every running value finds the greatest of all sequence sums, including the empty sequence.",
+  "walkthrough": "For [2,-8,3,-2,4,-10], running totals after discarding negative suffixes are 2,0,3,1,5,0. The best is 5 from [3,-2,4]. Adding all positive elements would incorrectly return 9 because those positions are not contiguous.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        2,
+        -8,
+        3,
+        -2,
+        4,
+        -10
+      ]
+    ],
+    "expected": 5
+  },
+  "timeComplexity": "O(n) time in one scan.",
+  "spaceComplexity": "O(1) auxiliary scalar storage.",
+  "edgeCases": [
+    "Empty and all-negative inputs return zero.",
+    "Zeros, all-positive input, a best interval strictly inside the array."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.17. No affiliation is implied."
+}

@@ -64,6 +64,98 @@
     }
   },
   {
+    "ref": "8.2",
+    "method": "FindRobotPath",
+    "params": [
+      [
+        "grid",
+        "aai"
+      ]
+    ],
+    "result": "path",
+    "mutation": "none",
+    "description": "Find one path from the top-left cell to the bottom-right cell of a rectangular grid, moving only one cell right or one cell down at each step. A 1 is open and a 0 is blocked. Return the visited [row,column] pairs in travel order, including both endpoints, or an empty collection when no path exists. Any valid path is accepted; this asks for one path, not all paths or a count.",
+    "constraints": [
+      "The nonnull grid has 0..50 rows and 0..50 columns, all rows have equal length, and entries are 0 or 1. An empty dimension has no path. Coordinates are zero-based.",
+      "Preserve the outer array, every row object, all cell contents and row order. The start and destination must both be open. A one-cell open grid returns [[0,0]]. Return concrete materialized integer lists/vectors, not an iterator."
+    ],
+    "why": "A cell can be reached only from its upper or left neighbor. Store one predecessor for each reachable open cell while scanning rows. This avoids revisiting the same failed subproblem and provides enough information to reconstruct one path without copying a growing path for every candidate.",
+    "correctness": "The origin is reachable exactly when it is open. At every later open cell, the only possible incoming moves are from its upper or left neighbor. By induction in row order, their reachability is already correct, so recording one reachable predecessor marks precisely the reachable cells. A blocked cell is never marked. If the destination is unmarked, no path exists. Otherwise following predecessors reaches the origin and decreases the row or column at each step. Reversing those coordinates produces a legal forward path with both endpoints, using only open cells.",
+    "walkthrough": "For [[1,1,0],[0,1,1]], the origin reaches (0,1), which reaches (1,1), then (1,2). The returned path is [[0,0],[0,1],[1,1],[1,2]]. Cell (1,0) is blocked, so a diagonal jump from the origin to (1,1) would not be a valid alternative.",
+    "example": [
+      [
+        [
+          [
+            1,
+            1,
+            0
+          ],
+          [
+            0,
+            1,
+            1
+          ]
+        ]
+      ],
+      [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ]
+    ],
+    "time": "O(rows*columns) time to scan the grid, plus O(rows+columns) path reconstruction when a path exists.",
+    "space": "O(rows*columns) predecessor storage, excluding the returned O(rows+columns) coordinate pairs. No recursion stack is used.",
+    "edges": [
+      "Empty dimensions, blocked origin or destination, one open cell.",
+      "A unique narrow corridor, multiple valid paths, and an unreachable region.",
+      "Right/down moves only: diagonal and backward steps are invalid."
+    ],
+    "related": "An all-path enumerator or unrestricted four-direction maze solver does not satisfy the same task. The author Java implementation establishes the one-path requirement; the community JavaScript example enumerates all paths and is not used as that contract.",
+    "id": "ctci6_8_2",
+    "title": "Robot in a Grid",
+    "testCount": 644,
+    "languages": {
+      "csharp": {
+        "signature": "List<List<int>> FindRobotPath(int[][] grid)",
+        "starterCode": "public class Solution\n{\n    public List<List<int>> FindRobotPath(int[][] grid)\n    {\n        return [];\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public List<List<int>> FindRobotPath(int[][] grid)\n    {\n        int rows = grid.Length, columns = rows == 0 ? 0 : grid[0].Length;\n        if (rows == 0 || columns == 0)\n        {\n            return [];\n        }\n        int[,] parent = new int[rows, columns];\n        var path = new List<List<int>>();\n        for (int r = 0; r < rows; ++r)\n        {\n            for (int c = 0; c < columns; ++c)\n            {\n                if (grid[r][c] == 0)\n                    continue;\n                if (r == 0 && c == 0)\n                    parent[r, c] = 3;\n                else if (r > 0 && parent[r - 1, c] != 0)\n                    parent[r, c] = 1;\n                else if (c > 0 && parent[r, c - 1] != 0)\n                    parent[r, c] = 2;\n            }\n        }\n        if (parent[rows - 1, columns - 1] == 0)\n        {\n            return [];\n        }\n        int row = rows - 1, col = columns - 1;\n        while (true)\n        {\n            path.Add([row, col]);\n            if (row == 0 && col == 0)\n                break;\n            if (parent[row, col] == 1)\n                --row;\n            else\n                --col;\n        }\n        path.Reverse();\n        return path;\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function FindRobotPath(grid)",
+        "starterCode": "function FindRobotPath(grid) {\n  return [];\n}\n",
+        "solutionCode": "function FindRobotPath(grid) {\n  const rows = grid.length,\n    columns = rows ? grid[0].length : 0;\n  if (!rows || !columns) return [];\n  const parent = Array.from({ length: rows }, () => Array(columns).fill(0));\n  for (let r = 0; r < rows; ++r) {\n    for (let c = 0; c < columns; ++c) {\n      if (grid[r][c] === 0) continue;\n      if (r === 0 && c === 0) parent[r][c] = 3;\n      else if (r > 0 && parent[r - 1][c]) parent[r][c] = 1;\n      else if (c > 0 && parent[r][c - 1]) parent[r][c] = 2;\n    }\n  }\n  if (!parent[rows - 1][columns - 1]) return [];\n  const path = [];\n  let r = rows - 1,\n    c = columns - 1;\n  while (true) {\n    path.push([r, c]);\n    if (r === 0 && c === 0) break;\n    if (parent[r][c] === 1) --r;\n    else --c;\n  }\n  path.reverse();\n  return path;\n}\n"
+      },
+      "python": {
+        "signature": "def FindRobotPath(grid: list[list[int]]) -> list[list[int]]",
+        "starterCode": "def FindRobotPath(grid: list[list[int]]) -> list[list[int]]:\n    return []\n",
+        "solutionCode": "def FindRobotPath(grid: list[list[int]]) -> list[list[int]]:\n    rows = len(grid)\n    columns = len(grid[0]) if rows else 0\n    if not rows or not columns:\n        return []\n    parent = [[0] * columns for _ in range(rows)]\n    for r in range(rows):\n        for c in range(columns):\n            if grid[r][c] == 0:\n                continue\n            if r == 0 and c == 0:\n                parent[r][c] = 3\n            elif r > 0 and parent[r - 1][c]:\n                parent[r][c] = 1\n            elif c > 0 and parent[r][c - 1]:\n                parent[r][c] = 2\n    if not parent[-1][-1]:\n        return []\n    path = []\n    r, c = rows - 1, columns - 1\n    while True:\n        path.append([r, c])\n        if r == 0 and c == 0:\n            break\n        if parent[r][c] == 1:\n            r -= 1\n        else:\n            c -= 1\n    path.reverse()\n    return path\n"
+      },
+      "cpp": {
+        "signature": "std::vector<std::vector<int>> FindRobotPath(const std::vector<std::vector<int>>& grid)",
+        "starterCode": "class Solution {\n public:\n  std::vector<std::vector<int>> FindRobotPath(const std::vector<std::vector<int>>& grid) {\n    return {};\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  std::vector<std::vector<int>> FindRobotPath(const std::vector<std::vector<int>>& grid) {\n    int rows = static_cast<int>(grid.size()),\n        columns = rows == 0 ? 0 : static_cast<int>(grid[0].size());\n    if (rows == 0 || columns == 0) {\n      return {};\n    }\n    std::vector<std::vector<int>> parent(rows, std::vector<int>(columns)), path;\n    for (int r = 0; r < rows; ++r) {\n      for (int c = 0; c < columns; ++c) {\n        if (grid[r][c] == 0)\n          continue;\n        if (r == 0 && c == 0)\n          parent[r][c] = 3;\n        else if (r > 0 && parent[r - 1][c] != 0)\n          parent[r][c] = 1;\n        else if (c > 0 && parent[r][c - 1] != 0)\n          parent[r][c] = 2;\n      }\n    }\n    if (parent[rows - 1][columns - 1] == 0) {\n      return {};\n    }\n    int row = rows - 1, col = columns - 1;\n    while (true) {\n      path.push_back({row, col});\n      if (row == 0 && col == 0)\n        break;\n      if (parent[row][col] == 1)\n        --row;\n      else\n        --col;\n    }\n    std::reverse(path.begin(), path.end());\n    return path;\n  }\n};\n"
+      },
+      "java": {
+        "signature": "List<List<Integer>> FindRobotPath(int[][] grid)",
+        "starterCode": "class Solution {\n  public List<List<Integer>> FindRobotPath(int[][] grid) {\n    return new ArrayList<>();\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public List<List<Integer>> FindRobotPath(int[][] grid) {\n    int rows = grid.length, columns = rows == 0 ? 0 : grid[0].length;\n    if (rows == 0 || columns == 0) {\n      return new ArrayList<>();\n    }\n    int[][] parent = new int[rows][columns];\n    List<List<Integer>> path = new ArrayList<>();\n    for (int r = 0; r < rows; ++r) {\n      for (int c = 0; c < columns; ++c) {\n        if (grid[r][c] == 0)\n          continue;\n        if (r == 0 && c == 0)\n          parent[r][c] = 3;\n        else if (r > 0 && parent[r - 1][c] != 0)\n          parent[r][c] = 1;\n        else if (c > 0 && parent[r][c - 1] != 0)\n          parent[r][c] = 2;\n      }\n    }\n    if (parent[rows - 1][columns - 1] == 0) {\n      return new ArrayList<>();\n    }\n    int row = rows - 1, col = columns - 1;\n    while (true) {\n      path.add(new ArrayList<>(List.of(row, col)));\n      if (row == 0 && col == 0)\n        break;\n      if (parent[row][col] == 1)\n        --row;\n      else\n        --col;\n    }\n    Collections.reverse(path);\n    return path;\n  }\n}\n"
+      }
+    }
+  },
+  {
     "ref": "8.3",
     "method": "FindMagicIndex",
     "params": [
@@ -289,6 +381,86 @@
     }
   },
   {
+    "ref": "8.6",
+    "method": "SolveHanoi",
+    "params": [
+      [
+        "disks",
+        "i"
+      ]
+    ],
+    "result": "path",
+    "mutation": "none",
+    "description": "Solve the three-tower Hanoi puzzle using three stacks. Initially tower 0 holds disks disks..1 from bottom to top, and towers 1 and 2 are empty. Move all disks to tower 2 using tower 1 as a buffer. Return the ordered moves as [disk,fromTower,toTower] triples. Each move transfers one exposed top disk and may not place a larger disk on a smaller disk. Produce the minimum number of moves.",
+    "constraints": [
+      "0 <= disks <= 12. Disk 1 is smallest; tower indices are 0,1,2. For zero disks return an empty move list. For positive disks return exactly 2^disks-1 legal moves ending with all disks on tower 2.",
+      "Maintain three stack representations and perform their pop/push operations when generating the transcript; do not return a count in place of solving the puzzle. A stack may use the end of a list/vector/array as its top. Each returned triple is a materialized integer list/vector."
+    ],
+    "why": "The largest disk cannot move to the destination until all smaller disks have been moved to the buffer. After that largest-disk move, the smaller stack must move from the buffer onto it. The same three-tower task appears twice with one fewer disk, so swapping the source, buffer and destination roles gives the recursive procedure.",
+    "correctness": "Zero disks require no move. Assume the procedure correctly transfers a legal stack of k-1 disks. It first transfers those smaller disks to the buffer, exposing disk k and leaving the destination free of smaller disks. Moving disk k is legal. The second recursive transfer places the smaller stack on disk k, preserving its legal order. Thus induction transfers the whole stack. Any solution must move the largest disk and move all smaller disks away before it and onto it afterward, requiring at least 2*T(k-1)+1 moves. The procedure meets this bound with T(0)=0, giving exactly 2^k-1 moves. Actual stack pops supply the recorded disk identity.",
+    "walkthrough": "For two disks, move [1,0,1], then [2,0,2], then [1,1,2]. Disk 2 becomes exposed only after disk 1 leaves tower 0. Returning just the final tower contents would omit the legal sequence that solves the puzzle.",
+    "example": [
+      [
+        2
+      ],
+      [
+        [
+          1,
+          0,
+          1
+        ],
+        [
+          2,
+          0,
+          2
+        ],
+        [
+          1,
+          1,
+          2
+        ]
+      ]
+    ],
+    "time": "O(2^disks) time: one constant-time stack move and transcript append per required move.",
+    "space": "O(disks) auxiliary space for three stacks and recursion depth, excluding O(2^disks) returned move triples.",
+    "edges": [
+      "Zero and one disk; repeated calls start from fresh towers.",
+      "Every move must use the source top and preserve the smaller-on-larger rule.",
+      "Twelve disks require 4095 moves; an output-size exponential bound is essential."
+    ],
+    "related": "The bank callable initializes the canonical three towers and returns the move transcript instead of printing moves. It preserves the public tower-transfer task and stack operations.",
+    "id": "ctci6_8_6",
+    "title": "Towers of Hanoi",
+    "testCount": 13,
+    "languages": {
+      "csharp": {
+        "signature": "List<List<int>> SolveHanoi(int disks)",
+        "starterCode": "public class Solution\n{\n    public List<List<int>> SolveHanoi(int disks)\n    {\n        return [];\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public List<List<int>> SolveHanoi(int disks)\n    {\n        var towers = new Stack<int>[] { new(), new(), new() };\n        for (int disk = disks; disk >= 1; --disk)\n            towers[0].Push(disk);\n        var moves = new List<List<int>>();\n        void Transfer(int count, int source, int buffer, int destination)\n        {\n            if (count == 0)\n                return;\n            Transfer(count - 1, source, destination, buffer);\n            int disk = towers[source].Pop();\n            towers[destination].Push(disk);\n            moves.Add([disk, source, destination]);\n            Transfer(count - 1, buffer, source, destination);\n        }\n        Transfer(disks, 0, 1, 2);\n        return moves;\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function SolveHanoi(disks)",
+        "starterCode": "function SolveHanoi(disks) {\n  return [];\n}\n",
+        "solutionCode": "function SolveHanoi(disks) {\n  const towers = [Array.from({ length: disks }, (_, i) => disks - i), [], []],\n    moves = [];\n  function transfer(count, source, buffer, destination) {\n    if (count === 0) return;\n    transfer(count - 1, source, destination, buffer);\n    const disk = towers[source].pop();\n    towers[destination].push(disk);\n    moves.push([disk, source, destination]);\n    transfer(count - 1, buffer, source, destination);\n  }\n  transfer(disks, 0, 1, 2);\n  return moves;\n}\n"
+      },
+      "python": {
+        "signature": "def SolveHanoi(disks: int) -> list[list[int]]",
+        "starterCode": "def SolveHanoi(disks: int) -> list[list[int]]:\n    return []\n",
+        "solutionCode": "def SolveHanoi(disks: int) -> list[list[int]]:\n    towers = [list(range(disks, 0, -1)), [], []]\n    moves = []\n\n    def transfer(count, source, buffer, destination):\n        if count == 0:\n            return\n        transfer(count - 1, source, destination, buffer)\n        disk = towers[source].pop()\n        towers[destination].append(disk)\n        moves.append([disk, source, destination])\n        transfer(count - 1, buffer, source, destination)\n\n    transfer(disks, 0, 1, 2)\n    return moves\n"
+      },
+      "cpp": {
+        "signature": "std::vector<std::vector<int>> SolveHanoi(int disks)",
+        "starterCode": "class Solution {\n public:\n  std::vector<std::vector<int>> SolveHanoi(int disks) {\n    return {};\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  std::vector<std::vector<int>> SolveHanoi(int disks) {\n    std::array<std::vector<int>, 3> towers;\n    for (int disk = disks; disk >= 1; --disk)\n      towers[0].push_back(disk);\n    std::vector<std::vector<int>> moves;\n    std::function<void(int, int, int, int)> transfer = [&](int count, int source, int buffer,\n                                                           int destination) {\n      if (count == 0)\n        return;\n      transfer(count - 1, source, destination, buffer);\n      int disk = towers[source].back();\n      towers[source].pop_back();\n      towers[destination].push_back(disk);\n      moves.push_back({disk, source, destination});\n      transfer(count - 1, buffer, source, destination);\n    };\n    transfer(disks, 0, 1, 2);\n    return moves;\n  }\n};\n"
+      },
+      "java": {
+        "signature": "List<List<Integer>> SolveHanoi(int disks)",
+        "starterCode": "class Solution {\n  public List<List<Integer>> SolveHanoi(int disks) {\n    return new ArrayList<>();\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public List<List<Integer>> SolveHanoi(int disks) {\n    List<Deque<Integer>> towers =\n        List.of(new ArrayDeque<>(), new ArrayDeque<>(), new ArrayDeque<>());\n    for (int disk = disks; disk >= 1; --disk)\n      towers.get(0).push(disk);\n    List<List<Integer>> moves = new ArrayList<>();\n    class Solver {\n      void Transfer(int count, int source, int buffer, int destination) {\n        if (count == 0)\n          return;\n        Transfer(count - 1, source, destination, buffer);\n        int disk = towers.get(source).pop();\n        towers.get(destination).push(disk);\n        moves.add(new ArrayList<>(List.of(disk, source, destination)));\n        Transfer(count - 1, buffer, source, destination);\n      }\n    }\n    new Solver().Transfer(disks, 0, 1, 2);\n    return moves;\n  }\n}\n"
+      }
+    }
+  },
+  {
     "ref": "8.7",
     "method": "PermutationsDistinct",
     "params": [
@@ -490,6 +662,118 @@
         "signature": "List<String> GenerateParentheses(int pairs)",
         "starterCode": "class Solution {\n  public List<String> GenerateParentheses(int pairs) {\n    return new ArrayList<>();\n  }\n}\n",
         "solutionCode": "class Solution {\n  public List<String> GenerateParentheses(int pairs) {\n    char[] buffer = new char[2 * pairs];\n    List<String> result = new ArrayList<>();\n    class Search {\n      void Visit(int opened, int closed) {\n        int position = opened + closed;\n        if (position == buffer.length) {\n          result.add(new String(buffer));\n          return;\n        }\n        if (opened < pairs) {\n          buffer[position] = '(';\n          Visit(opened + 1, closed);\n        }\n        if (closed < opened) {\n          buffer[position] = ')';\n          Visit(opened, closed + 1);\n        }\n      }\n    }\n    new Search().Visit(0, 0);\n    return result;\n  }\n}\n"
+      }
+    }
+  },
+  {
+    "ref": "8.10",
+    "method": "PaintFill",
+    "params": [
+      [
+        "screen",
+        "aai"
+      ],
+      [
+        "row",
+        "i"
+      ],
+      [
+        "column",
+        "i"
+      ],
+      [
+        "newColor",
+        "i"
+      ]
+    ],
+    "result": "aai",
+    "mutation": "screen",
+    "description": "Recolor the four-directionally connected region containing (row,column) in screen. The region consists of cells with the starting cell's original color, connected through shared horizontal or vertical edges. Change exactly that region to newColor in place, preserve all other cells, and return the filled screen values. Diagonal contact alone does not connect regions.",
+    "constraints": [
+      "The nonnull rectangular screen has 0..50 rows and 0..50 columns with integer colors 0..4; newColor is also 0..4. Row and column are signed 32-bit integers. An out-of-range coordinate or empty dimension leaves the screen unchanged.",
+      "Preserve the outer array, original row objects, dimensions and row order. Only cell values in the specified original-color component may change. If the old and new colors agree, return immediately without repeatedly visiting the region.",
+      "C#/Java/JavaScript/Python may return the same screen object; the C++ signature returns its values by value after mutating the supplied reference. Returning a changed copy while leaving the input unmodified is incorrect."
+    ],
+    "why": "Starting at one cell, only matching neighbors can extend its original-color component. Mark a matching cell by recoloring it before adding it to a work stack. This makes every cell enter the work stack once and avoids a separate visited matrix. The same-color early return is necessary because recoloring would otherwise fail to mark visits.",
+    "correctness": "After the initial bounds and same-color checks, the start cell belongs to the required component and is marked. Every later pushed cell is an original-color neighbor of an already reached cell, so it belongs to that component. Recoloring at discovery prevents a second push. Conversely, take any cell in the component and a connecting path from the start: induction along that path ensures each next original-color neighbor is eventually discovered. Thus every and only component cells are recolored. No row or outer array is replaced, and all other cell values are untouched.",
+    "walkthrough": "With [[1,0,1],[0,1,1],[1,1,0]], start (0,0) and newColor 2. Its right and lower neighbors are both 0, so only that one cell changes, giving [[2,0,1],[0,1,1],[1,1,0]]. The 1 at (1,1) touches diagonally but is outside the region.",
+    "example": [
+      [
+        [
+          [
+            1,
+            0,
+            1
+          ],
+          [
+            0,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            0
+          ]
+        ],
+        0,
+        0,
+        2
+      ],
+      [
+        [
+          2,
+          0,
+          1
+        ],
+        [
+          0,
+          1,
+          1
+        ],
+        [
+          1,
+          1,
+          0
+        ]
+      ]
+    ],
+    "time": "O(k) fill time for a changed component of k cells, with four neighbor checks per cell; O(1) fill work for invalid coordinates or equal colors. The C++ by-value result adds O(rows*columns) return-copy time even for a no-op.",
+    "space": "O(k) auxiliary work-stack storage, at most O(rows*columns). The C++ by-value return additionally copies the O(rows*columns) screen values; other languages return the existing screen object.",
+    "edges": [
+      "Diagonal-only contact must not spread paint.",
+      "Same-color request, empty screen, zero-width rows, and out-of-bounds signed coordinates.",
+      "Whole-screen component, isolated cell, and adjacent different-color regions."
+    ],
+    "related": "The author Java source uses four neighbors; an examined community implementation uses eight and is not followed. Returning filled values is an explicit bank convention replacing the incidental public Boolean status.",
+    "id": "ctci6_8_10",
+    "title": "Paint Fill",
+    "testCount": 4656,
+    "languages": {
+      "csharp": {
+        "signature": "int[][] PaintFill(int[][] screen, int row, int column, int newColor)",
+        "starterCode": "public class Solution\n{\n    public int[][] PaintFill(int[][] screen, int row, int column, int newColor)\n    {\n        return [];\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public int[][] PaintFill(int[][] screen, int row, int column, int newColor)\n    {\n        int rows = screen.Length, columns = rows == 0 ? 0 : screen[0].Length;\n        if (row < 0 || row >= rows || column < 0 || column >= columns)\n            return screen;\n        int oldColor = screen[row][column];\n        if (oldColor == newColor)\n            return screen;\n        var work = new Stack<(int, int)>();\n        work.Push((row, column));\n        screen[row][column] = newColor;\n        int[] dr = { -1, 1, 0, 0 }, dc = { 0, 0, -1, 1 };\n        while (work.Count > 0)\n        {\n            var (r, c) = work.Pop();\n            for (int i = 0; i < 4; ++i)\n            {\n                int nr = r + dr[i], nc = c + dc[i];\n                if (nr >= 0 && nr < rows && nc >= 0 && nc < columns && screen[nr][nc] == oldColor)\n                {\n                    screen[nr][nc] = newColor;\n                    work.Push((nr, nc));\n                }\n            }\n        }\n        return screen;\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function PaintFill(screen, row, column, newColor)",
+        "starterCode": "function PaintFill(screen, row, column, newColor) {\n  return [];\n}\n",
+        "solutionCode": "function PaintFill(screen, row, column, newColor) {\n  const rows = screen.length,\n    columns = rows ? screen[0].length : 0;\n  if (row < 0 || row >= rows || column < 0 || column >= columns) return screen;\n  const oldColor = screen[row][column];\n  if (oldColor === newColor) return screen;\n  const work = [[row, column]];\n  screen[row][column] = newColor;\n  while (work.length) {\n    const [r, c] = work.pop();\n    for (const [nr, nc] of [\n      [r - 1, c],\n      [r + 1, c],\n      [r, c - 1],\n      [r, c + 1],\n    ]) {\n      if (nr >= 0 && nr < rows && nc >= 0 && nc < columns && screen[nr][nc] === oldColor) {\n        screen[nr][nc] = newColor;\n        work.push([nr, nc]);\n      }\n    }\n  }\n  return screen;\n}\n"
+      },
+      "python": {
+        "signature": "def PaintFill(screen: list[list[int]], row: int, column: int, newColor: int) -> list[list[int]]",
+        "starterCode": "def PaintFill(screen: list[list[int]], row: int, column: int, newColor: int) -> list[list[int]]:\n    return []\n",
+        "solutionCode": "def PaintFill(screen: list[list[int]], row: int, column: int, newColor: int) -> list[list[int]]:\n    rows = len(screen)\n    columns = len(screen[0]) if rows else 0\n    if row < 0 or row >= rows or column < 0 or column >= columns:\n        return screen\n    old_color = screen[row][column]\n    if old_color == newColor:\n        return screen\n    work = [(row, column)]\n    screen[row][column] = newColor\n    while work:\n        r, c = work.pop()\n        for nr, nc in ((r - 1, c), (r + 1, c), (r, c - 1), (r, c + 1)):\n            if 0 <= nr < rows and 0 <= nc < columns and screen[nr][nc] == old_color:\n                screen[nr][nc] = newColor\n                work.append((nr, nc))\n    return screen\n"
+      },
+      "cpp": {
+        "signature": "std::vector<std::vector<int>> PaintFill(std::vector<std::vector<int>>& screen, int row, int column, int newColor)",
+        "starterCode": "class Solution {\n public:\n  std::vector<std::vector<int>> PaintFill(std::vector<std::vector<int>>& screen, int row,\n                                          int column, int newColor) {\n    return {};\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  std::vector<std::vector<int>> PaintFill(std::vector<std::vector<int>>& screen, int row,\n                                          int column, int newColor) {\n    int rows = static_cast<int>(screen.size()),\n        columns = rows == 0 ? 0 : static_cast<int>(screen[0].size());\n    if (row < 0 || row >= rows || column < 0 || column >= columns)\n      return screen;\n    int oldColor = screen[row][column];\n    if (oldColor == newColor)\n      return screen;\n    std::vector<std::pair<int, int>> work{{row, column}};\n    screen[row][column] = newColor;\n    int dr[] = {-1, 1, 0, 0}, dc[] = {0, 0, -1, 1};\n    while (!work.empty()) {\n      auto [r, c] = work.back();\n      work.pop_back();\n      for (int i = 0; i < 4; ++i) {\n        int nr = r + dr[i], nc = c + dc[i];\n        if (nr >= 0 && nr < rows && nc >= 0 && nc < columns && screen[nr][nc] == oldColor) {\n          screen[nr][nc] = newColor;\n          work.push_back({nr, nc});\n        }\n      }\n    }\n    return screen;\n  }\n};\n"
+      },
+      "java": {
+        "signature": "int[][] PaintFill(int[][] screen, int row, int column, int newColor)",
+        "starterCode": "class Solution {\n  public int[][] PaintFill(int[][] screen, int row, int column, int newColor) {\n    return new int[0][];\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public int[][] PaintFill(int[][] screen, int row, int column, int newColor) {\n    int rows = screen.length, columns = rows == 0 ? 0 : screen[0].length;\n    if (row < 0 || row >= rows || column < 0 || column >= columns)\n      return screen;\n    int oldColor = screen[row][column];\n    if (oldColor == newColor)\n      return screen;\n    Deque<int[]> work = new ArrayDeque<>();\n    work.push(new int[] {row, column});\n    screen[row][column] = newColor;\n    int[] dr = {-1, 1, 0, 0}, dc = {0, 0, -1, 1};\n    while (!work.isEmpty()) {\n      var cell = work.pop();\n      int r = cell[0], c = cell[1];\n      for (int i = 0; i < 4; ++i) {\n        int nr = r + dr[i], nc = c + dc[i];\n        if (nr >= 0 && nr < rows && nc >= 0 && nc < columns && screen[nr][nc] == oldColor) {\n          screen[nr][nc] = newColor;\n          work.push(new int[] {nr, nc});\n        }\n      }\n    }\n    return screen;\n  }\n}\n"
       }
     }
   },

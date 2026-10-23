@@ -432,3 +432,102 @@ for(int i=0;i<count;++i){{{at("truth", "i", "i")}={char("2*i")}=='1'?1:0;{at("fa
 for(int length=2;length<=count;++length){{for(int low=0;low+length<=count;++low){{int high=low+length-1;for(int split=low;split<high;++split){{int lt={at("truth", "low", "split")},lf={at("falsity", "low", "split")},rt={at("truth", "split+1", "high")},rf={at("falsity", "split+1", "high")},total=(lt+lf)*(rt+rf);char operation={char("2*split+1")};int trueCount=operation=='&'?lt*rt:operation=='|'?total-lf*rf:lt*rf+lf*rt;{at("truth", "low", "high")}+=trueCount;{at("falsity", "low", "high")}+=total-trueCount;}}}}}}
 return desired?{at("truth", "0", "count-1")}:{at("falsity", "0", "count-1")};"""
     raise ValueError(ref)
+
+_prior_body = body
+
+def body(ref, language):
+    if ref not in ('8.2','8.6','8.10'):
+        return _prior_body(ref, language)
+    if ref == '8.2':
+        if language == 'python':
+            return '''rows = len(grid)
+columns = len(grid[0]) if rows else 0
+if not rows or not columns:
+    return []
+parent = [[0] * columns for _ in range(rows)]
+for r in range(rows):
+    for c in range(columns):
+        if grid[r][c] == 0:
+            continue
+        if r == 0 and c == 0:
+            parent[r][c] = 3
+        elif r > 0 and parent[r - 1][c]:
+            parent[r][c] = 1
+        elif c > 0 and parent[r][c - 1]:
+            parent[r][c] = 2
+if not parent[-1][-1]:
+    return []
+path = []
+r, c = rows - 1, columns - 1
+while True:
+    path.append([r, c])
+    if r == 0 and c == 0:
+        break
+    if parent[r][c] == 1:
+        r -= 1
+    else:
+        c -= 1
+path.reverse()
+return path'''
+        if language == 'javascript':
+            return 'const rows=grid.length,columns=rows?grid[0].length:0;if(!rows||!columns)return [];const parent=Array.from({length:rows},()=>Array(columns).fill(0));for(let r=0;r<rows;++r){for(let c=0;c<columns;++c){if(grid[r][c]===0)continue;if(r===0&&c===0)parent[r][c]=3;else if(r>0&&parent[r-1][c])parent[r][c]=1;else if(c>0&&parent[r][c-1])parent[r][c]=2;}}if(!parent[rows-1][columns-1])return [];const path=[];let r=rows-1,c=columns-1;while(true){path.push([r,c]);if(r===0&&c===0)break;if(parent[r][c]===1)--r;else --c;}path.reverse();return path;'
+        rows = 'grid.Length' if language=='csharp' else 'grid.length' if language=='java' else 'static_cast<int>(grid.size())'
+        cols = 'grid[0].Length' if language=='csharp' else 'grid[0].length' if language=='java' else 'static_cast<int>(grid[0].size())'
+        setup = 'int[,] parent=new int[rows,columns];var path=new List<List<int>>();' if language=='csharp' else 'int[][] parent=new int[rows][columns];List<List<Integer>> path=new ArrayList<>();' if language=='java' else 'std::vector<std::vector<int>> parent(rows,std::vector<int>(columns)),path;'
+        at = lambda r,c: f'parent[{r},{c}]' if language=='csharp' else f'parent[{r}][{c}]'
+        empty = 'return [];' if language=='csharp' else 'return new ArrayList<>();' if language=='java' else 'return {};'
+        add = 'path.Add([row,col]);' if language=='csharp' else 'path.add(new ArrayList<>(List.of(row,col)));' if language=='java' else 'path.push_back({row,col});'
+        reverse = 'path.Reverse();' if language=='csharp' else 'Collections.reverse(path);' if language=='java' else 'std::reverse(path.begin(),path.end());'
+        return f'''int rows={rows},columns=rows==0?0:{cols};if(rows==0||columns==0){{{empty}}}{setup}
+for(int r=0;r<rows;++r){{for(int c=0;c<columns;++c){{if(grid[r][c]==0)continue;if(r==0&&c==0){at('r','c')}=3;else if(r>0&&{at('r-1','c')}!=0){at('r','c')}=1;else if(c>0&&{at('r','c-1')}!=0){at('r','c')}=2;}}}}
+if({at('rows-1','columns-1')}==0){{{empty}}}int row=rows-1,col=columns-1;while(true){{{add}if(row==0&&col==0)break;if({at('row','col')}==1)--row;else --col;}}{reverse}return path;'''
+    if ref == '8.6':
+        if language == 'python':
+            return '''towers = [list(range(disks, 0, -1)), [], []]
+moves = []
+def transfer(count, source, buffer, destination):
+    if count == 0:
+        return
+    transfer(count - 1, source, destination, buffer)
+    disk = towers[source].pop()
+    towers[destination].append(disk)
+    moves.append([disk, source, destination])
+    transfer(count - 1, buffer, source, destination)
+transfer(disks, 0, 1, 2)
+return moves'''
+        if language == 'javascript':
+            return 'const towers=[Array.from({length:disks},(_,i)=>disks-i),[],[]],moves=[];function transfer(count,source,buffer,destination){if(count===0)return;transfer(count-1,source,destination,buffer);const disk=towers[source].pop();towers[destination].push(disk);moves.push([disk,source,destination]);transfer(count-1,buffer,source,destination);}transfer(disks,0,1,2);return moves;'
+        setup = 'var towers=new Stack<int>[] {new(),new(),new()};for(int disk=disks;disk>=1;--disk)towers[0].Push(disk);var moves=new List<List<int>>();' if language=='csharp' else 'List<Deque<Integer>> towers=List.of(new ArrayDeque<>(),new ArrayDeque<>(),new ArrayDeque<>());for(int disk=disks;disk>=1;--disk)towers.get(0).push(disk);List<List<Integer>> moves=new ArrayList<>();' if language=='java' else 'std::array<std::vector<int>,3> towers;for(int disk=disks;disk>=1;--disk)towers[0].push_back(disk);std::vector<std::vector<int>> moves;'
+        operation = 'int disk=towers[source].Pop();towers[destination].Push(disk);moves.Add([disk,source,destination]);' if language=='csharp' else 'int disk=towers.get(source).pop();towers.get(destination).push(disk);moves.add(new ArrayList<>(List.of(disk,source,destination)));' if language=='java' else 'int disk=towers[source].back();towers[source].pop_back();towers[destination].push_back(disk);moves.push_back({disk,source,destination});'
+        name = 'transfer' if language=='cpp' else 'Transfer'
+        signature = 'int count,int source,int buffer,int destination'
+        logic = f'if(count==0)return;{name}(count-1,source,destination,buffer);{operation}{name}(count-1,buffer,source,destination);'
+        helper = f'void Transfer({signature}){{{logic}}}Transfer(disks,0,1,2);' if language=='csharp' else f'class Solver {{void Transfer({signature}){{{logic}}}}}new Solver().Transfer(disks,0,1,2);' if language=='java' else f'std::function<void(int,int,int,int)> transfer=[&]({signature}){{{logic}}};transfer(disks,0,1,2);'
+        return setup+helper+'return moves;'
+    if language == 'python':
+        return '''rows = len(screen)
+columns = len(screen[0]) if rows else 0
+if row < 0 or row >= rows or column < 0 or column >= columns:
+    return screen
+old_color = screen[row][column]
+if old_color == newColor:
+    return screen
+work = [(row, column)]
+screen[row][column] = newColor
+while work:
+    r, c = work.pop()
+    for nr, nc in ((r - 1, c), (r + 1, c), (r, c - 1), (r, c + 1)):
+        if 0 <= nr < rows and 0 <= nc < columns and screen[nr][nc] == old_color:
+            screen[nr][nc] = newColor
+            work.append((nr, nc))
+return screen'''
+    if language == 'javascript':
+        return 'const rows=screen.length,columns=rows?screen[0].length:0;if(row<0||row>=rows||column<0||column>=columns)return screen;const oldColor=screen[row][column];if(oldColor===newColor)return screen;const work=[[row,column]];screen[row][column]=newColor;while(work.length){const [r,c]=work.pop();for(const [nr,nc] of [[r-1,c],[r+1,c],[r,c-1],[r,c+1]]){if(nr>=0&&nr<rows&&nc>=0&&nc<columns&&screen[nr][nc]===oldColor){screen[nr][nc]=newColor;work.push([nr,nc]);}}}return screen;'
+    rows = 'screen.Length' if language=='csharp' else 'screen.length' if language=='java' else 'static_cast<int>(screen.size())'
+    cols = 'screen[0].Length' if language=='csharp' else 'screen[0].length' if language=='java' else 'static_cast<int>(screen[0].size())'
+    setup = 'var work=new Stack<(int,int)>();work.Push((row,column));' if language=='csharp' else 'Deque<int[]> work=new ArrayDeque<>();work.push(new int[]{row,column});' if language=='java' else 'std::vector<std::pair<int,int>> work{{row,column}};'
+    pop = 'var (r,c)=work.Pop();' if language=='csharp' else 'var cell=work.pop();int r=cell[0],c=cell[1];' if language=='java' else 'auto [r,c]=work.back();work.pop_back();'
+    neighbors = 'int dr[]={-1,1,0,0},dc[]={0,0,-1,1};' if language=='cpp' else 'int[] dr={-1,1,0,0},dc={0,0,-1,1};'
+    push = 'work.Push((nr,nc));' if language=='csharp' else 'work.push(new int[]{nr,nc});' if language=='java' else 'work.push_back({nr,nc});'
+    count = 'work.Count>0' if language=='csharp' else '!work.isEmpty()' if language=='java' else '!work.empty()'
+    return f'int rows={rows},columns=rows==0?0:{cols};if(row<0||row>=rows||column<0||column>=columns)return screen;int oldColor=screen[row][column];if(oldColor==newColor)return screen;{setup}screen[row][column]=newColor;{neighbors}while({count}){{{pop}for(int i=0;i<4;++i){{int nr=r+dr[i],nc=c+dc[i];if(nr>=0&&nr<rows&&nc>=0&&nc<columns&&screen[nr][nc]==oldColor){{screen[nr][nc]=newColor;{push}}}}}}}return screen;'

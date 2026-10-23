@@ -5,8 +5,8 @@ from core import ROOT
 from models08 import header, TYPES
 
 
-def source(language, starters=False, only_ref=None):
-    entries = json.loads((ROOT / 'ctci6/staged08/catalog.json').read_text())
+def source(language, starters=False, only_ref=None, staging_name='staged08'):
+    entries = json.loads((ROOT / 'ctci6' / staging_name / 'catalog.json').read_text())
     if only_ref is not None:
         entries = [e for e in entries if e['ref'] == only_ref]
     if not entries:
@@ -33,7 +33,9 @@ def source(language, starters=False, only_ref=None):
                 decode.append(f'var {name}={value};')
                 if kind in ('ai', 'aai'):
                     decode.append(f'var before{i}=JsonSerializer.Serialize({name});')
-                    checks.append(f'JsonSerializer.Serialize({name})==before{i}')
+                    
+                    if entry['mutation'] != 'screen':
+                        checks.append(f'JsonSerializer.Serialize({name})==before{i}')
                     if kind == 'aai':
                         decode.append(f'var rows{i}={name}.ToArray();')
                         checks.append(f'{name}.Length==rows{i}.Length && {name}.Select((r,j)=>ReferenceEquals(r,rows{i}[j])).All(v=>v)')
@@ -47,7 +49,9 @@ def source(language, starters=False, only_ref=None):
                     decode.append(f'var {name}={value};')
                 if kind in ('ai','aai'):
                     decode.append(f'String before{i}=encode({name}).toString();')
-                    checks.append(f'encode({name}).toString().equals(before{i})')
+                    
+                    if entry['mutation'] != 'screen':
+                        checks.append(f'encode({name}).toString().equals(before{i})')
                     if kind == 'aai':
                         decode.append(f'int[][] rows{i}={name}.clone();')
                         checks.append(f'sameRows({name},rows{i})')
@@ -55,11 +59,15 @@ def source(language, starters=False, only_ref=None):
                 decode.append(f'auto {name}=args[{i}].get<{TYPES[language][kind]}>();')
                 if kind in ('ai', 'aai'):
                     decode.append(f'auto before{i}={name};')
-                    checks.append(f'{name}==before{i}')
+                    
+                    if entry['mutation'] != 'screen':
+                        checks.append(f'{name}==before{i}')
                     if kind == 'aai':
                         decode.append(f'std::vector<const int*> rows{i};for(const auto& row:{name})rows{i}.push_back(row.data());')
                         checks.append(f'sameRows({name},rows{i})')
         call = ('new ' + cls + '()' if language != 'cpp' else cls + '()') + '.' + entry['method'] + '(' + ','.join(names) + ')'
+        if entry['mutation'] == 'screen':
+            checks.append('JsonSerializer.Serialize(actual)==JsonSerializer.Serialize(p0)' if language == 'csharp' else 'encode(actual).toString().equals(encode(p0).toString())' if language == 'java' else 'actual==p0')
         check = ' && '.join('(' + v + ')' for v in checks) or 'true'
         emit = f'return new {{actual,mutationOk={check}}};' if language == 'csharp' else f'return new JsonObject().add("actual",encode(actual)).add("mutationOk",{check});' if language == 'java' else 'return json{{"actual",actual},{"mutationOk",' + check + '}};'
         condition = f'reference.equals("{entry["ref"]}")' if language == 'java' else f'reference=="{entry["ref"]}"'
@@ -78,8 +86,8 @@ def invoke(row):
 def execute(row):
     args=row['arguments'];before=json.dumps(args);outer=[v for v in args if type(v) is list];rows=[(v,list(v)) for v in outer if v and type(v[0]) is list]
     actual=invoke(row);kind=KINDS[row['ref']]
-    valid=(type(actual) is list and all(type(v) is str for v in actual)) if kind=='strings' else (type(actual) is list and all(type(r) is list and all(type(v) is int for v in r) for r in actual)) if kind in ('sets','arrangements') else type(actual) is int and -2147483648<=actual<=2147483647
-    return dict(actual=actual,mutationOk=valid and json.dumps(args)==before and all(any(v is original for v in args) for original in outer) and all(len(v)==len(old) and all(a is b for a,b in zip(v,old)) for v,old in rows))
+    valid=(type(actual) is list and all(type(v) is str for v in actual)) if kind=='strings' else (type(actual) is list and all(type(r) is list and all(type(v) is int for v in r) for r in actual)) if kind in ('sets','arrangements','path','aai') else (type(actual) is list and all(type(v) is int for v in actual)) if kind=='ai' else type(actual) is int and -2147483648<=actual<=2147483647
+    return dict(actual=actual,mutationOk=valid and (actual==args[0] if row['ref']=='8.10' else json.dumps(args)==before) and all(any(v is original for v in args) for original in outer) and all(len(v)==len(old) and all(a is b for a,b in zip(v,old)) for v,old in rows))
 results=[]
 for row in json.load(open('cases.json',encoding='utf-8')):
     try:results.append(execute(row))
@@ -90,7 +98,7 @@ json.dump(results,open('results.json','w',encoding='utf-8'))
         return prefix + code + f'''
 const fs=require('node:fs'),kinds={json.dumps(kinds)};
 function invoke(row){{const ref=row.ref,args=row.arguments;{dispatch}throw new Error('Unknown reference');}}
-function execute(row){{const args=row.arguments,before=JSON.stringify(args),outer=args.filter(Array.isArray),rows=outer.filter(v=>v.length&&Array.isArray(v[0])).map(v=>[v,v.slice()]);const actual=invoke(row),kind=kinds[row.ref];const valid=kind==='strings'?Array.isArray(actual)&&actual.every(v=>typeof v==='string'):['sets','arrangements'].includes(kind)?Array.isArray(actual)&&actual.every(r=>Array.isArray(r)&&r.every(Number.isInteger)):Number.isInteger(actual)&&actual>=-2147483648&&actual<=2147483647;return {{actual,mutationOk:valid&&JSON.stringify(args)===before&&outer.every(v=>args.includes(v))&&rows.every(([v,old])=>v.length===old.length&&v.every((r,i)=>r===old[i]))}};}}
+function execute(row){{const args=row.arguments,before=JSON.stringify(args),outer=args.filter(Array.isArray),rows=outer.filter(v=>v.length&&Array.isArray(v[0])).map(v=>[v,v.slice()]);const actual=invoke(row),kind=kinds[row.ref];const valid=kind==='strings'?Array.isArray(actual)&&actual.every(v=>typeof v==='string'):['sets','arrangements','path','aai'].includes(kind)?Array.isArray(actual)&&actual.every(r=>Array.isArray(r)&&r.every(Number.isInteger)):kind==='ai'?Array.isArray(actual)&&actual.every(v=>Number.isInteger(v)&&v>=-2147483648&&v<=2147483647):Number.isInteger(actual)&&actual>=-2147483648&&actual<=2147483647;return {{actual,mutationOk:valid&&(row.ref==='8.10'?JSON.stringify(actual)===JSON.stringify(args[0]):JSON.stringify(args)===before)&&outer.every(v=>args.includes(v))&&rows.every(([v,old])=>v.length===old.length&&v.every((r,i)=>r===old[i]))}};}}
 const results=JSON.parse(fs.readFileSync('cases.json','utf8')).map(row=>{{try{{return execute(row);}}catch(error){{return {{error:String(error)}};}}}});
 fs.writeFileSync('results.json',JSON.stringify(results));
 '''

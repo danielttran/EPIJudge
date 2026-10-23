@@ -12,11 +12,11 @@ from harness08 import source
 from verify01 import execute, standalone_paths
 
 
-def verify():
-    generate08()
+def verify(specs=SPECS, batch=8, generator=generate08, case_builder=cases, matcher=valid_observation, adapter=source):
+    generator()
     started = time.monotonic()
-    rows = [dict(ref=s["ref"], **case) for s in SPECS for case in cases(s)]
-    output = ROOT / ".epi-runs/ctci6-chapter08"
+    rows = [dict(ref=s["ref"], **case) for s in specs for case in case_builder(s)]
+    output = ROOT / f".epi-runs/ctci6-chapter{batch:02}"
     evidence = []
     for language in LANGUAGES:
         for starters in (False, True):
@@ -30,7 +30,7 @@ def verify():
                 starters,
                 rows,
                 output / (language + "-" + label),
-                source_builder=source,
+                source_builder=adapter,
             )
             if len(actual) != len(rows):
                 raise AssertionError("Incomplete bit execution")
@@ -42,14 +42,14 @@ def verify():
                     observed=value,
                 )
                 for case, value in zip(rows, actual)
-                if not valid_observation(case["ref"], case, value)
+                if not matcher(case["ref"], case, value)
             ]
             if not starters and failures:
                 (output / "failure.json").write_text(json.dumps(failures[:3], indent=2))
                 raise AssertionError(
                     f"{language}: {len(failures)} bit failures; see {output / 'failure.json'}"
                 )
-            if starters and {f["ref"] for f in failures} != {s["ref"] for s in SPECS}:
+            if starters and {f["ref"] for f in failures} != {s["ref"] for s in specs}:
                 raise AssertionError("Some bit starter was accepted")
             evidence.extend(
                 dict(
@@ -59,13 +59,13 @@ def verify():
                     cases=sum(r["ref"] == s["ref"] for r in rows),
                     outcome="rejected" if starters else "passed",
                 )
-                for s in SPECS
+                for s in specs
             )
             print(
-                f"Passed recursion/DP {language} {label} expectations across {len(SPECS)} exercises",
+                f"Passed recursion/DP {language} {label} expectations across {len(specs)} exercises",
                 flush=True,
             )
-    paths = standalone_paths(8, "staged08") + [ROOT / "scripts/ctci6/harness08_typed.py"]
+    paths = standalone_paths(batch, f"staged{batch:02}") + [ROOT / "scripts/ctci6/harness08_typed.py", ROOT / "scripts/ctci6/verify08.py", ROOT / "scripts/ctci6/models08.py"]
     hashes = {
         str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest()
         for p in paths
@@ -75,15 +75,15 @@ def verify():
         status="passed",
         stage="standalone-authoring-only",
         livePublication="pending",
-        questions=len(SPECS),
-        solutionLanguagePairs=len(SPECS) * len(LANGUAGES),
+        questions=len(specs),
+        solutionLanguagePairs=len(specs) * len(LANGUAGES),
         solutionCaseExecutions=len(rows) * len(LANGUAGES),
         starterCaseExecutions=len(rows) * len(LANGUAGES),
         elapsedSeconds=round(time.monotonic() - started, 2),
         sourceHashes=hashes,
         executions=evidence,
     )
-    (ROOT / "ctci6/staged08/validation.json").write_text(
+    (ROOT / f"ctci6/staged{batch:02}/validation.json").write_text(
         json.dumps(report, indent=2) + "\n"
     )
     print(

@@ -1,0 +1,54 @@
+{
+  "explanation": "Starting at one cell, only matching neighbors can extend its original-color component. Mark a matching cell by recoloring it before adding it to a work stack. This makes every cell enter the work stack once and avoids a separate visited matrix. The same-color early return is necessary because recoloring would otherwise fail to mark visits.",
+  "correctness": "After the initial bounds and same-color checks, the start cell belongs to the required component and is marked. Every later pushed cell is an original-color neighbor of an already reached cell, so it belongs to that component. Recoloring at discovery prevents a second push. Conversely, take any cell in the component and a connecting path from the start: induction along that path ensures each next original-color neighbor is eventually discovered. Thus every and only component cells are recolored. No row or outer array is replaced, and all other cell values are untouched.",
+  "walkthrough": "With [[1,0,1],[0,1,1],[1,1,0]], start (0,0) and newColor 2. Its right and lower neighbors are both 0, so only that one cell changes, giving [[2,0,1],[0,1,1],[1,1,0]]. The 1 at (1,1) touches diagonally but is outside the region.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          1,
+          0,
+          1
+        ],
+        [
+          0,
+          1,
+          1
+        ],
+        [
+          1,
+          1,
+          0
+        ]
+      ],
+      0,
+      0,
+      2
+    ],
+    "expected": [
+      [
+        2,
+        0,
+        1
+      ],
+      [
+        0,
+        1,
+        1
+      ],
+      [
+        1,
+        1,
+        0
+      ]
+    ]
+  },
+  "timeComplexity": "O(k) fill time for a changed component of k cells, with four neighbor checks per cell; O(1) fill work for invalid coordinates or equal colors. The C++ by-value result adds O(rows*columns) return-copy time even for a no-op.",
+  "spaceComplexity": "O(k) auxiliary work-stack storage, at most O(rows*columns). The C++ by-value return additionally copies the O(rows*columns) screen values; other languages return the existing screen object.",
+  "edgeCases": [
+    "Diagonal-only contact must not spread paint.",
+    "Same-color request, empty screen, zero-width rows, and out-of-bounds signed coordinates.",
+    "Whole-screen component, isolated cell, and adjacent different-color regions."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 8.10. No affiliation is implied."
+}

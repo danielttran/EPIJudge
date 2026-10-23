@@ -9256,6 +9256,186 @@
         "ctci6/runtime/validation.json",
         "ctci6/cases/ctci6_8_14.json"
       ]
+    },
+    "ctci6_8_2": {
+      "collection": "ctci6",
+      "statementSha256": "185b5aa468046a93365ecdf66cba5ab24397b71bef5b0465d87c795ff7e81ea7",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review08.json",
+      "checks": {
+        "inputDomain": "The nonnull grid has 0..50 rows and 0..50 columns, all rows have equal length, and entries are 0 or 1. An empty dimension has no path. Coordinates are zero-based. Preserve the outer array, every row object, all cell contents and row order. The start and destination must both be open. A one-cell open grid returns [[0,0]]. Return concrete materialized integer lists/vectors, not an iterator.",
+        "outputAndTies": "Find one path from the top-left cell to the bottom-right cell of a rectangular grid, moving only one cell right or one cell down at each step. A 1 is open and a 0 is blocked. Return the visited [row,column] pairs in travel order, including both endpoints, or an empty collection when no path exists. Any valid path is accepted; this asks for one path, not all paths or a count.",
+        "mutationAndIdentity": "The author Java source establishes a single right/down path, unlike the public community all-path variant. Grid cells use explicit 0/1 wire values. All five bodies preserve input outer/row identities and cells; any legal path is accepted independently of the oracle path. Empty/blocked endpoints, all 3x3 obstacle grids, larger grids and right/down-only restrictions are covered. Concrete List/vector coordinates and O(rows*columns) tables match the explanations.",
+        "boundaryBehavior": "Empty dimensions, blocked origin or destination, one open cell. A unique narrow corridor, multiple valid paths, and an unreachable region. Right/down moves only: diagonal and backward steps are invalid.",
+        "examples": "The independently checked displayed example and algorithm trace agree with the executed five-language bodies.",
+        "languageContracts": "{\"csharp\": \"Signed int bounds are justified by the explicit domains and executed endpoints. Arrays are zero-initialized, ways[0] is set before the denomination passes, and recursive multiplication uses ordinary method self-calls without hidden helper state. Collection outputs use concrete Lists. Local recursive functions copy char buffers into immutable strings; the set grader canonicalizes member/outer ordering and rejects boolean or oversized integer members without an exception.\", \"javascript\": \"All results and intermediate sums stay below signed 32-bit maximum and therefore are exact Numbers. The smaller multiplication operand is below 2^16, making its unsigned right shift well-defined for this domain. Each call creates its own DP array. Destructuring swaps restore the exact original character order before siblings. Returned values are real Arrays; input mutation checks use strict scalar equality. Frequency counts and parentheses counters remain local to each invocation.\", \"python\": \"The recursive function's module-global name refers to itself even when invoked through the exported adapter alias. Rolling assignment evaluates previous values before rebinding. Arbitrary-size ints do not mask another language's overflow because shared admitted bounds are verified. Subsets and string collections must be concrete lists. Input snapshot checks require exact int elements, catching bool substitution despite Python equality. Every returned string is joined from the full buffer at a leaf.\", \"cpp\": \"vector<int> zero-initializes the coin counts; std::array enumerates the four denominations. The recursive method calls itself on a strictly smaller nonnegative operand, and all signed additions remain in range. Primitive parameters are passed by value. const references protect scalar-array and string inputs. std::function recursion captures local buffers/results by reference and is invoked only while they live. Subset copies are moved into the result after construction; outer-vector growth does not invalidate an in-use source reference.\", \"java\": \"int arithmetic is exact within the admitted count/product bounds. The recurrence and coin arrays are local to each invocation; no static cached result leaks across tests. Recursive multiplication calls the same instance method with reduced arguments. Local Search classes capture effectively-final buffer/result references. Mutation of array contents is intentional workspace use, while each output string is copied. Boxed integer subset values are encoded by value; input int arrays are compared against untouched snapshots.\"}",
+        "judgeAgreement": "The author Java source establishes a single right/down path, unlike the public community all-path variant. Grid cells use explicit 0/1 wire values. All five bodies preserve input outer/row identities and cells; any legal path is accepted independently of the oracle path. Empty/blocked endpoints, all 3x3 obstacle grids, larger grids and right/down-only restrictions are covered. Concrete List/vector coordinates and O(rows*columns) tables match the explanations."
+      },
+      "evidence": [
+        "ctci6/review08.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_8_2.json"
+      ]
+    },
+    "ctci6_8_6": {
+      "collection": "ctci6",
+      "statementSha256": "051e936876c58714c03296b54977d941fd74d28ec1f89b6226b06873ea529ce3",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review08.json",
+      "checks": {
+        "inputDomain": "0 <= disks <= 12. Disk 1 is smallest; tower indices are 0,1,2. For zero disks return an empty move list. For positive disks return exactly 2^disks-1 legal moves ending with all disks on tower 2. Maintain three stack representations and perform their pop/push operations when generating the transcript; do not return a count in place of solving the puzzle. A stack may use the end of a list/vector/array as its top. Each returned triple is a materialized integer list/vector.",
+        "outputAndTies": "Solve the three-tower Hanoi puzzle using three stacks. Initially tower 0 holds disks disks..1 from bottom to top, and towers 1 and 2 are empty. Move all disks to tower 2 using tower 1 as a buffer. Return the ordered moves as [disk,fromTower,toTower] triples. Each move transfers one exposed top disk and may not place a larger disk on a smaller disk. Produce the minimum number of moves.",
+        "mutationAndIdentity": "Every language initializes three private stacks, with end-of-list or actual Stack/Deque tops. Recursive role permutation exposes the largest disk before moving it and transfers smaller disks afterward. An independent iterative legal-move cycle supplies expected ordered moves; a separate simulation checks every pop, size rule, final state and 2^n-1 bound through twelve disks. C# Stack and Java Deque use their documented top; Python/JS/C++ list/vector back is the top. Transcript output replaces public printing, not the tower-transfer task.",
+        "boundaryBehavior": "Zero and one disk; repeated calls start from fresh towers. Every move must use the source top and preserve the smaller-on-larger rule. Twelve disks require 4095 moves; an output-size exponential bound is essential.",
+        "examples": "The independently checked displayed example and algorithm trace agree with the executed five-language bodies.",
+        "languageContracts": "{\"csharp\": \"Signed int bounds are justified by the explicit domains and executed endpoints. Arrays are zero-initialized, ways[0] is set before the denomination passes, and recursive multiplication uses ordinary method self-calls without hidden helper state. Collection outputs use concrete Lists. Local recursive functions copy char buffers into immutable strings; the set grader canonicalizes member/outer ordering and rejects boolean or oversized integer members without an exception.\", \"javascript\": \"All results and intermediate sums stay below signed 32-bit maximum and therefore are exact Numbers. The smaller multiplication operand is below 2^16, making its unsigned right shift well-defined for this domain. Each call creates its own DP array. Destructuring swaps restore the exact original character order before siblings. Returned values are real Arrays; input mutation checks use strict scalar equality. Frequency counts and parentheses counters remain local to each invocation.\", \"python\": \"The recursive function's module-global name refers to itself even when invoked through the exported adapter alias. Rolling assignment evaluates previous values before rebinding. Arbitrary-size ints do not mask another language's overflow because shared admitted bounds are verified. Subsets and string collections must be concrete lists. Input snapshot checks require exact int elements, catching bool substitution despite Python equality. Every returned string is joined from the full buffer at a leaf.\", \"cpp\": \"vector<int> zero-initializes the coin counts; std::array enumerates the four denominations. The recursive method calls itself on a strictly smaller nonnegative operand, and all signed additions remain in range. Primitive parameters are passed by value. const references protect scalar-array and string inputs. std::function recursion captures local buffers/results by reference and is invoked only while they live. Subset copies are moved into the result after construction; outer-vector growth does not invalidate an in-use source reference.\", \"java\": \"int arithmetic is exact within the admitted count/product bounds. The recurrence and coin arrays are local to each invocation; no static cached result leaks across tests. Recursive multiplication calls the same instance method with reduced arguments. Local Search classes capture effectively-final buffer/result references. Mutation of array contents is intentional workspace use, while each output string is copied. Boxed integer subset values are encoded by value; input int arrays are compared against untouched snapshots.\"}",
+        "judgeAgreement": "Every language initializes three private stacks, with end-of-list or actual Stack/Deque tops. Recursive role permutation exposes the largest disk before moving it and transfers smaller disks afterward. An independent iterative legal-move cycle supplies expected ordered moves; a separate simulation checks every pop, size rule, final state and 2^n-1 bound through twelve disks. C# Stack and Java Deque use their documented top; Python/JS/C++ list/vector back is the top. Transcript output replaces public printing, not the tower-transfer task."
+      },
+      "evidence": [
+        "ctci6/review08.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_8_6.json"
+      ]
+    },
+    "ctci6_8_10": {
+      "collection": "ctci6",
+      "statementSha256": "e06b30efa04dc1ecfa5efe8e765a27e227718ac423eb2064be70e2279a58b266",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review08.json",
+      "checks": {
+        "inputDomain": "The nonnull rectangular screen has 0..50 rows and 0..50 columns with integer colors 0..4; newColor is also 0..4. Row and column are signed 32-bit integers. An out-of-range coordinate or empty dimension leaves the screen unchanged. Preserve the outer array, original row objects, dimensions and row order. Only cell values in the specified original-color component may change. If the old and new colors agree, return immediately without repeatedly visiting the region. C#/Java/JavaScript/Python may return the same screen object; the C++ signature returns its values by value after mutating the supplied reference. Returning a changed copy while leaving the input unmodified is incorrect.",
+        "outputAndTies": "Recolor the four-directionally connected region containing (row,column) in screen. The region consists of cells with the starting cell's original color, connected through shared horizontal or vertical edges. Change exactly that region to newColor in place, preserve all other cells, and return the filled screen values. Diagonal contact alone does not connect regions.",
+        "mutationAndIdentity": "The author Java source uses four neighbors; the community eight-neighbor version is explicitly excluded. Bank conventions define integer colors, returned filled values and graceful invalid-coordinate no-ops. Every language preserves original outer and row objects while changing exactly component cells. Same-color early return avoids revisiting forever. C++ takes a mutable reference and returns a value copy, with copy time/space stated; other languages return the existing screen. Independent component discovery precedes recoloring in the oracle. Exhaustive binary 3x3 screens and diagonal-only cases expose eight-neighbor mistakes.",
+        "boundaryBehavior": "Diagonal-only contact must not spread paint. Same-color request, empty screen, zero-width rows, and out-of-bounds signed coordinates. Whole-screen component, isolated cell, and adjacent different-color regions.",
+        "examples": "The independently checked displayed example and algorithm trace agree with the executed five-language bodies.",
+        "languageContracts": "{\"csharp\": \"Signed int bounds are justified by the explicit domains and executed endpoints. Arrays are zero-initialized, ways[0] is set before the denomination passes, and recursive multiplication uses ordinary method self-calls without hidden helper state. Collection outputs use concrete Lists. Local recursive functions copy char buffers into immutable strings; the set grader canonicalizes member/outer ordering and rejects boolean or oversized integer members without an exception.\", \"javascript\": \"All results and intermediate sums stay below signed 32-bit maximum and therefore are exact Numbers. The smaller multiplication operand is below 2^16, making its unsigned right shift well-defined for this domain. Each call creates its own DP array. Destructuring swaps restore the exact original character order before siblings. Returned values are real Arrays; input mutation checks use strict scalar equality. Frequency counts and parentheses counters remain local to each invocation.\", \"python\": \"The recursive function's module-global name refers to itself even when invoked through the exported adapter alias. Rolling assignment evaluates previous values before rebinding. Arbitrary-size ints do not mask another language's overflow because shared admitted bounds are verified. Subsets and string collections must be concrete lists. Input snapshot checks require exact int elements, catching bool substitution despite Python equality. Every returned string is joined from the full buffer at a leaf.\", \"cpp\": \"vector<int> zero-initializes the coin counts; std::array enumerates the four denominations. The recursive method calls itself on a strictly smaller nonnegative operand, and all signed additions remain in range. Primitive parameters are passed by value. const references protect scalar-array and string inputs. std::function recursion captures local buffers/results by reference and is invoked only while they live. Subset copies are moved into the result after construction; outer-vector growth does not invalidate an in-use source reference.\", \"java\": \"int arithmetic is exact within the admitted count/product bounds. The recurrence and coin arrays are local to each invocation; no static cached result leaks across tests. Recursive multiplication calls the same instance method with reduced arguments. Local Search classes capture effectively-final buffer/result references. Mutation of array contents is intentional workspace use, while each output string is copied. Boxed integer subset values are encoded by value; input int arrays are compared against untouched snapshots.\"}",
+        "judgeAgreement": "The author Java source uses four neighbors; the community eight-neighbor version is explicitly excluded. Bank conventions define integer colors, returned filled values and graceful invalid-coordinate no-ops. Every language preserves original outer and row objects while changing exactly component cells. Same-color early return avoids revisiting forever. C++ takes a mutable reference and returns a value copy, with copy time/space stated; other languages return the existing screen. Independent component discovery precedes recoloring in the oracle. Exhaustive binary 3x3 screens and diagonal-only cases expose eight-neighbor mistakes."
+      },
+      "evidence": [
+        "ctci6/review08.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_8_10.json"
+      ]
+    },
+    "ctci6_16_5": {
+      "collection": "ctci6",
+      "statementSha256": "9b517e01a308fa041f44bf29b3c80d0e1f9d341c2fc5c456eeeb98dce34be455",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "inputDomain": "0 <= n <= 2147483647. Define 0! as 1, which has zero trailing zeros. Return the exact signed 32-bit count. Preserve inputs.",
+        "outputAndTies": "Return the number of trailing decimal zero digits in n factorial, without constructing the factorial. A trailing zero means a factor of ten at the end of the integer, not any zero digit inside its representation.",
+        "mutationAndIdentity": "No factorial or growing fixed-width power is computed. The independently authored oracle directly inspects factorial decimal endings for small n and uses arbitrary-precision powers for large n. Boundaries around every representable power of five and int.MaxValue are executed. JavaScript uses Math.floor rather than real division; all totals fit signed int.",
+        "boundaryBehavior": "Zero and numbers below five. Just below, at and above powers of five; the maximum signed input.",
+        "examples": "The independently checked displayed example and algorithm trace agree with the executed five-language bodies.",
+        "languageContracts": "{\"csharp\": \"Read all actual signed-int bodies. Array return expressions match int[] signatures. NumberMax uses uint sign extraction and an explicit unchecked difference, then signed masks; no conditional comparison helper. MasterMind IndexOf uses the admitted ASCII alphabet. Mutable array inputs are read only in this batch.\", \"javascript\": \"Read all actual functions. Factorial division is floored, NumberMax bit operations coerce the intended signed 32-bit patterns, and bounded ordinary arithmetic stays exactly representable. All array results are materialized, not generators. Inputs remain unchanged.\", \"python\": \"Read all actual function bodies and exact annotations. NumberMax masks the potentially wider difference before extracting its 32-bit sign; the signed selection mask works with arbitrary-width bitwise operations. Arrays are concrete lists and bool is not an integer observation. The admitted numeric bounds remain shared.\", \"cpp\": \"Read all actual methods with const vector/string references. NumberMax difference is uint32_t and final operand multiplication by 0/1 cannot overflow. No undefined signed subtraction or implementation-defined unsigned narrowing is used. Returned vectors own their values; prefix/suffix scans index only nonempty input.\", \"java\": \"Read all actual methods. Integer arithmetic uses justified bounds, except the intentionally wrapping subtraction whose bit pattern is observed with >>>. Returned int[] arrays match declared types, String indexing uses charAt, and the frequency table is local per call. Inputs are unchanged.\"}",
+        "judgeAgreement": "No factorial or growing fixed-width power is computed. The independently authored oracle directly inspects factorial decimal endings for small n and uses arbitrary-precision powers for large n. Boundaries around every representable power of five and int.MaxValue are executed. JavaScript uses Math.floor rather than real division; all totals fit signed int."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_5.json"
+      ]
+    },
+    "ctci6_16_7": {
+      "collection": "ctci6",
+      "statementSha256": "39944edcfe26db93b984b798eb5e2d55e09f386ab136926a37d122a5eb2d87fd",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "inputDomain": "Both inputs may be any signed 32-bit integer, including -2147483648 and 2147483647. The result is one original input. Preserve inputs. Do not use <,>,<=,>=,==,!=, if/switch, a ternary expression, or a helper that performs the comparison for you. Fixed-width unsigned conversion/masking and sign-bit extraction are allowed.",
+        "outputAndTies": "Return the larger of two signed 32-bit integers without using comparison operators, conditional branches, conditional expressions, or a max/min/sorting helper. Use their sign bits and arithmetic/bit operations to select the answer. Either copy is valid when the arguments are equal.",
+        "mutationAndIdentity": "Read all five bodies: no comparison operator, if/switch, conditional expression or max/min helper appears in the solution. C#/Java/JS explicitly observe 32-bit difference bits; Python masks to 32 bits. C++ subtraction uses uint32_t, not overflowing signed subtraction, and chooses via 0/1 products of exact original operands rather than unsigned-to-signed narrowing. Extreme opposite signs and all small signed pairs are executed against host max.",
+        "boundaryBehavior": "Opposite signed endpoints, equal values, zero and negatives. A subtraction that wraps must not influence the opposite-sign choice.",
+        "examples": "The independently checked displayed example and algorithm trace agree with the executed five-language bodies.",
+        "languageContracts": "{\"csharp\": \"Read all actual signed-int bodies. Array return expressions match int[] signatures. NumberMax uses uint sign extraction and an explicit unchecked difference, then signed masks; no conditional comparison helper. MasterMind IndexOf uses the admitted ASCII alphabet. Mutable array inputs are read only in this batch.\", \"javascript\": \"Read all actual functions. Factorial division is floored, NumberMax bit operations coerce the intended signed 32-bit patterns, and bounded ordinary arithmetic stays exactly representable. All array results are materialized, not generators. Inputs remain unchanged.\", \"python\": \"Read all actual function bodies and exact annotations. NumberMax masks the potentially wider difference before extracting its 32-bit sign; the signed selection mask works with arbitrary-width bitwise operations. Arrays are concrete lists and bool is not an integer observation. The admitted numeric bounds remain shared.\", \"cpp\": \"Read all actual methods with const vector/string references. NumberMax difference is uint32_t and final operand multiplication by 0/1 cannot overflow. No undefined signed subtraction or implementation-defined unsigned narrowing is used. Returned vectors own their values; prefix/suffix scans index only nonempty input.\", \"java\": \"Read all actual methods. Integer arithmetic uses justified bounds, except the intentionally wrapping subtraction whose bit pattern is observed with >>>. Returned int[] arrays match declared types, String indexing uses charAt, and the frequency table is local per call. Inputs are unchanged.\"}",
+        "judgeAgreement": "Read all five bodies: no comparison operator, if/switch, conditional expression or max/min helper appears in the solution. C#/Java/JS explicitly observe 32-bit difference bits; Python masks to 32 bits. C++ subtraction uses uint32_t, not overflowing signed subtraction, and chooses via 0/1 products of exact original operands rather than unsigned-to-signed narrowing. Extreme opposite signs and all small signed pairs are executed against host max."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_7.json"
+      ]
+    },
+    "ctci6_16_11": {
+      "collection": "ctci6",
+      "statementSha256": "7cdc73e3b03204fe8b16c2951cdb12f9557884b767fc4678a768a01a93709e53",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "inputDomain": "0 <= planks <= 10000 and 1 <= shorter <= longer <= 100000. The largest total is at most 1000000000 and fits signed 32-bit range. Inputs are preserved. For zero planks return [0], the length of the empty board. When the two lengths agree, return one length, not repeated copies. Return a concrete integer array/list/vector.",
+        "outputAndTies": "Return every distinct total length obtainable by placing exactly planks wooden planks end to end. Each plank independently has length shorter or longer, with unlimited availability of each kind. Arrangement order does not make a new length. Return the lengths in strictly increasing order.",
+        "mutationAndIdentity": "Each actual body emits n+1 strictly increasing lengths only when lengths differ. Zero planks returns [0]. C#/Java allocate exact int arrays, JavaScript uses Array.from, Python a concrete comprehension and C++ reserves a vector. The bound ensures every product/sum is at most 10^9. The independent small oracle builds reachable length sets by repeated plank addition.",
+        "boundaryBehavior": "Zero planks, equal lengths, one plank. Maximum count and lengths, without integer overflow or duplicate totals.",
+        "examples": "The independently checked displayed example and algorithm trace agree with the executed five-language bodies.",
+        "languageContracts": "{\"csharp\": \"Read all actual signed-int bodies. Array return expressions match int[] signatures. NumberMax uses uint sign extraction and an explicit unchecked difference, then signed masks; no conditional comparison helper. MasterMind IndexOf uses the admitted ASCII alphabet. Mutable array inputs are read only in this batch.\", \"javascript\": \"Read all actual functions. Factorial division is floored, NumberMax bit operations coerce the intended signed 32-bit patterns, and bounded ordinary arithmetic stays exactly representable. All array results are materialized, not generators. Inputs remain unchanged.\", \"python\": \"Read all actual function bodies and exact annotations. NumberMax masks the potentially wider difference before extracting its 32-bit sign; the signed selection mask works with arbitrary-width bitwise operations. Arrays are concrete lists and bool is not an integer observation. The admitted numeric bounds remain shared.\", \"cpp\": \"Read all actual methods with const vector/string references. NumberMax difference is uint32_t and final operand multiplication by 0/1 cannot overflow. No undefined signed subtraction or implementation-defined unsigned narrowing is used. Returned vectors own their values; prefix/suffix scans index only nonempty input.\", \"java\": \"Read all actual methods. Integer arithmetic uses justified bounds, except the intentionally wrapping subtraction whose bit pattern is observed with >>>. Returned int[] arrays match declared types, String indexing uses charAt, and the frequency table is local per call. Inputs are unchanged.\"}",
+        "judgeAgreement": "Each actual body emits n+1 strictly increasing lengths only when lengths differ. Zero planks returns [0]. C#/Java allocate exact int arrays, JavaScript uses Array.from, Python a concrete comprehension and C++ reserves a vector. The bound ensures every product/sum is at most 10^9. The independent small oracle builds reachable length sets by repeated plank addition."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_11.json"
+      ]
+    },
+    "ctci6_16_15": {
+      "collection": "ctci6",
+      "statementSha256": "2eec5095cdb5ff243c12b12ded46036ff501b3a02a261f88d490e72c0c7abbd3",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "inputDomain": "guess and secret are nonnull strings of exactly four uppercase ASCII characters from R,G,B,Y. Repeated colors are allowed. Preserve both inputs. A hit cannot also be a pseudo-hit. Excess guessed occurrences of a color receive no credit beyond the unmatched secret count.",
+        "outputAndTies": "Score a four-slot Master Mind guess against a secret. Both strings contain only R,G,B,Y. A hit is a matching color in the same slot. A pseudo-hit is a correct color in a different slot after hits have been removed. Each remaining secret occurrence may be used at most once. Return [hits,pseudoHits].",
+        "mutationAndIdentity": "All five bodies use the same four-color alphabet order consistently for both passes. A hit is excluded from the frequency table and from pseudo-hit consumption; repeated guesses cannot consume one slot twice. Independent permutation matching of unmatched positions, all-color strings, monochrome guesses, reversals, rotations and two-color exhaustive pairs cover multiplicity errors.",
+        "boundaryBehavior": "All hits, no matches, all one color. Repeated guessed colors cannot consume one unmatched secret occurrence twice.",
+        "examples": "The independently checked displayed example and algorithm trace agree with the executed five-language bodies.",
+        "languageContracts": "{\"csharp\": \"Read all actual signed-int bodies. Array return expressions match int[] signatures. NumberMax uses uint sign extraction and an explicit unchecked difference, then signed masks; no conditional comparison helper. MasterMind IndexOf uses the admitted ASCII alphabet. Mutable array inputs are read only in this batch.\", \"javascript\": \"Read all actual functions. Factorial division is floored, NumberMax bit operations coerce the intended signed 32-bit patterns, and bounded ordinary arithmetic stays exactly representable. All array results are materialized, not generators. Inputs remain unchanged.\", \"python\": \"Read all actual function bodies and exact annotations. NumberMax masks the potentially wider difference before extracting its 32-bit sign; the signed selection mask works with arbitrary-width bitwise operations. Arrays are concrete lists and bool is not an integer observation. The admitted numeric bounds remain shared.\", \"cpp\": \"Read all actual methods with const vector/string references. NumberMax difference is uint32_t and final operand multiplication by 0/1 cannot overflow. No undefined signed subtraction or implementation-defined unsigned narrowing is used. Returned vectors own their values; prefix/suffix scans index only nonempty input.\", \"java\": \"Read all actual methods. Integer arithmetic uses justified bounds, except the intentionally wrapping subtraction whose bit pattern is observed with >>>. Returned int[] arrays match declared types, String indexing uses charAt, and the frequency table is local per call. Inputs are unchanged.\"}",
+        "judgeAgreement": "All five bodies use the same four-color alphabet order consistently for both passes. A hit is excluded from the frequency table and from pseudo-hit consumption; repeated guesses cannot consume one slot twice. Independent permutation matching of unmatched positions, all-color strings, monochrome guesses, reversals, rotations and two-color exhaustive pairs cover multiplicity errors."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_15.json"
+      ]
+    },
+    "ctci6_16_16": {
+      "collection": "ctci6",
+      "statementSha256": "01067c8a3f1f09bbe8ff875be9143b28128a30763fdbbfb9e8fa78b2b7c00c93",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "inputDomain": "values contains 0..10000 signed 32-bit integers. Duplicates are allowed. Preserve the input array and order. Equal adjacent values are already in sorted order. The returned endpoints describe the window in the original array.",
+        "outputAndTies": "Return the inclusive zero-based endpoints [left,right] of the shortest contiguous window which, if sorted in nondecreasing order, would make the entire array nondecreasing. Do not actually change the input. If it is already sorted, including an empty or singleton array, return [-1,-1].",
+        "mutationAndIdentity": "Strict comparisons treat equal values as already ordered. Empty input is checked before indexing; no forward violation returns [-1,-1]. All five return inclusive original endpoints and preserve input. Independent sorted-copy mismatch endpoints agree for all small repeated-value arrays, signed extremes and 10000-element sorted/reverse inputs.",
+        "boundaryBehavior": "Empty, singleton, already sorted, all equal. Reverse order, duplicates around both endpoints, signed extremes.",
+        "examples": "The independently checked displayed example and algorithm trace agree with the executed five-language bodies.",
+        "languageContracts": "{\"csharp\": \"Read all actual signed-int bodies. Array return expressions match int[] signatures. NumberMax uses uint sign extraction and an explicit unchecked difference, then signed masks; no conditional comparison helper. MasterMind IndexOf uses the admitted ASCII alphabet. Mutable array inputs are read only in this batch.\", \"javascript\": \"Read all actual functions. Factorial division is floored, NumberMax bit operations coerce the intended signed 32-bit patterns, and bounded ordinary arithmetic stays exactly representable. All array results are materialized, not generators. Inputs remain unchanged.\", \"python\": \"Read all actual function bodies and exact annotations. NumberMax masks the potentially wider difference before extracting its 32-bit sign; the signed selection mask works with arbitrary-width bitwise operations. Arrays are concrete lists and bool is not an integer observation. The admitted numeric bounds remain shared.\", \"cpp\": \"Read all actual methods with const vector/string references. NumberMax difference is uint32_t and final operand multiplication by 0/1 cannot overflow. No undefined signed subtraction or implementation-defined unsigned narrowing is used. Returned vectors own their values; prefix/suffix scans index only nonempty input.\", \"java\": \"Read all actual methods. Integer arithmetic uses justified bounds, except the intentionally wrapping subtraction whose bit pattern is observed with >>>. Returned int[] arrays match declared types, String indexing uses charAt, and the frequency table is local per call. Inputs are unchanged.\"}",
+        "judgeAgreement": "Strict comparisons treat equal values as already ordered. Empty input is checked before indexing; no forward violation returns [-1,-1]. All five return inclusive original endpoints and preserve input. Independent sorted-copy mismatch endpoints agree for all small repeated-value arrays, signed extremes and 10000-element sorted/reverse inputs."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_16.json"
+      ]
+    },
+    "ctci6_16_17": {
+      "collection": "ctci6",
+      "statementSha256": "607c090a70a1dfcba6d1d01089606a4131e3772fcf4c81bee4d4278aead29062",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "inputDomain": "values has 0..1000 integers, each in -1000000..1000000. Every contiguous sum is within signed 32-bit range. The input is nonnull and unchanged. A sequence must use consecutive positions in their original order. Do not select separated positive values. Empty-sequence permission is intentional and matches the public source's zero result for all-negative input.",
+        "outputAndTies": "Return the largest sum of a contiguous sequence of values. The empty sequence is allowed and has sum zero, so an empty array or all-negative array returns zero. Preserve the input; return the sum rather than sequence endpoints.",
+        "mutationAndIdentity": "Empty/all-negative input returns zero, as in the author source; a nonempty-only variant is not substituted. The oracle directly enumerates contiguous intervals. The shared domain bounds all sums by 10^9, so Java/C#/C++ arithmetic and JS Number results are exact. Python arbitrary precision does not hide a cross-language overflow. Inputs are not modified.",
+        "boundaryBehavior": "Empty and all-negative inputs return zero. Zeros, all-positive input, a best interval strictly inside the array.",
+        "examples": "The independently checked displayed example and algorithm trace agree with the executed five-language bodies.",
+        "languageContracts": "{\"csharp\": \"Read all actual signed-int bodies. Array return expressions match int[] signatures. NumberMax uses uint sign extraction and an explicit unchecked difference, then signed masks; no conditional comparison helper. MasterMind IndexOf uses the admitted ASCII alphabet. Mutable array inputs are read only in this batch.\", \"javascript\": \"Read all actual functions. Factorial division is floored, NumberMax bit operations coerce the intended signed 32-bit patterns, and bounded ordinary arithmetic stays exactly representable. All array results are materialized, not generators. Inputs remain unchanged.\", \"python\": \"Read all actual function bodies and exact annotations. NumberMax masks the potentially wider difference before extracting its 32-bit sign; the signed selection mask works with arbitrary-width bitwise operations. Arrays are concrete lists and bool is not an integer observation. The admitted numeric bounds remain shared.\", \"cpp\": \"Read all actual methods with const vector/string references. NumberMax difference is uint32_t and final operand multiplication by 0/1 cannot overflow. No undefined signed subtraction or implementation-defined unsigned narrowing is used. Returned vectors own their values; prefix/suffix scans index only nonempty input.\", \"java\": \"Read all actual methods. Integer arithmetic uses justified bounds, except the intentionally wrapping subtraction whose bit pattern is observed with >>>. Returned int[] arrays match declared types, String indexing uses charAt, and the frequency table is local per call. Inputs are unchanged.\"}",
+        "judgeAgreement": "Empty/all-negative input returns zero, as in the author source; a nonempty-only variant is not substituted. The oracle directly enumerates contiguous intervals. The shared domain bounds all sums by 10^9, so Java/C#/C++ arithmetic and JS Number results are exact. Python arbitrary precision does not hide a cross-language overflow. Inputs are not modified."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_17.json"
+      ]
     }
   },
   "solutions": {
@@ -53321,6 +53501,1041 @@
         "ctci6/cases/ctci6_8_14.json",
         "solutions/java/ctci6_8_14.java",
         "solutions/notes/java/ctci6_8_14.json"
+      ]
+    },
+    "ctci6_8_2/csharp": {
+      "codePath": "solutions/csharp/ctci6_8_2.cs",
+      "notesPath": "solutions/notes/ctci6_8_2.json",
+      "contentSha256": "128308862faae9a8b037c59051b10646721122b408981898a6e3352779a9bfd8",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review08.json",
+      "checks": {
+        "actualAlgorithm": "Row-order predecessor DP followed by reverse path reconstruction.",
+        "correctness": "The origin is reachable exactly when it is open. At every later open cell, the only possible incoming moves are from its upper or left neighbor. By induction in row order, their reachability is already correct, so recording one reachable predecessor marks precisely the reachable cells. A blocked cell is never marked. If the destination is unmarked, no path exists. Otherwise following predecessors reaches the origin and decreases the row or column at each step. Reversing those coordinates produces a legal forward path with both endpoints, using only open cells.",
+        "workedTrace": "For [[1,1,0],[0,1,1]], the origin reaches (0,1), which reaches (1,1), then (1,2). The returned path is [[0,0],[0,1],[1,1],[1,2]]. Cell (1,0) is blocked, so a diagonal jump from the origin to (1,1) would not be a valid alternative.",
+        "edgeCases": "Empty dimensions, blocked origin or destination, one open cell. A unique narrow corridor, multiple valid paths, and an unreachable region. Right/down moves only: diagonal and backward steps are invalid.",
+        "timeDerivation": "O(rows*columns) time to scan the grid, plus O(rows+columns) path reconstruction when a path exists.",
+        "spaceDerivation": "O(rows*columns) predecessor storage, excluding the returned O(rows+columns) coordinate pairs. No recursion stack is used.",
+        "callableAgreement": "The author Java source establishes a single right/down path, unlike the public community all-path variant. Grid cells use explicit 0/1 wire values. All five bodies preserve input outer/row identities and cells; any legal path is accepted independently of the oracle path. Empty/blocked endpoints, all 3x3 obstacle grids, larger grids and right/down-only restrictions are covered. Concrete List/vector coordinates and O(rows*columns) tables match the explanations. Signed int bounds are justified by the explicit domains and executed endpoints. Arrays are zero-initialized, ways[0] is set before the denomination passes, and recursive multiplication uses ordinary method self-calls without hidden helper state. Collection outputs use concrete Lists. Local recursive functions copy char buffers into immutable strings; the set grader canonicalizes member/outer ordering and rejects boolean or oversized integer members without an exception."
+      },
+      "evidence": [
+        "ctci6/review08.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_8_2.json",
+        "solutions/csharp/ctci6_8_2.cs",
+        "solutions/notes/ctci6_8_2.json"
+      ]
+    },
+    "ctci6_8_2/javascript": {
+      "codePath": "solutions/javascript/ctci6_8_2.js",
+      "notesPath": "solutions/notes/javascript/ctci6_8_2.json",
+      "contentSha256": "dd4379f3be0a1b288fc694c3bbb46c1ba6dad692f32934569c8c0a3c32324dc3",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review08.json",
+      "checks": {
+        "actualAlgorithm": "Row-order predecessor DP followed by reverse path reconstruction.",
+        "correctness": "The origin is reachable exactly when it is open. At every later open cell, the only possible incoming moves are from its upper or left neighbor. By induction in row order, their reachability is already correct, so recording one reachable predecessor marks precisely the reachable cells. A blocked cell is never marked. If the destination is unmarked, no path exists. Otherwise following predecessors reaches the origin and decreases the row or column at each step. Reversing those coordinates produces a legal forward path with both endpoints, using only open cells.",
+        "workedTrace": "For [[1,1,0],[0,1,1]], the origin reaches (0,1), which reaches (1,1), then (1,2). The returned path is [[0,0],[0,1],[1,1],[1,2]]. Cell (1,0) is blocked, so a diagonal jump from the origin to (1,1) would not be a valid alternative.",
+        "edgeCases": "Empty dimensions, blocked origin or destination, one open cell. A unique narrow corridor, multiple valid paths, and an unreachable region. Right/down moves only: diagonal and backward steps are invalid.",
+        "timeDerivation": "O(rows*columns) time to scan the grid, plus O(rows+columns) path reconstruction when a path exists.",
+        "spaceDerivation": "O(rows*columns) predecessor storage, excluding the returned O(rows+columns) coordinate pairs. No recursion stack is used.",
+        "callableAgreement": "The author Java source establishes a single right/down path, unlike the public community all-path variant. Grid cells use explicit 0/1 wire values. All five bodies preserve input outer/row identities and cells; any legal path is accepted independently of the oracle path. Empty/blocked endpoints, all 3x3 obstacle grids, larger grids and right/down-only restrictions are covered. Concrete List/vector coordinates and O(rows*columns) tables match the explanations. All results and intermediate sums stay below signed 32-bit maximum and therefore are exact Numbers. The smaller multiplication operand is below 2^16, making its unsigned right shift well-defined for this domain. Each call creates its own DP array. Destructuring swaps restore the exact original character order before siblings. Returned values are real Arrays; input mutation checks use strict scalar equality. Frequency counts and parentheses counters remain local to each invocation."
+      },
+      "evidence": [
+        "ctci6/review08.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_8_2.json",
+        "solutions/javascript/ctci6_8_2.js",
+        "solutions/notes/javascript/ctci6_8_2.json"
+      ]
+    },
+    "ctci6_8_2/python": {
+      "codePath": "solutions/python/ctci6_8_2.py",
+      "notesPath": "solutions/notes/python/ctci6_8_2.json",
+      "contentSha256": "c16289bf53089d4a8b2184557c0c8aaac14ac3f565709bb2bf9e759804b80957",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review08.json",
+      "checks": {
+        "actualAlgorithm": "Row-order predecessor DP followed by reverse path reconstruction.",
+        "correctness": "The origin is reachable exactly when it is open. At every later open cell, the only possible incoming moves are from its upper or left neighbor. By induction in row order, their reachability is already correct, so recording one reachable predecessor marks precisely the reachable cells. A blocked cell is never marked. If the destination is unmarked, no path exists. Otherwise following predecessors reaches the origin and decreases the row or column at each step. Reversing those coordinates produces a legal forward path with both endpoints, using only open cells.",
+        "workedTrace": "For [[1,1,0],[0,1,1]], the origin reaches (0,1), which reaches (1,1), then (1,2). The returned path is [[0,0],[0,1],[1,1],[1,2]]. Cell (1,0) is blocked, so a diagonal jump from the origin to (1,1) would not be a valid alternative.",
+        "edgeCases": "Empty dimensions, blocked origin or destination, one open cell. A unique narrow corridor, multiple valid paths, and an unreachable region. Right/down moves only: diagonal and backward steps are invalid.",
+        "timeDerivation": "O(rows*columns) time to scan the grid, plus O(rows+columns) path reconstruction when a path exists.",
+        "spaceDerivation": "O(rows*columns) predecessor storage, excluding the returned O(rows+columns) coordinate pairs. No recursion stack is used.",
+        "callableAgreement": "The author Java source establishes a single right/down path, unlike the public community all-path variant. Grid cells use explicit 0/1 wire values. All five bodies preserve input outer/row identities and cells; any legal path is accepted independently of the oracle path. Empty/blocked endpoints, all 3x3 obstacle grids, larger grids and right/down-only restrictions are covered. Concrete List/vector coordinates and O(rows*columns) tables match the explanations. The recursive function's module-global name refers to itself even when invoked through the exported adapter alias. Rolling assignment evaluates previous values before rebinding. Arbitrary-size ints do not mask another language's overflow because shared admitted bounds are verified. Subsets and string collections must be concrete lists. Input snapshot checks require exact int elements, catching bool substitution despite Python equality. Every returned string is joined from the full buffer at a leaf."
+      },
+      "evidence": [
+        "ctci6/review08.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_8_2.json",
+        "solutions/python/ctci6_8_2.py",
+        "solutions/notes/python/ctci6_8_2.json"
+      ]
+    },
+    "ctci6_8_2/cpp": {
+      "codePath": "solutions/cpp/ctci6_8_2.cpp",
+      "notesPath": "solutions/notes/cpp/ctci6_8_2.json",
+      "contentSha256": "469da4ba006c4211a235b9594278b584893be4c61e895daf0a4dff330f1fb7b1",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review08.json",
+      "checks": {
+        "actualAlgorithm": "Row-order predecessor DP followed by reverse path reconstruction.",
+        "correctness": "The origin is reachable exactly when it is open. At every later open cell, the only possible incoming moves are from its upper or left neighbor. By induction in row order, their reachability is already correct, so recording one reachable predecessor marks precisely the reachable cells. A blocked cell is never marked. If the destination is unmarked, no path exists. Otherwise following predecessors reaches the origin and decreases the row or column at each step. Reversing those coordinates produces a legal forward path with both endpoints, using only open cells.",
+        "workedTrace": "For [[1,1,0],[0,1,1]], the origin reaches (0,1), which reaches (1,1), then (1,2). The returned path is [[0,0],[0,1],[1,1],[1,2]]. Cell (1,0) is blocked, so a diagonal jump from the origin to (1,1) would not be a valid alternative.",
+        "edgeCases": "Empty dimensions, blocked origin or destination, one open cell. A unique narrow corridor, multiple valid paths, and an unreachable region. Right/down moves only: diagonal and backward steps are invalid.",
+        "timeDerivation": "O(rows*columns) time to scan the grid, plus O(rows+columns) path reconstruction when a path exists.",
+        "spaceDerivation": "O(rows*columns) predecessor storage, excluding the returned O(rows+columns) coordinate pairs. No recursion stack is used.",
+        "callableAgreement": "The author Java source establishes a single right/down path, unlike the public community all-path variant. Grid cells use explicit 0/1 wire values. All five bodies preserve input outer/row identities and cells; any legal path is accepted independently of the oracle path. Empty/blocked endpoints, all 3x3 obstacle grids, larger grids and right/down-only restrictions are covered. Concrete List/vector coordinates and O(rows*columns) tables match the explanations. vector<int> zero-initializes the coin counts; std::array enumerates the four denominations. The recursive method calls itself on a strictly smaller nonnegative operand, and all signed additions remain in range. Primitive parameters are passed by value. const references protect scalar-array and string inputs. std::function recursion captures local buffers/results by reference and is invoked only while they live. Subset copies are moved into the result after construction; outer-vector growth does not invalidate an in-use source reference."
+      },
+      "evidence": [
+        "ctci6/review08.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_8_2.json",
+        "solutions/cpp/ctci6_8_2.cpp",
+        "solutions/notes/cpp/ctci6_8_2.json"
+      ]
+    },
+    "ctci6_8_2/java": {
+      "codePath": "solutions/java/ctci6_8_2.java",
+      "notesPath": "solutions/notes/java/ctci6_8_2.json",
+      "contentSha256": "b2c711916bd3756a62b54e00a34ba67e5108b43d6156ad27e948947cc50f02ae",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review08.json",
+      "checks": {
+        "actualAlgorithm": "Row-order predecessor DP followed by reverse path reconstruction.",
+        "correctness": "The origin is reachable exactly when it is open. At every later open cell, the only possible incoming moves are from its upper or left neighbor. By induction in row order, their reachability is already correct, so recording one reachable predecessor marks precisely the reachable cells. A blocked cell is never marked. If the destination is unmarked, no path exists. Otherwise following predecessors reaches the origin and decreases the row or column at each step. Reversing those coordinates produces a legal forward path with both endpoints, using only open cells.",
+        "workedTrace": "For [[1,1,0],[0,1,1]], the origin reaches (0,1), which reaches (1,1), then (1,2). The returned path is [[0,0],[0,1],[1,1],[1,2]]. Cell (1,0) is blocked, so a diagonal jump from the origin to (1,1) would not be a valid alternative.",
+        "edgeCases": "Empty dimensions, blocked origin or destination, one open cell. A unique narrow corridor, multiple valid paths, and an unreachable region. Right/down moves only: diagonal and backward steps are invalid.",
+        "timeDerivation": "O(rows*columns) time to scan the grid, plus O(rows+columns) path reconstruction when a path exists.",
+        "spaceDerivation": "O(rows*columns) predecessor storage, excluding the returned O(rows+columns) coordinate pairs. No recursion stack is used.",
+        "callableAgreement": "The author Java source establishes a single right/down path, unlike the public community all-path variant. Grid cells use explicit 0/1 wire values. All five bodies preserve input outer/row identities and cells; any legal path is accepted independently of the oracle path. Empty/blocked endpoints, all 3x3 obstacle grids, larger grids and right/down-only restrictions are covered. Concrete List/vector coordinates and O(rows*columns) tables match the explanations. int arithmetic is exact within the admitted count/product bounds. The recurrence and coin arrays are local to each invocation; no static cached result leaks across tests. Recursive multiplication calls the same instance method with reduced arguments. Local Search classes capture effectively-final buffer/result references. Mutation of array contents is intentional workspace use, while each output string is copied. Boxed integer subset values are encoded by value; input int arrays are compared against untouched snapshots."
+      },
+      "evidence": [
+        "ctci6/review08.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_8_2.json",
+        "solutions/java/ctci6_8_2.java",
+        "solutions/notes/java/ctci6_8_2.json"
+      ]
+    },
+    "ctci6_8_6/csharp": {
+      "codePath": "solutions/csharp/ctci6_8_6.cs",
+      "notesPath": "solutions/notes/ctci6_8_6.json",
+      "contentSha256": "24e45ac907a33e17ce8d7d940279fb7097547ca724cf55b0296fbfac71ac3746",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review08.json",
+      "checks": {
+        "actualAlgorithm": "Recursively transfer a canonical initial three-stack puzzle, performing actual top pops/pushes and recording [disk,source,destination].",
+        "correctness": "Zero disks require no move. Assume the procedure correctly transfers a legal stack of k-1 disks. It first transfers those smaller disks to the buffer, exposing disk k and leaving the destination free of smaller disks. Moving disk k is legal. The second recursive transfer places the smaller stack on disk k, preserving its legal order. Thus induction transfers the whole stack. Any solution must move the largest disk and move all smaller disks away before it and onto it afterward, requiring at least 2*T(k-1)+1 moves. The procedure meets this bound with T(0)=0, giving exactly 2^k-1 moves. Actual stack pops supply the recorded disk identity.",
+        "workedTrace": "For two disks, move [1,0,1], then [2,0,2], then [1,1,2]. Disk 2 becomes exposed only after disk 1 leaves tower 0. Returning just the final tower contents would omit the legal sequence that solves the puzzle.",
+        "edgeCases": "Zero and one disk; repeated calls start from fresh towers. Every move must use the source top and preserve the smaller-on-larger rule. Twelve disks require 4095 moves; an output-size exponential bound is essential.",
+        "timeDerivation": "O(2^disks) time: one constant-time stack move and transcript append per required move.",
+        "spaceDerivation": "O(disks) auxiliary space for three stacks and recursion depth, excluding O(2^disks) returned move triples.",
+        "callableAgreement": "Every language initializes three private stacks, with end-of-list or actual Stack/Deque tops. Recursive role permutation exposes the largest disk before moving it and transfers smaller disks afterward. An independent iterative legal-move cycle supplies expected ordered moves; a separate simulation checks every pop, size rule, final state and 2^n-1 bound through twelve disks. C# Stack and Java Deque use their documented top; Python/JS/C++ list/vector back is the top. Transcript output replaces public printing, not the tower-transfer task. Signed int bounds are justified by the explicit domains and executed endpoints. Arrays are zero-initialized, ways[0] is set before the denomination passes, and recursive multiplication uses ordinary method self-calls without hidden helper state. Collection outputs use concrete Lists. Local recursive functions copy char buffers into immutable strings; the set grader canonicalizes member/outer ordering and rejects boolean or oversized integer members without an exception."
+      },
+      "evidence": [
+        "ctci6/review08.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_8_6.json",
+        "solutions/csharp/ctci6_8_6.cs",
+        "solutions/notes/ctci6_8_6.json"
+      ]
+    },
+    "ctci6_8_6/javascript": {
+      "codePath": "solutions/javascript/ctci6_8_6.js",
+      "notesPath": "solutions/notes/javascript/ctci6_8_6.json",
+      "contentSha256": "fce1c300e681b8fdb31065457a6e86fde6f79fde998cae1c3ce07dccd961ef6e",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review08.json",
+      "checks": {
+        "actualAlgorithm": "Recursively transfer a canonical initial three-stack puzzle, performing actual top pops/pushes and recording [disk,source,destination].",
+        "correctness": "Zero disks require no move. Assume the procedure correctly transfers a legal stack of k-1 disks. It first transfers those smaller disks to the buffer, exposing disk k and leaving the destination free of smaller disks. Moving disk k is legal. The second recursive transfer places the smaller stack on disk k, preserving its legal order. Thus induction transfers the whole stack. Any solution must move the largest disk and move all smaller disks away before it and onto it afterward, requiring at least 2*T(k-1)+1 moves. The procedure meets this bound with T(0)=0, giving exactly 2^k-1 moves. Actual stack pops supply the recorded disk identity.",
+        "workedTrace": "For two disks, move [1,0,1], then [2,0,2], then [1,1,2]. Disk 2 becomes exposed only after disk 1 leaves tower 0. Returning just the final tower contents would omit the legal sequence that solves the puzzle.",
+        "edgeCases": "Zero and one disk; repeated calls start from fresh towers. Every move must use the source top and preserve the smaller-on-larger rule. Twelve disks require 4095 moves; an output-size exponential bound is essential.",
+        "timeDerivation": "O(2^disks) time: one constant-time stack move and transcript append per required move.",
+        "spaceDerivation": "O(disks) auxiliary space for three stacks and recursion depth, excluding O(2^disks) returned move triples.",
+        "callableAgreement": "Every language initializes three private stacks, with end-of-list or actual Stack/Deque tops. Recursive role permutation exposes the largest disk before moving it and transfers smaller disks afterward. An independent iterative legal-move cycle supplies expected ordered moves; a separate simulation checks every pop, size rule, final state and 2^n-1 bound through twelve disks. C# Stack and Java Deque use their documented top; Python/JS/C++ list/vector back is the top. Transcript output replaces public printing, not the tower-transfer task. All results and intermediate sums stay below signed 32-bit maximum and therefore are exact Numbers. The smaller multiplication operand is below 2^16, making its unsigned right shift well-defined for this domain. Each call creates its own DP array. Destructuring swaps restore the exact original character order before siblings. Returned values are real Arrays; input mutation checks use strict scalar equality. Frequency counts and parentheses counters remain local to each invocation."
+      },
+      "evidence": [
+        "ctci6/review08.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_8_6.json",
+        "solutions/javascript/ctci6_8_6.js",
+        "solutions/notes/javascript/ctci6_8_6.json"
+      ]
+    },
+    "ctci6_8_6/python": {
+      "codePath": "solutions/python/ctci6_8_6.py",
+      "notesPath": "solutions/notes/python/ctci6_8_6.json",
+      "contentSha256": "c8f73f650b7373c274a3088e34acf81a264a7eb3ac451b3f95f2debc2ce5c043",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review08.json",
+      "checks": {
+        "actualAlgorithm": "Recursively transfer a canonical initial three-stack puzzle, performing actual top pops/pushes and recording [disk,source,destination].",
+        "correctness": "Zero disks require no move. Assume the procedure correctly transfers a legal stack of k-1 disks. It first transfers those smaller disks to the buffer, exposing disk k and leaving the destination free of smaller disks. Moving disk k is legal. The second recursive transfer places the smaller stack on disk k, preserving its legal order. Thus induction transfers the whole stack. Any solution must move the largest disk and move all smaller disks away before it and onto it afterward, requiring at least 2*T(k-1)+1 moves. The procedure meets this bound with T(0)=0, giving exactly 2^k-1 moves. Actual stack pops supply the recorded disk identity.",
+        "workedTrace": "For two disks, move [1,0,1], then [2,0,2], then [1,1,2]. Disk 2 becomes exposed only after disk 1 leaves tower 0. Returning just the final tower contents would omit the legal sequence that solves the puzzle.",
+        "edgeCases": "Zero and one disk; repeated calls start from fresh towers. Every move must use the source top and preserve the smaller-on-larger rule. Twelve disks require 4095 moves; an output-size exponential bound is essential.",
+        "timeDerivation": "O(2^disks) time: one constant-time stack move and transcript append per required move.",
+        "spaceDerivation": "O(disks) auxiliary space for three stacks and recursion depth, excluding O(2^disks) returned move triples.",
+        "callableAgreement": "Every language initializes three private stacks, with end-of-list or actual Stack/Deque tops. Recursive role permutation exposes the largest disk before moving it and transfers smaller disks afterward. An independent iterative legal-move cycle supplies expected ordered moves; a separate simulation checks every pop, size rule, final state and 2^n-1 bound through twelve disks. C# Stack and Java Deque use their documented top; Python/JS/C++ list/vector back is the top. Transcript output replaces public printing, not the tower-transfer task. The recursive function's module-global name refers to itself even when invoked through the exported adapter alias. Rolling assignment evaluates previous values before rebinding. Arbitrary-size ints do not mask another language's overflow because shared admitted bounds are verified. Subsets and string collections must be concrete lists. Input snapshot checks require exact int elements, catching bool substitution despite Python equality. Every returned string is joined from the full buffer at a leaf."
+      },
+      "evidence": [
+        "ctci6/review08.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_8_6.json",
+        "solutions/python/ctci6_8_6.py",
+        "solutions/notes/python/ctci6_8_6.json"
+      ]
+    },
+    "ctci6_8_6/cpp": {
+      "codePath": "solutions/cpp/ctci6_8_6.cpp",
+      "notesPath": "solutions/notes/cpp/ctci6_8_6.json",
+      "contentSha256": "518df40547c23292a51e264584fb253c84f3695b1e9aad9db9fd5cf878fca6d9",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review08.json",
+      "checks": {
+        "actualAlgorithm": "Recursively transfer a canonical initial three-stack puzzle, performing actual top pops/pushes and recording [disk,source,destination].",
+        "correctness": "Zero disks require no move. Assume the procedure correctly transfers a legal stack of k-1 disks. It first transfers those smaller disks to the buffer, exposing disk k and leaving the destination free of smaller disks. Moving disk k is legal. The second recursive transfer places the smaller stack on disk k, preserving its legal order. Thus induction transfers the whole stack. Any solution must move the largest disk and move all smaller disks away before it and onto it afterward, requiring at least 2*T(k-1)+1 moves. The procedure meets this bound with T(0)=0, giving exactly 2^k-1 moves. Actual stack pops supply the recorded disk identity.",
+        "workedTrace": "For two disks, move [1,0,1], then [2,0,2], then [1,1,2]. Disk 2 becomes exposed only after disk 1 leaves tower 0. Returning just the final tower contents would omit the legal sequence that solves the puzzle.",
+        "edgeCases": "Zero and one disk; repeated calls start from fresh towers. Every move must use the source top and preserve the smaller-on-larger rule. Twelve disks require 4095 moves; an output-size exponential bound is essential.",
+        "timeDerivation": "O(2^disks) time: one constant-time stack move and transcript append per required move.",
+        "spaceDerivation": "O(disks) auxiliary space for three stacks and recursion depth, excluding O(2^disks) returned move triples.",
+        "callableAgreement": "Every language initializes three private stacks, with end-of-list or actual Stack/Deque tops. Recursive role permutation exposes the largest disk before moving it and transfers smaller disks afterward. An independent iterative legal-move cycle supplies expected ordered moves; a separate simulation checks every pop, size rule, final state and 2^n-1 bound through twelve disks. C# Stack and Java Deque use their documented top; Python/JS/C++ list/vector back is the top. Transcript output replaces public printing, not the tower-transfer task. vector<int> zero-initializes the coin counts; std::array enumerates the four denominations. The recursive method calls itself on a strictly smaller nonnegative operand, and all signed additions remain in range. Primitive parameters are passed by value. const references protect scalar-array and string inputs. std::function recursion captures local buffers/results by reference and is invoked only while they live. Subset copies are moved into the result after construction; outer-vector growth does not invalidate an in-use source reference."
+      },
+      "evidence": [
+        "ctci6/review08.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_8_6.json",
+        "solutions/cpp/ctci6_8_6.cpp",
+        "solutions/notes/cpp/ctci6_8_6.json"
+      ]
+    },
+    "ctci6_8_6/java": {
+      "codePath": "solutions/java/ctci6_8_6.java",
+      "notesPath": "solutions/notes/java/ctci6_8_6.json",
+      "contentSha256": "84e13d057ec087eba7f0992f8aa25d3465b56664ff6dca29b3a848854a0e67fc",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review08.json",
+      "checks": {
+        "actualAlgorithm": "Recursively transfer a canonical initial three-stack puzzle, performing actual top pops/pushes and recording [disk,source,destination].",
+        "correctness": "Zero disks require no move. Assume the procedure correctly transfers a legal stack of k-1 disks. It first transfers those smaller disks to the buffer, exposing disk k and leaving the destination free of smaller disks. Moving disk k is legal. The second recursive transfer places the smaller stack on disk k, preserving its legal order. Thus induction transfers the whole stack. Any solution must move the largest disk and move all smaller disks away before it and onto it afterward, requiring at least 2*T(k-1)+1 moves. The procedure meets this bound with T(0)=0, giving exactly 2^k-1 moves. Actual stack pops supply the recorded disk identity.",
+        "workedTrace": "For two disks, move [1,0,1], then [2,0,2], then [1,1,2]. Disk 2 becomes exposed only after disk 1 leaves tower 0. Returning just the final tower contents would omit the legal sequence that solves the puzzle.",
+        "edgeCases": "Zero and one disk; repeated calls start from fresh towers. Every move must use the source top and preserve the smaller-on-larger rule. Twelve disks require 4095 moves; an output-size exponential bound is essential.",
+        "timeDerivation": "O(2^disks) time: one constant-time stack move and transcript append per required move.",
+        "spaceDerivation": "O(disks) auxiliary space for three stacks and recursion depth, excluding O(2^disks) returned move triples.",
+        "callableAgreement": "Every language initializes three private stacks, with end-of-list or actual Stack/Deque tops. Recursive role permutation exposes the largest disk before moving it and transfers smaller disks afterward. An independent iterative legal-move cycle supplies expected ordered moves; a separate simulation checks every pop, size rule, final state and 2^n-1 bound through twelve disks. C# Stack and Java Deque use their documented top; Python/JS/C++ list/vector back is the top. Transcript output replaces public printing, not the tower-transfer task. int arithmetic is exact within the admitted count/product bounds. The recurrence and coin arrays are local to each invocation; no static cached result leaks across tests. Recursive multiplication calls the same instance method with reduced arguments. Local Search classes capture effectively-final buffer/result references. Mutation of array contents is intentional workspace use, while each output string is copied. Boxed integer subset values are encoded by value; input int arrays are compared against untouched snapshots."
+      },
+      "evidence": [
+        "ctci6/review08.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_8_6.json",
+        "solutions/java/ctci6_8_6.java",
+        "solutions/notes/java/ctci6_8_6.json"
+      ]
+    },
+    "ctci6_8_10/csharp": {
+      "codePath": "solutions/csharp/ctci6_8_10.cs",
+      "notesPath": "solutions/notes/ctci6_8_10.json",
+      "contentSha256": "09081ed7fe3de3442dc3d061af7e05a2b7a9e842e2ceacb7a164c7c7f5009317",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review08.json",
+      "checks": {
+        "actualAlgorithm": "Iterative work-stack flood fill, recoloring matching cells when discovered before enqueueing.",
+        "correctness": "After the initial bounds and same-color checks, the start cell belongs to the required component and is marked. Every later pushed cell is an original-color neighbor of an already reached cell, so it belongs to that component. Recoloring at discovery prevents a second push. Conversely, take any cell in the component and a connecting path from the start: induction along that path ensures each next original-color neighbor is eventually discovered. Thus every and only component cells are recolored. No row or outer array is replaced, and all other cell values are untouched.",
+        "workedTrace": "With [[1,0,1],[0,1,1],[1,1,0]], start (0,0) and newColor 2. Its right and lower neighbors are both 0, so only that one cell changes, giving [[2,0,1],[0,1,1],[1,1,0]]. The 1 at (1,1) touches diagonally but is outside the region.",
+        "edgeCases": "Diagonal-only contact must not spread paint. Same-color request, empty screen, zero-width rows, and out-of-bounds signed coordinates. Whole-screen component, isolated cell, and adjacent different-color regions.",
+        "timeDerivation": "O(k) fill time for a changed component of k cells, with four neighbor checks per cell; O(1) fill work for invalid coordinates or equal colors. The C++ by-value result adds O(rows*columns) return-copy time even for a no-op.",
+        "spaceDerivation": "O(k) auxiliary work-stack storage, at most O(rows*columns). The C++ by-value return additionally copies the O(rows*columns) screen values; other languages return the existing screen object.",
+        "callableAgreement": "The author Java source uses four neighbors; the community eight-neighbor version is explicitly excluded. Bank conventions define integer colors, returned filled values and graceful invalid-coordinate no-ops. Every language preserves original outer and row objects while changing exactly component cells. Same-color early return avoids revisiting forever. C++ takes a mutable reference and returns a value copy, with copy time/space stated; other languages return the existing screen. Independent component discovery precedes recoloring in the oracle. Exhaustive binary 3x3 screens and diagonal-only cases expose eight-neighbor mistakes. Signed int bounds are justified by the explicit domains and executed endpoints. Arrays are zero-initialized, ways[0] is set before the denomination passes, and recursive multiplication uses ordinary method self-calls without hidden helper state. Collection outputs use concrete Lists. Local recursive functions copy char buffers into immutable strings; the set grader canonicalizes member/outer ordering and rejects boolean or oversized integer members without an exception."
+      },
+      "evidence": [
+        "ctci6/review08.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_8_10.json",
+        "solutions/csharp/ctci6_8_10.cs",
+        "solutions/notes/ctci6_8_10.json"
+      ]
+    },
+    "ctci6_8_10/javascript": {
+      "codePath": "solutions/javascript/ctci6_8_10.js",
+      "notesPath": "solutions/notes/javascript/ctci6_8_10.json",
+      "contentSha256": "ba5ce1a3721d9f7cc762be5f2cc70aef121eab080eac027aee5951972d609247",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review08.json",
+      "checks": {
+        "actualAlgorithm": "Iterative work-stack flood fill, recoloring matching cells when discovered before enqueueing.",
+        "correctness": "After the initial bounds and same-color checks, the start cell belongs to the required component and is marked. Every later pushed cell is an original-color neighbor of an already reached cell, so it belongs to that component. Recoloring at discovery prevents a second push. Conversely, take any cell in the component and a connecting path from the start: induction along that path ensures each next original-color neighbor is eventually discovered. Thus every and only component cells are recolored. No row or outer array is replaced, and all other cell values are untouched.",
+        "workedTrace": "With [[1,0,1],[0,1,1],[1,1,0]], start (0,0) and newColor 2. Its right and lower neighbors are both 0, so only that one cell changes, giving [[2,0,1],[0,1,1],[1,1,0]]. The 1 at (1,1) touches diagonally but is outside the region.",
+        "edgeCases": "Diagonal-only contact must not spread paint. Same-color request, empty screen, zero-width rows, and out-of-bounds signed coordinates. Whole-screen component, isolated cell, and adjacent different-color regions.",
+        "timeDerivation": "O(k) fill time for a changed component of k cells, with four neighbor checks per cell; O(1) fill work for invalid coordinates or equal colors. The C++ by-value result adds O(rows*columns) return-copy time even for a no-op.",
+        "spaceDerivation": "O(k) auxiliary work-stack storage, at most O(rows*columns). The C++ by-value return additionally copies the O(rows*columns) screen values; other languages return the existing screen object.",
+        "callableAgreement": "The author Java source uses four neighbors; the community eight-neighbor version is explicitly excluded. Bank conventions define integer colors, returned filled values and graceful invalid-coordinate no-ops. Every language preserves original outer and row objects while changing exactly component cells. Same-color early return avoids revisiting forever. C++ takes a mutable reference and returns a value copy, with copy time/space stated; other languages return the existing screen. Independent component discovery precedes recoloring in the oracle. Exhaustive binary 3x3 screens and diagonal-only cases expose eight-neighbor mistakes. All results and intermediate sums stay below signed 32-bit maximum and therefore are exact Numbers. The smaller multiplication operand is below 2^16, making its unsigned right shift well-defined for this domain. Each call creates its own DP array. Destructuring swaps restore the exact original character order before siblings. Returned values are real Arrays; input mutation checks use strict scalar equality. Frequency counts and parentheses counters remain local to each invocation."
+      },
+      "evidence": [
+        "ctci6/review08.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_8_10.json",
+        "solutions/javascript/ctci6_8_10.js",
+        "solutions/notes/javascript/ctci6_8_10.json"
+      ]
+    },
+    "ctci6_8_10/python": {
+      "codePath": "solutions/python/ctci6_8_10.py",
+      "notesPath": "solutions/notes/python/ctci6_8_10.json",
+      "contentSha256": "5d2a4c4828c91cc42d9fcaa1ef29ecefed389c3d94ba6fcb9c7b0d9079352b42",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review08.json",
+      "checks": {
+        "actualAlgorithm": "Iterative work-stack flood fill, recoloring matching cells when discovered before enqueueing.",
+        "correctness": "After the initial bounds and same-color checks, the start cell belongs to the required component and is marked. Every later pushed cell is an original-color neighbor of an already reached cell, so it belongs to that component. Recoloring at discovery prevents a second push. Conversely, take any cell in the component and a connecting path from the start: induction along that path ensures each next original-color neighbor is eventually discovered. Thus every and only component cells are recolored. No row or outer array is replaced, and all other cell values are untouched.",
+        "workedTrace": "With [[1,0,1],[0,1,1],[1,1,0]], start (0,0) and newColor 2. Its right and lower neighbors are both 0, so only that one cell changes, giving [[2,0,1],[0,1,1],[1,1,0]]. The 1 at (1,1) touches diagonally but is outside the region.",
+        "edgeCases": "Diagonal-only contact must not spread paint. Same-color request, empty screen, zero-width rows, and out-of-bounds signed coordinates. Whole-screen component, isolated cell, and adjacent different-color regions.",
+        "timeDerivation": "O(k) fill time for a changed component of k cells, with four neighbor checks per cell; O(1) fill work for invalid coordinates or equal colors. The C++ by-value result adds O(rows*columns) return-copy time even for a no-op.",
+        "spaceDerivation": "O(k) auxiliary work-stack storage, at most O(rows*columns). The C++ by-value return additionally copies the O(rows*columns) screen values; other languages return the existing screen object.",
+        "callableAgreement": "The author Java source uses four neighbors; the community eight-neighbor version is explicitly excluded. Bank conventions define integer colors, returned filled values and graceful invalid-coordinate no-ops. Every language preserves original outer and row objects while changing exactly component cells. Same-color early return avoids revisiting forever. C++ takes a mutable reference and returns a value copy, with copy time/space stated; other languages return the existing screen. Independent component discovery precedes recoloring in the oracle. Exhaustive binary 3x3 screens and diagonal-only cases expose eight-neighbor mistakes. The recursive function's module-global name refers to itself even when invoked through the exported adapter alias. Rolling assignment evaluates previous values before rebinding. Arbitrary-size ints do not mask another language's overflow because shared admitted bounds are verified. Subsets and string collections must be concrete lists. Input snapshot checks require exact int elements, catching bool substitution despite Python equality. Every returned string is joined from the full buffer at a leaf."
+      },
+      "evidence": [
+        "ctci6/review08.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_8_10.json",
+        "solutions/python/ctci6_8_10.py",
+        "solutions/notes/python/ctci6_8_10.json"
+      ]
+    },
+    "ctci6_8_10/cpp": {
+      "codePath": "solutions/cpp/ctci6_8_10.cpp",
+      "notesPath": "solutions/notes/cpp/ctci6_8_10.json",
+      "contentSha256": "80b3f3f1e6bfb457015f6f9a4c098a4ff0b470c11875be0a6adb6642dc16d7a6",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review08.json",
+      "checks": {
+        "actualAlgorithm": "Iterative work-stack flood fill, recoloring matching cells when discovered before enqueueing.",
+        "correctness": "After the initial bounds and same-color checks, the start cell belongs to the required component and is marked. Every later pushed cell is an original-color neighbor of an already reached cell, so it belongs to that component. Recoloring at discovery prevents a second push. Conversely, take any cell in the component and a connecting path from the start: induction along that path ensures each next original-color neighbor is eventually discovered. Thus every and only component cells are recolored. No row or outer array is replaced, and all other cell values are untouched.",
+        "workedTrace": "With [[1,0,1],[0,1,1],[1,1,0]], start (0,0) and newColor 2. Its right and lower neighbors are both 0, so only that one cell changes, giving [[2,0,1],[0,1,1],[1,1,0]]. The 1 at (1,1) touches diagonally but is outside the region.",
+        "edgeCases": "Diagonal-only contact must not spread paint. Same-color request, empty screen, zero-width rows, and out-of-bounds signed coordinates. Whole-screen component, isolated cell, and adjacent different-color regions.",
+        "timeDerivation": "O(k) fill time for a changed component of k cells, with four neighbor checks per cell; O(1) fill work for invalid coordinates or equal colors. The C++ by-value result adds O(rows*columns) return-copy time even for a no-op.",
+        "spaceDerivation": "O(k) auxiliary work-stack storage, at most O(rows*columns). The C++ by-value return additionally copies the O(rows*columns) screen values; other languages return the existing screen object.",
+        "callableAgreement": "The author Java source uses four neighbors; the community eight-neighbor version is explicitly excluded. Bank conventions define integer colors, returned filled values and graceful invalid-coordinate no-ops. Every language preserves original outer and row objects while changing exactly component cells. Same-color early return avoids revisiting forever. C++ takes a mutable reference and returns a value copy, with copy time/space stated; other languages return the existing screen. Independent component discovery precedes recoloring in the oracle. Exhaustive binary 3x3 screens and diagonal-only cases expose eight-neighbor mistakes. vector<int> zero-initializes the coin counts; std::array enumerates the four denominations. The recursive method calls itself on a strictly smaller nonnegative operand, and all signed additions remain in range. Primitive parameters are passed by value. const references protect scalar-array and string inputs. std::function recursion captures local buffers/results by reference and is invoked only while they live. Subset copies are moved into the result after construction; outer-vector growth does not invalidate an in-use source reference."
+      },
+      "evidence": [
+        "ctci6/review08.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_8_10.json",
+        "solutions/cpp/ctci6_8_10.cpp",
+        "solutions/notes/cpp/ctci6_8_10.json"
+      ]
+    },
+    "ctci6_8_10/java": {
+      "codePath": "solutions/java/ctci6_8_10.java",
+      "notesPath": "solutions/notes/java/ctci6_8_10.json",
+      "contentSha256": "68c1c5cdd7b09976cba70b5ffc8081991240be68b12c81a4d50afa57ac60536f",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review08.json",
+      "checks": {
+        "actualAlgorithm": "Iterative work-stack flood fill, recoloring matching cells when discovered before enqueueing.",
+        "correctness": "After the initial bounds and same-color checks, the start cell belongs to the required component and is marked. Every later pushed cell is an original-color neighbor of an already reached cell, so it belongs to that component. Recoloring at discovery prevents a second push. Conversely, take any cell in the component and a connecting path from the start: induction along that path ensures each next original-color neighbor is eventually discovered. Thus every and only component cells are recolored. No row or outer array is replaced, and all other cell values are untouched.",
+        "workedTrace": "With [[1,0,1],[0,1,1],[1,1,0]], start (0,0) and newColor 2. Its right and lower neighbors are both 0, so only that one cell changes, giving [[2,0,1],[0,1,1],[1,1,0]]. The 1 at (1,1) touches diagonally but is outside the region.",
+        "edgeCases": "Diagonal-only contact must not spread paint. Same-color request, empty screen, zero-width rows, and out-of-bounds signed coordinates. Whole-screen component, isolated cell, and adjacent different-color regions.",
+        "timeDerivation": "O(k) fill time for a changed component of k cells, with four neighbor checks per cell; O(1) fill work for invalid coordinates or equal colors. The C++ by-value result adds O(rows*columns) return-copy time even for a no-op.",
+        "spaceDerivation": "O(k) auxiliary work-stack storage, at most O(rows*columns). The C++ by-value return additionally copies the O(rows*columns) screen values; other languages return the existing screen object.",
+        "callableAgreement": "The author Java source uses four neighbors; the community eight-neighbor version is explicitly excluded. Bank conventions define integer colors, returned filled values and graceful invalid-coordinate no-ops. Every language preserves original outer and row objects while changing exactly component cells. Same-color early return avoids revisiting forever. C++ takes a mutable reference and returns a value copy, with copy time/space stated; other languages return the existing screen. Independent component discovery precedes recoloring in the oracle. Exhaustive binary 3x3 screens and diagonal-only cases expose eight-neighbor mistakes. int arithmetic is exact within the admitted count/product bounds. The recurrence and coin arrays are local to each invocation; no static cached result leaks across tests. Recursive multiplication calls the same instance method with reduced arguments. Local Search classes capture effectively-final buffer/result references. Mutation of array contents is intentional workspace use, while each output string is copied. Boxed integer subset values are encoded by value; input int arrays are compared against untouched snapshots."
+      },
+      "evidence": [
+        "ctci6/review08.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_8_10.json",
+        "solutions/java/ctci6_8_10.java",
+        "solutions/notes/java/ctci6_8_10.json"
+      ]
+    },
+    "ctci6_16_5/csharp": {
+      "codePath": "solutions/csharp/ctci6_16_5.cs",
+      "notesPath": "solutions/notes/ctci6_16_5.json",
+      "contentSha256": "3ee80c242f0cec787ebfa93da56a31417e3c39f48d985cfa5d11e7b4344b9668",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Repeated quotient division by five accumulates the prime-five valuation of n!.",
+        "correctness": "For every exponent k>=1, floor(n/5^k) counts exactly the factors among 1..n supplying at least k copies of five. A factor containing t fives appears in exactly t such counts, so their sum is precisely the total five exponent. Twos are at least as numerous, hence this exponent equals the number of factors of ten. Replacing n by floor(n/5) at each iteration produces these successive quotients. Once it reaches zero, no higher power contributes.",
+        "workedTrace": "For 25!, multiples 5,10,15,20,25 supply five copies of five, and 25 supplies one extra. The successive quotients are 5,1,0, so the result is 6. Counting multiples of five only would incorrectly return 5.",
+        "edgeCases": "Zero and numbers below five. Just below, at and above powers of five; the maximum signed input.",
+        "timeDerivation": "O(log_5(n+1)) integer divisions and additions; zero takes constant time.",
+        "spaceDerivation": "O(1) auxiliary space; the factorial and powers of five are never stored.",
+        "callableAgreement": "No factorial or growing fixed-width power is computed. The independently authored oracle directly inspects factorial decimal endings for small n and uses arbitrary-precision powers for large n. Boundaries around every representable power of five and int.MaxValue are executed. JavaScript uses Math.floor rather than real division; all totals fit signed int. Read all actual signed-int bodies. Array return expressions match int[] signatures. NumberMax uses uint sign extraction and an explicit unchecked difference, then signed masks; no conditional comparison helper. MasterMind IndexOf uses the admitted ASCII alphabet. Mutable array inputs are read only in this batch."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_5.json",
+        "solutions/csharp/ctci6_16_5.cs",
+        "solutions/notes/ctci6_16_5.json"
+      ]
+    },
+    "ctci6_16_5/javascript": {
+      "codePath": "solutions/javascript/ctci6_16_5.js",
+      "notesPath": "solutions/notes/javascript/ctci6_16_5.json",
+      "contentSha256": "3af6eb80b32a2716443651682cb062fc1ada195ca5cff45a48ac04d4c5bc03c7",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Repeated quotient division by five accumulates the prime-five valuation of n!.",
+        "correctness": "For every exponent k>=1, floor(n/5^k) counts exactly the factors among 1..n supplying at least k copies of five. A factor containing t fives appears in exactly t such counts, so their sum is precisely the total five exponent. Twos are at least as numerous, hence this exponent equals the number of factors of ten. Replacing n by floor(n/5) at each iteration produces these successive quotients. Once it reaches zero, no higher power contributes.",
+        "workedTrace": "For 25!, multiples 5,10,15,20,25 supply five copies of five, and 25 supplies one extra. The successive quotients are 5,1,0, so the result is 6. Counting multiples of five only would incorrectly return 5.",
+        "edgeCases": "Zero and numbers below five. Just below, at and above powers of five; the maximum signed input.",
+        "timeDerivation": "O(log_5(n+1)) integer divisions and additions; zero takes constant time.",
+        "spaceDerivation": "O(1) auxiliary space; the factorial and powers of five are never stored.",
+        "callableAgreement": "No factorial or growing fixed-width power is computed. The independently authored oracle directly inspects factorial decimal endings for small n and uses arbitrary-precision powers for large n. Boundaries around every representable power of five and int.MaxValue are executed. JavaScript uses Math.floor rather than real division; all totals fit signed int. Read all actual functions. Factorial division is floored, NumberMax bit operations coerce the intended signed 32-bit patterns, and bounded ordinary arithmetic stays exactly representable. All array results are materialized, not generators. Inputs remain unchanged."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_5.json",
+        "solutions/javascript/ctci6_16_5.js",
+        "solutions/notes/javascript/ctci6_16_5.json"
+      ]
+    },
+    "ctci6_16_5/python": {
+      "codePath": "solutions/python/ctci6_16_5.py",
+      "notesPath": "solutions/notes/python/ctci6_16_5.json",
+      "contentSha256": "04761c73d50db4c0eca486df9c1902ad436b28b05fec0e82793c93766146a559",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Repeated quotient division by five accumulates the prime-five valuation of n!.",
+        "correctness": "For every exponent k>=1, floor(n/5^k) counts exactly the factors among 1..n supplying at least k copies of five. A factor containing t fives appears in exactly t such counts, so their sum is precisely the total five exponent. Twos are at least as numerous, hence this exponent equals the number of factors of ten. Replacing n by floor(n/5) at each iteration produces these successive quotients. Once it reaches zero, no higher power contributes.",
+        "workedTrace": "For 25!, multiples 5,10,15,20,25 supply five copies of five, and 25 supplies one extra. The successive quotients are 5,1,0, so the result is 6. Counting multiples of five only would incorrectly return 5.",
+        "edgeCases": "Zero and numbers below five. Just below, at and above powers of five; the maximum signed input.",
+        "timeDerivation": "O(log_5(n+1)) integer divisions and additions; zero takes constant time.",
+        "spaceDerivation": "O(1) auxiliary space; the factorial and powers of five are never stored.",
+        "callableAgreement": "No factorial or growing fixed-width power is computed. The independently authored oracle directly inspects factorial decimal endings for small n and uses arbitrary-precision powers for large n. Boundaries around every representable power of five and int.MaxValue are executed. JavaScript uses Math.floor rather than real division; all totals fit signed int. Read all actual function bodies and exact annotations. NumberMax masks the potentially wider difference before extracting its 32-bit sign; the signed selection mask works with arbitrary-width bitwise operations. Arrays are concrete lists and bool is not an integer observation. The admitted numeric bounds remain shared."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_5.json",
+        "solutions/python/ctci6_16_5.py",
+        "solutions/notes/python/ctci6_16_5.json"
+      ]
+    },
+    "ctci6_16_5/cpp": {
+      "codePath": "solutions/cpp/ctci6_16_5.cpp",
+      "notesPath": "solutions/notes/cpp/ctci6_16_5.json",
+      "contentSha256": "ab61c044abcab82e08cd6fb64e9f891517fbbd6d1dfecafcbe178b106dc7ded3",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Repeated quotient division by five accumulates the prime-five valuation of n!.",
+        "correctness": "For every exponent k>=1, floor(n/5^k) counts exactly the factors among 1..n supplying at least k copies of five. A factor containing t fives appears in exactly t such counts, so their sum is precisely the total five exponent. Twos are at least as numerous, hence this exponent equals the number of factors of ten. Replacing n by floor(n/5) at each iteration produces these successive quotients. Once it reaches zero, no higher power contributes.",
+        "workedTrace": "For 25!, multiples 5,10,15,20,25 supply five copies of five, and 25 supplies one extra. The successive quotients are 5,1,0, so the result is 6. Counting multiples of five only would incorrectly return 5.",
+        "edgeCases": "Zero and numbers below five. Just below, at and above powers of five; the maximum signed input.",
+        "timeDerivation": "O(log_5(n+1)) integer divisions and additions; zero takes constant time.",
+        "spaceDerivation": "O(1) auxiliary space; the factorial and powers of five are never stored.",
+        "callableAgreement": "No factorial or growing fixed-width power is computed. The independently authored oracle directly inspects factorial decimal endings for small n and uses arbitrary-precision powers for large n. Boundaries around every representable power of five and int.MaxValue are executed. JavaScript uses Math.floor rather than real division; all totals fit signed int. Read all actual methods with const vector/string references. NumberMax difference is uint32_t and final operand multiplication by 0/1 cannot overflow. No undefined signed subtraction or implementation-defined unsigned narrowing is used. Returned vectors own their values; prefix/suffix scans index only nonempty input."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_5.json",
+        "solutions/cpp/ctci6_16_5.cpp",
+        "solutions/notes/cpp/ctci6_16_5.json"
+      ]
+    },
+    "ctci6_16_5/java": {
+      "codePath": "solutions/java/ctci6_16_5.java",
+      "notesPath": "solutions/notes/java/ctci6_16_5.json",
+      "contentSha256": "fc899591df9b4356ac1f597dfda49d429fd1e866f111519760b9e87394270748",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Repeated quotient division by five accumulates the prime-five valuation of n!.",
+        "correctness": "For every exponent k>=1, floor(n/5^k) counts exactly the factors among 1..n supplying at least k copies of five. A factor containing t fives appears in exactly t such counts, so their sum is precisely the total five exponent. Twos are at least as numerous, hence this exponent equals the number of factors of ten. Replacing n by floor(n/5) at each iteration produces these successive quotients. Once it reaches zero, no higher power contributes.",
+        "workedTrace": "For 25!, multiples 5,10,15,20,25 supply five copies of five, and 25 supplies one extra. The successive quotients are 5,1,0, so the result is 6. Counting multiples of five only would incorrectly return 5.",
+        "edgeCases": "Zero and numbers below five. Just below, at and above powers of five; the maximum signed input.",
+        "timeDerivation": "O(log_5(n+1)) integer divisions and additions; zero takes constant time.",
+        "spaceDerivation": "O(1) auxiliary space; the factorial and powers of five are never stored.",
+        "callableAgreement": "No factorial or growing fixed-width power is computed. The independently authored oracle directly inspects factorial decimal endings for small n and uses arbitrary-precision powers for large n. Boundaries around every representable power of five and int.MaxValue are executed. JavaScript uses Math.floor rather than real division; all totals fit signed int. Read all actual methods. Integer arithmetic uses justified bounds, except the intentionally wrapping subtraction whose bit pattern is observed with >>>. Returned int[] arrays match declared types, String indexing uses charAt, and the frequency table is local per call. Inputs are unchanged."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_5.json",
+        "solutions/java/ctci6_16_5.java",
+        "solutions/notes/java/ctci6_16_5.json"
+      ]
+    },
+    "ctci6_16_7/csharp": {
+      "codePath": "solutions/csharp/ctci6_16_7.cs",
+      "notesPath": "solutions/notes/ctci6_16_7.json",
+      "contentSha256": "afcd2cbdc61346330ed7a7035f49b34ffd4892dd24254e0060601827c03827af",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Choose by operand sign when signs differ and by wrapped difference sign only when signs agree, then select the original operand.",
+        "correctness": "Let a and b be bits indicating negative inputs, and d indicate a negative 32-bit difference. When a xor b is one, choose first exactly when a is zero. When their xor is zero, choose first exactly when d is zero; equal inputs may choose first. These two cases are disjoint and exhaustive. The computed selector is therefore zero or one and selects precisely a maximum input. A mask derived from the selector copies the chosen input bits. C++ computes the difference in uint32_t and converts the selected exact signed operand arithmetically, avoiding signed-overflow and implementation-defined unsigned-to-signed conversion.",
+        "workedTrace": "For first=-2147483648 and second=2147483647, subtraction wraps to the positive bit pattern 1. Its sign alone would select the wrong input. The argument signs differ, so the selector instead chooses the nonnegative second input. For 9 and 4, signs agree and the positive difference correctly chooses 9.",
+        "edgeCases": "Opposite signed endpoints, equal values, zero and negatives. A subtraction that wraps must not influence the opposite-sign choice.",
+        "timeDerivation": "O(1) fixed-width arithmetic and bit operations.",
+        "spaceDerivation": "O(1) auxiliary scalar storage.",
+        "callableAgreement": "Read all five bodies: no comparison operator, if/switch, conditional expression or max/min helper appears in the solution. C#/Java/JS explicitly observe 32-bit difference bits; Python masks to 32 bits. C++ subtraction uses uint32_t, not overflowing signed subtraction, and chooses via 0/1 products of exact original operands rather than unsigned-to-signed narrowing. Extreme opposite signs and all small signed pairs are executed against host max. Read all actual signed-int bodies. Array return expressions match int[] signatures. NumberMax uses uint sign extraction and an explicit unchecked difference, then signed masks; no conditional comparison helper. MasterMind IndexOf uses the admitted ASCII alphabet. Mutable array inputs are read only in this batch."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_7.json",
+        "solutions/csharp/ctci6_16_7.cs",
+        "solutions/notes/ctci6_16_7.json"
+      ]
+    },
+    "ctci6_16_7/javascript": {
+      "codePath": "solutions/javascript/ctci6_16_7.js",
+      "notesPath": "solutions/notes/javascript/ctci6_16_7.json",
+      "contentSha256": "36f89bf9a29ed4c5bf03d87710e1402edcd1b235f654d18785ce545104381d1b",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Choose by operand sign when signs differ and by wrapped difference sign only when signs agree, then select the original operand.",
+        "correctness": "Let a and b be bits indicating negative inputs, and d indicate a negative 32-bit difference. When a xor b is one, choose first exactly when a is zero. When their xor is zero, choose first exactly when d is zero; equal inputs may choose first. These two cases are disjoint and exhaustive. The computed selector is therefore zero or one and selects precisely a maximum input. A mask derived from the selector copies the chosen input bits. C++ computes the difference in uint32_t and converts the selected exact signed operand arithmetically, avoiding signed-overflow and implementation-defined unsigned-to-signed conversion.",
+        "workedTrace": "For first=-2147483648 and second=2147483647, subtraction wraps to the positive bit pattern 1. Its sign alone would select the wrong input. The argument signs differ, so the selector instead chooses the nonnegative second input. For 9 and 4, signs agree and the positive difference correctly chooses 9.",
+        "edgeCases": "Opposite signed endpoints, equal values, zero and negatives. A subtraction that wraps must not influence the opposite-sign choice.",
+        "timeDerivation": "O(1) fixed-width arithmetic and bit operations.",
+        "spaceDerivation": "O(1) auxiliary scalar storage.",
+        "callableAgreement": "Read all five bodies: no comparison operator, if/switch, conditional expression or max/min helper appears in the solution. C#/Java/JS explicitly observe 32-bit difference bits; Python masks to 32 bits. C++ subtraction uses uint32_t, not overflowing signed subtraction, and chooses via 0/1 products of exact original operands rather than unsigned-to-signed narrowing. Extreme opposite signs and all small signed pairs are executed against host max. Read all actual functions. Factorial division is floored, NumberMax bit operations coerce the intended signed 32-bit patterns, and bounded ordinary arithmetic stays exactly representable. All array results are materialized, not generators. Inputs remain unchanged."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_7.json",
+        "solutions/javascript/ctci6_16_7.js",
+        "solutions/notes/javascript/ctci6_16_7.json"
+      ]
+    },
+    "ctci6_16_7/python": {
+      "codePath": "solutions/python/ctci6_16_7.py",
+      "notesPath": "solutions/notes/python/ctci6_16_7.json",
+      "contentSha256": "f57d182032601ac488d2970e6b3fe492cb658e7b4d20ce7f69c54c6acac4ca0a",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Choose by operand sign when signs differ and by wrapped difference sign only when signs agree, then select the original operand.",
+        "correctness": "Let a and b be bits indicating negative inputs, and d indicate a negative 32-bit difference. When a xor b is one, choose first exactly when a is zero. When their xor is zero, choose first exactly when d is zero; equal inputs may choose first. These two cases are disjoint and exhaustive. The computed selector is therefore zero or one and selects precisely a maximum input. A mask derived from the selector copies the chosen input bits. C++ computes the difference in uint32_t and converts the selected exact signed operand arithmetically, avoiding signed-overflow and implementation-defined unsigned-to-signed conversion.",
+        "workedTrace": "For first=-2147483648 and second=2147483647, subtraction wraps to the positive bit pattern 1. Its sign alone would select the wrong input. The argument signs differ, so the selector instead chooses the nonnegative second input. For 9 and 4, signs agree and the positive difference correctly chooses 9.",
+        "edgeCases": "Opposite signed endpoints, equal values, zero and negatives. A subtraction that wraps must not influence the opposite-sign choice.",
+        "timeDerivation": "O(1) fixed-width arithmetic and bit operations.",
+        "spaceDerivation": "O(1) auxiliary scalar storage.",
+        "callableAgreement": "Read all five bodies: no comparison operator, if/switch, conditional expression or max/min helper appears in the solution. C#/Java/JS explicitly observe 32-bit difference bits; Python masks to 32 bits. C++ subtraction uses uint32_t, not overflowing signed subtraction, and chooses via 0/1 products of exact original operands rather than unsigned-to-signed narrowing. Extreme opposite signs and all small signed pairs are executed against host max. Read all actual function bodies and exact annotations. NumberMax masks the potentially wider difference before extracting its 32-bit sign; the signed selection mask works with arbitrary-width bitwise operations. Arrays are concrete lists and bool is not an integer observation. The admitted numeric bounds remain shared."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_7.json",
+        "solutions/python/ctci6_16_7.py",
+        "solutions/notes/python/ctci6_16_7.json"
+      ]
+    },
+    "ctci6_16_7/cpp": {
+      "codePath": "solutions/cpp/ctci6_16_7.cpp",
+      "notesPath": "solutions/notes/cpp/ctci6_16_7.json",
+      "contentSha256": "94f970503cb95e9b7cdafd74908c5deaf8377cacdbd558281e73822bafa0fc8a",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Choose by operand sign when signs differ and by wrapped difference sign only when signs agree, then select the original operand.",
+        "correctness": "Let a and b be bits indicating negative inputs, and d indicate a negative 32-bit difference. When a xor b is one, choose first exactly when a is zero. When their xor is zero, choose first exactly when d is zero; equal inputs may choose first. These two cases are disjoint and exhaustive. The computed selector is therefore zero or one and selects precisely a maximum input. A mask derived from the selector copies the chosen input bits. C++ computes the difference in uint32_t and converts the selected exact signed operand arithmetically, avoiding signed-overflow and implementation-defined unsigned-to-signed conversion.",
+        "workedTrace": "For first=-2147483648 and second=2147483647, subtraction wraps to the positive bit pattern 1. Its sign alone would select the wrong input. The argument signs differ, so the selector instead chooses the nonnegative second input. For 9 and 4, signs agree and the positive difference correctly chooses 9.",
+        "edgeCases": "Opposite signed endpoints, equal values, zero and negatives. A subtraction that wraps must not influence the opposite-sign choice.",
+        "timeDerivation": "O(1) fixed-width arithmetic and bit operations.",
+        "spaceDerivation": "O(1) auxiliary scalar storage.",
+        "callableAgreement": "Read all five bodies: no comparison operator, if/switch, conditional expression or max/min helper appears in the solution. C#/Java/JS explicitly observe 32-bit difference bits; Python masks to 32 bits. C++ subtraction uses uint32_t, not overflowing signed subtraction, and chooses via 0/1 products of exact original operands rather than unsigned-to-signed narrowing. Extreme opposite signs and all small signed pairs are executed against host max. Read all actual methods with const vector/string references. NumberMax difference is uint32_t and final operand multiplication by 0/1 cannot overflow. No undefined signed subtraction or implementation-defined unsigned narrowing is used. Returned vectors own their values; prefix/suffix scans index only nonempty input."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_7.json",
+        "solutions/cpp/ctci6_16_7.cpp",
+        "solutions/notes/cpp/ctci6_16_7.json"
+      ]
+    },
+    "ctci6_16_7/java": {
+      "codePath": "solutions/java/ctci6_16_7.java",
+      "notesPath": "solutions/notes/java/ctci6_16_7.json",
+      "contentSha256": "9c4b4bccbd679d4bb7148e4e4b335726e5f504d25c9a12bb12971a8e2caab491",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Choose by operand sign when signs differ and by wrapped difference sign only when signs agree, then select the original operand.",
+        "correctness": "Let a and b be bits indicating negative inputs, and d indicate a negative 32-bit difference. When a xor b is one, choose first exactly when a is zero. When their xor is zero, choose first exactly when d is zero; equal inputs may choose first. These two cases are disjoint and exhaustive. The computed selector is therefore zero or one and selects precisely a maximum input. A mask derived from the selector copies the chosen input bits. C++ computes the difference in uint32_t and converts the selected exact signed operand arithmetically, avoiding signed-overflow and implementation-defined unsigned-to-signed conversion.",
+        "workedTrace": "For first=-2147483648 and second=2147483647, subtraction wraps to the positive bit pattern 1. Its sign alone would select the wrong input. The argument signs differ, so the selector instead chooses the nonnegative second input. For 9 and 4, signs agree and the positive difference correctly chooses 9.",
+        "edgeCases": "Opposite signed endpoints, equal values, zero and negatives. A subtraction that wraps must not influence the opposite-sign choice.",
+        "timeDerivation": "O(1) fixed-width arithmetic and bit operations.",
+        "spaceDerivation": "O(1) auxiliary scalar storage.",
+        "callableAgreement": "Read all five bodies: no comparison operator, if/switch, conditional expression or max/min helper appears in the solution. C#/Java/JS explicitly observe 32-bit difference bits; Python masks to 32 bits. C++ subtraction uses uint32_t, not overflowing signed subtraction, and chooses via 0/1 products of exact original operands rather than unsigned-to-signed narrowing. Extreme opposite signs and all small signed pairs are executed against host max. Read all actual methods. Integer arithmetic uses justified bounds, except the intentionally wrapping subtraction whose bit pattern is observed with >>>. Returned int[] arrays match declared types, String indexing uses charAt, and the frequency table is local per call. Inputs are unchanged."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_7.json",
+        "solutions/java/ctci6_16_7.java",
+        "solutions/notes/java/ctci6_16_7.json"
+      ]
+    },
+    "ctci6_16_11/csharp": {
+      "codePath": "solutions/csharp/ctci6_16_11.cs",
+      "notesPath": "solutions/notes/ctci6_16_11.json",
+      "contentSha256": "c8ddf52cbea81846dc7e003b5b5a193143d746d973ebedc72a9b9a21e7ec4914",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Enumerate long-plank count once in increasing order; collapse equal plank lengths to one total.",
+        "correctness": "Every board uses a unique count k of long planks between zero and planks, so its total has the stated formula. Conversely every such k is feasible by choosing k long planks and the rest short. When longer>shorter, increasing k strictly increases the total, proving the generated list is sorted and contains no duplicates. When lengths agree, all choices yield the single emitted total. The k=0 empty-board case yields zero.",
+        "workedTrace": "For 3 planks of lengths 2 and 5, choose 0,1,2,3 long planks to get 6,9,12,15. Short-long-short and long-short-short both have length 9 and appear once. With equal lengths 2 and 2, only 6 is returned.",
+        "edgeCases": "Zero planks, equal lengths, one plank. Maximum count and lengths, without integer overflow or duplicate totals.",
+        "timeDerivation": "O(planks+1) time when lengths differ, matching output size; O(1) when equal.",
+        "spaceDerivation": "O(1) auxiliary space excluding the returned O(planks+1) integer values, or one value for equal lengths.",
+        "callableAgreement": "Each actual body emits n+1 strictly increasing lengths only when lengths differ. Zero planks returns [0]. C#/Java allocate exact int arrays, JavaScript uses Array.from, Python a concrete comprehension and C++ reserves a vector. The bound ensures every product/sum is at most 10^9. The independent small oracle builds reachable length sets by repeated plank addition. Read all actual signed-int bodies. Array return expressions match int[] signatures. NumberMax uses uint sign extraction and an explicit unchecked difference, then signed masks; no conditional comparison helper. MasterMind IndexOf uses the admitted ASCII alphabet. Mutable array inputs are read only in this batch."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_11.json",
+        "solutions/csharp/ctci6_16_11.cs",
+        "solutions/notes/ctci6_16_11.json"
+      ]
+    },
+    "ctci6_16_11/javascript": {
+      "codePath": "solutions/javascript/ctci6_16_11.js",
+      "notesPath": "solutions/notes/javascript/ctci6_16_11.json",
+      "contentSha256": "61bd046cae60b7ab2e3da0ed2e2670051be0e520d92b1f273e90b286d0f4ad12",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Enumerate long-plank count once in increasing order; collapse equal plank lengths to one total.",
+        "correctness": "Every board uses a unique count k of long planks between zero and planks, so its total has the stated formula. Conversely every such k is feasible by choosing k long planks and the rest short. When longer>shorter, increasing k strictly increases the total, proving the generated list is sorted and contains no duplicates. When lengths agree, all choices yield the single emitted total. The k=0 empty-board case yields zero.",
+        "workedTrace": "For 3 planks of lengths 2 and 5, choose 0,1,2,3 long planks to get 6,9,12,15. Short-long-short and long-short-short both have length 9 and appear once. With equal lengths 2 and 2, only 6 is returned.",
+        "edgeCases": "Zero planks, equal lengths, one plank. Maximum count and lengths, without integer overflow or duplicate totals.",
+        "timeDerivation": "O(planks+1) time when lengths differ, matching output size; O(1) when equal.",
+        "spaceDerivation": "O(1) auxiliary space excluding the returned O(planks+1) integer values, or one value for equal lengths.",
+        "callableAgreement": "Each actual body emits n+1 strictly increasing lengths only when lengths differ. Zero planks returns [0]. C#/Java allocate exact int arrays, JavaScript uses Array.from, Python a concrete comprehension and C++ reserves a vector. The bound ensures every product/sum is at most 10^9. The independent small oracle builds reachable length sets by repeated plank addition. Read all actual functions. Factorial division is floored, NumberMax bit operations coerce the intended signed 32-bit patterns, and bounded ordinary arithmetic stays exactly representable. All array results are materialized, not generators. Inputs remain unchanged."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_11.json",
+        "solutions/javascript/ctci6_16_11.js",
+        "solutions/notes/javascript/ctci6_16_11.json"
+      ]
+    },
+    "ctci6_16_11/python": {
+      "codePath": "solutions/python/ctci6_16_11.py",
+      "notesPath": "solutions/notes/python/ctci6_16_11.json",
+      "contentSha256": "a6ab39638217cc15092462162c4e66af4463eeb428c0f05a65e584e62967406c",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Enumerate long-plank count once in increasing order; collapse equal plank lengths to one total.",
+        "correctness": "Every board uses a unique count k of long planks between zero and planks, so its total has the stated formula. Conversely every such k is feasible by choosing k long planks and the rest short. When longer>shorter, increasing k strictly increases the total, proving the generated list is sorted and contains no duplicates. When lengths agree, all choices yield the single emitted total. The k=0 empty-board case yields zero.",
+        "workedTrace": "For 3 planks of lengths 2 and 5, choose 0,1,2,3 long planks to get 6,9,12,15. Short-long-short and long-short-short both have length 9 and appear once. With equal lengths 2 and 2, only 6 is returned.",
+        "edgeCases": "Zero planks, equal lengths, one plank. Maximum count and lengths, without integer overflow or duplicate totals.",
+        "timeDerivation": "O(planks+1) time when lengths differ, matching output size; O(1) when equal.",
+        "spaceDerivation": "O(1) auxiliary space excluding the returned O(planks+1) integer values, or one value for equal lengths.",
+        "callableAgreement": "Each actual body emits n+1 strictly increasing lengths only when lengths differ. Zero planks returns [0]. C#/Java allocate exact int arrays, JavaScript uses Array.from, Python a concrete comprehension and C++ reserves a vector. The bound ensures every product/sum is at most 10^9. The independent small oracle builds reachable length sets by repeated plank addition. Read all actual function bodies and exact annotations. NumberMax masks the potentially wider difference before extracting its 32-bit sign; the signed selection mask works with arbitrary-width bitwise operations. Arrays are concrete lists and bool is not an integer observation. The admitted numeric bounds remain shared."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_11.json",
+        "solutions/python/ctci6_16_11.py",
+        "solutions/notes/python/ctci6_16_11.json"
+      ]
+    },
+    "ctci6_16_11/cpp": {
+      "codePath": "solutions/cpp/ctci6_16_11.cpp",
+      "notesPath": "solutions/notes/cpp/ctci6_16_11.json",
+      "contentSha256": "8692a20e0c27bef1053d5bd18e638e067d84436192ab49953a5b97d4753ee1b1",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Enumerate long-plank count once in increasing order; collapse equal plank lengths to one total.",
+        "correctness": "Every board uses a unique count k of long planks between zero and planks, so its total has the stated formula. Conversely every such k is feasible by choosing k long planks and the rest short. When longer>shorter, increasing k strictly increases the total, proving the generated list is sorted and contains no duplicates. When lengths agree, all choices yield the single emitted total. The k=0 empty-board case yields zero.",
+        "workedTrace": "For 3 planks of lengths 2 and 5, choose 0,1,2,3 long planks to get 6,9,12,15. Short-long-short and long-short-short both have length 9 and appear once. With equal lengths 2 and 2, only 6 is returned.",
+        "edgeCases": "Zero planks, equal lengths, one plank. Maximum count and lengths, without integer overflow or duplicate totals.",
+        "timeDerivation": "O(planks+1) time when lengths differ, matching output size; O(1) when equal.",
+        "spaceDerivation": "O(1) auxiliary space excluding the returned O(planks+1) integer values, or one value for equal lengths.",
+        "callableAgreement": "Each actual body emits n+1 strictly increasing lengths only when lengths differ. Zero planks returns [0]. C#/Java allocate exact int arrays, JavaScript uses Array.from, Python a concrete comprehension and C++ reserves a vector. The bound ensures every product/sum is at most 10^9. The independent small oracle builds reachable length sets by repeated plank addition. Read all actual methods with const vector/string references. NumberMax difference is uint32_t and final operand multiplication by 0/1 cannot overflow. No undefined signed subtraction or implementation-defined unsigned narrowing is used. Returned vectors own their values; prefix/suffix scans index only nonempty input."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_11.json",
+        "solutions/cpp/ctci6_16_11.cpp",
+        "solutions/notes/cpp/ctci6_16_11.json"
+      ]
+    },
+    "ctci6_16_11/java": {
+      "codePath": "solutions/java/ctci6_16_11.java",
+      "notesPath": "solutions/notes/java/ctci6_16_11.json",
+      "contentSha256": "0de92c0b5d5346a456785cb6fca4cf4c4751e8d7e773cf3a947a57b194f028d2",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Enumerate long-plank count once in increasing order; collapse equal plank lengths to one total.",
+        "correctness": "Every board uses a unique count k of long planks between zero and planks, so its total has the stated formula. Conversely every such k is feasible by choosing k long planks and the rest short. When longer>shorter, increasing k strictly increases the total, proving the generated list is sorted and contains no duplicates. When lengths agree, all choices yield the single emitted total. The k=0 empty-board case yields zero.",
+        "workedTrace": "For 3 planks of lengths 2 and 5, choose 0,1,2,3 long planks to get 6,9,12,15. Short-long-short and long-short-short both have length 9 and appear once. With equal lengths 2 and 2, only 6 is returned.",
+        "edgeCases": "Zero planks, equal lengths, one plank. Maximum count and lengths, without integer overflow or duplicate totals.",
+        "timeDerivation": "O(planks+1) time when lengths differ, matching output size; O(1) when equal.",
+        "spaceDerivation": "O(1) auxiliary space excluding the returned O(planks+1) integer values, or one value for equal lengths.",
+        "callableAgreement": "Each actual body emits n+1 strictly increasing lengths only when lengths differ. Zero planks returns [0]. C#/Java allocate exact int arrays, JavaScript uses Array.from, Python a concrete comprehension and C++ reserves a vector. The bound ensures every product/sum is at most 10^9. The independent small oracle builds reachable length sets by repeated plank addition. Read all actual methods. Integer arithmetic uses justified bounds, except the intentionally wrapping subtraction whose bit pattern is observed with >>>. Returned int[] arrays match declared types, String indexing uses charAt, and the frequency table is local per call. Inputs are unchanged."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_11.json",
+        "solutions/java/ctci6_16_11.java",
+        "solutions/notes/java/ctci6_16_11.json"
+      ]
+    },
+    "ctci6_16_15/csharp": {
+      "codePath": "solutions/csharp/ctci6_16_15.cs",
+      "notesPath": "solutions/notes/ctci6_16_15.json",
+      "contentSha256": "d2d994a93f1144230dcf3185139ea626e9fedf416698358beae44ac24747a81c",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Count exact hits, then consume only unmatched secret-color frequencies for unmatched guesses.",
+        "correctness": "The first pass counts every exact match and excludes both its occurrences from later matching. For each other secret slot, it adds one available occurrence of that color. The second pass ignores hit slots and consumes an available matching color for each unmatched guess. For every color this creates exactly the minimum of its unmatched guess and secret multiplicities, which is the greatest possible one-to-one matching count. Colors are disjoint, so their sum is the pseudo-hit count.",
+        "workedTrace": "For guess GGRR and secret RGBY, slot 1 is a G hit. Remaining secret colors are R,B,Y; remaining guesses are G,R,R. Only one R can consume the single remaining R, so the score is [1,1], not [1,2].",
+        "edgeCases": "All hits, no matches, all one color. Repeated guessed colors cannot consume one unmatched secret occurrence twice.",
+        "timeDerivation": "O(1) for the fixed four slots; two passes and a fixed four-color table.",
+        "spaceDerivation": "O(1) auxiliary space and a two-integer result.",
+        "callableAgreement": "All five bodies use the same four-color alphabet order consistently for both passes. A hit is excluded from the frequency table and from pseudo-hit consumption; repeated guesses cannot consume one slot twice. Independent permutation matching of unmatched positions, all-color strings, monochrome guesses, reversals, rotations and two-color exhaustive pairs cover multiplicity errors. Read all actual signed-int bodies. Array return expressions match int[] signatures. NumberMax uses uint sign extraction and an explicit unchecked difference, then signed masks; no conditional comparison helper. MasterMind IndexOf uses the admitted ASCII alphabet. Mutable array inputs are read only in this batch."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_15.json",
+        "solutions/csharp/ctci6_16_15.cs",
+        "solutions/notes/ctci6_16_15.json"
+      ]
+    },
+    "ctci6_16_15/javascript": {
+      "codePath": "solutions/javascript/ctci6_16_15.js",
+      "notesPath": "solutions/notes/javascript/ctci6_16_15.json",
+      "contentSha256": "cf747039b00779326464eaccc5bd651aa0a73f08750589ae660c15be667b8fb3",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Count exact hits, then consume only unmatched secret-color frequencies for unmatched guesses.",
+        "correctness": "The first pass counts every exact match and excludes both its occurrences from later matching. For each other secret slot, it adds one available occurrence of that color. The second pass ignores hit slots and consumes an available matching color for each unmatched guess. For every color this creates exactly the minimum of its unmatched guess and secret multiplicities, which is the greatest possible one-to-one matching count. Colors are disjoint, so their sum is the pseudo-hit count.",
+        "workedTrace": "For guess GGRR and secret RGBY, slot 1 is a G hit. Remaining secret colors are R,B,Y; remaining guesses are G,R,R. Only one R can consume the single remaining R, so the score is [1,1], not [1,2].",
+        "edgeCases": "All hits, no matches, all one color. Repeated guessed colors cannot consume one unmatched secret occurrence twice.",
+        "timeDerivation": "O(1) for the fixed four slots; two passes and a fixed four-color table.",
+        "spaceDerivation": "O(1) auxiliary space and a two-integer result.",
+        "callableAgreement": "All five bodies use the same four-color alphabet order consistently for both passes. A hit is excluded from the frequency table and from pseudo-hit consumption; repeated guesses cannot consume one slot twice. Independent permutation matching of unmatched positions, all-color strings, monochrome guesses, reversals, rotations and two-color exhaustive pairs cover multiplicity errors. Read all actual functions. Factorial division is floored, NumberMax bit operations coerce the intended signed 32-bit patterns, and bounded ordinary arithmetic stays exactly representable. All array results are materialized, not generators. Inputs remain unchanged."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_15.json",
+        "solutions/javascript/ctci6_16_15.js",
+        "solutions/notes/javascript/ctci6_16_15.json"
+      ]
+    },
+    "ctci6_16_15/python": {
+      "codePath": "solutions/python/ctci6_16_15.py",
+      "notesPath": "solutions/notes/python/ctci6_16_15.json",
+      "contentSha256": "458b7357f5cbe816e7d2992f1402873cff38ba6e3c3c87c7d789467fde4c7e4f",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Count exact hits, then consume only unmatched secret-color frequencies for unmatched guesses.",
+        "correctness": "The first pass counts every exact match and excludes both its occurrences from later matching. For each other secret slot, it adds one available occurrence of that color. The second pass ignores hit slots and consumes an available matching color for each unmatched guess. For every color this creates exactly the minimum of its unmatched guess and secret multiplicities, which is the greatest possible one-to-one matching count. Colors are disjoint, so their sum is the pseudo-hit count.",
+        "workedTrace": "For guess GGRR and secret RGBY, slot 1 is a G hit. Remaining secret colors are R,B,Y; remaining guesses are G,R,R. Only one R can consume the single remaining R, so the score is [1,1], not [1,2].",
+        "edgeCases": "All hits, no matches, all one color. Repeated guessed colors cannot consume one unmatched secret occurrence twice.",
+        "timeDerivation": "O(1) for the fixed four slots; two passes and a fixed four-color table.",
+        "spaceDerivation": "O(1) auxiliary space and a two-integer result.",
+        "callableAgreement": "All five bodies use the same four-color alphabet order consistently for both passes. A hit is excluded from the frequency table and from pseudo-hit consumption; repeated guesses cannot consume one slot twice. Independent permutation matching of unmatched positions, all-color strings, monochrome guesses, reversals, rotations and two-color exhaustive pairs cover multiplicity errors. Read all actual function bodies and exact annotations. NumberMax masks the potentially wider difference before extracting its 32-bit sign; the signed selection mask works with arbitrary-width bitwise operations. Arrays are concrete lists and bool is not an integer observation. The admitted numeric bounds remain shared."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_15.json",
+        "solutions/python/ctci6_16_15.py",
+        "solutions/notes/python/ctci6_16_15.json"
+      ]
+    },
+    "ctci6_16_15/cpp": {
+      "codePath": "solutions/cpp/ctci6_16_15.cpp",
+      "notesPath": "solutions/notes/cpp/ctci6_16_15.json",
+      "contentSha256": "442810b8d71b5ec5a396ec1fd414e882dfd81a138a6925cc7f2a4efa16b51ad6",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Count exact hits, then consume only unmatched secret-color frequencies for unmatched guesses.",
+        "correctness": "The first pass counts every exact match and excludes both its occurrences from later matching. For each other secret slot, it adds one available occurrence of that color. The second pass ignores hit slots and consumes an available matching color for each unmatched guess. For every color this creates exactly the minimum of its unmatched guess and secret multiplicities, which is the greatest possible one-to-one matching count. Colors are disjoint, so their sum is the pseudo-hit count.",
+        "workedTrace": "For guess GGRR and secret RGBY, slot 1 is a G hit. Remaining secret colors are R,B,Y; remaining guesses are G,R,R. Only one R can consume the single remaining R, so the score is [1,1], not [1,2].",
+        "edgeCases": "All hits, no matches, all one color. Repeated guessed colors cannot consume one unmatched secret occurrence twice.",
+        "timeDerivation": "O(1) for the fixed four slots; two passes and a fixed four-color table.",
+        "spaceDerivation": "O(1) auxiliary space and a two-integer result.",
+        "callableAgreement": "All five bodies use the same four-color alphabet order consistently for both passes. A hit is excluded from the frequency table and from pseudo-hit consumption; repeated guesses cannot consume one slot twice. Independent permutation matching of unmatched positions, all-color strings, monochrome guesses, reversals, rotations and two-color exhaustive pairs cover multiplicity errors. Read all actual methods with const vector/string references. NumberMax difference is uint32_t and final operand multiplication by 0/1 cannot overflow. No undefined signed subtraction or implementation-defined unsigned narrowing is used. Returned vectors own their values; prefix/suffix scans index only nonempty input."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_15.json",
+        "solutions/cpp/ctci6_16_15.cpp",
+        "solutions/notes/cpp/ctci6_16_15.json"
+      ]
+    },
+    "ctci6_16_15/java": {
+      "codePath": "solutions/java/ctci6_16_15.java",
+      "notesPath": "solutions/notes/java/ctci6_16_15.json",
+      "contentSha256": "0474a64377589b8842dbb56d9fdea249955b79f36b9d47796067268cd0eb2ac3",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Count exact hits, then consume only unmatched secret-color frequencies for unmatched guesses.",
+        "correctness": "The first pass counts every exact match and excludes both its occurrences from later matching. For each other secret slot, it adds one available occurrence of that color. The second pass ignores hit slots and consumes an available matching color for each unmatched guess. For every color this creates exactly the minimum of its unmatched guess and secret multiplicities, which is the greatest possible one-to-one matching count. Colors are disjoint, so their sum is the pseudo-hit count.",
+        "workedTrace": "For guess GGRR and secret RGBY, slot 1 is a G hit. Remaining secret colors are R,B,Y; remaining guesses are G,R,R. Only one R can consume the single remaining R, so the score is [1,1], not [1,2].",
+        "edgeCases": "All hits, no matches, all one color. Repeated guessed colors cannot consume one unmatched secret occurrence twice.",
+        "timeDerivation": "O(1) for the fixed four slots; two passes and a fixed four-color table.",
+        "spaceDerivation": "O(1) auxiliary space and a two-integer result.",
+        "callableAgreement": "All five bodies use the same four-color alphabet order consistently for both passes. A hit is excluded from the frequency table and from pseudo-hit consumption; repeated guesses cannot consume one slot twice. Independent permutation matching of unmatched positions, all-color strings, monochrome guesses, reversals, rotations and two-color exhaustive pairs cover multiplicity errors. Read all actual methods. Integer arithmetic uses justified bounds, except the intentionally wrapping subtraction whose bit pattern is observed with >>>. Returned int[] arrays match declared types, String indexing uses charAt, and the frequency table is local per call. Inputs are unchanged."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_15.json",
+        "solutions/java/ctci6_16_15.java",
+        "solutions/notes/java/ctci6_16_15.json"
+      ]
+    },
+    "ctci6_16_16/csharp": {
+      "codePath": "solutions/csharp/ctci6_16_16.cs",
+      "notesPath": "solutions/notes/ctci6_16_16.json",
+      "contentSha256": "14b5848e48787e00bd44b91f617a0a7fd4df2903bf2544a9ec47822bdf71b050",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Locate the last prefix-maximum violation and the first suffix-minimum violation without sorting or mutating input.",
+        "correctness": "At each forward position, the running maximum equals the maximum of the prefix. A value smaller than that maximum cannot be fixed without including its position, so the last such position is a necessary right bound. The reverse argument makes the first position above its suffix minimum a necessary left bound. Outside those bounds, values are ordered consistently with all preceding or following values. Sorting the enclosed region therefore removes all cross-order violations and makes the whole array nondecreasing. Since neither bound can be excluded, the resulting window is shortest. No forward violation means no inversion and hence an already sorted array.",
+        "workedTrace": "For [1,2,4,3,3,5], the running maximum becomes 4 at index 2; indices 3 and 4 are below it, so right=4. Scanning backward, the suffix minimum is 3 when index 2 is reached, giving left=2. Sorting indices 2..4 produces [1,2,3,3,4,5].",
+        "edgeCases": "Empty, singleton, already sorted, all equal. Reverse order, duplicates around both endpoints, signed extremes.",
+        "timeDerivation": "O(n) time for two scans.",
+        "spaceDerivation": "O(1) auxiliary storage, excluding the two-integer output.",
+        "callableAgreement": "Strict comparisons treat equal values as already ordered. Empty input is checked before indexing; no forward violation returns [-1,-1]. All five return inclusive original endpoints and preserve input. Independent sorted-copy mismatch endpoints agree for all small repeated-value arrays, signed extremes and 10000-element sorted/reverse inputs. Read all actual signed-int bodies. Array return expressions match int[] signatures. NumberMax uses uint sign extraction and an explicit unchecked difference, then signed masks; no conditional comparison helper. MasterMind IndexOf uses the admitted ASCII alphabet. Mutable array inputs are read only in this batch."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_16.json",
+        "solutions/csharp/ctci6_16_16.cs",
+        "solutions/notes/ctci6_16_16.json"
+      ]
+    },
+    "ctci6_16_16/javascript": {
+      "codePath": "solutions/javascript/ctci6_16_16.js",
+      "notesPath": "solutions/notes/javascript/ctci6_16_16.json",
+      "contentSha256": "42ab1b66f3377291ef5fb711a1ea314cc8d0ff42b74371220fa2ab4976afb574",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Locate the last prefix-maximum violation and the first suffix-minimum violation without sorting or mutating input.",
+        "correctness": "At each forward position, the running maximum equals the maximum of the prefix. A value smaller than that maximum cannot be fixed without including its position, so the last such position is a necessary right bound. The reverse argument makes the first position above its suffix minimum a necessary left bound. Outside those bounds, values are ordered consistently with all preceding or following values. Sorting the enclosed region therefore removes all cross-order violations and makes the whole array nondecreasing. Since neither bound can be excluded, the resulting window is shortest. No forward violation means no inversion and hence an already sorted array.",
+        "workedTrace": "For [1,2,4,3,3,5], the running maximum becomes 4 at index 2; indices 3 and 4 are below it, so right=4. Scanning backward, the suffix minimum is 3 when index 2 is reached, giving left=2. Sorting indices 2..4 produces [1,2,3,3,4,5].",
+        "edgeCases": "Empty, singleton, already sorted, all equal. Reverse order, duplicates around both endpoints, signed extremes.",
+        "timeDerivation": "O(n) time for two scans.",
+        "spaceDerivation": "O(1) auxiliary storage, excluding the two-integer output.",
+        "callableAgreement": "Strict comparisons treat equal values as already ordered. Empty input is checked before indexing; no forward violation returns [-1,-1]. All five return inclusive original endpoints and preserve input. Independent sorted-copy mismatch endpoints agree for all small repeated-value arrays, signed extremes and 10000-element sorted/reverse inputs. Read all actual functions. Factorial division is floored, NumberMax bit operations coerce the intended signed 32-bit patterns, and bounded ordinary arithmetic stays exactly representable. All array results are materialized, not generators. Inputs remain unchanged."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_16.json",
+        "solutions/javascript/ctci6_16_16.js",
+        "solutions/notes/javascript/ctci6_16_16.json"
+      ]
+    },
+    "ctci6_16_16/python": {
+      "codePath": "solutions/python/ctci6_16_16.py",
+      "notesPath": "solutions/notes/python/ctci6_16_16.json",
+      "contentSha256": "f22ecac5a2c2cba10027ea6a85fdc0461ccad75ed6580ccaed1c614e8fd748f4",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Locate the last prefix-maximum violation and the first suffix-minimum violation without sorting or mutating input.",
+        "correctness": "At each forward position, the running maximum equals the maximum of the prefix. A value smaller than that maximum cannot be fixed without including its position, so the last such position is a necessary right bound. The reverse argument makes the first position above its suffix minimum a necessary left bound. Outside those bounds, values are ordered consistently with all preceding or following values. Sorting the enclosed region therefore removes all cross-order violations and makes the whole array nondecreasing. Since neither bound can be excluded, the resulting window is shortest. No forward violation means no inversion and hence an already sorted array.",
+        "workedTrace": "For [1,2,4,3,3,5], the running maximum becomes 4 at index 2; indices 3 and 4 are below it, so right=4. Scanning backward, the suffix minimum is 3 when index 2 is reached, giving left=2. Sorting indices 2..4 produces [1,2,3,3,4,5].",
+        "edgeCases": "Empty, singleton, already sorted, all equal. Reverse order, duplicates around both endpoints, signed extremes.",
+        "timeDerivation": "O(n) time for two scans.",
+        "spaceDerivation": "O(1) auxiliary storage, excluding the two-integer output.",
+        "callableAgreement": "Strict comparisons treat equal values as already ordered. Empty input is checked before indexing; no forward violation returns [-1,-1]. All five return inclusive original endpoints and preserve input. Independent sorted-copy mismatch endpoints agree for all small repeated-value arrays, signed extremes and 10000-element sorted/reverse inputs. Read all actual function bodies and exact annotations. NumberMax masks the potentially wider difference before extracting its 32-bit sign; the signed selection mask works with arbitrary-width bitwise operations. Arrays are concrete lists and bool is not an integer observation. The admitted numeric bounds remain shared."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_16.json",
+        "solutions/python/ctci6_16_16.py",
+        "solutions/notes/python/ctci6_16_16.json"
+      ]
+    },
+    "ctci6_16_16/cpp": {
+      "codePath": "solutions/cpp/ctci6_16_16.cpp",
+      "notesPath": "solutions/notes/cpp/ctci6_16_16.json",
+      "contentSha256": "da2478ae09785eee6f11a2d69af166f40faff66b1f990d7d98c23ccc42041886",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Locate the last prefix-maximum violation and the first suffix-minimum violation without sorting or mutating input.",
+        "correctness": "At each forward position, the running maximum equals the maximum of the prefix. A value smaller than that maximum cannot be fixed without including its position, so the last such position is a necessary right bound. The reverse argument makes the first position above its suffix minimum a necessary left bound. Outside those bounds, values are ordered consistently with all preceding or following values. Sorting the enclosed region therefore removes all cross-order violations and makes the whole array nondecreasing. Since neither bound can be excluded, the resulting window is shortest. No forward violation means no inversion and hence an already sorted array.",
+        "workedTrace": "For [1,2,4,3,3,5], the running maximum becomes 4 at index 2; indices 3 and 4 are below it, so right=4. Scanning backward, the suffix minimum is 3 when index 2 is reached, giving left=2. Sorting indices 2..4 produces [1,2,3,3,4,5].",
+        "edgeCases": "Empty, singleton, already sorted, all equal. Reverse order, duplicates around both endpoints, signed extremes.",
+        "timeDerivation": "O(n) time for two scans.",
+        "spaceDerivation": "O(1) auxiliary storage, excluding the two-integer output.",
+        "callableAgreement": "Strict comparisons treat equal values as already ordered. Empty input is checked before indexing; no forward violation returns [-1,-1]. All five return inclusive original endpoints and preserve input. Independent sorted-copy mismatch endpoints agree for all small repeated-value arrays, signed extremes and 10000-element sorted/reverse inputs. Read all actual methods with const vector/string references. NumberMax difference is uint32_t and final operand multiplication by 0/1 cannot overflow. No undefined signed subtraction or implementation-defined unsigned narrowing is used. Returned vectors own their values; prefix/suffix scans index only nonempty input."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_16.json",
+        "solutions/cpp/ctci6_16_16.cpp",
+        "solutions/notes/cpp/ctci6_16_16.json"
+      ]
+    },
+    "ctci6_16_16/java": {
+      "codePath": "solutions/java/ctci6_16_16.java",
+      "notesPath": "solutions/notes/java/ctci6_16_16.json",
+      "contentSha256": "2337a4b09fb9d77d354252046b21ea6d1b6717f07d33f0f67a4c694a77d06ec6",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Locate the last prefix-maximum violation and the first suffix-minimum violation without sorting or mutating input.",
+        "correctness": "At each forward position, the running maximum equals the maximum of the prefix. A value smaller than that maximum cannot be fixed without including its position, so the last such position is a necessary right bound. The reverse argument makes the first position above its suffix minimum a necessary left bound. Outside those bounds, values are ordered consistently with all preceding or following values. Sorting the enclosed region therefore removes all cross-order violations and makes the whole array nondecreasing. Since neither bound can be excluded, the resulting window is shortest. No forward violation means no inversion and hence an already sorted array.",
+        "workedTrace": "For [1,2,4,3,3,5], the running maximum becomes 4 at index 2; indices 3 and 4 are below it, so right=4. Scanning backward, the suffix minimum is 3 when index 2 is reached, giving left=2. Sorting indices 2..4 produces [1,2,3,3,4,5].",
+        "edgeCases": "Empty, singleton, already sorted, all equal. Reverse order, duplicates around both endpoints, signed extremes.",
+        "timeDerivation": "O(n) time for two scans.",
+        "spaceDerivation": "O(1) auxiliary storage, excluding the two-integer output.",
+        "callableAgreement": "Strict comparisons treat equal values as already ordered. Empty input is checked before indexing; no forward violation returns [-1,-1]. All five return inclusive original endpoints and preserve input. Independent sorted-copy mismatch endpoints agree for all small repeated-value arrays, signed extremes and 10000-element sorted/reverse inputs. Read all actual methods. Integer arithmetic uses justified bounds, except the intentionally wrapping subtraction whose bit pattern is observed with >>>. Returned int[] arrays match declared types, String indexing uses charAt, and the frequency table is local per call. Inputs are unchanged."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_16.json",
+        "solutions/java/ctci6_16_16.java",
+        "solutions/notes/java/ctci6_16_16.json"
+      ]
+    },
+    "ctci6_16_17/csharp": {
+      "codePath": "solutions/csharp/ctci6_16_17.cs",
+      "notesPath": "solutions/notes/ctci6_16_17.json",
+      "contentSha256": "dea13fd1d11c63c074f083a80870e9cfdba7d59f75d26466c016ac9d7754e75e",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Keep the best nonnegative suffix sum and global maximum in one scan.",
+        "correctness": "After processing a prefix, running is the maximum of zero and the sums of all suffixes of that prefix. Appending the next value extends every nonempty candidate suffix; taking max(0,running+value) also permits the empty suffix and subsumes starting with this value alone. Induction preserves that invariant. Every contiguous sequence ends at some position, so updating best with every running value finds the greatest of all sequence sums, including the empty sequence.",
+        "workedTrace": "For [2,-8,3,-2,4,-10], running totals after discarding negative suffixes are 2,0,3,1,5,0. The best is 5 from [3,-2,4]. Adding all positive elements would incorrectly return 9 because those positions are not contiguous.",
+        "edgeCases": "Empty and all-negative inputs return zero. Zeros, all-positive input, a best interval strictly inside the array.",
+        "timeDerivation": "O(n) time in one scan.",
+        "spaceDerivation": "O(1) auxiliary scalar storage.",
+        "callableAgreement": "Empty/all-negative input returns zero, as in the author source; a nonempty-only variant is not substituted. The oracle directly enumerates contiguous intervals. The shared domain bounds all sums by 10^9, so Java/C#/C++ arithmetic and JS Number results are exact. Python arbitrary precision does not hide a cross-language overflow. Inputs are not modified. Read all actual signed-int bodies. Array return expressions match int[] signatures. NumberMax uses uint sign extraction and an explicit unchecked difference, then signed masks; no conditional comparison helper. MasterMind IndexOf uses the admitted ASCII alphabet. Mutable array inputs are read only in this batch."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_17.json",
+        "solutions/csharp/ctci6_16_17.cs",
+        "solutions/notes/ctci6_16_17.json"
+      ]
+    },
+    "ctci6_16_17/javascript": {
+      "codePath": "solutions/javascript/ctci6_16_17.js",
+      "notesPath": "solutions/notes/javascript/ctci6_16_17.json",
+      "contentSha256": "be45efa4d4ed364925138da0eddfbae94862d3969a1ee6573233fe7138b5ee02",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Keep the best nonnegative suffix sum and global maximum in one scan.",
+        "correctness": "After processing a prefix, running is the maximum of zero and the sums of all suffixes of that prefix. Appending the next value extends every nonempty candidate suffix; taking max(0,running+value) also permits the empty suffix and subsumes starting with this value alone. Induction preserves that invariant. Every contiguous sequence ends at some position, so updating best with every running value finds the greatest of all sequence sums, including the empty sequence.",
+        "workedTrace": "For [2,-8,3,-2,4,-10], running totals after discarding negative suffixes are 2,0,3,1,5,0. The best is 5 from [3,-2,4]. Adding all positive elements would incorrectly return 9 because those positions are not contiguous.",
+        "edgeCases": "Empty and all-negative inputs return zero. Zeros, all-positive input, a best interval strictly inside the array.",
+        "timeDerivation": "O(n) time in one scan.",
+        "spaceDerivation": "O(1) auxiliary scalar storage.",
+        "callableAgreement": "Empty/all-negative input returns zero, as in the author source; a nonempty-only variant is not substituted. The oracle directly enumerates contiguous intervals. The shared domain bounds all sums by 10^9, so Java/C#/C++ arithmetic and JS Number results are exact. Python arbitrary precision does not hide a cross-language overflow. Inputs are not modified. Read all actual functions. Factorial division is floored, NumberMax bit operations coerce the intended signed 32-bit patterns, and bounded ordinary arithmetic stays exactly representable. All array results are materialized, not generators. Inputs remain unchanged."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_17.json",
+        "solutions/javascript/ctci6_16_17.js",
+        "solutions/notes/javascript/ctci6_16_17.json"
+      ]
+    },
+    "ctci6_16_17/python": {
+      "codePath": "solutions/python/ctci6_16_17.py",
+      "notesPath": "solutions/notes/python/ctci6_16_17.json",
+      "contentSha256": "6dc7a1242a539c37245555868051547bdd585f7e068cbe9363733d080a3eb2a6",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Keep the best nonnegative suffix sum and global maximum in one scan.",
+        "correctness": "After processing a prefix, running is the maximum of zero and the sums of all suffixes of that prefix. Appending the next value extends every nonempty candidate suffix; taking max(0,running+value) also permits the empty suffix and subsumes starting with this value alone. Induction preserves that invariant. Every contiguous sequence ends at some position, so updating best with every running value finds the greatest of all sequence sums, including the empty sequence.",
+        "workedTrace": "For [2,-8,3,-2,4,-10], running totals after discarding negative suffixes are 2,0,3,1,5,0. The best is 5 from [3,-2,4]. Adding all positive elements would incorrectly return 9 because those positions are not contiguous.",
+        "edgeCases": "Empty and all-negative inputs return zero. Zeros, all-positive input, a best interval strictly inside the array.",
+        "timeDerivation": "O(n) time in one scan.",
+        "spaceDerivation": "O(1) auxiliary scalar storage.",
+        "callableAgreement": "Empty/all-negative input returns zero, as in the author source; a nonempty-only variant is not substituted. The oracle directly enumerates contiguous intervals. The shared domain bounds all sums by 10^9, so Java/C#/C++ arithmetic and JS Number results are exact. Python arbitrary precision does not hide a cross-language overflow. Inputs are not modified. Read all actual function bodies and exact annotations. NumberMax masks the potentially wider difference before extracting its 32-bit sign; the signed selection mask works with arbitrary-width bitwise operations. Arrays are concrete lists and bool is not an integer observation. The admitted numeric bounds remain shared."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_17.json",
+        "solutions/python/ctci6_16_17.py",
+        "solutions/notes/python/ctci6_16_17.json"
+      ]
+    },
+    "ctci6_16_17/cpp": {
+      "codePath": "solutions/cpp/ctci6_16_17.cpp",
+      "notesPath": "solutions/notes/cpp/ctci6_16_17.json",
+      "contentSha256": "4d996ff0408dd99925204cfb73d6cba313093e3be64679a640d578a6a5def439",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Keep the best nonnegative suffix sum and global maximum in one scan.",
+        "correctness": "After processing a prefix, running is the maximum of zero and the sums of all suffixes of that prefix. Appending the next value extends every nonempty candidate suffix; taking max(0,running+value) also permits the empty suffix and subsumes starting with this value alone. Induction preserves that invariant. Every contiguous sequence ends at some position, so updating best with every running value finds the greatest of all sequence sums, including the empty sequence.",
+        "workedTrace": "For [2,-8,3,-2,4,-10], running totals after discarding negative suffixes are 2,0,3,1,5,0. The best is 5 from [3,-2,4]. Adding all positive elements would incorrectly return 9 because those positions are not contiguous.",
+        "edgeCases": "Empty and all-negative inputs return zero. Zeros, all-positive input, a best interval strictly inside the array.",
+        "timeDerivation": "O(n) time in one scan.",
+        "spaceDerivation": "O(1) auxiliary scalar storage.",
+        "callableAgreement": "Empty/all-negative input returns zero, as in the author source; a nonempty-only variant is not substituted. The oracle directly enumerates contiguous intervals. The shared domain bounds all sums by 10^9, so Java/C#/C++ arithmetic and JS Number results are exact. Python arbitrary precision does not hide a cross-language overflow. Inputs are not modified. Read all actual methods with const vector/string references. NumberMax difference is uint32_t and final operand multiplication by 0/1 cannot overflow. No undefined signed subtraction or implementation-defined unsigned narrowing is used. Returned vectors own their values; prefix/suffix scans index only nonempty input."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_17.json",
+        "solutions/cpp/ctci6_16_17.cpp",
+        "solutions/notes/cpp/ctci6_16_17.json"
+      ]
+    },
+    "ctci6_16_17/java": {
+      "codePath": "solutions/java/ctci6_16_17.java",
+      "notesPath": "solutions/notes/java/ctci6_16_17.json",
+      "contentSha256": "29a0e504d8eafa84cf2d51b648f44c14c421c46d043ca2fbdca80614ed66f580",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Keep the best nonnegative suffix sum and global maximum in one scan.",
+        "correctness": "After processing a prefix, running is the maximum of zero and the sums of all suffixes of that prefix. Appending the next value extends every nonempty candidate suffix; taking max(0,running+value) also permits the empty suffix and subsumes starting with this value alone. Induction preserves that invariant. Every contiguous sequence ends at some position, so updating best with every running value finds the greatest of all sequence sums, including the empty sequence.",
+        "workedTrace": "For [2,-8,3,-2,4,-10], running totals after discarding negative suffixes are 2,0,3,1,5,0. The best is 5 from [3,-2,4]. Adding all positive elements would incorrectly return 9 because those positions are not contiguous.",
+        "edgeCases": "Empty and all-negative inputs return zero. Zeros, all-positive input, a best interval strictly inside the array.",
+        "timeDerivation": "O(n) time in one scan.",
+        "spaceDerivation": "O(1) auxiliary scalar storage.",
+        "callableAgreement": "Empty/all-negative input returns zero, as in the author source; a nonempty-only variant is not substituted. The oracle directly enumerates contiguous intervals. The shared domain bounds all sums by 10^9, so Java/C#/C++ arithmetic and JS Number results are exact. Python arbitrary precision does not hide a cross-language overflow. Inputs are not modified. Read all actual methods. Integer arithmetic uses justified bounds, except the intentionally wrapping subtraction whose bit pattern is observed with >>>. Returned int[] arrays match declared types, String indexing uses charAt, and the frequency table is local per call. Inputs are unchanged."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_17.json",
+        "solutions/java/ctci6_16_17.java",
+        "solutions/notes/java/ctci6_16_17.json"
       ]
     }
   }
