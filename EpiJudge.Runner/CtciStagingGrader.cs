@@ -18,7 +18,14 @@ public static class CtciStagingGrader
     {
         if (observed.GetProperty("mutationOk").ValueKind != JsonValueKind.True) return "Preserve the required input objects and readonly values, and perform the stated in-place changes.";
         var actual = observed.GetProperty("actual");
-        if (definition.Ref is "10.3" or "10.5")
+        if (definition.Ref == "10.4")
+        {
+            int probes = observed.GetProperty("probes").GetInt32();
+            int size = test.Arguments[0].GetArrayLength(), power = 1, steps = 0;
+            while (power < size + 2) { power <<= 1; steps++; }
+            if (probes < 0 || probes > 4 * steps + 8) return "Use logarithmically many Listy.ElementAt queries.";
+        }
+        if (definition.Ref is "10.3" or "10.4" or "10.5")
         {
             if (actual.ValueKind != JsonValueKind.Number || !actual.TryGetInt32(out int index)) return "Return an integer index or -1.";
             if (definition.Ref == "10.5" && test.Arguments[1].GetString() == "") return index == -1 ? null : "Empty strings are gaps, not searchable targets.";

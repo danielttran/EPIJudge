@@ -71,6 +71,89 @@
     }
   },
   {
+    "ref": "16.2",
+    "method": "WordFrequencies",
+    "params": [
+      [
+        "book",
+        "as"
+      ],
+      [
+        "queries",
+        "as"
+      ]
+    ],
+    "result": "ai",
+    "mutation": "none",
+    "description": "Count how often each queried word occurs in a tokenized book, ignoring ASCII letter case. Return one count per query in the original query order, including repeated queries. The book is already split into words; tokenization and punctuation removal are not part of this task.",
+    "constraints": [
+      "book and queries are nonnull arrays of 0..1000 nonnull words. Each word has 1..20 ASCII letters A..Z or a..z. Case is ignored, but spelling must otherwise match exactly; a missing word has count zero.",
+      "Preserve both arrays and every word. Preprocess the book once to support the batch of queries rather than rescanning the book for every query. Empty book and empty query list are allowed."
+    ],
+    "why": "Many queries share the same book. Normalize case once per occurrence and accumulate counts in a dictionary, then normalize and look up each query. This pays for reading the book once instead of once per requested word.",
+    "correctness": "After processing any prefix of book, the dictionary count for each normalized word equals its occurrences in that prefix: inserting a new normalized key starts its count and every later occurrence increments it once. Induction gives exact counts for the entire book. A normalized query identifies precisely its case-insensitive equivalence class; lookup returns that count, or zero when no occurrence created its key. Appending answers in query order preserves repeated queries and their positions.",
+    "walkthrough": "For book=[Red,blue,RED,green] and queries=[red,BLUE,missing,Red], normalized counts are red:2, blue:1, green:1. The answers are [2,1,0,2]. Red and RED contribute to the same count; the repeated red query does not consume a book occurrence.",
+    "example": [
+      [
+        [
+          "Red",
+          "blue",
+          "RED",
+          "green"
+        ],
+        [
+          "red",
+          "BLUE",
+          "missing",
+          "Red"
+        ]
+      ],
+      [
+        2,
+        1,
+        0,
+        2
+      ]
+    ],
+    "time": "Expected O(B+Q) character work for B book characters and Q query characters, assuming expected constant dictionary access per bounded-length key. Hash-table collisions can worsen this bound.",
+    "space": "O(D*L+q) storage for D distinct normalized book words of maximum length L and q returned counts; query normalization uses O(L) temporary storage.",
+    "edges": [
+      "Empty book or query array; all queries absent.",
+      "Mixed case, repeated book words and repeated queries."
+    ],
+    "related": "The public preprocessing/query API is combined into one batch callable. Nonempty ASCII tokens avoid unspecified tokenization, Unicode and empty-token behavior.",
+    "id": "ctci6_16_2",
+    "title": "Word Frequencies",
+    "testCount": 1659,
+    "languages": {
+      "csharp": {
+        "signature": "int[] WordFrequencies(string[] book, string[] queries)",
+        "starterCode": "public class Solution\n{\n    public int[] WordFrequencies(string[] book, string[] queries)\n    {\n        return [];\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public int[] WordFrequencies(string[] book, string[] queries)\n    {\n        var counts = new Dictionary<string, int>(StringComparer.Ordinal);\n        foreach (string word in book)\n        {\n            string key = word.ToLowerInvariant();\n            counts.TryGetValue(key, out int count);\n            counts[key] = count + 1;\n        }\n        int[] result = new int[queries.Length];\n        for (int i = 0; i < queries.Length; ++i)\n        {\n            counts.TryGetValue(queries[i].ToLowerInvariant(), out int count);\n            result[i] = count;\n        }\n        return result;\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function WordFrequencies(book, queries)",
+        "starterCode": "function WordFrequencies(book, queries) {\n  return [];\n}\n",
+        "solutionCode": "function WordFrequencies(book, queries) {\n  const counts = new Map();\n  for (const word of book) {\n    const key = word.toLowerCase();\n    counts.set(key, (counts.get(key) || 0) + 1);\n  }\n  return queries.map((word) => counts.get(word.toLowerCase()) || 0);\n}\n"
+      },
+      "python": {
+        "signature": "def WordFrequencies(book: list[str], queries: list[str]) -> list[int]",
+        "starterCode": "def WordFrequencies(book: list[str], queries: list[str]) -> list[int]:\n    return []\n",
+        "solutionCode": "def WordFrequencies(book: list[str], queries: list[str]) -> list[int]:\n    counts = {}\n    for word in book:\n        key = word.lower()\n        counts[key] = counts.get(key, 0) + 1\n    return [counts.get(word.lower(), 0) for word in queries]\n"
+      },
+      "cpp": {
+        "signature": "std::vector<int> WordFrequencies(const std::vector<std::string>& book, const std::vector<std::string>& queries)",
+        "starterCode": "class Solution {\n public:\n  std::vector<int> WordFrequencies(const std::vector<std::string>& book,\n                                   const std::vector<std::string>& queries) {\n    return {};\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  std::vector<int> WordFrequencies(const std::vector<std::string>& book,\n                                   const std::vector<std::string>& queries) {\n    std::unordered_map<std::string, int> counts;\n    for (auto word : book) {\n      for (char& c : word)\n        if (c >= 'A' && c <= 'Z')\n          c = static_cast<char>(c - 'A' + 'a');\n      ++counts[word];\n    }\n    std::vector<int> result;\n    result.reserve(queries.size());\n    for (auto word : queries) {\n      for (char& c : word)\n        if (c >= 'A' && c <= 'Z')\n          c = static_cast<char>(c - 'A' + 'a');\n      auto found = counts.find(word);\n      result.push_back(found == counts.end() ? 0 : found->second);\n    }\n    return result;\n  }\n};\n"
+      },
+      "java": {
+        "signature": "int[] WordFrequencies(String[] book, String[] queries)",
+        "starterCode": "class Solution {\n  public int[] WordFrequencies(String[] book, String[] queries) {\n    return new int[0];\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public int[] WordFrequencies(String[] book, String[] queries) {\n    Map<String, Integer> counts = new HashMap<>();\n    for (String word : book) {\n      String key = word.toLowerCase(Locale.ROOT);\n      counts.put(key, counts.getOrDefault(key, 0) + 1);\n    }\n    int[] result = new int[queries.length];\n    for (int i = 0; i < queries.length; ++i)\n      result[i] = counts.getOrDefault(queries[i].toLowerCase(Locale.ROOT), 0);\n    return result;\n  }\n}\n"
+      }
+    }
+  },
+  {
     "ref": "16.4",
     "method": "TicTacWinner",
     "params": [
@@ -208,6 +291,81 @@
         "signature": "int CountFactorialZeros(int n)",
         "starterCode": "class Solution {\n  public int CountFactorialZeros(int n) {\n    return 0;\n  }\n}\n",
         "solutionCode": "class Solution {\n  public int CountFactorialZeros(int n) {\n    int count = 0;\n    while (n != 0) {\n      n /= 5;\n      count += n;\n    }\n    return count;\n  }\n}\n"
+      }
+    }
+  },
+  {
+    "ref": "16.6",
+    "method": "SmallestDifference",
+    "params": [
+      [
+        "first",
+        "ai"
+      ],
+      [
+        "second",
+        "ai"
+      ]
+    ],
+    "result": "l",
+    "mutation": "none",
+    "description": "Return the smallest absolute difference between one value from first and one from second. The two chosen occurrences must come from different arrays. Return -1 if either array is empty; otherwise return the exact nonnegative difference, which may exceed a signed 32-bit integer.",
+    "constraints": [
+      "Each nonnull input array contains 0..1000 signed 32-bit integers. Duplicates and equal cross-array values are allowed. Preserve both input arrays and their original order; sort private copies if needed.",
+      "C#/Java return a signed 64-bit integer, C++ returns long long, Python returns int and JavaScript returns Number. The largest possible result is 4294967295, exactly representable in each result type. Widen BEFORE subtracting; taking abs after an overflowing 32-bit subtraction is incorrect."
+    ],
+    "why": "Sorted copies expose the closest cross-array neighbors without checking every pair. At current values a and b, moving the larger value can only keep or increase the gap while the smaller stays fixed. Record their difference, then advance the smaller side to seek a closer value.",
+    "correctness": "Consider current sorted values a<=b. Every not-yet-visited value on the second side is at least b, so none can improve the recorded b-a while a stays fixed. Discarding a is safe. The symmetric argument applies when b<a. Every discarded value has therefore been paired with its best remaining candidate, and any candidates skipped earlier were already bounded by an earlier recorded difference. The least recorded difference is the global minimum. Equal values certify the optimal lower bound zero. Empty input has no cross-array pair and uses the explicit -1 convention.",
+    "walkthrough": "For first=[10,1,20] and second=[14,5], sort copies to [1,10,20] and [5,14]. Record gaps 4 (1,5), 5 (10,5), 4 (10,14), and 6 (20,14), returning 4. For [-2147483648] and [2147483647], the exact answer is 4294967295 rather than an overflowing signed value.",
+    "example": [
+      [
+        [
+          10,
+          1,
+          20
+        ],
+        [
+          14,
+          5
+        ]
+      ],
+      4
+    ],
+    "time": "O(n log(n+1)+m log(m+1)) sorting time plus O(n+m) pointer advances.",
+    "space": "O(n+m) for the two private sorted copies; library sorting workspace is bounded by this storage.",
+    "edges": [
+      "Either input empty, duplicates and a shared value.",
+      "Signed endpoints and differences above 2147483647."
+    ],
+    "related": "The author sorted two-pointer task is preserved, with an explicit readonly-input convention and widened result correcting overflow in the public demonstration.",
+    "id": "ctci6_16_6",
+    "title": "Smallest Difference",
+    "testCount": 1737,
+    "languages": {
+      "csharp": {
+        "signature": "long SmallestDifference(int[] first, int[] second)",
+        "starterCode": "public class Solution\n{\n    public long SmallestDifference(int[] first, int[] second)\n    {\n        return 0;\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public long SmallestDifference(int[] first, int[] second)\n    {\n        if (first.Length == 0 || second.Length == 0)\n            return -1;\n        int[] a = (int[])first.Clone(), b = (int[])second.Clone();\n        Array.Sort(a);\n        Array.Sort(b);\n        int i = 0, j = 0;\n        long best = 4294967295L;\n        while (i < a.Length && j < b.Length)\n        {\n            long difference = (long)a[i] - b[j];\n            best = Math.Min(best, Math.Abs(difference));\n            if (difference == 0)\n                return 0;\n            if (difference < 0)\n                ++i;\n            else\n                ++j;\n        }\n        return best;\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function SmallestDifference(first, second)",
+        "starterCode": "function SmallestDifference(first, second) {\n  return 0;\n}\n",
+        "solutionCode": "function SmallestDifference(first, second) {\n  if (!first.length || !second.length) return -1;\n  const a = first.slice().sort((x, y) => x - y),\n    b = second.slice().sort((x, y) => x - y);\n  let i = 0,\n    j = 0,\n    best = 4294967295;\n  while (i < a.length && j < b.length) {\n    const difference = a[i] - b[j];\n    best = Math.min(best, Math.abs(difference));\n    if (difference === 0) return 0;\n    if (difference < 0) ++i;\n    else ++j;\n  }\n  return best;\n}\n"
+      },
+      "python": {
+        "signature": "def SmallestDifference(first: list[int], second: list[int]) -> int",
+        "starterCode": "def SmallestDifference(first: list[int], second: list[int]) -> int:\n    return 0\n",
+        "solutionCode": "def SmallestDifference(first: list[int], second: list[int]) -> int:\n    if not first or not second:\n        return -1\n    a, b = sorted(first), sorted(second)\n    i = j = 0\n    best = 4294967295\n    while i < len(a) and j < len(b):\n        difference = a[i] - b[j]\n        best = min(best, abs(difference))\n        if difference == 0:\n            return 0\n        if difference < 0:\n            i += 1\n        else:\n            j += 1\n    return best\n"
+      },
+      "cpp": {
+        "signature": "long long SmallestDifference(const std::vector<int>& first, const std::vector<int>& second)",
+        "starterCode": "class Solution {\n public:\n  long long SmallestDifference(const std::vector<int>& first, const std::vector<int>& second) {\n    return 0;\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  long long SmallestDifference(const std::vector<int>& first, const std::vector<int>& second) {\n    if (first.empty() || second.empty())\n      return -1;\n    auto a = first, b = second;\n    std::sort(a.begin(), a.end());\n    std::sort(b.begin(), b.end());\n    size_t i = 0, j = 0;\n    long long best = 4294967295LL;\n    while (i < a.size() && j < b.size()) {\n      long long difference = static_cast<long long>(a[i]) - b[j];\n      best = std::min(best, difference < 0 ? -difference : difference);\n      if (difference == 0)\n        return 0;\n      if (difference < 0)\n        ++i;\n      else\n        ++j;\n    }\n    return best;\n  }\n};\n"
+      },
+      "java": {
+        "signature": "long SmallestDifference(int[] first, int[] second)",
+        "starterCode": "class Solution {\n  public long SmallestDifference(int[] first, int[] second) {\n    return 0;\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public long SmallestDifference(int[] first, int[] second) {\n    if (first.length == 0 || second.length == 0)\n      return -1;\n    int[] a = first.clone(), b = second.clone();\n    Arrays.sort(a);\n    Arrays.sort(b);\n    int i = 0, j = 0;\n    long best = 4294967295L;\n    while (i < a.length && j < b.length) {\n      long difference = (long) a[i] - b[j];\n      best = Math.min(best, Math.abs(difference));\n      if (difference == 0)\n        return 0;\n      if (difference < 0)\n        ++i;\n      else\n        ++j;\n    }\n    return best;\n  }\n}\n"
       }
     }
   },
@@ -725,6 +883,177 @@
         "signature": "int[] PondSizes(int[][] land)",
         "starterCode": "class Solution {\n  public int[] PondSizes(int[][] land) {\n    return new int[0];\n  }\n}\n",
         "solutionCode": "class Solution {\n  public int[] PondSizes(int[][] land) {\n    int rows = land.length, columns = rows == 0 ? 0 : land[0].length;\n    boolean[][] seen = new boolean[rows][columns];\n    List<Integer> sizes = new ArrayList<>();\n    for (int row = 0; row < rows; ++row) {\n      for (int column = 0; column < columns; ++column) {\n        if (land[row][column] != 0 || seen[row][column])\n          continue;\n        seen[row][column] = true;\n        Deque<int[]> work = new ArrayDeque<>();\n        work.push(new int[] {row, column});\n        int size = 0;\n        while (!work.isEmpty()) {\n          var cell = work.pop();\n          int r = cell[0], c = cell[1];\n          ++size;\n          for (int dr = -1; dr <= 1; ++dr) {\n            for (int dc = -1; dc <= 1; ++dc) {\n              if (dr == 0 && dc == 0)\n                continue;\n              int nr = r + dr, nc = c + dc;\n              if (nr >= 0 && nr < rows && nc >= 0 && nc < columns && land[nr][nc] == 0\n                  && !seen[nr][nc]) {\n                seen[nr][nc] = true;\n                work.push(new int[] {nr, nc});\n              }\n            }\n          }\n        }\n        sizes.add(size);\n      }\n    }\n    Collections.sort(sizes);\n    int[] result = new int[sizes.size()];\n    for (int i = 0; i < result.length; ++i)\n      result[i] = sizes.get(i);\n    return result;\n  }\n}\n"
+      }
+    }
+  },
+  {
+    "ref": "16.21",
+    "method": "SumSwap",
+    "params": [
+      [
+        "first",
+        "ai"
+      ],
+      [
+        "second",
+        "ai"
+      ]
+    ],
+    "result": "ai",
+    "mutation": "none",
+    "description": "Find one value from each array that could be exchanged to make the array sums equal. Return [valueFromFirst,valueFromSecond], or [] if no such exchange exists. Do not actually exchange or modify entries. If several exchanges work, choose the value at the earliest original position in first; its matching second value is then determined.",
+    "constraints": [
+      "Each input is a nonnull array of 0..1000 signed 32-bit integers. Values may repeat. Both chosen values must actually occur in their respective arrays. An empty array cannot supply an exchange, even when both sums are equal.",
+      "Preserve both arrays and their order. Compute sums and candidate differences in signed 64-bit arithmetic (or Python int / exact JavaScript Number); the admitted maximum absolute total difference is below 2^53. A candidate outside signed 32-bit range is not an array value and must not be narrowed with wraparound."
+    ],
+    "why": "Writing the new sums as S1-a+b and S2-b+a gives 2*(a-b)=S1-S2. An odd total difference is impossible. Otherwise, for each a in first, the only possible b is a-(S1-S2)/2; a hash set of second values answers membership without testing every pair.",
+    "correctness": "Any valid exchange satisfies the derived equation, so an odd sum difference rules out all possibilities. For an even difference, every scanned a has exactly one required b. A set membership hit proves both values occur and substitution into the equation proves the new sums agree. Conversely, every valid exchange has a first-array occurrence that the scan visits and its required second value is in the set, so a valid exchange cannot be missed. Scanning original first order and returning the first hit implements the tie rule. No hit proves absence.",
+    "walkthrough": "For first=[4,1,2,1,1,2] (sum 11) and second=[3,6,3,3] (sum 15), the half-difference is -2. The first value 4 requires second value 6, which exists, so return [4,6]. The hypothetical new sums are both 13; the supplied arrays stay unchanged.",
+    "example": [
+      [
+        [
+          4,
+          1,
+          2,
+          1,
+          1,
+          2
+        ],
+        [
+          3,
+          6,
+          3,
+          3
+        ]
+      ],
+      [
+        4,
+        6
+      ]
+    ],
+    "time": "Expected O(n+m) time for sums, building the membership set and one scan; hash collisions can worsen the bound.",
+    "space": "O(m) membership storage plus a constant-size returned pair.",
+    "edges": [
+      "Empty inputs, odd total difference, equal sums but no shared value.",
+      "Multiple exchanges, repeated values, negative totals and signed endpoints."
+    ],
+    "related": "The earliest-first-occurrence tie convention follows the public hash-set scan; [] replaces its null no-exchange result.",
+    "id": "ctci6_16_21",
+    "title": "Sum Swap",
+    "testCount": 1741,
+    "languages": {
+      "csharp": {
+        "signature": "int[] SumSwap(int[] first, int[] second)",
+        "starterCode": "public class Solution\n{\n    public int[] SumSwap(int[] first, int[] second)\n    {\n        return [];\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public int[] SumSwap(int[] first, int[] second)\n    {\n        long difference = 0;\n        foreach (int value in first)\n            difference += value;\n        foreach (int value in second)\n            difference -= value;\n        if (difference % 2 != 0)\n        {\n            return [];\n        }\n        long half = difference / 2;\n        var contents = new HashSet<int>(second);\n        foreach (int value in first)\n        {\n            long required = (long)value - half;\n            if (required >= -2147483648L && required <= 2147483647L &&\n                contents.Contains((int)required))\n            {\n                return [value, (int)required];\n            }\n        }\n        return [];\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function SumSwap(first, second)",
+        "starterCode": "function SumSwap(first, second) {\n  return [];\n}\n",
+        "solutionCode": "function SumSwap(first, second) {\n  let difference = 0;\n  for (const value of first) difference += value;\n  for (const value of second) difference -= value;\n  if (difference % 2 !== 0) return [];\n  const half = difference / 2,\n    contents = new Set(second);\n  for (const value of first) {\n    const required = value - half;\n    if (contents.has(required)) return [value, required];\n  }\n  return [];\n}\n"
+      },
+      "python": {
+        "signature": "def SumSwap(first: list[int], second: list[int]) -> list[int]",
+        "starterCode": "def SumSwap(first: list[int], second: list[int]) -> list[int]:\n    return []\n",
+        "solutionCode": "def SumSwap(first: list[int], second: list[int]) -> list[int]:\n    difference = sum(first) - sum(second)\n    if difference % 2:\n        return []\n    half = difference // 2\n    contents = set(second)\n    for value in first:\n        required = value - half\n        if required in contents:\n            return [value, required]\n    return []\n"
+      },
+      "cpp": {
+        "signature": "std::vector<int> SumSwap(const std::vector<int>& first, const std::vector<int>& second)",
+        "starterCode": "class Solution {\n public:\n  std::vector<int> SumSwap(const std::vector<int>& first, const std::vector<int>& second) {\n    return {};\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  std::vector<int> SumSwap(const std::vector<int>& first, const std::vector<int>& second) {\n    long long difference = 0;\n    for (int value : first)\n      difference += value;\n    for (int value : second)\n      difference -= value;\n    if (difference % 2 != 0)\n      return {};\n    long long half = difference / 2;\n    std::unordered_set<int> contents(second.begin(), second.end());\n    for (int value : first) {\n      long long required = static_cast<long long>(value) - half;\n      if (required >= -2147483648LL && required <= 2147483647LL &&\n          contents.count(static_cast<int>(required)))\n        return {value, static_cast<int>(required)};\n    }\n    return {};\n  }\n};\n"
+      },
+      "java": {
+        "signature": "int[] SumSwap(int[] first, int[] second)",
+        "starterCode": "class Solution {\n  public int[] SumSwap(int[] first, int[] second) {\n    return new int[0];\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public int[] SumSwap(int[] first, int[] second) {\n    long difference = 0;\n    for (int value : first)\n      difference += value;\n    for (int value : second)\n      difference -= value;\n    if (difference % 2 != 0) {\n      return new int[0];\n    }\n    long half = difference / 2;\n    Set<Integer> contents = new HashSet<>();\n    for (int value : second)\n      contents.add(value);\n    for (int value : first) {\n      long required = (long) value - half;\n      if (required >= -2147483648L && required <= 2147483647L\n          && contents.contains((int) required)) {\n        return new int[] {value, (int) required};\n      }\n    }\n    return new int[0];\n  }\n}\n"
+      }
+    }
+  },
+  {
+    "ref": "16.24",
+    "method": "PairsWithSum",
+    "params": [
+      [
+        "values",
+        "ai"
+      ],
+      [
+        "target",
+        "i"
+      ]
+    ],
+    "result": "aai",
+    "mutation": "none",
+    "description": "Form as many disjoint pairs of input occurrences as possible whose values sum to target. Each occurrence may be used in at most one pair. Return each pair as [smallerValue,largerValue], and return the pairs in lexicographic order. Repeated equal pairs are retained when enough occurrences exist; this is not a list of every index pair.",
+    "constraints": [
+      "values is a nonnull array of 0..1000 signed 32-bit integers; target is signed 32-bit. Preserve values and its order. Return a concrete two-dimensional integer collection, with exactly two values per row.",
+      "A pair uses two distinct occurrences, including when the values are equal. Use widened arithmetic for pair sums so signed endpoints do not wrap. Empty or singleton input returns []. Ordering is a deterministic presentation convention; occurrence consumption follows the author sorted two-pointer variant."
+    ],
+    "why": "Sort a private copy and inspect its smallest and largest remaining values. If their sum is too small, the smallest cannot pair with anything; if too large, the largest cannot pair with anything. On equality, consume both occurrences. Complementary value classes cannot compete with other classes, so using a valid pair cannot reduce the eventual pair count.",
+    "correctness": "For sorted endpoints a<=b, a+b<target means no remaining partner is large enough for a; discarding a loses no valid pair. Similarly a+b>target rules out every remaining partner for b. On equality, a can pair only with value b and b only with value a. Taking that pair reduces the available counts of those complementary classes by one each (or by two for equal values), achieving the maximum possible count for that class. Repeating these safe steps produces a maximum number of disjoint pairs. Left endpoints never decrease, so normalized pairs are already in lexicographic order; all are drawn from distinct consumed occurrences.",
+    "walkthrough": "For values=[1,1,2,2,3,3] and target 4, the sorted endpoints yield [1,3], then another [1,3], then [2,2]. All six occurrences are used once. With only three 2s and target 4, return one [2,2], leaving one unused; returning three index pairs would reuse occurrences.",
+    "example": [
+      [
+        [
+          1,
+          1,
+          2,
+          2,
+          3,
+          3
+        ],
+        4
+      ],
+      [
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          2,
+          2
+        ]
+      ]
+    ],
+    "time": "O(n log(n+1)) time for sorting plus O(n) endpoint steps.",
+    "space": "O(n) for the private sorted copy and O(p) returned pairs, p<=floor(n/2).",
+    "edges": [
+      "No pair, singleton, duplicate pairs and odd equal-value multiplicity.",
+      "Negative targets, zero and signed endpoints requiring widened sums."
+    ],
+    "related": "The public hash-count and sorted variants consume occurrences, while its brute-force variant enumerates index pairs. This callable explicitly selects the disjoint sorted variant rather than hiding that distinction.",
+    "id": "ctci6_16_24",
+    "title": "Pairs With Sum",
+    "testCount": 1925,
+    "languages": {
+      "csharp": {
+        "signature": "int[][] PairsWithSum(int[] values, int target)",
+        "starterCode": "public class Solution\n{\n    public int[][] PairsWithSum(int[] values, int target)\n    {\n        return [];\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public int[][] PairsWithSum(int[] values, int target)\n    {\n        int[] ordered = (int[])values.Clone();\n        Array.Sort(ordered);\n        var result = new List<int[]>();\n        int left = 0, right = ordered.Length - 1;\n        while (left < right)\n        {\n            long total = (long)ordered[left] + ordered[right];\n            if (total == target)\n            {\n                result.Add([ordered[left], ordered[right]]);\n                ++left;\n                --right;\n            }\n            else if (total < target)\n                ++left;\n            else\n                --right;\n        }\n        return result.ToArray();\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function PairsWithSum(values, target)",
+        "starterCode": "function PairsWithSum(values, target) {\n  return [];\n}\n",
+        "solutionCode": "function PairsWithSum(values, target) {\n  const ordered = values.slice().sort((a, b) => a - b),\n    result = [];\n  let left = 0,\n    right = ordered.length - 1;\n  while (left < right) {\n    const total = ordered[left] + ordered[right];\n    if (total === target) {\n      result.push([ordered[left], ordered[right]]);\n      ++left;\n      --right;\n    } else if (total < target) ++left;\n    else --right;\n  }\n  return result;\n}\n"
+      },
+      "python": {
+        "signature": "def PairsWithSum(values: list[int], target: int) -> list[list[int]]",
+        "starterCode": "def PairsWithSum(values: list[int], target: int) -> list[list[int]]:\n    return []\n",
+        "solutionCode": "def PairsWithSum(values: list[int], target: int) -> list[list[int]]:\n    ordered = sorted(values)\n    left, right = 0, len(ordered) - 1\n    result = []\n    while left < right:\n        total = ordered[left] + ordered[right]\n        if total == target:\n            result.append([ordered[left], ordered[right]])\n            left += 1\n            right -= 1\n        elif total < target:\n            left += 1\n        else:\n            right -= 1\n    return result\n"
+      },
+      "cpp": {
+        "signature": "std::vector<std::vector<int>> PairsWithSum(const std::vector<int>& values, int target)",
+        "starterCode": "class Solution {\n public:\n  std::vector<std::vector<int>> PairsWithSum(const std::vector<int>& values, int target) {\n    return {};\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  std::vector<std::vector<int>> PairsWithSum(const std::vector<int>& values, int target) {\n    auto ordered = values;\n    std::sort(ordered.begin(), ordered.end());\n    std::vector<std::vector<int>> result;\n    int left = 0, right = static_cast<int>(ordered.size()) - 1;\n    while (left < right) {\n      long long total = static_cast<long long>(ordered[left]) + ordered[right];\n      if (total == target) {\n        result.push_back({ordered[left], ordered[right]});\n        ++left;\n        --right;\n      } else if (total < target)\n        ++left;\n      else\n        --right;\n    }\n    return result;\n  }\n};\n"
+      },
+      "java": {
+        "signature": "int[][] PairsWithSum(int[] values, int target)",
+        "starterCode": "class Solution {\n  public int[][] PairsWithSum(int[] values, int target) {\n    return new int[0][];\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public int[][] PairsWithSum(int[] values, int target) {\n    int[] ordered = values.clone();\n    Arrays.sort(ordered);\n    List<int[]> result = new ArrayList<>();\n    int left = 0, right = ordered.length - 1;\n    while (left < right) {\n      long total = (long) ordered[left] + ordered[right];\n      if (total == target) {\n        result.add(new int[] {ordered[left], ordered[right]});\n        ++left;\n        --right;\n      } else if (total < target)\n        ++left;\n      else\n        --right;\n    }\n    return result.toArray(new int[0][]);\n  }\n}\n"
       }
     }
   }

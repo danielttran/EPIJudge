@@ -200,3 +200,57 @@ def cases(spec):
         args += [[[[rng.randrange(-15,16) for _ in range(5)] for _ in range(4)]] for _ in range(45)]
     distinct={json.dumps(a):a for a in args}
     return [dict(arguments=a,expected=oracle(ref,a)) for a in distinct.values()]
+
+_previous_text_oracle=oracle
+_previous_text_cases=cases
+
+def oracle(ref,args):
+    if ref=='17.11':
+        words,first,second=args
+        return min((abs(i-j) for i,word in enumerate(words) if word==first for j,other in enumerate(words) if other==second),default=-1)
+    if ref=='17.15':
+        from functools import lru_cache
+        words=args[0]
+        for candidate in sorted(set(words),key=lambda word:(-len(word),word)):
+            components=set(words)-{candidate}
+            @lru_cache(None)
+            def spell(suffix):
+                if suffix in components:return True
+                return any(suffix[:cut] in components and spell(suffix[cut:]) for cut in range(1,len(suffix)))
+            if spell(candidate):return candidate
+        return ''
+    if ref=='17.17':
+        import re
+        text,patterns=args
+        return [[m.start() for m in re.finditer('(?='+re.escape(pattern)+')',text)] for pattern in patterns]
+    return _previous_text_oracle(ref,args)
+
+def cases(spec):
+    ref=spec['ref']
+    if ref not in ('17.11','17.15','17.17'):return _previous_text_cases(spec)
+    rng=random.Random(int(ref.replace('.',''))+170000);args=[spec['example'][0]]
+    if ref=='17.11':
+        args += [[list(words),'a','b'] for n in range(7) for words in itertools.product(('a','b','x'),repeat=n)]
+        args += [[['a']*9999+['b'],'a','b'],[['a']+['x']*9998+['b'],'a','b'],[['x']*10000,'a','b']]
+        for _ in range(100):args.append([[rng.choice(('a','b','x')) for _ in range(rng.randrange(100))],'a','b'])
+    elif ref=='17.15':
+        vocabulary=['a','b','ab','ba','aa','aba','bab']
+        args += [[[word for i,word in enumerate(vocabulary) if mask>>i&1]] for mask in range(1<<len(vocabulary))]
+        args += [[['cat','cat']],[['cat','dog','dogcat','catdog']],[['a','a'*40]],[['a'*40]*200],[['a','a'*40]+['b'*39+'c']*198]]
+        for _ in range(100):args.append([[''.join(rng.choice('abc') for _ in range(rng.randrange(1,11))) for _ in range(rng.randrange(30))]])
+    else:
+        patterns=[''.join(chars) for n in range(4) for chars in itertools.product('ab',repeat=n)]+['c','aba','']
+        args += [[''.join(text),patterns] for n in range(7) for text in itertools.product('ab',repeat=n)]
+        args += [['',[]],['a'*1000,['a'*20]*100],['ab'*500,['ab','ba','']*33+['x']]]
+        for _ in range(100):args.append([''.join(rng.choice('abc') for _ in range(rng.randrange(50))),[''.join(rng.choice('abc') for _ in range(rng.randrange(10))) for _ in range(rng.randrange(15))]])
+    distinct={json.dumps(a):a for a in args}
+    return [dict(arguments=a,expected=oracle(ref,a)) for a in distinct.values()]
+
+_previous_numeric_observation=valid_observation
+
+def valid_observation(ref,case,observed):
+    if ref not in ('17.15','17.17'):return _previous_numeric_observation(ref,case,observed)
+    if not isinstance(observed,dict) or observed.get('mutationOk') is not True:return False
+    actual=observed.get('actual')
+    if ref=='17.15':return type(actual) is str and actual==case['expected']
+    return type(actual) is list and all(type(row) is list and all(type(value) is int for value in row) for row in actual) and actual==case['expected']

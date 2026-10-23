@@ -1,0 +1,42 @@
+{
+  "explanation": "The direct baseline tests each legal start position independently for each query. Bounding starts by text.length-pattern.length prevents overreads, while advancing by one retains overlaps. Returning rows rather than a map preserves the order and multiplicity of the supplied query list.",
+  "correctness": "A legal occurrence of a pattern of length m must start at one of the positions 0 through n-m, and the loop examines each exactly once. Character-by-character equality (or equivalent exact substring comparison) accepts precisely the windows spelling that pattern, so no occurrence is missed or invented. Increasing start order yields increasing output positions and includes overlaps. For m=0, each of the n+1 legal windows is empty, giving the stated boundary convention. An outer loop over patterns preserves every query position, including duplicates.",
+  "walkthrough": "For text=ababa and patterns=[aba,ba,z,\"\"], aba starts at [0,2], ba at [1,3], and z has no match. The empty pattern row is [0,1,2,3,4,5]. The two aba occurrences overlap at index 2; moving by pattern length would miss one.",
+  "walkthroughCase": {
+    "arguments": [
+      "ababa",
+      [
+        "aba",
+        "ba",
+        "z",
+        ""
+      ]
+    ],
+    "expected": [
+      [
+        0,
+        2
+      ],
+      [
+        1,
+        3
+      ],
+      [],
+      [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    ]
+  },
+  "timeComplexity": "O(P+sum(max(0,n-m+1)*(m+1))) worst-case time over P patterns of lengths m and text length n; this is the direct baseline, not a trie-optimized search.",
+  "spaceComplexity": "O(K+P+L) for K returned positions, P result rows and at most L temporary substring characters; constant comparison indices beyond the output in versions using direct character comparison.",
+  "edgeCases": [
+    "Empty text/pattern, missing pattern and a pattern longer than text.",
+    "Overlaps, repeated queries and matches at the final legal start."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.17. No affiliation is implied."
+}

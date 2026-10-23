@@ -1,0 +1,34 @@
+{
+  "explanation": "Writing the new sums as S1-a+b and S2-b+a gives 2*(a-b)=S1-S2. An odd total difference is impossible. Otherwise, for each a in first, the only possible b is a-(S1-S2)/2; a hash set of second values answers membership without testing every pair.",
+  "correctness": "Any valid exchange satisfies the derived equation, so an odd sum difference rules out all possibilities. For an even difference, every scanned a has exactly one required b. A set membership hit proves both values occur and substitution into the equation proves the new sums agree. Conversely, every valid exchange has a first-array occurrence that the scan visits and its required second value is in the set, so a valid exchange cannot be missed. Scanning original first order and returning the first hit implements the tie rule. No hit proves absence.",
+  "walkthrough": "For first=[4,1,2,1,1,2] (sum 11) and second=[3,6,3,3] (sum 15), the half-difference is -2. The first value 4 requires second value 6, which exists, so return [4,6]. The hypothetical new sums are both 13; the supplied arrays stay unchanged.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        4,
+        1,
+        2,
+        1,
+        1,
+        2
+      ],
+      [
+        3,
+        6,
+        3,
+        3
+      ]
+    ],
+    "expected": [
+      4,
+      6
+    ]
+  },
+  "timeComplexity": "Expected O(n+m) time for sums, building the membership set and one scan; hash collisions can worsen the bound.",
+  "spaceComplexity": "O(m) membership storage plus a constant-size returned pair.",
+  "edgeCases": [
+    "Empty inputs, odd total difference, equal sums but no shared value.",
+    "Multiple exchanges, repeated values, negative totals and signed endpoints."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.21. No affiliation is implied."
+}

@@ -1,0 +1,34 @@
+{
+  "explanation": "Many queries share the same book. Normalize case once per occurrence and accumulate counts in a dictionary, then normalize and look up each query. This pays for reading the book once instead of once per requested word.",
+  "correctness": "After processing any prefix of book, the dictionary count for each normalized word equals its occurrences in that prefix: inserting a new normalized key starts its count and every later occurrence increments it once. Induction gives exact counts for the entire book. A normalized query identifies precisely its case-insensitive equivalence class; lookup returns that count, or zero when no occurrence created its key. Appending answers in query order preserves repeated queries and their positions.",
+  "walkthrough": "For book=[Red,blue,RED,green] and queries=[red,BLUE,missing,Red], normalized counts are red:2, blue:1, green:1. The answers are [2,1,0,2]. Red and RED contribute to the same count; the repeated red query does not consume a book occurrence.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        "Red",
+        "blue",
+        "RED",
+        "green"
+      ],
+      [
+        "red",
+        "BLUE",
+        "missing",
+        "Red"
+      ]
+    ],
+    "expected": [
+      2,
+      1,
+      0,
+      2
+    ]
+  },
+  "timeComplexity": "Expected O(B+Q) character work for B book characters and Q query characters, assuming expected constant dictionary access per bounded-length key. Hash-table collisions can worsen this bound.",
+  "spaceComplexity": "O(D*L+q) storage for D distinct normalized book words of maximum length L and q returned counts; query normalization uses O(L) temporary storage.",
+  "edgeCases": [
+    "Empty book or query array; all queries absent.",
+    "Mixed case, repeated book words and repeated queries."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.2. No affiliation is implied."
+}

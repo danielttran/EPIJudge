@@ -1,7 +1,7 @@
 {
   "stage": "standalone-authoring-and-separate-module",
   "liveIntegration": "pending-current-module-receipts",
-  "reviewScope": "Twelve hard coding tasks and sixty actual language bodies individually reviewed; operation restrictions, source conventions, heap bindings, contiguous/covering windows, XOR missing pairs, black borders and nonempty rectangles.",
+  "reviewScope": "Fifteen hard tasks and seventy-five actual language bodies, including single-query word distance, dictionary composition with reusable components and overlap-preserving multi-search.",
   "questions": [
     {
       "ref": "17.1",
@@ -29,14 +29,29 @@
       "review": "The optional zero/one integer collection avoids conflating a true -1 majority with absence. Both passes preserve inputs; empty arrays, exact-half counts and nonmajority surviving candidates are tested. C#/Java/C++ use exact int arrays/vectors and bounded balances; Python/JS concrete arrays are type-checked. Independent Counter results cover all small ternary arrays and 10000-element boundaries."
     },
     {
+      "ref": "17.11",
+      "algorithm": "One scan retains the last occurrence of each distinct requested word and the least cross-word gap.",
+      "review": "Read all five actual bodies. Equality uses whole ASCII tokens and Java equals rather than reference identity. Last indices begin at -1 and are checked before subtraction. Distance counts index steps; missing words return -1 and identical query words are explicitly outside the domain. The independent oracle compares occurrence-index pairs, covering exhaustive short texts, long repeated runs, a far-separated maximum-length pair and absent words. Caller token arrays stay unchanged."
+    },
+    {
       "ref": "17.14",
       "algorithm": "Retain a logical max heap of k smallest occurrences and return its ordered values.",
       "review": "All five implement the actual heap requirement, not sorting/partitioning the entire input. C#/Java reversed comparers avoid signed subtraction overflow; Python heapq uses exact negated keys; C++ standard max-heap algorithms update a copied k-vector; JavaScript implements downward repair locally. Selected-language WHY details explain these differences. Duplicate occurrences, k=0/all, signed endpoints and 10000 input elements are checked against independent sorting. Returned order is ascending and inputs remain unchanged."
     },
     {
+      "ref": "17.15",
+      "algorithm": "For each dictionary candidate, prefix DP maximizes the number of vocabulary components; require at least two and resolve length ties lexically.",
+      "review": "Read each actual body. A one-piece self match can set only the final DP entry to one and cannot falsely satisfy the two-piece condition. Reuse of a short component does not consume dictionary entries. C#/Java/CPP use ordinal/ASCII comparison and substrings; Python/JS equivalent slicing and set membership follow the same recurrence. The independent oracle removes the candidate spelling and recursively memoizes composition with strictly shorter dictionary pieces. Duplicate entries, lexical ties, 40-character words and the 200-entry bound are executed. No caller array sorting occurs."
+    },
+    {
       "ref": "17.16",
       "algorithm": "Rolling-prefix include/skip dynamic programming for nonadjacent duration choices.",
       "review": "All actual implementations keep prefix optima one and two positions back, compute before shifting and permit an empty choice. The public suffix-direction code is not copied into the explanation. Small independent exhaustive valid masks and a larger independent suffix table cover every small duration pattern and maximum admitted totals. No sorting, appointment splitting or cross-pair greedy shortcut occurs."
+    },
+    {
+      "ref": "17.17",
+      "algorithm": "Direct per-pattern start enumeration with exact window matching, retaining overlaps and query rows.",
+      "review": "Read all five bodies and exact legal-start bounds. C# CompareOrdinal and C++ compare inspect windows; Java/Python/JS startsWith equivalents match prefixes at each start. All include the final legal start and all n+1 empty-pattern boundaries, but never pass an invalid start to string comparison. Duplicate queries retain separate rows. The independent regex-lookahead oracle verifies overlaps on exhaustive short texts, missing/too-long patterns and maximum text/query bounds. Result rows contain integers, not booleans; original patterns stay unchanged."
     },
     {
       "ref": "17.18",
@@ -72,16 +87,17 @@
     "java"
   ],
   "languageBindingReview": {
-    "csharp": "Read exact bodies: AddWithoutArithmetic uses unsigned carry shifts and explicit unchecked signed conversions. CountDigitTwos uses long before multiplying place blocks. Array-return expressions match int[]; bounded sums and candidate products stay within int. All arrays supplied to algorithms remain unchanged. SmallestK reverses PriorityQueue priority with CompareTo and fills output backward. Prefix first-occurrence arrays use -2 as the unseen sentinel. Matrix runs use rectangular int tables; hash windows use Dictionary values counted before/after edge changes.",
-    "javascript": "Read exact functions: addition relies on signed 32-bit bitwise coercion, while decimal division uses Math.floor. All ordinary counts/products are safely exact Numbers under shared bounds. Zero/one majority output is an Array; the rolling DP and water scan use local scalars and never rewrite input elements. SmallestK explicitly builds/repairs a local max heap then numerically sorts its k retained values. Its helper and mutation are inside the visible callable. Map keys remain integer Numbers; nested matrix rows use Array.from, avoiding shared-row aliasing.",
-    "python": "Read exact functions: masked 32-bit addition terminates on negative inputs and complement reconstructs signed output without arithmetic. Majority verification uses a fresh scalar count, not a misleading sentinel. All collection results are concrete lists, and observation rejects bool-as-int. Recursion is absent in all six bodies. SmallestK has a language-specific heapq/negated-key explanation; no input-sized suffix slice is allocated. Matrix tables allocate distinct row lists, and nonempty Kadane restarts only after a negative running sum. Returned ranges are concrete integer lists.",
-    "cpp": "Read exact C++17 methods: uint32_t carry shifts are defined; the visible <cstring> include supports memcpy of the final int32_t bits. Digit counting widens place arithmetic to int64_t. Const vector references preserve inputs; by-value returned vectors own optional majority results. All index arithmetic handles emptiness before access. The visible unordered_map include belongs to the covering-window callable, not a hidden helper. SmallestK uses standard heap algorithms on a k-sized vector; const inputs remain unchanged. Comparator decisions avoid subtraction of extreme signed values.",
-    "java": "Read exact methods: int carry shifts deliberately discard overflow bits; digit counting uses long intermediates before the justified final cast. int[] and ArrayList-free optional results match signatures. Bit/loop state is per invocation, and bounded DP/water totals fit int; no static state or mutable input side effects. SmallestK uses Comparator.reverseOrder safely and fills int[] output backward. Prefix slots use Arrays.fill(-2); matrix tables allocate independent rows. Hash windows use boxed integer keys consistently with primitive input values."
+    "csharp": "Read exact bodies: AddWithoutArithmetic uses unsigned carry shifts and explicit unchecked signed conversions. CountDigitTwos uses long before multiplying place blocks. Array-return expressions match int[]; bounded sums and candidate products stay within int. All arrays supplied to algorithms remain unchanged. SmallestK reverses PriorityQueue priority with CompareTo and fills output backward. Prefix first-occurrence arrays use -2 as the unseen sentinel. Matrix runs use rectangular int tables; hash windows use Dictionary values counted before/after edge changes. New composition uses StringComparer.Ordinal and HashSet membership; MultiSearch CompareOrdinal accepts the empty window at text.Length. DP arrays are fresh per candidate.",
+    "javascript": "Read exact functions: addition relies on signed 32-bit bitwise coercion, while decimal division uses Math.floor. All ordinary counts/products are safely exact Numbers under shared bounds. Zero/one majority output is an Array; the rolling DP and water scan use local scalars and never rewrite input elements. SmallestK explicitly builds/repairs a local max heap then numerically sorts its k retained values. Its helper and mutation are inside the visible callable. Map keys remain integer Numbers; nested matrix rows use Array.from, avoiding shared-row aliasing. String-returning callables require typeof string, preserving strict integer validation elsewhere. Set membership does not consume components; startsWith enumerates every legal overlap.",
+    "python": "Read exact functions: masked 32-bit addition terminates on negative inputs and complement reconstructs signed output without arithmetic. Majority verification uses a fresh scalar count, not a misleading sentinel. All collection results are concrete lists, and observation rejects bool-as-int. Recursion is absent in all six bodies. SmallestK has a language-specific heapq/negated-key explanation; no input-sized suffix slice is allocated. Matrix tables allocate distinct row lists, and nonempty Kadane restarts only after a negative running sum. Returned ranges are concrete integer lists. Text results are validated as strings only for string-returning callables. Prefix lists and set membership implement composition; startswith includes empty/end boundaries.",
+    "cpp": "Read exact C++17 methods: uint32_t carry shifts are defined; the visible <cstring> include supports memcpy of the final int32_t bits. Digit counting widens place arithmetic to int64_t. Const vector references preserve inputs; by-value returned vectors own optional majority results. All index arithmetic handles emptiness before access. The visible unordered_map include belongs to the covering-window callable, not a hidden helper. SmallestK uses standard heap algorithms on a k-sized vector; const inputs remain unchanged. Comparator decisions avoid subtraction of extreme signed values. Longest composition includes unordered_set in the visible solution source. const input vectors and std::string::compare preserve input; signed start limits prevent unsigned underflow when a pattern is too long.",
+    "java": "Read exact methods: int carry shifts deliberately discard overflow bits; digit counting uses long intermediates before the justified final cast. int[] and ArrayList-free optional results match signatures. Bit/loop state is per invocation, and bounded DP/water totals fit int; no static state or mutable input side effects. SmallestK uses Comparator.reverseOrder safely and fills int[] output backward. Prefix slots use Arrays.fill(-2); matrix tables allocate independent rows. Hash windows use boxed integer keys consistently with primitive input values. New word equality uses String.equals. Longest composition uses substring/hash membership and compareTo on the ASCII domain; List<int[]> is materialized into int[][]."
   },
   "executionEvidence": "staged17/validation.json",
   "submissionEvidence": "runtime/validation.json",
   "graderRegressions": [
-    "scripts/ctci6/test_hard17.py"
+    "scripts/ctci6/test_hard17.py",
+    "scripts/ctci6/test_text17.py"
   ],
   "remainingAcceptance": [
     "remaining known content and classifications",

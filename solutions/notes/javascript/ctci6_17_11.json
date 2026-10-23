@@ -1,0 +1,27 @@
+{
+  "explanation": "Remember the most recent position of each requested word. When one appears, its closest partner among all earlier opposite-word occurrences is the latest such occurrence. Updating the best distance at those encounters finds every possible closest cross-word boundary without storing all positions.",
+  "correctness": "For any occurrence at index i, every earlier opposite-word index j has distance i-j. This distance is smallest for the largest such j, which is exactly the remembered last position. Every pair has a later endpoint; when that endpoint is scanned, the algorithm considers a pair at least as close. Taking the least of these candidate distances therefore finds the global minimum. Only actual occurrences update remembered positions, so every candidate is valid. If either word never occurs, no candidate exists and the explicit -1 result is correct.",
+  "walkthrough": "For words=[red,x,blue,red,y,blue], first=red and second=blue, the encounter at index 2 yields distance 2 from red at 0. The red at index 3 is only 1 away from blue at 2, improving the best to 1. The final blue is 2 away from red at 3, so return 1, not zero intervening words.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        "red",
+        "x",
+        "blue",
+        "red",
+        "y",
+        "blue"
+      ],
+      "red",
+      "blue"
+    ],
+    "expected": 1
+  },
+  "timeComplexity": "O(n*L) worst-case character comparison work for n tokens and maximum word length L; O(n) token comparisons.",
+  "spaceComplexity": "O(1) auxiliary index/count storage.",
+  "edgeCases": [
+    "Empty text, one or both words absent.",
+    "Adjacent targets, repeated runs and the closest pair appearing late."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.11. No affiliation is implied."
+}

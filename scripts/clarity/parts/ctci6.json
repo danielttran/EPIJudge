@@ -3956,6 +3956,70 @@
         ]
       }
     },
+    "ctci6_10_4": {
+      "description": "Search the provided Listy without a size/length operation. Its sorted sequence contains positive integers; ElementAt(index) returns the value or -1 for an out-of-range index. Return any zero-based index containing target, or -1 when absent. Use logarithmically many ElementAt queries rather than scanning to discover the full length.",
+      "constraints": [
+        "The hidden sequence has 0..10000 positive signed 32-bit integers in nondecreasing order; duplicates are allowed. target is any signed 32-bit integer. Nonpositive targets cannot occur and return -1.",
+        "The first displayed example argument describes the hidden sequence, but the callable receives Listy, not an array. Use only ElementAt(index); do not inspect a concrete subtype, underlying storage, length, or reflection. Negative indices and indices at/after the hidden end return -1.",
+        "Preserve the sequence. A case permits at most 4*ceil(log2(n+2))+8 queries, where n is its hidden length. This generous logarithmic bound admits exponential range discovery followed by binary search. Provided API declarations are visible before the solution."
+      ],
+      "examples": [
+        {
+          "input": "[[1, 2, 4, 5, 6, 7, 9], 6]",
+          "output": "4",
+          "explanation": "For hidden [1,2,4,5,6,7,9] and target 6, probes at 1 and 2 return 2 and 4, both too small. Probe 4 returns 6, providing an upper bound. Binary search indices 2..4 and return index 4. A -1 probe marks the end and must never match target=-1."
+        }
+      ],
+      "exampleCases": [
+        {
+          "arguments": [
+            [
+              1,
+              2,
+              4,
+              5,
+              6,
+              7,
+              9
+            ],
+            6
+          ],
+          "expected": 4
+        }
+      ],
+      "contracts": {
+        "csharp": [
+          "Callable: int SearchWithoutSize(Listy values, int target)",
+          "The hidden sequence has 0..10000 positive signed 32-bit integers in nondecreasing order; duplicates are allowed. target is any signed 32-bit integer. Nonpositive targets cannot occur and return -1.",
+          "The first displayed example argument describes the hidden sequence, but the callable receives Listy, not an array. Use only ElementAt(index); do not inspect a concrete subtype, underlying storage, length, or reflection. Negative indices and indices at/after the hidden end return -1.",
+          "Preserve the sequence. A case permits at most 4*ceil(log2(n+2))+8 queries, where n is its hidden length. This generous logarithmic bound admits exponential range discovery followed by binary search. Provided API declarations are visible before the solution."
+        ],
+        "javascript": [
+          "Callable: function SearchWithoutSize(values, target)",
+          "The hidden sequence has 0..10000 positive signed 32-bit integers in nondecreasing order; duplicates are allowed. target is any signed 32-bit integer. Nonpositive targets cannot occur and return -1.",
+          "The first displayed example argument describes the hidden sequence, but the callable receives Listy, not an array. Use only ElementAt(index); do not inspect a concrete subtype, underlying storage, length, or reflection. Negative indices and indices at/after the hidden end return -1.",
+          "Preserve the sequence. A case permits at most 4*ceil(log2(n+2))+8 queries, where n is its hidden length. This generous logarithmic bound admits exponential range discovery followed by binary search. Provided API declarations are visible before the solution."
+        ],
+        "python": [
+          "Callable: def SearchWithoutSize(values: Listy, target: int) -> int",
+          "The hidden sequence has 0..10000 positive signed 32-bit integers in nondecreasing order; duplicates are allowed. target is any signed 32-bit integer. Nonpositive targets cannot occur and return -1.",
+          "The first displayed example argument describes the hidden sequence, but the callable receives Listy, not an array. Use only ElementAt(index); do not inspect a concrete subtype, underlying storage, length, or reflection. Negative indices and indices at/after the hidden end return -1.",
+          "Preserve the sequence. A case permits at most 4*ceil(log2(n+2))+8 queries, where n is its hidden length. This generous logarithmic bound admits exponential range discovery followed by binary search. Provided API declarations are visible before the solution."
+        ],
+        "cpp": [
+          "Callable: int SearchWithoutSize(Listy& values, int target)",
+          "The hidden sequence has 0..10000 positive signed 32-bit integers in nondecreasing order; duplicates are allowed. target is any signed 32-bit integer. Nonpositive targets cannot occur and return -1.",
+          "The first displayed example argument describes the hidden sequence, but the callable receives Listy, not an array. Use only ElementAt(index); do not inspect a concrete subtype, underlying storage, length, or reflection. Negative indices and indices at/after the hidden end return -1.",
+          "Preserve the sequence. A case permits at most 4*ceil(log2(n+2))+8 queries, where n is its hidden length. This generous logarithmic bound admits exponential range discovery followed by binary search. Provided API declarations are visible before the solution."
+        ],
+        "java": [
+          "Callable: int SearchWithoutSize(Listy values, int target)",
+          "The hidden sequence has 0..10000 positive signed 32-bit integers in nondecreasing order; duplicates are allowed. target is any signed 32-bit integer. Nonpositive targets cannot occur and return -1.",
+          "The first displayed example argument describes the hidden sequence, but the callable receives Listy, not an array. Use only ElementAt(index); do not inspect a concrete subtype, underlying storage, length, or reflection. Negative indices and indices at/after the hidden end return -1.",
+          "Preserve the sequence. A case permits at most 4*ceil(log2(n+2))+8 queries, where n is its hidden length. This generous logarithmic bound admits exponential range discovery followed by binary search. Provided API declarations are visible before the solution."
+        ]
+      }
+    },
     "ctci6_10_5": {
       "description": "Search a lexicographically sorted sequence of nonempty words with empty-string gaps inserted at arbitrary positions. Return any original-array index containing target, or -1 if absent. Empty strings are gaps, not searchable words: an empty target returns -1.",
       "constraints": [
@@ -4016,6 +4080,72 @@
           "Callable: int SparseSearch(String[] words, String target)",
           "words is nonnull with 0..10000 nonnull strings, each 0..20 lowercase ASCII letters a..z. Removing its empty strings leaves a nondecreasing lexicographic sequence. target is a nonnull lowercase ASCII string of length 0..20.",
           "Preserve the array, its gap positions and word values. Repeated nonempty words are allowed; any matching index is accepted. Comparisons use ASCII lexicographic order, consistently across languages."
+        ]
+      }
+    },
+    "ctci6_10_8": {
+      "description": "Report every occurrence of an integer after its first occurrence, in original encounter order. For example, three occurrences of 8 contribute two returned 8s. All values lie in 1..32000, and the actual largest value is not supplied. Preserve the input and use the interview's 4KB marking workspace.",
+      "constraints": [
+        "values is a nonnull array of 0..10000 integers in 1..32000. Return a concrete integer array/list/vector of repeated occurrences; do not deduplicate the output or sort the input.",
+        "Use at most 4000 bytes of marking bits and constant scalar bookkeeping. Input, final returned storage and language/runtime object headers are excluded from this logical 4KB interview workspace budget. A hash set or one-byte-per-value table does not meet the marking budget.",
+        "The implementation may read the array more than once. Count repeated occurrences first, then reuse the same bitmap to fill an exactly sized result, avoiding a separate growing output buffer plus a final copied array."
+      ],
+      "examples": [
+        {
+          "input": "[[8, 1, 8, 8, 32000, 32000]]",
+          "output": "[8, 8, 32000]",
+          "explanation": "For [8,1,8,8,32000,32000], the first 8 sets bit 7 of byte 0. Its next two occurrences are both repeats. The first 32000 sets the final bitmap bit; its next occurrence repeats. Count three outputs, clear the bitmap, and fill [8,8,32000] on the second pass."
+        }
+      ],
+      "exampleCases": [
+        {
+          "arguments": [
+            [
+              8,
+              1,
+              8,
+              8,
+              32000,
+              32000
+            ]
+          ],
+          "expected": [
+            8,
+            8,
+            32000
+          ]
+        }
+      ],
+      "contracts": {
+        "csharp": [
+          "Callable: int[] RepeatedOccurrences(int[] values)",
+          "values is a nonnull array of 0..10000 integers in 1..32000. Return a concrete integer array/list/vector of repeated occurrences; do not deduplicate the output or sort the input.",
+          "Use at most 4000 bytes of marking bits and constant scalar bookkeeping. Input, final returned storage and language/runtime object headers are excluded from this logical 4KB interview workspace budget. A hash set or one-byte-per-value table does not meet the marking budget.",
+          "The implementation may read the array more than once. Count repeated occurrences first, then reuse the same bitmap to fill an exactly sized result, avoiding a separate growing output buffer plus a final copied array."
+        ],
+        "javascript": [
+          "Callable: function RepeatedOccurrences(values)",
+          "values is a nonnull array of 0..10000 integers in 1..32000. Return a concrete integer array/list/vector of repeated occurrences; do not deduplicate the output or sort the input.",
+          "Use at most 4000 bytes of marking bits and constant scalar bookkeeping. Input, final returned storage and language/runtime object headers are excluded from this logical 4KB interview workspace budget. A hash set or one-byte-per-value table does not meet the marking budget.",
+          "The implementation may read the array more than once. Count repeated occurrences first, then reuse the same bitmap to fill an exactly sized result, avoiding a separate growing output buffer plus a final copied array."
+        ],
+        "python": [
+          "Callable: def RepeatedOccurrences(values: list[int]) -> list[int]",
+          "values is a nonnull array of 0..10000 integers in 1..32000. Return a concrete integer array/list/vector of repeated occurrences; do not deduplicate the output or sort the input.",
+          "Use at most 4000 bytes of marking bits and constant scalar bookkeeping. Input, final returned storage and language/runtime object headers are excluded from this logical 4KB interview workspace budget. A hash set or one-byte-per-value table does not meet the marking budget.",
+          "The implementation may read the array more than once. Count repeated occurrences first, then reuse the same bitmap to fill an exactly sized result, avoiding a separate growing output buffer plus a final copied array."
+        ],
+        "cpp": [
+          "Callable: std::vector<int> RepeatedOccurrences(const std::vector<int>& values)",
+          "values is a nonnull array of 0..10000 integers in 1..32000. Return a concrete integer array/list/vector of repeated occurrences; do not deduplicate the output or sort the input.",
+          "Use at most 4000 bytes of marking bits and constant scalar bookkeeping. Input, final returned storage and language/runtime object headers are excluded from this logical 4KB interview workspace budget. A hash set or one-byte-per-value table does not meet the marking budget.",
+          "The implementation may read the array more than once. Count repeated occurrences first, then reuse the same bitmap to fill an exactly sized result, avoiding a separate growing output buffer plus a final copied array."
+        ],
+        "java": [
+          "Callable: int[] RepeatedOccurrences(int[] values)",
+          "values is a nonnull array of 0..10000 integers in 1..32000. Return a concrete integer array/list/vector of repeated occurrences; do not deduplicate the output or sort the input.",
+          "Use at most 4000 bytes of marking bits and constant scalar bookkeeping. Input, final returned storage and language/runtime object headers are excluded from this logical 4KB interview workspace budget. A hash set or one-byte-per-value table does not meet the marking budget.",
+          "The implementation may read the array more than once. Count repeated occurrences first, then reuse the same bitmap to fill an exactly sized result, avoiding a separate growing output buffer plus a final copied array."
         ]
       }
     },
@@ -4085,6 +4215,98 @@
           "Callable: int[] SearchSortedMatrix(int[][] matrix, int target)",
           "matrix is nonnull, rectangular, with 0..50 rows and 0..50 columns. All entries and target are signed 32-bit integers. Duplicate values are allowed. Preserve outer/row objects and all values.",
           "Either empty dimension has no match. Any valid target coordinate is accepted when several exist. Do not assume the last value of one row is below the first value of the next row."
+        ]
+      }
+    },
+    "ctci6_10_10": {
+      "description": "Implement RankTracker for a stream of integers. Track(value) records one occurrence. GetRank(value) returns the number of tracked occurrences less than or equal to value, excluding ONE occurrence of value itself. Other equal occurrences still count. Return -1 if value has never been tracked, including an empty tracker.",
+      "constraints": [
+        "The input transcript has 1..2001 operations. The first is RankTracker with []; every later operation is Track or GetRank with exactly one signed 32-bit integer. Construct a fresh tracker for each transcript.",
+        "Track returns no value, represented by null in results. Constructor output is also null. Return one result per operation in order. GetRank returns a zero-based last-occurrence rank among sorted tracked values; an absent query returns -1, not the insertion position.",
+        "Preserve transcript inputs. Support changing stream state and duplicates; do not sort the caller transcript. Private implementation nodes are not caller-provided models."
+      ],
+      "examples": [
+        {
+          "input": "[[\"RankTracker\", \"Track\", \"Track\", \"Track\", \"Track\", \"GetRank\", \"GetRank\"], [[], [5], [1], [4], [4], [4], [2]]]",
+          "output": "[null, null, null, null, null, 2, -1]",
+          "explanation": "Track 5,1,4,4. Sorted tracked values are [1,4,4,5]. GetRank(4) returns 2: one 1 and the OTHER 4 count, while one queried 4 is excluded. GetRank(2) returns -1 even though its insertion position would be 1. A new tracker begins empty."
+        }
+      ],
+      "exampleCases": [
+        {
+          "arguments": [
+            [
+              "RankTracker",
+              "Track",
+              "Track",
+              "Track",
+              "Track",
+              "GetRank",
+              "GetRank"
+            ],
+            [
+              [],
+              [
+                5
+              ],
+              [
+                1
+              ],
+              [
+                4
+              ],
+              [
+                4
+              ],
+              [
+                4
+              ],
+              [
+                2
+              ]
+            ]
+          ],
+          "expected": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            2,
+            -1
+          ]
+        }
+      ],
+      "contracts": {
+        "csharp": [
+          "Callable: RankTracker(); void Track(int value); int GetRank(int value)",
+          "The input transcript has 1..2001 operations. The first is RankTracker with []; every later operation is Track or GetRank with exactly one signed 32-bit integer. Construct a fresh tracker for each transcript.",
+          "Track returns no value, represented by null in results. Constructor output is also null. Return one result per operation in order. GetRank returns a zero-based last-occurrence rank among sorted tracked values; an absent query returns -1, not the insertion position.",
+          "Preserve transcript inputs. Support changing stream state and duplicates; do not sort the caller transcript. Private implementation nodes are not caller-provided models."
+        ],
+        "javascript": [
+          "Callable: new RankTracker(); Track(value); GetRank(value)",
+          "The input transcript has 1..2001 operations. The first is RankTracker with []; every later operation is Track or GetRank with exactly one signed 32-bit integer. Construct a fresh tracker for each transcript.",
+          "Track returns no value, represented by null in results. Constructor output is also null. Return one result per operation in order. GetRank returns a zero-based last-occurrence rank among sorted tracked values; an absent query returns -1, not the insertion position.",
+          "Preserve transcript inputs. Support changing stream state and duplicates; do not sort the caller transcript. Private implementation nodes are not caller-provided models."
+        ],
+        "python": [
+          "Callable: RankTracker(); Track(value: int) -> None; GetRank(value: int) -> int",
+          "The input transcript has 1..2001 operations. The first is RankTracker with []; every later operation is Track or GetRank with exactly one signed 32-bit integer. Construct a fresh tracker for each transcript.",
+          "Track returns no value, represented by null in results. Constructor output is also null. Return one result per operation in order. GetRank returns a zero-based last-occurrence rank among sorted tracked values; an absent query returns -1, not the insertion position.",
+          "Preserve transcript inputs. Support changing stream state and duplicates; do not sort the caller transcript. Private implementation nodes are not caller-provided models."
+        ],
+        "cpp": [
+          "Callable: RankTracker(); void Track(int value); int GetRank(int value)",
+          "The input transcript has 1..2001 operations. The first is RankTracker with []; every later operation is Track or GetRank with exactly one signed 32-bit integer. Construct a fresh tracker for each transcript.",
+          "Track returns no value, represented by null in results. Constructor output is also null. Return one result per operation in order. GetRank returns a zero-based last-occurrence rank among sorted tracked values; an absent query returns -1, not the insertion position.",
+          "Preserve transcript inputs. Support changing stream state and duplicates; do not sort the caller transcript. Private implementation nodes are not caller-provided models."
+        ],
+        "java": [
+          "Callable: RankTracker(); void Track(int value); int GetRank(int value)",
+          "The input transcript has 1..2001 operations. The first is RankTracker with []; every later operation is Track or GetRank with exactly one signed 32-bit integer. Construct a fresh tracker for each transcript.",
+          "Track returns no value, represented by null in results. Constructor output is also null. Return one result per operation in order. GetRank returns a zero-based last-occurrence rank among sorted tracked values; an absent query returns -1, not the insertion position.",
+          "Preserve transcript inputs. Support changing stream state and duplicates; do not sort the caller transcript. Private implementation nodes are not caller-provided models."
         ]
       }
     },
@@ -4202,6 +4424,71 @@
         ]
       }
     },
+    "ctci6_16_2": {
+      "description": "Count how often each queried word occurs in a tokenized book, ignoring ASCII letter case. Return one count per query in the original query order, including repeated queries. The book is already split into words; tokenization and punctuation removal are not part of this task.",
+      "constraints": [
+        "book and queries are nonnull arrays of 0..1000 nonnull words. Each word has 1..20 ASCII letters A..Z or a..z. Case is ignored, but spelling must otherwise match exactly; a missing word has count zero.",
+        "Preserve both arrays and every word. Preprocess the book once to support the batch of queries rather than rescanning the book for every query. Empty book and empty query list are allowed."
+      ],
+      "examples": [
+        {
+          "input": "[[\"Red\", \"blue\", \"RED\", \"green\"], [\"red\", \"BLUE\", \"missing\", \"Red\"]]",
+          "output": "[2, 1, 0, 2]",
+          "explanation": "For book=[Red,blue,RED,green] and queries=[red,BLUE,missing,Red], normalized counts are red:2, blue:1, green:1. The answers are [2,1,0,2]. Red and RED contribute to the same count; the repeated red query does not consume a book occurrence."
+        }
+      ],
+      "exampleCases": [
+        {
+          "arguments": [
+            [
+              "Red",
+              "blue",
+              "RED",
+              "green"
+            ],
+            [
+              "red",
+              "BLUE",
+              "missing",
+              "Red"
+            ]
+          ],
+          "expected": [
+            2,
+            1,
+            0,
+            2
+          ]
+        }
+      ],
+      "contracts": {
+        "csharp": [
+          "Callable: int[] WordFrequencies(string[] book, string[] queries)",
+          "book and queries are nonnull arrays of 0..1000 nonnull words. Each word has 1..20 ASCII letters A..Z or a..z. Case is ignored, but spelling must otherwise match exactly; a missing word has count zero.",
+          "Preserve both arrays and every word. Preprocess the book once to support the batch of queries rather than rescanning the book for every query. Empty book and empty query list are allowed."
+        ],
+        "javascript": [
+          "Callable: function WordFrequencies(book, queries)",
+          "book and queries are nonnull arrays of 0..1000 nonnull words. Each word has 1..20 ASCII letters A..Z or a..z. Case is ignored, but spelling must otherwise match exactly; a missing word has count zero.",
+          "Preserve both arrays and every word. Preprocess the book once to support the batch of queries rather than rescanning the book for every query. Empty book and empty query list are allowed."
+        ],
+        "python": [
+          "Callable: def WordFrequencies(book: list[str], queries: list[str]) -> list[int]",
+          "book and queries are nonnull arrays of 0..1000 nonnull words. Each word has 1..20 ASCII letters A..Z or a..z. Case is ignored, but spelling must otherwise match exactly; a missing word has count zero.",
+          "Preserve both arrays and every word. Preprocess the book once to support the batch of queries rather than rescanning the book for every query. Empty book and empty query list are allowed."
+        ],
+        "cpp": [
+          "Callable: std::vector<int> WordFrequencies(const std::vector<std::string>& book, const std::vector<std::string>& queries)",
+          "book and queries are nonnull arrays of 0..1000 nonnull words. Each word has 1..20 ASCII letters A..Z or a..z. Case is ignored, but spelling must otherwise match exactly; a missing word has count zero.",
+          "Preserve both arrays and every word. Preprocess the book once to support the batch of queries rather than rescanning the book for every query. Empty book and empty query list are allowed."
+        ],
+        "java": [
+          "Callable: int[] WordFrequencies(String[] book, String[] queries)",
+          "book and queries are nonnull arrays of 0..1000 nonnull words. Each word has 1..20 ASCII letters A..Z or a..z. Case is ignored, but spelling must otherwise match exactly; a missing word has count zero.",
+          "Preserve both arrays and every word. Preprocess the book once to support the batch of queries rather than rescanning the book for every query. Empty book and empty query list are allowed."
+        ]
+      }
+    },
     "ctci6_16_4": {
       "description": "Inspect an n by n tic-tac-toe board and return its winning player: 1 or 2. A win requires a complete nonempty row, complete column, or one of the two full corner-to-corner diagonals occupied by that player. Empty cells are 0. Return 0 when neither player has such a line.",
       "constraints": [
@@ -4307,6 +4594,63 @@
         "java": [
           "Callable: int CountFactorialZeros(int n)",
           "0 <= n <= 2147483647. Define 0! as 1, which has zero trailing zeros. Return the exact signed 32-bit count. Preserve inputs."
+        ]
+      }
+    },
+    "ctci6_16_6": {
+      "description": "Return the smallest absolute difference between one value from first and one from second. The two chosen occurrences must come from different arrays. Return -1 if either array is empty; otherwise return the exact nonnegative difference, which may exceed a signed 32-bit integer.",
+      "constraints": [
+        "Each nonnull input array contains 0..1000 signed 32-bit integers. Duplicates and equal cross-array values are allowed. Preserve both input arrays and their original order; sort private copies if needed.",
+        "C#/Java return a signed 64-bit integer, C++ returns long long, Python returns int and JavaScript returns Number. The largest possible result is 4294967295, exactly representable in each result type. Widen BEFORE subtracting; taking abs after an overflowing 32-bit subtraction is incorrect."
+      ],
+      "examples": [
+        {
+          "input": "[[10, 1, 20], [14, 5]]",
+          "output": "4",
+          "explanation": "For first=[10,1,20] and second=[14,5], sort copies to [1,10,20] and [5,14]. Record gaps 4 (1,5), 5 (10,5), 4 (10,14), and 6 (20,14), returning 4. For [-2147483648] and [2147483647], the exact answer is 4294967295 rather than an overflowing signed value."
+        }
+      ],
+      "exampleCases": [
+        {
+          "arguments": [
+            [
+              10,
+              1,
+              20
+            ],
+            [
+              14,
+              5
+            ]
+          ],
+          "expected": 4
+        }
+      ],
+      "contracts": {
+        "csharp": [
+          "Callable: long SmallestDifference(int[] first, int[] second)",
+          "Each nonnull input array contains 0..1000 signed 32-bit integers. Duplicates and equal cross-array values are allowed. Preserve both input arrays and their original order; sort private copies if needed.",
+          "C#/Java return a signed 64-bit integer, C++ returns long long, Python returns int and JavaScript returns Number. The largest possible result is 4294967295, exactly representable in each result type. Widen BEFORE subtracting; taking abs after an overflowing 32-bit subtraction is incorrect."
+        ],
+        "javascript": [
+          "Callable: function SmallestDifference(first, second)",
+          "Each nonnull input array contains 0..1000 signed 32-bit integers. Duplicates and equal cross-array values are allowed. Preserve both input arrays and their original order; sort private copies if needed.",
+          "C#/Java return a signed 64-bit integer, C++ returns long long, Python returns int and JavaScript returns Number. The largest possible result is 4294967295, exactly representable in each result type. Widen BEFORE subtracting; taking abs after an overflowing 32-bit subtraction is incorrect."
+        ],
+        "python": [
+          "Callable: def SmallestDifference(first: list[int], second: list[int]) -> int",
+          "Each nonnull input array contains 0..1000 signed 32-bit integers. Duplicates and equal cross-array values are allowed. Preserve both input arrays and their original order; sort private copies if needed.",
+          "C#/Java return a signed 64-bit integer, C++ returns long long, Python returns int and JavaScript returns Number. The largest possible result is 4294967295, exactly representable in each result type. Widen BEFORE subtracting; taking abs after an overflowing 32-bit subtraction is incorrect."
+        ],
+        "cpp": [
+          "Callable: long long SmallestDifference(const std::vector<int>& first, const std::vector<int>& second)",
+          "Each nonnull input array contains 0..1000 signed 32-bit integers. Duplicates and equal cross-array values are allowed. Preserve both input arrays and their original order; sort private copies if needed.",
+          "C#/Java return a signed 64-bit integer, C++ returns long long, Python returns int and JavaScript returns Number. The largest possible result is 4294967295, exactly representable in each result type. Widen BEFORE subtracting; taking abs after an overflowing 32-bit subtraction is incorrect."
+        ],
+        "java": [
+          "Callable: long SmallestDifference(int[] first, int[] second)",
+          "Each nonnull input array contains 0..1000 signed 32-bit integers. Duplicates and equal cross-array values are allowed. Preserve both input arrays and their original order; sort private copies if needed.",
+          "C#/Java return a signed 64-bit integer, C++ returns long long, Python returns int and JavaScript returns Number. The largest possible result is 4294967295, exactly representable in each result type. Widen BEFORE subtracting; taking abs after an overflowing 32-bit subtraction is incorrect."
         ]
       }
     },
@@ -4713,6 +5057,141 @@
         ]
       }
     },
+    "ctci6_16_21": {
+      "description": "Find one value from each array that could be exchanged to make the array sums equal. Return [valueFromFirst,valueFromSecond], or [] if no such exchange exists. Do not actually exchange or modify entries. If several exchanges work, choose the value at the earliest original position in first; its matching second value is then determined.",
+      "constraints": [
+        "Each input is a nonnull array of 0..1000 signed 32-bit integers. Values may repeat. Both chosen values must actually occur in their respective arrays. An empty array cannot supply an exchange, even when both sums are equal.",
+        "Preserve both arrays and their order. Compute sums and candidate differences in signed 64-bit arithmetic (or Python int / exact JavaScript Number); the admitted maximum absolute total difference is below 2^53. A candidate outside signed 32-bit range is not an array value and must not be narrowed with wraparound."
+      ],
+      "examples": [
+        {
+          "input": "[[4, 1, 2, 1, 1, 2], [3, 6, 3, 3]]",
+          "output": "[4, 6]",
+          "explanation": "For first=[4,1,2,1,1,2] (sum 11) and second=[3,6,3,3] (sum 15), the half-difference is -2. The first value 4 requires second value 6, which exists, so return [4,6]. The hypothetical new sums are both 13; the supplied arrays stay unchanged."
+        }
+      ],
+      "exampleCases": [
+        {
+          "arguments": [
+            [
+              4,
+              1,
+              2,
+              1,
+              1,
+              2
+            ],
+            [
+              3,
+              6,
+              3,
+              3
+            ]
+          ],
+          "expected": [
+            4,
+            6
+          ]
+        }
+      ],
+      "contracts": {
+        "csharp": [
+          "Callable: int[] SumSwap(int[] first, int[] second)",
+          "Each input is a nonnull array of 0..1000 signed 32-bit integers. Values may repeat. Both chosen values must actually occur in their respective arrays. An empty array cannot supply an exchange, even when both sums are equal.",
+          "Preserve both arrays and their order. Compute sums and candidate differences in signed 64-bit arithmetic (or Python int / exact JavaScript Number); the admitted maximum absolute total difference is below 2^53. A candidate outside signed 32-bit range is not an array value and must not be narrowed with wraparound."
+        ],
+        "javascript": [
+          "Callable: function SumSwap(first, second)",
+          "Each input is a nonnull array of 0..1000 signed 32-bit integers. Values may repeat. Both chosen values must actually occur in their respective arrays. An empty array cannot supply an exchange, even when both sums are equal.",
+          "Preserve both arrays and their order. Compute sums and candidate differences in signed 64-bit arithmetic (or Python int / exact JavaScript Number); the admitted maximum absolute total difference is below 2^53. A candidate outside signed 32-bit range is not an array value and must not be narrowed with wraparound."
+        ],
+        "python": [
+          "Callable: def SumSwap(first: list[int], second: list[int]) -> list[int]",
+          "Each input is a nonnull array of 0..1000 signed 32-bit integers. Values may repeat. Both chosen values must actually occur in their respective arrays. An empty array cannot supply an exchange, even when both sums are equal.",
+          "Preserve both arrays and their order. Compute sums and candidate differences in signed 64-bit arithmetic (or Python int / exact JavaScript Number); the admitted maximum absolute total difference is below 2^53. A candidate outside signed 32-bit range is not an array value and must not be narrowed with wraparound."
+        ],
+        "cpp": [
+          "Callable: std::vector<int> SumSwap(const std::vector<int>& first, const std::vector<int>& second)",
+          "Each input is a nonnull array of 0..1000 signed 32-bit integers. Values may repeat. Both chosen values must actually occur in their respective arrays. An empty array cannot supply an exchange, even when both sums are equal.",
+          "Preserve both arrays and their order. Compute sums and candidate differences in signed 64-bit arithmetic (or Python int / exact JavaScript Number); the admitted maximum absolute total difference is below 2^53. A candidate outside signed 32-bit range is not an array value and must not be narrowed with wraparound."
+        ],
+        "java": [
+          "Callable: int[] SumSwap(int[] first, int[] second)",
+          "Each input is a nonnull array of 0..1000 signed 32-bit integers. Values may repeat. Both chosen values must actually occur in their respective arrays. An empty array cannot supply an exchange, even when both sums are equal.",
+          "Preserve both arrays and their order. Compute sums and candidate differences in signed 64-bit arithmetic (or Python int / exact JavaScript Number); the admitted maximum absolute total difference is below 2^53. A candidate outside signed 32-bit range is not an array value and must not be narrowed with wraparound."
+        ]
+      }
+    },
+    "ctci6_16_24": {
+      "description": "Form as many disjoint pairs of input occurrences as possible whose values sum to target. Each occurrence may be used in at most one pair. Return each pair as [smallerValue,largerValue], and return the pairs in lexicographic order. Repeated equal pairs are retained when enough occurrences exist; this is not a list of every index pair.",
+      "constraints": [
+        "values is a nonnull array of 0..1000 signed 32-bit integers; target is signed 32-bit. Preserve values and its order. Return a concrete two-dimensional integer collection, with exactly two values per row.",
+        "A pair uses two distinct occurrences, including when the values are equal. Use widened arithmetic for pair sums so signed endpoints do not wrap. Empty or singleton input returns []. Ordering is a deterministic presentation convention; occurrence consumption follows the author sorted two-pointer variant."
+      ],
+      "examples": [
+        {
+          "input": "[[1, 1, 2, 2, 3, 3], 4]",
+          "output": "[[1, 3], [1, 3], [2, 2]]",
+          "explanation": "For values=[1,1,2,2,3,3] and target 4, the sorted endpoints yield [1,3], then another [1,3], then [2,2]. All six occurrences are used once. With only three 2s and target 4, return one [2,2], leaving one unused; returning three index pairs would reuse occurrences."
+        }
+      ],
+      "exampleCases": [
+        {
+          "arguments": [
+            [
+              1,
+              1,
+              2,
+              2,
+              3,
+              3
+            ],
+            4
+          ],
+          "expected": [
+            [
+              1,
+              3
+            ],
+            [
+              1,
+              3
+            ],
+            [
+              2,
+              2
+            ]
+          ]
+        }
+      ],
+      "contracts": {
+        "csharp": [
+          "Callable: int[][] PairsWithSum(int[] values, int target)",
+          "values is a nonnull array of 0..1000 signed 32-bit integers; target is signed 32-bit. Preserve values and its order. Return a concrete two-dimensional integer collection, with exactly two values per row.",
+          "A pair uses two distinct occurrences, including when the values are equal. Use widened arithmetic for pair sums so signed endpoints do not wrap. Empty or singleton input returns []. Ordering is a deterministic presentation convention; occurrence consumption follows the author sorted two-pointer variant."
+        ],
+        "javascript": [
+          "Callable: function PairsWithSum(values, target)",
+          "values is a nonnull array of 0..1000 signed 32-bit integers; target is signed 32-bit. Preserve values and its order. Return a concrete two-dimensional integer collection, with exactly two values per row.",
+          "A pair uses two distinct occurrences, including when the values are equal. Use widened arithmetic for pair sums so signed endpoints do not wrap. Empty or singleton input returns []. Ordering is a deterministic presentation convention; occurrence consumption follows the author sorted two-pointer variant."
+        ],
+        "python": [
+          "Callable: def PairsWithSum(values: list[int], target: int) -> list[list[int]]",
+          "values is a nonnull array of 0..1000 signed 32-bit integers; target is signed 32-bit. Preserve values and its order. Return a concrete two-dimensional integer collection, with exactly two values per row.",
+          "A pair uses two distinct occurrences, including when the values are equal. Use widened arithmetic for pair sums so signed endpoints do not wrap. Empty or singleton input returns []. Ordering is a deterministic presentation convention; occurrence consumption follows the author sorted two-pointer variant."
+        ],
+        "cpp": [
+          "Callable: std::vector<std::vector<int>> PairsWithSum(const std::vector<int>& values, int target)",
+          "values is a nonnull array of 0..1000 signed 32-bit integers; target is signed 32-bit. Preserve values and its order. Return a concrete two-dimensional integer collection, with exactly two values per row.",
+          "A pair uses two distinct occurrences, including when the values are equal. Use widened arithmetic for pair sums so signed endpoints do not wrap. Empty or singleton input returns []. Ordering is a deterministic presentation convention; occurrence consumption follows the author sorted two-pointer variant."
+        ],
+        "java": [
+          "Callable: int[][] PairsWithSum(int[] values, int target)",
+          "values is a nonnull array of 0..1000 signed 32-bit integers; target is signed 32-bit. Preserve values and its order. Return a concrete two-dimensional integer collection, with exactly two values per row.",
+          "A pair uses two distinct occurrences, including when the values are equal. Use widened arithmetic for pair sums so signed endpoints do not wrap. Empty or singleton input returns []. Ordering is a deterministic presentation convention; occurrence consumption follows the author sorted two-pointer variant."
+        ]
+      }
+    },
     "ctci6_17_1": {
       "description": "Add two signed 32-bit integers without using arithmetic operators or an arithmetic helper. Return the signed 32-bit two's-complement sum: overflow wraps modulo 2^32, exactly as ordinary Java int addition. Use bit operations to combine sum bits and carries.",
       "constraints": [
@@ -4970,6 +5449,64 @@
         ]
       }
     },
+    "ctci6_17_11": {
+      "description": "Return the smallest absolute difference between an occurrence index of first and an occurrence index of second in the tokenized text words. Count index steps, not just intervening words. Return -1 if either requested word is absent.",
+      "constraints": [
+        "words contains 0..10000 nonnull lowercase ASCII words, each 1..20 letters. first and second are distinct nonempty lowercase ASCII words of length at most 20. Matching is case-sensitive and requires a complete token.",
+        "Preserve words and its order. Positions are zero-based. Adjacent requested words have distance 1, and two equal query words are outside this callable's domain. This is the single-query task; no persistent index is supplied."
+      ],
+      "examples": [
+        {
+          "input": "[[\"red\", \"x\", \"blue\", \"red\", \"y\", \"blue\"], \"red\", \"blue\"]",
+          "output": "1",
+          "explanation": "For words=[red,x,blue,red,y,blue], first=red and second=blue, the encounter at index 2 yields distance 2 from red at 0. The red at index 3 is only 1 away from blue at 2, improving the best to 1. The final blue is 2 away from red at 3, so return 1, not zero intervening words."
+        }
+      ],
+      "exampleCases": [
+        {
+          "arguments": [
+            [
+              "red",
+              "x",
+              "blue",
+              "red",
+              "y",
+              "blue"
+            ],
+            "red",
+            "blue"
+          ],
+          "expected": 1
+        }
+      ],
+      "contracts": {
+        "csharp": [
+          "Callable: int WordDistance(string[] words, string first, string second)",
+          "words contains 0..10000 nonnull lowercase ASCII words, each 1..20 letters. first and second are distinct nonempty lowercase ASCII words of length at most 20. Matching is case-sensitive and requires a complete token.",
+          "Preserve words and its order. Positions are zero-based. Adjacent requested words have distance 1, and two equal query words are outside this callable's domain. This is the single-query task; no persistent index is supplied."
+        ],
+        "javascript": [
+          "Callable: function WordDistance(words, first, second)",
+          "words contains 0..10000 nonnull lowercase ASCII words, each 1..20 letters. first and second are distinct nonempty lowercase ASCII words of length at most 20. Matching is case-sensitive and requires a complete token.",
+          "Preserve words and its order. Positions are zero-based. Adjacent requested words have distance 1, and two equal query words are outside this callable's domain. This is the single-query task; no persistent index is supplied."
+        ],
+        "python": [
+          "Callable: def WordDistance(words: list[str], first: str, second: str) -> int",
+          "words contains 0..10000 nonnull lowercase ASCII words, each 1..20 letters. first and second are distinct nonempty lowercase ASCII words of length at most 20. Matching is case-sensitive and requires a complete token.",
+          "Preserve words and its order. Positions are zero-based. Adjacent requested words have distance 1, and two equal query words are outside this callable's domain. This is the single-query task; no persistent index is supplied."
+        ],
+        "cpp": [
+          "Callable: int WordDistance(const std::vector<std::string>& words, const std::string& first, const std::string& second)",
+          "words contains 0..10000 nonnull lowercase ASCII words, each 1..20 letters. first and second are distinct nonempty lowercase ASCII words of length at most 20. Matching is case-sensitive and requires a complete token.",
+          "Preserve words and its order. Positions are zero-based. Adjacent requested words have distance 1, and two equal query words are outside this callable's domain. This is the single-query task; no persistent index is supplied."
+        ],
+        "java": [
+          "Callable: int WordDistance(String[] words, String first, String second)",
+          "words contains 0..10000 nonnull lowercase ASCII words, each 1..20 letters. first and second are distinct nonempty lowercase ASCII words of length at most 20. Matching is case-sensitive and requires a complete token.",
+          "Preserve words and its order. Positions are zero-based. Adjacent requested words have distance 1, and two equal query words are outside this callable's domain. This is the single-query task; no persistent index is supplied."
+        ]
+      }
+    },
     "ctci6_17_14": {
       "description": "Return the k smallest input values in nondecreasing order, preserving duplicate occurrences. The output has exactly k elements. Do not change the input array or its order.",
       "constraints": [
@@ -5030,6 +5567,61 @@
         ]
       }
     },
+    "ctci6_17_15": {
+      "description": "Return the longest dictionary word that can be formed by concatenating at least two nonempty words from the same dictionary. A dictionary word may be reused any number of times as a component; this is vocabulary membership, not consuming input occurrences. If several longest words qualify, return the lexicographically smallest. Return an empty string if none qualifies.",
+      "constraints": [
+        "words is a nonnull array of 0..200 nonnull strings, each 1..40 lowercase ASCII letters. Duplicate dictionary entries do not create new spellings or permit a one-component answer.",
+        "Preserve the input array and its order. Components concatenate without spaces or gaps and must spell the entire candidate. The candidate itself as one component is insufficient; at least two components are required. Lexicographic ties use ASCII letter order."
+      ],
+      "examples": [
+        {
+          "input": "[[\"cat\", \"dog\", \"catdog\", \"dogcat\", \"catcatdog\"]]",
+          "output": "\"catcatdog\"",
+          "explanation": "For [cat,dog,catdog,dogcat,catcatdog], catdog and dogcat each have two components. catcatdog has three: cat+cat+dog, so its length 9 beats their length 6 and it is returned. For [cat,dog,catdog,dogcat], the equal-length tie selects catdog. A dictionary containing only cat has no qualifying word."
+        }
+      ],
+      "exampleCases": [
+        {
+          "arguments": [
+            [
+              "cat",
+              "dog",
+              "catdog",
+              "dogcat",
+              "catcatdog"
+            ]
+          ],
+          "expected": "catcatdog"
+        }
+      ],
+      "contracts": {
+        "csharp": [
+          "Callable: string LongestComposedWord(string[] words)",
+          "words is a nonnull array of 0..200 nonnull strings, each 1..40 lowercase ASCII letters. Duplicate dictionary entries do not create new spellings or permit a one-component answer.",
+          "Preserve the input array and its order. Components concatenate without spaces or gaps and must spell the entire candidate. The candidate itself as one component is insufficient; at least two components are required. Lexicographic ties use ASCII letter order."
+        ],
+        "javascript": [
+          "Callable: function LongestComposedWord(words)",
+          "words is a nonnull array of 0..200 nonnull strings, each 1..40 lowercase ASCII letters. Duplicate dictionary entries do not create new spellings or permit a one-component answer.",
+          "Preserve the input array and its order. Components concatenate without spaces or gaps and must spell the entire candidate. The candidate itself as one component is insufficient; at least two components are required. Lexicographic ties use ASCII letter order."
+        ],
+        "python": [
+          "Callable: def LongestComposedWord(words: list[str]) -> str",
+          "words is a nonnull array of 0..200 nonnull strings, each 1..40 lowercase ASCII letters. Duplicate dictionary entries do not create new spellings or permit a one-component answer.",
+          "Preserve the input array and its order. Components concatenate without spaces or gaps and must spell the entire candidate. The candidate itself as one component is insufficient; at least two components are required. Lexicographic ties use ASCII letter order."
+        ],
+        "cpp": [
+          "Callable: std::string LongestComposedWord(const std::vector<std::string>& words)",
+          "words is a nonnull array of 0..200 nonnull strings, each 1..40 lowercase ASCII letters. Duplicate dictionary entries do not create new spellings or permit a one-component answer.",
+          "Preserve the input array and its order. Components concatenate without spaces or gaps and must spell the entire candidate. The candidate itself as one component is insufficient; at least two components are required. Lexicographic ties use ASCII letter order."
+        ],
+        "java": [
+          "Callable: String LongestComposedWord(String[] words)",
+          "words is a nonnull array of 0..200 nonnull strings, each 1..40 lowercase ASCII letters. Duplicate dictionary entries do not create new spellings or permit a one-component answer.",
+          "Preserve the input array and its order. Components concatenate without spaces or gaps and must spell the entire candidate. The candidate itself as one component is insufficient; at least two components are required. Lexicographic ties use ASCII letter order."
+        ]
+      }
+    },
     "ctci6_17_16": {
       "description": "Choose appointments from their given sequence to maximize total massage minutes, with the restriction that no two adjacent appointments may both be accepted. Return the maximum total minutes. The empty choice is allowed; do not reorder appointments or split an appointment.",
       "constraints": [
@@ -5085,6 +5677,79 @@
           "Callable: int MaximumMassageMinutes(int[] appointments)",
           "appointments contains 0..1000 nonnegative integer durations in 0..1000000 minutes. All totals fit signed 32-bit range. Preserve the original array and ordering.",
           "Adjacency refers to neighboring input positions. Accepting index i forbids i-1 and i+1, regardless of their durations. An empty input returns zero."
+        ]
+      }
+    },
+    "ctci6_17_17": {
+      "description": "For every pattern, return all zero-based positions where it starts in text. Include overlapping occurrences. Return one integer row per pattern, in original pattern order; positions within each row increase. A missing pattern has an empty row.",
+      "constraints": [
+        "text has 0..1000 lowercase ASCII letters. patterns is a nonnull array of 0..100 nonnull strings, each 0..20 lowercase ASCII letters. Preserve the array and strings; duplicate queries receive separate identical result rows.",
+        "A pattern must match its entire text window. The empty pattern occurs at all boundaries 0..text.length inclusive, including boundary 0 in empty text. A nonempty pattern longer than text has no occurrence."
+      ],
+      "examples": [
+        {
+          "input": "[\"ababa\", [\"aba\", \"ba\", \"z\", \"\"]]",
+          "output": "[[0, 2], [1, 3], [], [0, 1, 2, 3, 4, 5]]",
+          "explanation": "For text=ababa and patterns=[aba,ba,z,\"\"], aba starts at [0,2], ba at [1,3], and z has no match. The empty pattern row is [0,1,2,3,4,5]. The two aba occurrences overlap at index 2; moving by pattern length would miss one."
+        }
+      ],
+      "exampleCases": [
+        {
+          "arguments": [
+            "ababa",
+            [
+              "aba",
+              "ba",
+              "z",
+              ""
+            ]
+          ],
+          "expected": [
+            [
+              0,
+              2
+            ],
+            [
+              1,
+              3
+            ],
+            [],
+            [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ]
+          ]
+        }
+      ],
+      "contracts": {
+        "csharp": [
+          "Callable: int[][] MultiSearch(string text, string[] patterns)",
+          "text has 0..1000 lowercase ASCII letters. patterns is a nonnull array of 0..100 nonnull strings, each 0..20 lowercase ASCII letters. Preserve the array and strings; duplicate queries receive separate identical result rows.",
+          "A pattern must match its entire text window. The empty pattern occurs at all boundaries 0..text.length inclusive, including boundary 0 in empty text. A nonempty pattern longer than text has no occurrence."
+        ],
+        "javascript": [
+          "Callable: function MultiSearch(text, patterns)",
+          "text has 0..1000 lowercase ASCII letters. patterns is a nonnull array of 0..100 nonnull strings, each 0..20 lowercase ASCII letters. Preserve the array and strings; duplicate queries receive separate identical result rows.",
+          "A pattern must match its entire text window. The empty pattern occurs at all boundaries 0..text.length inclusive, including boundary 0 in empty text. A nonempty pattern longer than text has no occurrence."
+        ],
+        "python": [
+          "Callable: def MultiSearch(text: str, patterns: list[str]) -> list[list[int]]",
+          "text has 0..1000 lowercase ASCII letters. patterns is a nonnull array of 0..100 nonnull strings, each 0..20 lowercase ASCII letters. Preserve the array and strings; duplicate queries receive separate identical result rows.",
+          "A pattern must match its entire text window. The empty pattern occurs at all boundaries 0..text.length inclusive, including boundary 0 in empty text. A nonempty pattern longer than text has no occurrence."
+        ],
+        "cpp": [
+          "Callable: std::vector<std::vector<int>> MultiSearch(const std::string& text, const std::vector<std::string>& patterns)",
+          "text has 0..1000 lowercase ASCII letters. patterns is a nonnull array of 0..100 nonnull strings, each 0..20 lowercase ASCII letters. Preserve the array and strings; duplicate queries receive separate identical result rows.",
+          "A pattern must match its entire text window. The empty pattern occurs at all boundaries 0..text.length inclusive, including boundary 0 in empty text. A nonempty pattern longer than text has no occurrence."
+        ],
+        "java": [
+          "Callable: int[][] MultiSearch(String text, String[] patterns)",
+          "text has 0..1000 lowercase ASCII letters. patterns is a nonnull array of 0..100 nonnull strings, each 0..20 lowercase ASCII letters. Preserve the array and strings; duplicate queries receive separate identical result rows.",
+          "A pattern must match its entire text window. The empty pattern occurs at all boundaries 0..text.length inclusive, including boundary 0 in empty text. A nonempty pattern longer than text has no occurrence."
         ]
       }
     },

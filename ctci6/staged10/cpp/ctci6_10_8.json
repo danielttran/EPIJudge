@@ -1,0 +1,30 @@
+{
+  "explanation": "One bit records whether a value has appeared, so 32000 possible values need 32000/8=4000 bytes. Subtract one before choosing the byte and bit because values begin at one. Returning an array instead of printing requires its size; a counting pass and a second pass with the cleared same bitmap avoid an extra input-sized working collection.",
+  "correctness": "During either pass, the bit for a value is set exactly when that value has appeared earlier in that pass. A clear bit is set on first occurrence; a set bit therefore identifies precisely each later occurrence. The first pass counts exactly the output length. Clearing all bitmap bytes restores the initial invariant, and the second pass writes those same repeated encounters into the preallocated result in input order. No input value is changed, every repeat is included and no first occurrence is included.",
+  "walkthrough": "For [8,1,8,8,32000,32000], the first 8 sets bit 7 of byte 0. Its next two occurrences are both repeats. The first 32000 sets the final bitmap bit; its next occurrence repeats. Count three outputs, clear the bitmap, and fill [8,8,32000] on the second pass.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        8,
+        1,
+        8,
+        8,
+        32000,
+        32000
+      ]
+    ],
+    "expected": [
+      8,
+      8,
+      32000
+    ]
+  },
+  "timeComplexity": "O(n+U/8) time for two scans and clearing U/8 marking bytes, where U=32000 is fixed; hence O(n+1) for this domain.",
+  "spaceComplexity": "4000 marking bytes plus O(1) scalar bookkeeping, excluding the exactly sized final result. The bitmap is reused, not doubled between passes.",
+  "edgeCases": [
+    "Empty input, all distinct values and one value repeated many times.",
+    "Values 1,8,9,31999,32000 cross byte and signed-byte boundaries.",
+    "Output multiplicity is occurrence count minus one, not one per distinct duplicate value."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 10.8. No affiliation is implied."
+}

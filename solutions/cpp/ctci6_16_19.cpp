@@ -5,6 +5,8 @@
 #include <cstdint>
 #include <functional>
 #include <utility>
+#include <unordered_map>
+#include <unordered_set>
 class Solution {
  public:
   std::vector<int> PondSizes(const std::vector<std::vector<int>>& land) {

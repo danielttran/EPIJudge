@@ -65,12 +65,102 @@ public sealed class CtciStagingTests
     [InlineData("3.3")]
     [InlineData("3.4")]
     [InlineData("3.6")]
+    [InlineData("10.10")]
     public void JavaStateClassUsesItsOwnMatchingFilename(string reference)
     {
         var definition = Definition(reference);
         Assert.Equal(definition.Method + ".java", definition.Callable("java").Filename);
         Assert.Equal(definition.Callable("java").Filename, CallableCodeCatalog.Find(definition.Id, "java")!.Filename);
         if (reference == "3.1") Assert.Contains("capacity: int", definition.Languages["python"].Signature);
+    }
+
+    [Fact]
+    public void ListyResultsEnforceQueryBoundsAndAcceptAnyMatchingIndex()
+    {
+        var definition = Definition("10.4");
+        var test = Case([new[] { 1, 1, 2, 4 }, 1], 0);
+        Assert.Null(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = 1, probes = 4, mutationOk = true })));
+        foreach (int probes in new[] { -1, 1000 }) Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = 1, probes, mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = -1, probes = 4, mutationOk = true })));
+    }
+
+    [Theory]
+    [InlineData("csharp")]
+    [InlineData("javascript")]
+    [InlineData("python")]
+    [InlineData("cpp")]
+    [InlineData("java")]
+    public void ListyApiIsVisibleWithoutItsPrivateJudgeStorage(string language)
+    {
+        var reference = Assert.Single(CallableCodeCatalog.Find("ctci6_10_4", language)!.References);
+        Assert.Contains("Listy", reference.Names);
+        Assert.Contains("ElementAt", reference.Code);
+        Assert.DoesNotContain("JudgeListy", reference.Code);
+    }
+
+    [Fact]
+    public void StreamRankCountsOtherEqualOccurrencesAndAbsentValuesRemainAbsent()
+    {
+        var definition = Definition("10.10");
+        var test = Case([new[] { "RankTracker", "Track", "Track", "Track", "Track", "GetRank", "GetRank" }, new int[][] { [], [5], [1], [4], [4], [4], [2] }], new object?[] { null, null, null, null, null, 2, -1 });
+        Assert.Null(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new object?[] { null, null, null, null, null, 2, -1 }, mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new object?[] { null, null, null, null, null, 1, -1 }, mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new object?[] { null, null, null, null, null, 2, 1 }, mutationOk = true })));
+    }
+
+    [Fact]
+    public void DuplicateOutputsPreserveRepeatedEncounterOrderAndMultiplicity()
+    {
+        var definition = Definition("10.8");
+        var test = Case([new[] { 8, 1, 8, 8, 32000, 32000 }], new[] { 8, 8, 32000 });
+        Assert.Null(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new[] { 8, 8, 32000 }, mutationOk = true })));
+        foreach (var values in new int[][] { [8, 32000], [32000, 8, 8] }) Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = values, mutationOk = true })));
+    }
+
+    [Fact]
+    public void SmallestDifferenceAcceptsExactWidenedEndpointResult()
+    {
+        var definition = Definition("16.6");
+        var test = Case([new[] { int.MinValue }, new[] { int.MaxValue }], 4294967295L);
+        Assert.Null(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = 4294967295L, mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = 1, mutationOk = true })));
+    }
+
+    [Fact]
+    public void ComposedWordsResolveLongestTiesAndRejectAnUncomposedSelfMatch()
+    {
+        var definition = Definition("17.15");
+        var test = Case([new[] { "cat", "dog", "dogcat", "catdog" }], "catdog");
+        Assert.Null(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = "catdog", mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = "dogcat", mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, Case([new[] { "cat", "cat" }], ""), Json(new { actual = "cat", mutationOk = true })));
+    }
+
+    [Fact]
+    public void MultiSearchKeepsOverlapsAndTheLastEmptyPatternBoundary()
+    {
+        var definition = Definition("17.17");
+        var test = Case(["aaa", new[] { "aa", "" }], new int[][] { [0, 1], [0, 1, 2, 3] });
+        Assert.Null(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new int[][] { [0, 1], [0, 1, 2, 3] }, mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new int[][] { [0], [0, 1, 2] }, mutationOk = true })));
+    }
+
+    [Fact]
+    public void PairSumUsesDisjointOccurrencesRatherThanAllIndexPairs()
+    {
+        var definition = Definition("16.24");
+        var test = Case([new[] { 2, 2, 2 }, 4], new int[][] { [2, 2] });
+        Assert.Null(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new int[][] { [2, 2] }, mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new int[][] { [2, 2], [2, 2], [2, 2] }, mutationOk = true })));
+    }
+
+    [Fact]
+    public void SumSwapDoesNotAcceptAValueObtainedByWrappingTheRequiredCandidate()
+    {
+        var definition = Definition("16.21");
+        var test = Case([new[] { 0 }, new[] { int.MinValue, int.MaxValue, int.MaxValue, int.MaxValue, 3 }], Array.Empty<int>());
+        Assert.Null(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = Array.Empty<int>(), mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new[] { 0, int.MinValue }, mutationOk = true })));
     }
 
     [Fact]

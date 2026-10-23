@@ -1,0 +1,56 @@
+{
+  "explanation": "A search-tree node can cache how many tracked occurrences lie in its left subtree. Route equal inserted values left, so that count also includes earlier/later duplicates beneath an equal node. A rank query accumulates entire left subtrees and ancestor nodes only when moving right; finding the queried value adds its left count without counting that node itself.",
+  "correctness": "Every insertion preserves the BST rule left<=node<right and increments a node's left count exactly when the new occurrence enters that left subtree. During a query, the accumulated count contains exactly the smaller/equal occurrences already skipped on right turns. At equality, every left-subtree occurrence is <=value, and the current node is the one excluded occurrence, so accumulated+leftCount is the required rank. If traversal reaches no matching node, the value is absent and -1 is returned regardless of the partial accumulated count. Iterative traversal avoids recursion-depth failures on a skewed stream.",
+  "walkthrough": "Track 5,1,4,4. Sorted tracked values are [1,4,4,5]. GetRank(4) returns 2: one 1 and the OTHER 4 count, while one queried 4 is excluded. GetRank(2) returns -1 even though its insertion position would be 1. A new tracker begins empty.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        "RankTracker",
+        "Track",
+        "Track",
+        "Track",
+        "Track",
+        "GetRank",
+        "GetRank"
+      ],
+      [
+        [],
+        [
+          5
+        ],
+        [
+          1
+        ],
+        [
+          4
+        ],
+        [
+          4
+        ],
+        [
+          4
+        ],
+        [
+          2
+        ]
+      ]
+    ],
+    "expected": [
+      null,
+      null,
+      null,
+      null,
+      null,
+      2,
+      -1
+    ]
+  },
+  "timeComplexity": "O(h) per Track/GetRank for tree height h. The actual BST is not balanced: worst-case h equals the number of tracked occurrences; do not claim guaranteed logarithmic time.",
+  "spaceComplexity": "O(t) stored nodes after t tracked occurrences and O(1) auxiliary iterative traversal space, excluding the returned transcript results.",
+  "edgeCases": [
+    "Query before any Track and query an absent interior value.",
+    "Repeated equal values count other copies; negative and signed-endpoint values.",
+    "Ascending/descending streams create skewed trees but not recursive stack overflow."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 10.10. No affiliation is implied."
+}

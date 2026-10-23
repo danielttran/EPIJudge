@@ -243,3 +243,54 @@ return answer'''
     totals='int[] totals=new int[columns];' if language!='cpp' else 'std::vector<int> totals(columns);'
     result='[best,top,start,bottom,c]' if language=='csharp' else 'new int[]{best,top,start,bottom,c}' if language=='java' else '{best,top,start,bottom,c}'
     return f'int rows={rows},columns=rows==0?0:{cols};if(rows==0||columns==0)return {empty};int best=-2147483648;{allocate}for(int top=0;top<rows;++top){{{totals}for(int bottom=top;bottom<rows;++bottom){{int running=0,start=0;for(int c=0;c<columns;++c){{totals[c]+=matrix[bottom][c];if(running<0){{running=totals[c];start=c;}}else running+=totals[c];if(running>best){{best=running;answer={result};}}}}}}}}return answer;'
+
+_previous_text_body=body
+
+def body(ref,language):
+    if ref=='17.11':
+        if language=='python':return '''last_first = last_second = -1
+best = len(words) + 1
+for index, word in enumerate(words):
+    if word == first:
+        last_first = index
+        if last_second >= 0:
+            best = min(best, index - last_second)
+    elif word == second:
+        last_second = index
+        if last_first >= 0:
+            best = min(best, index - last_first)
+return -1 if best == len(words) + 1 else best'''
+        if language=='javascript':return 'let lastFirst=-1,lastSecond=-1,best=words.length+1;for(let i=0;i<words.length;++i){if(words[i]===first){lastFirst=i;if(lastSecond>=0)best=Math.min(best,i-lastSecond);}else if(words[i]===second){lastSecond=i;if(lastFirst>=0)best=Math.min(best,i-lastFirst);}}return best===words.length+1?-1:best;'
+        size='words.Length' if language=='csharp' else 'words.length' if language=='java' else 'static_cast<int>(words.size())';match=lambda q:'words[i].equals('+q+')' if language=='java' else 'words[i]=='+q;minimum='Math.Min' if language=='csharp' else 'Math.min' if language=='java' else 'std::min'
+        return f'int lastFirst=-1,lastSecond=-1,best={size}+1;for(int i=0;i<{size};++i){{if({match("first")}){{lastFirst=i;if(lastSecond>=0)best={minimum}(best,i-lastSecond);}}else if({match("second")}){{lastSecond=i;if(lastFirst>=0)best={minimum}(best,i-lastFirst);}}}}return best=={size}+1?-1:best;'
+    if ref=='17.15':
+        if language=='python':return '''dictionary = set(words)
+best = ""
+for word in words:
+    dp = [-1] * (len(word) + 1)
+    dp[0] = 0
+    for end in range(1, len(word) + 1):
+        for start in range(end):
+            if dp[start] >= 0 and word[start:end] in dictionary:
+                dp[end] = max(dp[end], dp[start] + 1)
+    if dp[-1] >= 2 and (len(word) > len(best) or (len(word) == len(best) and word < best)):
+        best = word
+return best'''
+        if language=='javascript':return 'const dictionary=new Set(words);let best="";for(const word of words){const dp=new Array(word.length+1).fill(-1);dp[0]=0;for(let end=1;end<=word.length;++end)for(let start=0;start<end;++start)if(dp[start]>=0&&dictionary.has(word.slice(start,end)))dp[end]=Math.max(dp[end],dp[start]+1);if(dp[word.length]>=2&&(word.length>best.length||(word.length===best.length&&word<best)))best=word;}return best;'
+        if language=='cpp':return 'std::unordered_set<std::string> dictionary(words.begin(),words.end());std::string best;for(const auto& word:words){int n=static_cast<int>(word.size());std::vector<int> dp(n+1,-1);dp[0]=0;for(int end=1;end<=n;++end)for(int start=0;start<end;++start)if(dp[start]>=0&&dictionary.count(word.substr(start,end-start)))dp[end]=std::max(dp[end],dp[start]+1);if(dp[n]>=2&&(word.size()>best.size()||(word.size()==best.size()&&word<best)))best=word;}return best;'
+        if language=='csharp':return 'var dictionary=new HashSet<string>(words,StringComparer.Ordinal);string best="";foreach(string word in words){int[] dp=new int[word.Length+1];Array.Fill(dp,-1);dp[0]=0;for(int end=1;end<=word.Length;++end)for(int start=0;start<end;++start)if(dp[start]>=0&&dictionary.Contains(word.Substring(start,end-start)))dp[end]=Math.Max(dp[end],dp[start]+1);if(dp[word.Length]>=2&&(word.Length>best.Length||(word.Length==best.Length&&StringComparer.Ordinal.Compare(word,best)<0)))best=word;}return best;'
+        return 'Set<String> dictionary=new HashSet<>(Arrays.asList(words));String best="";for(String word:words){int[] dp=new int[word.length()+1];Arrays.fill(dp,-1);dp[0]=0;for(int end=1;end<=word.length();++end)for(int start=0;start<end;++start)if(dp[start]>=0&&dictionary.contains(word.substring(start,end)))dp[end]=Math.max(dp[end],dp[start]+1);if(dp[word.length()]>=2&&(word.length()>best.length()||(word.length()==best.length()&&word.compareTo(best)<0)))best=word;}return best;'
+    if ref=='17.17':
+        if language=='python':return '''result = []
+for pattern in patterns:
+    positions = []
+    for start in range(len(text) - len(pattern) + 1):
+        if text.startswith(pattern, start):
+            positions.append(start)
+    result.append(positions)
+return result'''
+        if language=='javascript':return 'const result=[];for(const pattern of patterns){const positions=[];for(let start=0;start+pattern.length<=text.length;++start)if(text.startsWith(pattern,start))positions.push(start);result.push(positions);}return result;'
+        if language=='cpp':return 'std::vector<std::vector<int>> result;for(const auto& pattern:patterns){std::vector<int> positions;int limit=static_cast<int>(text.size())-static_cast<int>(pattern.size());for(int start=0;start<=limit;++start)if(text.compare(start,pattern.size(),pattern)==0)positions.push_back(start);result.push_back(std::move(positions));}return result;'
+        if language=='csharp':return 'var result=new List<int[]>();foreach(string pattern in patterns){var positions=new List<int>();for(int start=0;start+pattern.Length<=text.Length;++start)if(string.CompareOrdinal(text,start,pattern,0,pattern.Length)==0)positions.Add(start);result.Add(positions.ToArray());}return result.ToArray();'
+        return 'List<int[]> result=new ArrayList<>();for(String pattern:patterns){List<Integer> positions=new ArrayList<>();for(int start=0;start+pattern.length()<=text.length();++start)if(text.startsWith(pattern,start))positions.add(start);int[] row=new int[positions.size()];for(int i=0;i<row.length;++i)row[i]=positions.get(i);result.add(row);}return result.toArray(new int[0][]);'
+    return _previous_text_body(ref,language)

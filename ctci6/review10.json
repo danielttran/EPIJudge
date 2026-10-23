@@ -1,7 +1,7 @@
 {
   "stage": "standalone-authoring-and-separate-module",
   "liveIntegration": "pending-local-export",
-  "reviewScope": "Six sorting/searching coding tasks and thirty actual language bodies; mutable-first/readonly-other contracts, string-array decoding, group/property graders and nonunique duplicate/coordinate results reviewed individually.",
+  "reviewScope": "Nine sorting/searching coding tasks and forty-five actual language bodies; mutable arrays, opaque bounded-query access, fixed-size bitmap workspace and per-instance rank state reviewed against actual implementations.",
   "questions": [
     {
       "ref": "10.1",
@@ -19,14 +19,29 @@
       "review": "Repeated values are admitted and any matching index is valid. All five test the midpoint first, trim only known nonmatching equal boundaries, then retain the possible sorted/rotated half. Exhaustive rotations of small nondecreasing repeated-value arrays and all-equal 10000-element bounds exercise the linear worst case. Direct host lookup checks existence independently without forcing the first duplicate index."
     },
     {
+      "ref": "10.4",
+      "algorithm": "Exponential range discovery followed by sentinel-aware binary search through the opaque ElementAt API.",
+      "review": "Read all five actual bodies. Each cached probe is used once per step; nonpositive targets are rejected before any query. Doubling bounds remain within safe integer range for the hidden 10000-element maximum. Sentinel -1 means outside storage, never a target match. Private judge storage is absent from the supplied model. Executed empty, duplicate, endpoint and maximum-length inputs; alternative matching indices are accepted, while excessive query counts are rejected. Five independently substituted linear scans exceed the enforced logarithmic query budget."
+    },
+    {
       "ref": "10.5",
       "algorithm": "Binary search with an outward nonempty-pivot scan inside the current interval.",
       "review": "Empty targets are explicitly not searchable, following the public wrapper. All five preserve gap positions and accept any matching original index. C# uses ordinal comparison, Java compareTo, and the shared ASCII domain makes other languages consistent. Empty/all-gap arrays, long gap blocks, duplicate words and dense sorted subsequences agree with independent direct lookup. Complexity explicitly allows linear gap work instead of promising logarithmic worst case."
     },
     {
+      "ref": "10.8",
+      "algorithm": "Reuse one 4000-byte bitmap for a repeat-count pass and an encounter-order result-fill pass.",
+      "review": "Read all five bodies and allocations: exactly one byte[4000], unsigned-char array, bytearray or Uint8Array holds marking bits. Returned storage is allocated once at the counted length; no growing intermediate result or second bitmap exists. Java signed bytes are masked/promoted safely. Python clears the existing buffer by indexed writes, not a second allocated zero buffer. Byte-boundary values, all 32000 possible values in chunks, triplicate multiplicity and maximum-length sequences agree with an independent set-based oracle. Logical workspace exclusions are explicit; arbitrary submitted memory allocation is not dynamically measured."
+    },
+    {
       "ref": "10.9",
       "algorithm": "Top-right staircase search discards one impossible row or column at each comparison.",
       "review": "The input is row/column sorted, not necessarily globally flattened-sorted. All five handle empty dimensions before indexing and preserve original row references and cells. Any coordinate holding target is accepted. Independent direct row scanning covers all small sorted matrices, duplicates, signed endpoints and 50x50 overlapping row ranges."
+    },
+    {
+      "ref": "10.10",
+      "algorithm": "Iterative unbalanced BST with left-subtree occurrence counts; equal inserts go left.",
+      "review": "Read each actual state class. C#/Java own private nodes, C++ owns unique_ptr nodes, Python uses nested nodes and JavaScript owns node records. Each instance starts empty. Counts increment exactly on left descents; right query descents add leftCount+1, equality adds leftCount and excludes one equal occurrence. Absent queries discard accumulated insertion counts and return -1. No balanced-tree logarithmic guarantee is claimed. Ascending/descending 1999-insertion transcripts, duplicates, signed endpoints and interleaved queries are executed against sorted-list rank. Typed Track/GetRank signatures and Python boolean-result rejection are covered."
     },
     {
       "ref": "10.11",
@@ -42,17 +57,18 @@
     "java"
   ],
   "languageBindingReview": {
-    "csharp": "Read all actual bodies and typed string[]/int[] contracts. Backward merge and local peak swaps mutate only the first array. Grouping computes tuple keys once and uses StringComparer.Ordinal. Sparse word comparisons are ordinal. The property grader does not demand one canonical output ordering or duplicate index.",
-    "javascript": "Read exact functions: mutable arrays are changed by indexed writes or swaps before return. Decorated anagram keys avoid comparator recomputation. Map-free searches use ASCII comparisons and bounded integer indices. Snapshot observations preserve all other argument values and original array references.",
-    "python": "Read exact functions: backward merge and local swaps mutate the supplied lists; grouping sorts the list in place before returning a copy. The gap search never compacts input. First-array observations compare every other input against the original snapshot and reject a correct result computed only on a rebound copy.",
-    "cpp": "Read exact C++17 signatures: only the first array reference is mutable where specified, while the second merge input stays const. Return copies are accounted for in complexity. Group key/word pairs retain occurrences during writeback. String vectors use the generic JSON decoder; comparator decisions do not subtract signed integer endpoints.",
-    "java": "Read exact methods: string-array JSON decoding and Object[] observation encoding preserve empty gaps. Grouping sorts cached-key indices and reads an original clone during writeback. Mutable first arrays retain their object identities; second arrays are independently observed unchanged. Searches compare primitives/ASCII strings without narrowing or locale assumptions."
+    "csharp": "Read all actual bodies and typed string[]/int[] contracts. Backward merge and local peak swaps mutate only the first array. Grouping computes tuple keys once and uses StringComparer.Ordinal. Sparse word comparisons are ordinal. The property grader does not demand one canonical output ordering or duplicate index. Listy is supplied as an abstract API; RankTracker delegates enforce void Track and int GetRank. Duplicate marking uses exactly one byte array and Array.Clear.",
+    "javascript": "Read exact functions: mutable arrays are changed by indexed writes or swaps before return. Decorated anagram keys avoid comparator recomputation. Map-free searches use ASCII comparisons and bounded integer indices. Snapshot observations preserve all other argument values and original array references. Listy exposes ElementAt only and counts actual calls. Rank state belongs to each constructed object. One Uint8Array is reused and result storage is allocated at the counted size.",
+    "python": "Read exact functions: backward merge and local swaps mutate the supplied lists; grouping sorts the list in place before returning a copy. The gap search never compacts input. First-array observations compare every other input against the original snapshot and reject a correct result computed only on a rebound copy. Listy remains opaque; runtime query limits reject linear scans. Rank operations are iterative and bool is rejected as an integer rank. The existing bytearray is cleared without allocating another marking buffer.",
+    "cpp": "Read exact C++17 signatures: only the first array reference is mutable where specified, while the second merge input stays const. Return copies are accounted for in complexity. Group key/word pairs retain occurrences during writeback. String vectors use the generic JSON decoder; comparator decisions do not subtract signed integer endpoints. The opaque Listy reference provides a virtual ElementAt only. RankTracker owns nodes with unique_ptr; unevaluated static_assert checks enforce operation types. Duplicate marking uses one std::array<unsigned char,4000>.",
+    "java": "Read exact methods: string-array JSON decoding and Object[] observation encoding preserve empty gaps. Grouping sorts cached-key indices and reads an original clone during writeback. Mutable first arrays retain their object identities; second arrays are independently observed unchanged. Searches compare primitives/ASCII strings without narrowing or locale assumptions. Listy exposes only ElementAt; reflective public method checks enforce int rank/void tracking. Byte masks correctly inspect signed Java bytes; RankTracker filename follows its class."
   },
   "executionEvidence": "staged10/validation.json",
   "submissionEvidence": "runtime/validation.json",
   "graderRegressions": [
     "scripts/ctci6/test_sorting10.py",
-    "EpiJudge.Tests/CtciStagingTests.cs"
+    "EpiJudge.Tests/CtciStagingTests.cs",
+    "scripts/ctci6/test_listy_rank10.py"
   ],
   "remainingAcceptance": [
     "remaining known content and classification",

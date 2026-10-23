@@ -17,6 +17,8 @@ import harness10
 import harness16
 import harness17
 import models08
+import models10
+import models16
 import models03
 from core import HEADERS, LANGUAGES, ROOT
 from models02 import MODELS, header
@@ -108,7 +110,11 @@ return json{{{{"observation",observed}},{{"elapsedMs",elapsed}}}};
 
 
 def submission_prefix(batch, language, reference=None):
-    if batch in (8, 10, 16, 17):
+    if batch == 10:
+        return models10.header(reference, language)
+    if batch == 16:
+        return models16.header(reference, language)
+    if batch in (8, 17):
         return models08.header(reference, language)
     if batch in (1, 5):
         return HEADERS[language] + (
@@ -151,6 +157,8 @@ def adapter(entry, language, batch):
         )
         if batch == 2:
             imports += "LinkedListNode = user.LinkedListNode\n"
+        elif batch == 10 and entry["ref"] == "10.4":
+            imports += "Listy = user.Listy\n"
         elif batch == 3:
             imports += "BankError = user.BankError\nIntStack = user.IntStack\nAnimal = user.Animal\n"
     elif language == "javascript":
@@ -163,6 +171,8 @@ def adapter(entry, language, batch):
         )
         if batch == 2:
             imports += "const LinkedListNode = user.LinkedListNode;\n"
+        elif batch == 10 and entry["ref"] == "10.4":
+            imports += "const Listy = user.Listy;\n"
         elif batch == 3:
             imports += "const {BankError, IntStack, Animal} = user;\n"
     else:
@@ -218,6 +228,7 @@ def generate_runtime():
                 exports = (
                     ["LinkedListNode"]
                     if batch == 2
+                    else ["Listy"] if batch == 10 and entry["ref"] == "10.4"
                     else ["BankError", "IntStack", "Animal"]
                     if batch == 3
                     else []
@@ -239,7 +250,7 @@ def generate_runtime():
                             HEADERS[language]
                         )
                         if batch == 3
-                        else ""
+                        else models10.LISTY[language] if batch == 10 and entry["ref"] == "10.4" else ""
                     ),
                 )
             rows.append(item)

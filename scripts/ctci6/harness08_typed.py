@@ -5,11 +5,12 @@ from core import ROOT
 from models08 import header, TYPES
 
 
-def _source(language, starters=False, only_ref=None, staging_name='staged08'):
+def _source(language, starters=False, only_ref=None, staging_name='staged08', exclude_refs=(), allow_empty=False):
     entries = json.loads((ROOT / 'ctci6' / staging_name / 'catalog.json').read_text())
     if only_ref is not None:
         entries = [e for e in entries if e['ref'] == only_ref]
-    if not entries:
+    entries = [e for e in entries if e['ref'] not in exclude_refs]
+    if not entries and not allow_empty:
         raise ValueError('Unknown recursion exercise')
     declarations, branches = [], []
     for entry in entries:
@@ -130,12 +131,13 @@ int main(){{std::ifstream input("cases.json");json rows;input>>rows;json results
 '''
 
 
-def source(language, starters=False, only_ref=None, staging_name='staged08'):
+def source(language, starters=False, only_ref=None, staging_name='staged08', exclude_refs=(), allow_empty=False):
     """Extend only new shapes; unchanged per-reference adapters remain byte-identical."""
-    value = _source(language, starters, only_ref, staging_name)
+    value = _source(language, starters, only_ref, staging_name, exclude_refs, allow_empty)
     entries = json.loads((ROOT / 'ctci6' / staging_name / 'catalog.json').read_text())
     if only_ref is not None:
         entries = [entry for entry in entries if entry['ref'] == only_ref]
+    entries = [entry for entry in entries if entry['ref'] not in exclude_refs]
     if language == 'java' and any(kind == 'as' for entry in entries for _, kind in entry['params']):
         helper = 'static String[] strings(JsonArray values){String[] output=new String[values.size()];for(int i=0;i<output.length;++i)output[i]=values.get(i).asString();return output;}\n'
         value = value.replace('public class Harness {\n', 'public class Harness {\n' + helper, 1)

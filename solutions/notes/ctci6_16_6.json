@@ -1,0 +1,26 @@
+{
+  "explanation": "Sorted copies expose the closest cross-array neighbors without checking every pair. At current values a and b, moving the larger value can only keep or increase the gap while the smaller stays fixed. Record their difference, then advance the smaller side to seek a closer value.",
+  "correctness": "Consider current sorted values a<=b. Every not-yet-visited value on the second side is at least b, so none can improve the recorded b-a while a stays fixed. Discarding a is safe. The symmetric argument applies when b<a. Every discarded value has therefore been paired with its best remaining candidate, and any candidates skipped earlier were already bounded by an earlier recorded difference. The least recorded difference is the global minimum. Equal values certify the optimal lower bound zero. Empty input has no cross-array pair and uses the explicit -1 convention.",
+  "walkthrough": "For first=[10,1,20] and second=[14,5], sort copies to [1,10,20] and [5,14]. Record gaps 4 (1,5), 5 (10,5), 4 (10,14), and 6 (20,14), returning 4. For [-2147483648] and [2147483647], the exact answer is 4294967295 rather than an overflowing signed value.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        10,
+        1,
+        20
+      ],
+      [
+        14,
+        5
+      ]
+    ],
+    "expected": 4
+  },
+  "timeComplexity": "O(n log(n+1)+m log(m+1)) sorting time plus O(n+m) pointer advances.",
+  "spaceComplexity": "O(n+m) for the two private sorted copies; library sorting workspace is bounded by this storage.",
+  "edgeCases": [
+    "Either input empty, duplicates and a shared value.",
+    "Signed endpoints and differences above 2147483647."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.6. No affiliation is implied."
+}

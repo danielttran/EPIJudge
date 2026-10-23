@@ -331,6 +331,86 @@
     }
   },
   {
+    "ref": "17.11",
+    "method": "WordDistance",
+    "params": [
+      [
+        "words",
+        "as"
+      ],
+      [
+        "first",
+        "s"
+      ],
+      [
+        "second",
+        "s"
+      ]
+    ],
+    "result": "i",
+    "mutation": "none",
+    "description": "Return the smallest absolute difference between an occurrence index of first and an occurrence index of second in the tokenized text words. Count index steps, not just intervening words. Return -1 if either requested word is absent.",
+    "constraints": [
+      "words contains 0..10000 nonnull lowercase ASCII words, each 1..20 letters. first and second are distinct nonempty lowercase ASCII words of length at most 20. Matching is case-sensitive and requires a complete token.",
+      "Preserve words and its order. Positions are zero-based. Adjacent requested words have distance 1, and two equal query words are outside this callable's domain. This is the single-query task; no persistent index is supplied."
+    ],
+    "why": "Remember the most recent position of each requested word. When one appears, its closest partner among all earlier opposite-word occurrences is the latest such occurrence. Updating the best distance at those encounters finds every possible closest cross-word boundary without storing all positions.",
+    "correctness": "For any occurrence at index i, every earlier opposite-word index j has distance i-j. This distance is smallest for the largest such j, which is exactly the remembered last position. Every pair has a later endpoint; when that endpoint is scanned, the algorithm considers a pair at least as close. Taking the least of these candidate distances therefore finds the global minimum. Only actual occurrences update remembered positions, so every candidate is valid. If either word never occurs, no candidate exists and the explicit -1 result is correct.",
+    "walkthrough": "For words=[red,x,blue,red,y,blue], first=red and second=blue, the encounter at index 2 yields distance 2 from red at 0. The red at index 3 is only 1 away from blue at 2, improving the best to 1. The final blue is 2 away from red at 3, so return 1, not zero intervening words.",
+    "example": [
+      [
+        [
+          "red",
+          "x",
+          "blue",
+          "red",
+          "y",
+          "blue"
+        ],
+        "red",
+        "blue"
+      ],
+      1
+    ],
+    "time": "O(n*L) worst-case character comparison work for n tokens and maximum word length L; O(n) token comparisons.",
+    "space": "O(1) auxiliary index/count storage.",
+    "edges": [
+      "Empty text, one or both words absent.",
+      "Adjacent targets, repeated runs and the closest pair appearing late."
+    ],
+    "related": "The author public single-query scan returns a location pair. This callable exposes its minimum index distance and explicitly defines absence and distinct-query behavior.",
+    "id": "ctci6_17_11",
+    "title": "Word Distance",
+    "testCount": 1193,
+    "languages": {
+      "csharp": {
+        "signature": "int WordDistance(string[] words, string first, string second)",
+        "starterCode": "public class Solution\n{\n    public int WordDistance(string[] words, string first, string second)\n    {\n        return 0;\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public int WordDistance(string[] words, string first, string second)\n    {\n        int lastFirst = -1, lastSecond = -1, best = words.Length + 1;\n        for (int i = 0; i < words.Length; ++i)\n        {\n            if (words[i] == first)\n            {\n                lastFirst = i;\n                if (lastSecond >= 0)\n                    best = Math.Min(best, i - lastSecond);\n            }\n            else if (words[i] == second)\n            {\n                lastSecond = i;\n                if (lastFirst >= 0)\n                    best = Math.Min(best, i - lastFirst);\n            }\n        }\n        return best == words.Length + 1 ? -1 : best;\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function WordDistance(words, first, second)",
+        "starterCode": "function WordDistance(words, first, second) {\n  return 0;\n}\n",
+        "solutionCode": "function WordDistance(words, first, second) {\n  let lastFirst = -1,\n    lastSecond = -1,\n    best = words.length + 1;\n  for (let i = 0; i < words.length; ++i) {\n    if (words[i] === first) {\n      lastFirst = i;\n      if (lastSecond >= 0) best = Math.min(best, i - lastSecond);\n    } else if (words[i] === second) {\n      lastSecond = i;\n      if (lastFirst >= 0) best = Math.min(best, i - lastFirst);\n    }\n  }\n  return best === words.length + 1 ? -1 : best;\n}\n"
+      },
+      "python": {
+        "signature": "def WordDistance(words: list[str], first: str, second: str) -> int",
+        "starterCode": "def WordDistance(words: list[str], first: str, second: str) -> int:\n    return 0\n",
+        "solutionCode": "def WordDistance(words: list[str], first: str, second: str) -> int:\n    last_first = last_second = -1\n    best = len(words) + 1\n    for index, word in enumerate(words):\n        if word == first:\n            last_first = index\n            if last_second >= 0:\n                best = min(best, index - last_second)\n        elif word == second:\n            last_second = index\n            if last_first >= 0:\n                best = min(best, index - last_first)\n    return -1 if best == len(words) + 1 else best\n"
+      },
+      "cpp": {
+        "signature": "int WordDistance(const std::vector<std::string>& words, const std::string& first, const std::string& second)",
+        "starterCode": "class Solution {\n public:\n  int WordDistance(const std::vector<std::string>& words, const std::string& first,\n                   const std::string& second) {\n    return 0;\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  int WordDistance(const std::vector<std::string>& words, const std::string& first,\n                   const std::string& second) {\n    int lastFirst = -1, lastSecond = -1, best = static_cast<int>(words.size()) + 1;\n    for (int i = 0; i < static_cast<int>(words.size()); ++i) {\n      if (words[i] == first) {\n        lastFirst = i;\n        if (lastSecond >= 0)\n          best = std::min(best, i - lastSecond);\n      } else if (words[i] == second) {\n        lastSecond = i;\n        if (lastFirst >= 0)\n          best = std::min(best, i - lastFirst);\n      }\n    }\n    return best == static_cast<int>(words.size()) + 1 ? -1 : best;\n  }\n};\n"
+      },
+      "java": {
+        "signature": "int WordDistance(String[] words, String first, String second)",
+        "starterCode": "class Solution {\n  public int WordDistance(String[] words, String first, String second) {\n    return 0;\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public int WordDistance(String[] words, String first, String second) {\n    int lastFirst = -1, lastSecond = -1, best = words.length + 1;\n    for (int i = 0; i < words.length; ++i) {\n      if (words[i].equals(first)) {\n        lastFirst = i;\n        if (lastSecond >= 0)\n          best = Math.min(best, i - lastSecond);\n      } else if (words[i].equals(second)) {\n        lastSecond = i;\n        if (lastFirst >= 0)\n          best = Math.min(best, i - lastFirst);\n      }\n    }\n    return best == words.length + 1 ? -1 : best;\n  }\n}\n"
+      }
+    }
+  },
+  {
     "ref": "17.14",
     "method": "SmallestK",
     "params": [
@@ -416,6 +496,75 @@
     }
   },
   {
+    "ref": "17.15",
+    "method": "LongestComposedWord",
+    "params": [
+      [
+        "words",
+        "as"
+      ]
+    ],
+    "result": "s",
+    "mutation": "none",
+    "description": "Return the longest dictionary word that can be formed by concatenating at least two nonempty words from the same dictionary. A dictionary word may be reused any number of times as a component; this is vocabulary membership, not consuming input occurrences. If several longest words qualify, return the lexicographically smallest. Return an empty string if none qualifies.",
+    "constraints": [
+      "words is a nonnull array of 0..200 nonnull strings, each 1..40 lowercase ASCII letters. Duplicate dictionary entries do not create new spellings or permit a one-component answer.",
+      "Preserve the input array and its order. Components concatenate without spaces or gaps and must spell the entire candidate. The candidate itself as one component is insufficient; at least two components are required. Lexicographic ties use ASCII letter order."
+    ],
+    "why": "For each candidate, use prefix dynamic programming to record how many dictionary components can spell each reachable prefix. A valid final prefix needs at least two components, so the candidate's own dictionary membership cannot falsely qualify it. A set permits component membership checks; comparing successful candidates by length and then lexicographic order resolves the output unambiguously.",
+    "correctness": "Let dp[i] be the largest number of components spelling the first i characters, or -1 when unreachable, with dp[0]=0. Every transition appends a nonempty dictionary substring to a reachable prefix, so it creates a valid decomposition. Conversely, removing the last component of any valid decomposition leaves a shorter reachable prefix; induction ensures the transition for that last component is considered. Thus dp[length]>=2 holds exactly for candidates with the required decomposition. Keeping the longest successful word and the smallest lexicographic word on a length tie produces the specified global choice. Repeated component use is allowed because membership is not consumed.",
+    "walkthrough": "For [cat,dog,catdog,dogcat,catcatdog], catdog and dogcat each have two components. catcatdog has three: cat+cat+dog, so its length 9 beats their length 6 and it is returned. For [cat,dog,catdog,dogcat], the equal-length tie selects catdog. A dictionary containing only cat has no qualifying word.",
+    "example": [
+      [
+        [
+          "cat",
+          "dog",
+          "catdog",
+          "dogcat",
+          "catcatdog"
+        ]
+      ],
+      "catcatdog"
+    ],
+    "time": "Expected O(W*L^3) character work for W candidate entries of maximum length L: O(L^2) substrings per candidate, each costing up to O(L) copying/hashing. Hash collisions can worsen membership costs.",
+    "space": "O(D*L) dictionary storage plus O(L) DP and substring workspace per candidate, for D distinct words; the input is not sorted or mutated.",
+    "edges": [
+      "No composed word, repeated dictionary entries and a word that equals only itself.",
+      "Repeated component reuse, multiple decompositions and equal-length lexical ties."
+    ],
+    "related": "The author task permits recursive reuse of dictionary components. The bank specifies an explicit lexical tie convention and uses independently authored prefix DP rather than its recursive implementation.",
+    "id": "ctci6_17_15",
+    "title": "Longest Word",
+    "testCount": 230,
+    "languages": {
+      "csharp": {
+        "signature": "string LongestComposedWord(string[] words)",
+        "starterCode": "public class Solution\n{\n    public string LongestComposedWord(string[] words)\n    {\n        return \"\";\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public string LongestComposedWord(string[] words)\n    {\n        var dictionary = new HashSet<string>(words, StringComparer.Ordinal);\n        string best = \"\";\n        foreach (string word in words)\n        {\n            int[] dp = new int[word.Length + 1];\n            Array.Fill(dp, -1);\n            dp[0] = 0;\n            for (int end = 1; end <= word.Length; ++end)\n                for (int start = 0; start < end; ++start)\n                    if (dp[start] >= 0 && dictionary.Contains(word.Substring(start, end - start)))\n                        dp[end] = Math.Max(dp[end], dp[start] + 1);\n            if (dp[word.Length] >= 2 &&\n                (word.Length > best.Length ||\n                 (word.Length == best.Length && StringComparer.Ordinal.Compare(word, best) < 0)))\n                best = word;\n        }\n        return best;\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function LongestComposedWord(words)",
+        "starterCode": "function LongestComposedWord(words) {\n  return \"\";\n}\n",
+        "solutionCode": "function LongestComposedWord(words) {\n  const dictionary = new Set(words);\n  let best = \"\";\n  for (const word of words) {\n    const dp = new Array(word.length + 1).fill(-1);\n    dp[0] = 0;\n    for (let end = 1; end <= word.length; ++end)\n      for (let start = 0; start < end; ++start)\n        if (dp[start] >= 0 && dictionary.has(word.slice(start, end)))\n          dp[end] = Math.max(dp[end], dp[start] + 1);\n    if (\n      dp[word.length] >= 2 &&\n      (word.length > best.length || (word.length === best.length && word < best))\n    )\n      best = word;\n  }\n  return best;\n}\n"
+      },
+      "python": {
+        "signature": "def LongestComposedWord(words: list[str]) -> str",
+        "starterCode": "def LongestComposedWord(words: list[str]) -> str:\n    return \"\"\n",
+        "solutionCode": "def LongestComposedWord(words: list[str]) -> str:\n    dictionary = set(words)\n    best = \"\"\n    for word in words:\n        dp = [-1] * (len(word) + 1)\n        dp[0] = 0\n        for end in range(1, len(word) + 1):\n            for start in range(end):\n                if dp[start] >= 0 and word[start:end] in dictionary:\n                    dp[end] = max(dp[end], dp[start] + 1)\n        if dp[-1] >= 2 and (len(word) > len(best) or (len(word) == len(best) and word < best)):\n            best = word\n    return best\n"
+      },
+      "cpp": {
+        "signature": "std::string LongestComposedWord(const std::vector<std::string>& words)",
+        "starterCode": "#include <unordered_set>\nclass Solution {\n public:\n  std::string LongestComposedWord(const std::vector<std::string>& words) {\n    return \"\";\n  }\n};\n",
+        "solutionCode": "#include <unordered_set>\nclass Solution {\n public:\n  std::string LongestComposedWord(const std::vector<std::string>& words) {\n    std::unordered_set<std::string> dictionary(words.begin(), words.end());\n    std::string best;\n    for (const auto& word : words) {\n      int n = static_cast<int>(word.size());\n      std::vector<int> dp(n + 1, -1);\n      dp[0] = 0;\n      for (int end = 1; end <= n; ++end)\n        for (int start = 0; start < end; ++start)\n          if (dp[start] >= 0 && dictionary.count(word.substr(start, end - start)))\n            dp[end] = std::max(dp[end], dp[start] + 1);\n      if (dp[n] >= 2 && (word.size() > best.size() || (word.size() == best.size() && word < best)))\n        best = word;\n    }\n    return best;\n  }\n};\n"
+      },
+      "java": {
+        "signature": "String LongestComposedWord(String[] words)",
+        "starterCode": "class Solution {\n  public String LongestComposedWord(String[] words) {\n    return \"\";\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public String LongestComposedWord(String[] words) {\n    Set<String> dictionary = new HashSet<>(Arrays.asList(words));\n    String best = \"\";\n    for (String word : words) {\n      int[] dp = new int[word.length() + 1];\n      Arrays.fill(dp, -1);\n      dp[0] = 0;\n      for (int end = 1; end <= word.length(); ++end)\n        for (int start = 0; start < end; ++start)\n          if (dp[start] >= 0 && dictionary.contains(word.substring(start, end)))\n            dp[end] = Math.max(dp[end], dp[start] + 1);\n      if (dp[word.length()] >= 2\n          && (word.length() > best.length()\n              || (word.length() == best.length() && word.compareTo(best) < 0)))\n        best = word;\n    }\n    return best;\n  }\n}\n"
+      }
+    }
+  },
+  {
     "ref": "17.16",
     "method": "MaximumMassageMinutes",
     "params": [
@@ -484,6 +633,97 @@
         "signature": "int MaximumMassageMinutes(int[] appointments)",
         "starterCode": "class Solution {\n  public int MaximumMassageMinutes(int[] appointments) {\n    return 0;\n  }\n}\n",
         "solutionCode": "class Solution {\n  public int MaximumMassageMinutes(int[] appointments) {\n    int oneBack = 0, twoBack = 0;\n    for (int duration : appointments) {\n      int current = Math.max(oneBack, duration + twoBack);\n      twoBack = oneBack;\n      oneBack = current;\n    }\n    return oneBack;\n  }\n}\n"
+      }
+    }
+  },
+  {
+    "ref": "17.17",
+    "method": "MultiSearch",
+    "params": [
+      [
+        "text",
+        "s"
+      ],
+      [
+        "patterns",
+        "as"
+      ]
+    ],
+    "result": "aai",
+    "mutation": "none",
+    "description": "For every pattern, return all zero-based positions where it starts in text. Include overlapping occurrences. Return one integer row per pattern, in original pattern order; positions within each row increase. A missing pattern has an empty row.",
+    "constraints": [
+      "text has 0..1000 lowercase ASCII letters. patterns is a nonnull array of 0..100 nonnull strings, each 0..20 lowercase ASCII letters. Preserve the array and strings; duplicate queries receive separate identical result rows.",
+      "A pattern must match its entire text window. The empty pattern occurs at all boundaries 0..text.length inclusive, including boundary 0 in empty text. A nonempty pattern longer than text has no occurrence."
+    ],
+    "why": "The direct baseline tests each legal start position independently for each query. Bounding starts by text.length-pattern.length prevents overreads, while advancing by one retains overlaps. Returning rows rather than a map preserves the order and multiplicity of the supplied query list.",
+    "correctness": "A legal occurrence of a pattern of length m must start at one of the positions 0 through n-m, and the loop examines each exactly once. Character-by-character equality (or equivalent exact substring comparison) accepts precisely the windows spelling that pattern, so no occurrence is missed or invented. Increasing start order yields increasing output positions and includes overlaps. For m=0, each of the n+1 legal windows is empty, giving the stated boundary convention. An outer loop over patterns preserves every query position, including duplicates.",
+    "walkthrough": "For text=ababa and patterns=[aba,ba,z,\"\"], aba starts at [0,2], ba at [1,3], and z has no match. The empty pattern row is [0,1,2,3,4,5]. The two aba occurrences overlap at index 2; moving by pattern length would miss one.",
+    "example": [
+      [
+        "ababa",
+        [
+          "aba",
+          "ba",
+          "z",
+          ""
+        ]
+      ],
+      [
+        [
+          0,
+          2
+        ],
+        [
+          1,
+          3
+        ],
+        [],
+        [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      ]
+    ],
+    "time": "O(P+sum(max(0,n-m+1)*(m+1))) worst-case time over P patterns of lengths m and text length n; this is the direct baseline, not a trie-optimized search.",
+    "space": "O(K+P+L) for K returned positions, P result rows and at most L temporary substring characters; constant comparison indices beyond the output in versions using direct character comparison.",
+    "edges": [
+      "Empty text/pattern, missing pattern and a pattern longer than text.",
+      "Overlaps, repeated queries and matches at the final legal start."
+    ],
+    "related": "The author public direct baseline establishes inclusive start enumeration, including empty patterns. Per-query rows replace its map without silently losing repeated queries.",
+    "id": "ctci6_17_17",
+    "title": "Multi Search",
+    "testCount": 231,
+    "languages": {
+      "csharp": {
+        "signature": "int[][] MultiSearch(string text, string[] patterns)",
+        "starterCode": "public class Solution\n{\n    public int[][] MultiSearch(string text, string[] patterns)\n    {\n        return [];\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public int[][] MultiSearch(string text, string[] patterns)\n    {\n        var result = new List<int[]>();\n        foreach (string pattern in patterns)\n        {\n            var positions = new List<int>();\n            for (int start = 0; start + pattern.Length <= text.Length; ++start)\n                if (string.CompareOrdinal(text, start, pattern, 0, pattern.Length) == 0)\n                    positions.Add(start);\n            result.Add(positions.ToArray());\n        }\n        return result.ToArray();\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function MultiSearch(text, patterns)",
+        "starterCode": "function MultiSearch(text, patterns) {\n  return [];\n}\n",
+        "solutionCode": "function MultiSearch(text, patterns) {\n  const result = [];\n  for (const pattern of patterns) {\n    const positions = [];\n    for (let start = 0; start + pattern.length <= text.length; ++start)\n      if (text.startsWith(pattern, start)) positions.push(start);\n    result.push(positions);\n  }\n  return result;\n}\n"
+      },
+      "python": {
+        "signature": "def MultiSearch(text: str, patterns: list[str]) -> list[list[int]]",
+        "starterCode": "def MultiSearch(text: str, patterns: list[str]) -> list[list[int]]:\n    return []\n",
+        "solutionCode": "def MultiSearch(text: str, patterns: list[str]) -> list[list[int]]:\n    result = []\n    for pattern in patterns:\n        positions = []\n        for start in range(len(text) - len(pattern) + 1):\n            if text.startswith(pattern, start):\n                positions.append(start)\n        result.append(positions)\n    return result\n"
+      },
+      "cpp": {
+        "signature": "std::vector<std::vector<int>> MultiSearch(const std::string& text, const std::vector<std::string>& patterns)",
+        "starterCode": "class Solution {\n public:\n  std::vector<std::vector<int>> MultiSearch(const std::string& text,\n                                            const std::vector<std::string>& patterns) {\n    return {};\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  std::vector<std::vector<int>> MultiSearch(const std::string& text,\n                                            const std::vector<std::string>& patterns) {\n    std::vector<std::vector<int>> result;\n    for (const auto& pattern : patterns) {\n      std::vector<int> positions;\n      int limit = static_cast<int>(text.size()) - static_cast<int>(pattern.size());\n      for (int start = 0; start <= limit; ++start)\n        if (text.compare(start, pattern.size(), pattern) == 0)\n          positions.push_back(start);\n      result.push_back(std::move(positions));\n    }\n    return result;\n  }\n};\n"
+      },
+      "java": {
+        "signature": "int[][] MultiSearch(String text, String[] patterns)",
+        "starterCode": "class Solution {\n  public int[][] MultiSearch(String text, String[] patterns) {\n    return new int[0][];\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public int[][] MultiSearch(String text, String[] patterns) {\n    List<int[]> result = new ArrayList<>();\n    for (String pattern : patterns) {\n      List<Integer> positions = new ArrayList<>();\n      for (int start = 0; start + pattern.length() <= text.length(); ++start)\n        if (text.startsWith(pattern, start))\n          positions.add(start);\n      int[] row = new int[positions.size()];\n      for (int i = 0; i < row.length; ++i)\n        row[i] = positions.get(i);\n      result.add(row);\n    }\n    return result.toArray(new int[0][]);\n  }\n}\n"
       }
     }
   },

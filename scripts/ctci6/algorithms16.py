@@ -163,3 +163,72 @@ return sizes'''
     add='sizes.Add(size);' if language=='csharp' else 'sizes.add(size);' if language=='java' else 'sizes.push_back(size);'
     finish='sizes.Sort();return sizes.ToArray();' if language=='csharp' else 'Collections.sort(sizes);int[] result=new int[sizes.size()];for(int i=0;i<result.length;++i)result[i]=sizes.get(i);return result;' if language=='java' else 'std::sort(sizes.begin(),sizes.end());return sizes;'
     return f'int rows={rows},columns=rows==0?0:{cols};{setup}for(int row=0;row<rows;++row){{for(int column=0;column<columns;++column){{if(land[row][column]!=0||{at("row","column")})continue;{at("row","column")}=true;{work}int size=0;while({count}){{{pop}++size;for(int dr=-1;dr<=1;++dr){{for(int dc=-1;dc<=1;++dc){{if(dr==0&&dc==0)continue;int nr=r+dr,nc=c+dc;if(nr>=0&&nr<rows&&nc>=0&&nc<columns&&land[nr][nc]==0&&!{at("nr","nc")}){{{at("nr","nc")}=true;{push}}}}}}}}}{add}}}}}{finish}'
+
+_previous_batch_body=body
+
+def body(ref,language):
+    if ref=='16.2':
+        if language=='python':return '''counts = {}
+for word in book:
+    key = word.lower()
+    counts[key] = counts.get(key, 0) + 1
+return [counts.get(word.lower(), 0) for word in queries]'''
+        if language=='javascript':return 'const counts=new Map();for(const word of book){const key=word.toLowerCase();counts.set(key,(counts.get(key)||0)+1);}return queries.map(word=>counts.get(word.toLowerCase())||0);'
+        if language=='csharp':return 'var counts=new Dictionary<string,int>(StringComparer.Ordinal);foreach(string word in book){string key=word.ToLowerInvariant();counts.TryGetValue(key,out int count);counts[key]=count+1;}int[] result=new int[queries.Length];for(int i=0;i<queries.Length;++i){counts.TryGetValue(queries[i].ToLowerInvariant(),out int count);result[i]=count;}return result;'
+        if language=='java':return 'Map<String,Integer> counts=new HashMap<>();for(String word:book){String key=word.toLowerCase(Locale.ROOT);counts.put(key,counts.getOrDefault(key,0)+1);}int[] result=new int[queries.length];for(int i=0;i<queries.length;++i)result[i]=counts.getOrDefault(queries[i].toLowerCase(Locale.ROOT),0);return result;'
+        return 'std::unordered_map<std::string,int> counts;for(auto word:book){for(char& c:word)if(c>=\'A\'&&c<=\'Z\')c=static_cast<char>(c-\'A\'+\'a\');++counts[word];}std::vector<int> result;result.reserve(queries.size());for(auto word:queries){for(char& c:word)if(c>=\'A\'&&c<=\'Z\')c=static_cast<char>(c-\'A\'+\'a\');auto found=counts.find(word);result.push_back(found==counts.end()?0:found->second);}return result;'
+    if ref=='16.6':
+        if language=='python':return '''if not first or not second:
+    return -1
+a, b = sorted(first), sorted(second)
+i = j = 0
+best = 4294967295
+while i < len(a) and j < len(b):
+    difference = a[i] - b[j]
+    best = min(best, abs(difference))
+    if difference == 0:
+        return 0
+    if difference < 0:
+        i += 1
+    else:
+        j += 1
+return best'''
+        if language=='javascript':return 'if(!first.length||!second.length)return -1;const a=first.slice().sort((x,y)=>x-y),b=second.slice().sort((x,y)=>x-y);let i=0,j=0,best=4294967295;while(i<a.length&&j<b.length){const difference=a[i]-b[j];best=Math.min(best,Math.abs(difference));if(difference===0)return 0;if(difference<0)++i;else ++j;}return best;'
+        if language=='cpp':return 'if(first.empty()||second.empty())return -1;auto a=first,b=second;std::sort(a.begin(),a.end());std::sort(b.begin(),b.end());size_t i=0,j=0;long long best=4294967295LL;while(i<a.size()&&j<b.size()){long long difference=static_cast<long long>(a[i])-b[j];best=std::min(best,difference<0?-difference:difference);if(difference==0)return 0;if(difference<0)++i;else ++j;}return best;'
+        size='Length' if language=='csharp' else 'length';clone='(int[])first.Clone(),b=(int[])second.Clone()' if language=='csharp' else 'first.clone(),b=second.clone()';sort='Array.Sort(a);Array.Sort(b);' if language=='csharp' else 'Arrays.sort(a);Arrays.sort(b);';minimum='Math.Min' if language=='csharp' else 'Math.min';absolute='Math.Abs' if language=='csharp' else 'Math.abs'
+        return f'if(first.{size}==0||second.{size}==0)return -1;int[] a={clone};{sort}int i=0,j=0;long best=4294967295L;while(i<a.{size}&&j<b.{size}){{long difference=(long)a[i]-b[j];best={minimum}(best,{absolute}(difference));if(difference==0)return 0;if(difference<0)++i;else ++j;}}return best;'
+    if ref=='16.21':
+        if language=='python':return '''difference = sum(first) - sum(second)
+if difference % 2:
+    return []
+half = difference // 2
+contents = set(second)
+for value in first:
+    required = value - half
+    if required in contents:
+        return [value, required]
+return []'''
+        if language=='javascript':return 'let difference=0;for(const value of first)difference+=value;for(const value of second)difference-=value;if(difference%2!==0)return [];const half=difference/2,contents=new Set(second);for(const value of first){const required=value-half;if(contents.has(required))return [value,required];}return [];'
+        if language=='cpp':return 'long long difference=0;for(int value:first)difference+=value;for(int value:second)difference-=value;if(difference%2!=0)return {};long long half=difference/2;std::unordered_set<int> contents(second.begin(),second.end());for(int value:first){long long required=static_cast<long long>(value)-half;if(required>=-2147483648LL&&required<=2147483647LL&&contents.count(static_cast<int>(required)))return {value,static_cast<int>(required)};}return {};'
+        loop='foreach(int value in ' if language=='csharp' else 'for(int value:';contains='contents.Contains((int)required)' if language=='csharp' else 'contents.contains((int)required)';sets='var contents=new HashSet<int>(second);' if language=='csharp' else 'Set<Integer> contents=new HashSet<>();for(int value:second)contents.add(value);';pair='return [value,(int)required];' if language=='csharp' else 'return new int[]{value,(int)required};';empty='return [];' if language=='csharp' else 'return new int[0];'
+        return f'long difference=0;{loop}first)difference+=value;{loop}second)difference-=value;if(difference%2!=0){{{empty}}}long half=difference/2;{sets}{loop}first){{long required=(long)value-half;if(required>=-2147483648L&&required<=2147483647L&&{contains}){{{pair}}}}}{empty}'
+    if ref=='16.24':
+        if language=='python':return '''ordered = sorted(values)
+left, right = 0, len(ordered) - 1
+result = []
+while left < right:
+    total = ordered[left] + ordered[right]
+    if total == target:
+        result.append([ordered[left], ordered[right]])
+        left += 1
+        right -= 1
+    elif total < target:
+        left += 1
+    else:
+        right -= 1
+return result'''
+        if language=='javascript':return 'const ordered=values.slice().sort((a,b)=>a-b),result=[];let left=0,right=ordered.length-1;while(left<right){const total=ordered[left]+ordered[right];if(total===target){result.push([ordered[left],ordered[right]]);++left;--right;}else if(total<target)++left;else --right;}return result;'
+        if language=='cpp':return 'auto ordered=values;std::sort(ordered.begin(),ordered.end());std::vector<std::vector<int>> result;int left=0,right=static_cast<int>(ordered.size())-1;while(left<right){long long total=static_cast<long long>(ordered[left])+ordered[right];if(total==target){result.push_back({ordered[left],ordered[right]});++left;--right;}else if(total<target)++left;else --right;}return result;'
+        clone='(int[])values.Clone();Array.Sort(ordered);var result=new List<int[]>();' if language=='csharp' else 'values.clone();Arrays.sort(ordered);List<int[]> result=new ArrayList<>();';size='Length' if language=='csharp' else 'length';append='result.Add([ordered[left],ordered[right]]);' if language=='csharp' else 'result.add(new int[]{ordered[left],ordered[right]});';finish='return result.ToArray();' if language=='csharp' else 'return result.toArray(new int[0][]);'
+        return f'int[] ordered={clone}int left=0,right=ordered.{size}-1;while(left<right){{long total=(long)ordered[left]+ordered[right];if(total==target){{{append}++left;--right;}}else if(total<target)++left;else --right;}}{finish}'
+    return _previous_batch_body(ref,language)

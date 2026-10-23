@@ -250,6 +250,84 @@
     }
   },
   {
+    "ref": "10.4",
+    "method": "SearchWithoutSize",
+    "params": [
+      [
+        "values",
+        "listy"
+      ],
+      [
+        "target",
+        "i"
+      ]
+    ],
+    "result": "i",
+    "mutation": "none",
+    "description": "Search the provided Listy without a size/length operation. Its sorted sequence contains positive integers; ElementAt(index) returns the value or -1 for an out-of-range index. Return any zero-based index containing target, or -1 when absent. Use logarithmically many ElementAt queries rather than scanning to discover the full length.",
+    "constraints": [
+      "The hidden sequence has 0..10000 positive signed 32-bit integers in nondecreasing order; duplicates are allowed. target is any signed 32-bit integer. Nonpositive targets cannot occur and return -1.",
+      "The first displayed example argument describes the hidden sequence, but the callable receives Listy, not an array. Use only ElementAt(index); do not inspect a concrete subtype, underlying storage, length, or reflection. Negative indices and indices at/after the hidden end return -1.",
+      "Preserve the sequence. A case permits at most 4*ceil(log2(n+2))+8 queries, where n is its hidden length. This generous logarithmic bound admits exponential range discovery followed by binary search. Provided API declarations are visible before the solution."
+    ],
+    "why": "Probe indices 1,2,4,8,... until a probe is absent or no smaller than target. The target can only lie between the preceding bound and this bound. Binary search that interval, treating -1 as beyond the end rather than as an ordinary negative value. This discovers enough range to search without first measuring the sequence.",
+    "correctness": "Before each doubling, the probed value is valid and below target, so all earlier positions are also too small. When doubling stops, the target, if present, lies between half the bound and the bound: the latter is either large enough or past the hidden end. During binary search, an out-of-range or too-large value safely removes the upper part, and a smaller value removes the lower part. Equality returns a verified index. Every step shrinks the remaining interval, proving absence when it empties. Exponential discovery and binary search each use logarithmically many probes.",
+    "walkthrough": "For hidden [1,2,4,5,6,7,9] and target 6, probes at 1 and 2 return 2 and 4, both too small. Probe 4 returns 6, providing an upper bound. Binary search indices 2..4 and return index 4. A -1 probe marks the end and must never match target=-1.",
+    "example": [
+      [
+        [
+          1,
+          2,
+          4,
+          5,
+          6,
+          7,
+          9
+        ],
+        6
+      ],
+      4
+    ],
+    "time": "O(log(n+1)) ElementAt calls and scalar work, with constant work for a nonpositive target.",
+    "space": "O(1) auxiliary indices and the latest probed value; the provided Listy storage is input, not an allocated search array.",
+    "edges": [
+      "Empty and singleton sequences, nonpositive or absent targets.",
+      "Repeated values, an upper bound beyond the end, and the largest positive integer.",
+      "Linear length-discovery programs exceed the query budget on large cases."
+    ],
+    "related": "The author Java implementation lives under the nested Arrayish directory. The bank makes the intended opaque access API explicit.",
+    "id": "ctci6_10_4",
+    "title": "Sorted Search No Size",
+    "testCount": 971,
+    "languages": {
+      "csharp": {
+        "signature": "int SearchWithoutSize(Listy values, int target)",
+        "starterCode": "public class Solution\n{\n    public int SearchWithoutSize(Listy values, int target)\n    {\n        return 0;\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public int SearchWithoutSize(Listy values, int target)\n    {\n        if (target <= 0)\n            return -1;\n        int bound = 1;\n        while (true)\n        {\n            int value = values.ElementAt(bound);\n            if (value == -1 || value >= target)\n                break;\n            bound *= 2;\n        }\n        int low = bound / 2, high = bound;\n        while (low <= high)\n        {\n            int middle = low + (high - low) / 2, value = values.ElementAt(middle);\n            if (value == -1 || value > target)\n                high = middle - 1;\n            else if (value < target)\n                low = middle + 1;\n            else\n                return middle;\n        }\n        return -1;\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function SearchWithoutSize(values, target)",
+        "starterCode": "function SearchWithoutSize(values, target) {\n  return 0;\n}\n",
+        "solutionCode": "function SearchWithoutSize(values, target) {\n  if (target <= 0) return -1;\n  let bound = 1;\n  while (true) {\n    const value = values.ElementAt(bound);\n    if (value === -1 || value >= target) break;\n    bound *= 2;\n  }\n  let low = Math.floor(bound / 2),\n    high = bound;\n  while (low <= high) {\n    const middle = low + Math.floor((high - low) / 2),\n      value = values.ElementAt(middle);\n    if (value === -1 || value > target) high = middle - 1;\n    else if (value < target) low = middle + 1;\n    else return middle;\n  }\n  return -1;\n}\n"
+      },
+      "python": {
+        "signature": "def SearchWithoutSize(values: Listy, target: int) -> int",
+        "starterCode": "def SearchWithoutSize(values: Listy, target: int) -> int:\n    return 0\n",
+        "solutionCode": "def SearchWithoutSize(values: Listy, target: int) -> int:\n    if target <= 0:\n        return -1\n    bound = 1\n    while True:\n        value = values.ElementAt(bound)\n        if value == -1 or value >= target:\n            break\n        bound *= 2\n    low, high = bound // 2, bound\n    while low <= high:\n        middle = low + (high - low) // 2\n        value = values.ElementAt(middle)\n        if value == -1 or value > target:\n            high = middle - 1\n        elif value < target:\n            low = middle + 1\n        else:\n            return middle\n    return -1\n"
+      },
+      "cpp": {
+        "signature": "int SearchWithoutSize(Listy& values, int target)",
+        "starterCode": "class Solution {\n public:\n  int SearchWithoutSize(Listy& values, int target) {\n    return 0;\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  int SearchWithoutSize(Listy& values, int target) {\n    if (target <= 0)\n      return -1;\n    int bound = 1;\n    while (true) {\n      int value = values.ElementAt(bound);\n      if (value == -1 || value >= target)\n        break;\n      bound *= 2;\n    }\n    int low = bound / 2, high = bound;\n    while (low <= high) {\n      int middle = low + (high - low) / 2, value = values.ElementAt(middle);\n      if (value == -1 || value > target)\n        high = middle - 1;\n      else if (value < target)\n        low = middle + 1;\n      else\n        return middle;\n    }\n    return -1;\n  }\n};\n"
+      },
+      "java": {
+        "signature": "int SearchWithoutSize(Listy values, int target)",
+        "starterCode": "class Solution {\n  public int SearchWithoutSize(Listy values, int target) {\n    return 0;\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public int SearchWithoutSize(Listy values, int target) {\n    if (target <= 0)\n      return -1;\n    int bound = 1;\n    while (true) {\n      int value = values.ElementAt(bound);\n      if (value == -1 || value >= target)\n        break;\n      bound *= 2;\n    }\n    int low = bound / 2, high = bound;\n    while (low <= high) {\n      int middle = low + (high - low) / 2, value = values.ElementAt(middle);\n      if (value == -1 || value > target)\n        high = middle - 1;\n      else if (value < target)\n        low = middle + 1;\n      else\n        return middle;\n    }\n    return -1;\n  }\n}\n"
+      }
+    }
+  },
+  {
     "ref": "10.5",
     "method": "SparseSearch",
     "params": [
@@ -327,6 +405,82 @@
         "signature": "int SparseSearch(String[] words, String target)",
         "starterCode": "class Solution {\n  public int SparseSearch(String[] words, String target) {\n    return 0;\n  }\n}\n",
         "solutionCode": "class Solution {\n  public int SparseSearch(String[] words, String target) {\n    if (target.isEmpty())\n      return -1;\n    int low = 0, high = words.length - 1;\n    while (low <= high) {\n      int middle = low + (high - low) / 2;\n      if (words[middle].isEmpty()) {\n        int left = middle - 1, right = middle + 1;\n        while (true) {\n          if (left < low && right > high)\n            return -1;\n          if (right <= high && !(words[right].isEmpty())) {\n            middle = right;\n            break;\n          }\n          if (left >= low && !(words[left].isEmpty())) {\n            middle = left;\n            break;\n          }\n          --left;\n          ++right;\n        }\n      }\n      int comparison = words[middle].compareTo(target);\n      if (comparison == 0)\n        return middle;\n      if (comparison < 0)\n        low = middle + 1;\n      else\n        high = middle - 1;\n    }\n    return -1;\n  }\n}\n"
+      }
+    }
+  },
+  {
+    "ref": "10.8",
+    "method": "RepeatedOccurrences",
+    "params": [
+      [
+        "values",
+        "ai"
+      ]
+    ],
+    "result": "ai",
+    "mutation": "none",
+    "description": "Report every occurrence of an integer after its first occurrence, in original encounter order. For example, three occurrences of 8 contribute two returned 8s. All values lie in 1..32000, and the actual largest value is not supplied. Preserve the input and use the interview's 4KB marking workspace.",
+    "constraints": [
+      "values is a nonnull array of 0..10000 integers in 1..32000. Return a concrete integer array/list/vector of repeated occurrences; do not deduplicate the output or sort the input.",
+      "Use at most 4000 bytes of marking bits and constant scalar bookkeeping. Input, final returned storage and language/runtime object headers are excluded from this logical 4KB interview workspace budget. A hash set or one-byte-per-value table does not meet the marking budget.",
+      "The implementation may read the array more than once. Count repeated occurrences first, then reuse the same bitmap to fill an exactly sized result, avoiding a separate growing output buffer plus a final copied array."
+    ],
+    "why": "One bit records whether a value has appeared, so 32000 possible values need 32000/8=4000 bytes. Subtract one before choosing the byte and bit because values begin at one. Returning an array instead of printing requires its size; a counting pass and a second pass with the cleared same bitmap avoid an extra input-sized working collection.",
+    "correctness": "During either pass, the bit for a value is set exactly when that value has appeared earlier in that pass. A clear bit is set on first occurrence; a set bit therefore identifies precisely each later occurrence. The first pass counts exactly the output length. Clearing all bitmap bytes restores the initial invariant, and the second pass writes those same repeated encounters into the preallocated result in input order. No input value is changed, every repeat is included and no first occurrence is included.",
+    "walkthrough": "For [8,1,8,8,32000,32000], the first 8 sets bit 7 of byte 0. Its next two occurrences are both repeats. The first 32000 sets the final bitmap bit; its next occurrence repeats. Count three outputs, clear the bitmap, and fill [8,8,32000] on the second pass.",
+    "example": [
+      [
+        [
+          8,
+          1,
+          8,
+          8,
+          32000,
+          32000
+        ]
+      ],
+      [
+        8,
+        8,
+        32000
+      ]
+    ],
+    "time": "O(n+U/8) time for two scans and clearing U/8 marking bytes, where U=32000 is fixed; hence O(n+1) for this domain.",
+    "space": "4000 marking bytes plus O(1) scalar bookkeeping, excluding the exactly sized final result. The bitmap is reused, not doubled between passes.",
+    "edges": [
+      "Empty input, all distinct values and one value repeated many times.",
+      "Values 1,8,9,31999,32000 cross byte and signed-byte boundaries.",
+      "Output multiplicity is occurrence count minus one, not one per distinct duplicate value."
+    ],
+    "related": "The author public code prints each repeated encounter; this callable returns that same sequence under an explicit memory model.",
+    "id": "ctci6_10_8",
+    "title": "Find Duplicates",
+    "testCount": 5468,
+    "languages": {
+      "csharp": {
+        "signature": "int[] RepeatedOccurrences(int[] values)",
+        "starterCode": "public class Solution\n{\n    public int[] RepeatedOccurrences(int[] values)\n    {\n        return [];\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public int[] RepeatedOccurrences(int[] values)\n    {\n        byte[] bits = new byte[4000];\n        int count = 0;\n        foreach (int value in values)\n        {\n            int slot = (value - 1) >> 3, mask = 1 << ((value - 1) & 7);\n            if ((bits[slot] & mask) != 0)\n                ++count;\n            else\n                bits[slot] = (byte)(bits[slot] | mask);\n        }\n        int[] result = new int[count];\n        Array.Clear(bits);\n        int write = 0;\n        foreach (int value in values)\n        {\n            int slot = (value - 1) >> 3, mask = 1 << ((value - 1) & 7);\n            if ((bits[slot] & mask) != 0)\n                result[write++] = value;\n            else\n                bits[slot] = (byte)(bits[slot] | mask);\n        }\n        return result;\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function RepeatedOccurrences(values)",
+        "starterCode": "function RepeatedOccurrences(values) {\n  return [];\n}\n",
+        "solutionCode": "function RepeatedOccurrences(values) {\n  const bits = new Uint8Array(4000);\n  let count = 0;\n  for (const value of values) {\n    const slot = (value - 1) >> 3,\n      mask = 1 << ((value - 1) & 7);\n    if (bits[slot] & mask) ++count;\n    else bits[slot] |= mask;\n  }\n  const result = new Array(count);\n  bits.fill(0);\n  let write = 0;\n  for (const value of values) {\n    const slot = (value - 1) >> 3,\n      mask = 1 << ((value - 1) & 7);\n    if (bits[slot] & mask) result[write++] = value;\n    else bits[slot] |= mask;\n  }\n  return result;\n}\n"
+      },
+      "python": {
+        "signature": "def RepeatedOccurrences(values: list[int]) -> list[int]",
+        "starterCode": "def RepeatedOccurrences(values: list[int]) -> list[int]:\n    return []\n",
+        "solutionCode": "def RepeatedOccurrences(values: list[int]) -> list[int]:\n    bits = bytearray(4000)\n    count = 0\n    for value in values:\n        slot, shift = (value - 1) >> 3, (value - 1) & 7\n        mask = 1 << shift\n        if bits[slot] & mask:\n            count += 1\n        else:\n            bits[slot] |= mask\n    result = [0] * count\n    for index in range(4000):\n        bits[index] = 0\n    write = 0\n    for value in values:\n        slot, shift = (value - 1) >> 3, (value - 1) & 7\n        mask = 1 << shift\n        if bits[slot] & mask:\n            result[write] = value\n            write += 1\n        else:\n            bits[slot] |= mask\n    return result\n"
+      },
+      "cpp": {
+        "signature": "std::vector<int> RepeatedOccurrences(const std::vector<int>& values)",
+        "starterCode": "class Solution {\n public:\n  std::vector<int> RepeatedOccurrences(const std::vector<int>& values) {\n    return {};\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  std::vector<int> RepeatedOccurrences(const std::vector<int>& values) {\n    std::array<unsigned char, 4000> bits{};\n    int count = 0;\n    for (int value : values) {\n      int slot = (value - 1) >> 3, mask = 1 << ((value - 1) & 7);\n      if ((bits[slot] & mask) != 0)\n        ++count;\n      else\n        bits[slot] = static_cast<unsigned char>(bits[slot] | mask);\n    }\n    std::vector<int> result(count);\n    bits.fill(0);\n    int write = 0;\n    for (int value : values) {\n      int slot = (value - 1) >> 3, mask = 1 << ((value - 1) & 7);\n      if ((bits[slot] & mask) != 0)\n        result[write++] = value;\n      else\n        bits[slot] = static_cast<unsigned char>(bits[slot] | mask);\n    }\n    return result;\n  }\n};\n"
+      },
+      "java": {
+        "signature": "int[] RepeatedOccurrences(int[] values)",
+        "starterCode": "class Solution {\n  public int[] RepeatedOccurrences(int[] values) {\n    return new int[0];\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public int[] RepeatedOccurrences(int[] values) {\n    byte[] bits = new byte[4000];\n    int count = 0;\n    for (int value : values) {\n      int slot = (value - 1) >> 3, mask = 1 << ((value - 1) & 7);\n      if ((bits[slot] & mask) != 0)\n        ++count;\n      else\n        bits[slot] = (byte) (bits[slot] | mask);\n    }\n    int[] result = new int[count];\n    Arrays.fill(bits, (byte) 0);\n    int write = 0;\n    for (int value : values) {\n      int slot = (value - 1) >> 3, mask = 1 << ((value - 1) & 7);\n      if ((bits[slot] & mask) != 0)\n        result[write++] = value;\n      else\n        bits[slot] = (byte) (bits[slot] | mask);\n    }\n    return result;\n  }\n}\n"
       }
     }
   },
@@ -414,6 +568,112 @@
         "signature": "int[] SearchSortedMatrix(int[][] matrix, int target)",
         "starterCode": "class Solution {\n  public int[] SearchSortedMatrix(int[][] matrix, int target) {\n    return new int[0];\n  }\n}\n",
         "solutionCode": "class Solution {\n  public int[] SearchSortedMatrix(int[][] matrix, int target) {\n    int rows = matrix.length, columns = rows == 0 ? 0 : matrix[0].length, row = 0,\n        column = columns - 1;\n    while (row < rows && column >= 0) {\n      int value = matrix[row][column];\n      if (value == target)\n        return new int[] {row, column};\n      if (value > target)\n        --column;\n      else\n        ++row;\n    }\n    return new int[] {-1, -1};\n  }\n}\n"
+      }
+    }
+  },
+  {
+    "ref": "10.10",
+    "method": "RankTracker",
+    "params": [
+      [
+        "operations",
+        "as"
+      ],
+      [
+        "arguments",
+        "aai"
+      ]
+    ],
+    "result": "state",
+    "mutation": "none",
+    "description": "Implement RankTracker for a stream of integers. Track(value) records one occurrence. GetRank(value) returns the number of tracked occurrences less than or equal to value, excluding ONE occurrence of value itself. Other equal occurrences still count. Return -1 if value has never been tracked, including an empty tracker.",
+    "constraints": [
+      "The input transcript has 1..2001 operations. The first is RankTracker with []; every later operation is Track or GetRank with exactly one signed 32-bit integer. Construct a fresh tracker for each transcript.",
+      "Track returns no value, represented by null in results. Constructor output is also null. Return one result per operation in order. GetRank returns a zero-based last-occurrence rank among sorted tracked values; an absent query returns -1, not the insertion position.",
+      "Preserve transcript inputs. Support changing stream state and duplicates; do not sort the caller transcript. Private implementation nodes are not caller-provided models."
+    ],
+    "why": "A search-tree node can cache how many tracked occurrences lie in its left subtree. Route equal inserted values left, so that count also includes earlier/later duplicates beneath an equal node. A rank query accumulates entire left subtrees and ancestor nodes only when moving right; finding the queried value adds its left count without counting that node itself.",
+    "correctness": "Every insertion preserves the BST rule left<=node<right and increments a node's left count exactly when the new occurrence enters that left subtree. During a query, the accumulated count contains exactly the smaller/equal occurrences already skipped on right turns. At equality, every left-subtree occurrence is <=value, and the current node is the one excluded occurrence, so accumulated+leftCount is the required rank. If traversal reaches no matching node, the value is absent and -1 is returned regardless of the partial accumulated count. Iterative traversal avoids recursion-depth failures on a skewed stream.",
+    "walkthrough": "Track 5,1,4,4. Sorted tracked values are [1,4,4,5]. GetRank(4) returns 2: one 1 and the OTHER 4 count, while one queried 4 is excluded. GetRank(2) returns -1 even though its insertion position would be 1. A new tracker begins empty.",
+    "example": [
+      [
+        [
+          "RankTracker",
+          "Track",
+          "Track",
+          "Track",
+          "Track",
+          "GetRank",
+          "GetRank"
+        ],
+        [
+          [],
+          [
+            5
+          ],
+          [
+            1
+          ],
+          [
+            4
+          ],
+          [
+            4
+          ],
+          [
+            4
+          ],
+          [
+            2
+          ]
+        ]
+      ],
+      [
+        null,
+        null,
+        null,
+        null,
+        null,
+        2,
+        -1
+      ]
+    ],
+    "time": "O(h) per Track/GetRank for tree height h. The actual BST is not balanced: worst-case h equals the number of tracked occurrences; do not claim guaranteed logarithmic time.",
+    "space": "O(t) stored nodes after t tracked occurrences and O(1) auxiliary iterative traversal space, excluding the returned transcript results.",
+    "edges": [
+      "Query before any Track and query an absent interior value.",
+      "Repeated equal values count other copies; negative and signed-endpoint values.",
+      "Ascending/descending streams create skewed trees but not recursive stack overflow."
+    ],
+    "related": "A fresh class replaces the public static root; rank semantics match its node left-size definition and explicit absence result.",
+    "id": "ctci6_10_10",
+    "title": "Rank from Stream",
+    "testCount": 188,
+    "languages": {
+      "csharp": {
+        "signature": "RankTracker(); void Track(int value); int GetRank(int value)",
+        "starterCode": "public class RankTracker\n{\n    public RankTracker()\n    {\n    }\n    public void Track(int value)\n    {\n    }\n    public int GetRank(int value)\n    {\n        return -1;\n    }\n}\n",
+        "solutionCode": "public class RankTracker\n{\n    private sealed class Node\n    {\n        public int Value, LeftCount;\n        public Node? Left, Right;\n        public Node(int value)\n        {\n            Value = value;\n        }\n    }\n    private Node? root;\n    public RankTracker()\n    {\n    }\n    public void Track(int value)\n    {\n        if (root == null)\n        {\n            root = new Node(value);\n            return;\n        }\n        Node node = root;\n        while (true)\n        {\n            if (value <= node.Value)\n            {\n                ++node.LeftCount;\n                if (node.Left == null)\n                {\n                    node.Left = new Node(value);\n                    return;\n                }\n                node = node.Left;\n            }\n            else\n            {\n                if (node.Right == null)\n                {\n                    node.Right = new Node(value);\n                    return;\n                }\n                node = node.Right;\n            }\n        }\n    }\n    public int GetRank(int value)\n    {\n        Node? node = root;\n        int skipped = 0;\n        while (node != null)\n        {\n            if (value == node.Value)\n                return skipped + node.LeftCount;\n            if (value < node.Value)\n                node = node.Left;\n            else\n            {\n                skipped += node.LeftCount + 1;\n                node = node.Right;\n            }\n        }\n        return -1;\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "new RankTracker(); Track(value); GetRank(value)",
+        "starterCode": "class RankTracker {\n  constructor() {}\n  Track(value) {}\n  GetRank(value) {\n    return -1;\n  }\n}\n",
+        "solutionCode": "class RankTracker {\n  constructor() {\n    this.root = null;\n  }\n  Track(value) {\n    if (this.root === null) {\n      this.root = { value, leftCount: 0, left: null, right: null };\n      return;\n    }\n    let node = this.root;\n    while (true) {\n      if (value <= node.value) {\n        ++node.leftCount;\n        if (node.left === null) {\n          node.left = { value, leftCount: 0, left: null, right: null };\n          return;\n        }\n        node = node.left;\n      } else {\n        if (node.right === null) {\n          node.right = { value, leftCount: 0, left: null, right: null };\n          return;\n        }\n        node = node.right;\n      }\n    }\n  }\n  GetRank(value) {\n    let node = this.root,\n      skipped = 0;\n    while (node !== null) {\n      if (value === node.value) return skipped + node.leftCount;\n      if (value < node.value) node = node.left;\n      else {\n        skipped += node.leftCount + 1;\n        node = node.right;\n      }\n    }\n    return -1;\n  }\n}\n"
+      },
+      "python": {
+        "signature": "RankTracker(); Track(value: int) -> None; GetRank(value: int) -> int",
+        "starterCode": "class RankTracker:\n    def __init__(self):\n        pass\n\n    def Track(self, value: int) -> None:\n        pass\n\n    def GetRank(self, value: int) -> int:\n        return -1\n",
+        "solutionCode": "class RankTracker:\n    class _Node:\n        def __init__(self, value):\n            self.value = value\n            self.left_count = 0\n            self.left = self.right = None\n\n    def __init__(self):\n        self._root = None\n\n    def Track(self, value: int) -> None:\n        if self._root is None:\n            self._root = self._Node(value)\n            return\n        node = self._root\n        while True:\n            if value <= node.value:\n                node.left_count += 1\n                if node.left is None:\n                    node.left = self._Node(value)\n                    return\n                node = node.left\n            else:\n                if node.right is None:\n                    node.right = self._Node(value)\n                    return\n                node = node.right\n\n    def GetRank(self, value: int) -> int:\n        node = self._root\n        skipped = 0\n        while node is not None:\n            if value == node.value:\n                return skipped + node.left_count\n            if value < node.value:\n                node = node.left\n            else:\n                skipped += node.left_count + 1\n                node = node.right\n        return -1\n"
+      },
+      "cpp": {
+        "signature": "RankTracker(); void Track(int value); int GetRank(int value)",
+        "starterCode": "class RankTracker {\n public:\n  RankTracker() = default;\n  void Track(int value) {\n  }\n  int GetRank(int value) {\n    return -1;\n  }\n};\n",
+        "solutionCode": "#include <memory>\nclass RankTracker {\n  struct Node {\n    int value, leftCount = 0;\n    std::unique_ptr<Node> left, right;\n    explicit Node(int value) : value(value) {\n    }\n  };\n  std::unique_ptr<Node> root;\n\n public:\n  RankTracker() = default;\n  void Track(int value) {\n    if (!root) {\n      root = std::make_unique<Node>(value);\n      return;\n    }\n    Node* node = root.get();\n    while (true) {\n      if (value <= node->value) {\n        ++node->leftCount;\n        if (!node->left) {\n          node->left = std::make_unique<Node>(value);\n          return;\n        }\n        node = node->left.get();\n      } else {\n        if (!node->right) {\n          node->right = std::make_unique<Node>(value);\n          return;\n        }\n        node = node->right.get();\n      }\n    }\n  }\n  int GetRank(int value) {\n    Node* node = root.get();\n    int skipped = 0;\n    while (node) {\n      if (value == node->value)\n        return skipped + node->leftCount;\n      if (value < node->value)\n        node = node->left.get();\n      else {\n        skipped += node->leftCount + 1;\n        node = node->right.get();\n      }\n    }\n    return -1;\n  }\n};\n"
+      },
+      "java": {
+        "signature": "RankTracker(); void Track(int value); int GetRank(int value)",
+        "starterCode": "class RankTracker {\n  public RankTracker() {\n  }\n  public void Track(int value) {\n  }\n  public int GetRank(int value) {\n    return -1;\n  }\n}\n",
+        "solutionCode": "class RankTracker {\n  private static class Node {\n    int value, leftCount;\n    Node left, right;\n    Node(int value) {\n      this.value = value;\n    }\n  }\n  private Node root;\n  public RankTracker() {\n  }\n  public void Track(int value) {\n    if (root == null) {\n      root = new Node(value);\n      return;\n    }\n    Node node = root;\n    while (true) {\n      if (value <= node.value) {\n        ++node.leftCount;\n        if (node.left == null) {\n          node.left = new Node(value);\n          return;\n        }\n        node = node.left;\n      } else {\n        if (node.right == null) {\n          node.right = new Node(value);\n          return;\n        }\n        node = node.right;\n      }\n    }\n  }\n  public int GetRank(int value) {\n    Node node = root;\n    int skipped = 0;\n    while (node != null) {\n      if (value == node.value)\n        return skipped + node.leftCount;\n      if (value < node.value)\n        node = node.left;\n      else {\n        skipped += node.leftCount + 1;\n        node = node.right;\n      }\n    }\n    return -1;\n  }\n}\n"
       }
     }
   },

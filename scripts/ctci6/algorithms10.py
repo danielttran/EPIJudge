@@ -107,3 +107,106 @@ return values'''
         swap='int temporary=values[i];values[i]=values[best];values[best]=temporary;' if language!='cpp' else 'std::swap(values[i],values[best]);'
         return f'for(int i=1;i<{size};i+=2){{int best=i;if(values[i-1]>values[best])best=i-1;if(i+1<{size}&&values[i+1]>values[best])best=i+1;{swap}}}return values;'
     raise ValueError(ref)
+
+_previous_body=body
+
+def body(ref,language):
+    if ref not in ('10.4','10.8','10.10'):
+        return _previous_body(ref,language)
+    if ref=='10.4':
+        if language=='python':return '''if target <= 0:
+    return -1
+bound = 1
+while True:
+    value = values.ElementAt(bound)
+    if value == -1 or value >= target:
+        break
+    bound *= 2
+low, high = bound // 2, bound
+while low <= high:
+    middle = low + (high - low) // 2
+    value = values.ElementAt(middle)
+    if value == -1 or value > target:
+        high = middle - 1
+    elif value < target:
+        low = middle + 1
+    else:
+        return middle
+return -1'''
+        if language=='javascript':return 'if(target<=0)return -1;let bound=1;while(true){const value=values.ElementAt(bound);if(value===-1||value>=target)break;bound*=2;}let low=Math.floor(bound/2),high=bound;while(low<=high){const middle=low+Math.floor((high-low)/2),value=values.ElementAt(middle);if(value===-1||value>target)high=middle-1;else if(value<target)low=middle+1;else return middle;}return -1;'
+        return 'if(target<=0)return -1;int bound=1;while(true){int value=values.ElementAt(bound);if(value==-1||value>=target)break;bound*=2;}int low=bound/2,high=bound;while(low<=high){int middle=low+(high-low)/2,value=values.ElementAt(middle);if(value==-1||value>target)high=middle-1;else if(value<target)low=middle+1;else return middle;}return -1;'
+    if ref=='10.8':
+        if language=='python':return '''bits = bytearray(4000)
+count = 0
+for value in values:
+    slot, shift = (value - 1) >> 3, (value - 1) & 7
+    mask = 1 << shift
+    if bits[slot] & mask:
+        count += 1
+    else:
+        bits[slot] |= mask
+result = [0] * count
+for index in range(4000):
+    bits[index] = 0
+write = 0
+for value in values:
+    slot, shift = (value - 1) >> 3, (value - 1) & 7
+    mask = 1 << shift
+    if bits[slot] & mask:
+        result[write] = value
+        write += 1
+    else:
+        bits[slot] |= mask
+return result'''
+        if language=='javascript':return 'const bits=new Uint8Array(4000);let count=0;for(const value of values){const slot=(value-1)>>3,mask=1<<((value-1)&7);if(bits[slot]&mask)++count;else bits[slot]|=mask;}const result=new Array(count);bits.fill(0);let write=0;for(const value of values){const slot=(value-1)>>3,mask=1<<((value-1)&7);if(bits[slot]&mask)result[write++]=value;else bits[slot]|=mask;}return result;'
+        setup='byte[] bits=new byte[4000];' if language!='cpp' else 'std::array<unsigned char,4000> bits{};'
+        loop='foreach(int value in values)' if language=='csharp' else 'for(int value:values)'
+        mark='bits[slot]=(byte)(bits[slot]|mask);' if language in ('csharp','java') else 'bits[slot]=static_cast<unsigned char>(bits[slot]|mask);'
+        clear='Array.Clear(bits);' if language=='csharp' else 'Arrays.fill(bits,(byte)0);' if language=='java' else 'bits.fill(0);'
+        result='int[] result=new int[count];' if language!='cpp' else 'std::vector<int> result(count);'
+        return f'{setup}int count=0;{loop}{{int slot=(value-1)>>3,mask=1<<((value-1)&7);if((bits[slot]&mask)!=0)++count;else {mark}}}{result}{clear}int write=0;{loop}{{int slot=(value-1)>>3,mask=1<<((value-1)&7);if((bits[slot]&mask)!=0)result[write++]=value;else {mark}}}return result;'
+    if language=='python':return '''class RankTracker:
+    class _Node:
+        def __init__(self, value):
+            self.value = value
+            self.left_count = 0
+            self.left = self.right = None
+
+    def __init__(self):
+        self._root = None
+
+    def Track(self, value: int) -> None:
+        if self._root is None:
+            self._root = self._Node(value)
+            return
+        node = self._root
+        while True:
+            if value <= node.value:
+                node.left_count += 1
+                if node.left is None:
+                    node.left = self._Node(value)
+                    return
+                node = node.left
+            else:
+                if node.right is None:
+                    node.right = self._Node(value)
+                    return
+                node = node.right
+
+    def GetRank(self, value: int) -> int:
+        node = self._root
+        skipped = 0
+        while node is not None:
+            if value == node.value:
+                return skipped + node.left_count
+            if value < node.value:
+                node = node.left
+            else:
+                skipped += node.left_count + 1
+                node = node.right
+        return -1
+'''
+    if language=='javascript':return 'class RankTracker {constructor(){this.root=null;}Track(value){if(this.root===null){this.root={value,leftCount:0,left:null,right:null};return;}let node=this.root;while(true){if(value<=node.value){++node.leftCount;if(node.left===null){node.left={value,leftCount:0,left:null,right:null};return;}node=node.left;}else{if(node.right===null){node.right={value,leftCount:0,left:null,right:null};return;}node=node.right;}}}GetRank(value){let node=this.root,skipped=0;while(node!==null){if(value===node.value)return skipped+node.leftCount;if(value<node.value)node=node.left;else{skipped+=node.leftCount+1;node=node.right;}}return -1;}}'
+    if language=='csharp':return 'public class RankTracker {private sealed class Node {public int Value,LeftCount;public Node? Left,Right;public Node(int value){Value=value;}}private Node? root;public RankTracker(){}public void Track(int value){if(root==null){root=new Node(value);return;}Node node=root;while(true){if(value<=node.Value){++node.LeftCount;if(node.Left==null){node.Left=new Node(value);return;}node=node.Left;}else{if(node.Right==null){node.Right=new Node(value);return;}node=node.Right;}}}public int GetRank(int value){Node? node=root;int skipped=0;while(node!=null){if(value==node.Value)return skipped+node.LeftCount;if(value<node.Value)node=node.Left;else{skipped+=node.LeftCount+1;node=node.Right;}}return -1;}}'
+    if language=='java':return 'class RankTracker {private static class Node {int value,leftCount;Node left,right;Node(int value){this.value=value;}}private Node root;public RankTracker(){}public void Track(int value){if(root==null){root=new Node(value);return;}Node node=root;while(true){if(value<=node.value){++node.leftCount;if(node.left==null){node.left=new Node(value);return;}node=node.left;}else{if(node.right==null){node.right=new Node(value);return;}node=node.right;}}}public int GetRank(int value){Node node=root;int skipped=0;while(node!=null){if(value==node.value)return skipped+node.leftCount;if(value<node.value)node=node.left;else{skipped+=node.leftCount+1;node=node.right;}}return -1;}}'
+    return '#include <memory>\nclass RankTracker {struct Node {int value,leftCount=0;std::unique_ptr<Node> left,right;explicit Node(int value):value(value){}};std::unique_ptr<Node> root;public:RankTracker()=default;void Track(int value){if(!root){root=std::make_unique<Node>(value);return;}Node* node=root.get();while(true){if(value<=node->value){++node->leftCount;if(!node->left){node->left=std::make_unique<Node>(value);return;}node=node->left.get();}else{if(!node->right){node->right=std::make_unique<Node>(value);return;}node=node->right.get();}}}int GetRank(int value){Node* node=root.get();int skipped=0;while(node){if(value==node->value)return skipped+node->leftCount;if(value<node->value)node=node->left.get();else{skipped+=node->leftCount+1;node=node->right.get();}}return -1;}};'

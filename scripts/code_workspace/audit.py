@@ -515,6 +515,8 @@ def expected_references(entry: dict) -> set[str] | None:
         row = ctci_contracts()[problem_id]
         if row["batch"] == 2:
             return {"LinkedListNode"}
+        if row["ref"] == "10.4":
+            return {"Listy"}
         if row["batch"] == 3:
             return {"BankError"} | (
                 {"IntStack"}
@@ -757,7 +759,7 @@ def audit_artifact(
             if entry["problemId"].startswith("blind75_")
             else CAKE_MODELS
             if entry["problemId"].startswith("interviewcake_")
-            else {"LinkedListNode", "IntStack", "Animal", "BankError"}
+            else {"LinkedListNode", "IntStack", "Animal", "BankError", "Listy"}
             if entry["problemId"].startswith("ctci6_")
             else set()
         )

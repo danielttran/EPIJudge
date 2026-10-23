@@ -33040,6 +33040,91 @@
     ]
   },
   {
+    "problemId": "ctci6_10_4",
+    "collection": "ctci6",
+    "language": "csharp",
+    "code": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic abstract class Listy { public abstract int ElementAt(int index); }\npublic class Solution\n{\n    public int SearchWithoutSize(Listy values, int target)\n    {\n        if (target <= 0)\n            return -1;\n        int bound = 1;\n        while (true)\n        {\n            int value = values.ElementAt(bound);\n            if (value == -1 || value >= target)\n                break;\n            bound *= 2;\n        }\n        int low = bound / 2, high = bound;\n        while (low <= high)\n        {\n            int middle = low + (high - low) / 2, value = values.ElementAt(middle);\n            if (value == -1 || value > target)\n                high = middle - 1;\n            else if (value < target)\n                low = middle + 1;\n            else\n                return middle;\n        }\n        return -1;\n    }\n}\n",
+    "explanation": "Probe indices 1,2,4,8,... until a probe is absent or no smaller than target. The target can only lie between the preceding bound and this bound. Binary search that interval, treating -1 as beyond the end rather than as an ordinary negative value. This discovers enough range to search without first measuring the sequence.",
+    "timeComplexity": "O(log(n+1)) ElementAt calls and scalar work, with constant work for a nonpositive target.",
+    "spaceComplexity": "O(1) auxiliary indices and the latest probed value; the provided Listy storage is input, not an allocated search array.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 10.4. No affiliation is implied.",
+    "correctness": "Before each doubling, the probed value is valid and below target, so all earlier positions are also too small. When doubling stops, the target, if present, lies between half the bound and the bound: the latter is either large enough or past the hidden end. During binary search, an out-of-range or too-large value safely removes the upper part, and a smaller value removes the lower part. Equality returns a verified index. Every step shrinks the remaining interval, proving absence when it empties. Exponential discovery and binary search each use logarithmically many probes.",
+    "walkthrough": "For hidden [1,2,4,5,6,7,9] and target 6, probes at 1 and 2 return 2 and 4, both too small. Probe 4 returns 6, providing an upper bound. Binary search indices 2..4 and return index 4. A -1 probe marks the end and must never match target=-1.",
+    "edgeCases": [
+      "Empty and singleton sequences, nonpositive or absent targets.",
+      "Repeated values, an upper bound beyond the end, and the largest positive integer.",
+      "Linear length-discovery programs exceed the query budget on large cases."
+    ]
+  },
+  {
+    "problemId": "ctci6_10_4",
+    "collection": "ctci6",
+    "language": "javascript",
+    "code": "'use strict';\nclass Listy { ElementAt(index) { throw new Error(\"Provided by the judge\"); } }\nfunction SearchWithoutSize(values, target) {\n  if (target <= 0) return -1;\n  let bound = 1;\n  while (true) {\n    const value = values.ElementAt(bound);\n    if (value === -1 || value >= target) break;\n    bound *= 2;\n  }\n  let low = Math.floor(bound / 2),\n    high = bound;\n  while (low <= high) {\n    const middle = low + Math.floor((high - low) / 2),\n      value = values.ElementAt(middle);\n    if (value === -1 || value > target) high = middle - 1;\n    else if (value < target) low = middle + 1;\n    else return middle;\n  }\n  return -1;\n}\n\nmodule.exports = {Listy,SearchWithoutSize};\n",
+    "explanation": "Probe indices 1,2,4,8,... until a probe is absent or no smaller than target. The target can only lie between the preceding bound and this bound. Binary search that interval, treating -1 as beyond the end rather than as an ordinary negative value. This discovers enough range to search without first measuring the sequence.",
+    "timeComplexity": "O(log(n+1)) ElementAt calls and scalar work, with constant work for a nonpositive target.",
+    "spaceComplexity": "O(1) auxiliary indices and the latest probed value; the provided Listy storage is input, not an allocated search array.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 10.4. No affiliation is implied.",
+    "correctness": "Before each doubling, the probed value is valid and below target, so all earlier positions are also too small. When doubling stops, the target, if present, lies between half the bound and the bound: the latter is either large enough or past the hidden end. During binary search, an out-of-range or too-large value safely removes the upper part, and a smaller value removes the lower part. Equality returns a verified index. Every step shrinks the remaining interval, proving absence when it empties. Exponential discovery and binary search each use logarithmically many probes.",
+    "walkthrough": "For hidden [1,2,4,5,6,7,9] and target 6, probes at 1 and 2 return 2 and 4, both too small. Probe 4 returns 6, providing an upper bound. Binary search indices 2..4 and return index 4. A -1 probe marks the end and must never match target=-1.",
+    "edgeCases": [
+      "Empty and singleton sequences, nonpositive or absent targets.",
+      "Repeated values, an upper bound beyond the end, and the largest positive integer.",
+      "Linear length-discovery programs exceed the query budget on large cases."
+    ]
+  },
+  {
+    "problemId": "ctci6_10_4",
+    "collection": "ctci6",
+    "language": "python",
+    "code": "class Listy:\n    def ElementAt(self, index: int) -> int:\n        raise RuntimeError(\"Provided by the judge\")\ndef SearchWithoutSize(values: Listy, target: int) -> int:\n    if target <= 0:\n        return -1\n    bound = 1\n    while True:\n        value = values.ElementAt(bound)\n        if value == -1 or value >= target:\n            break\n        bound *= 2\n    low, high = bound // 2, bound\n    while low <= high:\n        middle = low + (high - low) // 2\n        value = values.ElementAt(middle)\n        if value == -1 or value > target:\n            high = middle - 1\n        elif value < target:\n            low = middle + 1\n        else:\n            return middle\n    return -1\n",
+    "explanation": "Probe indices 1,2,4,8,... until a probe is absent or no smaller than target. The target can only lie between the preceding bound and this bound. Binary search that interval, treating -1 as beyond the end rather than as an ordinary negative value. This discovers enough range to search without first measuring the sequence.",
+    "timeComplexity": "O(log(n+1)) ElementAt calls and scalar work, with constant work for a nonpositive target.",
+    "spaceComplexity": "O(1) auxiliary indices and the latest probed value; the provided Listy storage is input, not an allocated search array.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 10.4. No affiliation is implied.",
+    "correctness": "Before each doubling, the probed value is valid and below target, so all earlier positions are also too small. When doubling stops, the target, if present, lies between half the bound and the bound: the latter is either large enough or past the hidden end. During binary search, an out-of-range or too-large value safely removes the upper part, and a smaller value removes the lower part. Equality returns a verified index. Every step shrinks the remaining interval, proving absence when it empties. Exponential discovery and binary search each use logarithmically many probes.",
+    "walkthrough": "For hidden [1,2,4,5,6,7,9] and target 6, probes at 1 and 2 return 2 and 4, both too small. Probe 4 returns 6, providing an upper bound. Binary search indices 2..4 and return index 4. A -1 probe marks the end and must never match target=-1.",
+    "edgeCases": [
+      "Empty and singleton sequences, nonpositive or absent targets.",
+      "Repeated values, an upper bound beyond the end, and the largest positive integer.",
+      "Linear length-discovery programs exceed the query budget on large cases."
+    ]
+  },
+  {
+    "problemId": "ctci6_10_4",
+    "collection": "ctci6",
+    "language": "cpp",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\nclass Listy { public: virtual int ElementAt(int index)=0; virtual ~Listy()=default; };\nclass Solution {\n public:\n  int SearchWithoutSize(Listy& values, int target) {\n    if (target <= 0)\n      return -1;\n    int bound = 1;\n    while (true) {\n      int value = values.ElementAt(bound);\n      if (value == -1 || value >= target)\n        break;\n      bound *= 2;\n    }\n    int low = bound / 2, high = bound;\n    while (low <= high) {\n      int middle = low + (high - low) / 2, value = values.ElementAt(middle);\n      if (value == -1 || value > target)\n        high = middle - 1;\n      else if (value < target)\n        low = middle + 1;\n      else\n        return middle;\n    }\n    return -1;\n  }\n};\n",
+    "explanation": "Probe indices 1,2,4,8,... until a probe is absent or no smaller than target. The target can only lie between the preceding bound and this bound. Binary search that interval, treating -1 as beyond the end rather than as an ordinary negative value. This discovers enough range to search without first measuring the sequence.",
+    "timeComplexity": "O(log(n+1)) ElementAt calls and scalar work, with constant work for a nonpositive target.",
+    "spaceComplexity": "O(1) auxiliary indices and the latest probed value; the provided Listy storage is input, not an allocated search array.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 10.4. No affiliation is implied.",
+    "correctness": "Before each doubling, the probed value is valid and below target, so all earlier positions are also too small. When doubling stops, the target, if present, lies between half the bound and the bound: the latter is either large enough or past the hidden end. During binary search, an out-of-range or too-large value safely removes the upper part, and a smaller value removes the lower part. Equality returns a verified index. Every step shrinks the remaining interval, proving absence when it empties. Exponential discovery and binary search each use logarithmically many probes.",
+    "walkthrough": "For hidden [1,2,4,5,6,7,9] and target 6, probes at 1 and 2 return 2 and 4, both too small. Probe 4 returns 6, providing an upper bound. Binary search indices 2..4 and return index 4. A -1 probe marks the end and must never match target=-1.",
+    "edgeCases": [
+      "Empty and singleton sequences, nonpositive or absent targets.",
+      "Repeated values, an upper bound beyond the end, and the largest positive integer.",
+      "Linear length-discovery programs exceed the query budget on large cases."
+    ]
+  },
+  {
+    "problemId": "ctci6_10_4",
+    "collection": "ctci6",
+    "language": "java",
+    "code": "import java.util.*;\nabstract class Listy { public abstract int ElementAt(int index); }\nclass Solution {\n  public int SearchWithoutSize(Listy values, int target) {\n    if (target <= 0)\n      return -1;\n    int bound = 1;\n    while (true) {\n      int value = values.ElementAt(bound);\n      if (value == -1 || value >= target)\n        break;\n      bound *= 2;\n    }\n    int low = bound / 2, high = bound;\n    while (low <= high) {\n      int middle = low + (high - low) / 2, value = values.ElementAt(middle);\n      if (value == -1 || value > target)\n        high = middle - 1;\n      else if (value < target)\n        low = middle + 1;\n      else\n        return middle;\n    }\n    return -1;\n  }\n}\n",
+    "explanation": "Probe indices 1,2,4,8,... until a probe is absent or no smaller than target. The target can only lie between the preceding bound and this bound. Binary search that interval, treating -1 as beyond the end rather than as an ordinary negative value. This discovers enough range to search without first measuring the sequence.",
+    "timeComplexity": "O(log(n+1)) ElementAt calls and scalar work, with constant work for a nonpositive target.",
+    "spaceComplexity": "O(1) auxiliary indices and the latest probed value; the provided Listy storage is input, not an allocated search array.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 10.4. No affiliation is implied.",
+    "correctness": "Before each doubling, the probed value is valid and below target, so all earlier positions are also too small. When doubling stops, the target, if present, lies between half the bound and the bound: the latter is either large enough or past the hidden end. During binary search, an out-of-range or too-large value safely removes the upper part, and a smaller value removes the lower part. Equality returns a verified index. Every step shrinks the remaining interval, proving absence when it empties. Exponential discovery and binary search each use logarithmically many probes.",
+    "walkthrough": "For hidden [1,2,4,5,6,7,9] and target 6, probes at 1 and 2 return 2 and 4, both too small. Probe 4 returns 6, providing an upper bound. Binary search indices 2..4 and return index 4. A -1 probe marks the end and must never match target=-1.",
+    "edgeCases": [
+      "Empty and singleton sequences, nonpositive or absent targets.",
+      "Repeated values, an upper bound beyond the end, and the largest positive integer.",
+      "Linear length-discovery programs exceed the query budget on large cases."
+    ]
+  },
+  {
     "problemId": "ctci6_10_5",
     "collection": "ctci6",
     "language": "csharp",
@@ -33120,6 +33205,91 @@
     ]
   },
   {
+    "problemId": "ctci6_10_8",
+    "collection": "ctci6",
+    "language": "csharp",
+    "code": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic class Solution\n{\n    public int[] RepeatedOccurrences(int[] values)\n    {\n        byte[] bits = new byte[4000];\n        int count = 0;\n        foreach (int value in values)\n        {\n            int slot = (value - 1) >> 3, mask = 1 << ((value - 1) & 7);\n            if ((bits[slot] & mask) != 0)\n                ++count;\n            else\n                bits[slot] = (byte)(bits[slot] | mask);\n        }\n        int[] result = new int[count];\n        Array.Clear(bits);\n        int write = 0;\n        foreach (int value in values)\n        {\n            int slot = (value - 1) >> 3, mask = 1 << ((value - 1) & 7);\n            if ((bits[slot] & mask) != 0)\n                result[write++] = value;\n            else\n                bits[slot] = (byte)(bits[slot] | mask);\n        }\n        return result;\n    }\n}\n",
+    "explanation": "One bit records whether a value has appeared, so 32000 possible values need 32000/8=4000 bytes. Subtract one before choosing the byte and bit because values begin at one. Returning an array instead of printing requires its size; a counting pass and a second pass with the cleared same bitmap avoid an extra input-sized working collection.",
+    "timeComplexity": "O(n+U/8) time for two scans and clearing U/8 marking bytes, where U=32000 is fixed; hence O(n+1) for this domain.",
+    "spaceComplexity": "4000 marking bytes plus O(1) scalar bookkeeping, excluding the exactly sized final result. The bitmap is reused, not doubled between passes.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 10.8. No affiliation is implied.",
+    "correctness": "During either pass, the bit for a value is set exactly when that value has appeared earlier in that pass. A clear bit is set on first occurrence; a set bit therefore identifies precisely each later occurrence. The first pass counts exactly the output length. Clearing all bitmap bytes restores the initial invariant, and the second pass writes those same repeated encounters into the preallocated result in input order. No input value is changed, every repeat is included and no first occurrence is included.",
+    "walkthrough": "For [8,1,8,8,32000,32000], the first 8 sets bit 7 of byte 0. Its next two occurrences are both repeats. The first 32000 sets the final bitmap bit; its next occurrence repeats. Count three outputs, clear the bitmap, and fill [8,8,32000] on the second pass.",
+    "edgeCases": [
+      "Empty input, all distinct values and one value repeated many times.",
+      "Values 1,8,9,31999,32000 cross byte and signed-byte boundaries.",
+      "Output multiplicity is occurrence count minus one, not one per distinct duplicate value."
+    ]
+  },
+  {
+    "problemId": "ctci6_10_8",
+    "collection": "ctci6",
+    "language": "javascript",
+    "code": "'use strict';\nfunction RepeatedOccurrences(values) {\n  const bits = new Uint8Array(4000);\n  let count = 0;\n  for (const value of values) {\n    const slot = (value - 1) >> 3,\n      mask = 1 << ((value - 1) & 7);\n    if (bits[slot] & mask) ++count;\n    else bits[slot] |= mask;\n  }\n  const result = new Array(count);\n  bits.fill(0);\n  let write = 0;\n  for (const value of values) {\n    const slot = (value - 1) >> 3,\n      mask = 1 << ((value - 1) & 7);\n    if (bits[slot] & mask) result[write++] = value;\n    else bits[slot] |= mask;\n  }\n  return result;\n}\n\nmodule.exports = {RepeatedOccurrences};\n",
+    "explanation": "One bit records whether a value has appeared, so 32000 possible values need 32000/8=4000 bytes. Subtract one before choosing the byte and bit because values begin at one. Returning an array instead of printing requires its size; a counting pass and a second pass with the cleared same bitmap avoid an extra input-sized working collection.",
+    "timeComplexity": "O(n+U/8) time for two scans and clearing U/8 marking bytes, where U=32000 is fixed; hence O(n+1) for this domain.",
+    "spaceComplexity": "4000 marking bytes plus O(1) scalar bookkeeping, excluding the exactly sized final result. The bitmap is reused, not doubled between passes.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 10.8. No affiliation is implied.",
+    "correctness": "During either pass, the bit for a value is set exactly when that value has appeared earlier in that pass. A clear bit is set on first occurrence; a set bit therefore identifies precisely each later occurrence. The first pass counts exactly the output length. Clearing all bitmap bytes restores the initial invariant, and the second pass writes those same repeated encounters into the preallocated result in input order. No input value is changed, every repeat is included and no first occurrence is included.",
+    "walkthrough": "For [8,1,8,8,32000,32000], the first 8 sets bit 7 of byte 0. Its next two occurrences are both repeats. The first 32000 sets the final bitmap bit; its next occurrence repeats. Count three outputs, clear the bitmap, and fill [8,8,32000] on the second pass.",
+    "edgeCases": [
+      "Empty input, all distinct values and one value repeated many times.",
+      "Values 1,8,9,31999,32000 cross byte and signed-byte boundaries.",
+      "Output multiplicity is occurrence count minus one, not one per distinct duplicate value."
+    ]
+  },
+  {
+    "problemId": "ctci6_10_8",
+    "collection": "ctci6",
+    "language": "python",
+    "code": "def RepeatedOccurrences(values: list[int]) -> list[int]:\n    bits = bytearray(4000)\n    count = 0\n    for value in values:\n        slot, shift = (value - 1) >> 3, (value - 1) & 7\n        mask = 1 << shift\n        if bits[slot] & mask:\n            count += 1\n        else:\n            bits[slot] |= mask\n    result = [0] * count\n    for index in range(4000):\n        bits[index] = 0\n    write = 0\n    for value in values:\n        slot, shift = (value - 1) >> 3, (value - 1) & 7\n        mask = 1 << shift\n        if bits[slot] & mask:\n            result[write] = value\n            write += 1\n        else:\n            bits[slot] |= mask\n    return result\n",
+    "explanation": "One bit records whether a value has appeared, so 32000 possible values need 32000/8=4000 bytes. Subtract one before choosing the byte and bit because values begin at one. Returning an array instead of printing requires its size; a counting pass and a second pass with the cleared same bitmap avoid an extra input-sized working collection.",
+    "timeComplexity": "O(n+U/8) time for two scans and clearing U/8 marking bytes, where U=32000 is fixed; hence O(n+1) for this domain.",
+    "spaceComplexity": "4000 marking bytes plus O(1) scalar bookkeeping, excluding the exactly sized final result. The bitmap is reused, not doubled between passes.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 10.8. No affiliation is implied.",
+    "correctness": "During either pass, the bit for a value is set exactly when that value has appeared earlier in that pass. A clear bit is set on first occurrence; a set bit therefore identifies precisely each later occurrence. The first pass counts exactly the output length. Clearing all bitmap bytes restores the initial invariant, and the second pass writes those same repeated encounters into the preallocated result in input order. No input value is changed, every repeat is included and no first occurrence is included.",
+    "walkthrough": "For [8,1,8,8,32000,32000], the first 8 sets bit 7 of byte 0. Its next two occurrences are both repeats. The first 32000 sets the final bitmap bit; its next occurrence repeats. Count three outputs, clear the bitmap, and fill [8,8,32000] on the second pass.",
+    "edgeCases": [
+      "Empty input, all distinct values and one value repeated many times.",
+      "Values 1,8,9,31999,32000 cross byte and signed-byte boundaries.",
+      "Output multiplicity is occurrence count minus one, not one per distinct duplicate value."
+    ]
+  },
+  {
+    "problemId": "ctci6_10_8",
+    "collection": "ctci6",
+    "language": "cpp",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\nclass Solution {\n public:\n  std::vector<int> RepeatedOccurrences(const std::vector<int>& values) {\n    std::array<unsigned char, 4000> bits{};\n    int count = 0;\n    for (int value : values) {\n      int slot = (value - 1) >> 3, mask = 1 << ((value - 1) & 7);\n      if ((bits[slot] & mask) != 0)\n        ++count;\n      else\n        bits[slot] = static_cast<unsigned char>(bits[slot] | mask);\n    }\n    std::vector<int> result(count);\n    bits.fill(0);\n    int write = 0;\n    for (int value : values) {\n      int slot = (value - 1) >> 3, mask = 1 << ((value - 1) & 7);\n      if ((bits[slot] & mask) != 0)\n        result[write++] = value;\n      else\n        bits[slot] = static_cast<unsigned char>(bits[slot] | mask);\n    }\n    return result;\n  }\n};\n",
+    "explanation": "One bit records whether a value has appeared, so 32000 possible values need 32000/8=4000 bytes. Subtract one before choosing the byte and bit because values begin at one. Returning an array instead of printing requires its size; a counting pass and a second pass with the cleared same bitmap avoid an extra input-sized working collection.",
+    "timeComplexity": "O(n+U/8) time for two scans and clearing U/8 marking bytes, where U=32000 is fixed; hence O(n+1) for this domain.",
+    "spaceComplexity": "4000 marking bytes plus O(1) scalar bookkeeping, excluding the exactly sized final result. The bitmap is reused, not doubled between passes.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 10.8. No affiliation is implied.",
+    "correctness": "During either pass, the bit for a value is set exactly when that value has appeared earlier in that pass. A clear bit is set on first occurrence; a set bit therefore identifies precisely each later occurrence. The first pass counts exactly the output length. Clearing all bitmap bytes restores the initial invariant, and the second pass writes those same repeated encounters into the preallocated result in input order. No input value is changed, every repeat is included and no first occurrence is included.",
+    "walkthrough": "For [8,1,8,8,32000,32000], the first 8 sets bit 7 of byte 0. Its next two occurrences are both repeats. The first 32000 sets the final bitmap bit; its next occurrence repeats. Count three outputs, clear the bitmap, and fill [8,8,32000] on the second pass.",
+    "edgeCases": [
+      "Empty input, all distinct values and one value repeated many times.",
+      "Values 1,8,9,31999,32000 cross byte and signed-byte boundaries.",
+      "Output multiplicity is occurrence count minus one, not one per distinct duplicate value."
+    ]
+  },
+  {
+    "problemId": "ctci6_10_8",
+    "collection": "ctci6",
+    "language": "java",
+    "code": "import java.util.*;\nclass Solution {\n  public int[] RepeatedOccurrences(int[] values) {\n    byte[] bits = new byte[4000];\n    int count = 0;\n    for (int value : values) {\n      int slot = (value - 1) >> 3, mask = 1 << ((value - 1) & 7);\n      if ((bits[slot] & mask) != 0)\n        ++count;\n      else\n        bits[slot] = (byte) (bits[slot] | mask);\n    }\n    int[] result = new int[count];\n    Arrays.fill(bits, (byte) 0);\n    int write = 0;\n    for (int value : values) {\n      int slot = (value - 1) >> 3, mask = 1 << ((value - 1) & 7);\n      if ((bits[slot] & mask) != 0)\n        result[write++] = value;\n      else\n        bits[slot] = (byte) (bits[slot] | mask);\n    }\n    return result;\n  }\n}\n",
+    "explanation": "One bit records whether a value has appeared, so 32000 possible values need 32000/8=4000 bytes. Subtract one before choosing the byte and bit because values begin at one. Returning an array instead of printing requires its size; a counting pass and a second pass with the cleared same bitmap avoid an extra input-sized working collection.",
+    "timeComplexity": "O(n+U/8) time for two scans and clearing U/8 marking bytes, where U=32000 is fixed; hence O(n+1) for this domain.",
+    "spaceComplexity": "4000 marking bytes plus O(1) scalar bookkeeping, excluding the exactly sized final result. The bitmap is reused, not doubled between passes.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 10.8. No affiliation is implied.",
+    "correctness": "During either pass, the bit for a value is set exactly when that value has appeared earlier in that pass. A clear bit is set on first occurrence; a set bit therefore identifies precisely each later occurrence. The first pass counts exactly the output length. Clearing all bitmap bytes restores the initial invariant, and the second pass writes those same repeated encounters into the preallocated result in input order. No input value is changed, every repeat is included and no first occurrence is included.",
+    "walkthrough": "For [8,1,8,8,32000,32000], the first 8 sets bit 7 of byte 0. Its next two occurrences are both repeats. The first 32000 sets the final bitmap bit; its next occurrence repeats. Count three outputs, clear the bitmap, and fill [8,8,32000] on the second pass.",
+    "edgeCases": [
+      "Empty input, all distinct values and one value repeated many times.",
+      "Values 1,8,9,31999,32000 cross byte and signed-byte boundaries.",
+      "Output multiplicity is occurrence count minus one, not one per distinct duplicate value."
+    ]
+  },
+  {
     "problemId": "ctci6_10_9",
     "collection": "ctci6",
     "language": "csharp",
@@ -33197,6 +33367,91 @@
     "edgeCases": [
       "Empty dimensions, one row or column, target outside the value range.",
       "Duplicates, signed endpoints and row ranges that overlap."
+    ]
+  },
+  {
+    "problemId": "ctci6_10_10",
+    "collection": "ctci6",
+    "language": "csharp",
+    "code": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic class RankTracker\n{\n    private sealed class Node\n    {\n        public int Value, LeftCount;\n        public Node? Left, Right;\n        public Node(int value)\n        {\n            Value = value;\n        }\n    }\n    private Node? root;\n    public RankTracker()\n    {\n    }\n    public void Track(int value)\n    {\n        if (root == null)\n        {\n            root = new Node(value);\n            return;\n        }\n        Node node = root;\n        while (true)\n        {\n            if (value <= node.Value)\n            {\n                ++node.LeftCount;\n                if (node.Left == null)\n                {\n                    node.Left = new Node(value);\n                    return;\n                }\n                node = node.Left;\n            }\n            else\n            {\n                if (node.Right == null)\n                {\n                    node.Right = new Node(value);\n                    return;\n                }\n                node = node.Right;\n            }\n        }\n    }\n    public int GetRank(int value)\n    {\n        Node? node = root;\n        int skipped = 0;\n        while (node != null)\n        {\n            if (value == node.Value)\n                return skipped + node.LeftCount;\n            if (value < node.Value)\n                node = node.Left;\n            else\n            {\n                skipped += node.LeftCount + 1;\n                node = node.Right;\n            }\n        }\n        return -1;\n    }\n}\n",
+    "explanation": "A search-tree node can cache how many tracked occurrences lie in its left subtree. Route equal inserted values left, so that count also includes earlier/later duplicates beneath an equal node. A rank query accumulates entire left subtrees and ancestor nodes only when moving right; finding the queried value adds its left count without counting that node itself.",
+    "timeComplexity": "O(h) per Track/GetRank for tree height h. The actual BST is not balanced: worst-case h equals the number of tracked occurrences; do not claim guaranteed logarithmic time.",
+    "spaceComplexity": "O(t) stored nodes after t tracked occurrences and O(1) auxiliary iterative traversal space, excluding the returned transcript results.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 10.10. No affiliation is implied.",
+    "correctness": "Every insertion preserves the BST rule left<=node<right and increments a node's left count exactly when the new occurrence enters that left subtree. During a query, the accumulated count contains exactly the smaller/equal occurrences already skipped on right turns. At equality, every left-subtree occurrence is <=value, and the current node is the one excluded occurrence, so accumulated+leftCount is the required rank. If traversal reaches no matching node, the value is absent and -1 is returned regardless of the partial accumulated count. Iterative traversal avoids recursion-depth failures on a skewed stream.",
+    "walkthrough": "Track 5,1,4,4. Sorted tracked values are [1,4,4,5]. GetRank(4) returns 2: one 1 and the OTHER 4 count, while one queried 4 is excluded. GetRank(2) returns -1 even though its insertion position would be 1. A new tracker begins empty.",
+    "edgeCases": [
+      "Query before any Track and query an absent interior value.",
+      "Repeated equal values count other copies; negative and signed-endpoint values.",
+      "Ascending/descending streams create skewed trees but not recursive stack overflow."
+    ]
+  },
+  {
+    "problemId": "ctci6_10_10",
+    "collection": "ctci6",
+    "language": "javascript",
+    "code": "'use strict';\nclass RankTracker {\n  constructor() {\n    this.root = null;\n  }\n  Track(value) {\n    if (this.root === null) {\n      this.root = { value, leftCount: 0, left: null, right: null };\n      return;\n    }\n    let node = this.root;\n    while (true) {\n      if (value <= node.value) {\n        ++node.leftCount;\n        if (node.left === null) {\n          node.left = { value, leftCount: 0, left: null, right: null };\n          return;\n        }\n        node = node.left;\n      } else {\n        if (node.right === null) {\n          node.right = { value, leftCount: 0, left: null, right: null };\n          return;\n        }\n        node = node.right;\n      }\n    }\n  }\n  GetRank(value) {\n    let node = this.root,\n      skipped = 0;\n    while (node !== null) {\n      if (value === node.value) return skipped + node.leftCount;\n      if (value < node.value) node = node.left;\n      else {\n        skipped += node.leftCount + 1;\n        node = node.right;\n      }\n    }\n    return -1;\n  }\n}\n\nmodule.exports = {RankTracker};\n",
+    "explanation": "A search-tree node can cache how many tracked occurrences lie in its left subtree. Route equal inserted values left, so that count also includes earlier/later duplicates beneath an equal node. A rank query accumulates entire left subtrees and ancestor nodes only when moving right; finding the queried value adds its left count without counting that node itself.",
+    "timeComplexity": "O(h) per Track/GetRank for tree height h. The actual BST is not balanced: worst-case h equals the number of tracked occurrences; do not claim guaranteed logarithmic time.",
+    "spaceComplexity": "O(t) stored nodes after t tracked occurrences and O(1) auxiliary iterative traversal space, excluding the returned transcript results.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 10.10. No affiliation is implied.",
+    "correctness": "Every insertion preserves the BST rule left<=node<right and increments a node's left count exactly when the new occurrence enters that left subtree. During a query, the accumulated count contains exactly the smaller/equal occurrences already skipped on right turns. At equality, every left-subtree occurrence is <=value, and the current node is the one excluded occurrence, so accumulated+leftCount is the required rank. If traversal reaches no matching node, the value is absent and -1 is returned regardless of the partial accumulated count. Iterative traversal avoids recursion-depth failures on a skewed stream.",
+    "walkthrough": "Track 5,1,4,4. Sorted tracked values are [1,4,4,5]. GetRank(4) returns 2: one 1 and the OTHER 4 count, while one queried 4 is excluded. GetRank(2) returns -1 even though its insertion position would be 1. A new tracker begins empty.",
+    "edgeCases": [
+      "Query before any Track and query an absent interior value.",
+      "Repeated equal values count other copies; negative and signed-endpoint values.",
+      "Ascending/descending streams create skewed trees but not recursive stack overflow."
+    ]
+  },
+  {
+    "problemId": "ctci6_10_10",
+    "collection": "ctci6",
+    "language": "python",
+    "code": "class RankTracker:\n    class _Node:\n        def __init__(self, value):\n            self.value = value\n            self.left_count = 0\n            self.left = self.right = None\n\n    def __init__(self):\n        self._root = None\n\n    def Track(self, value: int) -> None:\n        if self._root is None:\n            self._root = self._Node(value)\n            return\n        node = self._root\n        while True:\n            if value <= node.value:\n                node.left_count += 1\n                if node.left is None:\n                    node.left = self._Node(value)\n                    return\n                node = node.left\n            else:\n                if node.right is None:\n                    node.right = self._Node(value)\n                    return\n                node = node.right\n\n    def GetRank(self, value: int) -> int:\n        node = self._root\n        skipped = 0\n        while node is not None:\n            if value == node.value:\n                return skipped + node.left_count\n            if value < node.value:\n                node = node.left\n            else:\n                skipped += node.left_count + 1\n                node = node.right\n        return -1\n",
+    "explanation": "A search-tree node can cache how many tracked occurrences lie in its left subtree. Route equal inserted values left, so that count also includes earlier/later duplicates beneath an equal node. A rank query accumulates entire left subtrees and ancestor nodes only when moving right; finding the queried value adds its left count without counting that node itself.",
+    "timeComplexity": "O(h) per Track/GetRank for tree height h. The actual BST is not balanced: worst-case h equals the number of tracked occurrences; do not claim guaranteed logarithmic time.",
+    "spaceComplexity": "O(t) stored nodes after t tracked occurrences and O(1) auxiliary iterative traversal space, excluding the returned transcript results.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 10.10. No affiliation is implied.",
+    "correctness": "Every insertion preserves the BST rule left<=node<right and increments a node's left count exactly when the new occurrence enters that left subtree. During a query, the accumulated count contains exactly the smaller/equal occurrences already skipped on right turns. At equality, every left-subtree occurrence is <=value, and the current node is the one excluded occurrence, so accumulated+leftCount is the required rank. If traversal reaches no matching node, the value is absent and -1 is returned regardless of the partial accumulated count. Iterative traversal avoids recursion-depth failures on a skewed stream.",
+    "walkthrough": "Track 5,1,4,4. Sorted tracked values are [1,4,4,5]. GetRank(4) returns 2: one 1 and the OTHER 4 count, while one queried 4 is excluded. GetRank(2) returns -1 even though its insertion position would be 1. A new tracker begins empty.",
+    "edgeCases": [
+      "Query before any Track and query an absent interior value.",
+      "Repeated equal values count other copies; negative and signed-endpoint values.",
+      "Ascending/descending streams create skewed trees but not recursive stack overflow."
+    ]
+  },
+  {
+    "problemId": "ctci6_10_10",
+    "collection": "ctci6",
+    "language": "cpp",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n#include <memory>\nclass RankTracker {\n  struct Node {\n    int value, leftCount = 0;\n    std::unique_ptr<Node> left, right;\n    explicit Node(int value) : value(value) {\n    }\n  };\n  std::unique_ptr<Node> root;\n\n public:\n  RankTracker() = default;\n  void Track(int value) {\n    if (!root) {\n      root = std::make_unique<Node>(value);\n      return;\n    }\n    Node* node = root.get();\n    while (true) {\n      if (value <= node->value) {\n        ++node->leftCount;\n        if (!node->left) {\n          node->left = std::make_unique<Node>(value);\n          return;\n        }\n        node = node->left.get();\n      } else {\n        if (!node->right) {\n          node->right = std::make_unique<Node>(value);\n          return;\n        }\n        node = node->right.get();\n      }\n    }\n  }\n  int GetRank(int value) {\n    Node* node = root.get();\n    int skipped = 0;\n    while (node) {\n      if (value == node->value)\n        return skipped + node->leftCount;\n      if (value < node->value)\n        node = node->left.get();\n      else {\n        skipped += node->leftCount + 1;\n        node = node->right.get();\n      }\n    }\n    return -1;\n  }\n};\n",
+    "explanation": "A search-tree node can cache how many tracked occurrences lie in its left subtree. Route equal inserted values left, so that count also includes earlier/later duplicates beneath an equal node. A rank query accumulates entire left subtrees and ancestor nodes only when moving right; finding the queried value adds its left count without counting that node itself.",
+    "timeComplexity": "O(h) per Track/GetRank for tree height h. The actual BST is not balanced: worst-case h equals the number of tracked occurrences; do not claim guaranteed logarithmic time.",
+    "spaceComplexity": "O(t) stored nodes after t tracked occurrences and O(1) auxiliary iterative traversal space, excluding the returned transcript results.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 10.10. No affiliation is implied.",
+    "correctness": "Every insertion preserves the BST rule left<=node<right and increments a node's left count exactly when the new occurrence enters that left subtree. During a query, the accumulated count contains exactly the smaller/equal occurrences already skipped on right turns. At equality, every left-subtree occurrence is <=value, and the current node is the one excluded occurrence, so accumulated+leftCount is the required rank. If traversal reaches no matching node, the value is absent and -1 is returned regardless of the partial accumulated count. Iterative traversal avoids recursion-depth failures on a skewed stream.",
+    "walkthrough": "Track 5,1,4,4. Sorted tracked values are [1,4,4,5]. GetRank(4) returns 2: one 1 and the OTHER 4 count, while one queried 4 is excluded. GetRank(2) returns -1 even though its insertion position would be 1. A new tracker begins empty.",
+    "edgeCases": [
+      "Query before any Track and query an absent interior value.",
+      "Repeated equal values count other copies; negative and signed-endpoint values.",
+      "Ascending/descending streams create skewed trees but not recursive stack overflow."
+    ]
+  },
+  {
+    "problemId": "ctci6_10_10",
+    "collection": "ctci6",
+    "language": "java",
+    "code": "import java.util.*;\nclass RankTracker {\n  private static class Node {\n    int value, leftCount;\n    Node left, right;\n    Node(int value) {\n      this.value = value;\n    }\n  }\n  private Node root;\n  public RankTracker() {\n  }\n  public void Track(int value) {\n    if (root == null) {\n      root = new Node(value);\n      return;\n    }\n    Node node = root;\n    while (true) {\n      if (value <= node.value) {\n        ++node.leftCount;\n        if (node.left == null) {\n          node.left = new Node(value);\n          return;\n        }\n        node = node.left;\n      } else {\n        if (node.right == null) {\n          node.right = new Node(value);\n          return;\n        }\n        node = node.right;\n      }\n    }\n  }\n  public int GetRank(int value) {\n    Node node = root;\n    int skipped = 0;\n    while (node != null) {\n      if (value == node.value)\n        return skipped + node.leftCount;\n      if (value < node.value)\n        node = node.left;\n      else {\n        skipped += node.leftCount + 1;\n        node = node.right;\n      }\n    }\n    return -1;\n  }\n}\n",
+    "explanation": "A search-tree node can cache how many tracked occurrences lie in its left subtree. Route equal inserted values left, so that count also includes earlier/later duplicates beneath an equal node. A rank query accumulates entire left subtrees and ancestor nodes only when moving right; finding the queried value adds its left count without counting that node itself.",
+    "timeComplexity": "O(h) per Track/GetRank for tree height h. The actual BST is not balanced: worst-case h equals the number of tracked occurrences; do not claim guaranteed logarithmic time.",
+    "spaceComplexity": "O(t) stored nodes after t tracked occurrences and O(1) auxiliary iterative traversal space, excluding the returned transcript results.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 10.10. No affiliation is implied.",
+    "correctness": "Every insertion preserves the BST rule left<=node<right and increments a node's left count exactly when the new occurrence enters that left subtree. During a query, the accumulated count contains exactly the smaller/equal occurrences already skipped on right turns. At equality, every left-subtree occurrence is <=value, and the current node is the one excluded occurrence, so accumulated+leftCount is the required rank. If traversal reaches no matching node, the value is absent and -1 is returned regardless of the partial accumulated count. Iterative traversal avoids recursion-depth failures on a skewed stream.",
+    "walkthrough": "Track 5,1,4,4. Sorted tracked values are [1,4,4,5]. GetRank(4) returns 2: one 1 and the OTHER 4 count, while one queried 4 is excluded. GetRank(2) returns -1 even though its insertion position would be 1. A new tracker begins empty.",
+    "edgeCases": [
+      "Query before any Track and query an absent interior value.",
+      "Repeated equal values count other copies; negative and signed-endpoint values.",
+      "Ascending/descending streams create skewed trees but not recursive stack overflow."
     ]
   },
   {
@@ -33336,7 +33591,7 @@
     "problemId": "ctci6_16_1",
     "collection": "ctci6",
     "language": "cpp",
-    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\nclass Solution {\n public:\n  std::vector<int> SwapWithoutTemporary(int first, int second) {\n    first ^= second;\n    second ^= first;\n    first ^= second;\n    return {first, second};\n  }\n};\n",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n#include <unordered_map>\n#include <unordered_set>\nclass Solution {\n public:\n  std::vector<int> SwapWithoutTemporary(int first, int second) {\n    first ^= second;\n    second ^= first;\n    first ^= second;\n    return {first, second};\n  }\n};\n",
     "explanation": "XOR removes a repeated operand: x xor x is zero and x xor zero is x. The first assignment stores the combined information of both inputs. XORing that combination with the old second recovers the original first, then XORing it with the recovered first recovers the original second. No addition/subtraction overflow is required.",
     "timeComplexity": "O(1) fixed-width XOR operations.",
     "spaceComplexity": "O(1) auxiliary storage; no swap temporary, plus the two-integer output.",
@@ -33362,6 +33617,86 @@
     "edgeCases": [
       "Equal inputs, zeros and negative values.",
       "Both signed endpoints; arithmetic overflow must not break exchange."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_2",
+    "collection": "ctci6",
+    "language": "csharp",
+    "code": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic class Solution\n{\n    public int[] WordFrequencies(string[] book, string[] queries)\n    {\n        var counts = new Dictionary<string, int>(StringComparer.Ordinal);\n        foreach (string word in book)\n        {\n            string key = word.ToLowerInvariant();\n            counts.TryGetValue(key, out int count);\n            counts[key] = count + 1;\n        }\n        int[] result = new int[queries.Length];\n        for (int i = 0; i < queries.Length; ++i)\n        {\n            counts.TryGetValue(queries[i].ToLowerInvariant(), out int count);\n            result[i] = count;\n        }\n        return result;\n    }\n}\n",
+    "explanation": "Many queries share the same book. Normalize case once per occurrence and accumulate counts in a dictionary, then normalize and look up each query. This pays for reading the book once instead of once per requested word.",
+    "timeComplexity": "Expected O(B+Q) character work for B book characters and Q query characters, assuming expected constant dictionary access per bounded-length key. Hash-table collisions can worsen this bound.",
+    "spaceComplexity": "O(D*L+q) storage for D distinct normalized book words of maximum length L and q returned counts; query normalization uses O(L) temporary storage.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.2. No affiliation is implied.",
+    "correctness": "After processing any prefix of book, the dictionary count for each normalized word equals its occurrences in that prefix: inserting a new normalized key starts its count and every later occurrence increments it once. Induction gives exact counts for the entire book. A normalized query identifies precisely its case-insensitive equivalence class; lookup returns that count, or zero when no occurrence created its key. Appending answers in query order preserves repeated queries and their positions.",
+    "walkthrough": "For book=[Red,blue,RED,green] and queries=[red,BLUE,missing,Red], normalized counts are red:2, blue:1, green:1. The answers are [2,1,0,2]. Red and RED contribute to the same count; the repeated red query does not consume a book occurrence.",
+    "edgeCases": [
+      "Empty book or query array; all queries absent.",
+      "Mixed case, repeated book words and repeated queries."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_2",
+    "collection": "ctci6",
+    "language": "javascript",
+    "code": "'use strict';\nfunction WordFrequencies(book, queries) {\n  const counts = new Map();\n  for (const word of book) {\n    const key = word.toLowerCase();\n    counts.set(key, (counts.get(key) || 0) + 1);\n  }\n  return queries.map((word) => counts.get(word.toLowerCase()) || 0);\n}\n\nmodule.exports = {WordFrequencies};\n",
+    "explanation": "Many queries share the same book. Normalize case once per occurrence and accumulate counts in a dictionary, then normalize and look up each query. This pays for reading the book once instead of once per requested word.",
+    "timeComplexity": "Expected O(B+Q) character work for B book characters and Q query characters, assuming expected constant dictionary access per bounded-length key. Hash-table collisions can worsen this bound.",
+    "spaceComplexity": "O(D*L+q) storage for D distinct normalized book words of maximum length L and q returned counts; query normalization uses O(L) temporary storage.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.2. No affiliation is implied.",
+    "correctness": "After processing any prefix of book, the dictionary count for each normalized word equals its occurrences in that prefix: inserting a new normalized key starts its count and every later occurrence increments it once. Induction gives exact counts for the entire book. A normalized query identifies precisely its case-insensitive equivalence class; lookup returns that count, or zero when no occurrence created its key. Appending answers in query order preserves repeated queries and their positions.",
+    "walkthrough": "For book=[Red,blue,RED,green] and queries=[red,BLUE,missing,Red], normalized counts are red:2, blue:1, green:1. The answers are [2,1,0,2]. Red and RED contribute to the same count; the repeated red query does not consume a book occurrence.",
+    "edgeCases": [
+      "Empty book or query array; all queries absent.",
+      "Mixed case, repeated book words and repeated queries."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_2",
+    "collection": "ctci6",
+    "language": "python",
+    "code": "def WordFrequencies(book: list[str], queries: list[str]) -> list[int]:\n    counts = {}\n    for word in book:\n        key = word.lower()\n        counts[key] = counts.get(key, 0) + 1\n    return [counts.get(word.lower(), 0) for word in queries]\n",
+    "explanation": "Many queries share the same book. Normalize case once per occurrence and accumulate counts in a dictionary, then normalize and look up each query. This pays for reading the book once instead of once per requested word.",
+    "timeComplexity": "Expected O(B+Q) character work for B book characters and Q query characters, assuming expected constant dictionary access per bounded-length key. Hash-table collisions can worsen this bound.",
+    "spaceComplexity": "O(D*L+q) storage for D distinct normalized book words of maximum length L and q returned counts; query normalization uses O(L) temporary storage.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.2. No affiliation is implied.",
+    "correctness": "After processing any prefix of book, the dictionary count for each normalized word equals its occurrences in that prefix: inserting a new normalized key starts its count and every later occurrence increments it once. Induction gives exact counts for the entire book. A normalized query identifies precisely its case-insensitive equivalence class; lookup returns that count, or zero when no occurrence created its key. Appending answers in query order preserves repeated queries and their positions.",
+    "walkthrough": "For book=[Red,blue,RED,green] and queries=[red,BLUE,missing,Red], normalized counts are red:2, blue:1, green:1. The answers are [2,1,0,2]. Red and RED contribute to the same count; the repeated red query does not consume a book occurrence.",
+    "edgeCases": [
+      "Empty book or query array; all queries absent.",
+      "Mixed case, repeated book words and repeated queries."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_2",
+    "collection": "ctci6",
+    "language": "cpp",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n#include <unordered_map>\n#include <unordered_set>\nclass Solution {\n public:\n  std::vector<int> WordFrequencies(const std::vector<std::string>& book,\n                                   const std::vector<std::string>& queries) {\n    std::unordered_map<std::string, int> counts;\n    for (auto word : book) {\n      for (char& c : word)\n        if (c >= 'A' && c <= 'Z')\n          c = static_cast<char>(c - 'A' + 'a');\n      ++counts[word];\n    }\n    std::vector<int> result;\n    result.reserve(queries.size());\n    for (auto word : queries) {\n      for (char& c : word)\n        if (c >= 'A' && c <= 'Z')\n          c = static_cast<char>(c - 'A' + 'a');\n      auto found = counts.find(word);\n      result.push_back(found == counts.end() ? 0 : found->second);\n    }\n    return result;\n  }\n};\n",
+    "explanation": "Many queries share the same book. Normalize case once per occurrence and accumulate counts in a dictionary, then normalize and look up each query. This pays for reading the book once instead of once per requested word.",
+    "timeComplexity": "Expected O(B+Q) character work for B book characters and Q query characters, assuming expected constant dictionary access per bounded-length key. Hash-table collisions can worsen this bound.",
+    "spaceComplexity": "O(D*L+q) storage for D distinct normalized book words of maximum length L and q returned counts; query normalization uses O(L) temporary storage.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.2. No affiliation is implied.",
+    "correctness": "After processing any prefix of book, the dictionary count for each normalized word equals its occurrences in that prefix: inserting a new normalized key starts its count and every later occurrence increments it once. Induction gives exact counts for the entire book. A normalized query identifies precisely its case-insensitive equivalence class; lookup returns that count, or zero when no occurrence created its key. Appending answers in query order preserves repeated queries and their positions.",
+    "walkthrough": "For book=[Red,blue,RED,green] and queries=[red,BLUE,missing,Red], normalized counts are red:2, blue:1, green:1. The answers are [2,1,0,2]. Red and RED contribute to the same count; the repeated red query does not consume a book occurrence.",
+    "edgeCases": [
+      "Empty book or query array; all queries absent.",
+      "Mixed case, repeated book words and repeated queries."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_2",
+    "collection": "ctci6",
+    "language": "java",
+    "code": "import java.util.*;\nclass Solution {\n  public int[] WordFrequencies(String[] book, String[] queries) {\n    Map<String, Integer> counts = new HashMap<>();\n    for (String word : book) {\n      String key = word.toLowerCase(Locale.ROOT);\n      counts.put(key, counts.getOrDefault(key, 0) + 1);\n    }\n    int[] result = new int[queries.length];\n    for (int i = 0; i < queries.length; ++i)\n      result[i] = counts.getOrDefault(queries[i].toLowerCase(Locale.ROOT), 0);\n    return result;\n  }\n}\n",
+    "explanation": "Many queries share the same book. Normalize case once per occurrence and accumulate counts in a dictionary, then normalize and look up each query. This pays for reading the book once instead of once per requested word.",
+    "timeComplexity": "Expected O(B+Q) character work for B book characters and Q query characters, assuming expected constant dictionary access per bounded-length key. Hash-table collisions can worsen this bound.",
+    "spaceComplexity": "O(D*L+q) storage for D distinct normalized book words of maximum length L and q returned counts; query normalization uses O(L) temporary storage.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.2. No affiliation is implied.",
+    "correctness": "After processing any prefix of book, the dictionary count for each normalized word equals its occurrences in that prefix: inserting a new normalized key starts its count and every later occurrence increments it once. Induction gives exact counts for the entire book. A normalized query identifies precisely its case-insensitive equivalence class; lookup returns that count, or zero when no occurrence created its key. Appending answers in query order preserves repeated queries and their positions.",
+    "walkthrough": "For book=[Red,blue,RED,green] and queries=[red,BLUE,missing,Red], normalized counts are red:2, blue:1, green:1. The answers are [2,1,0,2]. Red and RED contribute to the same count; the repeated red query does not consume a book occurrence.",
+    "edgeCases": [
+      "Empty book or query array; all queries absent.",
+      "Mixed case, repeated book words and repeated queries."
     ]
   },
   {
@@ -33416,7 +33751,7 @@
     "problemId": "ctci6_16_4",
     "collection": "ctci6",
     "language": "cpp",
-    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\nclass Solution {\n public:\n  int TicTacWinner(const std::vector<std::vector<int>>& board) {\n    int n = static_cast<int>(board.size());\n    if (n == 0)\n      return 0;\n    for (int i = 0; i < n; ++i) {\n      int row = board[i][0], column = board[0][i];\n      for (int j = 0; j < n; ++j) {\n        if (board[i][j] != row)\n          row = 0;\n        if (board[j][i] != column)\n          column = 0;\n      }\n      if (row != 0)\n        return row;\n      if (column != 0)\n        return column;\n    }\n    int main = board[0][0], other = board[0][n - 1];\n    for (int i = 0; i < n; ++i) {\n      if (board[i][i] != main)\n        main = 0;\n      if (board[i][n - 1 - i] != other)\n        other = 0;\n    }\n    if (main != 0)\n      return main;\n    return other;\n  }\n};\n",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n#include <unordered_map>\n#include <unordered_set>\nclass Solution {\n public:\n  int TicTacWinner(const std::vector<std::vector<int>>& board) {\n    int n = static_cast<int>(board.size());\n    if (n == 0)\n      return 0;\n    for (int i = 0; i < n; ++i) {\n      int row = board[i][0], column = board[0][i];\n      for (int j = 0; j < n; ++j) {\n        if (board[i][j] != row)\n          row = 0;\n        if (board[j][i] != column)\n          column = 0;\n      }\n      if (row != 0)\n        return row;\n      if (column != 0)\n        return column;\n    }\n    int main = board[0][0], other = board[0][n - 1];\n    for (int i = 0; i < n; ++i) {\n      if (board[i][i] != main)\n        main = 0;\n      if (board[i][n - 1 - i] != other)\n        other = 0;\n    }\n    if (main != 0)\n      return main;\n    return other;\n  }\n};\n",
     "explanation": "A winning line can only belong to one of a finite set: n rows, n columns and two full diagonals. For each candidate, take its first cell as the proposed player and verify the remaining cells; an empty first cell immediately disqualifies the line. This covers the generic square-board follow-up without assuming the board is always 3 by 3.",
     "timeComplexity": "O(n^2) time: examine at most 2n+2 lines of length n.",
     "spaceComplexity": "O(1) auxiliary space; no board copy or history is needed.",
@@ -33496,7 +33831,7 @@
     "problemId": "ctci6_16_5",
     "collection": "ctci6",
     "language": "cpp",
-    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\nclass Solution {\n public:\n  int CountFactorialZeros(int n) {\n    int count = 0;\n    while (n != 0) {\n      n /= 5;\n      count += n;\n    }\n    return count;\n  }\n};\n",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n#include <unordered_map>\n#include <unordered_set>\nclass Solution {\n public:\n  int CountFactorialZeros(int n) {\n    int count = 0;\n    while (n != 0) {\n      n /= 5;\n      count += n;\n    }\n    return count;\n  }\n};\n",
     "explanation": "A decimal trailing zero consumes one factor 2 and one factor 5. Factorials supply more twos than fives, so only the number of fives matters. Multiples of 25 contribute a second five, multiples of 125 a third, and so on. Repeatedly dividing n by five counts each contribution without growing a power that might overflow.",
     "timeComplexity": "O(log_5(n+1)) integer divisions and additions; zero takes constant time.",
     "spaceComplexity": "O(1) auxiliary space; the factorial and powers of five are never stored.",
@@ -33522,6 +33857,86 @@
     "edgeCases": [
       "Zero and numbers below five.",
       "Just below, at and above powers of five; the maximum signed input."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_6",
+    "collection": "ctci6",
+    "language": "csharp",
+    "code": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic class Solution\n{\n    public long SmallestDifference(int[] first, int[] second)\n    {\n        if (first.Length == 0 || second.Length == 0)\n            return -1;\n        int[] a = (int[])first.Clone(), b = (int[])second.Clone();\n        Array.Sort(a);\n        Array.Sort(b);\n        int i = 0, j = 0;\n        long best = 4294967295L;\n        while (i < a.Length && j < b.Length)\n        {\n            long difference = (long)a[i] - b[j];\n            best = Math.Min(best, Math.Abs(difference));\n            if (difference == 0)\n                return 0;\n            if (difference < 0)\n                ++i;\n            else\n                ++j;\n        }\n        return best;\n    }\n}\n",
+    "explanation": "Sorted copies expose the closest cross-array neighbors without checking every pair. At current values a and b, moving the larger value can only keep or increase the gap while the smaller stays fixed. Record their difference, then advance the smaller side to seek a closer value.",
+    "timeComplexity": "O(n log(n+1)+m log(m+1)) sorting time plus O(n+m) pointer advances.",
+    "spaceComplexity": "O(n+m) for the two private sorted copies; library sorting workspace is bounded by this storage.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.6. No affiliation is implied.",
+    "correctness": "Consider current sorted values a<=b. Every not-yet-visited value on the second side is at least b, so none can improve the recorded b-a while a stays fixed. Discarding a is safe. The symmetric argument applies when b<a. Every discarded value has therefore been paired with its best remaining candidate, and any candidates skipped earlier were already bounded by an earlier recorded difference. The least recorded difference is the global minimum. Equal values certify the optimal lower bound zero. Empty input has no cross-array pair and uses the explicit -1 convention.",
+    "walkthrough": "For first=[10,1,20] and second=[14,5], sort copies to [1,10,20] and [5,14]. Record gaps 4 (1,5), 5 (10,5), 4 (10,14), and 6 (20,14), returning 4. For [-2147483648] and [2147483647], the exact answer is 4294967295 rather than an overflowing signed value.",
+    "edgeCases": [
+      "Either input empty, duplicates and a shared value.",
+      "Signed endpoints and differences above 2147483647."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_6",
+    "collection": "ctci6",
+    "language": "javascript",
+    "code": "'use strict';\nfunction SmallestDifference(first, second) {\n  if (!first.length || !second.length) return -1;\n  const a = first.slice().sort((x, y) => x - y),\n    b = second.slice().sort((x, y) => x - y);\n  let i = 0,\n    j = 0,\n    best = 4294967295;\n  while (i < a.length && j < b.length) {\n    const difference = a[i] - b[j];\n    best = Math.min(best, Math.abs(difference));\n    if (difference === 0) return 0;\n    if (difference < 0) ++i;\n    else ++j;\n  }\n  return best;\n}\n\nmodule.exports = {SmallestDifference};\n",
+    "explanation": "Sorted copies expose the closest cross-array neighbors without checking every pair. At current values a and b, moving the larger value can only keep or increase the gap while the smaller stays fixed. Record their difference, then advance the smaller side to seek a closer value.",
+    "timeComplexity": "O(n log(n+1)+m log(m+1)) sorting time plus O(n+m) pointer advances.",
+    "spaceComplexity": "O(n+m) for the two private sorted copies; library sorting workspace is bounded by this storage.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.6. No affiliation is implied.",
+    "correctness": "Consider current sorted values a<=b. Every not-yet-visited value on the second side is at least b, so none can improve the recorded b-a while a stays fixed. Discarding a is safe. The symmetric argument applies when b<a. Every discarded value has therefore been paired with its best remaining candidate, and any candidates skipped earlier were already bounded by an earlier recorded difference. The least recorded difference is the global minimum. Equal values certify the optimal lower bound zero. Empty input has no cross-array pair and uses the explicit -1 convention.",
+    "walkthrough": "For first=[10,1,20] and second=[14,5], sort copies to [1,10,20] and [5,14]. Record gaps 4 (1,5), 5 (10,5), 4 (10,14), and 6 (20,14), returning 4. For [-2147483648] and [2147483647], the exact answer is 4294967295 rather than an overflowing signed value.",
+    "edgeCases": [
+      "Either input empty, duplicates and a shared value.",
+      "Signed endpoints and differences above 2147483647."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_6",
+    "collection": "ctci6",
+    "language": "python",
+    "code": "def SmallestDifference(first: list[int], second: list[int]) -> int:\n    if not first or not second:\n        return -1\n    a, b = sorted(first), sorted(second)\n    i = j = 0\n    best = 4294967295\n    while i < len(a) and j < len(b):\n        difference = a[i] - b[j]\n        best = min(best, abs(difference))\n        if difference == 0:\n            return 0\n        if difference < 0:\n            i += 1\n        else:\n            j += 1\n    return best\n",
+    "explanation": "Sorted copies expose the closest cross-array neighbors without checking every pair. At current values a and b, moving the larger value can only keep or increase the gap while the smaller stays fixed. Record their difference, then advance the smaller side to seek a closer value.",
+    "timeComplexity": "O(n log(n+1)+m log(m+1)) sorting time plus O(n+m) pointer advances.",
+    "spaceComplexity": "O(n+m) for the two private sorted copies; library sorting workspace is bounded by this storage.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.6. No affiliation is implied.",
+    "correctness": "Consider current sorted values a<=b. Every not-yet-visited value on the second side is at least b, so none can improve the recorded b-a while a stays fixed. Discarding a is safe. The symmetric argument applies when b<a. Every discarded value has therefore been paired with its best remaining candidate, and any candidates skipped earlier were already bounded by an earlier recorded difference. The least recorded difference is the global minimum. Equal values certify the optimal lower bound zero. Empty input has no cross-array pair and uses the explicit -1 convention.",
+    "walkthrough": "For first=[10,1,20] and second=[14,5], sort copies to [1,10,20] and [5,14]. Record gaps 4 (1,5), 5 (10,5), 4 (10,14), and 6 (20,14), returning 4. For [-2147483648] and [2147483647], the exact answer is 4294967295 rather than an overflowing signed value.",
+    "edgeCases": [
+      "Either input empty, duplicates and a shared value.",
+      "Signed endpoints and differences above 2147483647."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_6",
+    "collection": "ctci6",
+    "language": "cpp",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n#include <unordered_map>\n#include <unordered_set>\nclass Solution {\n public:\n  long long SmallestDifference(const std::vector<int>& first, const std::vector<int>& second) {\n    if (first.empty() || second.empty())\n      return -1;\n    auto a = first, b = second;\n    std::sort(a.begin(), a.end());\n    std::sort(b.begin(), b.end());\n    size_t i = 0, j = 0;\n    long long best = 4294967295LL;\n    while (i < a.size() && j < b.size()) {\n      long long difference = static_cast<long long>(a[i]) - b[j];\n      best = std::min(best, difference < 0 ? -difference : difference);\n      if (difference == 0)\n        return 0;\n      if (difference < 0)\n        ++i;\n      else\n        ++j;\n    }\n    return best;\n  }\n};\n",
+    "explanation": "Sorted copies expose the closest cross-array neighbors without checking every pair. At current values a and b, moving the larger value can only keep or increase the gap while the smaller stays fixed. Record their difference, then advance the smaller side to seek a closer value.",
+    "timeComplexity": "O(n log(n+1)+m log(m+1)) sorting time plus O(n+m) pointer advances.",
+    "spaceComplexity": "O(n+m) for the two private sorted copies; library sorting workspace is bounded by this storage.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.6. No affiliation is implied.",
+    "correctness": "Consider current sorted values a<=b. Every not-yet-visited value on the second side is at least b, so none can improve the recorded b-a while a stays fixed. Discarding a is safe. The symmetric argument applies when b<a. Every discarded value has therefore been paired with its best remaining candidate, and any candidates skipped earlier were already bounded by an earlier recorded difference. The least recorded difference is the global minimum. Equal values certify the optimal lower bound zero. Empty input has no cross-array pair and uses the explicit -1 convention.",
+    "walkthrough": "For first=[10,1,20] and second=[14,5], sort copies to [1,10,20] and [5,14]. Record gaps 4 (1,5), 5 (10,5), 4 (10,14), and 6 (20,14), returning 4. For [-2147483648] and [2147483647], the exact answer is 4294967295 rather than an overflowing signed value.",
+    "edgeCases": [
+      "Either input empty, duplicates and a shared value.",
+      "Signed endpoints and differences above 2147483647."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_6",
+    "collection": "ctci6",
+    "language": "java",
+    "code": "import java.util.*;\nclass Solution {\n  public long SmallestDifference(int[] first, int[] second) {\n    if (first.length == 0 || second.length == 0)\n      return -1;\n    int[] a = first.clone(), b = second.clone();\n    Arrays.sort(a);\n    Arrays.sort(b);\n    int i = 0, j = 0;\n    long best = 4294967295L;\n    while (i < a.length && j < b.length) {\n      long difference = (long) a[i] - b[j];\n      best = Math.min(best, Math.abs(difference));\n      if (difference == 0)\n        return 0;\n      if (difference < 0)\n        ++i;\n      else\n        ++j;\n    }\n    return best;\n  }\n}\n",
+    "explanation": "Sorted copies expose the closest cross-array neighbors without checking every pair. At current values a and b, moving the larger value can only keep or increase the gap while the smaller stays fixed. Record their difference, then advance the smaller side to seek a closer value.",
+    "timeComplexity": "O(n log(n+1)+m log(m+1)) sorting time plus O(n+m) pointer advances.",
+    "spaceComplexity": "O(n+m) for the two private sorted copies; library sorting workspace is bounded by this storage.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.6. No affiliation is implied.",
+    "correctness": "Consider current sorted values a<=b. Every not-yet-visited value on the second side is at least b, so none can improve the recorded b-a while a stays fixed. Discarding a is safe. The symmetric argument applies when b<a. Every discarded value has therefore been paired with its best remaining candidate, and any candidates skipped earlier were already bounded by an earlier recorded difference. The least recorded difference is the global minimum. Equal values certify the optimal lower bound zero. Empty input has no cross-array pair and uses the explicit -1 convention.",
+    "walkthrough": "For first=[10,1,20] and second=[14,5], sort copies to [1,10,20] and [5,14]. Record gaps 4 (1,5), 5 (10,5), 4 (10,14), and 6 (20,14), returning 4. For [-2147483648] and [2147483647], the exact answer is 4294967295 rather than an overflowing signed value.",
+    "edgeCases": [
+      "Either input empty, duplicates and a shared value.",
+      "Signed endpoints and differences above 2147483647."
     ]
   },
   {
@@ -33576,7 +33991,7 @@
     "problemId": "ctci6_16_7",
     "collection": "ctci6",
     "language": "cpp",
-    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\nclass Solution {\n public:\n  int MaximumWithoutComparison(int first, int second) {\n    auto a = static_cast<std::uint32_t>(first), b = static_cast<std::uint32_t>(second);\n    int negativeFirst = a >> 31, negativeSecond = b >> 31, negativeDifference = (a - b) >> 31,\n        different = negativeFirst ^ negativeSecond,\n        chooseFirst = different * (negativeFirst ^ 1) + (different ^ 1) * (negativeDifference ^ 1);\n    return first * chooseFirst + second * (chooseFirst ^ 1);\n  }\n};\n",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n#include <unordered_map>\n#include <unordered_set>\nclass Solution {\n public:\n  int MaximumWithoutComparison(int first, int second) {\n    auto a = static_cast<std::uint32_t>(first), b = static_cast<std::uint32_t>(second);\n    int negativeFirst = a >> 31, negativeSecond = b >> 31, negativeDifference = (a - b) >> 31,\n        different = negativeFirst ^ negativeSecond,\n        chooseFirst = different * (negativeFirst ^ 1) + (different ^ 1) * (negativeDifference ^ 1);\n    return first * chooseFirst + second * (chooseFirst ^ 1);\n  }\n};\n",
     "explanation": "The sign of first-second decides which input is larger only when subtraction cannot overflow. If signs differ, the nonnegative input is larger regardless of the wrapped difference. If signs agree, the difference fits signed range and its sign is reliable. Combine those two choices as zero/one selectors instead of branching.",
     "timeComplexity": "O(1) fixed-width arithmetic and bit operations.",
     "spaceComplexity": "O(1) auxiliary scalar storage.",
@@ -33656,7 +34071,7 @@
     "problemId": "ctci6_16_10",
     "collection": "ctci6",
     "language": "cpp",
-    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\nclass Solution {\n public:\n  int MostPopulatedYear(const std::vector<std::vector<int>>& people) {\n    int changes[102] = {};\n    for (const auto& person : people) {\n      ++changes[person[0] - 1900];\n      --changes[person[1] - 1900 + 1];\n    }\n    int alive = 0, best = 0, answer = 1900;\n    for (int offset = 0; offset < 101; ++offset) {\n      alive += changes[offset];\n      if (alive > best) {\n        best = alive;\n        answer = 1900 + offset;\n      }\n    }\n    return answer;\n  }\n};\n",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n#include <unordered_map>\n#include <unordered_set>\nclass Solution {\n public:\n  int MostPopulatedYear(const std::vector<std::vector<int>>& people) {\n    int changes[102] = {};\n    for (const auto& person : people) {\n      ++changes[person[0] - 1900];\n      --changes[person[1] - 1900 + 1];\n    }\n    int alive = 0, best = 0, answer = 1900;\n    for (int offset = 0; offset < 101; ++offset) {\n      alive += changes[offset];\n      if (alive > best) {\n        best = alive;\n        answer = 1900 + offset;\n      }\n    }\n    return answer;\n  }\n};\n",
     "explanation": "A birth increases the population starting in its own year. A death decreases it only in the following year because the death year is included. Recording those changes and taking a prefix sum counts all lifetimes without visiting every person in every year. Scan years in increasing order and update the winner only on a strictly larger population to retain the earliest tie.",
     "timeComplexity": "O(p+Y) time for p people and Y=101 admitted years, hence O(p+1) for this fixed domain.",
     "spaceComplexity": "O(Y) change counters including a death-after-2000 sentinel; Y is fixed at 101.",
@@ -33736,7 +34151,7 @@
     "problemId": "ctci6_16_11",
     "collection": "ctci6",
     "language": "cpp",
-    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\nclass Solution {\n public:\n  std::vector<int> DivingBoardLengths(int planks, int shorter, int longer) {\n    if (shorter == longer)\n      return {planks * shorter};\n    std::vector<int> result;\n    result.reserve(planks + 1);\n    for (int count = 0; count <= planks; ++count)\n      result.push_back(planks * shorter + count * (longer - shorter));\n    return result;\n  }\n};\n",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n#include <unordered_map>\n#include <unordered_set>\nclass Solution {\n public:\n  std::vector<int> DivingBoardLengths(int planks, int shorter, int longer) {\n    if (shorter == longer)\n      return {planks * shorter};\n    std::vector<int> result;\n    result.reserve(planks + 1);\n    for (int count = 0; count <= planks; ++count)\n      result.push_back(planks * shorter + count * (longer - shorter));\n    return result;\n  }\n};\n",
     "explanation": "Only the number of long planks affects the total; the ordering of those planks does not. For k long planks, total length is planks*shorter+k*(longer-shorter). Enumerating k from zero through planks covers all choices without exploring 2^planks arrangements. Equal plank lengths collapse all counts to one answer.",
     "timeComplexity": "O(planks+1) time when lengths differ, matching output size; O(1) when equal.",
     "spaceComplexity": "O(1) auxiliary space excluding the returned O(planks+1) integer values, or one value for equal lengths.",
@@ -33816,7 +34231,7 @@
     "problemId": "ctci6_16_15",
     "collection": "ctci6",
     "language": "cpp",
-    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\nclass Solution {\n public:\n  std::vector<int> ScoreMasterMind(const std::string& guess, const std::string& secret) {\n    int remaining[4] = {};\n    int hits = 0, pseudoHits = 0;\n    for (int i = 0; i < 4; ++i) {\n      if (guess[i] == secret[i])\n        ++hits;\n      else\n        ++remaining[static_cast<int>(std::string(\"RGBY\").find(secret[i]))];\n    }\n    for (int i = 0; i < 4; ++i) {\n      if (guess[i] == secret[i])\n        continue;\n      int color = static_cast<int>(std::string(\"RGBY\").find(guess[i]));\n      if (remaining[color] > 0) {\n        --remaining[color];\n        ++pseudoHits;\n      }\n    }\n    return {hits, pseudoHits};\n  }\n};\n",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n#include <unordered_map>\n#include <unordered_set>\nclass Solution {\n public:\n  std::vector<int> ScoreMasterMind(const std::string& guess, const std::string& secret) {\n    int remaining[4] = {};\n    int hits = 0, pseudoHits = 0;\n    for (int i = 0; i < 4; ++i) {\n      if (guess[i] == secret[i])\n        ++hits;\n      else\n        ++remaining[static_cast<int>(std::string(\"RGBY\").find(secret[i]))];\n    }\n    for (int i = 0; i < 4; ++i) {\n      if (guess[i] == secret[i])\n        continue;\n      int color = static_cast<int>(std::string(\"RGBY\").find(guess[i]));\n      if (remaining[color] > 0) {\n        --remaining[color];\n        ++pseudoHits;\n      }\n    }\n    return {hits, pseudoHits};\n  }\n};\n",
     "explanation": "Reserve exact matches first so their occurrences cannot be reused. Among the unmatched positions, only remaining color multiplicities matter: each unmatched guess can consume one occurrence of its color if available. A frequency table implements this matching without pairing the same secret slot twice.",
     "timeComplexity": "O(1) for the fixed four slots; two passes and a fixed four-color table.",
     "spaceComplexity": "O(1) auxiliary space and a two-integer result.",
@@ -33896,7 +34311,7 @@
     "problemId": "ctci6_16_16",
     "collection": "ctci6",
     "language": "cpp",
-    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\nclass Solution {\n public:\n  std::vector<int> ShortestSortWindow(const std::vector<int>& values) {\n    int n = static_cast<int>(values.size());\n    if (n == 0)\n      return {-1, -1};\n    int right = -1, maximum = values[0];\n    for (int i = 0; i < n; ++i) {\n      if (values[i] < maximum)\n        right = i;\n      maximum = std::max(maximum, values[i]);\n    }\n    if (right == -1)\n      return {-1, -1};\n    int left = -1, minimum = values[n - 1];\n    for (int i = n - 1; i >= 0; --i) {\n      if (values[i] > minimum)\n        left = i;\n      minimum = std::min(minimum, values[i]);\n    }\n    return {left, right};\n  }\n};\n",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n#include <unordered_map>\n#include <unordered_set>\nclass Solution {\n public:\n  std::vector<int> ShortestSortWindow(const std::vector<int>& values) {\n    int n = static_cast<int>(values.size());\n    if (n == 0)\n      return {-1, -1};\n    int right = -1, maximum = values[0];\n    for (int i = 0; i < n; ++i) {\n      if (values[i] < maximum)\n        right = i;\n      maximum = std::max(maximum, values[i]);\n    }\n    if (right == -1)\n      return {-1, -1};\n    int left = -1, minimum = values[n - 1];\n    for (int i = n - 1; i >= 0; --i) {\n      if (values[i] > minimum)\n        left = i;\n      minimum = std::min(minimum, values[i]);\n    }\n    return {left, right};\n  }\n};\n",
     "explanation": "Scanning left to right, any value below the largest earlier value is too far right and must lie inside the sorting window. Its last occurrence of such a violation fixes the right endpoint. Symmetrically, a value above the smallest later value is too far left; scanning backward locates the left endpoint. This avoids sorting a full copy just to find mismatches.",
     "timeComplexity": "O(n) time for two scans.",
     "spaceComplexity": "O(1) auxiliary storage, excluding the two-integer output.",
@@ -33976,7 +34391,7 @@
     "problemId": "ctci6_16_17",
     "collection": "ctci6",
     "language": "cpp",
-    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\nclass Solution {\n public:\n  int MaximumContiguousSum(const std::vector<int>& values) {\n    int running = 0, best = 0;\n    for (int value : values) {\n      running = std::max(0, running + value);\n      best = std::max(best, running);\n    }\n    return best;\n  }\n};\n",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n#include <unordered_map>\n#include <unordered_set>\nclass Solution {\n public:\n  int MaximumContiguousSum(const std::vector<int>& values) {\n    int running = 0, best = 0;\n    for (int value : values) {\n      running = std::max(0, running + value);\n      best = std::max(best, running);\n    }\n    return best;\n  }\n};\n",
     "explanation": "For any next element, a best suffix either extends a nonnegative previous suffix or starts afresh. A negative running prefix can never improve a future sum, so discard it. Retain a separate best-so-far total so ending a promising sequence does not lose its result.",
     "timeComplexity": "O(n) time in one scan.",
     "spaceComplexity": "O(1) auxiliary scalar storage.",
@@ -34056,7 +34471,7 @@
     "problemId": "ctci6_16_19",
     "collection": "ctci6",
     "language": "cpp",
-    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\nclass Solution {\n public:\n  std::vector<int> PondSizes(const std::vector<std::vector<int>>& land) {\n    int rows = static_cast<int>(land.size()),\n        columns = rows == 0 ? 0 : static_cast<int>(land[0].size());\n    std::vector<std::vector<bool>> seen(rows, std::vector<bool>(columns));\n    std::vector<int> sizes;\n    for (int row = 0; row < rows; ++row) {\n      for (int column = 0; column < columns; ++column) {\n        if (land[row][column] != 0 || seen[row][column])\n          continue;\n        seen[row][column] = true;\n        std::vector<std::pair<int, int>> work{{row, column}};\n        int size = 0;\n        while (!work.empty()) {\n          auto [r, c] = work.back();\n          work.pop_back();\n          ++size;\n          for (int dr = -1; dr <= 1; ++dr) {\n            for (int dc = -1; dc <= 1; ++dc) {\n              if (dr == 0 && dc == 0)\n                continue;\n              int nr = r + dr, nc = c + dc;\n              if (nr >= 0 && nr < rows && nc >= 0 && nc < columns && land[nr][nc] == 0 &&\n                  !seen[nr][nc]) {\n                seen[nr][nc] = true;\n                work.push_back({nr, nc});\n              }\n            }\n          }\n        }\n        sizes.push_back(size);\n      }\n    }\n    std::sort(sizes.begin(), sizes.end());\n    return sizes;\n  }\n};\n",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n#include <unordered_map>\n#include <unordered_set>\nclass Solution {\n public:\n  std::vector<int> PondSizes(const std::vector<std::vector<int>>& land) {\n    int rows = static_cast<int>(land.size()),\n        columns = rows == 0 ? 0 : static_cast<int>(land[0].size());\n    std::vector<std::vector<bool>> seen(rows, std::vector<bool>(columns));\n    std::vector<int> sizes;\n    for (int row = 0; row < rows; ++row) {\n      for (int column = 0; column < columns; ++column) {\n        if (land[row][column] != 0 || seen[row][column])\n          continue;\n        seen[row][column] = true;\n        std::vector<std::pair<int, int>> work{{row, column}};\n        int size = 0;\n        while (!work.empty()) {\n          auto [r, c] = work.back();\n          work.pop_back();\n          ++size;\n          for (int dr = -1; dr <= 1; ++dr) {\n            for (int dc = -1; dc <= 1; ++dc) {\n              if (dr == 0 && dc == 0)\n                continue;\n              int nr = r + dr, nc = c + dc;\n              if (nr >= 0 && nr < rows && nc >= 0 && nc < columns && land[nr][nc] == 0 &&\n                  !seen[nr][nc]) {\n                seen[nr][nc] = true;\n                work.push_back({nr, nc});\n              }\n            }\n          }\n        }\n        sizes.push_back(size);\n      }\n    }\n    std::sort(sizes.begin(), sizes.end());\n    return sizes;\n  }\n};\n",
     "explanation": "Start a search only at an unvisited water cell, mark it on discovery, and count every water cell reached through eight-neighbor steps. Every such search consumes exactly one connected component. Separate visited flags preserve the elevation input; marking before pushing avoids counting a water cell twice. Sorting the component counts provides the bank's deterministic output order without merging equal-sized ponds.",
     "timeComplexity": "O(rows*columns + p*log(p+1)) time for the scan/search and sorting p pond sizes. Each cell and its eight neighbors are checked a constant number of times.",
     "spaceComplexity": "O(rows*columns) visited flags and worst-case work stack, excluding the p returned sizes.",
@@ -34082,6 +34497,166 @@
     "edgeCases": [
       "No water, all water, empty dimensions.",
       "Diagonal-only connections, separate equal-sized ponds, and boundary/corner cells."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_21",
+    "collection": "ctci6",
+    "language": "csharp",
+    "code": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic class Solution\n{\n    public int[] SumSwap(int[] first, int[] second)\n    {\n        long difference = 0;\n        foreach (int value in first)\n            difference += value;\n        foreach (int value in second)\n            difference -= value;\n        if (difference % 2 != 0)\n        {\n            return [];\n        }\n        long half = difference / 2;\n        var contents = new HashSet<int>(second);\n        foreach (int value in first)\n        {\n            long required = (long)value - half;\n            if (required >= -2147483648L && required <= 2147483647L &&\n                contents.Contains((int)required))\n            {\n                return [value, (int)required];\n            }\n        }\n        return [];\n    }\n}\n",
+    "explanation": "Writing the new sums as S1-a+b and S2-b+a gives 2*(a-b)=S1-S2. An odd total difference is impossible. Otherwise, for each a in first, the only possible b is a-(S1-S2)/2; a hash set of second values answers membership without testing every pair.",
+    "timeComplexity": "Expected O(n+m) time for sums, building the membership set and one scan; hash collisions can worsen the bound.",
+    "spaceComplexity": "O(m) membership storage plus a constant-size returned pair.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.21. No affiliation is implied.",
+    "correctness": "Any valid exchange satisfies the derived equation, so an odd sum difference rules out all possibilities. For an even difference, every scanned a has exactly one required b. A set membership hit proves both values occur and substitution into the equation proves the new sums agree. Conversely, every valid exchange has a first-array occurrence that the scan visits and its required second value is in the set, so a valid exchange cannot be missed. Scanning original first order and returning the first hit implements the tie rule. No hit proves absence.",
+    "walkthrough": "For first=[4,1,2,1,1,2] (sum 11) and second=[3,6,3,3] (sum 15), the half-difference is -2. The first value 4 requires second value 6, which exists, so return [4,6]. The hypothetical new sums are both 13; the supplied arrays stay unchanged.",
+    "edgeCases": [
+      "Empty inputs, odd total difference, equal sums but no shared value.",
+      "Multiple exchanges, repeated values, negative totals and signed endpoints."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_21",
+    "collection": "ctci6",
+    "language": "javascript",
+    "code": "'use strict';\nfunction SumSwap(first, second) {\n  let difference = 0;\n  for (const value of first) difference += value;\n  for (const value of second) difference -= value;\n  if (difference % 2 !== 0) return [];\n  const half = difference / 2,\n    contents = new Set(second);\n  for (const value of first) {\n    const required = value - half;\n    if (contents.has(required)) return [value, required];\n  }\n  return [];\n}\n\nmodule.exports = {SumSwap};\n",
+    "explanation": "Writing the new sums as S1-a+b and S2-b+a gives 2*(a-b)=S1-S2. An odd total difference is impossible. Otherwise, for each a in first, the only possible b is a-(S1-S2)/2; a hash set of second values answers membership without testing every pair.",
+    "timeComplexity": "Expected O(n+m) time for sums, building the membership set and one scan; hash collisions can worsen the bound.",
+    "spaceComplexity": "O(m) membership storage plus a constant-size returned pair.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.21. No affiliation is implied.",
+    "correctness": "Any valid exchange satisfies the derived equation, so an odd sum difference rules out all possibilities. For an even difference, every scanned a has exactly one required b. A set membership hit proves both values occur and substitution into the equation proves the new sums agree. Conversely, every valid exchange has a first-array occurrence that the scan visits and its required second value is in the set, so a valid exchange cannot be missed. Scanning original first order and returning the first hit implements the tie rule. No hit proves absence.",
+    "walkthrough": "For first=[4,1,2,1,1,2] (sum 11) and second=[3,6,3,3] (sum 15), the half-difference is -2. The first value 4 requires second value 6, which exists, so return [4,6]. The hypothetical new sums are both 13; the supplied arrays stay unchanged.",
+    "edgeCases": [
+      "Empty inputs, odd total difference, equal sums but no shared value.",
+      "Multiple exchanges, repeated values, negative totals and signed endpoints."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_21",
+    "collection": "ctci6",
+    "language": "python",
+    "code": "def SumSwap(first: list[int], second: list[int]) -> list[int]:\n    difference = sum(first) - sum(second)\n    if difference % 2:\n        return []\n    half = difference // 2\n    contents = set(second)\n    for value in first:\n        required = value - half\n        if required in contents:\n            return [value, required]\n    return []\n",
+    "explanation": "Writing the new sums as S1-a+b and S2-b+a gives 2*(a-b)=S1-S2. An odd total difference is impossible. Otherwise, for each a in first, the only possible b is a-(S1-S2)/2; a hash set of second values answers membership without testing every pair.",
+    "timeComplexity": "Expected O(n+m) time for sums, building the membership set and one scan; hash collisions can worsen the bound.",
+    "spaceComplexity": "O(m) membership storage plus a constant-size returned pair.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.21. No affiliation is implied.",
+    "correctness": "Any valid exchange satisfies the derived equation, so an odd sum difference rules out all possibilities. For an even difference, every scanned a has exactly one required b. A set membership hit proves both values occur and substitution into the equation proves the new sums agree. Conversely, every valid exchange has a first-array occurrence that the scan visits and its required second value is in the set, so a valid exchange cannot be missed. Scanning original first order and returning the first hit implements the tie rule. No hit proves absence.",
+    "walkthrough": "For first=[4,1,2,1,1,2] (sum 11) and second=[3,6,3,3] (sum 15), the half-difference is -2. The first value 4 requires second value 6, which exists, so return [4,6]. The hypothetical new sums are both 13; the supplied arrays stay unchanged.",
+    "edgeCases": [
+      "Empty inputs, odd total difference, equal sums but no shared value.",
+      "Multiple exchanges, repeated values, negative totals and signed endpoints."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_21",
+    "collection": "ctci6",
+    "language": "cpp",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n#include <unordered_map>\n#include <unordered_set>\nclass Solution {\n public:\n  std::vector<int> SumSwap(const std::vector<int>& first, const std::vector<int>& second) {\n    long long difference = 0;\n    for (int value : first)\n      difference += value;\n    for (int value : second)\n      difference -= value;\n    if (difference % 2 != 0)\n      return {};\n    long long half = difference / 2;\n    std::unordered_set<int> contents(second.begin(), second.end());\n    for (int value : first) {\n      long long required = static_cast<long long>(value) - half;\n      if (required >= -2147483648LL && required <= 2147483647LL &&\n          contents.count(static_cast<int>(required)))\n        return {value, static_cast<int>(required)};\n    }\n    return {};\n  }\n};\n",
+    "explanation": "Writing the new sums as S1-a+b and S2-b+a gives 2*(a-b)=S1-S2. An odd total difference is impossible. Otherwise, for each a in first, the only possible b is a-(S1-S2)/2; a hash set of second values answers membership without testing every pair.",
+    "timeComplexity": "Expected O(n+m) time for sums, building the membership set and one scan; hash collisions can worsen the bound.",
+    "spaceComplexity": "O(m) membership storage plus a constant-size returned pair.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.21. No affiliation is implied.",
+    "correctness": "Any valid exchange satisfies the derived equation, so an odd sum difference rules out all possibilities. For an even difference, every scanned a has exactly one required b. A set membership hit proves both values occur and substitution into the equation proves the new sums agree. Conversely, every valid exchange has a first-array occurrence that the scan visits and its required second value is in the set, so a valid exchange cannot be missed. Scanning original first order and returning the first hit implements the tie rule. No hit proves absence.",
+    "walkthrough": "For first=[4,1,2,1,1,2] (sum 11) and second=[3,6,3,3] (sum 15), the half-difference is -2. The first value 4 requires second value 6, which exists, so return [4,6]. The hypothetical new sums are both 13; the supplied arrays stay unchanged.",
+    "edgeCases": [
+      "Empty inputs, odd total difference, equal sums but no shared value.",
+      "Multiple exchanges, repeated values, negative totals and signed endpoints."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_21",
+    "collection": "ctci6",
+    "language": "java",
+    "code": "import java.util.*;\nclass Solution {\n  public int[] SumSwap(int[] first, int[] second) {\n    long difference = 0;\n    for (int value : first)\n      difference += value;\n    for (int value : second)\n      difference -= value;\n    if (difference % 2 != 0) {\n      return new int[0];\n    }\n    long half = difference / 2;\n    Set<Integer> contents = new HashSet<>();\n    for (int value : second)\n      contents.add(value);\n    for (int value : first) {\n      long required = (long) value - half;\n      if (required >= -2147483648L && required <= 2147483647L\n          && contents.contains((int) required)) {\n        return new int[] {value, (int) required};\n      }\n    }\n    return new int[0];\n  }\n}\n",
+    "explanation": "Writing the new sums as S1-a+b and S2-b+a gives 2*(a-b)=S1-S2. An odd total difference is impossible. Otherwise, for each a in first, the only possible b is a-(S1-S2)/2; a hash set of second values answers membership without testing every pair.",
+    "timeComplexity": "Expected O(n+m) time for sums, building the membership set and one scan; hash collisions can worsen the bound.",
+    "spaceComplexity": "O(m) membership storage plus a constant-size returned pair.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.21. No affiliation is implied.",
+    "correctness": "Any valid exchange satisfies the derived equation, so an odd sum difference rules out all possibilities. For an even difference, every scanned a has exactly one required b. A set membership hit proves both values occur and substitution into the equation proves the new sums agree. Conversely, every valid exchange has a first-array occurrence that the scan visits and its required second value is in the set, so a valid exchange cannot be missed. Scanning original first order and returning the first hit implements the tie rule. No hit proves absence.",
+    "walkthrough": "For first=[4,1,2,1,1,2] (sum 11) and second=[3,6,3,3] (sum 15), the half-difference is -2. The first value 4 requires second value 6, which exists, so return [4,6]. The hypothetical new sums are both 13; the supplied arrays stay unchanged.",
+    "edgeCases": [
+      "Empty inputs, odd total difference, equal sums but no shared value.",
+      "Multiple exchanges, repeated values, negative totals and signed endpoints."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_24",
+    "collection": "ctci6",
+    "language": "csharp",
+    "code": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic class Solution\n{\n    public int[][] PairsWithSum(int[] values, int target)\n    {\n        int[] ordered = (int[])values.Clone();\n        Array.Sort(ordered);\n        var result = new List<int[]>();\n        int left = 0, right = ordered.Length - 1;\n        while (left < right)\n        {\n            long total = (long)ordered[left] + ordered[right];\n            if (total == target)\n            {\n                result.Add([ordered[left], ordered[right]]);\n                ++left;\n                --right;\n            }\n            else if (total < target)\n                ++left;\n            else\n                --right;\n        }\n        return result.ToArray();\n    }\n}\n",
+    "explanation": "Sort a private copy and inspect its smallest and largest remaining values. If their sum is too small, the smallest cannot pair with anything; if too large, the largest cannot pair with anything. On equality, consume both occurrences. Complementary value classes cannot compete with other classes, so using a valid pair cannot reduce the eventual pair count.",
+    "timeComplexity": "O(n log(n+1)) time for sorting plus O(n) endpoint steps.",
+    "spaceComplexity": "O(n) for the private sorted copy and O(p) returned pairs, p<=floor(n/2).",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.24. No affiliation is implied.",
+    "correctness": "For sorted endpoints a<=b, a+b<target means no remaining partner is large enough for a; discarding a loses no valid pair. Similarly a+b>target rules out every remaining partner for b. On equality, a can pair only with value b and b only with value a. Taking that pair reduces the available counts of those complementary classes by one each (or by two for equal values), achieving the maximum possible count for that class. Repeating these safe steps produces a maximum number of disjoint pairs. Left endpoints never decrease, so normalized pairs are already in lexicographic order; all are drawn from distinct consumed occurrences.",
+    "walkthrough": "For values=[1,1,2,2,3,3] and target 4, the sorted endpoints yield [1,3], then another [1,3], then [2,2]. All six occurrences are used once. With only three 2s and target 4, return one [2,2], leaving one unused; returning three index pairs would reuse occurrences.",
+    "edgeCases": [
+      "No pair, singleton, duplicate pairs and odd equal-value multiplicity.",
+      "Negative targets, zero and signed endpoints requiring widened sums."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_24",
+    "collection": "ctci6",
+    "language": "javascript",
+    "code": "'use strict';\nfunction PairsWithSum(values, target) {\n  const ordered = values.slice().sort((a, b) => a - b),\n    result = [];\n  let left = 0,\n    right = ordered.length - 1;\n  while (left < right) {\n    const total = ordered[left] + ordered[right];\n    if (total === target) {\n      result.push([ordered[left], ordered[right]]);\n      ++left;\n      --right;\n    } else if (total < target) ++left;\n    else --right;\n  }\n  return result;\n}\n\nmodule.exports = {PairsWithSum};\n",
+    "explanation": "Sort a private copy and inspect its smallest and largest remaining values. If their sum is too small, the smallest cannot pair with anything; if too large, the largest cannot pair with anything. On equality, consume both occurrences. Complementary value classes cannot compete with other classes, so using a valid pair cannot reduce the eventual pair count.",
+    "timeComplexity": "O(n log(n+1)) time for sorting plus O(n) endpoint steps.",
+    "spaceComplexity": "O(n) for the private sorted copy and O(p) returned pairs, p<=floor(n/2).",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.24. No affiliation is implied.",
+    "correctness": "For sorted endpoints a<=b, a+b<target means no remaining partner is large enough for a; discarding a loses no valid pair. Similarly a+b>target rules out every remaining partner for b. On equality, a can pair only with value b and b only with value a. Taking that pair reduces the available counts of those complementary classes by one each (or by two for equal values), achieving the maximum possible count for that class. Repeating these safe steps produces a maximum number of disjoint pairs. Left endpoints never decrease, so normalized pairs are already in lexicographic order; all are drawn from distinct consumed occurrences.",
+    "walkthrough": "For values=[1,1,2,2,3,3] and target 4, the sorted endpoints yield [1,3], then another [1,3], then [2,2]. All six occurrences are used once. With only three 2s and target 4, return one [2,2], leaving one unused; returning three index pairs would reuse occurrences.",
+    "edgeCases": [
+      "No pair, singleton, duplicate pairs and odd equal-value multiplicity.",
+      "Negative targets, zero and signed endpoints requiring widened sums."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_24",
+    "collection": "ctci6",
+    "language": "python",
+    "code": "def PairsWithSum(values: list[int], target: int) -> list[list[int]]:\n    ordered = sorted(values)\n    left, right = 0, len(ordered) - 1\n    result = []\n    while left < right:\n        total = ordered[left] + ordered[right]\n        if total == target:\n            result.append([ordered[left], ordered[right]])\n            left += 1\n            right -= 1\n        elif total < target:\n            left += 1\n        else:\n            right -= 1\n    return result\n",
+    "explanation": "Sort a private copy and inspect its smallest and largest remaining values. If their sum is too small, the smallest cannot pair with anything; if too large, the largest cannot pair with anything. On equality, consume both occurrences. Complementary value classes cannot compete with other classes, so using a valid pair cannot reduce the eventual pair count.",
+    "timeComplexity": "O(n log(n+1)) time for sorting plus O(n) endpoint steps.",
+    "spaceComplexity": "O(n) for the private sorted copy and O(p) returned pairs, p<=floor(n/2).",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.24. No affiliation is implied.",
+    "correctness": "For sorted endpoints a<=b, a+b<target means no remaining partner is large enough for a; discarding a loses no valid pair. Similarly a+b>target rules out every remaining partner for b. On equality, a can pair only with value b and b only with value a. Taking that pair reduces the available counts of those complementary classes by one each (or by two for equal values), achieving the maximum possible count for that class. Repeating these safe steps produces a maximum number of disjoint pairs. Left endpoints never decrease, so normalized pairs are already in lexicographic order; all are drawn from distinct consumed occurrences.",
+    "walkthrough": "For values=[1,1,2,2,3,3] and target 4, the sorted endpoints yield [1,3], then another [1,3], then [2,2]. All six occurrences are used once. With only three 2s and target 4, return one [2,2], leaving one unused; returning three index pairs would reuse occurrences.",
+    "edgeCases": [
+      "No pair, singleton, duplicate pairs and odd equal-value multiplicity.",
+      "Negative targets, zero and signed endpoints requiring widened sums."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_24",
+    "collection": "ctci6",
+    "language": "cpp",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n#include <unordered_map>\n#include <unordered_set>\nclass Solution {\n public:\n  std::vector<std::vector<int>> PairsWithSum(const std::vector<int>& values, int target) {\n    auto ordered = values;\n    std::sort(ordered.begin(), ordered.end());\n    std::vector<std::vector<int>> result;\n    int left = 0, right = static_cast<int>(ordered.size()) - 1;\n    while (left < right) {\n      long long total = static_cast<long long>(ordered[left]) + ordered[right];\n      if (total == target) {\n        result.push_back({ordered[left], ordered[right]});\n        ++left;\n        --right;\n      } else if (total < target)\n        ++left;\n      else\n        --right;\n    }\n    return result;\n  }\n};\n",
+    "explanation": "Sort a private copy and inspect its smallest and largest remaining values. If their sum is too small, the smallest cannot pair with anything; if too large, the largest cannot pair with anything. On equality, consume both occurrences. Complementary value classes cannot compete with other classes, so using a valid pair cannot reduce the eventual pair count.",
+    "timeComplexity": "O(n log(n+1)) time for sorting plus O(n) endpoint steps.",
+    "spaceComplexity": "O(n) for the private sorted copy and O(p) returned pairs, p<=floor(n/2).",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.24. No affiliation is implied.",
+    "correctness": "For sorted endpoints a<=b, a+b<target means no remaining partner is large enough for a; discarding a loses no valid pair. Similarly a+b>target rules out every remaining partner for b. On equality, a can pair only with value b and b only with value a. Taking that pair reduces the available counts of those complementary classes by one each (or by two for equal values), achieving the maximum possible count for that class. Repeating these safe steps produces a maximum number of disjoint pairs. Left endpoints never decrease, so normalized pairs are already in lexicographic order; all are drawn from distinct consumed occurrences.",
+    "walkthrough": "For values=[1,1,2,2,3,3] and target 4, the sorted endpoints yield [1,3], then another [1,3], then [2,2]. All six occurrences are used once. With only three 2s and target 4, return one [2,2], leaving one unused; returning three index pairs would reuse occurrences.",
+    "edgeCases": [
+      "No pair, singleton, duplicate pairs and odd equal-value multiplicity.",
+      "Negative targets, zero and signed endpoints requiring widened sums."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_24",
+    "collection": "ctci6",
+    "language": "java",
+    "code": "import java.util.*;\nclass Solution {\n  public int[][] PairsWithSum(int[] values, int target) {\n    int[] ordered = values.clone();\n    Arrays.sort(ordered);\n    List<int[]> result = new ArrayList<>();\n    int left = 0, right = ordered.length - 1;\n    while (left < right) {\n      long total = (long) ordered[left] + ordered[right];\n      if (total == target) {\n        result.add(new int[] {ordered[left], ordered[right]});\n        ++left;\n        --right;\n      } else if (total < target)\n        ++left;\n      else\n        --right;\n    }\n    return result.toArray(new int[0][]);\n  }\n}\n",
+    "explanation": "Sort a private copy and inspect its smallest and largest remaining values. If their sum is too small, the smallest cannot pair with anything; if too large, the largest cannot pair with anything. On equality, consume both occurrences. Complementary value classes cannot compete with other classes, so using a valid pair cannot reduce the eventual pair count.",
+    "timeComplexity": "O(n log(n+1)) time for sorting plus O(n) endpoint steps.",
+    "spaceComplexity": "O(n) for the private sorted copy and O(p) returned pairs, p<=floor(n/2).",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.24. No affiliation is implied.",
+    "correctness": "For sorted endpoints a<=b, a+b<target means no remaining partner is large enough for a; discarding a loses no valid pair. Similarly a+b>target rules out every remaining partner for b. On equality, a can pair only with value b and b only with value a. Taking that pair reduces the available counts of those complementary classes by one each (or by two for equal values), achieving the maximum possible count for that class. Repeating these safe steps produces a maximum number of disjoint pairs. Left endpoints never decrease, so normalized pairs are already in lexicographic order; all are drawn from distinct consumed occurrences.",
+    "walkthrough": "For values=[1,1,2,2,3,3] and target 4, the sorted endpoints yield [1,3], then another [1,3], then [2,2]. All six occurrences are used once. With only three 2s and target 4, return one [2,2], leaving one unused; returning three index pairs would reuse occurrences.",
+    "edgeCases": [
+      "No pair, singleton, duplicate pairs and odd equal-value multiplicity.",
+      "Negative targets, zero and signed endpoints requiring widened sums."
     ]
   },
   {
@@ -34485,6 +35060,86 @@
     ]
   },
   {
+    "problemId": "ctci6_17_11",
+    "collection": "ctci6",
+    "language": "csharp",
+    "code": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic class Solution\n{\n    public int WordDistance(string[] words, string first, string second)\n    {\n        int lastFirst = -1, lastSecond = -1, best = words.Length + 1;\n        for (int i = 0; i < words.Length; ++i)\n        {\n            if (words[i] == first)\n            {\n                lastFirst = i;\n                if (lastSecond >= 0)\n                    best = Math.Min(best, i - lastSecond);\n            }\n            else if (words[i] == second)\n            {\n                lastSecond = i;\n                if (lastFirst >= 0)\n                    best = Math.Min(best, i - lastFirst);\n            }\n        }\n        return best == words.Length + 1 ? -1 : best;\n    }\n}\n",
+    "explanation": "Remember the most recent position of each requested word. When one appears, its closest partner among all earlier opposite-word occurrences is the latest such occurrence. Updating the best distance at those encounters finds every possible closest cross-word boundary without storing all positions.",
+    "timeComplexity": "O(n*L) worst-case character comparison work for n tokens and maximum word length L; O(n) token comparisons.",
+    "spaceComplexity": "O(1) auxiliary index/count storage.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.11. No affiliation is implied.",
+    "correctness": "For any occurrence at index i, every earlier opposite-word index j has distance i-j. This distance is smallest for the largest such j, which is exactly the remembered last position. Every pair has a later endpoint; when that endpoint is scanned, the algorithm considers a pair at least as close. Taking the least of these candidate distances therefore finds the global minimum. Only actual occurrences update remembered positions, so every candidate is valid. If either word never occurs, no candidate exists and the explicit -1 result is correct.",
+    "walkthrough": "For words=[red,x,blue,red,y,blue], first=red and second=blue, the encounter at index 2 yields distance 2 from red at 0. The red at index 3 is only 1 away from blue at 2, improving the best to 1. The final blue is 2 away from red at 3, so return 1, not zero intervening words.",
+    "edgeCases": [
+      "Empty text, one or both words absent.",
+      "Adjacent targets, repeated runs and the closest pair appearing late."
+    ]
+  },
+  {
+    "problemId": "ctci6_17_11",
+    "collection": "ctci6",
+    "language": "javascript",
+    "code": "'use strict';\nfunction WordDistance(words, first, second) {\n  let lastFirst = -1,\n    lastSecond = -1,\n    best = words.length + 1;\n  for (let i = 0; i < words.length; ++i) {\n    if (words[i] === first) {\n      lastFirst = i;\n      if (lastSecond >= 0) best = Math.min(best, i - lastSecond);\n    } else if (words[i] === second) {\n      lastSecond = i;\n      if (lastFirst >= 0) best = Math.min(best, i - lastFirst);\n    }\n  }\n  return best === words.length + 1 ? -1 : best;\n}\n\nmodule.exports = {WordDistance};\n",
+    "explanation": "Remember the most recent position of each requested word. When one appears, its closest partner among all earlier opposite-word occurrences is the latest such occurrence. Updating the best distance at those encounters finds every possible closest cross-word boundary without storing all positions.",
+    "timeComplexity": "O(n*L) worst-case character comparison work for n tokens and maximum word length L; O(n) token comparisons.",
+    "spaceComplexity": "O(1) auxiliary index/count storage.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.11. No affiliation is implied.",
+    "correctness": "For any occurrence at index i, every earlier opposite-word index j has distance i-j. This distance is smallest for the largest such j, which is exactly the remembered last position. Every pair has a later endpoint; when that endpoint is scanned, the algorithm considers a pair at least as close. Taking the least of these candidate distances therefore finds the global minimum. Only actual occurrences update remembered positions, so every candidate is valid. If either word never occurs, no candidate exists and the explicit -1 result is correct.",
+    "walkthrough": "For words=[red,x,blue,red,y,blue], first=red and second=blue, the encounter at index 2 yields distance 2 from red at 0. The red at index 3 is only 1 away from blue at 2, improving the best to 1. The final blue is 2 away from red at 3, so return 1, not zero intervening words.",
+    "edgeCases": [
+      "Empty text, one or both words absent.",
+      "Adjacent targets, repeated runs and the closest pair appearing late."
+    ]
+  },
+  {
+    "problemId": "ctci6_17_11",
+    "collection": "ctci6",
+    "language": "python",
+    "code": "def WordDistance(words: list[str], first: str, second: str) -> int:\n    last_first = last_second = -1\n    best = len(words) + 1\n    for index, word in enumerate(words):\n        if word == first:\n            last_first = index\n            if last_second >= 0:\n                best = min(best, index - last_second)\n        elif word == second:\n            last_second = index\n            if last_first >= 0:\n                best = min(best, index - last_first)\n    return -1 if best == len(words) + 1 else best\n",
+    "explanation": "Remember the most recent position of each requested word. When one appears, its closest partner among all earlier opposite-word occurrences is the latest such occurrence. Updating the best distance at those encounters finds every possible closest cross-word boundary without storing all positions.",
+    "timeComplexity": "O(n*L) worst-case character comparison work for n tokens and maximum word length L; O(n) token comparisons.",
+    "spaceComplexity": "O(1) auxiliary index/count storage.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.11. No affiliation is implied.",
+    "correctness": "For any occurrence at index i, every earlier opposite-word index j has distance i-j. This distance is smallest for the largest such j, which is exactly the remembered last position. Every pair has a later endpoint; when that endpoint is scanned, the algorithm considers a pair at least as close. Taking the least of these candidate distances therefore finds the global minimum. Only actual occurrences update remembered positions, so every candidate is valid. If either word never occurs, no candidate exists and the explicit -1 result is correct.",
+    "walkthrough": "For words=[red,x,blue,red,y,blue], first=red and second=blue, the encounter at index 2 yields distance 2 from red at 0. The red at index 3 is only 1 away from blue at 2, improving the best to 1. The final blue is 2 away from red at 3, so return 1, not zero intervening words.",
+    "edgeCases": [
+      "Empty text, one or both words absent.",
+      "Adjacent targets, repeated runs and the closest pair appearing late."
+    ]
+  },
+  {
+    "problemId": "ctci6_17_11",
+    "collection": "ctci6",
+    "language": "cpp",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\nclass Solution {\n public:\n  int WordDistance(const std::vector<std::string>& words, const std::string& first,\n                   const std::string& second) {\n    int lastFirst = -1, lastSecond = -1, best = static_cast<int>(words.size()) + 1;\n    for (int i = 0; i < static_cast<int>(words.size()); ++i) {\n      if (words[i] == first) {\n        lastFirst = i;\n        if (lastSecond >= 0)\n          best = std::min(best, i - lastSecond);\n      } else if (words[i] == second) {\n        lastSecond = i;\n        if (lastFirst >= 0)\n          best = std::min(best, i - lastFirst);\n      }\n    }\n    return best == static_cast<int>(words.size()) + 1 ? -1 : best;\n  }\n};\n",
+    "explanation": "Remember the most recent position of each requested word. When one appears, its closest partner among all earlier opposite-word occurrences is the latest such occurrence. Updating the best distance at those encounters finds every possible closest cross-word boundary without storing all positions.",
+    "timeComplexity": "O(n*L) worst-case character comparison work for n tokens and maximum word length L; O(n) token comparisons.",
+    "spaceComplexity": "O(1) auxiliary index/count storage.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.11. No affiliation is implied.",
+    "correctness": "For any occurrence at index i, every earlier opposite-word index j has distance i-j. This distance is smallest for the largest such j, which is exactly the remembered last position. Every pair has a later endpoint; when that endpoint is scanned, the algorithm considers a pair at least as close. Taking the least of these candidate distances therefore finds the global minimum. Only actual occurrences update remembered positions, so every candidate is valid. If either word never occurs, no candidate exists and the explicit -1 result is correct.",
+    "walkthrough": "For words=[red,x,blue,red,y,blue], first=red and second=blue, the encounter at index 2 yields distance 2 from red at 0. The red at index 3 is only 1 away from blue at 2, improving the best to 1. The final blue is 2 away from red at 3, so return 1, not zero intervening words.",
+    "edgeCases": [
+      "Empty text, one or both words absent.",
+      "Adjacent targets, repeated runs and the closest pair appearing late."
+    ]
+  },
+  {
+    "problemId": "ctci6_17_11",
+    "collection": "ctci6",
+    "language": "java",
+    "code": "import java.util.*;\nclass Solution {\n  public int WordDistance(String[] words, String first, String second) {\n    int lastFirst = -1, lastSecond = -1, best = words.length + 1;\n    for (int i = 0; i < words.length; ++i) {\n      if (words[i].equals(first)) {\n        lastFirst = i;\n        if (lastSecond >= 0)\n          best = Math.min(best, i - lastSecond);\n      } else if (words[i].equals(second)) {\n        lastSecond = i;\n        if (lastFirst >= 0)\n          best = Math.min(best, i - lastFirst);\n      }\n    }\n    return best == words.length + 1 ? -1 : best;\n  }\n}\n",
+    "explanation": "Remember the most recent position of each requested word. When one appears, its closest partner among all earlier opposite-word occurrences is the latest such occurrence. Updating the best distance at those encounters finds every possible closest cross-word boundary without storing all positions.",
+    "timeComplexity": "O(n*L) worst-case character comparison work for n tokens and maximum word length L; O(n) token comparisons.",
+    "spaceComplexity": "O(1) auxiliary index/count storage.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.11. No affiliation is implied.",
+    "correctness": "For any occurrence at index i, every earlier opposite-word index j has distance i-j. This distance is smallest for the largest such j, which is exactly the remembered last position. Every pair has a later endpoint; when that endpoint is scanned, the algorithm considers a pair at least as close. Taking the least of these candidate distances therefore finds the global minimum. Only actual occurrences update remembered positions, so every candidate is valid. If either word never occurs, no candidate exists and the explicit -1 result is correct.",
+    "walkthrough": "For words=[red,x,blue,red,y,blue], first=red and second=blue, the encounter at index 2 yields distance 2 from red at 0. The red at index 3 is only 1 away from blue at 2, improving the best to 1. The final blue is 2 away from red at 3, so return 1, not zero intervening words.",
+    "edgeCases": [
+      "Empty text, one or both words absent.",
+      "Adjacent targets, repeated runs and the closest pair appearing late."
+    ]
+  },
+  {
     "problemId": "ctci6_17_14",
     "collection": "ctci6",
     "language": "csharp",
@@ -34565,6 +35220,86 @@
     ]
   },
   {
+    "problemId": "ctci6_17_15",
+    "collection": "ctci6",
+    "language": "csharp",
+    "code": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic class Solution\n{\n    public string LongestComposedWord(string[] words)\n    {\n        var dictionary = new HashSet<string>(words, StringComparer.Ordinal);\n        string best = \"\";\n        foreach (string word in words)\n        {\n            int[] dp = new int[word.Length + 1];\n            Array.Fill(dp, -1);\n            dp[0] = 0;\n            for (int end = 1; end <= word.Length; ++end)\n                for (int start = 0; start < end; ++start)\n                    if (dp[start] >= 0 && dictionary.Contains(word.Substring(start, end - start)))\n                        dp[end] = Math.Max(dp[end], dp[start] + 1);\n            if (dp[word.Length] >= 2 &&\n                (word.Length > best.Length ||\n                 (word.Length == best.Length && StringComparer.Ordinal.Compare(word, best) < 0)))\n                best = word;\n        }\n        return best;\n    }\n}\n",
+    "explanation": "For each candidate, use prefix dynamic programming to record how many dictionary components can spell each reachable prefix. A valid final prefix needs at least two components, so the candidate's own dictionary membership cannot falsely qualify it. A set permits component membership checks; comparing successful candidates by length and then lexicographic order resolves the output unambiguously.",
+    "timeComplexity": "Expected O(W*L^3) character work for W candidate entries of maximum length L: O(L^2) substrings per candidate, each costing up to O(L) copying/hashing. Hash collisions can worsen membership costs.",
+    "spaceComplexity": "O(D*L) dictionary storage plus O(L) DP and substring workspace per candidate, for D distinct words; the input is not sorted or mutated.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.15. No affiliation is implied.",
+    "correctness": "Let dp[i] be the largest number of components spelling the first i characters, or -1 when unreachable, with dp[0]=0. Every transition appends a nonempty dictionary substring to a reachable prefix, so it creates a valid decomposition. Conversely, removing the last component of any valid decomposition leaves a shorter reachable prefix; induction ensures the transition for that last component is considered. Thus dp[length]>=2 holds exactly for candidates with the required decomposition. Keeping the longest successful word and the smallest lexicographic word on a length tie produces the specified global choice. Repeated component use is allowed because membership is not consumed.",
+    "walkthrough": "For [cat,dog,catdog,dogcat,catcatdog], catdog and dogcat each have two components. catcatdog has three: cat+cat+dog, so its length 9 beats their length 6 and it is returned. For [cat,dog,catdog,dogcat], the equal-length tie selects catdog. A dictionary containing only cat has no qualifying word.",
+    "edgeCases": [
+      "No composed word, repeated dictionary entries and a word that equals only itself.",
+      "Repeated component reuse, multiple decompositions and equal-length lexical ties."
+    ]
+  },
+  {
+    "problemId": "ctci6_17_15",
+    "collection": "ctci6",
+    "language": "javascript",
+    "code": "'use strict';\nfunction LongestComposedWord(words) {\n  const dictionary = new Set(words);\n  let best = \"\";\n  for (const word of words) {\n    const dp = new Array(word.length + 1).fill(-1);\n    dp[0] = 0;\n    for (let end = 1; end <= word.length; ++end)\n      for (let start = 0; start < end; ++start)\n        if (dp[start] >= 0 && dictionary.has(word.slice(start, end)))\n          dp[end] = Math.max(dp[end], dp[start] + 1);\n    if (\n      dp[word.length] >= 2 &&\n      (word.length > best.length || (word.length === best.length && word < best))\n    )\n      best = word;\n  }\n  return best;\n}\n\nmodule.exports = {LongestComposedWord};\n",
+    "explanation": "For each candidate, use prefix dynamic programming to record how many dictionary components can spell each reachable prefix. A valid final prefix needs at least two components, so the candidate's own dictionary membership cannot falsely qualify it. A set permits component membership checks; comparing successful candidates by length and then lexicographic order resolves the output unambiguously.",
+    "timeComplexity": "Expected O(W*L^3) character work for W candidate entries of maximum length L: O(L^2) substrings per candidate, each costing up to O(L) copying/hashing. Hash collisions can worsen membership costs.",
+    "spaceComplexity": "O(D*L) dictionary storage plus O(L) DP and substring workspace per candidate, for D distinct words; the input is not sorted or mutated.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.15. No affiliation is implied.",
+    "correctness": "Let dp[i] be the largest number of components spelling the first i characters, or -1 when unreachable, with dp[0]=0. Every transition appends a nonempty dictionary substring to a reachable prefix, so it creates a valid decomposition. Conversely, removing the last component of any valid decomposition leaves a shorter reachable prefix; induction ensures the transition for that last component is considered. Thus dp[length]>=2 holds exactly for candidates with the required decomposition. Keeping the longest successful word and the smallest lexicographic word on a length tie produces the specified global choice. Repeated component use is allowed because membership is not consumed.",
+    "walkthrough": "For [cat,dog,catdog,dogcat,catcatdog], catdog and dogcat each have two components. catcatdog has three: cat+cat+dog, so its length 9 beats their length 6 and it is returned. For [cat,dog,catdog,dogcat], the equal-length tie selects catdog. A dictionary containing only cat has no qualifying word.",
+    "edgeCases": [
+      "No composed word, repeated dictionary entries and a word that equals only itself.",
+      "Repeated component reuse, multiple decompositions and equal-length lexical ties."
+    ]
+  },
+  {
+    "problemId": "ctci6_17_15",
+    "collection": "ctci6",
+    "language": "python",
+    "code": "def LongestComposedWord(words: list[str]) -> str:\n    dictionary = set(words)\n    best = \"\"\n    for word in words:\n        dp = [-1] * (len(word) + 1)\n        dp[0] = 0\n        for end in range(1, len(word) + 1):\n            for start in range(end):\n                if dp[start] >= 0 and word[start:end] in dictionary:\n                    dp[end] = max(dp[end], dp[start] + 1)\n        if dp[-1] >= 2 and (len(word) > len(best) or (len(word) == len(best) and word < best)):\n            best = word\n    return best\n",
+    "explanation": "For each candidate, use prefix dynamic programming to record how many dictionary components can spell each reachable prefix. A valid final prefix needs at least two components, so the candidate's own dictionary membership cannot falsely qualify it. A set permits component membership checks; comparing successful candidates by length and then lexicographic order resolves the output unambiguously.",
+    "timeComplexity": "Expected O(W*L^3) character work for W candidate entries of maximum length L: O(L^2) substrings per candidate, each costing up to O(L) copying/hashing. Hash collisions can worsen membership costs.",
+    "spaceComplexity": "O(D*L) dictionary storage plus O(L) DP and substring workspace per candidate, for D distinct words; the input is not sorted or mutated.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.15. No affiliation is implied.",
+    "correctness": "Let dp[i] be the largest number of components spelling the first i characters, or -1 when unreachable, with dp[0]=0. Every transition appends a nonempty dictionary substring to a reachable prefix, so it creates a valid decomposition. Conversely, removing the last component of any valid decomposition leaves a shorter reachable prefix; induction ensures the transition for that last component is considered. Thus dp[length]>=2 holds exactly for candidates with the required decomposition. Keeping the longest successful word and the smallest lexicographic word on a length tie produces the specified global choice. Repeated component use is allowed because membership is not consumed.",
+    "walkthrough": "For [cat,dog,catdog,dogcat,catcatdog], catdog and dogcat each have two components. catcatdog has three: cat+cat+dog, so its length 9 beats their length 6 and it is returned. For [cat,dog,catdog,dogcat], the equal-length tie selects catdog. A dictionary containing only cat has no qualifying word.",
+    "edgeCases": [
+      "No composed word, repeated dictionary entries and a word that equals only itself.",
+      "Repeated component reuse, multiple decompositions and equal-length lexical ties."
+    ]
+  },
+  {
+    "problemId": "ctci6_17_15",
+    "collection": "ctci6",
+    "language": "cpp",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n#include <unordered_set>\nclass Solution {\n public:\n  std::string LongestComposedWord(const std::vector<std::string>& words) {\n    std::unordered_set<std::string> dictionary(words.begin(), words.end());\n    std::string best;\n    for (const auto& word : words) {\n      int n = static_cast<int>(word.size());\n      std::vector<int> dp(n + 1, -1);\n      dp[0] = 0;\n      for (int end = 1; end <= n; ++end)\n        for (int start = 0; start < end; ++start)\n          if (dp[start] >= 0 && dictionary.count(word.substr(start, end - start)))\n            dp[end] = std::max(dp[end], dp[start] + 1);\n      if (dp[n] >= 2 && (word.size() > best.size() || (word.size() == best.size() && word < best)))\n        best = word;\n    }\n    return best;\n  }\n};\n",
+    "explanation": "For each candidate, use prefix dynamic programming to record how many dictionary components can spell each reachable prefix. A valid final prefix needs at least two components, so the candidate's own dictionary membership cannot falsely qualify it. A set permits component membership checks; comparing successful candidates by length and then lexicographic order resolves the output unambiguously.",
+    "timeComplexity": "Expected O(W*L^3) character work for W candidate entries of maximum length L: O(L^2) substrings per candidate, each costing up to O(L) copying/hashing. Hash collisions can worsen membership costs.",
+    "spaceComplexity": "O(D*L) dictionary storage plus O(L) DP and substring workspace per candidate, for D distinct words; the input is not sorted or mutated.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.15. No affiliation is implied.",
+    "correctness": "Let dp[i] be the largest number of components spelling the first i characters, or -1 when unreachable, with dp[0]=0. Every transition appends a nonempty dictionary substring to a reachable prefix, so it creates a valid decomposition. Conversely, removing the last component of any valid decomposition leaves a shorter reachable prefix; induction ensures the transition for that last component is considered. Thus dp[length]>=2 holds exactly for candidates with the required decomposition. Keeping the longest successful word and the smallest lexicographic word on a length tie produces the specified global choice. Repeated component use is allowed because membership is not consumed.",
+    "walkthrough": "For [cat,dog,catdog,dogcat,catcatdog], catdog and dogcat each have two components. catcatdog has three: cat+cat+dog, so its length 9 beats their length 6 and it is returned. For [cat,dog,catdog,dogcat], the equal-length tie selects catdog. A dictionary containing only cat has no qualifying word.",
+    "edgeCases": [
+      "No composed word, repeated dictionary entries and a word that equals only itself.",
+      "Repeated component reuse, multiple decompositions and equal-length lexical ties."
+    ]
+  },
+  {
+    "problemId": "ctci6_17_15",
+    "collection": "ctci6",
+    "language": "java",
+    "code": "import java.util.*;\nclass Solution {\n  public String LongestComposedWord(String[] words) {\n    Set<String> dictionary = new HashSet<>(Arrays.asList(words));\n    String best = \"\";\n    for (String word : words) {\n      int[] dp = new int[word.length() + 1];\n      Arrays.fill(dp, -1);\n      dp[0] = 0;\n      for (int end = 1; end <= word.length(); ++end)\n        for (int start = 0; start < end; ++start)\n          if (dp[start] >= 0 && dictionary.contains(word.substring(start, end)))\n            dp[end] = Math.max(dp[end], dp[start] + 1);\n      if (dp[word.length()] >= 2\n          && (word.length() > best.length()\n              || (word.length() == best.length() && word.compareTo(best) < 0)))\n        best = word;\n    }\n    return best;\n  }\n}\n",
+    "explanation": "For each candidate, use prefix dynamic programming to record how many dictionary components can spell each reachable prefix. A valid final prefix needs at least two components, so the candidate's own dictionary membership cannot falsely qualify it. A set permits component membership checks; comparing successful candidates by length and then lexicographic order resolves the output unambiguously.",
+    "timeComplexity": "Expected O(W*L^3) character work for W candidate entries of maximum length L: O(L^2) substrings per candidate, each costing up to O(L) copying/hashing. Hash collisions can worsen membership costs.",
+    "spaceComplexity": "O(D*L) dictionary storage plus O(L) DP and substring workspace per candidate, for D distinct words; the input is not sorted or mutated.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.15. No affiliation is implied.",
+    "correctness": "Let dp[i] be the largest number of components spelling the first i characters, or -1 when unreachable, with dp[0]=0. Every transition appends a nonempty dictionary substring to a reachable prefix, so it creates a valid decomposition. Conversely, removing the last component of any valid decomposition leaves a shorter reachable prefix; induction ensures the transition for that last component is considered. Thus dp[length]>=2 holds exactly for candidates with the required decomposition. Keeping the longest successful word and the smallest lexicographic word on a length tie produces the specified global choice. Repeated component use is allowed because membership is not consumed.",
+    "walkthrough": "For [cat,dog,catdog,dogcat,catcatdog], catdog and dogcat each have two components. catcatdog has three: cat+cat+dog, so its length 9 beats their length 6 and it is returned. For [cat,dog,catdog,dogcat], the equal-length tie selects catdog. A dictionary containing only cat has no qualifying word.",
+    "edgeCases": [
+      "No composed word, repeated dictionary entries and a word that equals only itself.",
+      "Repeated component reuse, multiple decompositions and equal-length lexical ties."
+    ]
+  },
+  {
     "problemId": "ctci6_17_16",
     "collection": "ctci6",
     "language": "csharp",
@@ -34642,6 +35377,86 @@
     "edgeCases": [
       "Empty input, zero durations, one appointment.",
       "Two adjacent large appointments; a best choice mixing early and late positions."
+    ]
+  },
+  {
+    "problemId": "ctci6_17_17",
+    "collection": "ctci6",
+    "language": "csharp",
+    "code": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic class Solution\n{\n    public int[][] MultiSearch(string text, string[] patterns)\n    {\n        var result = new List<int[]>();\n        foreach (string pattern in patterns)\n        {\n            var positions = new List<int>();\n            for (int start = 0; start + pattern.Length <= text.Length; ++start)\n                if (string.CompareOrdinal(text, start, pattern, 0, pattern.Length) == 0)\n                    positions.Add(start);\n            result.Add(positions.ToArray());\n        }\n        return result.ToArray();\n    }\n}\n",
+    "explanation": "The direct baseline tests each legal start position independently for each query. Bounding starts by text.length-pattern.length prevents overreads, while advancing by one retains overlaps. Returning rows rather than a map preserves the order and multiplicity of the supplied query list.",
+    "timeComplexity": "O(P+sum(max(0,n-m+1)*(m+1))) worst-case time over P patterns of lengths m and text length n; this is the direct baseline, not a trie-optimized search.",
+    "spaceComplexity": "O(K+P+L) for K returned positions, P result rows and at most L temporary substring characters; constant comparison indices beyond the output in versions using direct character comparison.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.17. No affiliation is implied.",
+    "correctness": "A legal occurrence of a pattern of length m must start at one of the positions 0 through n-m, and the loop examines each exactly once. Character-by-character equality (or equivalent exact substring comparison) accepts precisely the windows spelling that pattern, so no occurrence is missed or invented. Increasing start order yields increasing output positions and includes overlaps. For m=0, each of the n+1 legal windows is empty, giving the stated boundary convention. An outer loop over patterns preserves every query position, including duplicates.",
+    "walkthrough": "For text=ababa and patterns=[aba,ba,z,\"\"], aba starts at [0,2], ba at [1,3], and z has no match. The empty pattern row is [0,1,2,3,4,5]. The two aba occurrences overlap at index 2; moving by pattern length would miss one.",
+    "edgeCases": [
+      "Empty text/pattern, missing pattern and a pattern longer than text.",
+      "Overlaps, repeated queries and matches at the final legal start."
+    ]
+  },
+  {
+    "problemId": "ctci6_17_17",
+    "collection": "ctci6",
+    "language": "javascript",
+    "code": "'use strict';\nfunction MultiSearch(text, patterns) {\n  const result = [];\n  for (const pattern of patterns) {\n    const positions = [];\n    for (let start = 0; start + pattern.length <= text.length; ++start)\n      if (text.startsWith(pattern, start)) positions.push(start);\n    result.push(positions);\n  }\n  return result;\n}\n\nmodule.exports = {MultiSearch};\n",
+    "explanation": "The direct baseline tests each legal start position independently for each query. Bounding starts by text.length-pattern.length prevents overreads, while advancing by one retains overlaps. Returning rows rather than a map preserves the order and multiplicity of the supplied query list.",
+    "timeComplexity": "O(P+sum(max(0,n-m+1)*(m+1))) worst-case time over P patterns of lengths m and text length n; this is the direct baseline, not a trie-optimized search.",
+    "spaceComplexity": "O(K+P+L) for K returned positions, P result rows and at most L temporary substring characters; constant comparison indices beyond the output in versions using direct character comparison.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.17. No affiliation is implied.",
+    "correctness": "A legal occurrence of a pattern of length m must start at one of the positions 0 through n-m, and the loop examines each exactly once. Character-by-character equality (or equivalent exact substring comparison) accepts precisely the windows spelling that pattern, so no occurrence is missed or invented. Increasing start order yields increasing output positions and includes overlaps. For m=0, each of the n+1 legal windows is empty, giving the stated boundary convention. An outer loop over patterns preserves every query position, including duplicates.",
+    "walkthrough": "For text=ababa and patterns=[aba,ba,z,\"\"], aba starts at [0,2], ba at [1,3], and z has no match. The empty pattern row is [0,1,2,3,4,5]. The two aba occurrences overlap at index 2; moving by pattern length would miss one.",
+    "edgeCases": [
+      "Empty text/pattern, missing pattern and a pattern longer than text.",
+      "Overlaps, repeated queries and matches at the final legal start."
+    ]
+  },
+  {
+    "problemId": "ctci6_17_17",
+    "collection": "ctci6",
+    "language": "python",
+    "code": "def MultiSearch(text: str, patterns: list[str]) -> list[list[int]]:\n    result = []\n    for pattern in patterns:\n        positions = []\n        for start in range(len(text) - len(pattern) + 1):\n            if text.startswith(pattern, start):\n                positions.append(start)\n        result.append(positions)\n    return result\n",
+    "explanation": "The direct baseline tests each legal start position independently for each query. Bounding starts by text.length-pattern.length prevents overreads, while advancing by one retains overlaps. Returning rows rather than a map preserves the order and multiplicity of the supplied query list.",
+    "timeComplexity": "O(P+sum(max(0,n-m+1)*(m+1))) worst-case time over P patterns of lengths m and text length n; this is the direct baseline, not a trie-optimized search.",
+    "spaceComplexity": "O(K+P+L) for K returned positions, P result rows and at most L temporary substring characters; constant comparison indices beyond the output in versions using direct character comparison.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.17. No affiliation is implied.",
+    "correctness": "A legal occurrence of a pattern of length m must start at one of the positions 0 through n-m, and the loop examines each exactly once. Character-by-character equality (or equivalent exact substring comparison) accepts precisely the windows spelling that pattern, so no occurrence is missed or invented. Increasing start order yields increasing output positions and includes overlaps. For m=0, each of the n+1 legal windows is empty, giving the stated boundary convention. An outer loop over patterns preserves every query position, including duplicates.",
+    "walkthrough": "For text=ababa and patterns=[aba,ba,z,\"\"], aba starts at [0,2], ba at [1,3], and z has no match. The empty pattern row is [0,1,2,3,4,5]. The two aba occurrences overlap at index 2; moving by pattern length would miss one.",
+    "edgeCases": [
+      "Empty text/pattern, missing pattern and a pattern longer than text.",
+      "Overlaps, repeated queries and matches at the final legal start."
+    ]
+  },
+  {
+    "problemId": "ctci6_17_17",
+    "collection": "ctci6",
+    "language": "cpp",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\nclass Solution {\n public:\n  std::vector<std::vector<int>> MultiSearch(const std::string& text,\n                                            const std::vector<std::string>& patterns) {\n    std::vector<std::vector<int>> result;\n    for (const auto& pattern : patterns) {\n      std::vector<int> positions;\n      int limit = static_cast<int>(text.size()) - static_cast<int>(pattern.size());\n      for (int start = 0; start <= limit; ++start)\n        if (text.compare(start, pattern.size(), pattern) == 0)\n          positions.push_back(start);\n      result.push_back(std::move(positions));\n    }\n    return result;\n  }\n};\n",
+    "explanation": "The direct baseline tests each legal start position independently for each query. Bounding starts by text.length-pattern.length prevents overreads, while advancing by one retains overlaps. Returning rows rather than a map preserves the order and multiplicity of the supplied query list.",
+    "timeComplexity": "O(P+sum(max(0,n-m+1)*(m+1))) worst-case time over P patterns of lengths m and text length n; this is the direct baseline, not a trie-optimized search.",
+    "spaceComplexity": "O(K+P+L) for K returned positions, P result rows and at most L temporary substring characters; constant comparison indices beyond the output in versions using direct character comparison.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.17. No affiliation is implied.",
+    "correctness": "A legal occurrence of a pattern of length m must start at one of the positions 0 through n-m, and the loop examines each exactly once. Character-by-character equality (or equivalent exact substring comparison) accepts precisely the windows spelling that pattern, so no occurrence is missed or invented. Increasing start order yields increasing output positions and includes overlaps. For m=0, each of the n+1 legal windows is empty, giving the stated boundary convention. An outer loop over patterns preserves every query position, including duplicates.",
+    "walkthrough": "For text=ababa and patterns=[aba,ba,z,\"\"], aba starts at [0,2], ba at [1,3], and z has no match. The empty pattern row is [0,1,2,3,4,5]. The two aba occurrences overlap at index 2; moving by pattern length would miss one.",
+    "edgeCases": [
+      "Empty text/pattern, missing pattern and a pattern longer than text.",
+      "Overlaps, repeated queries and matches at the final legal start."
+    ]
+  },
+  {
+    "problemId": "ctci6_17_17",
+    "collection": "ctci6",
+    "language": "java",
+    "code": "import java.util.*;\nclass Solution {\n  public int[][] MultiSearch(String text, String[] patterns) {\n    List<int[]> result = new ArrayList<>();\n    for (String pattern : patterns) {\n      List<Integer> positions = new ArrayList<>();\n      for (int start = 0; start + pattern.length() <= text.length(); ++start)\n        if (text.startsWith(pattern, start))\n          positions.add(start);\n      int[] row = new int[positions.size()];\n      for (int i = 0; i < row.length; ++i)\n        row[i] = positions.get(i);\n      result.add(row);\n    }\n    return result.toArray(new int[0][]);\n  }\n}\n",
+    "explanation": "The direct baseline tests each legal start position independently for each query. Bounding starts by text.length-pattern.length prevents overreads, while advancing by one retains overlaps. Returning rows rather than a map preserves the order and multiplicity of the supplied query list.",
+    "timeComplexity": "O(P+sum(max(0,n-m+1)*(m+1))) worst-case time over P patterns of lengths m and text length n; this is the direct baseline, not a trie-optimized search.",
+    "spaceComplexity": "O(K+P+L) for K returned positions, P result rows and at most L temporary substring characters; constant comparison indices beyond the output in versions using direct character comparison.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.17. No affiliation is implied.",
+    "correctness": "A legal occurrence of a pattern of length m must start at one of the positions 0 through n-m, and the loop examines each exactly once. Character-by-character equality (or equivalent exact substring comparison) accepts precisely the windows spelling that pattern, so no occurrence is missed or invented. Increasing start order yields increasing output positions and includes overlaps. For m=0, each of the n+1 legal windows is empty, giving the stated boundary convention. An outer loop over patterns preserves every query position, including duplicates.",
+    "walkthrough": "For text=ababa and patterns=[aba,ba,z,\"\"], aba starts at [0,2], ba at [1,3], and z has no match. The empty pattern row is [0,1,2,3,4,5]. The two aba occurrences overlap at index 2; moving by pattern length would miss one.",
+    "edgeCases": [
+      "Empty text/pattern, missing pattern and a pattern longer than text.",
+      "Overlaps, repeated queries and matches at the final legal start."
     ]
   },
   {

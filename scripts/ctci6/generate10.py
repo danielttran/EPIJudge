@@ -12,7 +12,11 @@ def generate10():
     for spec in SPECS:
         if oracle(spec['ref'],spec['example'][0])!=spec['example'][1]:raise ValueError('Incorrect example '+spec['ref'])
         cases(spec)
-    generate(specs=SPECS,algorithm=body,corpus=cases,reference=oracle,headers={language:header('10',language) for language in LANGUAGES},declare=declare,neutral=neutral,staging_name='staged10')
+    rows = []
+    for spec in SPECS:
+        generate(specs=[spec],algorithm=body,corpus=cases,reference=oracle,headers={language:header(spec['ref'],language) for language in LANGUAGES},declare=declare,neutral=neutral,staging_name='staged10')
+        rows.extend(json.loads((ROOT / 'ctci6/staged10/catalog.json').read_text()))
+    (ROOT / 'ctci6/staged10/catalog.json').write_text(json.dumps(rows,indent=2)+'\n')
     for spec in SPECS:
         for language, detail in spec.get('languageWhy', {}).items():
             path = ROOT / 'ctci6/staged10' / language / ('ctci6_' + spec['ref'].replace('.', '_') + '.json')

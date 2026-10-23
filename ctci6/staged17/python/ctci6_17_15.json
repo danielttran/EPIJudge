@@ -1,0 +1,24 @@
+{
+  "explanation": "For each candidate, use prefix dynamic programming to record how many dictionary components can spell each reachable prefix. A valid final prefix needs at least two components, so the candidate's own dictionary membership cannot falsely qualify it. A set permits component membership checks; comparing successful candidates by length and then lexicographic order resolves the output unambiguously.",
+  "correctness": "Let dp[i] be the largest number of components spelling the first i characters, or -1 when unreachable, with dp[0]=0. Every transition appends a nonempty dictionary substring to a reachable prefix, so it creates a valid decomposition. Conversely, removing the last component of any valid decomposition leaves a shorter reachable prefix; induction ensures the transition for that last component is considered. Thus dp[length]>=2 holds exactly for candidates with the required decomposition. Keeping the longest successful word and the smallest lexicographic word on a length tie produces the specified global choice. Repeated component use is allowed because membership is not consumed.",
+  "walkthrough": "For [cat,dog,catdog,dogcat,catcatdog], catdog and dogcat each have two components. catcatdog has three: cat+cat+dog, so its length 9 beats their length 6 and it is returned. For [cat,dog,catdog,dogcat], the equal-length tie selects catdog. A dictionary containing only cat has no qualifying word.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        "cat",
+        "dog",
+        "catdog",
+        "dogcat",
+        "catcatdog"
+      ]
+    ],
+    "expected": "catcatdog"
+  },
+  "timeComplexity": "Expected O(W*L^3) character work for W candidate entries of maximum length L: O(L^2) substrings per candidate, each costing up to O(L) copying/hashing. Hash collisions can worsen membership costs.",
+  "spaceComplexity": "O(D*L) dictionary storage plus O(L) DP and substring workspace per candidate, for D distinct words; the input is not sorted or mutated.",
+  "edgeCases": [
+    "No composed word, repeated dictionary entries and a word that equals only itself.",
+    "Repeated component reuse, multiple decompositions and equal-length lexical ties."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.15. No affiliation is implied."
+}

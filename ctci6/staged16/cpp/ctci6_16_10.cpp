@@ -5,6 +5,8 @@
 #include <cstdint>
 #include <functional>
 #include <utility>
+#include <unordered_map>
+#include <unordered_set>
 class Solution {
  public:
   int MostPopulatedYear(const std::vector<std::vector<int>>& people) {

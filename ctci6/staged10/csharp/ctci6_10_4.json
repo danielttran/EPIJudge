@@ -1,0 +1,28 @@
+{
+  "explanation": "Probe indices 1,2,4,8,... until a probe is absent or no smaller than target. The target can only lie between the preceding bound and this bound. Binary search that interval, treating -1 as beyond the end rather than as an ordinary negative value. This discovers enough range to search without first measuring the sequence.",
+  "correctness": "Before each doubling, the probed value is valid and below target, so all earlier positions are also too small. When doubling stops, the target, if present, lies between half the bound and the bound: the latter is either large enough or past the hidden end. During binary search, an out-of-range or too-large value safely removes the upper part, and a smaller value removes the lower part. Equality returns a verified index. Every step shrinks the remaining interval, proving absence when it empties. Exponential discovery and binary search each use logarithmically many probes.",
+  "walkthrough": "For hidden [1,2,4,5,6,7,9] and target 6, probes at 1 and 2 return 2 and 4, both too small. Probe 4 returns 6, providing an upper bound. Binary search indices 2..4 and return index 4. A -1 probe marks the end and must never match target=-1.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        1,
+        2,
+        4,
+        5,
+        6,
+        7,
+        9
+      ],
+      6
+    ],
+    "expected": 4
+  },
+  "timeComplexity": "O(log(n+1)) ElementAt calls and scalar work, with constant work for a nonpositive target.",
+  "spaceComplexity": "O(1) auxiliary indices and the latest probed value; the provided Listy storage is input, not an allocated search array.",
+  "edgeCases": [
+    "Empty and singleton sequences, nonpositive or absent targets.",
+    "Repeated values, an upper bound beyond the end, and the largest positive integer.",
+    "Linear length-discovery programs exceed the query budget on large cases."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 10.4. No affiliation is implied."
+}
