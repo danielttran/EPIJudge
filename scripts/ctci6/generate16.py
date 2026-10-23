@@ -7,9 +7,11 @@ from corpus16 import cases as base_cases,oracle as base_oracle
 import corpus_line16
 
 import corpus_numeric
+import corpus_geometry
+import corpus_xml16
 
-def cases(spec):return corpus_numeric.cases(spec) if spec["ref"]=="16.26" else corpus_line16.cases(spec) if spec["ref"]=="16.14" else base_cases(spec)
-def oracle(reference,args):return corpus_numeric.oracle(reference,args) if reference=="16.26" else corpus_line16.oracle(reference,args) if reference=="16.14" else base_oracle(reference,args)
+def cases(spec):return corpus_xml16.cases(spec) if spec["ref"]=="16.12" else corpus_geometry.cases(spec) if spec["ref"] in ("16.3","16.13") else corpus_numeric.cases(spec) if spec["ref"]=="16.26" else corpus_line16.cases(spec) if spec["ref"]=="16.14" else base_cases(spec)
+def oracle(reference,args):return corpus_xml16.oracle(reference,args) if reference=="16.12" else corpus_geometry.oracle(reference,args) if reference in ("16.3","16.13") else corpus_numeric.oracle(reference,args) if reference=="16.26" else corpus_line16.oracle(reference,args) if reference=="16.14" else base_oracle(reference,args)
 from generate import generate
 from models16 import declare,header,neutral
 

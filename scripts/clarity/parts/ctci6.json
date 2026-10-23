@@ -5368,6 +5368,75 @@
         ]
       }
     },
+    "ctci6_16_3": {
+      "description": "Find an intersection point of two CLOSED line segments in the plane. endpoints contains [startA,endA,startB,endB], with each point represented as [x,y]. Return [x,y] for any point belonging to both segments, or [] when they are disjoint. A segment may have zero length. For an overlap of positive length, any point in the overlap is accepted.",
+      "constraints": [
+        "endpoints has exactly four distinct row objects, each containing two integers in -1000..1000. Equal coordinate values and reversed segment directions are allowed. Preserve the outer array, all row objects and values.",
+        "The returned coordinates must be finite numbers within absolute coordinate error 0.000001 of a true common point. Endpoints count as intersections. The input coordinates and collinearity decisions are exact integers; a nearly parallel pair must not be treated as collinear."
+      ],
+      "examples": [
+        {
+          "input": "[[[0, 0], [4, 4], [0, 4], [4, 0]]]",
+          "output": "[2, 2]",
+          "explanation": "Segments [0,0]→[4,4] and [0,4]→[4,0] have t=u=1/2, so return [2,2]. Segments [0,0]→[4,0] and [2,0]→[6,0] overlap: [2,0], [3,0] and [4,0] are all accepted. A point segment [1,1]→[1,1] intersects a diagonal containing [1,1]."
+        }
+      ],
+      "exampleCases": [
+        {
+          "arguments": [
+            [
+              [
+                0,
+                0
+              ],
+              [
+                4,
+                4
+              ],
+              [
+                0,
+                4
+              ],
+              [
+                4,
+                0
+              ]
+            ]
+          ],
+          "expected": [
+            2,
+            2
+          ]
+        }
+      ],
+      "contracts": {
+        "csharp": [
+          "Callable: double[] SegmentIntersection(int[][] endpoints)",
+          "endpoints has exactly four distinct row objects, each containing two integers in -1000..1000. Equal coordinate values and reversed segment directions are allowed. Preserve the outer array, all row objects and values.",
+          "The returned coordinates must be finite numbers within absolute coordinate error 0.000001 of a true common point. Endpoints count as intersections. The input coordinates and collinearity decisions are exact integers; a nearly parallel pair must not be treated as collinear."
+        ],
+        "javascript": [
+          "Callable: function SegmentIntersection(endpoints)",
+          "endpoints has exactly four distinct row objects, each containing two integers in -1000..1000. Equal coordinate values and reversed segment directions are allowed. Preserve the outer array, all row objects and values.",
+          "The returned coordinates must be finite numbers within absolute coordinate error 0.000001 of a true common point. Endpoints count as intersections. The input coordinates and collinearity decisions are exact integers; a nearly parallel pair must not be treated as collinear."
+        ],
+        "python": [
+          "Callable: def SegmentIntersection(endpoints: list[list[int]]) -> list[float]",
+          "endpoints has exactly four distinct row objects, each containing two integers in -1000..1000. Equal coordinate values and reversed segment directions are allowed. Preserve the outer array, all row objects and values.",
+          "The returned coordinates must be finite numbers within absolute coordinate error 0.000001 of a true common point. Endpoints count as intersections. The input coordinates and collinearity decisions are exact integers; a nearly parallel pair must not be treated as collinear."
+        ],
+        "cpp": [
+          "Callable: std::vector<double> SegmentIntersection(const std::vector<std::vector<int>>& endpoints)",
+          "endpoints has exactly four distinct row objects, each containing two integers in -1000..1000. Equal coordinate values and reversed segment directions are allowed. Preserve the outer array, all row objects and values.",
+          "The returned coordinates must be finite numbers within absolute coordinate error 0.000001 of a true common point. Endpoints count as intersections. The input coordinates and collinearity decisions are exact integers; a nearly parallel pair must not be treated as collinear."
+        ],
+        "java": [
+          "Callable: double[] SegmentIntersection(int[][] endpoints)",
+          "endpoints has exactly four distinct row objects, each containing two integers in -1000..1000. Equal coordinate values and reversed segment directions are allowed. Preserve the outer array, all row objects and values.",
+          "The returned coordinates must be finite numbers within absolute coordinate error 0.000001 of a true common point. Endpoints count as intersections. The input coordinates and collinearity decisions are exact integers; a nearly parallel pair must not be treated as collinear."
+        ]
+      }
+    },
     "ctci6_16_4": {
       "description": "Inspect an n by n tic-tac-toe board and return its winning player: 1 or 2. A win requires a complete nonempty row, complete column, or one of the two full corner-to-corner diagonals occupied by that player. Empty cells are 0. Return 0 when neither player has such a line.",
       "constraints": [
@@ -5804,6 +5873,181 @@
           "Callable: int[] DivingBoardLengths(int planks, int shorter, int longer)",
           "0 <= planks <= 10000 and 1 <= shorter <= longer <= 100000. The largest total is at most 1000000000 and fits signed 32-bit range. Inputs are preserved.",
           "For zero planks return [0], the length of the empty board. When the two lengths agree, return one length, not repeated copies. Return a concrete integer array/list/vector."
+        ]
+      }
+    },
+    "ctci6_16_12": {
+      "description": "Encode an already parsed XML element tree using supplied positive tag/attribute codes. Return an array of string tokens. For each element emit: its decimal name code; each attribute as decimal name code then literal value; \"0\" ending the attribute list; its nonempty text OR its recursively encoded children in order; and \"0\" ending the element. The token array preserves complete literal values, including spaces and empty attribute values.",
+      "constraints": [
+        "elementNames, elementTexts and children have equal length n in 0..1000. If n>0, element 0 is the root; children lists form one rooted tree reaching every element exactly once, with valid node indices and specified sibling order. Nonempty elementTexts is allowed only at a leaf. Empty text means no text token; an empty leaf therefore emits its code followed by two end markers. n=0 encodes to [].",
+        "attributeOwners, attributeNames and attributeValues have equal length a in 0..1000. Each owner is a valid element index. Emit attributes of an element in their original attribute-array order, even when attributes of different elements are interleaved. An element has no repeated attribute name.",
+        "codeNames and codes have equal length 1..9. codeNames are unique ASCII-letter names of length 1..20; codes are distinct integers 1..9. Every element/attribute name appears in this map. Texts and attribute values contain 0..100 ASCII letters/spaces. This literal domain excludes the reserved digit marker; XML parsing, entities, namespaces and mixed text/child content are outside this already-parsed input model.",
+        "All arrays, child row objects, values and order are readonly. Return actual literal tokens, not a whitespace-split string: one attribute value containing spaces remains one token. Numeric code tokens use ordinary decimal spelling, and end markers are exactly \"0\"."
+      ],
+      "examples": [
+        {
+          "input": "[[\"family\", \"person\"], [\"\", \"Hello\"], [[1], []], [0, 1], [\"last\", \"first\"], [\"Tran\", \"Ada\"], [\"family\", \"person\", \"first\", \"last\"], [1, 2, 3, 4]]",
+          "output": "[\"1\", \"4\", \"Tran\", \"0\", \"2\", \"3\", \"Ada\", \"0\", \"Hello\", \"0\", \"0\"]",
+          "explanation": "Let element names be [family,person], texts [\"\",Hello] and children [[1],[]]. Attributes are owners [0,1], names [last,first], values [Tran,Ada]; name codes are family=1, person=2, first=3, last=4. The tokens are [\"1\",\"4\",\"Tran\",\"0\",\"2\",\"3\",\"Ada\",\"0\",\"Hello\",\"0\",\"0\"]. The last two zeros close person then family; the earlier zeros end their attribute lists."
+        }
+      ],
+      "exampleCases": [
+        {
+          "arguments": [
+            [
+              "family",
+              "person"
+            ],
+            [
+              "",
+              "Hello"
+            ],
+            [
+              [
+                1
+              ],
+              []
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              "last",
+              "first"
+            ],
+            [
+              "Tran",
+              "Ada"
+            ],
+            [
+              "family",
+              "person",
+              "first",
+              "last"
+            ],
+            [
+              1,
+              2,
+              3,
+              4
+            ]
+          ],
+          "expected": [
+            "1",
+            "4",
+            "Tran",
+            "0",
+            "2",
+            "3",
+            "Ada",
+            "0",
+            "Hello",
+            "0",
+            "0"
+          ]
+        }
+      ],
+      "contracts": {
+        "csharp": [
+          "Callable: List<string> EncodeXml(string[] elementNames, string[] elementTexts, int[][] children, int[] attributeOwners, string[] attributeNames, string[] attributeValues, string[] codeNames, int[] codes)",
+          "elementNames, elementTexts and children have equal length n in 0..1000. If n>0, element 0 is the root; children lists form one rooted tree reaching every element exactly once, with valid node indices and specified sibling order. Nonempty elementTexts is allowed only at a leaf. Empty text means no text token; an empty leaf therefore emits its code followed by two end markers. n=0 encodes to [].",
+          "attributeOwners, attributeNames and attributeValues have equal length a in 0..1000. Each owner is a valid element index. Emit attributes of an element in their original attribute-array order, even when attributes of different elements are interleaved. An element has no repeated attribute name.",
+          "codeNames and codes have equal length 1..9. codeNames are unique ASCII-letter names of length 1..20; codes are distinct integers 1..9. Every element/attribute name appears in this map. Texts and attribute values contain 0..100 ASCII letters/spaces. This literal domain excludes the reserved digit marker; XML parsing, entities, namespaces and mixed text/child content are outside this already-parsed input model.",
+          "All arrays, child row objects, values and order are readonly. Return actual literal tokens, not a whitespace-split string: one attribute value containing spaces remains one token. Numeric code tokens use ordinary decimal spelling, and end markers are exactly \"0\"."
+        ],
+        "javascript": [
+          "Callable: function EncodeXml(elementNames, elementTexts, children, attributeOwners, attributeNames, attributeValues, codeNames, codes)",
+          "elementNames, elementTexts and children have equal length n in 0..1000. If n>0, element 0 is the root; children lists form one rooted tree reaching every element exactly once, with valid node indices and specified sibling order. Nonempty elementTexts is allowed only at a leaf. Empty text means no text token; an empty leaf therefore emits its code followed by two end markers. n=0 encodes to [].",
+          "attributeOwners, attributeNames and attributeValues have equal length a in 0..1000. Each owner is a valid element index. Emit attributes of an element in their original attribute-array order, even when attributes of different elements are interleaved. An element has no repeated attribute name.",
+          "codeNames and codes have equal length 1..9. codeNames are unique ASCII-letter names of length 1..20; codes are distinct integers 1..9. Every element/attribute name appears in this map. Texts and attribute values contain 0..100 ASCII letters/spaces. This literal domain excludes the reserved digit marker; XML parsing, entities, namespaces and mixed text/child content are outside this already-parsed input model.",
+          "All arrays, child row objects, values and order are readonly. Return actual literal tokens, not a whitespace-split string: one attribute value containing spaces remains one token. Numeric code tokens use ordinary decimal spelling, and end markers are exactly \"0\"."
+        ],
+        "python": [
+          "Callable: def EncodeXml(elementNames: list[str], elementTexts: list[str], children: list[list[int]], attributeOwners: list[int], attributeNames: list[str], attributeValues: list[str], codeNames: list[str], codes: list[int]) -> list[str]",
+          "elementNames, elementTexts and children have equal length n in 0..1000. If n>0, element 0 is the root; children lists form one rooted tree reaching every element exactly once, with valid node indices and specified sibling order. Nonempty elementTexts is allowed only at a leaf. Empty text means no text token; an empty leaf therefore emits its code followed by two end markers. n=0 encodes to [].",
+          "attributeOwners, attributeNames and attributeValues have equal length a in 0..1000. Each owner is a valid element index. Emit attributes of an element in their original attribute-array order, even when attributes of different elements are interleaved. An element has no repeated attribute name.",
+          "codeNames and codes have equal length 1..9. codeNames are unique ASCII-letter names of length 1..20; codes are distinct integers 1..9. Every element/attribute name appears in this map. Texts and attribute values contain 0..100 ASCII letters/spaces. This literal domain excludes the reserved digit marker; XML parsing, entities, namespaces and mixed text/child content are outside this already-parsed input model.",
+          "All arrays, child row objects, values and order are readonly. Return actual literal tokens, not a whitespace-split string: one attribute value containing spaces remains one token. Numeric code tokens use ordinary decimal spelling, and end markers are exactly \"0\"."
+        ],
+        "cpp": [
+          "Callable: std::vector<std::string> EncodeXml(const std::vector<std::string>& elementNames, const std::vector<std::string>& elementTexts, const std::vector<std::vector<int>>& children, const std::vector<int>& attributeOwners, const std::vector<std::string>& attributeNames, const std::vector<std::string>& attributeValues, const std::vector<std::string>& codeNames, const std::vector<int>& codes)",
+          "elementNames, elementTexts and children have equal length n in 0..1000. If n>0, element 0 is the root; children lists form one rooted tree reaching every element exactly once, with valid node indices and specified sibling order. Nonempty elementTexts is allowed only at a leaf. Empty text means no text token; an empty leaf therefore emits its code followed by two end markers. n=0 encodes to [].",
+          "attributeOwners, attributeNames and attributeValues have equal length a in 0..1000. Each owner is a valid element index. Emit attributes of an element in their original attribute-array order, even when attributes of different elements are interleaved. An element has no repeated attribute name.",
+          "codeNames and codes have equal length 1..9. codeNames are unique ASCII-letter names of length 1..20; codes are distinct integers 1..9. Every element/attribute name appears in this map. Texts and attribute values contain 0..100 ASCII letters/spaces. This literal domain excludes the reserved digit marker; XML parsing, entities, namespaces and mixed text/child content are outside this already-parsed input model.",
+          "All arrays, child row objects, values and order are readonly. Return actual literal tokens, not a whitespace-split string: one attribute value containing spaces remains one token. Numeric code tokens use ordinary decimal spelling, and end markers are exactly \"0\"."
+        ],
+        "java": [
+          "Callable: List<String> EncodeXml(String[] elementNames, String[] elementTexts, int[][] children, int[] attributeOwners, String[] attributeNames, String[] attributeValues, String[] codeNames, int[] codes)",
+          "elementNames, elementTexts and children have equal length n in 0..1000. If n>0, element 0 is the root; children lists form one rooted tree reaching every element exactly once, with valid node indices and specified sibling order. Nonempty elementTexts is allowed only at a leaf. Empty text means no text token; an empty leaf therefore emits its code followed by two end markers. n=0 encodes to [].",
+          "attributeOwners, attributeNames and attributeValues have equal length a in 0..1000. Each owner is a valid element index. Emit attributes of an element in their original attribute-array order, even when attributes of different elements are interleaved. An element has no repeated attribute name.",
+          "codeNames and codes have equal length 1..9. codeNames are unique ASCII-letter names of length 1..20; codes are distinct integers 1..9. Every element/attribute name appears in this map. Texts and attribute values contain 0..100 ASCII letters/spaces. This literal domain excludes the reserved digit marker; XML parsing, entities, namespaces and mixed text/child content are outside this already-parsed input model.",
+          "All arrays, child row objects, values and order are readonly. Return actual literal tokens, not a whitespace-split string: one attribute value containing spaces remains one token. Numeric code tokens use ordinary decimal spelling, and end markers are exactly \"0\"."
+        ]
+      }
+    },
+    "ctci6_16_13": {
+      "description": "Find a line that divides each of two axis-aligned squares into equal areas. Each row is [left,bottom,side], describing the closed square [left,left+side]×[bottom,bottom+side]. Return [startX,startY,endX,endY], the two outermost boundary intersections of that line across both squares. Either endpoint order is accepted. If the centers coincide, any line through the common center is accepted, with its full outer boundary span.",
+      "constraints": [
+        "squares has exactly two distinct row objects. left and bottom are integers in -1000..1000 and side is an integer in 1..1000. Squares may overlap, touch, contain one another or be identical. Preserve all input objects, rows and values.",
+        "Return four finite coordinates. Each endpoint must be within absolute coordinate error 0.000001 of the true outermost endpoint for the chosen bisecting line. The endpoints must be distinct and include the complete intersection span across both squares, including any gap between disjoint squares."
+      ],
+      "examples": [
+        {
+          "input": "[[[0, 0, 2], [4, 0, 2]]]",
+          "output": "[0, 1, 6, 1]",
+          "explanation": "Squares [0,0,2] and [4,0,2] have centers [1,1] and [5,1]. Their common bisector is y=1 and the outer crossings are [0,1] and [6,1], so return [0,1,6,1]. For identical [0,0,2] squares, vertical [1,0,1,2] and horizontal [0,1,2,1] are both accepted."
+        }
+      ],
+      "exampleCases": [
+        {
+          "arguments": [
+            [
+              [
+                0,
+                0,
+                2
+              ],
+              [
+                4,
+                0,
+                2
+              ]
+            ]
+          ],
+          "expected": [
+            0,
+            1,
+            6,
+            1
+          ]
+        }
+      ],
+      "contracts": {
+        "csharp": [
+          "Callable: double[] BisectSquares(int[][] squares)",
+          "squares has exactly two distinct row objects. left and bottom are integers in -1000..1000 and side is an integer in 1..1000. Squares may overlap, touch, contain one another or be identical. Preserve all input objects, rows and values.",
+          "Return four finite coordinates. Each endpoint must be within absolute coordinate error 0.000001 of the true outermost endpoint for the chosen bisecting line. The endpoints must be distinct and include the complete intersection span across both squares, including any gap between disjoint squares."
+        ],
+        "javascript": [
+          "Callable: function BisectSquares(squares)",
+          "squares has exactly two distinct row objects. left and bottom are integers in -1000..1000 and side is an integer in 1..1000. Squares may overlap, touch, contain one another or be identical. Preserve all input objects, rows and values.",
+          "Return four finite coordinates. Each endpoint must be within absolute coordinate error 0.000001 of the true outermost endpoint for the chosen bisecting line. The endpoints must be distinct and include the complete intersection span across both squares, including any gap between disjoint squares."
+        ],
+        "python": [
+          "Callable: def BisectSquares(squares: list[list[int]]) -> list[float]",
+          "squares has exactly two distinct row objects. left and bottom are integers in -1000..1000 and side is an integer in 1..1000. Squares may overlap, touch, contain one another or be identical. Preserve all input objects, rows and values.",
+          "Return four finite coordinates. Each endpoint must be within absolute coordinate error 0.000001 of the true outermost endpoint for the chosen bisecting line. The endpoints must be distinct and include the complete intersection span across both squares, including any gap between disjoint squares."
+        ],
+        "cpp": [
+          "Callable: std::vector<double> BisectSquares(const std::vector<std::vector<int>>& squares)",
+          "squares has exactly two distinct row objects. left and bottom are integers in -1000..1000 and side is an integer in 1..1000. Squares may overlap, touch, contain one another or be identical. Preserve all input objects, rows and values.",
+          "Return four finite coordinates. Each endpoint must be within absolute coordinate error 0.000001 of the true outermost endpoint for the chosen bisecting line. The endpoints must be distinct and include the complete intersection span across both squares, including any gap between disjoint squares."
+        ],
+        "java": [
+          "Callable: double[] BisectSquares(int[][] squares)",
+          "squares has exactly two distinct row objects. left and bottom are integers in -1000..1000 and side is an integer in 1..1000. Squares may overlap, touch, contain one another or be identical. Preserve all input objects, rows and values.",
+          "Return four finite coordinates. Each endpoint must be within absolute coordinate error 0.000001 of the true outermost endpoint for the chosen bisecting line. The endpoints must be distinct and include the complete intersection span across both squares, including any gap between disjoint squares."
         ]
       }
     },

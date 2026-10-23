@@ -58,6 +58,48 @@ public static class CtciStagingGrader
         return height == minimum ? null : "The returned BST must have the smallest possible height.";
     }
 
+    private static string? GeometryFailure(CtciStagingDefinition definition, TestCase test, JsonElement observed)
+    {
+        const double tolerance = 0.000001;
+        if (observed.GetProperty("mutationOk").ValueKind != JsonValueKind.True) return "Preserve all input arrays, rows and coordinates.";
+        var value = observed.GetProperty("actual");
+        if (value.ValueKind != JsonValueKind.Array) return "Return a numeric coordinate array.";
+        var actual = new List<double>();
+        foreach (var item in value.EnumerateArray())
+        {
+            if (item.ValueKind != JsonValueKind.Number || !item.TryGetDouble(out double coordinate) || !double.IsFinite(coordinate)) return "Return finite numeric coordinates.";
+            actual.Add(coordinate);
+        }
+        bool Near(IEnumerable<double> expected) => actual.Zip(expected).All(pair => Math.Abs(pair.First - pair.Second) <= tolerance);
+        var rows = test.Arguments[0].EnumerateArray().Select(Integers).ToArray();
+        if (definition.Ref == "16.3")
+        {
+            if (test.Expected.GetArrayLength() == 0) return actual.Count == 0 ? null : "The closed segments are disjoint.";
+            if (actual.Count != 2) return "Return exactly two coordinates of a common point.";
+            var a = rows[0]; var b = rows[1]; var c = rows[2]; var d = rows[3];
+            int denominator = (b[0] - a[0]) * (d[1] - c[1]) - (b[1] - a[1]) * (d[0] - c[0]);
+            if (a.SequenceEqual(b) || c.SequenceEqual(d) || denominator != 0) return Near(test.Expected.EnumerateArray().Select(v => v.GetDouble())) ? null : "Return the unique closed-segment intersection within the coordinate tolerance.";
+            int axis = Math.Abs(b[0] - a[0]) >= Math.Abs(b[1] - a[1]) ? 0 : 1;
+            double low = Math.Max(Math.Min(a[axis], b[axis]), Math.Min(c[axis], d[axis]));
+            double high = Math.Min(Math.Max(a[axis], b[axis]), Math.Max(c[axis], d[axis]));
+            double projected = Math.Clamp(actual[axis], low, high);
+            double parameter = (projected - a[axis]) / (b[axis] - a[axis]);
+            return Near(Enumerable.Range(0, 2).Select(i => a[i] + parameter * (b[i] - a[i]))) ? null : "Return a point in the actual collinear overlap.";
+        }
+        if (actual.Count != 4) return "Return both outer endpoints as four numeric coordinates.";
+        double x = rows[0][0] + rows[0][2] / 2.0, y = rows[0][1] + rows[0][2] / 2.0;
+        double otherX = rows[1][0] + rows[1][2] / 2.0, otherY = rows[1][1] + rows[1][2] / 2.0;
+        if (x != otherX || y != otherY)
+        {
+            var expected = test.Expected.EnumerateArray().Select(v => v.GetDouble()).ToArray();
+            return Near(expected) || Near(expected.Skip(2).Concat(expected.Take(2))) ? null : "Return the full outer boundary span through both square centers.";
+        }
+        double dx = actual[2] - actual[0], dy = actual[3] - actual[1], scale = Math.Max(Math.Abs(dx), Math.Abs(dy));
+        if (scale <= 2 * tolerance) return "The returned endpoints must be distinct.";
+        double radius = Math.Max(rows[0][2], rows[1][2]) / 2.0;
+        return Near(new[] { x - radius * dx / scale, y - radius * dy / scale, x + radius * dx / scale, y + radius * dy / scale }) ? null : "For concentric squares, return the full outer boundary span of any line through the common center.";
+    }
+
     private static string? NumericFailure(CtciStagingDefinition definition, TestCase test, JsonElement observed)
     {
         if (observed.GetProperty("mutationOk").ValueKind != JsonValueKind.True) return "Preserve input values and return finite numeric results.";
@@ -273,6 +315,7 @@ public static class CtciStagingGrader
         {
             if (observed.ValueKind != JsonValueKind.Object || observed.TryGetProperty("error", out var error) && error.ValueKind != JsonValueKind.Null)
                 return "Your code did not finish this case successfully.";
+            if (definition.Ref is "16.3" or "16.13") return GeometryFailure(definition, test, observed);
             if (definition.Ref is "16.26" or "17.20") return NumericFailure(definition, test, observed);
             if (definition.Ref is "16.14" or "17.7") return GroupOrLineFailure(definition, test, observed);
             if (definition.Batch == 10) return SortingFailure(definition, test, observed);

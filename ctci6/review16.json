@@ -1,7 +1,7 @@
 {
   "stage": "standalone-authoring-and-separate-module",
   "liveIntegration": "pending-current-module-receipts",
-  "reviewScope": "Twenty-two chapter-16 tasks and 110 actual language bodies, with real numeric result contracts.",
+  "reviewScope": "Twenty-five moderate tasks and 125 actual language bodies, including parsed XML hierarchy encoding.",
   "questions": [
     {
       "ref": "16.1",
@@ -12,6 +12,11 @@
       "ref": "16.2",
       "algorithm": "Build one normalized-word frequency dictionary and answer a batch of lookups.",
       "review": "Read all five actual bodies. C# uses invariant lowercase and ordinal dictionary keys; Java uses Locale.ROOT, Python/JS lowercase operations are equivalent on the explicit ASCII domain, and C++ converts only ASCII A..Z. Query lookups do not decrement counts. Both arrays stay readonly, and repeated queries retain their original positions. Independent direct per-query scans cover exhaustive small token lists, absent words, mixed case, repeated queries and 1000-token/query bounds."
+    },
+    {
+      "ref": "16.3",
+      "algorithm": "Exact cross-product parameter tests, then finite coordinate construction; endpoint membership for parallel or degenerate pairs.",
+      "review": "Read all five actual bodies. Coordinate differences are at most 2000; cross products/differences at most 8 million, within int and exact JS Number. Ratio comparisons occur before real division, so almost parallel segments are not merged by epsilon. Python nested predicate, Java local Geometry, C# local function and C++ lambda all require both coordinate bounds and collinearity. No sorting mutates original points. Independent rational Cramer/orientation oracle covers every four-point choice on a small grid, reversed/vertical/degenerate cases and random/boundary coordinates. Property checks preserve any overlap-point freedom."
     },
     {
       "ref": "16.4",
@@ -52,6 +57,16 @@
       "ref": "16.11",
       "algorithm": "Enumerate long-plank count once in increasing order; collapse equal plank lengths to one total.",
       "review": "Each actual body emits n+1 strictly increasing lengths only when lengths differ. Zero planks returns [0]. C#/Java allocate exact int arrays, JavaScript uses Array.from, Python a concrete comprehension and C++ reserves a vector. The bound ensures every product/sum is at most 10^9. The independent small oracle builds reachable length sets by repeated plank addition."
+    },
+    {
+      "ref": "16.12",
+      "algorithm": "Attribute buckets plus explicit enter/exit events encode each subtree in sibling order.",
+      "review": "Read all five actual bodies and every input binding. Parallel arrays explicitly represent the parsed hierarchy and attribute list; this is XML structural encoding, not an invented parser or unrelated traversal output. Nonempty text is restricted to leaves, reserved digit markers are excluded from literal inputs and complete strings preserve embedded spaces/empty attribute values. C# uses ordinal code keys/invariant decimal codes and typed tuple events, Java int[] events, C++ pair events, Python tuple events and JS array events with independent per-owner buckets. Children are pushed in reverse only into private stacks, preserving original order/row objects. An independent child-cursor frame oracle differs from the enter/exit solution. Empty/deep/wide trees, interleaved attribute owners and the 1000-attribute bound execute actual code. The first native run exposed an integer-only generic matcher rejecting correct string tokens; the new explicit string observation check fixed the grader, and all native language executions were rerun successfully."
+    },
+    {
+      "ref": "16.13",
+      "algorithm": "Center-direction parameterization with half-side/max-coordinate radii and outer interval endpoints.",
+      "review": "Read all five actual bodies. Half-side arithmetic uses /2.0 or JS real division, preserving odd-side centers. Distinct centers have parameters zero and one; coincident centers select vertical direction and both center parameters zero. Max absolute direction prevents zero division and handles steep/vertical lines uniformly. Combining both radii before coordinate construction preserves the full outer span for nested and separated squares. Independent exact-rational boundary-edge intersection oracle uses a different construction. Graders accept endpoint reversal and every concentric center direction, including horizontal/diagonal alternatives, but reject center-only or truncated spans."
     },
     {
       "ref": "16.14",
@@ -138,7 +153,9 @@
     "scripts/ctci6/test_cache16.py",
     "scripts/ctci6/test_cache_runtime16.py",
     "scripts/ctci6/test_groups_line.py",
-    "scripts/ctci6/test_numeric.py"
+    "scripts/ctci6/test_numeric.py",
+    "scripts/ctci6/test_geometry.py",
+    "scripts/ctci6/test_xml16.py"
   ],
   "remainingAcceptance": [
     "remaining known collection content and classification",

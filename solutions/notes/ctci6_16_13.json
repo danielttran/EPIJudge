@@ -1,0 +1,35 @@
+{
+  "explanation": "Every line through a square center bisects its area by central symmetry. Distinct centers therefore determine the required line. Choose its direction and extend from each center until the larger coordinate displacement reaches half that square side. The four boundary crossings identify the full span; choose the earliest and latest along the common direction. Coincident centers admit a convenient vertical direction.",
+  "correctness": "A line bisecting a square passes through its center, and central symmetry pairs equal areas on its two sides. When centers differ, the line through both bisects each; when equal, any nonzero direction does. For direction (dx,dy), a boundary is reached at parameter distance side/(2*max(abs(dx),abs(dy))) from that square center, because at least one axis reaches its half-side and neither exceeds it sooner. Computing both signed crossings for both squares gives the complete segment portions. Their smallest and largest direction parameters are exactly the outer endpoints across the two portions. Returning those endpoints therefore specifies a common area bisector and its full required span.",
+  "walkthrough": "Squares [0,0,2] and [4,0,2] have centers [1,1] and [5,1]. Their common bisector is y=1 and the outer crossings are [0,1] and [6,1], so return [0,1,6,1]. For identical [0,0,2] squares, vertical [1,0,1,2] and horizontal [0,1,2,1] are both accepted.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          0,
+          0,
+          2
+        ],
+        [
+          4,
+          0,
+          2
+        ]
+      ]
+    ],
+    "expected": [
+      0,
+      1,
+      6,
+      1
+    ]
+  },
+  "timeComplexity": "O(1) center, direction and boundary calculations for exactly two squares.",
+  "spaceComplexity": "O(1) auxiliary scalars and four returned coordinates.",
+  "edgeCases": [
+    "Horizontal/vertical/diagonal center lines and fractional crossings.",
+    "Disjoint, overlapping, nested, identical and concentric squares.",
+    "Different side lengths, negative positions and boundary coordinates."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.13. No affiliation is implied."
+}

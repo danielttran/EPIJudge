@@ -9153,6 +9153,126 @@
       }
     },
     {
+      "problemId": "ctci6_16_3",
+      "language": "csharp",
+      "filename": "Solution.cs",
+      "signature": "double[] SegmentIntersection(int[][] endpoints)",
+      "starterCode": "public class Solution\n{\n    public double[] SegmentIntersection(int[][] endpoints)\n    {\n        return [];\n    }\n}\n",
+      "solutionCode": "public class Solution\n{\n    public double[] SegmentIntersection(int[][] endpoints)\n    {\n        int[] a = endpoints[0], b = endpoints[1], c = endpoints[2], d = endpoints[3];\n        int rx = b[0] - a[0], ry = b[1] - a[1], sx = d[0] - c[0], sy = d[1] - c[1],\n            qx = c[0] - a[0], qy = c[1] - a[1], denominator = rx * sy - ry * sx;\n        if (denominator != 0)\n        {\n            int first = qx * sy - qy * sx, second = qx * ry - qy * rx;\n            if (denominator < 0)\n            {\n                denominator = -denominator;\n                first = -first;\n                second = -second;\n            }\n            if (first >= 0 && first <= denominator && second >= 0 && second <= denominator)\n            {\n                double t = (double)first / denominator;\n                return [a[0] + t * rx, a[1] + t * ry];\n            }\n            return [];\n        }\n        bool Contains(int[] start, int[] end, int[] point)\n        {\n            return (end[0] - start[0]) * (point[1] - start[1]) ==\n                       (end[1] - start[1]) * (point[0] - start[0]) &&\n                   point[0] >= Math.Min(start[0], end[0]) &&\n                   point[0] <= Math.Max(start[0], end[0]) &&\n                   point[1] >= Math.Min(start[1], end[1]) && point[1] <= Math.Max(start[1], end[1]);\n        }\n        foreach (var point in endpoints)\n            if (Contains(a, b, point) && Contains(c, d, point))\n                return [(double)point[0], (double)point[1]];\n        return [];\n    }\n}\n",
+      "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/csharp/ctci6_16_3.cs"
+      ],
+      "sourceSha256": {
+        "starter": "b1e934b927c56e7a948d2cbe8ce6aacb520d695f1fcbaa9977cb1c3ff2948e53",
+        "solution": "effaa7894ff38704f029f4c8832bc85408fc3e888724c79179d36d740d54af8b"
+      }
+    },
+    {
+      "problemId": "ctci6_16_3",
+      "language": "javascript",
+      "filename": "solution.js",
+      "signature": "function SegmentIntersection(endpoints)",
+      "starterCode": "function SegmentIntersection(endpoints) {\n  return [];\n}\n",
+      "solutionCode": "function SegmentIntersection(endpoints) {\n  const [a, b, c, d] = endpoints,\n    rx = b[0] - a[0],\n    ry = b[1] - a[1],\n    sx = d[0] - c[0],\n    sy = d[1] - c[1],\n    qx = c[0] - a[0],\n    qy = c[1] - a[1];\n  let denominator = rx * sy - ry * sx;\n  if (denominator !== 0) {\n    let first = qx * sy - qy * sx,\n      second = qx * ry - qy * rx;\n    if (denominator < 0) {\n      denominator = -denominator;\n      first = -first;\n      second = -second;\n    }\n    if (first >= 0 && first <= denominator && second >= 0 && second <= denominator) {\n      const t = first / denominator;\n      return [a[0] + t * rx, a[1] + t * ry];\n    }\n    return [];\n  }\n  function contains(start, end, point) {\n    return (\n      (end[0] - start[0]) * (point[1] - start[1]) === (end[1] - start[1]) * (point[0] - start[0]) &&\n      point[0] >= Math.min(start[0], end[0]) &&\n      point[0] <= Math.max(start[0], end[0]) &&\n      point[1] >= Math.min(start[1], end[1]) &&\n      point[1] <= Math.max(start[1], end[1])\n    );\n  }\n  for (const point of endpoints)\n    if (contains(a, b, point) && contains(c, d, point)) return [point[0], point[1]];\n  return [];\n}\n",
+      "prefix": "'use strict';\n",
+      "suffix": "\nmodule.exports = {SegmentIntersection};\n",
+      "references": [],
+      "visibleSymbols": [
+        "SegmentIntersection"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/javascript/ctci6_16_3.js"
+      ],
+      "sourceSha256": {
+        "starter": "225b4da6d71fd58d22ffbddcb05f4b7433434a754d2585bdf17d68a917cd5912",
+        "solution": "0afc82f7bd9899e500c27497a26f6e1d6b4453a40c21513eb21f43e440b16cef"
+      }
+    },
+    {
+      "problemId": "ctci6_16_3",
+      "language": "python",
+      "filename": "solution.py",
+      "signature": "def SegmentIntersection(endpoints: list[list[int]]) -> list[float]",
+      "starterCode": "def SegmentIntersection(endpoints: list[list[int]]) -> list[float]:\n    return []\n",
+      "solutionCode": "def SegmentIntersection(endpoints: list[list[int]]) -> list[float]:\n    a, b, c, d = endpoints\n    rx, ry = b[0] - a[0], b[1] - a[1]\n    sx, sy = d[0] - c[0], d[1] - c[1]\n    qx, qy = c[0] - a[0], c[1] - a[1]\n    denominator = rx * sy - ry * sx\n    if denominator != 0:\n        first = qx * sy - qy * sx\n        second = qx * ry - qy * rx\n        if denominator < 0:\n            denominator, first, second = -denominator, -first, -second\n        if 0 <= first <= denominator and 0 <= second <= denominator:\n            t = first / denominator\n            return [a[0] + t * rx, a[1] + t * ry]\n        return []\n\n    def contains(start, end, point):\n        return (\n            (end[0] - start[0]) * (point[1] - start[1])\n            == (end[1] - start[1]) * (point[0] - start[0])\n            and min(start[0], end[0]) <= point[0] <= max(start[0], end[0])\n            and min(start[1], end[1]) <= point[1] <= max(start[1], end[1])\n        )\n\n    for point in endpoints:\n        if contains(a, b, point) and contains(c, d, point):\n            return [float(point[0]), float(point[1])]\n    return []\n",
+      "prefix": "",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "SegmentIntersection"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/python/ctci6_16_3.py"
+      ],
+      "sourceSha256": {
+        "starter": "04db95df3b299e572c2b99dc7bd88d68493d29256d5c105a1da692fcc2e69643",
+        "solution": "7ba49b6135165206f81828f1ebea5cdcb40e8afbaff47128bd50dd24e2f2930e"
+      }
+    },
+    {
+      "problemId": "ctci6_16_3",
+      "language": "cpp",
+      "filename": "solution.cpp",
+      "signature": "std::vector<double> SegmentIntersection(const std::vector<std::vector<int>>& endpoints)",
+      "starterCode": "class Solution {\n public:\n  std::vector<double> SegmentIntersection(const std::vector<std::vector<int>>& endpoints) {\n    return {};\n  }\n};\n",
+      "solutionCode": "class Solution {\n public:\n  std::vector<double> SegmentIntersection(const std::vector<std::vector<int>>& endpoints) {\n    const auto& a = endpoints[0];\n    const auto& b = endpoints[1];\n    const auto& c = endpoints[2];\n    const auto& d = endpoints[3];\n    int rx = b[0] - a[0], ry = b[1] - a[1], sx = d[0] - c[0], sy = d[1] - c[1], qx = c[0] - a[0],\n        qy = c[1] - a[1], denominator = rx * sy - ry * sx;\n    if (denominator != 0) {\n      int first = qx * sy - qy * sx, second = qx * ry - qy * rx;\n      if (denominator < 0) {\n        denominator = -denominator;\n        first = -first;\n        second = -second;\n      }\n      if (first >= 0 && first <= denominator && second >= 0 && second <= denominator) {\n        double t = (double)first / denominator;\n        return {a[0] + t * rx, a[1] + t * ry};\n      }\n      return {};\n    }\n    auto contains = [](const std::vector<int>& start, const std::vector<int>& end,\n                       const std::vector<int>& point) {\n      return (end[0] - start[0]) * (point[1] - start[1]) ==\n                 (end[1] - start[1]) * (point[0] - start[0]) &&\n             point[0] >= std::min(start[0], end[0]) && point[0] <= std::max(start[0], end[0]) &&\n             point[1] >= std::min(start[1], end[1]) && point[1] <= std::max(start[1], end[1]);\n    };\n    for (const auto& point : endpoints)\n      if (contains(a, b, point) && contains(c, d, point))\n        return {(double)point[0], (double)point[1]};\n    return {};\n  }\n};\n",
+      "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n#include <unordered_map>\n#include <unordered_set>\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/cpp/ctci6_16_3.cpp"
+      ],
+      "sourceSha256": {
+        "starter": "652f8042daf9683c99d3f5aca1a8761948355e4ef56c451c1f396b202b350637",
+        "solution": "9c613bfe6cc1de61949fae1a9ba6835d26c83af0e0fe09e28d93fc09e80bf51d"
+      }
+    },
+    {
+      "problemId": "ctci6_16_3",
+      "language": "java",
+      "filename": "Solution.java",
+      "signature": "double[] SegmentIntersection(int[][] endpoints)",
+      "starterCode": "class Solution {\n  public double[] SegmentIntersection(int[][] endpoints) {\n    return new double[0];\n  }\n}\n",
+      "solutionCode": "class Solution {\n  public double[] SegmentIntersection(int[][] endpoints) {\n    int[] a = endpoints[0], b = endpoints[1], c = endpoints[2], d = endpoints[3];\n    int rx = b[0] - a[0], ry = b[1] - a[1], sx = d[0] - c[0], sy = d[1] - c[1], qx = c[0] - a[0],\n        qy = c[1] - a[1], denominator = rx * sy - ry * sx;\n    if (denominator != 0) {\n      int first = qx * sy - qy * sx, second = qx * ry - qy * rx;\n      if (denominator < 0) {\n        denominator = -denominator;\n        first = -first;\n        second = -second;\n      }\n      if (first >= 0 && first <= denominator && second >= 0 && second <= denominator) {\n        double t = (double) first / denominator;\n        return new double[] {a[0] + t * rx, a[1] + t * ry};\n      }\n      return new double[0];\n    }\n    class Geometry {\n      boolean contains(int[] start, int[] end, int[] point) {\n        return (end[0] - start[0]) * (point[1] - start[1])\n            == (end[1] - start[1]) * (point[0] - start[0])\n            && point[0] >= Math.min(start[0], end[0]) && point[0] <= Math.max(start[0], end[0])\n            && point[1] >= Math.min(start[1], end[1]) && point[1] <= Math.max(start[1], end[1]);\n      }\n    }\n    var geometry = new Geometry();\n    for (int[] point : endpoints)\n      if (geometry.contains(a, b, point) && geometry.contains(c, d, point))\n        return new double[] {(double) point[0], (double) point[1]};\n    return new double[0];\n  }\n}\n",
+      "prefix": "import java.util.*;\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/java/ctci6_16_3.java"
+      ],
+      "sourceSha256": {
+        "starter": "45127bb0d8ec67bc6856ab078a6b269d577d3c9fabe69c8da19e4f75f1fb78c6",
+        "solution": "11456b94e620cb2c3658e576e78ea9a773a664ff76748fb51a0c03301ebb0412"
+      }
+    },
+    {
       "problemId": "ctci6_16_4",
       "language": "csharp",
       "filename": "Solution.cs",
@@ -10110,6 +10230,246 @@
       "sourceSha256": {
         "starter": "799923ca59e2047942c12c694fa9a943f7919f9040b8b4a9706ed8ae97b23e3b",
         "solution": "925a7869bec1d7254f13bcb21a5bf6a879fd9fe87e1ba04f72eedd24df9497ad"
+      }
+    },
+    {
+      "problemId": "ctci6_16_12",
+      "language": "csharp",
+      "filename": "Solution.cs",
+      "signature": "List<string> EncodeXml(string[] elementNames, string[] elementTexts, int[][] children, int[] attributeOwners, string[] attributeNames, string[] attributeValues, string[] codeNames, int[] codes)",
+      "starterCode": "public class Solution\n{\n    public List<string> EncodeXml(string[] elementNames, string[] elementTexts, int[][] children,\n                                  int[] attributeOwners, string[] attributeNames,\n                                  string[] attributeValues, string[] codeNames, int[] codes)\n    {\n        return [];\n    }\n}\n",
+      "solutionCode": "public class Solution\n{\n    public List<string> EncodeXml(string[] elementNames, string[] elementTexts, int[][] children,\n                                  int[] attributeOwners, string[] attributeNames,\n                                  string[] attributeValues, string[] codeNames, int[] codes)\n    {\n        var result = new List<string>();\n        if (elementNames.Length == 0)\n            return result;\n        var lookup = new Dictionary<string, string>(StringComparer.Ordinal);\n        for (int i = 0; i < codeNames.Length; ++i)\n            lookup[codeNames[i]] =\n                codes[i].ToString(System.Globalization.CultureInfo.InvariantCulture);\n        var attributes = new List<int>[elementNames.Length];\n        for (int i = 0; i < attributes.Length; ++i)\n            attributes[i] = new List<int>();\n        for (int i = 0; i < attributeOwners.Length; ++i)\n            attributes[attributeOwners[i]].Add(i);\n        var events = new Stack<(int Node, bool Exit)>();\n        events.Push((0, false));\n        while (events.Count > 0)\n        {\n            var frame = events.Pop();\n            int node = frame.Node;\n            if (frame.Exit)\n            {\n                result.Add(\"0\");\n                continue;\n            }\n            result.Add(lookup[elementNames[node]]);\n            foreach (int attribute in attributes[node])\n            {\n                result.Add(lookup[attributeNames[attribute]]);\n                result.Add(attributeValues[attribute]);\n            }\n            result.Add(\"0\");\n            events.Push((node, true));\n            if (elementTexts[node].Length > 0)\n                result.Add(elementTexts[node]);\n            else\n                for (int i = children[node].Length - 1; i >= 0; --i)\n                    events.Push((children[node][i], false));\n        }\n        return result;\n    }\n}\n",
+      "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/csharp/ctci6_16_12.cs"
+      ],
+      "sourceSha256": {
+        "starter": "05f19d7d8bf4c20f9cc2064d6cc5743ae168a2a5a252a83f8ef88523a0305a4b",
+        "solution": "4bbcb1fd29d65c4fb7e92c213f0d6a364421a114bcd691b12a3471dd9cd85823"
+      }
+    },
+    {
+      "problemId": "ctci6_16_12",
+      "language": "javascript",
+      "filename": "solution.js",
+      "signature": "function EncodeXml(elementNames, elementTexts, children, attributeOwners, attributeNames, attributeValues, codeNames, codes)",
+      "starterCode": "function EncodeXml(\n  elementNames,\n  elementTexts,\n  children,\n  attributeOwners,\n  attributeNames,\n  attributeValues,\n  codeNames,\n  codes,\n) {\n  return [];\n}\n",
+      "solutionCode": "function EncodeXml(\n  elementNames,\n  elementTexts,\n  children,\n  attributeOwners,\n  attributeNames,\n  attributeValues,\n  codeNames,\n  codes,\n) {\n  if (elementNames.length === 0) return [];\n  const lookup = new Map(codeNames.map((name, i) => [name, String(codes[i])])),\n    attributes = Array.from({ length: elementNames.length }, () => []),\n    result = [],\n    events = [[0, false]];\n  for (let i = 0; i < attributeOwners.length; ++i) attributes[attributeOwners[i]].push(i);\n  while (events.length) {\n    const [node, exiting] = events.pop();\n    if (exiting) {\n      result.push(\"0\");\n      continue;\n    }\n    result.push(lookup.get(elementNames[node]));\n    for (const attribute of attributes[node])\n      result.push(lookup.get(attributeNames[attribute]), attributeValues[attribute]);\n    result.push(\"0\");\n    events.push([node, true]);\n    if (elementTexts[node].length) result.push(elementTexts[node]);\n    else\n      for (let i = children[node].length - 1; i >= 0; --i) events.push([children[node][i], false]);\n  }\n  return result;\n}\n",
+      "prefix": "'use strict';\n",
+      "suffix": "\nmodule.exports = {EncodeXml};\n",
+      "references": [],
+      "visibleSymbols": [
+        "EncodeXml"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/javascript/ctci6_16_12.js"
+      ],
+      "sourceSha256": {
+        "starter": "d878330fedf1178f8bc411b2d19e7b822ed105e033137cd15a557e16fa3faf1a",
+        "solution": "f59d75e6430985811dc1f6137550bde1d086694f8d067dc1597b95a375f65335"
+      }
+    },
+    {
+      "problemId": "ctci6_16_12",
+      "language": "python",
+      "filename": "solution.py",
+      "signature": "def EncodeXml(elementNames: list[str], elementTexts: list[str], children: list[list[int]], attributeOwners: list[int], attributeNames: list[str], attributeValues: list[str], codeNames: list[str], codes: list[int]) -> list[str]",
+      "starterCode": "def EncodeXml(\n    elementNames: list[str],\n    elementTexts: list[str],\n    children: list[list[int]],\n    attributeOwners: list[int],\n    attributeNames: list[str],\n    attributeValues: list[str],\n    codeNames: list[str],\n    codes: list[int],\n) -> list[str]:\n    return []\n",
+      "solutionCode": "def EncodeXml(\n    elementNames: list[str],\n    elementTexts: list[str],\n    children: list[list[int]],\n    attributeOwners: list[int],\n    attributeNames: list[str],\n    attributeValues: list[str],\n    codeNames: list[str],\n    codes: list[int],\n) -> list[str]:\n    if not elementNames:\n        return []\n    lookup = {name: str(code) for name, code in zip(codeNames, codes)}\n    attributes = [[] for _ in elementNames]\n    for index, owner in enumerate(attributeOwners):\n        attributes[owner].append(index)\n    result = []\n    events = [(0, False)]\n    while events:\n        node, exiting = events.pop()\n        if exiting:\n            result.append(\"0\")\n            continue\n        result.append(lookup[elementNames[node]])\n        for attribute in attributes[node]:\n            result.extend([lookup[attributeNames[attribute]], attributeValues[attribute]])\n        result.append(\"0\")\n        events.append((node, True))\n        if elementTexts[node]:\n            result.append(elementTexts[node])\n        else:\n            for child in reversed(children[node]):\n                events.append((child, False))\n    return result\n",
+      "prefix": "",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "EncodeXml"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/python/ctci6_16_12.py"
+      ],
+      "sourceSha256": {
+        "starter": "d4bdc6a742ea69ea917dd160f1ec52dca9d007351e37f04c276ed05371e2622f",
+        "solution": "388fcbacd2e69e2b8158141f612c01cadc2d57e1fc3b1c27d91aad74cbd47ecd"
+      }
+    },
+    {
+      "problemId": "ctci6_16_12",
+      "language": "cpp",
+      "filename": "solution.cpp",
+      "signature": "std::vector<std::string> EncodeXml(const std::vector<std::string>& elementNames, const std::vector<std::string>& elementTexts, const std::vector<std::vector<int>>& children, const std::vector<int>& attributeOwners, const std::vector<std::string>& attributeNames, const std::vector<std::string>& attributeValues, const std::vector<std::string>& codeNames, const std::vector<int>& codes)",
+      "starterCode": "class Solution {\n public:\n  std::vector<std::string> EncodeXml(const std::vector<std::string>& elementNames,\n                                     const std::vector<std::string>& elementTexts,\n                                     const std::vector<std::vector<int>>& children,\n                                     const std::vector<int>& attributeOwners,\n                                     const std::vector<std::string>& attributeNames,\n                                     const std::vector<std::string>& attributeValues,\n                                     const std::vector<std::string>& codeNames,\n                                     const std::vector<int>& codes) {\n    return {};\n  }\n};\n",
+      "solutionCode": "class Solution {\n public:\n  std::vector<std::string> EncodeXml(const std::vector<std::string>& elementNames,\n                                     const std::vector<std::string>& elementTexts,\n                                     const std::vector<std::vector<int>>& children,\n                                     const std::vector<int>& attributeOwners,\n                                     const std::vector<std::string>& attributeNames,\n                                     const std::vector<std::string>& attributeValues,\n                                     const std::vector<std::string>& codeNames,\n                                     const std::vector<int>& codes) {\n    std::vector<std::string> result;\n    if (elementNames.empty())\n      return result;\n    std::unordered_map<std::string, std::string> lookup;\n    for (size_t i = 0; i < codeNames.size(); ++i)\n      lookup[codeNames[i]] = std::to_string(codes[i]);\n    std::vector<std::vector<size_t>> attributes(elementNames.size());\n    for (size_t i = 0; i < attributeOwners.size(); ++i)\n      attributes[attributeOwners[i]].push_back(i);\n    std::vector<std::pair<int, bool>> events{{0, false}};\n    while (!events.empty()) {\n      auto frame = events.back();\n      events.pop_back();\n      int node = frame.first;\n      if (frame.second) {\n        result.push_back(\"0\");\n        continue;\n      }\n      result.push_back(lookup.at(elementNames[node]));\n      for (size_t attribute : attributes[node]) {\n        result.push_back(lookup.at(attributeNames[attribute]));\n        result.push_back(attributeValues[attribute]);\n      }\n      result.push_back(\"0\");\n      events.emplace_back(node, true);\n      if (!elementTexts[node].empty())\n        result.push_back(elementTexts[node]);\n      else\n        for (auto it = children[node].rbegin(); it != children[node].rend(); ++it)\n          events.emplace_back(*it, false);\n    }\n    return result;\n  }\n};\n",
+      "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n#include <unordered_map>\n#include <unordered_set>\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/cpp/ctci6_16_12.cpp"
+      ],
+      "sourceSha256": {
+        "starter": "38632c0615427d67b89087c2da49398cbdb37cdc42d6903b6cd2d4672a93ae21",
+        "solution": "48dc705636538fac46110cc7327da6bf5e843c3366fa18e6c2fd45f348bda10d"
+      }
+    },
+    {
+      "problemId": "ctci6_16_12",
+      "language": "java",
+      "filename": "Solution.java",
+      "signature": "List<String> EncodeXml(String[] elementNames, String[] elementTexts, int[][] children, int[] attributeOwners, String[] attributeNames, String[] attributeValues, String[] codeNames, int[] codes)",
+      "starterCode": "class Solution {\n  public List<String> EncodeXml(String[] elementNames, String[] elementTexts, int[][] children,\n      int[] attributeOwners, String[] attributeNames, String[] attributeValues, String[] codeNames,\n      int[] codes) {\n    return new ArrayList<>();\n  }\n}\n",
+      "solutionCode": "class Solution {\n  public List<String> EncodeXml(String[] elementNames, String[] elementTexts, int[][] children,\n      int[] attributeOwners, String[] attributeNames, String[] attributeValues, String[] codeNames,\n      int[] codes) {\n    var result = new ArrayList<String>();\n    if (elementNames.length == 0)\n      return result;\n    var lookup = new HashMap<String, String>();\n    for (int i = 0; i < codeNames.length; ++i)\n      lookup.put(codeNames[i], Integer.toString(codes[i]));\n    var attributes = new ArrayList<ArrayList<Integer>>();\n    for (int i = 0; i < elementNames.length; ++i)\n      attributes.add(new ArrayList<>());\n    for (int i = 0; i < attributeOwners.length; ++i)\n      attributes.get(attributeOwners[i]).add(i);\n    var events = new ArrayDeque<int[]>();\n    events.push(new int[] {0, 0});\n    while (!events.isEmpty()) {\n      int[] frame = events.pop();\n      int node = frame[0];\n      if (frame[1] != 0) {\n        result.add(\"0\");\n        continue;\n      }\n      result.add(lookup.get(elementNames[node]));\n      for (int attribute : attributes.get(node)) {\n        result.add(lookup.get(attributeNames[attribute]));\n        result.add(attributeValues[attribute]);\n      }\n      result.add(\"0\");\n      events.push(new int[] {node, 1});\n      if (!elementTexts[node].isEmpty())\n        result.add(elementTexts[node]);\n      else\n        for (int i = children[node].length - 1; i >= 0; --i)\n          events.push(new int[] {children[node][i], 0});\n    }\n    return result;\n  }\n}\n",
+      "prefix": "import java.util.*;\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/java/ctci6_16_12.java"
+      ],
+      "sourceSha256": {
+        "starter": "6bbb89618d89000f20ab06fb49b7a4a0bdbb516f0ae6c64d1fc53006f0065ac9",
+        "solution": "65613a0a68058f36b688ad07e20e4a85ab141e39251158e4fd6707e2295b712b"
+      }
+    },
+    {
+      "problemId": "ctci6_16_13",
+      "language": "csharp",
+      "filename": "Solution.cs",
+      "signature": "double[] BisectSquares(int[][] squares)",
+      "starterCode": "public class Solution\n{\n    public double[] BisectSquares(int[][] squares)\n    {\n        return [];\n    }\n}\n",
+      "solutionCode": "public class Solution\n{\n    public double[] BisectSquares(int[][] squares)\n    {\n        double x = squares[0][0] + squares[0][2] / 2.0, y = squares[0][1] + squares[0][2] / 2.0,\n               dx = squares[1][0] + squares[1][2] / 2.0 - x,\n               dy = squares[1][1] + squares[1][2] / 2.0 - y, other = 1;\n        if (dx == 0 && dy == 0)\n        {\n            dy = 1;\n            other = 0;\n        }\n        double scale = Math.Max(Math.Abs(dx), Math.Abs(dy)), first = squares[0][2] / (2.0 * scale),\n               second = squares[1][2] / (2.0 * scale), start = Math.Min(-first, other - second),\n               end = Math.Max(first, other + second);\n        return [x + start * dx, y + start * dy, x + end * dx, y + end * dy];\n    }\n}\n",
+      "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/csharp/ctci6_16_13.cs"
+      ],
+      "sourceSha256": {
+        "starter": "a8853893a5ce4a7d3e623bcacc606daa8ad4a80591997a6c2584e5f51c9a2f6e",
+        "solution": "ae2ee9b9e0ed5c3e125b6f3a31864d1c50c966aa61e0d6178a32a954215c4d75"
+      }
+    },
+    {
+      "problemId": "ctci6_16_13",
+      "language": "javascript",
+      "filename": "solution.js",
+      "signature": "function BisectSquares(squares)",
+      "starterCode": "function BisectSquares(squares) {\n  return [];\n}\n",
+      "solutionCode": "function BisectSquares(squares) {\n  const x = squares[0][0] + squares[0][2] / 2,\n    y = squares[0][1] + squares[0][2] / 2;\n  let dx = squares[1][0] + squares[1][2] / 2 - x,\n    dy = squares[1][1] + squares[1][2] / 2 - y,\n    other = 1;\n  if (dx === 0 && dy === 0) {\n    dy = 1;\n    other = 0;\n  }\n  const scale = Math.max(Math.abs(dx), Math.abs(dy)),\n    first = squares[0][2] / (2 * scale),\n    second = squares[1][2] / (2 * scale),\n    start = Math.min(-first, other - second),\n    end = Math.max(first, other + second);\n  return [x + start * dx, y + start * dy, x + end * dx, y + end * dy];\n}\n",
+      "prefix": "'use strict';\n",
+      "suffix": "\nmodule.exports = {BisectSquares};\n",
+      "references": [],
+      "visibleSymbols": [
+        "BisectSquares"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/javascript/ctci6_16_13.js"
+      ],
+      "sourceSha256": {
+        "starter": "0204ccc31e2b99cb3f614bedbb1e885b3269fe15fd520e67b55bf6fbfffd688a",
+        "solution": "4bae481606c6b520526bff4c4a70da0cb40d2edd36d7dfbdc030eab1f704c23a"
+      }
+    },
+    {
+      "problemId": "ctci6_16_13",
+      "language": "python",
+      "filename": "solution.py",
+      "signature": "def BisectSquares(squares: list[list[int]]) -> list[float]",
+      "starterCode": "def BisectSquares(squares: list[list[int]]) -> list[float]:\n    return []\n",
+      "solutionCode": "def BisectSquares(squares: list[list[int]]) -> list[float]:\n    x = squares[0][0] + squares[0][2] / 2.0\n    y = squares[0][1] + squares[0][2] / 2.0\n    dx = squares[1][0] + squares[1][2] / 2.0 - x\n    dy = squares[1][1] + squares[1][2] / 2.0 - y\n    if dx == 0 and dy == 0:\n        dy = 1.0\n        other = 0.0\n    else:\n        other = 1.0\n    scale = max(abs(dx), abs(dy))\n    first_radius = squares[0][2] / (2.0 * scale)\n    second_radius = squares[1][2] / (2.0 * scale)\n    start = min(-first_radius, other - second_radius)\n    end = max(first_radius, other + second_radius)\n    return [x + start * dx, y + start * dy, x + end * dx, y + end * dy]\n",
+      "prefix": "",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "BisectSquares"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/python/ctci6_16_13.py"
+      ],
+      "sourceSha256": {
+        "starter": "cf659bdc4cb7e5c96dfb9108b13aca9e2c0ad7e5d21e9d573995a49eb30429ac",
+        "solution": "37c72afbcb020deb46e62903d422c78217e8c81c5922269dce9b0a160cc04d38"
+      }
+    },
+    {
+      "problemId": "ctci6_16_13",
+      "language": "cpp",
+      "filename": "solution.cpp",
+      "signature": "std::vector<double> BisectSquares(const std::vector<std::vector<int>>& squares)",
+      "starterCode": "class Solution {\n public:\n  std::vector<double> BisectSquares(const std::vector<std::vector<int>>& squares) {\n    return {};\n  }\n};\n",
+      "solutionCode": "class Solution {\n public:\n  std::vector<double> BisectSquares(const std::vector<std::vector<int>>& squares) {\n    double x = squares[0][0] + squares[0][2] / 2.0, y = squares[0][1] + squares[0][2] / 2.0,\n           dx = squares[1][0] + squares[1][2] / 2.0 - x,\n           dy = squares[1][1] + squares[1][2] / 2.0 - y, other = 1;\n    if (dx == 0 && dy == 0) {\n      dy = 1;\n      other = 0;\n    }\n    double scale = std::max(std::abs(dx), std::abs(dy)), first = squares[0][2] / (2.0 * scale),\n           second = squares[1][2] / (2.0 * scale), start = std::min(-first, other - second),\n           end = std::max(first, other + second);\n    return {x + start * dx, y + start * dy, x + end * dx, y + end * dy};\n  }\n};\n",
+      "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n#include <unordered_map>\n#include <unordered_set>\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/cpp/ctci6_16_13.cpp"
+      ],
+      "sourceSha256": {
+        "starter": "d80cbb1c9ab08da238f308c113179b2c1c6886c01a73148e3e8e52d7cdeb28aa",
+        "solution": "38f2f5429d48475348079c340f7f5943ac3c8fddaa4d275c39d3a033347febbc"
+      }
+    },
+    {
+      "problemId": "ctci6_16_13",
+      "language": "java",
+      "filename": "Solution.java",
+      "signature": "double[] BisectSquares(int[][] squares)",
+      "starterCode": "class Solution {\n  public double[] BisectSquares(int[][] squares) {\n    return new double[0];\n  }\n}\n",
+      "solutionCode": "class Solution {\n  public double[] BisectSquares(int[][] squares) {\n    double x = squares[0][0] + squares[0][2] / 2.0, y = squares[0][1] + squares[0][2] / 2.0,\n           dx = squares[1][0] + squares[1][2] / 2.0 - x,\n           dy = squares[1][1] + squares[1][2] / 2.0 - y, other = 1;\n    if (dx == 0 && dy == 0) {\n      dy = 1;\n      other = 0;\n    }\n    double scale = Math.max(Math.abs(dx), Math.abs(dy)), first = squares[0][2] / (2.0 * scale),\n           second = squares[1][2] / (2.0 * scale), start = Math.min(-first, other - second),\n           end = Math.max(first, other + second);\n    return new double[] {x + start * dx, y + start * dy, x + end * dx, y + end * dy};\n  }\n}\n",
+      "prefix": "import java.util.*;\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/java/ctci6_16_13.java"
+      ],
+      "sourceSha256": {
+        "starter": "833a8315c320b1fb2ac756e41fc0685779fd99e653b614ba6f832d92880cdf04",
+        "solution": "6f0fe137b472736ec7f693f4bd3af0ffb577febe9b24a6f35a77890989acdef1"
       }
     },
     {

@@ -608,4 +608,35 @@ public sealed class CtciStagingTests
         Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new[] { (double)int.MinValue, 0.0 }, mutationOk = true })));
         Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new[] { -0.5 }, mutationOk = true })));
     }
+    [Fact]
+    public void SegmentIntersectionAllowsAnyOverlapPointButRejectsInfiniteLineOnlyCrossings()
+    {
+        var definition = Definition("16.3");
+        var overlap = Case([new int[][] { [0, 0], [4, 0], [2, 0], [6, 0] }], new[] { 2.0, 0 });
+        Assert.Null(CtciStagingGrader.FailureReason(definition, overlap, Json(new { actual = new[] { 3.0, 0 }, mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, overlap, Json(new { actual = new[] { 5.0, 0 }, mutationOk = true })));
+        var disjoint = Case([new int[][] { [0, 0], [1, 1], [2, 0], [2, 3] }], Array.Empty<double>());
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, disjoint, Json(new { actual = new[] { 2.0, 2 }, mutationOk = true })));
+    }
+
+    [Fact]
+    public void SquareBisectorAcceptsEitherEndpointOrderAndAnyConcentricDirection()
+    {
+        var definition = Definition("16.13");
+        var separate = Case([new int[][] { [0, 0, 2], [4, 0, 2] }], new[] { 0.0, 1, 6, 1 });
+        Assert.Null(CtciStagingGrader.FailureReason(definition, separate, Json(new { actual = new[] { 6.0, 1, 0, 1 }, mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, separate, Json(new { actual = new[] { 1.0, 1, 5, 1 }, mutationOk = true })));
+        var concentric = Case([new int[][] { [0, 0, 4], [1, 1, 2] }], new[] { 2.0, 0, 2, 4 });
+        Assert.Null(CtciStagingGrader.FailureReason(definition, concentric, Json(new { actual = new[] { 0.0, 0, 4, 4 }, mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, concentric, Json(new { actual = new[] { 1.0, 2, 3, 2 }, mutationOk = true })));
+    }
+    [Fact]
+    public void XmlEncodingKeepsLiteralTokenBoundariesAndBothEndMarkers()
+    {
+        var definition = Definition("16.12");
+        var test = Case([new[] { "node" }, new[] { "Text" }, new[] { Array.Empty<int>() }, new[] { 0 }, new[] { "key" }, new[] { "A B" }, new[] { "node", "key" }, new[] { 7, 2 }], new[] { "7", "2", "A B", "0", "Text", "0" });
+        Assert.Null(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new[] { "7", "2", "A B", "0", "Text", "0" }, mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new[] { "7", "2", "A", "B", "0", "Text", "0" }, mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new[] { "7", "2", "A B", "0", "Text" }, mutationOk = true })));
+    }
 }

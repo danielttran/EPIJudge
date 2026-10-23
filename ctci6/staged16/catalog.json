@@ -154,6 +154,90 @@
     }
   },
   {
+    "ref": "16.3",
+    "method": "SegmentIntersection",
+    "params": [
+      [
+        "endpoints",
+        "aai"
+      ]
+    ],
+    "result": "ad",
+    "mutation": "none",
+    "description": "Find an intersection point of two CLOSED line segments in the plane. endpoints contains [startA,endA,startB,endB], with each point represented as [x,y]. Return [x,y] for any point belonging to both segments, or [] when they are disjoint. A segment may have zero length. For an overlap of positive length, any point in the overlap is accepted.",
+    "constraints": [
+      "endpoints has exactly four distinct row objects, each containing two integers in -1000..1000. Equal coordinate values and reversed segment directions are allowed. Preserve the outer array, all row objects and values.",
+      "The returned coordinates must be finite numbers within absolute coordinate error 0.000001 of a true common point. Endpoints count as intersections. The input coordinates and collinearity decisions are exact integers; a nearly parallel pair must not be treated as collinear."
+    ],
+    "why": "Use cross products rather than slopes, so vertical segments require no division by zero. For nonparallel directions, the two signed cross-product ratios give the position along each segment; both must lie in [0,1]. Parallel segments can intersect only through collinear overlap, where an endpoint of one segment lies on the other. Checking endpoints also handles point segments.",
+    "correctness": "For nonzero cross(directionA,directionB), solving the two parametric line equations gives unique parameters t and u. The infinite lines meet inside both closed segments exactly when both parameters are in [0,1]; integer numerator/denominator comparisons establish that fact before computing coordinates. If the cross product is zero, the segments are parallel or degenerate. Any common point then implies either coincident point segments or an overlap containing an endpoint. Testing all four endpoints for exact membership in both segments therefore finds an intersection whenever one exists. If no endpoint passes, the parallel/degenerate segments are disjoint. Readonly inputs are never reordered.",
+    "walkthrough": "Segments [0,0]\u2192[4,4] and [0,4]\u2192[4,0] have t=u=1/2, so return [2,2]. Segments [0,0]\u2192[4,0] and [2,0]\u2192[6,0] overlap: [2,0], [3,0] and [4,0] are all accepted. A point segment [1,1]\u2192[1,1] intersects a diagonal containing [1,1].",
+    "example": [
+      [
+        [
+          [
+            0,
+            0
+          ],
+          [
+            4,
+            4
+          ],
+          [
+            0,
+            4
+          ],
+          [
+            4,
+            0
+          ]
+        ]
+      ],
+      [
+        2,
+        2
+      ]
+    ],
+    "time": "O(1) exact integer comparisons and a constant number of real arithmetic operations.",
+    "space": "O(1) auxiliary state and at most two returned numbers.",
+    "edges": [
+      "Vertical/horizontal crossings, endpoint touches and reversed directions.",
+      "Parallel separated segments, collinear overlap and identical segments.",
+      "One or two zero-length segments, nearly parallel lines and coordinate limits."
+    ],
+    "related": "The public exercise returns an intersection point or null for two bounded segments, including overlapping collinear segments. Empty/numeric arrays replace Point/null while preserving any common-point freedom.",
+    "id": "ctci6_16_3",
+    "title": "Intersection",
+    "testCount": 579,
+    "languages": {
+      "csharp": {
+        "signature": "double[] SegmentIntersection(int[][] endpoints)",
+        "starterCode": "public class Solution\n{\n    public double[] SegmentIntersection(int[][] endpoints)\n    {\n        return [];\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public double[] SegmentIntersection(int[][] endpoints)\n    {\n        int[] a = endpoints[0], b = endpoints[1], c = endpoints[2], d = endpoints[3];\n        int rx = b[0] - a[0], ry = b[1] - a[1], sx = d[0] - c[0], sy = d[1] - c[1],\n            qx = c[0] - a[0], qy = c[1] - a[1], denominator = rx * sy - ry * sx;\n        if (denominator != 0)\n        {\n            int first = qx * sy - qy * sx, second = qx * ry - qy * rx;\n            if (denominator < 0)\n            {\n                denominator = -denominator;\n                first = -first;\n                second = -second;\n            }\n            if (first >= 0 && first <= denominator && second >= 0 && second <= denominator)\n            {\n                double t = (double)first / denominator;\n                return [a[0] + t * rx, a[1] + t * ry];\n            }\n            return [];\n        }\n        bool Contains(int[] start, int[] end, int[] point)\n        {\n            return (end[0] - start[0]) * (point[1] - start[1]) ==\n                       (end[1] - start[1]) * (point[0] - start[0]) &&\n                   point[0] >= Math.Min(start[0], end[0]) &&\n                   point[0] <= Math.Max(start[0], end[0]) &&\n                   point[1] >= Math.Min(start[1], end[1]) && point[1] <= Math.Max(start[1], end[1]);\n        }\n        foreach (var point in endpoints)\n            if (Contains(a, b, point) && Contains(c, d, point))\n                return [(double)point[0], (double)point[1]];\n        return [];\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function SegmentIntersection(endpoints)",
+        "starterCode": "function SegmentIntersection(endpoints) {\n  return [];\n}\n",
+        "solutionCode": "function SegmentIntersection(endpoints) {\n  const [a, b, c, d] = endpoints,\n    rx = b[0] - a[0],\n    ry = b[1] - a[1],\n    sx = d[0] - c[0],\n    sy = d[1] - c[1],\n    qx = c[0] - a[0],\n    qy = c[1] - a[1];\n  let denominator = rx * sy - ry * sx;\n  if (denominator !== 0) {\n    let first = qx * sy - qy * sx,\n      second = qx * ry - qy * rx;\n    if (denominator < 0) {\n      denominator = -denominator;\n      first = -first;\n      second = -second;\n    }\n    if (first >= 0 && first <= denominator && second >= 0 && second <= denominator) {\n      const t = first / denominator;\n      return [a[0] + t * rx, a[1] + t * ry];\n    }\n    return [];\n  }\n  function contains(start, end, point) {\n    return (\n      (end[0] - start[0]) * (point[1] - start[1]) === (end[1] - start[1]) * (point[0] - start[0]) &&\n      point[0] >= Math.min(start[0], end[0]) &&\n      point[0] <= Math.max(start[0], end[0]) &&\n      point[1] >= Math.min(start[1], end[1]) &&\n      point[1] <= Math.max(start[1], end[1])\n    );\n  }\n  for (const point of endpoints)\n    if (contains(a, b, point) && contains(c, d, point)) return [point[0], point[1]];\n  return [];\n}\n"
+      },
+      "python": {
+        "signature": "def SegmentIntersection(endpoints: list[list[int]]) -> list[float]",
+        "starterCode": "def SegmentIntersection(endpoints: list[list[int]]) -> list[float]:\n    return []\n",
+        "solutionCode": "def SegmentIntersection(endpoints: list[list[int]]) -> list[float]:\n    a, b, c, d = endpoints\n    rx, ry = b[0] - a[0], b[1] - a[1]\n    sx, sy = d[0] - c[0], d[1] - c[1]\n    qx, qy = c[0] - a[0], c[1] - a[1]\n    denominator = rx * sy - ry * sx\n    if denominator != 0:\n        first = qx * sy - qy * sx\n        second = qx * ry - qy * rx\n        if denominator < 0:\n            denominator, first, second = -denominator, -first, -second\n        if 0 <= first <= denominator and 0 <= second <= denominator:\n            t = first / denominator\n            return [a[0] + t * rx, a[1] + t * ry]\n        return []\n\n    def contains(start, end, point):\n        return (\n            (end[0] - start[0]) * (point[1] - start[1])\n            == (end[1] - start[1]) * (point[0] - start[0])\n            and min(start[0], end[0]) <= point[0] <= max(start[0], end[0])\n            and min(start[1], end[1]) <= point[1] <= max(start[1], end[1])\n        )\n\n    for point in endpoints:\n        if contains(a, b, point) and contains(c, d, point):\n            return [float(point[0]), float(point[1])]\n    return []\n"
+      },
+      "cpp": {
+        "signature": "std::vector<double> SegmentIntersection(const std::vector<std::vector<int>>& endpoints)",
+        "starterCode": "class Solution {\n public:\n  std::vector<double> SegmentIntersection(const std::vector<std::vector<int>>& endpoints) {\n    return {};\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  std::vector<double> SegmentIntersection(const std::vector<std::vector<int>>& endpoints) {\n    const auto& a = endpoints[0];\n    const auto& b = endpoints[1];\n    const auto& c = endpoints[2];\n    const auto& d = endpoints[3];\n    int rx = b[0] - a[0], ry = b[1] - a[1], sx = d[0] - c[0], sy = d[1] - c[1], qx = c[0] - a[0],\n        qy = c[1] - a[1], denominator = rx * sy - ry * sx;\n    if (denominator != 0) {\n      int first = qx * sy - qy * sx, second = qx * ry - qy * rx;\n      if (denominator < 0) {\n        denominator = -denominator;\n        first = -first;\n        second = -second;\n      }\n      if (first >= 0 && first <= denominator && second >= 0 && second <= denominator) {\n        double t = (double)first / denominator;\n        return {a[0] + t * rx, a[1] + t * ry};\n      }\n      return {};\n    }\n    auto contains = [](const std::vector<int>& start, const std::vector<int>& end,\n                       const std::vector<int>& point) {\n      return (end[0] - start[0]) * (point[1] - start[1]) ==\n                 (end[1] - start[1]) * (point[0] - start[0]) &&\n             point[0] >= std::min(start[0], end[0]) && point[0] <= std::max(start[0], end[0]) &&\n             point[1] >= std::min(start[1], end[1]) && point[1] <= std::max(start[1], end[1]);\n    };\n    for (const auto& point : endpoints)\n      if (contains(a, b, point) && contains(c, d, point))\n        return {(double)point[0], (double)point[1]};\n    return {};\n  }\n};\n"
+      },
+      "java": {
+        "signature": "double[] SegmentIntersection(int[][] endpoints)",
+        "starterCode": "class Solution {\n  public double[] SegmentIntersection(int[][] endpoints) {\n    return new double[0];\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public double[] SegmentIntersection(int[][] endpoints) {\n    int[] a = endpoints[0], b = endpoints[1], c = endpoints[2], d = endpoints[3];\n    int rx = b[0] - a[0], ry = b[1] - a[1], sx = d[0] - c[0], sy = d[1] - c[1], qx = c[0] - a[0],\n        qy = c[1] - a[1], denominator = rx * sy - ry * sx;\n    if (denominator != 0) {\n      int first = qx * sy - qy * sx, second = qx * ry - qy * rx;\n      if (denominator < 0) {\n        denominator = -denominator;\n        first = -first;\n        second = -second;\n      }\n      if (first >= 0 && first <= denominator && second >= 0 && second <= denominator) {\n        double t = (double) first / denominator;\n        return new double[] {a[0] + t * rx, a[1] + t * ry};\n      }\n      return new double[0];\n    }\n    class Geometry {\n      boolean contains(int[] start, int[] end, int[] point) {\n        return (end[0] - start[0]) * (point[1] - start[1])\n            == (end[1] - start[1]) * (point[0] - start[0])\n            && point[0] >= Math.min(start[0], end[0]) && point[0] <= Math.max(start[0], end[0])\n            && point[1] >= Math.min(start[1], end[1]) && point[1] <= Math.max(start[1], end[1]);\n      }\n    }\n    var geometry = new Geometry();\n    for (int[] point : endpoints)\n      if (geometry.contains(a, b, point) && geometry.contains(c, d, point))\n        return new double[] {(double) point[0], (double) point[1]};\n    return new double[0];\n  }\n}\n"
+      }
+    }
+  },
+  {
     "ref": "16.4",
     "method": "TicTacWinner",
     "params": [
@@ -726,6 +810,229 @@
         "signature": "int[] DivingBoardLengths(int planks, int shorter, int longer)",
         "starterCode": "class Solution {\n  public int[] DivingBoardLengths(int planks, int shorter, int longer) {\n    return new int[0];\n  }\n}\n",
         "solutionCode": "class Solution {\n  public int[] DivingBoardLengths(int planks, int shorter, int longer) {\n    if (shorter == longer)\n      return new int[] {planks * shorter};\n    int[] result = new int[planks + 1];\n    for (int count = 0; count <= planks; ++count)\n      result[count] = planks * shorter + count * (longer - shorter);\n    return result;\n  }\n}\n"
+      }
+    }
+  },
+  {
+    "ref": "16.12",
+    "method": "EncodeXml",
+    "params": [
+      [
+        "elementNames",
+        "as"
+      ],
+      [
+        "elementTexts",
+        "as"
+      ],
+      [
+        "children",
+        "aai"
+      ],
+      [
+        "attributeOwners",
+        "ai"
+      ],
+      [
+        "attributeNames",
+        "as"
+      ],
+      [
+        "attributeValues",
+        "as"
+      ],
+      [
+        "codeNames",
+        "as"
+      ],
+      [
+        "codes",
+        "ai"
+      ]
+    ],
+    "result": "strings",
+    "mutation": "none",
+    "description": "Encode an already parsed XML element tree using supplied positive tag/attribute codes. Return an array of string tokens. For each element emit: its decimal name code; each attribute as decimal name code then literal value; \"0\" ending the attribute list; its nonempty text OR its recursively encoded children in order; and \"0\" ending the element. The token array preserves complete literal values, including spaces and empty attribute values.",
+    "constraints": [
+      "elementNames, elementTexts and children have equal length n in 0..1000. If n>0, element 0 is the root; children lists form one rooted tree reaching every element exactly once, with valid node indices and specified sibling order. Nonempty elementTexts is allowed only at a leaf. Empty text means no text token; an empty leaf therefore emits its code followed by two end markers. n=0 encodes to [].",
+      "attributeOwners, attributeNames and attributeValues have equal length a in 0..1000. Each owner is a valid element index. Emit attributes of an element in their original attribute-array order, even when attributes of different elements are interleaved. An element has no repeated attribute name.",
+      "codeNames and codes have equal length 1..9. codeNames are unique ASCII-letter names of length 1..20; codes are distinct integers 1..9. Every element/attribute name appears in this map. Texts and attribute values contain 0..100 ASCII letters/spaces. This literal domain excludes the reserved digit marker; XML parsing, entities, namespaces and mixed text/child content are outside this already-parsed input model.",
+      "All arrays, child row objects, values and order are readonly. Return actual literal tokens, not a whitespace-split string: one attribute value containing spaces remains one token. Numeric code tokens use ordinary decimal spelling, and end markers are exactly \"0\"."
+    ],
+    "why": "XML nesting needs a closing marker after all children, so an ordinary preorder list alone is insufficient. Use explicit enter/exit events: entering emits the code, attributes and first marker; exiting emits the final marker. Put child enter events on the stack in reverse sibling order so they execute in the original order. Group attribute indices by owner once to avoid rescanning every attribute at every element.",
+    "correctness": "On entry, the name code and every owned attribute pair are emitted in the required order, followed by exactly one attribute terminator. For a text leaf the literal text is emitted before its scheduled exit. Otherwise reverse pushing causes each child subtree to complete in sibling order before the parent exit is processed. By induction on a subtree, these events emit exactly its prescribed encoding and one final marker. The root event therefore emits the whole tree, and empty input emits no events. Attribute buckets preserve original per-owner order and never duplicate a pair. Inputs are only read.",
+    "walkthrough": "Let element names be [family,person], texts [\"\",Hello] and children [[1],[]]. Attributes are owners [0,1], names [last,first], values [Tran,Ada]; name codes are family=1, person=2, first=3, last=4. The tokens are [\"1\",\"4\",\"Tran\",\"0\",\"2\",\"3\",\"Ada\",\"0\",\"Hello\",\"0\",\"0\"]. The last two zeros close person then family; the earlier zeros end their attribute lists.",
+    "example": [
+      [
+        [
+          "family",
+          "person"
+        ],
+        [
+          "",
+          "Hello"
+        ],
+        [
+          [
+            1
+          ],
+          []
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          "last",
+          "first"
+        ],
+        [
+          "Tran",
+          "Ada"
+        ],
+        [
+          "family",
+          "person",
+          "first",
+          "last"
+        ],
+        [
+          1,
+          2,
+          3,
+          4
+        ]
+      ],
+      [
+        "1",
+        "4",
+        "Tran",
+        "0",
+        "2",
+        "3",
+        "Ada",
+        "0",
+        "Hello",
+        "0",
+        "0"
+      ]
+    ],
+    "time": "Expected O(n+a+k+T) time for n elements, a attributes, k code mappings and T returned token characters; each event/attribute is visited once and bounded name lookups are hashed.",
+    "space": "O(n+a+k) auxiliary buckets, event stack and map, plus O(n+a+T) returned token storage. The explicit stack avoids a language call-stack limit on a 1000-element chain.",
+    "edges": [
+      "No elements, empty leaves and text-only leaves.",
+      "Interleaved owners, empty/space-containing attribute values, arbitrary code-map order.",
+      "Wide sibling groups and 1000-level nested trees with no recursive call overflow."
+    ],
+    "related": "The public XML task encodes an already parsed Element hierarchy with name codes and two kinds of end marker. Parallel arrays are its explicit tree/attribute input representation here; returned string tokens preserve literal boundaries without adding a separate XML-parser exercise.",
+    "id": "ctci6_16_12",
+    "title": "XML Encoding",
+    "testCount": 293,
+    "languages": {
+      "csharp": {
+        "signature": "List<string> EncodeXml(string[] elementNames, string[] elementTexts, int[][] children, int[] attributeOwners, string[] attributeNames, string[] attributeValues, string[] codeNames, int[] codes)",
+        "starterCode": "public class Solution\n{\n    public List<string> EncodeXml(string[] elementNames, string[] elementTexts, int[][] children,\n                                  int[] attributeOwners, string[] attributeNames,\n                                  string[] attributeValues, string[] codeNames, int[] codes)\n    {\n        return [];\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public List<string> EncodeXml(string[] elementNames, string[] elementTexts, int[][] children,\n                                  int[] attributeOwners, string[] attributeNames,\n                                  string[] attributeValues, string[] codeNames, int[] codes)\n    {\n        var result = new List<string>();\n        if (elementNames.Length == 0)\n            return result;\n        var lookup = new Dictionary<string, string>(StringComparer.Ordinal);\n        for (int i = 0; i < codeNames.Length; ++i)\n            lookup[codeNames[i]] =\n                codes[i].ToString(System.Globalization.CultureInfo.InvariantCulture);\n        var attributes = new List<int>[elementNames.Length];\n        for (int i = 0; i < attributes.Length; ++i)\n            attributes[i] = new List<int>();\n        for (int i = 0; i < attributeOwners.Length; ++i)\n            attributes[attributeOwners[i]].Add(i);\n        var events = new Stack<(int Node, bool Exit)>();\n        events.Push((0, false));\n        while (events.Count > 0)\n        {\n            var frame = events.Pop();\n            int node = frame.Node;\n            if (frame.Exit)\n            {\n                result.Add(\"0\");\n                continue;\n            }\n            result.Add(lookup[elementNames[node]]);\n            foreach (int attribute in attributes[node])\n            {\n                result.Add(lookup[attributeNames[attribute]]);\n                result.Add(attributeValues[attribute]);\n            }\n            result.Add(\"0\");\n            events.Push((node, true));\n            if (elementTexts[node].Length > 0)\n                result.Add(elementTexts[node]);\n            else\n                for (int i = children[node].Length - 1; i >= 0; --i)\n                    events.Push((children[node][i], false));\n        }\n        return result;\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function EncodeXml(elementNames, elementTexts, children, attributeOwners, attributeNames, attributeValues, codeNames, codes)",
+        "starterCode": "function EncodeXml(\n  elementNames,\n  elementTexts,\n  children,\n  attributeOwners,\n  attributeNames,\n  attributeValues,\n  codeNames,\n  codes,\n) {\n  return [];\n}\n",
+        "solutionCode": "function EncodeXml(\n  elementNames,\n  elementTexts,\n  children,\n  attributeOwners,\n  attributeNames,\n  attributeValues,\n  codeNames,\n  codes,\n) {\n  if (elementNames.length === 0) return [];\n  const lookup = new Map(codeNames.map((name, i) => [name, String(codes[i])])),\n    attributes = Array.from({ length: elementNames.length }, () => []),\n    result = [],\n    events = [[0, false]];\n  for (let i = 0; i < attributeOwners.length; ++i) attributes[attributeOwners[i]].push(i);\n  while (events.length) {\n    const [node, exiting] = events.pop();\n    if (exiting) {\n      result.push(\"0\");\n      continue;\n    }\n    result.push(lookup.get(elementNames[node]));\n    for (const attribute of attributes[node])\n      result.push(lookup.get(attributeNames[attribute]), attributeValues[attribute]);\n    result.push(\"0\");\n    events.push([node, true]);\n    if (elementTexts[node].length) result.push(elementTexts[node]);\n    else\n      for (let i = children[node].length - 1; i >= 0; --i) events.push([children[node][i], false]);\n  }\n  return result;\n}\n"
+      },
+      "python": {
+        "signature": "def EncodeXml(elementNames: list[str], elementTexts: list[str], children: list[list[int]], attributeOwners: list[int], attributeNames: list[str], attributeValues: list[str], codeNames: list[str], codes: list[int]) -> list[str]",
+        "starterCode": "def EncodeXml(\n    elementNames: list[str],\n    elementTexts: list[str],\n    children: list[list[int]],\n    attributeOwners: list[int],\n    attributeNames: list[str],\n    attributeValues: list[str],\n    codeNames: list[str],\n    codes: list[int],\n) -> list[str]:\n    return []\n",
+        "solutionCode": "def EncodeXml(\n    elementNames: list[str],\n    elementTexts: list[str],\n    children: list[list[int]],\n    attributeOwners: list[int],\n    attributeNames: list[str],\n    attributeValues: list[str],\n    codeNames: list[str],\n    codes: list[int],\n) -> list[str]:\n    if not elementNames:\n        return []\n    lookup = {name: str(code) for name, code in zip(codeNames, codes)}\n    attributes = [[] for _ in elementNames]\n    for index, owner in enumerate(attributeOwners):\n        attributes[owner].append(index)\n    result = []\n    events = [(0, False)]\n    while events:\n        node, exiting = events.pop()\n        if exiting:\n            result.append(\"0\")\n            continue\n        result.append(lookup[elementNames[node]])\n        for attribute in attributes[node]:\n            result.extend([lookup[attributeNames[attribute]], attributeValues[attribute]])\n        result.append(\"0\")\n        events.append((node, True))\n        if elementTexts[node]:\n            result.append(elementTexts[node])\n        else:\n            for child in reversed(children[node]):\n                events.append((child, False))\n    return result\n"
+      },
+      "cpp": {
+        "signature": "std::vector<std::string> EncodeXml(const std::vector<std::string>& elementNames, const std::vector<std::string>& elementTexts, const std::vector<std::vector<int>>& children, const std::vector<int>& attributeOwners, const std::vector<std::string>& attributeNames, const std::vector<std::string>& attributeValues, const std::vector<std::string>& codeNames, const std::vector<int>& codes)",
+        "starterCode": "class Solution {\n public:\n  std::vector<std::string> EncodeXml(const std::vector<std::string>& elementNames,\n                                     const std::vector<std::string>& elementTexts,\n                                     const std::vector<std::vector<int>>& children,\n                                     const std::vector<int>& attributeOwners,\n                                     const std::vector<std::string>& attributeNames,\n                                     const std::vector<std::string>& attributeValues,\n                                     const std::vector<std::string>& codeNames,\n                                     const std::vector<int>& codes) {\n    return {};\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  std::vector<std::string> EncodeXml(const std::vector<std::string>& elementNames,\n                                     const std::vector<std::string>& elementTexts,\n                                     const std::vector<std::vector<int>>& children,\n                                     const std::vector<int>& attributeOwners,\n                                     const std::vector<std::string>& attributeNames,\n                                     const std::vector<std::string>& attributeValues,\n                                     const std::vector<std::string>& codeNames,\n                                     const std::vector<int>& codes) {\n    std::vector<std::string> result;\n    if (elementNames.empty())\n      return result;\n    std::unordered_map<std::string, std::string> lookup;\n    for (size_t i = 0; i < codeNames.size(); ++i)\n      lookup[codeNames[i]] = std::to_string(codes[i]);\n    std::vector<std::vector<size_t>> attributes(elementNames.size());\n    for (size_t i = 0; i < attributeOwners.size(); ++i)\n      attributes[attributeOwners[i]].push_back(i);\n    std::vector<std::pair<int, bool>> events{{0, false}};\n    while (!events.empty()) {\n      auto frame = events.back();\n      events.pop_back();\n      int node = frame.first;\n      if (frame.second) {\n        result.push_back(\"0\");\n        continue;\n      }\n      result.push_back(lookup.at(elementNames[node]));\n      for (size_t attribute : attributes[node]) {\n        result.push_back(lookup.at(attributeNames[attribute]));\n        result.push_back(attributeValues[attribute]);\n      }\n      result.push_back(\"0\");\n      events.emplace_back(node, true);\n      if (!elementTexts[node].empty())\n        result.push_back(elementTexts[node]);\n      else\n        for (auto it = children[node].rbegin(); it != children[node].rend(); ++it)\n          events.emplace_back(*it, false);\n    }\n    return result;\n  }\n};\n"
+      },
+      "java": {
+        "signature": "List<String> EncodeXml(String[] elementNames, String[] elementTexts, int[][] children, int[] attributeOwners, String[] attributeNames, String[] attributeValues, String[] codeNames, int[] codes)",
+        "starterCode": "class Solution {\n  public List<String> EncodeXml(String[] elementNames, String[] elementTexts, int[][] children,\n      int[] attributeOwners, String[] attributeNames, String[] attributeValues, String[] codeNames,\n      int[] codes) {\n    return new ArrayList<>();\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public List<String> EncodeXml(String[] elementNames, String[] elementTexts, int[][] children,\n      int[] attributeOwners, String[] attributeNames, String[] attributeValues, String[] codeNames,\n      int[] codes) {\n    var result = new ArrayList<String>();\n    if (elementNames.length == 0)\n      return result;\n    var lookup = new HashMap<String, String>();\n    for (int i = 0; i < codeNames.length; ++i)\n      lookup.put(codeNames[i], Integer.toString(codes[i]));\n    var attributes = new ArrayList<ArrayList<Integer>>();\n    for (int i = 0; i < elementNames.length; ++i)\n      attributes.add(new ArrayList<>());\n    for (int i = 0; i < attributeOwners.length; ++i)\n      attributes.get(attributeOwners[i]).add(i);\n    var events = new ArrayDeque<int[]>();\n    events.push(new int[] {0, 0});\n    while (!events.isEmpty()) {\n      int[] frame = events.pop();\n      int node = frame[0];\n      if (frame[1] != 0) {\n        result.add(\"0\");\n        continue;\n      }\n      result.add(lookup.get(elementNames[node]));\n      for (int attribute : attributes.get(node)) {\n        result.add(lookup.get(attributeNames[attribute]));\n        result.add(attributeValues[attribute]);\n      }\n      result.add(\"0\");\n      events.push(new int[] {node, 1});\n      if (!elementTexts[node].isEmpty())\n        result.add(elementTexts[node]);\n      else\n        for (int i = children[node].length - 1; i >= 0; --i)\n          events.push(new int[] {children[node][i], 0});\n    }\n    return result;\n  }\n}\n"
+      }
+    }
+  },
+  {
+    "ref": "16.13",
+    "method": "BisectSquares",
+    "params": [
+      [
+        "squares",
+        "aai"
+      ]
+    ],
+    "result": "ad",
+    "mutation": "none",
+    "description": "Find a line that divides each of two axis-aligned squares into equal areas. Each row is [left,bottom,side], describing the closed square [left,left+side]\u00d7[bottom,bottom+side]. Return [startX,startY,endX,endY], the two outermost boundary intersections of that line across both squares. Either endpoint order is accepted. If the centers coincide, any line through the common center is accepted, with its full outer boundary span.",
+    "constraints": [
+      "squares has exactly two distinct row objects. left and bottom are integers in -1000..1000 and side is an integer in 1..1000. Squares may overlap, touch, contain one another or be identical. Preserve all input objects, rows and values.",
+      "Return four finite coordinates. Each endpoint must be within absolute coordinate error 0.000001 of the true outermost endpoint for the chosen bisecting line. The endpoints must be distinct and include the complete intersection span across both squares, including any gap between disjoint squares."
+    ],
+    "why": "Every line through a square center bisects its area by central symmetry. Distinct centers therefore determine the required line. Choose its direction and extend from each center until the larger coordinate displacement reaches half that square side. The four boundary crossings identify the full span; choose the earliest and latest along the common direction. Coincident centers admit a convenient vertical direction.",
+    "correctness": "A line bisecting a square passes through its center, and central symmetry pairs equal areas on its two sides. When centers differ, the line through both bisects each; when equal, any nonzero direction does. For direction (dx,dy), a boundary is reached at parameter distance side/(2*max(abs(dx),abs(dy))) from that square center, because at least one axis reaches its half-side and neither exceeds it sooner. Computing both signed crossings for both squares gives the complete segment portions. Their smallest and largest direction parameters are exactly the outer endpoints across the two portions. Returning those endpoints therefore specifies a common area bisector and its full required span.",
+    "walkthrough": "Squares [0,0,2] and [4,0,2] have centers [1,1] and [5,1]. Their common bisector is y=1 and the outer crossings are [0,1] and [6,1], so return [0,1,6,1]. For identical [0,0,2] squares, vertical [1,0,1,2] and horizontal [0,1,2,1] are both accepted.",
+    "example": [
+      [
+        [
+          [
+            0,
+            0,
+            2
+          ],
+          [
+            4,
+            0,
+            2
+          ]
+        ]
+      ],
+      [
+        0,
+        1,
+        6,
+        1
+      ]
+    ],
+    "time": "O(1) center, direction and boundary calculations for exactly two squares.",
+    "space": "O(1) auxiliary scalars and four returned coordinates.",
+    "edges": [
+      "Horizontal/vertical/diagonal center lines and fractional crossings.",
+      "Disjoint, overlapping, nested, identical and concentric squares.",
+      "Different side lengths, negative positions and boundary coordinates."
+    ],
+    "related": "The public square cut returns the outer segment through both centers. This binding states axis orientation, endpoint span and the nonunique concentric-center case without imposing an arbitrary orientation on valid solutions.",
+    "id": "ctci6_16_13",
+    "title": "Bisect Squares",
+    "testCount": 1033,
+    "languages": {
+      "csharp": {
+        "signature": "double[] BisectSquares(int[][] squares)",
+        "starterCode": "public class Solution\n{\n    public double[] BisectSquares(int[][] squares)\n    {\n        return [];\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public double[] BisectSquares(int[][] squares)\n    {\n        double x = squares[0][0] + squares[0][2] / 2.0, y = squares[0][1] + squares[0][2] / 2.0,\n               dx = squares[1][0] + squares[1][2] / 2.0 - x,\n               dy = squares[1][1] + squares[1][2] / 2.0 - y, other = 1;\n        if (dx == 0 && dy == 0)\n        {\n            dy = 1;\n            other = 0;\n        }\n        double scale = Math.Max(Math.Abs(dx), Math.Abs(dy)), first = squares[0][2] / (2.0 * scale),\n               second = squares[1][2] / (2.0 * scale), start = Math.Min(-first, other - second),\n               end = Math.Max(first, other + second);\n        return [x + start * dx, y + start * dy, x + end * dx, y + end * dy];\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function BisectSquares(squares)",
+        "starterCode": "function BisectSquares(squares) {\n  return [];\n}\n",
+        "solutionCode": "function BisectSquares(squares) {\n  const x = squares[0][0] + squares[0][2] / 2,\n    y = squares[0][1] + squares[0][2] / 2;\n  let dx = squares[1][0] + squares[1][2] / 2 - x,\n    dy = squares[1][1] + squares[1][2] / 2 - y,\n    other = 1;\n  if (dx === 0 && dy === 0) {\n    dy = 1;\n    other = 0;\n  }\n  const scale = Math.max(Math.abs(dx), Math.abs(dy)),\n    first = squares[0][2] / (2 * scale),\n    second = squares[1][2] / (2 * scale),\n    start = Math.min(-first, other - second),\n    end = Math.max(first, other + second);\n  return [x + start * dx, y + start * dy, x + end * dx, y + end * dy];\n}\n"
+      },
+      "python": {
+        "signature": "def BisectSquares(squares: list[list[int]]) -> list[float]",
+        "starterCode": "def BisectSquares(squares: list[list[int]]) -> list[float]:\n    return []\n",
+        "solutionCode": "def BisectSquares(squares: list[list[int]]) -> list[float]:\n    x = squares[0][0] + squares[0][2] / 2.0\n    y = squares[0][1] + squares[0][2] / 2.0\n    dx = squares[1][0] + squares[1][2] / 2.0 - x\n    dy = squares[1][1] + squares[1][2] / 2.0 - y\n    if dx == 0 and dy == 0:\n        dy = 1.0\n        other = 0.0\n    else:\n        other = 1.0\n    scale = max(abs(dx), abs(dy))\n    first_radius = squares[0][2] / (2.0 * scale)\n    second_radius = squares[1][2] / (2.0 * scale)\n    start = min(-first_radius, other - second_radius)\n    end = max(first_radius, other + second_radius)\n    return [x + start * dx, y + start * dy, x + end * dx, y + end * dy]\n"
+      },
+      "cpp": {
+        "signature": "std::vector<double> BisectSquares(const std::vector<std::vector<int>>& squares)",
+        "starterCode": "class Solution {\n public:\n  std::vector<double> BisectSquares(const std::vector<std::vector<int>>& squares) {\n    return {};\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  std::vector<double> BisectSquares(const std::vector<std::vector<int>>& squares) {\n    double x = squares[0][0] + squares[0][2] / 2.0, y = squares[0][1] + squares[0][2] / 2.0,\n           dx = squares[1][0] + squares[1][2] / 2.0 - x,\n           dy = squares[1][1] + squares[1][2] / 2.0 - y, other = 1;\n    if (dx == 0 && dy == 0) {\n      dy = 1;\n      other = 0;\n    }\n    double scale = std::max(std::abs(dx), std::abs(dy)), first = squares[0][2] / (2.0 * scale),\n           second = squares[1][2] / (2.0 * scale), start = std::min(-first, other - second),\n           end = std::max(first, other + second);\n    return {x + start * dx, y + start * dy, x + end * dx, y + end * dy};\n  }\n};\n"
+      },
+      "java": {
+        "signature": "double[] BisectSquares(int[][] squares)",
+        "starterCode": "class Solution {\n  public double[] BisectSquares(int[][] squares) {\n    return new double[0];\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public double[] BisectSquares(int[][] squares) {\n    double x = squares[0][0] + squares[0][2] / 2.0, y = squares[0][1] + squares[0][2] / 2.0,\n           dx = squares[1][0] + squares[1][2] / 2.0 - x,\n           dy = squares[1][1] + squares[1][2] / 2.0 - y, other = 1;\n    if (dx == 0 && dy == 0) {\n      dy = 1;\n      other = 0;\n    }\n    double scale = Math.max(Math.abs(dx), Math.abs(dy)), first = squares[0][2] / (2.0 * scale),\n           second = squares[1][2] / (2.0 * scale), start = Math.min(-first, other - second),\n           end = Math.max(first, other + second);\n    return new double[] {x + start * dx, y + start * dy, x + end * dx, y + end * dy};\n  }\n}\n"
       }
     }
   },

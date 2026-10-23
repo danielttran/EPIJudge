@@ -6965,6 +6965,101 @@
     }
   },
   {
+    "id": "ctci6_16_3",
+    "ref": "16.3",
+    "title": "Intersection",
+    "description": "Find an intersection point of two CLOSED line segments in the plane. endpoints contains [startA,endA,startB,endB], with each point represented as [x,y]. Return [x,y] for any point belonging to both segments, or [] when they are disjoint. A segment may have zero length. For an overlap of positive length, any point in the overlap is accepted.",
+    "constraints": [
+      "endpoints has exactly four distinct row objects, each containing two integers in -1000..1000. Equal coordinate values and reversed segment directions are allowed. Preserve the outer array, all row objects and values.",
+      "The returned coordinates must be finite numbers within absolute coordinate error 0.000001 of a true common point. Endpoints count as intersections. The input coordinates and collinearity decisions are exact integers; a nearly parallel pair must not be treated as collinear."
+    ],
+    "method": "SegmentIntersection",
+    "params": [
+      [
+        "endpoints",
+        "aai"
+      ]
+    ],
+    "result": "ad",
+    "mutation": "none",
+    "testCount": 579,
+    "batch": 16,
+    "stagingDirectory": "staged16",
+    "example": [
+      [
+        [
+          [
+            0,
+            0
+          ],
+          [
+            4,
+            4
+          ],
+          [
+            0,
+            4
+          ],
+          [
+            4,
+            0
+          ]
+        ]
+      ],
+      [
+        2,
+        2
+      ]
+    ],
+    "languages": {
+      "csharp": {
+        "signature": "double[] SegmentIntersection(int[][] endpoints)",
+        "starterCode": "public class Solution\n{\n    public double[] SegmentIntersection(int[][] endpoints)\n    {\n        return [];\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public double[] SegmentIntersection(int[][] endpoints)\n    {\n        int[] a = endpoints[0], b = endpoints[1], c = endpoints[2], d = endpoints[3];\n        int rx = b[0] - a[0], ry = b[1] - a[1], sx = d[0] - c[0], sy = d[1] - c[1],\n            qx = c[0] - a[0], qy = c[1] - a[1], denominator = rx * sy - ry * sx;\n        if (denominator != 0)\n        {\n            int first = qx * sy - qy * sx, second = qx * ry - qy * rx;\n            if (denominator < 0)\n            {\n                denominator = -denominator;\n                first = -first;\n                second = -second;\n            }\n            if (first >= 0 && first <= denominator && second >= 0 && second <= denominator)\n            {\n                double t = (double)first / denominator;\n                return [a[0] + t * rx, a[1] + t * ry];\n            }\n            return [];\n        }\n        bool Contains(int[] start, int[] end, int[] point)\n        {\n            return (end[0] - start[0]) * (point[1] - start[1]) ==\n                       (end[1] - start[1]) * (point[0] - start[0]) &&\n                   point[0] >= Math.Min(start[0], end[0]) &&\n                   point[0] <= Math.Max(start[0], end[0]) &&\n                   point[1] >= Math.Min(start[1], end[1]) && point[1] <= Math.Max(start[1], end[1]);\n        }\n        foreach (var point in endpoints)\n            if (Contains(a, b, point) && Contains(c, d, point))\n                return [(double)point[0], (double)point[1]];\n        return [];\n    }\n}\n",
+        "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\n",
+        "suffix": "",
+        "harness": "using System;\nusing System.Collections.Generic;\nusing System.Text;\nusing System.IO;\nusing System.Text.Json;\n\nclass Harness {\nstatic object Execute(JsonElement row){string reference=row.GetProperty(\"ref\").GetString()!;var args=row.GetProperty(\"arguments\");if(reference==\"16.3\"){var p0=JsonSerializer.Deserialize<int[][]>(args[0].GetRawText())!;var before0=JsonSerializer.Serialize(p0);var rows0=p0.ToArray();var actual=new Solution().SegmentIntersection(p0);return new {actual,mutationOk=(JsonSerializer.Serialize(p0)==before0) && (p0.Length==rows0.Length && p0.Select((r,j)=>ReferenceEquals(r,rows0[j])).All(v=>v))};}throw new Exception(\"Unknown reference\");}\nstatic object TimedExecute(JsonElement row) {\nvar clock=System.Diagnostics.Stopwatch.StartNew();object observed;\ntry { observed=Execute(row); } catch(Exception error) { observed=new {error=error.ToString()}; }\nreturn new {observation=observed,elapsedMs=clock.Elapsed.TotalMilliseconds};\n}\nstatic void Main(){using var document=JsonDocument.Parse(File.ReadAllText(\"cases.json\"));var results=new List<object>();foreach(var row in document.RootElement.EnumerateArray()){try{results.Add(TimedExecute(row));}catch(Exception error){results.Add(new {error=error.ToString()});}}File.WriteAllText(\"results.json\",JsonSerializer.Serialize(results));}\n}\n",
+        "reference": ""
+      },
+      "javascript": {
+        "signature": "function SegmentIntersection(endpoints)",
+        "starterCode": "function SegmentIntersection(endpoints) {\n  return [];\n}\n",
+        "solutionCode": "function SegmentIntersection(endpoints) {\n  const [a, b, c, d] = endpoints,\n    rx = b[0] - a[0],\n    ry = b[1] - a[1],\n    sx = d[0] - c[0],\n    sy = d[1] - c[1],\n    qx = c[0] - a[0],\n    qy = c[1] - a[1];\n  let denominator = rx * sy - ry * sx;\n  if (denominator !== 0) {\n    let first = qx * sy - qy * sx,\n      second = qx * ry - qy * rx;\n    if (denominator < 0) {\n      denominator = -denominator;\n      first = -first;\n      second = -second;\n    }\n    if (first >= 0 && first <= denominator && second >= 0 && second <= denominator) {\n      const t = first / denominator;\n      return [a[0] + t * rx, a[1] + t * ry];\n    }\n    return [];\n  }\n  function contains(start, end, point) {\n    return (\n      (end[0] - start[0]) * (point[1] - start[1]) === (end[1] - start[1]) * (point[0] - start[0]) &&\n      point[0] >= Math.min(start[0], end[0]) &&\n      point[0] <= Math.max(start[0], end[0]) &&\n      point[1] >= Math.min(start[1], end[1]) &&\n      point[1] <= Math.max(start[1], end[1])\n    );\n  }\n  for (const point of endpoints)\n    if (contains(a, b, point) && contains(c, d, point)) return [point[0], point[1]];\n  return [];\n}\n",
+        "prefix": "'use strict';\n",
+        "suffix": "\nmodule.exports = {SegmentIntersection};\n",
+        "harness": "const user = require('./solution.js');\nconst SegmentIntersection = user.SegmentIntersection;\n\nconst fs=require('node:fs'),kinds={\"16.3\": \"ad\"};\nfunction invoke(row){const ref=row.ref,args=row.arguments;if(ref===\"16.3\")return SegmentIntersection(...args);throw new Error('Unknown reference');}\nfunction execute(row){const args=row.arguments,before=JSON.stringify(args),outer=args.filter(Array.isArray),rows=outer.filter(v=>v.length&&Array.isArray(v[0])).map(v=>[v,v.slice()]);const actual=invoke(row),kind=kinds[row.ref];const valid=kind==='d'?typeof actual==='number'&&Number.isFinite(actual):kind==='ad'?Array.isArray(actual)&&actual.every(v=>typeof v==='number'&&Number.isFinite(v)):kind==='strings'?Array.isArray(actual)&&actual.every(v=>typeof v==='string'):['sets','arrangements','path','aai'].includes(kind)?Array.isArray(actual)&&actual.every(r=>Array.isArray(r)&&r.every(Number.isInteger)):kind==='ai'?Array.isArray(actual)&&actual.every(v=>Number.isInteger(v)&&v>=-2147483648&&v<=2147483647):kind==='l'?Number.isSafeInteger(actual)&&actual>=-1&&actual<=4294967295:Number.isInteger(actual)&&actual>=-2147483648&&actual<=2147483647;return {actual,mutationOk:valid&&(row.ref==='8.10'?JSON.stringify(actual)===JSON.stringify(args[0]):JSON.stringify(args)===before)&&outer.every(v=>args.includes(v))&&rows.every(([v,old])=>v.length===old.length&&v.every((r,i)=>r===old[i]))};}\nconst results=JSON.parse(fs.readFileSync('cases.json','utf8')).map(timed(row=>{try{return execute(row);}catch(error){return {error:String(error)};}}));\nfs.writeFileSync('results.json',JSON.stringify(results));\n\nfunction timed(fn) { return row => { const start=performance.now(); let observation; try { observation=fn(row); } catch(error) { observation={error:String(error)}; } return {observation,elapsedMs:performance.now()-start}; }; }\n",
+        "reference": ""
+      },
+      "python": {
+        "signature": "def SegmentIntersection(endpoints: list[list[int]]) -> list[float]",
+        "starterCode": "def SegmentIntersection(endpoints: list[list[int]]) -> list[float]:\n    return []\n",
+        "solutionCode": "def SegmentIntersection(endpoints: list[list[int]]) -> list[float]:\n    a, b, c, d = endpoints\n    rx, ry = b[0] - a[0], b[1] - a[1]\n    sx, sy = d[0] - c[0], d[1] - c[1]\n    qx, qy = c[0] - a[0], c[1] - a[1]\n    denominator = rx * sy - ry * sx\n    if denominator != 0:\n        first = qx * sy - qy * sx\n        second = qx * ry - qy * rx\n        if denominator < 0:\n            denominator, first, second = -denominator, -first, -second\n        if 0 <= first <= denominator and 0 <= second <= denominator:\n            t = first / denominator\n            return [a[0] + t * rx, a[1] + t * ry]\n        return []\n\n    def contains(start, end, point):\n        return (\n            (end[0] - start[0]) * (point[1] - start[1])\n            == (end[1] - start[1]) * (point[0] - start[0])\n            and min(start[0], end[0]) <= point[0] <= max(start[0], end[0])\n            and min(start[1], end[1]) <= point[1] <= max(start[1], end[1])\n        )\n\n    for point in endpoints:\n        if contains(a, b, point) and contains(c, d, point):\n            return [float(point[0]), float(point[1])]\n    return []\n",
+        "prefix": "",
+        "suffix": "",
+        "harness": "import time\nimport solution as user\nSegmentIntersection = user.SegmentIntersection\n\nimport json\nKINDS={'16.3': 'ad'}\ndef invoke(row):\n    ref,args=row['ref'],row['arguments']\n    if ref == '16.3': return SegmentIntersection(*args)\n    raise ValueError('Unknown reference')\ndef execute(row):\n    args=row['arguments'];before=json.dumps(args);outer=[v for v in args if type(v) is list];rows=[(v,list(v)) for v in outer if v and type(v[0]) is list]\n    actual=invoke(row);kind=KINDS[row['ref']]\n    valid=(type(actual) in (int,float) and __import__('math').isfinite(actual)) if kind=='d' else (type(actual) is list and all(type(v) in (int,float) and __import__('math').isfinite(v) for v in actual)) if kind=='ad' else (type(actual) is list and all(type(v) is str for v in actual)) if kind=='strings' else (type(actual) is list and all(type(r) is list and all(type(v) is int for v in r) for r in actual)) if kind in ('sets','arrangements','path','aai') else (type(actual) is list and all(type(v) is int for v in actual)) if kind=='ai' else type(actual) is int and -1<=actual<=4294967295 if kind=='l' else type(actual) is int and -2147483648<=actual<=2147483647\n    return dict(actual=actual,mutationOk=valid and (actual==args[0] if row['ref']=='8.10' else json.dumps(args)==before) and all(any(v is original for v in args) for original in outer) and all(len(v)==len(old) and all(a is b for a,b in zip(v,old)) for v,old in rows))\nresults=[]\nfor row in json.load(open('cases.json',encoding='utf-8')):\n    clock = time.perf_counter()\n    try:results.append(execute(row))\n    except Exception as error:results.append(dict(error=repr(error)))\n    results[-1] = dict(observation=results[-1], elapsedMs=(time.perf_counter()-clock)*1000)\njson.dump(results,open('results.json','w',encoding='utf-8'))\n",
+        "reference": ""
+      },
+      "cpp": {
+        "signature": "std::vector<double> SegmentIntersection(const std::vector<std::vector<int>>& endpoints)",
+        "starterCode": "class Solution {\n public:\n  std::vector<double> SegmentIntersection(const std::vector<std::vector<int>>& endpoints) {\n    return {};\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  std::vector<double> SegmentIntersection(const std::vector<std::vector<int>>& endpoints) {\n    const auto& a = endpoints[0];\n    const auto& b = endpoints[1];\n    const auto& c = endpoints[2];\n    const auto& d = endpoints[3];\n    int rx = b[0] - a[0], ry = b[1] - a[1], sx = d[0] - c[0], sy = d[1] - c[1], qx = c[0] - a[0],\n        qy = c[1] - a[1], denominator = rx * sy - ry * sx;\n    if (denominator != 0) {\n      int first = qx * sy - qy * sx, second = qx * ry - qy * rx;\n      if (denominator < 0) {\n        denominator = -denominator;\n        first = -first;\n        second = -second;\n      }\n      if (first >= 0 && first <= denominator && second >= 0 && second <= denominator) {\n        double t = (double)first / denominator;\n        return {a[0] + t * rx, a[1] + t * ry};\n      }\n      return {};\n    }\n    auto contains = [](const std::vector<int>& start, const std::vector<int>& end,\n                       const std::vector<int>& point) {\n      return (end[0] - start[0]) * (point[1] - start[1]) ==\n                 (end[1] - start[1]) * (point[0] - start[0]) &&\n             point[0] >= std::min(start[0], end[0]) && point[0] <= std::max(start[0], end[0]) &&\n             point[1] >= std::min(start[1], end[1]) && point[1] <= std::max(start[1], end[1]);\n    };\n    for (const auto& point : endpoints)\n      if (contains(a, b, point) && contains(c, d, point))\n        return {(double)point[0], (double)point[1]};\n    return {};\n  }\n};\n",
+        "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n#include <unordered_map>\n#include <unordered_set>\n",
+        "suffix": "",
+        "harness": "#include <chrono>\n#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include \"solution.cpp\"\n#include <fstream>\n#include \"test_framework/json.h\"\nusing json=nlohmann::json;\n\nbool sameRows(const std::vector<std::vector<int>>& values,const std::vector<const int*>& rows){if(values.size()!=rows.size())return false;for(size_t i=0;i<rows.size();++i)if(values[i].data()!=rows[i])return false;return true;}\njson execute(const json& row){std::string reference=row[\"ref\"].get<std::string>();const auto& args=row[\"arguments\"];if(reference==\"16.3\"){auto p0=args[0].get<std::vector<std::vector<int>>>();auto before0=p0;std::vector<const int*> rows0;for(const auto& row:p0)rows0.push_back(row.data());auto actual=Solution().SegmentIntersection(p0);return json{{\"actual\",actual},{\"mutationOk\",(p0==before0) && (sameRows(p0,rows0))}};}throw std::runtime_error(\"Unknown reference\");}\njson timedExecute(const json& row) {\nauto start=std::chrono::steady_clock::now();json observed;\ntry { observed=execute(row); } catch(const std::exception& error) { observed=json{{\"error\",error.what()}}; }\ndouble elapsed=std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-start).count();\nreturn json{{\"observation\",observed},{\"elapsedMs\",elapsed}};\n}\nint main(){std::ifstream input(\"cases.json\");json rows;input>>rows;json results=json::array();for(const auto& row:rows){try{results.push_back(timedExecute(row));}catch(const std::exception& error){results.push_back(json{{\"error\",error.what()}});}}std::ofstream(\"results.json\")<<results;}\n",
+        "reference": ""
+      },
+      "java": {
+        "signature": "double[] SegmentIntersection(int[][] endpoints)",
+        "starterCode": "class Solution {\n  public double[] SegmentIntersection(int[][] endpoints) {\n    return new double[0];\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public double[] SegmentIntersection(int[][] endpoints) {\n    int[] a = endpoints[0], b = endpoints[1], c = endpoints[2], d = endpoints[3];\n    int rx = b[0] - a[0], ry = b[1] - a[1], sx = d[0] - c[0], sy = d[1] - c[1], qx = c[0] - a[0],\n        qy = c[1] - a[1], denominator = rx * sy - ry * sx;\n    if (denominator != 0) {\n      int first = qx * sy - qy * sx, second = qx * ry - qy * rx;\n      if (denominator < 0) {\n        denominator = -denominator;\n        first = -first;\n        second = -second;\n      }\n      if (first >= 0 && first <= denominator && second >= 0 && second <= denominator) {\n        double t = (double) first / denominator;\n        return new double[] {a[0] + t * rx, a[1] + t * ry};\n      }\n      return new double[0];\n    }\n    class Geometry {\n      boolean contains(int[] start, int[] end, int[] point) {\n        return (end[0] - start[0]) * (point[1] - start[1])\n            == (end[1] - start[1]) * (point[0] - start[0])\n            && point[0] >= Math.min(start[0], end[0]) && point[0] <= Math.max(start[0], end[0])\n            && point[1] >= Math.min(start[1], end[1]) && point[1] <= Math.max(start[1], end[1]);\n      }\n    }\n    var geometry = new Geometry();\n    for (int[] point : endpoints)\n      if (geometry.contains(a, b, point) && geometry.contains(c, d, point))\n        return new double[] {(double) point[0], (double) point[1]};\n    return new double[0];\n  }\n}\n",
+        "prefix": "import java.util.*;\n",
+        "suffix": "",
+        "harness": "import java.util.*;\nimport java.nio.file.*;\nimport epi.test_framework.minimal_json.*;\n\npublic class Harness {\nstatic int[] integers(JsonArray values){int[] output=new int[values.size()];for(int i=0;i<output.length;++i)output[i]=values.get(i).asInt();return output;}\nstatic int[][] matrix(JsonArray values){int[][] output=new int[values.size()][];for(int i=0;i<output.length;++i)output[i]=integers(values.get(i).asArray());return output;}\nstatic boolean sameRows(int[][] values,int[][] before){if(values.length!=before.length)return false;for(int i=0;i<values.length;++i)if(values[i]!=before[i])return false;return true;}\nstatic JsonValue encode(Object value){if(value==null)return Json.NULL;if(value instanceof Integer v)return Json.value(v);if(value instanceof Double v){if(!Double.isFinite(v))throw new IllegalArgumentException(\"Return finite numbers\");return Json.value(v);}if(value instanceof Long v)return Json.value(v);if(value instanceof String v)return Json.value(v);var result=new JsonArray();if(value instanceof int[] values){for(int v:values)result.add(v);}else if(value instanceof int[][] values){for(int[] v:values)result.add(encode(v));}else if(value instanceof double[] values){for(double v:values){if(!Double.isFinite(v))throw new IllegalArgumentException(\"Return finite numbers\");result.add(v);}}else if(value instanceof Iterable<?> values){for(Object v:values)result.add(encode(v));}else throw new IllegalArgumentException(\"Invalid result\");return result;}\nstatic JsonValue execute(JsonObject row){String reference=row.get(\"ref\").asString();var args=row.get(\"arguments\").asArray();if(reference.equals(\"16.3\")){int[][] p0=matrix(args.get(0).asArray());String before0=encode(p0).toString();int[][] rows0=p0.clone();var actual=new Solution().SegmentIntersection(p0);return new JsonObject().add(\"actual\",encode(actual)).add(\"mutationOk\",(encode(p0).toString().equals(before0)) && (sameRows(p0,rows0)));}throw new RuntimeException(\"Unknown reference\");}\nstatic JsonValue timedExecute(JsonObject row) {\nlong start=System.nanoTime();JsonValue observed;\ntry { observed=execute(row); } catch(Throwable error) { observed=new JsonObject().add(\"error\",error.toString()); }\nreturn new JsonObject().add(\"observation\",observed).add(\"elapsedMs\",(System.nanoTime()-start)/1000000.0);\n}\npublic static void main(String[] ignored)throws Exception{var results=new JsonArray();for(var row:Json.parse(Files.readString(Path.of(\"cases.json\"))).asArray()){try{results.add(timedExecute(row.asObject()));}catch(Throwable error){results.add(new JsonObject().add(\"error\",error.toString()));}}Files.writeString(Path.of(\"results.json\"),results.toString());}\n}\n",
+        "reference": ""
+      }
+    }
+  },
+  {
     "id": "ctci6_16_4",
     "ref": "16.4",
     "title": "Tic Tac Win",
@@ -7631,6 +7726,251 @@
         "prefix": "import java.util.*;\n",
         "suffix": "",
         "harness": "import java.util.*;\nimport java.nio.file.*;\nimport epi.test_framework.minimal_json.*;\n\npublic class Harness {\nstatic int[] integers(JsonArray values){int[] output=new int[values.size()];for(int i=0;i<output.length;++i)output[i]=values.get(i).asInt();return output;}\nstatic int[][] matrix(JsonArray values){int[][] output=new int[values.size()][];for(int i=0;i<output.length;++i)output[i]=integers(values.get(i).asArray());return output;}\nstatic boolean sameRows(int[][] values,int[][] before){if(values.length!=before.length)return false;for(int i=0;i<values.length;++i)if(values[i]!=before[i])return false;return true;}\nstatic JsonValue encode(Object value){if(value==null)return Json.NULL;if(value instanceof Integer v)return Json.value(v);if(value instanceof Long v)return Json.value(v);if(value instanceof String v)return Json.value(v);var result=new JsonArray();if(value instanceof int[] values){for(int v:values)result.add(v);}else if(value instanceof int[][] values){for(int[] v:values)result.add(encode(v));}else if(value instanceof Iterable<?> values){for(Object v:values)result.add(encode(v));}else throw new IllegalArgumentException(\"Invalid result\");return result;}\nstatic JsonValue execute(JsonObject row){String reference=row.get(\"ref\").asString();var args=row.get(\"arguments\").asArray();if(reference.equals(\"16.11\")){var p0=args.get(0).asInt();var p1=args.get(1).asInt();var p2=args.get(2).asInt();var actual=new Solution().DivingBoardLengths(p0,p1,p2);return new JsonObject().add(\"actual\",encode(actual)).add(\"mutationOk\",true);}throw new RuntimeException(\"Unknown reference\");}\nstatic JsonValue timedExecute(JsonObject row) {\nlong start=System.nanoTime();JsonValue observed;\ntry { observed=execute(row); } catch(Throwable error) { observed=new JsonObject().add(\"error\",error.toString()); }\nreturn new JsonObject().add(\"observation\",observed).add(\"elapsedMs\",(System.nanoTime()-start)/1000000.0);\n}\npublic static void main(String[] ignored)throws Exception{var results=new JsonArray();for(var row:Json.parse(Files.readString(Path.of(\"cases.json\"))).asArray()){try{results.add(timedExecute(row.asObject()));}catch(Throwable error){results.add(new JsonObject().add(\"error\",error.toString()));}}Files.writeString(Path.of(\"results.json\"),results.toString());}\n}\n",
+        "reference": ""
+      }
+    }
+  },
+  {
+    "id": "ctci6_16_12",
+    "ref": "16.12",
+    "title": "XML Encoding",
+    "description": "Encode an already parsed XML element tree using supplied positive tag/attribute codes. Return an array of string tokens. For each element emit: its decimal name code; each attribute as decimal name code then literal value; \"0\" ending the attribute list; its nonempty text OR its recursively encoded children in order; and \"0\" ending the element. The token array preserves complete literal values, including spaces and empty attribute values.",
+    "constraints": [
+      "elementNames, elementTexts and children have equal length n in 0..1000. If n>0, element 0 is the root; children lists form one rooted tree reaching every element exactly once, with valid node indices and specified sibling order. Nonempty elementTexts is allowed only at a leaf. Empty text means no text token; an empty leaf therefore emits its code followed by two end markers. n=0 encodes to [].",
+      "attributeOwners, attributeNames and attributeValues have equal length a in 0..1000. Each owner is a valid element index. Emit attributes of an element in their original attribute-array order, even when attributes of different elements are interleaved. An element has no repeated attribute name.",
+      "codeNames and codes have equal length 1..9. codeNames are unique ASCII-letter names of length 1..20; codes are distinct integers 1..9. Every element/attribute name appears in this map. Texts and attribute values contain 0..100 ASCII letters/spaces. This literal domain excludes the reserved digit marker; XML parsing, entities, namespaces and mixed text/child content are outside this already-parsed input model.",
+      "All arrays, child row objects, values and order are readonly. Return actual literal tokens, not a whitespace-split string: one attribute value containing spaces remains one token. Numeric code tokens use ordinary decimal spelling, and end markers are exactly \"0\"."
+    ],
+    "method": "EncodeXml",
+    "params": [
+      [
+        "elementNames",
+        "as"
+      ],
+      [
+        "elementTexts",
+        "as"
+      ],
+      [
+        "children",
+        "aai"
+      ],
+      [
+        "attributeOwners",
+        "ai"
+      ],
+      [
+        "attributeNames",
+        "as"
+      ],
+      [
+        "attributeValues",
+        "as"
+      ],
+      [
+        "codeNames",
+        "as"
+      ],
+      [
+        "codes",
+        "ai"
+      ]
+    ],
+    "result": "strings",
+    "mutation": "none",
+    "testCount": 293,
+    "batch": 16,
+    "stagingDirectory": "staged16",
+    "example": [
+      [
+        [
+          "family",
+          "person"
+        ],
+        [
+          "",
+          "Hello"
+        ],
+        [
+          [
+            1
+          ],
+          []
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          "last",
+          "first"
+        ],
+        [
+          "Tran",
+          "Ada"
+        ],
+        [
+          "family",
+          "person",
+          "first",
+          "last"
+        ],
+        [
+          1,
+          2,
+          3,
+          4
+        ]
+      ],
+      [
+        "1",
+        "4",
+        "Tran",
+        "0",
+        "2",
+        "3",
+        "Ada",
+        "0",
+        "Hello",
+        "0",
+        "0"
+      ]
+    ],
+    "languages": {
+      "csharp": {
+        "signature": "List<string> EncodeXml(string[] elementNames, string[] elementTexts, int[][] children, int[] attributeOwners, string[] attributeNames, string[] attributeValues, string[] codeNames, int[] codes)",
+        "starterCode": "public class Solution\n{\n    public List<string> EncodeXml(string[] elementNames, string[] elementTexts, int[][] children,\n                                  int[] attributeOwners, string[] attributeNames,\n                                  string[] attributeValues, string[] codeNames, int[] codes)\n    {\n        return [];\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public List<string> EncodeXml(string[] elementNames, string[] elementTexts, int[][] children,\n                                  int[] attributeOwners, string[] attributeNames,\n                                  string[] attributeValues, string[] codeNames, int[] codes)\n    {\n        var result = new List<string>();\n        if (elementNames.Length == 0)\n            return result;\n        var lookup = new Dictionary<string, string>(StringComparer.Ordinal);\n        for (int i = 0; i < codeNames.Length; ++i)\n            lookup[codeNames[i]] =\n                codes[i].ToString(System.Globalization.CultureInfo.InvariantCulture);\n        var attributes = new List<int>[elementNames.Length];\n        for (int i = 0; i < attributes.Length; ++i)\n            attributes[i] = new List<int>();\n        for (int i = 0; i < attributeOwners.Length; ++i)\n            attributes[attributeOwners[i]].Add(i);\n        var events = new Stack<(int Node, bool Exit)>();\n        events.Push((0, false));\n        while (events.Count > 0)\n        {\n            var frame = events.Pop();\n            int node = frame.Node;\n            if (frame.Exit)\n            {\n                result.Add(\"0\");\n                continue;\n            }\n            result.Add(lookup[elementNames[node]]);\n            foreach (int attribute in attributes[node])\n            {\n                result.Add(lookup[attributeNames[attribute]]);\n                result.Add(attributeValues[attribute]);\n            }\n            result.Add(\"0\");\n            events.Push((node, true));\n            if (elementTexts[node].Length > 0)\n                result.Add(elementTexts[node]);\n            else\n                for (int i = children[node].Length - 1; i >= 0; --i)\n                    events.Push((children[node][i], false));\n        }\n        return result;\n    }\n}\n",
+        "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\n",
+        "suffix": "",
+        "harness": "using System;\nusing System.Collections.Generic;\nusing System.Text;\nusing System.IO;\nusing System.Text.Json;\n\nclass Harness {\nstatic object Execute(JsonElement row){string reference=row.GetProperty(\"ref\").GetString()!;var args=row.GetProperty(\"arguments\");if(reference==\"16.12\"){var p0=JsonSerializer.Deserialize<string[]>(args[0].GetRawText())!;var before0=JsonSerializer.Serialize(p0);var p1=JsonSerializer.Deserialize<string[]>(args[1].GetRawText())!;var before1=JsonSerializer.Serialize(p1);var p2=JsonSerializer.Deserialize<int[][]>(args[2].GetRawText())!;var before2=JsonSerializer.Serialize(p2);var rows2=p2.ToArray();var p3=JsonSerializer.Deserialize<int[]>(args[3].GetRawText())!;var before3=JsonSerializer.Serialize(p3);var p4=JsonSerializer.Deserialize<string[]>(args[4].GetRawText())!;var before4=JsonSerializer.Serialize(p4);var p5=JsonSerializer.Deserialize<string[]>(args[5].GetRawText())!;var before5=JsonSerializer.Serialize(p5);var p6=JsonSerializer.Deserialize<string[]>(args[6].GetRawText())!;var before6=JsonSerializer.Serialize(p6);var p7=JsonSerializer.Deserialize<int[]>(args[7].GetRawText())!;var before7=JsonSerializer.Serialize(p7);var actual=new Solution().EncodeXml(p0,p1,p2,p3,p4,p5,p6,p7);return new {actual,mutationOk=(JsonSerializer.Serialize(p0)==before0) && (JsonSerializer.Serialize(p1)==before1) && (JsonSerializer.Serialize(p2)==before2) && (p2.Length==rows2.Length && p2.Select((r,j)=>ReferenceEquals(r,rows2[j])).All(v=>v)) && (JsonSerializer.Serialize(p3)==before3) && (JsonSerializer.Serialize(p4)==before4) && (JsonSerializer.Serialize(p5)==before5) && (JsonSerializer.Serialize(p6)==before6) && (JsonSerializer.Serialize(p7)==before7)};}throw new Exception(\"Unknown reference\");}\nstatic object TimedExecute(JsonElement row) {\nvar clock=System.Diagnostics.Stopwatch.StartNew();object observed;\ntry { observed=Execute(row); } catch(Exception error) { observed=new {error=error.ToString()}; }\nreturn new {observation=observed,elapsedMs=clock.Elapsed.TotalMilliseconds};\n}\nstatic void Main(){using var document=JsonDocument.Parse(File.ReadAllText(\"cases.json\"));var results=new List<object>();foreach(var row in document.RootElement.EnumerateArray()){try{results.Add(TimedExecute(row));}catch(Exception error){results.Add(new {error=error.ToString()});}}File.WriteAllText(\"results.json\",JsonSerializer.Serialize(results));}\n}\n",
+        "reference": ""
+      },
+      "javascript": {
+        "signature": "function EncodeXml(elementNames, elementTexts, children, attributeOwners, attributeNames, attributeValues, codeNames, codes)",
+        "starterCode": "function EncodeXml(\n  elementNames,\n  elementTexts,\n  children,\n  attributeOwners,\n  attributeNames,\n  attributeValues,\n  codeNames,\n  codes,\n) {\n  return [];\n}\n",
+        "solutionCode": "function EncodeXml(\n  elementNames,\n  elementTexts,\n  children,\n  attributeOwners,\n  attributeNames,\n  attributeValues,\n  codeNames,\n  codes,\n) {\n  if (elementNames.length === 0) return [];\n  const lookup = new Map(codeNames.map((name, i) => [name, String(codes[i])])),\n    attributes = Array.from({ length: elementNames.length }, () => []),\n    result = [],\n    events = [[0, false]];\n  for (let i = 0; i < attributeOwners.length; ++i) attributes[attributeOwners[i]].push(i);\n  while (events.length) {\n    const [node, exiting] = events.pop();\n    if (exiting) {\n      result.push(\"0\");\n      continue;\n    }\n    result.push(lookup.get(elementNames[node]));\n    for (const attribute of attributes[node])\n      result.push(lookup.get(attributeNames[attribute]), attributeValues[attribute]);\n    result.push(\"0\");\n    events.push([node, true]);\n    if (elementTexts[node].length) result.push(elementTexts[node]);\n    else\n      for (let i = children[node].length - 1; i >= 0; --i) events.push([children[node][i], false]);\n  }\n  return result;\n}\n",
+        "prefix": "'use strict';\n",
+        "suffix": "\nmodule.exports = {EncodeXml};\n",
+        "harness": "const user = require('./solution.js');\nconst EncodeXml = user.EncodeXml;\n\nconst fs=require('node:fs'),kinds={\"16.12\": \"strings\"};\nfunction invoke(row){const ref=row.ref,args=row.arguments;if(ref===\"16.12\")return EncodeXml(...args);throw new Error('Unknown reference');}\nfunction execute(row){const args=row.arguments,before=JSON.stringify(args),outer=args.filter(Array.isArray),rows=outer.filter(v=>v.length&&Array.isArray(v[0])).map(v=>[v,v.slice()]);const actual=invoke(row),kind=kinds[row.ref];const valid=kind==='strings'?Array.isArray(actual)&&actual.every(v=>typeof v==='string'):['sets','arrangements','path','aai'].includes(kind)?Array.isArray(actual)&&actual.every(r=>Array.isArray(r)&&r.every(Number.isInteger)):kind==='ai'?Array.isArray(actual)&&actual.every(v=>Number.isInteger(v)&&v>=-2147483648&&v<=2147483647):kind==='l'?Number.isSafeInteger(actual)&&actual>=-1&&actual<=4294967295:Number.isInteger(actual)&&actual>=-2147483648&&actual<=2147483647;return {actual,mutationOk:valid&&(row.ref==='8.10'?JSON.stringify(actual)===JSON.stringify(args[0]):JSON.stringify(args)===before)&&outer.every(v=>args.includes(v))&&rows.every(([v,old])=>v.length===old.length&&v.every((r,i)=>r===old[i]))};}\nconst results=JSON.parse(fs.readFileSync('cases.json','utf8')).map(timed(row=>{try{return execute(row);}catch(error){return {error:String(error)};}}));\nfs.writeFileSync('results.json',JSON.stringify(results));\n\nfunction timed(fn) { return row => { const start=performance.now(); let observation; try { observation=fn(row); } catch(error) { observation={error:String(error)}; } return {observation,elapsedMs:performance.now()-start}; }; }\n",
+        "reference": ""
+      },
+      "python": {
+        "signature": "def EncodeXml(elementNames: list[str], elementTexts: list[str], children: list[list[int]], attributeOwners: list[int], attributeNames: list[str], attributeValues: list[str], codeNames: list[str], codes: list[int]) -> list[str]",
+        "starterCode": "def EncodeXml(\n    elementNames: list[str],\n    elementTexts: list[str],\n    children: list[list[int]],\n    attributeOwners: list[int],\n    attributeNames: list[str],\n    attributeValues: list[str],\n    codeNames: list[str],\n    codes: list[int],\n) -> list[str]:\n    return []\n",
+        "solutionCode": "def EncodeXml(\n    elementNames: list[str],\n    elementTexts: list[str],\n    children: list[list[int]],\n    attributeOwners: list[int],\n    attributeNames: list[str],\n    attributeValues: list[str],\n    codeNames: list[str],\n    codes: list[int],\n) -> list[str]:\n    if not elementNames:\n        return []\n    lookup = {name: str(code) for name, code in zip(codeNames, codes)}\n    attributes = [[] for _ in elementNames]\n    for index, owner in enumerate(attributeOwners):\n        attributes[owner].append(index)\n    result = []\n    events = [(0, False)]\n    while events:\n        node, exiting = events.pop()\n        if exiting:\n            result.append(\"0\")\n            continue\n        result.append(lookup[elementNames[node]])\n        for attribute in attributes[node]:\n            result.extend([lookup[attributeNames[attribute]], attributeValues[attribute]])\n        result.append(\"0\")\n        events.append((node, True))\n        if elementTexts[node]:\n            result.append(elementTexts[node])\n        else:\n            for child in reversed(children[node]):\n                events.append((child, False))\n    return result\n",
+        "prefix": "",
+        "suffix": "",
+        "harness": "import time\nimport solution as user\nEncodeXml = user.EncodeXml\n\nimport json\nKINDS={'16.12': 'strings'}\ndef invoke(row):\n    ref,args=row['ref'],row['arguments']\n    if ref == '16.12': return EncodeXml(*args)\n    raise ValueError('Unknown reference')\ndef execute(row):\n    args=row['arguments'];before=json.dumps(args);outer=[v for v in args if type(v) is list];rows=[(v,list(v)) for v in outer if v and type(v[0]) is list]\n    actual=invoke(row);kind=KINDS[row['ref']]\n    valid=(type(actual) is list and all(type(v) is str for v in actual)) if kind=='strings' else (type(actual) is list and all(type(r) is list and all(type(v) is int for v in r) for r in actual)) if kind in ('sets','arrangements','path','aai') else (type(actual) is list and all(type(v) is int for v in actual)) if kind=='ai' else type(actual) is int and -1<=actual<=4294967295 if kind=='l' else type(actual) is int and -2147483648<=actual<=2147483647\n    return dict(actual=actual,mutationOk=valid and (actual==args[0] if row['ref']=='8.10' else json.dumps(args)==before) and all(any(v is original for v in args) for original in outer) and all(len(v)==len(old) and all(a is b for a,b in zip(v,old)) for v,old in rows))\nresults=[]\nfor row in json.load(open('cases.json',encoding='utf-8')):\n    clock = time.perf_counter()\n    try:results.append(execute(row))\n    except Exception as error:results.append(dict(error=repr(error)))\n    results[-1] = dict(observation=results[-1], elapsedMs=(time.perf_counter()-clock)*1000)\njson.dump(results,open('results.json','w',encoding='utf-8'))\n",
+        "reference": ""
+      },
+      "cpp": {
+        "signature": "std::vector<std::string> EncodeXml(const std::vector<std::string>& elementNames, const std::vector<std::string>& elementTexts, const std::vector<std::vector<int>>& children, const std::vector<int>& attributeOwners, const std::vector<std::string>& attributeNames, const std::vector<std::string>& attributeValues, const std::vector<std::string>& codeNames, const std::vector<int>& codes)",
+        "starterCode": "class Solution {\n public:\n  std::vector<std::string> EncodeXml(const std::vector<std::string>& elementNames,\n                                     const std::vector<std::string>& elementTexts,\n                                     const std::vector<std::vector<int>>& children,\n                                     const std::vector<int>& attributeOwners,\n                                     const std::vector<std::string>& attributeNames,\n                                     const std::vector<std::string>& attributeValues,\n                                     const std::vector<std::string>& codeNames,\n                                     const std::vector<int>& codes) {\n    return {};\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  std::vector<std::string> EncodeXml(const std::vector<std::string>& elementNames,\n                                     const std::vector<std::string>& elementTexts,\n                                     const std::vector<std::vector<int>>& children,\n                                     const std::vector<int>& attributeOwners,\n                                     const std::vector<std::string>& attributeNames,\n                                     const std::vector<std::string>& attributeValues,\n                                     const std::vector<std::string>& codeNames,\n                                     const std::vector<int>& codes) {\n    std::vector<std::string> result;\n    if (elementNames.empty())\n      return result;\n    std::unordered_map<std::string, std::string> lookup;\n    for (size_t i = 0; i < codeNames.size(); ++i)\n      lookup[codeNames[i]] = std::to_string(codes[i]);\n    std::vector<std::vector<size_t>> attributes(elementNames.size());\n    for (size_t i = 0; i < attributeOwners.size(); ++i)\n      attributes[attributeOwners[i]].push_back(i);\n    std::vector<std::pair<int, bool>> events{{0, false}};\n    while (!events.empty()) {\n      auto frame = events.back();\n      events.pop_back();\n      int node = frame.first;\n      if (frame.second) {\n        result.push_back(\"0\");\n        continue;\n      }\n      result.push_back(lookup.at(elementNames[node]));\n      for (size_t attribute : attributes[node]) {\n        result.push_back(lookup.at(attributeNames[attribute]));\n        result.push_back(attributeValues[attribute]);\n      }\n      result.push_back(\"0\");\n      events.emplace_back(node, true);\n      if (!elementTexts[node].empty())\n        result.push_back(elementTexts[node]);\n      else\n        for (auto it = children[node].rbegin(); it != children[node].rend(); ++it)\n          events.emplace_back(*it, false);\n    }\n    return result;\n  }\n};\n",
+        "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n#include <unordered_map>\n#include <unordered_set>\n",
+        "suffix": "",
+        "harness": "#include <chrono>\n#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include \"solution.cpp\"\n#include <fstream>\n#include \"test_framework/json.h\"\nusing json=nlohmann::json;\n\nbool sameRows(const std::vector<std::vector<int>>& values,const std::vector<const int*>& rows){if(values.size()!=rows.size())return false;for(size_t i=0;i<rows.size();++i)if(values[i].data()!=rows[i])return false;return true;}\njson execute(const json& row){std::string reference=row[\"ref\"].get<std::string>();const auto& args=row[\"arguments\"];if(reference==\"16.12\"){auto p0=args[0].get<std::vector<std::string>>();auto before0=p0;auto p1=args[1].get<std::vector<std::string>>();auto before1=p1;auto p2=args[2].get<std::vector<std::vector<int>>>();auto before2=p2;std::vector<const int*> rows2;for(const auto& row:p2)rows2.push_back(row.data());auto p3=args[3].get<std::vector<int>>();auto before3=p3;auto p4=args[4].get<std::vector<std::string>>();auto before4=p4;auto p5=args[5].get<std::vector<std::string>>();auto before5=p5;auto p6=args[6].get<std::vector<std::string>>();auto before6=p6;auto p7=args[7].get<std::vector<int>>();auto before7=p7;auto actual=Solution().EncodeXml(p0,p1,p2,p3,p4,p5,p6,p7);return json{{\"actual\",actual},{\"mutationOk\",(p0==before0) && (p1==before1) && (p2==before2) && (sameRows(p2,rows2)) && (p3==before3) && (p4==before4) && (p5==before5) && (p6==before6) && (p7==before7)}};}throw std::runtime_error(\"Unknown reference\");}\njson timedExecute(const json& row) {\nauto start=std::chrono::steady_clock::now();json observed;\ntry { observed=execute(row); } catch(const std::exception& error) { observed=json{{\"error\",error.what()}}; }\ndouble elapsed=std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-start).count();\nreturn json{{\"observation\",observed},{\"elapsedMs\",elapsed}};\n}\nint main(){std::ifstream input(\"cases.json\");json rows;input>>rows;json results=json::array();for(const auto& row:rows){try{results.push_back(timedExecute(row));}catch(const std::exception& error){results.push_back(json{{\"error\",error.what()}});}}std::ofstream(\"results.json\")<<results;}\n",
+        "reference": ""
+      },
+      "java": {
+        "signature": "List<String> EncodeXml(String[] elementNames, String[] elementTexts, int[][] children, int[] attributeOwners, String[] attributeNames, String[] attributeValues, String[] codeNames, int[] codes)",
+        "starterCode": "class Solution {\n  public List<String> EncodeXml(String[] elementNames, String[] elementTexts, int[][] children,\n      int[] attributeOwners, String[] attributeNames, String[] attributeValues, String[] codeNames,\n      int[] codes) {\n    return new ArrayList<>();\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public List<String> EncodeXml(String[] elementNames, String[] elementTexts, int[][] children,\n      int[] attributeOwners, String[] attributeNames, String[] attributeValues, String[] codeNames,\n      int[] codes) {\n    var result = new ArrayList<String>();\n    if (elementNames.length == 0)\n      return result;\n    var lookup = new HashMap<String, String>();\n    for (int i = 0; i < codeNames.length; ++i)\n      lookup.put(codeNames[i], Integer.toString(codes[i]));\n    var attributes = new ArrayList<ArrayList<Integer>>();\n    for (int i = 0; i < elementNames.length; ++i)\n      attributes.add(new ArrayList<>());\n    for (int i = 0; i < attributeOwners.length; ++i)\n      attributes.get(attributeOwners[i]).add(i);\n    var events = new ArrayDeque<int[]>();\n    events.push(new int[] {0, 0});\n    while (!events.isEmpty()) {\n      int[] frame = events.pop();\n      int node = frame[0];\n      if (frame[1] != 0) {\n        result.add(\"0\");\n        continue;\n      }\n      result.add(lookup.get(elementNames[node]));\n      for (int attribute : attributes.get(node)) {\n        result.add(lookup.get(attributeNames[attribute]));\n        result.add(attributeValues[attribute]);\n      }\n      result.add(\"0\");\n      events.push(new int[] {node, 1});\n      if (!elementTexts[node].isEmpty())\n        result.add(elementTexts[node]);\n      else\n        for (int i = children[node].length - 1; i >= 0; --i)\n          events.push(new int[] {children[node][i], 0});\n    }\n    return result;\n  }\n}\n",
+        "prefix": "import java.util.*;\n",
+        "suffix": "",
+        "harness": "import java.util.*;\nimport java.nio.file.*;\nimport epi.test_framework.minimal_json.*;\n\npublic class Harness {\nstatic String[] strings(JsonArray values){String[] output=new String[values.size()];for(int i=0;i<output.length;++i)output[i]=values.get(i).asString();return output;}\nstatic int[] integers(JsonArray values){int[] output=new int[values.size()];for(int i=0;i<output.length;++i)output[i]=values.get(i).asInt();return output;}\nstatic int[][] matrix(JsonArray values){int[][] output=new int[values.size()][];for(int i=0;i<output.length;++i)output[i]=integers(values.get(i).asArray());return output;}\nstatic boolean sameRows(int[][] values,int[][] before){if(values.length!=before.length)return false;for(int i=0;i<values.length;++i)if(values[i]!=before[i])return false;return true;}\nstatic JsonValue encode(Object value){if(value==null)return Json.NULL;if(value instanceof Integer v)return Json.value(v);if(value instanceof Long v)return Json.value(v);if(value instanceof String v)return Json.value(v);var result=new JsonArray();if(value instanceof int[] values){for(int v:values)result.add(v);}else if(value instanceof int[][] values){for(int[] v:values)result.add(encode(v));}else if(value instanceof Object[] values){for(Object v:values)result.add(encode(v));}else if(value instanceof Iterable<?> values){for(Object v:values)result.add(encode(v));}else throw new IllegalArgumentException(\"Invalid result\");return result;}\nstatic JsonValue execute(JsonObject row){String reference=row.get(\"ref\").asString();var args=row.get(\"arguments\").asArray();if(reference.equals(\"16.12\")){String[] p0=strings(args.get(0).asArray());String before0=encode(p0).toString();String[] p1=strings(args.get(1).asArray());String before1=encode(p1).toString();int[][] p2=matrix(args.get(2).asArray());String before2=encode(p2).toString();int[][] rows2=p2.clone();int[] p3=integers(args.get(3).asArray());String before3=encode(p3).toString();String[] p4=strings(args.get(4).asArray());String before4=encode(p4).toString();String[] p5=strings(args.get(5).asArray());String before5=encode(p5).toString();String[] p6=strings(args.get(6).asArray());String before6=encode(p6).toString();int[] p7=integers(args.get(7).asArray());String before7=encode(p7).toString();var actual=new Solution().EncodeXml(p0,p1,p2,p3,p4,p5,p6,p7);return new JsonObject().add(\"actual\",encode(actual)).add(\"mutationOk\",(encode(p0).toString().equals(before0)) && (encode(p1).toString().equals(before1)) && (encode(p2).toString().equals(before2)) && (sameRows(p2,rows2)) && (encode(p3).toString().equals(before3)) && (encode(p4).toString().equals(before4)) && (encode(p5).toString().equals(before5)) && (encode(p6).toString().equals(before6)) && (encode(p7).toString().equals(before7)));}throw new RuntimeException(\"Unknown reference\");}\nstatic JsonValue timedExecute(JsonObject row) {\nlong start=System.nanoTime();JsonValue observed;\ntry { observed=execute(row); } catch(Throwable error) { observed=new JsonObject().add(\"error\",error.toString()); }\nreturn new JsonObject().add(\"observation\",observed).add(\"elapsedMs\",(System.nanoTime()-start)/1000000.0);\n}\npublic static void main(String[] ignored)throws Exception{var results=new JsonArray();for(var row:Json.parse(Files.readString(Path.of(\"cases.json\"))).asArray()){try{results.add(timedExecute(row.asObject()));}catch(Throwable error){results.add(new JsonObject().add(\"error\",error.toString()));}}Files.writeString(Path.of(\"results.json\"),results.toString());}\n}\n",
+        "reference": ""
+      }
+    }
+  },
+  {
+    "id": "ctci6_16_13",
+    "ref": "16.13",
+    "title": "Bisect Squares",
+    "description": "Find a line that divides each of two axis-aligned squares into equal areas. Each row is [left,bottom,side], describing the closed square [left,left+side]\u00d7[bottom,bottom+side]. Return [startX,startY,endX,endY], the two outermost boundary intersections of that line across both squares. Either endpoint order is accepted. If the centers coincide, any line through the common center is accepted, with its full outer boundary span.",
+    "constraints": [
+      "squares has exactly two distinct row objects. left and bottom are integers in -1000..1000 and side is an integer in 1..1000. Squares may overlap, touch, contain one another or be identical. Preserve all input objects, rows and values.",
+      "Return four finite coordinates. Each endpoint must be within absolute coordinate error 0.000001 of the true outermost endpoint for the chosen bisecting line. The endpoints must be distinct and include the complete intersection span across both squares, including any gap between disjoint squares."
+    ],
+    "method": "BisectSquares",
+    "params": [
+      [
+        "squares",
+        "aai"
+      ]
+    ],
+    "result": "ad",
+    "mutation": "none",
+    "testCount": 1033,
+    "batch": 16,
+    "stagingDirectory": "staged16",
+    "example": [
+      [
+        [
+          [
+            0,
+            0,
+            2
+          ],
+          [
+            4,
+            0,
+            2
+          ]
+        ]
+      ],
+      [
+        0,
+        1,
+        6,
+        1
+      ]
+    ],
+    "languages": {
+      "csharp": {
+        "signature": "double[] BisectSquares(int[][] squares)",
+        "starterCode": "public class Solution\n{\n    public double[] BisectSquares(int[][] squares)\n    {\n        return [];\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public double[] BisectSquares(int[][] squares)\n    {\n        double x = squares[0][0] + squares[0][2] / 2.0, y = squares[0][1] + squares[0][2] / 2.0,\n               dx = squares[1][0] + squares[1][2] / 2.0 - x,\n               dy = squares[1][1] + squares[1][2] / 2.0 - y, other = 1;\n        if (dx == 0 && dy == 0)\n        {\n            dy = 1;\n            other = 0;\n        }\n        double scale = Math.Max(Math.Abs(dx), Math.Abs(dy)), first = squares[0][2] / (2.0 * scale),\n               second = squares[1][2] / (2.0 * scale), start = Math.Min(-first, other - second),\n               end = Math.Max(first, other + second);\n        return [x + start * dx, y + start * dy, x + end * dx, y + end * dy];\n    }\n}\n",
+        "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\n",
+        "suffix": "",
+        "harness": "using System;\nusing System.Collections.Generic;\nusing System.Text;\nusing System.IO;\nusing System.Text.Json;\n\nclass Harness {\nstatic object Execute(JsonElement row){string reference=row.GetProperty(\"ref\").GetString()!;var args=row.GetProperty(\"arguments\");if(reference==\"16.13\"){var p0=JsonSerializer.Deserialize<int[][]>(args[0].GetRawText())!;var before0=JsonSerializer.Serialize(p0);var rows0=p0.ToArray();var actual=new Solution().BisectSquares(p0);return new {actual,mutationOk=(JsonSerializer.Serialize(p0)==before0) && (p0.Length==rows0.Length && p0.Select((r,j)=>ReferenceEquals(r,rows0[j])).All(v=>v))};}throw new Exception(\"Unknown reference\");}\nstatic object TimedExecute(JsonElement row) {\nvar clock=System.Diagnostics.Stopwatch.StartNew();object observed;\ntry { observed=Execute(row); } catch(Exception error) { observed=new {error=error.ToString()}; }\nreturn new {observation=observed,elapsedMs=clock.Elapsed.TotalMilliseconds};\n}\nstatic void Main(){using var document=JsonDocument.Parse(File.ReadAllText(\"cases.json\"));var results=new List<object>();foreach(var row in document.RootElement.EnumerateArray()){try{results.Add(TimedExecute(row));}catch(Exception error){results.Add(new {error=error.ToString()});}}File.WriteAllText(\"results.json\",JsonSerializer.Serialize(results));}\n}\n",
+        "reference": ""
+      },
+      "javascript": {
+        "signature": "function BisectSquares(squares)",
+        "starterCode": "function BisectSquares(squares) {\n  return [];\n}\n",
+        "solutionCode": "function BisectSquares(squares) {\n  const x = squares[0][0] + squares[0][2] / 2,\n    y = squares[0][1] + squares[0][2] / 2;\n  let dx = squares[1][0] + squares[1][2] / 2 - x,\n    dy = squares[1][1] + squares[1][2] / 2 - y,\n    other = 1;\n  if (dx === 0 && dy === 0) {\n    dy = 1;\n    other = 0;\n  }\n  const scale = Math.max(Math.abs(dx), Math.abs(dy)),\n    first = squares[0][2] / (2 * scale),\n    second = squares[1][2] / (2 * scale),\n    start = Math.min(-first, other - second),\n    end = Math.max(first, other + second);\n  return [x + start * dx, y + start * dy, x + end * dx, y + end * dy];\n}\n",
+        "prefix": "'use strict';\n",
+        "suffix": "\nmodule.exports = {BisectSquares};\n",
+        "harness": "const user = require('./solution.js');\nconst BisectSquares = user.BisectSquares;\n\nconst fs=require('node:fs'),kinds={\"16.13\": \"ad\"};\nfunction invoke(row){const ref=row.ref,args=row.arguments;if(ref===\"16.13\")return BisectSquares(...args);throw new Error('Unknown reference');}\nfunction execute(row){const args=row.arguments,before=JSON.stringify(args),outer=args.filter(Array.isArray),rows=outer.filter(v=>v.length&&Array.isArray(v[0])).map(v=>[v,v.slice()]);const actual=invoke(row),kind=kinds[row.ref];const valid=kind==='d'?typeof actual==='number'&&Number.isFinite(actual):kind==='ad'?Array.isArray(actual)&&actual.every(v=>typeof v==='number'&&Number.isFinite(v)):kind==='strings'?Array.isArray(actual)&&actual.every(v=>typeof v==='string'):['sets','arrangements','path','aai'].includes(kind)?Array.isArray(actual)&&actual.every(r=>Array.isArray(r)&&r.every(Number.isInteger)):kind==='ai'?Array.isArray(actual)&&actual.every(v=>Number.isInteger(v)&&v>=-2147483648&&v<=2147483647):kind==='l'?Number.isSafeInteger(actual)&&actual>=-1&&actual<=4294967295:Number.isInteger(actual)&&actual>=-2147483648&&actual<=2147483647;return {actual,mutationOk:valid&&(row.ref==='8.10'?JSON.stringify(actual)===JSON.stringify(args[0]):JSON.stringify(args)===before)&&outer.every(v=>args.includes(v))&&rows.every(([v,old])=>v.length===old.length&&v.every((r,i)=>r===old[i]))};}\nconst results=JSON.parse(fs.readFileSync('cases.json','utf8')).map(timed(row=>{try{return execute(row);}catch(error){return {error:String(error)};}}));\nfs.writeFileSync('results.json',JSON.stringify(results));\n\nfunction timed(fn) { return row => { const start=performance.now(); let observation; try { observation=fn(row); } catch(error) { observation={error:String(error)}; } return {observation,elapsedMs:performance.now()-start}; }; }\n",
+        "reference": ""
+      },
+      "python": {
+        "signature": "def BisectSquares(squares: list[list[int]]) -> list[float]",
+        "starterCode": "def BisectSquares(squares: list[list[int]]) -> list[float]:\n    return []\n",
+        "solutionCode": "def BisectSquares(squares: list[list[int]]) -> list[float]:\n    x = squares[0][0] + squares[0][2] / 2.0\n    y = squares[0][1] + squares[0][2] / 2.0\n    dx = squares[1][0] + squares[1][2] / 2.0 - x\n    dy = squares[1][1] + squares[1][2] / 2.0 - y\n    if dx == 0 and dy == 0:\n        dy = 1.0\n        other = 0.0\n    else:\n        other = 1.0\n    scale = max(abs(dx), abs(dy))\n    first_radius = squares[0][2] / (2.0 * scale)\n    second_radius = squares[1][2] / (2.0 * scale)\n    start = min(-first_radius, other - second_radius)\n    end = max(first_radius, other + second_radius)\n    return [x + start * dx, y + start * dy, x + end * dx, y + end * dy]\n",
+        "prefix": "",
+        "suffix": "",
+        "harness": "import time\nimport solution as user\nBisectSquares = user.BisectSquares\n\nimport json\nKINDS={'16.13': 'ad'}\ndef invoke(row):\n    ref,args=row['ref'],row['arguments']\n    if ref == '16.13': return BisectSquares(*args)\n    raise ValueError('Unknown reference')\ndef execute(row):\n    args=row['arguments'];before=json.dumps(args);outer=[v for v in args if type(v) is list];rows=[(v,list(v)) for v in outer if v and type(v[0]) is list]\n    actual=invoke(row);kind=KINDS[row['ref']]\n    valid=(type(actual) in (int,float) and __import__('math').isfinite(actual)) if kind=='d' else (type(actual) is list and all(type(v) in (int,float) and __import__('math').isfinite(v) for v in actual)) if kind=='ad' else (type(actual) is list and all(type(v) is str for v in actual)) if kind=='strings' else (type(actual) is list and all(type(r) is list and all(type(v) is int for v in r) for r in actual)) if kind in ('sets','arrangements','path','aai') else (type(actual) is list and all(type(v) is int for v in actual)) if kind=='ai' else type(actual) is int and -1<=actual<=4294967295 if kind=='l' else type(actual) is int and -2147483648<=actual<=2147483647\n    return dict(actual=actual,mutationOk=valid and (actual==args[0] if row['ref']=='8.10' else json.dumps(args)==before) and all(any(v is original for v in args) for original in outer) and all(len(v)==len(old) and all(a is b for a,b in zip(v,old)) for v,old in rows))\nresults=[]\nfor row in json.load(open('cases.json',encoding='utf-8')):\n    clock = time.perf_counter()\n    try:results.append(execute(row))\n    except Exception as error:results.append(dict(error=repr(error)))\n    results[-1] = dict(observation=results[-1], elapsedMs=(time.perf_counter()-clock)*1000)\njson.dump(results,open('results.json','w',encoding='utf-8'))\n",
+        "reference": ""
+      },
+      "cpp": {
+        "signature": "std::vector<double> BisectSquares(const std::vector<std::vector<int>>& squares)",
+        "starterCode": "class Solution {\n public:\n  std::vector<double> BisectSquares(const std::vector<std::vector<int>>& squares) {\n    return {};\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  std::vector<double> BisectSquares(const std::vector<std::vector<int>>& squares) {\n    double x = squares[0][0] + squares[0][2] / 2.0, y = squares[0][1] + squares[0][2] / 2.0,\n           dx = squares[1][0] + squares[1][2] / 2.0 - x,\n           dy = squares[1][1] + squares[1][2] / 2.0 - y, other = 1;\n    if (dx == 0 && dy == 0) {\n      dy = 1;\n      other = 0;\n    }\n    double scale = std::max(std::abs(dx), std::abs(dy)), first = squares[0][2] / (2.0 * scale),\n           second = squares[1][2] / (2.0 * scale), start = std::min(-first, other - second),\n           end = std::max(first, other + second);\n    return {x + start * dx, y + start * dy, x + end * dx, y + end * dy};\n  }\n};\n",
+        "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n#include <unordered_map>\n#include <unordered_set>\n",
+        "suffix": "",
+        "harness": "#include <chrono>\n#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include \"solution.cpp\"\n#include <fstream>\n#include \"test_framework/json.h\"\nusing json=nlohmann::json;\n\nbool sameRows(const std::vector<std::vector<int>>& values,const std::vector<const int*>& rows){if(values.size()!=rows.size())return false;for(size_t i=0;i<rows.size();++i)if(values[i].data()!=rows[i])return false;return true;}\njson execute(const json& row){std::string reference=row[\"ref\"].get<std::string>();const auto& args=row[\"arguments\"];if(reference==\"16.13\"){auto p0=args[0].get<std::vector<std::vector<int>>>();auto before0=p0;std::vector<const int*> rows0;for(const auto& row:p0)rows0.push_back(row.data());auto actual=Solution().BisectSquares(p0);return json{{\"actual\",actual},{\"mutationOk\",(p0==before0) && (sameRows(p0,rows0))}};}throw std::runtime_error(\"Unknown reference\");}\njson timedExecute(const json& row) {\nauto start=std::chrono::steady_clock::now();json observed;\ntry { observed=execute(row); } catch(const std::exception& error) { observed=json{{\"error\",error.what()}}; }\ndouble elapsed=std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-start).count();\nreturn json{{\"observation\",observed},{\"elapsedMs\",elapsed}};\n}\nint main(){std::ifstream input(\"cases.json\");json rows;input>>rows;json results=json::array();for(const auto& row:rows){try{results.push_back(timedExecute(row));}catch(const std::exception& error){results.push_back(json{{\"error\",error.what()}});}}std::ofstream(\"results.json\")<<results;}\n",
+        "reference": ""
+      },
+      "java": {
+        "signature": "double[] BisectSquares(int[][] squares)",
+        "starterCode": "class Solution {\n  public double[] BisectSquares(int[][] squares) {\n    return new double[0];\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public double[] BisectSquares(int[][] squares) {\n    double x = squares[0][0] + squares[0][2] / 2.0, y = squares[0][1] + squares[0][2] / 2.0,\n           dx = squares[1][0] + squares[1][2] / 2.0 - x,\n           dy = squares[1][1] + squares[1][2] / 2.0 - y, other = 1;\n    if (dx == 0 && dy == 0) {\n      dy = 1;\n      other = 0;\n    }\n    double scale = Math.max(Math.abs(dx), Math.abs(dy)), first = squares[0][2] / (2.0 * scale),\n           second = squares[1][2] / (2.0 * scale), start = Math.min(-first, other - second),\n           end = Math.max(first, other + second);\n    return new double[] {x + start * dx, y + start * dy, x + end * dx, y + end * dy};\n  }\n}\n",
+        "prefix": "import java.util.*;\n",
+        "suffix": "",
+        "harness": "import java.util.*;\nimport java.nio.file.*;\nimport epi.test_framework.minimal_json.*;\n\npublic class Harness {\nstatic int[] integers(JsonArray values){int[] output=new int[values.size()];for(int i=0;i<output.length;++i)output[i]=values.get(i).asInt();return output;}\nstatic int[][] matrix(JsonArray values){int[][] output=new int[values.size()][];for(int i=0;i<output.length;++i)output[i]=integers(values.get(i).asArray());return output;}\nstatic boolean sameRows(int[][] values,int[][] before){if(values.length!=before.length)return false;for(int i=0;i<values.length;++i)if(values[i]!=before[i])return false;return true;}\nstatic JsonValue encode(Object value){if(value==null)return Json.NULL;if(value instanceof Integer v)return Json.value(v);if(value instanceof Double v){if(!Double.isFinite(v))throw new IllegalArgumentException(\"Return finite numbers\");return Json.value(v);}if(value instanceof Long v)return Json.value(v);if(value instanceof String v)return Json.value(v);var result=new JsonArray();if(value instanceof int[] values){for(int v:values)result.add(v);}else if(value instanceof int[][] values){for(int[] v:values)result.add(encode(v));}else if(value instanceof double[] values){for(double v:values){if(!Double.isFinite(v))throw new IllegalArgumentException(\"Return finite numbers\");result.add(v);}}else if(value instanceof Iterable<?> values){for(Object v:values)result.add(encode(v));}else throw new IllegalArgumentException(\"Invalid result\");return result;}\nstatic JsonValue execute(JsonObject row){String reference=row.get(\"ref\").asString();var args=row.get(\"arguments\").asArray();if(reference.equals(\"16.13\")){int[][] p0=matrix(args.get(0).asArray());String before0=encode(p0).toString();int[][] rows0=p0.clone();var actual=new Solution().BisectSquares(p0);return new JsonObject().add(\"actual\",encode(actual)).add(\"mutationOk\",(encode(p0).toString().equals(before0)) && (sameRows(p0,rows0)));}throw new RuntimeException(\"Unknown reference\");}\nstatic JsonValue timedExecute(JsonObject row) {\nlong start=System.nanoTime();JsonValue observed;\ntry { observed=execute(row); } catch(Throwable error) { observed=new JsonObject().add(\"error\",error.toString()); }\nreturn new JsonObject().add(\"observation\",observed).add(\"elapsedMs\",(System.nanoTime()-start)/1000000.0);\n}\npublic static void main(String[] ignored)throws Exception{var results=new JsonArray();for(var row:Json.parse(Files.readString(Path.of(\"cases.json\"))).asArray()){try{results.add(timedExecute(row.asObject()));}catch(Throwable error){results.add(new JsonObject().add(\"error\",error.toString()));}}Files.writeString(Path.of(\"results.json\"),results.toString());}\n}\n",
         "reference": ""
       }
     }

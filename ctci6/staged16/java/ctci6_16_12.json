@@ -1,0 +1,68 @@
+{
+  "explanation": "XML nesting needs a closing marker after all children, so an ordinary preorder list alone is insufficient. Use explicit enter/exit events: entering emits the code, attributes and first marker; exiting emits the final marker. Put child enter events on the stack in reverse sibling order so they execute in the original order. Group attribute indices by owner once to avoid rescanning every attribute at every element.",
+  "correctness": "On entry, the name code and every owned attribute pair are emitted in the required order, followed by exactly one attribute terminator. For a text leaf the literal text is emitted before its scheduled exit. Otherwise reverse pushing causes each child subtree to complete in sibling order before the parent exit is processed. By induction on a subtree, these events emit exactly its prescribed encoding and one final marker. The root event therefore emits the whole tree, and empty input emits no events. Attribute buckets preserve original per-owner order and never duplicate a pair. Inputs are only read.",
+  "walkthrough": "Let element names be [family,person], texts [\"\",Hello] and children [[1],[]]. Attributes are owners [0,1], names [last,first], values [Tran,Ada]; name codes are family=1, person=2, first=3, last=4. The tokens are [\"1\",\"4\",\"Tran\",\"0\",\"2\",\"3\",\"Ada\",\"0\",\"Hello\",\"0\",\"0\"]. The last two zeros close person then family; the earlier zeros end their attribute lists.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        "family",
+        "person"
+      ],
+      [
+        "",
+        "Hello"
+      ],
+      [
+        [
+          1
+        ],
+        []
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        "last",
+        "first"
+      ],
+      [
+        "Tran",
+        "Ada"
+      ],
+      [
+        "family",
+        "person",
+        "first",
+        "last"
+      ],
+      [
+        1,
+        2,
+        3,
+        4
+      ]
+    ],
+    "expected": [
+      "1",
+      "4",
+      "Tran",
+      "0",
+      "2",
+      "3",
+      "Ada",
+      "0",
+      "Hello",
+      "0",
+      "0"
+    ]
+  },
+  "timeComplexity": "Expected O(n+a+k+T) time for n elements, a attributes, k code mappings and T returned token characters; each event/attribute is visited once and bounded name lookups are hashed.",
+  "spaceComplexity": "O(n+a+k) auxiliary buckets, event stack and map, plus O(n+a+T) returned token storage. The explicit stack avoids a language call-stack limit on a 1000-element chain.",
+  "edgeCases": [
+    "No elements, empty leaves and text-only leaves.",
+    "Interleaved owners, empty/space-containing attribute values, arbitrary code-map order.",
+    "Wide sibling groups and 1000-level nested trees with no recursive call overflow."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.12. No affiliation is implied."
+}

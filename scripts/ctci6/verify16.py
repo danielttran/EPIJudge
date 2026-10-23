@@ -4,8 +4,10 @@ from corpus16 import valid_observation as base_match
 import corpus_line16
 
 import corpus_numeric
+import corpus_geometry
+import corpus_xml16
 
-def valid_observation(reference,case,observed):return corpus_numeric.valid_observation(reference,case,observed) if reference=="16.26" else corpus_line16.valid_observation(reference,case,observed) if reference=="16.14" else base_match(reference,case,observed)
+def valid_observation(reference,case,observed):return corpus_xml16.valid_observation(reference,case,observed) if reference=="16.12" else corpus_geometry.valid_observation(reference,case,observed) if reference in ("16.3","16.13") else corpus_numeric.valid_observation(reference,case,observed) if reference=="16.26" else corpus_line16.valid_observation(reference,case,observed) if reference=="16.14" else base_match(reference,case,observed)
 from generate16 import generate16,cases
 from harness16 import source
 from verify08 import verify
@@ -17,7 +19,7 @@ if __name__ == '__main__':
 
     report_path=ROOT/'ctci6/staged16/validation.json'
     report=json.loads(report_path.read_text())
-    for name in ('harness_cache16.py','corpus_line16.py','corpus_numeric.py','numeric.py'):
+    for name in ('harness_cache16.py','corpus_line16.py','corpus_numeric.py','numeric.py','corpus_geometry.py','corpus_xml16.py'):
         helper=ROOT/'scripts/ctci6'/name
         report['sourceHashes'][str(helper.relative_to(ROOT))]=hashlib.sha256(helper.read_bytes()).hexdigest()
     report_path.write_text(json.dumps(report,indent=2)+'\n')

@@ -487,3 +487,94 @@ return total + term'''
     if language=='csharp':return "double total=0,term=0;char op='+';int index=0;while(index<expression.Length){int number=0;while(index<expression.Length&&expression[index]>='0'&&expression[index]<='9'){number=number*10+expression[index]-'0';index++;}if(op=='+'){total+=term;term=number;}else if(op=='-'){total+=term;term=-number;}else if(op=='*')term*=number;else term/=number;if(index<expression.Length)op=expression[index++];}return total+term;"
     if language=='java':return "double total=0,term=0;char op='+';int index=0;while(index<expression.length()){int number=0;while(index<expression.length()&&expression.charAt(index)>='0'&&expression.charAt(index)<='9'){number=number*10+expression.charAt(index)-'0';index++;}if(op=='+'){total+=term;term=number;}else if(op=='-'){total+=term;term=-number;}else if(op=='*')term*=number;else term/=number;if(index<expression.length())op=expression.charAt(index++);}return total+term;"
     return "double total=0,term=0;char op='+';size_t index=0;while(index<expression.size()){int number=0;while(index<expression.size()&&expression[index]>='0'&&expression[index]<='9'){number=number*10+expression[index]-'0';++index;}if(op=='+'){total+=term;term=number;}else if(op=='-'){total+=term;term=-number;}else if(op=='*')term*=number;else term/=number;if(index<expression.size())op=expression[index++];}return total+term;"
+
+_previous_geometry_body=body
+
+def body(ref,language):
+    if ref not in ('16.3','16.13'):return _previous_geometry_body(ref,language)
+    if ref=='16.3':
+        if language=='python':return '''a, b, c, d = endpoints
+rx, ry = b[0]-a[0], b[1]-a[1]
+sx, sy = d[0]-c[0], d[1]-c[1]
+qx, qy = c[0]-a[0], c[1]-a[1]
+denominator = rx*sy-ry*sx
+if denominator != 0:
+    first = qx*sy-qy*sx
+    second = qx*ry-qy*rx
+    if denominator < 0:
+        denominator, first, second = -denominator, -first, -second
+    if 0 <= first <= denominator and 0 <= second <= denominator:
+        t = first/denominator
+        return [a[0]+t*rx, a[1]+t*ry]
+    return []
+def contains(start, end, point):
+    return ((end[0]-start[0])*(point[1]-start[1]) == (end[1]-start[1])*(point[0]-start[0])
+            and min(start[0],end[0]) <= point[0] <= max(start[0],end[0])
+            and min(start[1],end[1]) <= point[1] <= max(start[1],end[1]))
+for point in endpoints:
+    if contains(a,b,point) and contains(c,d,point):
+        return [float(point[0]),float(point[1])]
+return []'''
+        if language=='javascript':return 'const [a,b,c,d]=endpoints,rx=b[0]-a[0],ry=b[1]-a[1],sx=d[0]-c[0],sy=d[1]-c[1],qx=c[0]-a[0],qy=c[1]-a[1];let denominator=rx*sy-ry*sx;if(denominator!==0){let first=qx*sy-qy*sx,second=qx*ry-qy*rx;if(denominator<0){denominator=-denominator;first=-first;second=-second;}if(first>=0&&first<=denominator&&second>=0&&second<=denominator){const t=first/denominator;return [a[0]+t*rx,a[1]+t*ry];}return [];}function contains(start,end,point){return (end[0]-start[0])*(point[1]-start[1])===(end[1]-start[1])*(point[0]-start[0])&&point[0]>=Math.min(start[0],end[0])&&point[0]<=Math.max(start[0],end[0])&&point[1]>=Math.min(start[1],end[1])&&point[1]<=Math.max(start[1],end[1]);}for(const point of endpoints)if(contains(a,b,point)&&contains(c,d,point))return [point[0],point[1]];return [];'
+        empty='return new double[0];' if language=='java' else 'return [];' if language=='csharp' else 'return {};'
+        ret=lambda v:'return new double[]{'+v+'};' if language=='java' else 'return ['+v+'];' if language=='csharp' else 'return {'+v+'};'
+        setup='int[] a=endpoints[0],b=endpoints[1],c=endpoints[2],d=endpoints[3];' if language in ('java','csharp') else 'const auto& a=endpoints[0];const auto& b=endpoints[1];const auto& c=endpoints[2];const auto& d=endpoints[3];'
+        minimum='Math.min' if language=='java' else 'Math.Min' if language=='csharp' else 'std::min';maximum='Math.max' if language=='java' else 'Math.Max' if language=='csharp' else 'std::max'
+        check=f'return (end[0]-start[0])*(point[1]-start[1])==(end[1]-start[1])*(point[0]-start[0])&&point[0]>={minimum}(start[0],end[0])&&point[0]<={maximum}(start[0],end[0])&&point[1]>={minimum}(start[1],end[1])&&point[1]<={maximum}(start[1],end[1]);'
+        if language=='java':helper='class Geometry {boolean contains(int[] start,int[] end,int[] point){'+check+'}}var geometry=new Geometry();';call='geometry.contains';loop='for(int[] point:endpoints)'
+        elif language=='csharp':helper='bool Contains(int[] start,int[] end,int[] point){'+check+'}';call='Contains';loop='foreach(var point in endpoints)'
+        else:helper='auto contains=[](const std::vector<int>& start,const std::vector<int>& end,const std::vector<int>& point){'+check+'};';call='contains';loop='for(const auto& point:endpoints)'
+        return setup+'int rx=b[0]-a[0],ry=b[1]-a[1],sx=d[0]-c[0],sy=d[1]-c[1],qx=c[0]-a[0],qy=c[1]-a[1],denominator=rx*sy-ry*sx;if(denominator!=0){int first=qx*sy-qy*sx,second=qx*ry-qy*rx;if(denominator<0){denominator=-denominator;first=-first;second=-second;}if(first>=0&&first<=denominator&&second>=0&&second<=denominator){double t=(double)first/denominator;'+ret('a[0]+t*rx,a[1]+t*ry')+'}'+empty+'}'+helper+loop+'if('+call+'(a,b,point)&&'+call+'(c,d,point))'+ret('(double)point[0],(double)point[1]')+empty
+    if language=='python':return '''x = squares[0][0]+squares[0][2]/2.0
+y = squares[0][1]+squares[0][2]/2.0
+dx = squares[1][0]+squares[1][2]/2.0-x
+dy = squares[1][1]+squares[1][2]/2.0-y
+if dx == 0 and dy == 0:
+    dy = 1.0
+    other = 0.0
+else:
+    other = 1.0
+scale = max(abs(dx),abs(dy))
+first_radius = squares[0][2]/(2.0*scale)
+second_radius = squares[1][2]/(2.0*scale)
+start = min(-first_radius,other-second_radius)
+end = max(first_radius,other+second_radius)
+return [x+start*dx,y+start*dy,x+end*dx,y+end*dy]'''
+    if language=='javascript':return 'const x=squares[0][0]+squares[0][2]/2,y=squares[0][1]+squares[0][2]/2;let dx=squares[1][0]+squares[1][2]/2-x,dy=squares[1][1]+squares[1][2]/2-y,other=1;if(dx===0&&dy===0){dy=1;other=0;}const scale=Math.max(Math.abs(dx),Math.abs(dy)),first=squares[0][2]/(2*scale),second=squares[1][2]/(2*scale),start=Math.min(-first,other-second),end=Math.max(first,other+second);return [x+start*dx,y+start*dy,x+end*dx,y+end*dy];'
+    minimum='Math.min' if language=='java' else 'Math.Min' if language=='csharp' else 'std::min';maximum='Math.max' if language=='java' else 'Math.Max' if language=='csharp' else 'std::max';absolute='Math.abs' if language=='java' else 'Math.Abs' if language=='csharp' else 'std::abs'
+    result='x+start*dx,y+start*dy,x+end*dx,y+end*dy'
+    ret='return new double[]{'+result+'};' if language=='java' else 'return ['+result+'];' if language=='csharp' else 'return {'+result+'};'
+    return f'double x=squares[0][0]+squares[0][2]/2.0,y=squares[0][1]+squares[0][2]/2.0,dx=squares[1][0]+squares[1][2]/2.0-x,dy=squares[1][1]+squares[1][2]/2.0-y,other=1;if(dx==0&&dy==0){{dy=1;other=0;}}double scale={maximum}({absolute}(dx),{absolute}(dy)),first=squares[0][2]/(2.0*scale),second=squares[1][2]/(2.0*scale),start={minimum}(-first,other-second),end={maximum}(first,other+second);'+ret
+
+_previous_xml_body=body
+
+def body(ref,language):
+    if ref!='16.12':return _previous_xml_body(ref,language)
+    if language=='python':return '''if not elementNames:
+    return []
+lookup = {name: str(code) for name,code in zip(codeNames,codes)}
+attributes = [[] for _ in elementNames]
+for index,owner in enumerate(attributeOwners):
+    attributes[owner].append(index)
+result = []
+events = [(0,False)]
+while events:
+    node, exiting = events.pop()
+    if exiting:
+        result.append('0')
+        continue
+    result.append(lookup[elementNames[node]])
+    for attribute in attributes[node]:
+        result.extend([lookup[attributeNames[attribute]],attributeValues[attribute]])
+    result.append('0')
+    events.append((node,True))
+    if elementTexts[node]:
+        result.append(elementTexts[node])
+    else:
+        for child in reversed(children[node]):
+            events.append((child,False))
+return result'''
+    if language=='javascript':return 'if(elementNames.length===0)return [];const lookup=new Map(codeNames.map((name,i)=>[name,String(codes[i])])),attributes=Array.from({length:elementNames.length},()=>[]),result=[],events=[[0,false]];for(let i=0;i<attributeOwners.length;++i)attributes[attributeOwners[i]].push(i);while(events.length){const [node,exiting]=events.pop();if(exiting){result.push("0");continue;}result.push(lookup.get(elementNames[node]));for(const attribute of attributes[node])result.push(lookup.get(attributeNames[attribute]),attributeValues[attribute]);result.push("0");events.push([node,true]);if(elementTexts[node].length)result.push(elementTexts[node]);else for(let i=children[node].length-1;i>=0;--i)events.push([children[node][i],false]);}return result;'
+    if language=='csharp':return 'var result=new List<string>();if(elementNames.Length==0)return result;var lookup=new Dictionary<string,string>(StringComparer.Ordinal);for(int i=0;i<codeNames.Length;++i)lookup[codeNames[i]]=codes[i].ToString(System.Globalization.CultureInfo.InvariantCulture);var attributes=new List<int>[elementNames.Length];for(int i=0;i<attributes.Length;++i)attributes[i]=new List<int>();for(int i=0;i<attributeOwners.Length;++i)attributes[attributeOwners[i]].Add(i);var events=new Stack<(int Node,bool Exit)>();events.Push((0,false));while(events.Count>0){var frame=events.Pop();int node=frame.Node;if(frame.Exit){result.Add("0");continue;}result.Add(lookup[elementNames[node]]);foreach(int attribute in attributes[node]){result.Add(lookup[attributeNames[attribute]]);result.Add(attributeValues[attribute]);}result.Add("0");events.Push((node,true));if(elementTexts[node].Length>0)result.Add(elementTexts[node]);else for(int i=children[node].Length-1;i>=0;--i)events.Push((children[node][i],false));}return result;'
+    if language=='java':return 'var result=new ArrayList<String>();if(elementNames.length==0)return result;var lookup=new HashMap<String,String>();for(int i=0;i<codeNames.length;++i)lookup.put(codeNames[i],Integer.toString(codes[i]));var attributes=new ArrayList<ArrayList<Integer>>();for(int i=0;i<elementNames.length;++i)attributes.add(new ArrayList<>());for(int i=0;i<attributeOwners.length;++i)attributes.get(attributeOwners[i]).add(i);var events=new ArrayDeque<int[]>();events.push(new int[]{0,0});while(!events.isEmpty()){int[] frame=events.pop();int node=frame[0];if(frame[1]!=0){result.add("0");continue;}result.add(lookup.get(elementNames[node]));for(int attribute:attributes.get(node)){result.add(lookup.get(attributeNames[attribute]));result.add(attributeValues[attribute]);}result.add("0");events.push(new int[]{node,1});if(!elementTexts[node].isEmpty())result.add(elementTexts[node]);else for(int i=children[node].length-1;i>=0;--i)events.push(new int[]{children[node][i],0});}return result;'
+    return 'std::vector<std::string> result;if(elementNames.empty())return result;std::unordered_map<std::string,std::string> lookup;for(size_t i=0;i<codeNames.size();++i)lookup[codeNames[i]]=std::to_string(codes[i]);std::vector<std::vector<size_t>> attributes(elementNames.size());for(size_t i=0;i<attributeOwners.size();++i)attributes[attributeOwners[i]].push_back(i);std::vector<std::pair<int,bool>> events{{0,false}};while(!events.empty()){auto frame=events.back();events.pop_back();int node=frame.first;if(frame.second){result.push_back("0");continue;}result.push_back(lookup.at(elementNames[node]));for(size_t attribute:attributes[node]){result.push_back(lookup.at(attributeNames[attribute]));result.push_back(attributeValues[attribute]);}result.push_back("0");events.emplace_back(node,true);if(!elementTexts[node].empty())result.push_back(elementTexts[node]);else for(auto it=children[node].rbegin();it!=children[node].rend();++it)events.emplace_back(*it,false);}return result;'
