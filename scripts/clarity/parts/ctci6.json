@@ -2391,6 +2391,134 @@
         ]
       }
     },
+    "ctci6_4_11": {
+      "description": "Implement a binary search tree class RandomBst with Insert, Find, Delete and GetRandomNode. Insert adds one occurrence, including duplicates. Find returns any CURRENT tree node with the requested Data, or null. Delete removes exactly one matching occurrence and returns true, or returns false without change if absent. GetRandomNode returns an actual current node with equal probability 1/n for each of the n nodes, or null for an empty tree. Equal Data values still belong to distinct nodes and must not collapse their selection probabilities.",
+      "constraints": [
+        "Each new RandomBst starts empty and owns independent mutable tree state. Expose its actual root as readable Root (null when empty), using the provided RandomNode model with Data, Left and Right fields. The reachable graph must always be one proper BST: no cycles/shared child nodes, and a nondecreasing inorder Data sequence. Duplicates may occur on either side under that ordering; self-balancing is not required. Caller code never modifies Root or node fields directly.",
+        "Implement the exact displayed language API. Insert returns void/None, Delete returns a boolean, and Find/GetRandomNode return actual provided RandomNode objects or subclasses, not Data integers or newly allocated equal-valued copies. Returned references are borrowed and should be treated as invalidated by the next insertion/deletion or destruction. Find/GetRandomNode must preserve Root and every current node Data/Left/Right link; internal bookkeeping is allowed.",
+        "Use only the provided RandomSource.GetRandom(lower,upper), which returns an independent uniform integer on the two INCLUSIVE nonnegative signed-32-bit bounds. Do not use another randomness source or a cached/correlated node cycle. Each current node, including equal-valued occurrences, needs the same selection probability. Any correct sampling strategy is accepted; private cached size fields are not part of the required node API.",
+        "Test input is an operation transcript: operations starts with RandomBst, whose corresponding argument row is []; Insert/Find/Delete each have [value], while GetRandomNode has []. All values are signed 32-bit integers. There are 1..2005 operations, at most 1000 live nodes, and at most three GetRandomNode requests per fixture; the checker repeats those queries internally under injected choices. Preserve the input transcript arrays and rows.",
+        "Displayed output contains results and finalValues. Constructor/Insert results are null; Find/GetRandomNode display [] for null or [Data-at-call-time] for a returned node, while identity is checked separately. Delete displays true/false. finalValues is the tree inorder Data snapshot. A random query example is one valid outcome, not a required fixed choice. C++ owns and frees its allocated nodes; query pointers are borrowed."
+      ],
+      "examples": [
+        {
+          "input": "[[\"RandomBst\", \"Insert\", \"Insert\", \"Insert\", \"Insert\", \"Find\", \"GetRandomNode\", \"Delete\", \"Find\", \"GetRandomNode\"], [[], [4], [2], [6], [1], [2], [], [2], [2], []]]",
+          "output": "{\"results\": [null, null, null, null, null, [2], [4], true, [], [4]], \"finalValues\": [1, 4, 6]}",
+          "explanation": "Insert 4,2,6,1. The root count is 4 and its left subtree count is 2. Inorder ranks 0,1,2,3 name the actual nodes with Data 1,2,4,6; a draw of 2 returns the root 4. Delete 2 by splicing its only child 1 into root.Left, reducing the root count to 3. Find(2) is now null. Ranks 0,1,2 name Data 1,4,6, so a draw of 1 again returns node 4. Choosing root/left/right each with probability 1/3 in the first tree would incorrectly give root probability 1/3 instead of 1/4."
+        }
+      ],
+      "exampleCases": [
+        {
+          "arguments": [
+            [
+              "RandomBst",
+              "Insert",
+              "Insert",
+              "Insert",
+              "Insert",
+              "Find",
+              "GetRandomNode",
+              "Delete",
+              "Find",
+              "GetRandomNode"
+            ],
+            [
+              [],
+              [
+                4
+              ],
+              [
+                2
+              ],
+              [
+                6
+              ],
+              [
+                1
+              ],
+              [
+                2
+              ],
+              [],
+              [
+                2
+              ],
+              [
+                2
+              ],
+              []
+            ]
+          ],
+          "expected": {
+            "results": [
+              null,
+              null,
+              null,
+              null,
+              null,
+              [
+                2
+              ],
+              [
+                4
+              ],
+              true,
+              [],
+              [
+                4
+              ]
+            ],
+            "finalValues": [
+              1,
+              4,
+              6
+            ]
+          }
+        }
+      ],
+      "contracts": {
+        "csharp": [
+          "Callable: RandomBst(); RandomNode? Root { get; }; void Insert(int value); RandomNode? Find(int value); bool Delete(int value); RandomNode? GetRandomNode()",
+          "Each new RandomBst starts empty and owns independent mutable tree state. Expose its actual root as readable Root (null when empty), using the provided RandomNode model with Data, Left and Right fields. The reachable graph must always be one proper BST: no cycles/shared child nodes, and a nondecreasing inorder Data sequence. Duplicates may occur on either side under that ordering; self-balancing is not required. Caller code never modifies Root or node fields directly.",
+          "Implement the exact displayed language API. Insert returns void/None, Delete returns a boolean, and Find/GetRandomNode return actual provided RandomNode objects or subclasses, not Data integers or newly allocated equal-valued copies. Returned references are borrowed and should be treated as invalidated by the next insertion/deletion or destruction. Find/GetRandomNode must preserve Root and every current node Data/Left/Right link; internal bookkeeping is allowed.",
+          "Use only the provided RandomSource.GetRandom(lower,upper), which returns an independent uniform integer on the two INCLUSIVE nonnegative signed-32-bit bounds. Do not use another randomness source or a cached/correlated node cycle. Each current node, including equal-valued occurrences, needs the same selection probability. Any correct sampling strategy is accepted; private cached size fields are not part of the required node API.",
+          "Test input is an operation transcript: operations starts with RandomBst, whose corresponding argument row is []; Insert/Find/Delete each have [value], while GetRandomNode has []. All values are signed 32-bit integers. There are 1..2005 operations, at most 1000 live nodes, and at most three GetRandomNode requests per fixture; the checker repeats those queries internally under injected choices. Preserve the input transcript arrays and rows.",
+          "Displayed output contains results and finalValues. Constructor/Insert results are null; Find/GetRandomNode display [] for null or [Data-at-call-time] for a returned node, while identity is checked separately. Delete displays true/false. finalValues is the tree inorder Data snapshot. A random query example is one valid outcome, not a required fixed choice. C++ owns and frees its allocated nodes; query pointers are borrowed."
+        ],
+        "javascript": [
+          "Callable: new RandomBst(); Root: RandomNode | null; Insert(value); Find(value) -> RandomNode | null; Delete(value) -> boolean; GetRandomNode() -> RandomNode | null",
+          "Each new RandomBst starts empty and owns independent mutable tree state. Expose its actual root as readable Root (null when empty), using the provided RandomNode model with Data, Left and Right fields. The reachable graph must always be one proper BST: no cycles/shared child nodes, and a nondecreasing inorder Data sequence. Duplicates may occur on either side under that ordering; self-balancing is not required. Caller code never modifies Root or node fields directly.",
+          "Implement the exact displayed language API. Insert returns void/None, Delete returns a boolean, and Find/GetRandomNode return actual provided RandomNode objects or subclasses, not Data integers or newly allocated equal-valued copies. Returned references are borrowed and should be treated as invalidated by the next insertion/deletion or destruction. Find/GetRandomNode must preserve Root and every current node Data/Left/Right link; internal bookkeeping is allowed.",
+          "Use only the provided RandomSource.GetRandom(lower,upper), which returns an independent uniform integer on the two INCLUSIVE nonnegative signed-32-bit bounds. Do not use another randomness source or a cached/correlated node cycle. Each current node, including equal-valued occurrences, needs the same selection probability. Any correct sampling strategy is accepted; private cached size fields are not part of the required node API.",
+          "Test input is an operation transcript: operations starts with RandomBst, whose corresponding argument row is []; Insert/Find/Delete each have [value], while GetRandomNode has []. All values are signed 32-bit integers. There are 1..2005 operations, at most 1000 live nodes, and at most three GetRandomNode requests per fixture; the checker repeats those queries internally under injected choices. Preserve the input transcript arrays and rows.",
+          "Displayed output contains results and finalValues. Constructor/Insert results are null; Find/GetRandomNode display [] for null or [Data-at-call-time] for a returned node, while identity is checked separately. Delete displays true/false. finalValues is the tree inorder Data snapshot. A random query example is one valid outcome, not a required fixed choice. C++ owns and frees its allocated nodes; query pointers are borrowed."
+        ],
+        "python": [
+          "Callable: RandomBst(); Root: RandomNode | None; Insert(value: int) -> None; Find(value: int) -> RandomNode | None; Delete(value: int) -> bool; GetRandomNode() -> RandomNode | None",
+          "Each new RandomBst starts empty and owns independent mutable tree state. Expose its actual root as readable Root (null when empty), using the provided RandomNode model with Data, Left and Right fields. The reachable graph must always be one proper BST: no cycles/shared child nodes, and a nondecreasing inorder Data sequence. Duplicates may occur on either side under that ordering; self-balancing is not required. Caller code never modifies Root or node fields directly.",
+          "Implement the exact displayed language API. Insert returns void/None, Delete returns a boolean, and Find/GetRandomNode return actual provided RandomNode objects or subclasses, not Data integers or newly allocated equal-valued copies. Returned references are borrowed and should be treated as invalidated by the next insertion/deletion or destruction. Find/GetRandomNode must preserve Root and every current node Data/Left/Right link; internal bookkeeping is allowed.",
+          "Use only the provided RandomSource.GetRandom(lower,upper), which returns an independent uniform integer on the two INCLUSIVE nonnegative signed-32-bit bounds. Do not use another randomness source or a cached/correlated node cycle. Each current node, including equal-valued occurrences, needs the same selection probability. Any correct sampling strategy is accepted; private cached size fields are not part of the required node API.",
+          "Test input is an operation transcript: operations starts with RandomBst, whose corresponding argument row is []; Insert/Find/Delete each have [value], while GetRandomNode has []. All values are signed 32-bit integers. There are 1..2005 operations, at most 1000 live nodes, and at most three GetRandomNode requests per fixture; the checker repeats those queries internally under injected choices. Preserve the input transcript arrays and rows.",
+          "Displayed output contains results and finalValues. Constructor/Insert results are null; Find/GetRandomNode display [] for null or [Data-at-call-time] for a returned node, while identity is checked separately. Delete displays true/false. finalValues is the tree inorder Data snapshot. A random query example is one valid outcome, not a required fixed choice. C++ owns and frees its allocated nodes; query pointers are borrowed."
+        ],
+        "cpp": [
+          "Callable: RandomBst(); ~RandomBst(); RandomNode* Root; void Insert(int value); RandomNode* Find(int value); bool Delete(int value); RandomNode* GetRandomNode()",
+          "Each new RandomBst starts empty and owns independent mutable tree state. Expose its actual root as readable Root (null when empty), using the provided RandomNode model with Data, Left and Right fields. The reachable graph must always be one proper BST: no cycles/shared child nodes, and a nondecreasing inorder Data sequence. Duplicates may occur on either side under that ordering; self-balancing is not required. Caller code never modifies Root or node fields directly.",
+          "Implement the exact displayed language API. Insert returns void/None, Delete returns a boolean, and Find/GetRandomNode return actual provided RandomNode objects or subclasses, not Data integers or newly allocated equal-valued copies. Returned references are borrowed and should be treated as invalidated by the next insertion/deletion or destruction. Find/GetRandomNode must preserve Root and every current node Data/Left/Right link; internal bookkeeping is allowed.",
+          "Use only the provided RandomSource.GetRandom(lower,upper), which returns an independent uniform integer on the two INCLUSIVE nonnegative signed-32-bit bounds. Do not use another randomness source or a cached/correlated node cycle. Each current node, including equal-valued occurrences, needs the same selection probability. Any correct sampling strategy is accepted; private cached size fields are not part of the required node API.",
+          "Test input is an operation transcript: operations starts with RandomBst, whose corresponding argument row is []; Insert/Find/Delete each have [value], while GetRandomNode has []. All values are signed 32-bit integers. There are 1..2005 operations, at most 1000 live nodes, and at most three GetRandomNode requests per fixture; the checker repeats those queries internally under injected choices. Preserve the input transcript arrays and rows.",
+          "Displayed output contains results and finalValues. Constructor/Insert results are null; Find/GetRandomNode display [] for null or [Data-at-call-time] for a returned node, while identity is checked separately. Delete displays true/false. finalValues is the tree inorder Data snapshot. A random query example is one valid outcome, not a required fixed choice. C++ owns and frees its allocated nodes; query pointers are borrowed."
+        ],
+        "java": [
+          "Callable: RandomBst(); RandomNode Root; void Insert(int value); RandomNode Find(int value); boolean Delete(int value); RandomNode GetRandomNode()",
+          "Each new RandomBst starts empty and owns independent mutable tree state. Expose its actual root as readable Root (null when empty), using the provided RandomNode model with Data, Left and Right fields. The reachable graph must always be one proper BST: no cycles/shared child nodes, and a nondecreasing inorder Data sequence. Duplicates may occur on either side under that ordering; self-balancing is not required. Caller code never modifies Root or node fields directly.",
+          "Implement the exact displayed language API. Insert returns void/None, Delete returns a boolean, and Find/GetRandomNode return actual provided RandomNode objects or subclasses, not Data integers or newly allocated equal-valued copies. Returned references are borrowed and should be treated as invalidated by the next insertion/deletion or destruction. Find/GetRandomNode must preserve Root and every current node Data/Left/Right link; internal bookkeeping is allowed.",
+          "Use only the provided RandomSource.GetRandom(lower,upper), which returns an independent uniform integer on the two INCLUSIVE nonnegative signed-32-bit bounds. Do not use another randomness source or a cached/correlated node cycle. Each current node, including equal-valued occurrences, needs the same selection probability. Any correct sampling strategy is accepted; private cached size fields are not part of the required node API.",
+          "Test input is an operation transcript: operations starts with RandomBst, whose corresponding argument row is []; Insert/Find/Delete each have [value], while GetRandomNode has []. All values are signed 32-bit integers. There are 1..2005 operations, at most 1000 live nodes, and at most three GetRandomNode requests per fixture; the checker repeats those queries internally under injected choices. Preserve the input transcript arrays and rows.",
+          "Displayed output contains results and finalValues. Constructor/Insert results are null; Find/GetRandomNode display [] for null or [Data-at-call-time] for a returned node, while identity is checked separately. Delete displays true/false. finalValues is the tree inorder Data snapshot. A random query example is one valid outcome, not a required fixed choice. C++ owns and frees its allocated nodes; query pointers are borrowed."
+        ]
+      }
+    },
     "ctci6_4_12": {
       "description": "Count all nonempty downward paths whose Data values sum to target. A path may start at any selected-subtree node and end at any descendant, following only child links. It need not start at root or end at a leaf, and it cannot go upward or cross between branches.",
       "constraints": [

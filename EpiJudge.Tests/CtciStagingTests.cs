@@ -699,4 +699,30 @@ public sealed class CtciStagingTests
         Assert.Contains("RandomSource", reference.Names);
         Assert.DoesNotContain("Draw", reference.Code);
     }
+    [Fact]
+    public void RandomTreeChecksEveryMutationAndAcceptsAnyCurrentRandomNode()
+    {
+        var definition = Definition("4.11");
+        string[] operations = ["RandomBst", "Insert", "Insert", "Insert", "GetRandomNode", "Delete", "Find"];
+        int[][] arguments = [[], [7], [7], [9], [], [7], [7]];
+        var test = Case([operations, arguments], null);
+        object[] changes = [new { added = new int[0], removed = new int[0], count = 0 }, new { added = new[] { 7 }, removed = new int[0], count = 1 }, new { added = new[] { 7 }, removed = new int[0], count = 2 }, new { added = new[] { 9 }, removed = new int[0], count = 3 }, new { added = new int[0], removed = new int[0], count = 3 }, new { added = new int[0], removed = new[] { 7 }, count = 2 }, new { added = new int[0], removed = new int[0], count = 2 }];
+        foreach (int chosen in new[] { 7, 9 })
+        {
+            object?[] results = [null, null, null, null, new[] { chosen }, true, new[] { 7 }];
+            var actual = new { results, finalValues = new[] { 7, 9 } };
+            Assert.Null(CtciStagingGrader.FailureReason(definition, test, Json(new { actual, changes, mutationOk = true, uniformOk = true })));
+            Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual, changes, mutationOk = true, uniformOk = false })));
+            var wrongChanges = changes.ToArray(); wrongChanges[5] = new { added = new int[0], removed = new int[0], count = 3 };
+            Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual, changes = wrongChanges, mutationOk = true, uniformOk = true })));
+            results[6] = Array.Empty<int>();
+            Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual, changes, mutationOk = true, uniformOk = true })));
+        }
+        var reference = Assert.Single(definition.Callable("python").References);
+        Assert.Contains("RandomNode", reference.Names);
+        Assert.Contains("RandomSource", reference.Names);
+        Assert.DoesNotContain("TreeNode", reference.Names);
+        Assert.DoesNotContain("Draw", reference.Code);
+    }
+
 }

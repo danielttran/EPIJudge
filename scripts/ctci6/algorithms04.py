@@ -259,3 +259,10 @@ return result'''
     if language=='cpp':return 'std::vector<std::vector<int>> result;std::vector<int> path;std::function<void(std::vector<TreeNode*>)> visit=[&](std::vector<TreeNode*> available){if(available.empty()){result.push_back(path);return;}for(size_t i=0;i<available.size();++i){auto node=available[i];auto following=available;following.erase(following.begin()+i);if(node->Left)following.push_back(node->Left);if(node->Right)following.push_back(node->Right);path.push_back(node->Data);visit(std::move(following));path.pop_back();}};visit(root?std::vector<TreeNode*>{root}:std::vector<TreeNode*>{});return result;'
     if language=='csharp':return 'var result=new List<List<int>>();var path=new List<int>();void Visit(List<TreeNode> available){if(available.Count==0){result.Add(new List<int>(path));return;}for(int i=0;i<available.Count;++i){var node=available[i];var following=new List<TreeNode>(available);following.RemoveAt(i);if(node.Left!=null)following.Add(node.Left);if(node.Right!=null)following.Add(node.Right);path.Add(node.Data);Visit(following);path.RemoveAt(path.Count-1);}}Visit(root==null?new List<TreeNode>():new List<TreeNode>{root});return result;'
     return 'List<List<Integer>> result=new ArrayList<>();List<Integer> path=new ArrayList<>();class Search {void visit(List<TreeNode> available){if(available.isEmpty()){result.add(new ArrayList<>(path));return;}for(int i=0;i<available.size();++i){TreeNode node=available.get(i);List<TreeNode> following=new ArrayList<>(available);following.remove(i);if(node.Left!=null)following.add(node.Left);if(node.Right!=null)following.add(node.Right);path.add(node.Data);visit(following);path.remove(path.size()-1);}}}List<TreeNode> initial=new ArrayList<>();if(root!=null)initial.add(root);new Search().visit(initial);return result;'
+
+_previous_random_body=body
+
+def body(ref,language):
+    if ref!='4.11':return _previous_random_body(ref,language)
+    from algorithms_random04 import body as random_body
+    return random_body(language)

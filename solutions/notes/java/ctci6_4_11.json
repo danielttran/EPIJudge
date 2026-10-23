@@ -1,0 +1,81 @@
+{
+  "explanation": "A random choice among root, left subtree and right subtree would be biased when the subtrees have different sizes. Cache each subtree node count, draw one uniform inorder rank in 0..n-1, and descend through contiguous rank ranges. Insert/delete update only ancestors of the physically added/removed node, so counts remain useful without rescanning the tree before each random query.",
+  "correctness": "Each new leaf has size 1. Insertion increments exactly its ancestors; deletion splices a zero/one-child node, or copies the right-subtree minimum Data and removes that successor, then decrements exactly ancestors of the physical removal. Thus cached counts equal actual subtree sizes after every update, and the weak BST ordering and occurrence multiset are preserved. Find follows the comparison-directed unique search region until a matching node or null. For a random query at a node with left size L, ranks 0..L-1 belong to the left subtree, rank L to that actual node, and larger ranks to the right subtree after subtracting L+1. This partitions all n ranks into one per original current node, even with equal Data, so a uniform rank selects each with probability 1/n. Queries change no tree links/data, and fresh independent primitive draws give independent selections.",
+  "walkthrough": "Insert 4,2,6,1. The root count is 4 and its left subtree count is 2. Inorder ranks 0,1,2,3 name the actual nodes with Data 1,2,4,6; a draw of 2 returns the root 4. Delete 2 by splicing its only child 1 into root.Left, reducing the root count to 3. Find(2) is now null. Ranks 0,1,2 name Data 1,4,6, so a draw of 1 again returns node 4. Choosing root/left/right each with probability 1/3 in the first tree would incorrectly give root probability 1/3 instead of 1/4.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        "RandomBst",
+        "Insert",
+        "Insert",
+        "Insert",
+        "Insert",
+        "Find",
+        "GetRandomNode",
+        "Delete",
+        "Find",
+        "GetRandomNode"
+      ],
+      [
+        [],
+        [
+          4
+        ],
+        [
+          2
+        ],
+        [
+          6
+        ],
+        [
+          1
+        ],
+        [
+          2
+        ],
+        [],
+        [
+          2
+        ],
+        [
+          2
+        ],
+        []
+      ]
+    ],
+    "expected": {
+      "results": [
+        null,
+        null,
+        null,
+        null,
+        null,
+        [
+          2
+        ],
+        [
+          4
+        ],
+        true,
+        [],
+        [
+          4
+        ]
+      ],
+      "finalValues": [
+        1,
+        4,
+        6
+      ]
+    }
+  },
+  "timeComplexity": "O(h) worst-case time per Insert, Find, Delete and GetRandomNode for current tree height h, with one primitive draw per nonempty random query. The tree is not balanced automatically, so h may equal n; O(log n) is not guaranteed.",
+  "spaceComplexity": "O(n) owned nodes including private cached counts, O(h) temporary ancestor paths for insertion/deletion, and O(1) query auxiliary state. C++ destruction uses an O(h) traversal stack and O(n) time.",
+  "edgeCases": [
+    "Empty trees, absent find/delete, duplicate occurrences and independent instances.",
+    "Leaf, one-child and two-child deletion, repeated root deletion and duplicate successor values.",
+    "Original node identity, unequal subtree weights, unchanged query links and signed Data endpoints.",
+    "Sorted 1000-node chains without recursive stack overflow, plus repeated independent queries."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 4.11. No affiliation is implied."
+}

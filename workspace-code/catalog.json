@@ -31817,6 +31817,186 @@
       }
     },
     {
+      "problemId": "ctci6_4_11",
+      "language": "cpp",
+      "filename": "solution.cpp",
+      "signature": "RandomBst(); ~RandomBst(); RandomNode* Root; void Insert(int value); RandomNode* Find(int value); bool Delete(int value); RandomNode* GetRandomNode()",
+      "starterCode": "class RandomBst {\n public:\n  RandomNode* Root = nullptr;\n  void Insert(int value) {\n  }\n  RandomNode* Find(int value) {\n    return nullptr;\n  }\n  bool Delete(int value) {\n    return false;\n  }\n  RandomNode* GetRandomNode() {\n    return nullptr;\n  }\n};\n",
+      "solutionCode": "class RandomBst {\n  struct SizedNode final : RandomNode {\n    int Size = 1;\n    explicit SizedNode(int value) : RandomNode(value) {\n    }\n  };\n  static int size(RandomNode* node) {\n    return node == nullptr ? 0 : static_cast<SizedNode*>(node)->Size;\n  }\n\n public:\n  RandomNode* Root = nullptr;\n  RandomBst() = default;\n  RandomBst(const RandomBst&) = delete;\n  RandomBst& operator=(const RandomBst&) = delete;\n  ~RandomBst() {\n    std::vector<RandomNode*> pending;\n    if (Root != nullptr)\n      pending.push_back(Root);\n    while (!pending.empty()) {\n      auto node = pending.back();\n      pending.pop_back();\n      if (node->Left != nullptr)\n        pending.push_back(node->Left);\n      if (node->Right != nullptr)\n        pending.push_back(node->Right);\n      delete node;\n    }\n    Root = nullptr;\n  }\n  void Insert(int value) {\n    auto added = new SizedNode(value);\n    if (Root == nullptr) {\n      Root = added;\n      return;\n    }\n    std::vector<RandomNode*> path;\n    auto node = Root;\n    while (true) {\n      path.push_back(node);\n      if (value <= node->Data) {\n        if (node->Left == nullptr) {\n          node->Left = added;\n          break;\n        }\n        node = node->Left;\n      } else {\n        if (node->Right == nullptr) {\n          node->Right = added;\n          break;\n        }\n        node = node->Right;\n      }\n    }\n    for (auto ancestor : path)\n      ++static_cast<SizedNode*>(ancestor)->Size;\n  }\n  RandomNode* Find(int value) {\n    auto node = Root;\n    while (node != nullptr) {\n      if (value == node->Data)\n        return node;\n      node = value < node->Data ? node->Left : node->Right;\n    }\n    return nullptr;\n  }\n  bool Delete(int value) {\n    std::vector<RandomNode*> path;\n    auto node = Root;\n    while (node != nullptr && node->Data != value) {\n      path.push_back(node);\n      node = value < node->Data ? node->Left : node->Right;\n    }\n    if (node == nullptr)\n      return false;\n    if (node->Left != nullptr && node->Right != nullptr) {\n      path.push_back(node);\n      auto successor = node->Right;\n      while (successor->Left != nullptr) {\n        path.push_back(successor);\n        successor = successor->Left;\n      }\n      node->Data = successor->Data;\n      node = successor;\n    }\n    auto replacement = node->Left != nullptr ? node->Left : node->Right;\n    if (path.empty())\n      Root = replacement;\n    else {\n      auto parent = path.back();\n      if (parent->Left == node)\n        parent->Left = replacement;\n      else\n        parent->Right = replacement;\n    }\n    for (auto ancestor : path)\n      --static_cast<SizedNode*>(ancestor)->Size;\n    delete node;\n    return true;\n  }\n  RandomNode* GetRandomNode() {\n    if (Root == nullptr)\n      return nullptr;\n    int rank = RandomSource::GetRandom(0, size(Root) - 1);\n    auto node = Root;\n    while (node != nullptr) {\n      int leftSize = size(node->Left);\n      if (rank < leftSize)\n        node = node->Left;\n      else if (rank == leftSize)\n        return node;\n      else {\n        rank -= leftSize + 1;\n        node = node->Right;\n      }\n    }\n    return nullptr;\n  }\n};\n",
+      "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\nstruct RandomNode { int Data; RandomNode* Left=nullptr; RandomNode* Right=nullptr; explicit RandomNode(int data):Data(data){} virtual ~RandomNode()=default; };\n#include <stdexcept>\nstruct RandomSource { inline static std::function<int(int,int)> Draw=[](int,int)->int{throw std::runtime_error(\"Provided by the judge\");}; static int GetRandom(int lower,int upper){return Draw(lower,upper);} };\n",
+      "suffix": "",
+      "references": [
+        {
+          "title": "Required callable model APIs",
+          "code": "struct RandomNode {\n  int Data;\n  RandomNode* Left = nullptr;\n  RandomNode* Right = nullptr;\n  explicit RandomNode(int data) : Data(data) {\n  }\n  virtual ~RandomNode() = default;\n};\nstruct RandomSource {\n  static int GetRandom(int lower, int upper);\n};\n",
+          "names": [
+            "RandomNode",
+            "RandomSource"
+          ]
+        }
+      ],
+      "visibleSymbols": [
+        "RandomBst"
+      ],
+      "hiddenSymbols": [
+        "RandomNode",
+        "RandomSource"
+      ],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/cpp/ctci6_4_11.cpp"
+      ],
+      "sourceSha256": {
+        "starter": "09a21ff1851bd881b853097a8822ee6100e3da3379fcae6c0a303a8e7d34d6d5",
+        "solution": "6f10fc8dd2825e371aeab6a32c61ff57791752f3e57eaaa23bc939bc5608ce3c"
+      }
+    },
+    {
+      "problemId": "ctci6_4_11",
+      "language": "csharp",
+      "filename": "Solution.cs",
+      "signature": "RandomBst(); RandomNode? Root { get; }; void Insert(int value); RandomNode? Find(int value); bool Delete(int value); RandomNode? GetRandomNode()",
+      "starterCode": "public class RandomBst\n{\n    public RandomNode? Root => null;\n    public void Insert(int value)\n    {\n    }\n    public RandomNode? Find(int value) => null;\n    public bool Delete(int value) => false;\n    public RandomNode? GetRandomNode() => null;\n}\n",
+      "solutionCode": "public class RandomBst\n{\n    private sealed class SizedNode(int value) : RandomNode\n    (value)\n    {\n        public int Size = 1;\n    }\n    public RandomNode? Root { get; private set; }\n    private static int Size(RandomNode? node) => node is null ? 0 : ((SizedNode)node).Size;\n    public void Insert(int value)\n    {\n        var added = new SizedNode(value);\n        if (Root is null)\n        {\n            Root = added;\n            return;\n        }\n        var path = new List<RandomNode>();\n        var node = Root;\n        while (true)\n        {\n            path.Add(node);\n            if (value <= node.Data)\n            {\n                if (node.Left is null)\n                {\n                    node.Left = added;\n                    break;\n                }\n                node = node.Left;\n            }\n            else\n            {\n                if (node.Right is null)\n                {\n                    node.Right = added;\n                    break;\n                }\n                node = node.Right;\n            }\n        }\n        foreach (var ancestor in path)\n            ((SizedNode)ancestor).Size++;\n    }\n    public RandomNode? Find(int value)\n    {\n        var node = Root;\n        while (node is not null)\n        {\n            if (value == node.Data)\n                return node;\n            node = value < node.Data ? node.Left : node.Right;\n        }\n        return null;\n    }\n    public bool Delete(int value)\n    {\n        var path = new List<RandomNode>();\n        var node = Root;\n        while (node is not null && node.Data != value)\n        {\n            path.Add(node);\n            node = value < node.Data ? node.Left : node.Right;\n        }\n        if (node is null)\n            return false;\n        if (node.Left is not null && node.Right is not null)\n        {\n            path.Add(node);\n            var successor = node.Right;\n            while (successor.Left is not null)\n            {\n                path.Add(successor);\n                successor = successor.Left;\n            }\n            node.Data = successor.Data;\n            node = successor;\n        }\n        var replacement = node.Left ?? node.Right;\n        if (path.Count == 0)\n            Root = replacement;\n        else\n        {\n            var parent = path[^1];\n            if (ReferenceEquals(parent.Left, node))\n                parent.Left = replacement;\n            else\n                parent.Right = replacement;\n        }\n        foreach (var ancestor in path)\n            ((SizedNode)ancestor).Size--;\n        return true;\n    }\n    public RandomNode? GetRandomNode()\n    {\n        if (Root is null)\n            return null;\n        int rank = RandomSource.GetRandom(0, Size(Root) - 1);\n        var node = Root;\n        while (node is not null)\n        {\n            int leftSize = Size(node.Left);\n            if (rank < leftSize)\n                node = node.Left;\n            else if (rank == leftSize)\n                return node;\n            else\n            {\n                rank -= leftSize + 1;\n                node = node.Right;\n            }\n        }\n        return null;\n    }\n}\n",
+      "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic class RandomNode { public int Data; public RandomNode? Left,Right; public RandomNode(int data){Data=data;} }\npublic static class RandomSource { internal static Func<int,int,int> Draw=(lower,upper)=>throw new InvalidOperationException(\"Provided by the judge\"); public static int GetRandom(int lower,int upper)=>Draw(lower,upper); }\n",
+      "suffix": "",
+      "references": [
+        {
+          "title": "Required callable model APIs",
+          "code": "public class RandomNode\n{\n    public int Data;\n    public RandomNode? Left, Right;\n    public RandomNode(int data)\n    {\n        Data = data;\n    }\n}\npublic static class RandomSource\n{\n    public static int GetRandom(int lower, int upper)\n    {\n        throw new System.InvalidOperationException(\"Provided by the judge\");\n    }\n}\n",
+          "names": [
+            "RandomNode",
+            "RandomSource"
+          ]
+        }
+      ],
+      "visibleSymbols": [
+        "RandomBst"
+      ],
+      "hiddenSymbols": [
+        "RandomNode",
+        "RandomSource"
+      ],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/csharp/ctci6_4_11.cs"
+      ],
+      "sourceSha256": {
+        "starter": "f5c49e81929c12ec562244d1ceb9a8de42d350a961bbd6fa9dd8c8af5037a533",
+        "solution": "3f7b76e84a17e9d0917e83b602efd5903dd28e559a8659932a2231c14ab214f8"
+      }
+    },
+    {
+      "problemId": "ctci6_4_11",
+      "language": "java",
+      "filename": "RandomBst.java",
+      "signature": "RandomBst(); RandomNode Root; void Insert(int value); RandomNode Find(int value); boolean Delete(int value); RandomNode GetRandomNode()",
+      "starterCode": "class RandomBst {\n  public RandomNode Root = null;\n  public void Insert(int value) {\n  }\n  public RandomNode Find(int value) {\n    return null;\n  }\n  public boolean Delete(int value) {\n    return false;\n  }\n  public RandomNode GetRandomNode() {\n    return null;\n  }\n}\n",
+      "solutionCode": "class RandomBst {\n  private static final class SizedNode extends RandomNode {\n    int Size = 1;\n    SizedNode(int value) {\n      super(value);\n    }\n  }\n  public RandomNode Root;\n  private static int size(RandomNode node) {\n    return node == null ? 0 : ((SizedNode) node).Size;\n  }\n  public void Insert(int value) {\n    var added = new SizedNode(value);\n    if (Root == null) {\n      Root = added;\n      return;\n    }\n    var path = new ArrayList<RandomNode>();\n    RandomNode node = Root;\n    while (true) {\n      path.add(node);\n      if (value <= node.Data) {\n        if (node.Left == null) {\n          node.Left = added;\n          break;\n        }\n        node = node.Left;\n      } else {\n        if (node.Right == null) {\n          node.Right = added;\n          break;\n        }\n        node = node.Right;\n      }\n    }\n    for (var ancestor : path)\n      ((SizedNode) ancestor).Size++;\n  }\n  public RandomNode Find(int value) {\n    RandomNode node = Root;\n    while (node != null) {\n      if (value == node.Data)\n        return node;\n      node = value < node.Data ? node.Left : node.Right;\n    }\n    return null;\n  }\n  public boolean Delete(int value) {\n    var path = new ArrayList<RandomNode>();\n    RandomNode node = Root;\n    while (node != null && node.Data != value) {\n      path.add(node);\n      node = value < node.Data ? node.Left : node.Right;\n    }\n    if (node == null)\n      return false;\n    if (node.Left != null && node.Right != null) {\n      path.add(node);\n      RandomNode successor = node.Right;\n      while (successor.Left != null) {\n        path.add(successor);\n        successor = successor.Left;\n      }\n      node.Data = successor.Data;\n      node = successor;\n    }\n    RandomNode replacement = node.Left != null ? node.Left : node.Right;\n    if (path.isEmpty())\n      Root = replacement;\n    else {\n      RandomNode parent = path.get(path.size() - 1);\n      if (parent.Left == node)\n        parent.Left = replacement;\n      else\n        parent.Right = replacement;\n    }\n    for (var ancestor : path)\n      ((SizedNode) ancestor).Size--;\n    return true;\n  }\n  public RandomNode GetRandomNode() {\n    if (Root == null)\n      return null;\n    int rank = RandomSource.GetRandom(0, size(Root) - 1);\n    RandomNode node = Root;\n    while (node != null) {\n      int leftSize = size(node.Left);\n      if (rank < leftSize)\n        node = node.Left;\n      else if (rank == leftSize)\n        return node;\n      else {\n        rank -= leftSize + 1;\n        node = node.Right;\n      }\n    }\n    return null;\n  }\n}\n",
+      "prefix": "import java.util.*;\nclass RandomNode { public int Data; public RandomNode Left,Right; public RandomNode(int data){Data=data;} }\nclass RandomSource { static java.util.function.IntBinaryOperator Draw=(lower,upper)->{throw new IllegalStateException(\"Provided by the judge\");}; public static int GetRandom(int lower,int upper){return Draw.applyAsInt(lower,upper);} }\n",
+      "suffix": "",
+      "references": [
+        {
+          "title": "Required callable model APIs",
+          "code": "class RandomNode {\n  public int Data;\n  public RandomNode Left, Right;\n  public RandomNode(int data) {\n    Data = data;\n  }\n}\nclass RandomSource {\n  public static int GetRandom(int lower, int upper) {\n    throw new IllegalStateException(\"Provided by the judge\");\n  }\n}\n",
+          "names": [
+            "RandomNode",
+            "RandomSource"
+          ]
+        }
+      ],
+      "visibleSymbols": [
+        "RandomBst"
+      ],
+      "hiddenSymbols": [
+        "RandomNode",
+        "RandomSource"
+      ],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/java/ctci6_4_11.java"
+      ],
+      "sourceSha256": {
+        "starter": "5850b04910a728eb582efa32054b4498c52382968e60c1177a7571da1a6b9028",
+        "solution": "8a48fa7d59bd706fa77a780f1ffdd3da4ad7c525758a6f55582a530d3981ffaf"
+      }
+    },
+    {
+      "problemId": "ctci6_4_11",
+      "language": "javascript",
+      "filename": "solution.js",
+      "signature": "new RandomBst(); Root: RandomNode | null; Insert(value); Find(value) -> RandomNode | null; Delete(value) -> boolean; GetRandomNode() -> RandomNode | null",
+      "starterCode": "class RandomBst {\n  constructor() {\n    this.Root = null;\n  }\n  Insert(value) {}\n  Find(value) {\n    return null;\n  }\n  Delete(value) {\n    return false;\n  }\n  GetRandomNode() {\n    return null;\n  }\n}\n",
+      "solutionCode": "class RandomBst {\n  static SizedNode = class extends RandomNode {\n    constructor(value) {\n      super(value);\n      this.Size = 1;\n    }\n  };\n  constructor() {\n    this.Root = null;\n  }\n  Insert(value) {\n    const added = new RandomBst.SizedNode(value);\n    if (this.Root === null) {\n      this.Root = added;\n      return;\n    }\n    const path = [];\n    let node = this.Root;\n    while (true) {\n      path.push(node);\n      if (value <= node.Data) {\n        if (node.Left === null) {\n          node.Left = added;\n          break;\n        }\n        node = node.Left;\n      } else {\n        if (node.Right === null) {\n          node.Right = added;\n          break;\n        }\n        node = node.Right;\n      }\n    }\n    for (const ancestor of path) ++ancestor.Size;\n  }\n  Find(value) {\n    let node = this.Root;\n    while (node !== null) {\n      if (value === node.Data) return node;\n      node = value < node.Data ? node.Left : node.Right;\n    }\n    return null;\n  }\n  Delete(value) {\n    const path = [];\n    let node = this.Root;\n    while (node !== null && node.Data !== value) {\n      path.push(node);\n      node = value < node.Data ? node.Left : node.Right;\n    }\n    if (node === null) return false;\n    if (node.Left !== null && node.Right !== null) {\n      path.push(node);\n      let successor = node.Right;\n      while (successor.Left !== null) {\n        path.push(successor);\n        successor = successor.Left;\n      }\n      node.Data = successor.Data;\n      node = successor;\n    }\n    const replacement = node.Left !== null ? node.Left : node.Right;\n    if (path.length === 0) this.Root = replacement;\n    else {\n      const parent = path[path.length - 1];\n      if (parent.Left === node) parent.Left = replacement;\n      else parent.Right = replacement;\n    }\n    for (const ancestor of path) --ancestor.Size;\n    return true;\n  }\n  GetRandomNode() {\n    if (this.Root === null) return null;\n    let rank = RandomSource.GetRandom(0, this.Root.Size - 1),\n      node = this.Root;\n    while (node !== null) {\n      const leftSize = node.Left === null ? 0 : node.Left.Size;\n      if (rank < leftSize) node = node.Left;\n      else if (rank === leftSize) return node;\n      else {\n        rank -= leftSize + 1;\n        node = node.Right;\n      }\n    }\n    return null;\n  }\n}\n",
+      "prefix": "'use strict';\nclass RandomNode {constructor(data){this.Data=data;this.Left=null;this.Right=null;}}\nclass RandomSource {static Draw=(lower,upper)=>{throw new Error(\"Provided by the judge\");};static GetRandom(lower,upper){return RandomSource.Draw(lower,upper);}}\n",
+      "suffix": "\nmodule.exports = {RandomNode,RandomSource,RandomBst};\n",
+      "references": [
+        {
+          "title": "Required callable model APIs",
+          "code": "class RandomNode {\n  constructor(data) {\n    this.Data = data;\n    this.Left = null;\n    this.Right = null;\n  }\n}\nclass RandomSource {\n  static GetRandom(lower, upper) {\n    throw new Error(\"Provided by the judge\");\n  }\n}\n",
+          "names": [
+            "RandomNode",
+            "RandomSource"
+          ]
+        }
+      ],
+      "visibleSymbols": [
+        "RandomBst"
+      ],
+      "hiddenSymbols": [
+        "RandomNode",
+        "RandomSource"
+      ],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/javascript/ctci6_4_11.js"
+      ],
+      "sourceSha256": {
+        "starter": "4552ff9e8fbd16d040efc2a90e0f342d681a4416d48a5786ad3ced3ce87e48a3",
+        "solution": "b93a9d70db299f8362207c575172ca0115b09b3af2fb06fac7c965a172525167"
+      }
+    },
+    {
+      "problemId": "ctci6_4_11",
+      "language": "python",
+      "filename": "solution.py",
+      "signature": "RandomBst(); Root: RandomNode | None; Insert(value: int) -> None; Find(value: int) -> RandomNode | None; Delete(value: int) -> bool; GetRandomNode() -> RandomNode | None",
+      "starterCode": "class RandomBst:\n    def __init__(self):\n        self.Root = None\n\n    def Insert(self, value: int) -> None:\n        pass\n\n    def Find(self, value: int) -> RandomNode | None:\n        return None\n\n    def Delete(self, value: int) -> bool:\n        return False\n\n    def GetRandomNode(self) -> RandomNode | None:\n        return None\n",
+      "solutionCode": "class RandomBst:\n    class _SizedNode(RandomNode):\n        def __init__(self, value: int):\n            super().__init__(value)\n            self.Size = 1\n\n    def __init__(self):\n        self.Root: RandomNode | None = None\n\n    def Insert(self, value: int) -> None:\n        added = RandomBst._SizedNode(value)\n        if self.Root is None:\n            self.Root = added\n            return\n        path = []\n        node = self.Root\n        while True:\n            path.append(node)\n            if value <= node.Data:\n                if node.Left is None:\n                    node.Left = added\n                    break\n                node = node.Left\n            else:\n                if node.Right is None:\n                    node.Right = added\n                    break\n                node = node.Right\n        for ancestor in path:\n            ancestor.Size += 1\n\n    def Find(self, value: int) -> RandomNode | None:\n        node = self.Root\n        while node is not None:\n            if value == node.Data:\n                return node\n            node = node.Left if value < node.Data else node.Right\n        return None\n\n    def Delete(self, value: int) -> bool:\n        path = []\n        node = self.Root\n        while node is not None and node.Data != value:\n            path.append(node)\n            node = node.Left if value < node.Data else node.Right\n        if node is None:\n            return False\n        if node.Left is not None and node.Right is not None:\n            path.append(node)\n            successor = node.Right\n            while successor.Left is not None:\n                path.append(successor)\n                successor = successor.Left\n            node.Data = successor.Data\n            node = successor\n        replacement = node.Left if node.Left is not None else node.Right\n        if not path:\n            self.Root = replacement\n        else:\n            parent = path[-1]\n            if parent.Left is node:\n                parent.Left = replacement\n            else:\n                parent.Right = replacement\n        for ancestor in path:\n            ancestor.Size -= 1\n        return True\n\n    def GetRandomNode(self) -> RandomNode | None:\n        if self.Root is None:\n            return None\n        rank = RandomSource.GetRandom(0, self.Root.Size - 1)\n        node = self.Root\n        while node is not None:\n            left_size = 0 if node.Left is None else node.Left.Size\n            if rank < left_size:\n                node = node.Left\n            elif rank == left_size:\n                return node\n            else:\n                rank -= left_size + 1\n                node = node.Right\n        return None\n",
+      "prefix": "class RandomNode:\n    def __init__(self,data: int):\n        self.Data=data\n        self.Left: RandomNode | None = None\n        self.Right: RandomNode | None = None\nclass RandomSource:\n    @staticmethod\n    def GetRandom(lower: int,upper: int) -> int:\n        return RandomSource.Draw(lower,upper)\n",
+      "suffix": "",
+      "references": [
+        {
+          "title": "Required callable model APIs",
+          "code": "class RandomNode:\n    def __init__(self, data: int):\n        self.Data = data\n        self.Left: RandomNode | None = None\n        self.Right: RandomNode | None = None\n\n\nclass RandomSource:\n    @staticmethod\n    def GetRandom(lower: int, upper: int) -> int:\n        raise RuntimeError(\"Provided by the judge\")\n",
+          "names": [
+            "RandomNode",
+            "RandomSource"
+          ]
+        }
+      ],
+      "visibleSymbols": [
+        "RandomBst"
+      ],
+      "hiddenSymbols": [
+        "RandomNode",
+        "RandomSource"
+      ],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/python/ctci6_4_11.py"
+      ],
+      "sourceSha256": {
+        "starter": "e58b1562e36144081112d3c30eaa911d5c8730ad8b63a61889cbdbf73f3ea439",
+        "solution": "a11742d10152d66c520e731caf685302d77f70705582b83a22076b61755925fc"
+      }
+    },
+    {
       "problemId": "ctci6_4_12",
       "language": "cpp",
       "filename": "solution.cpp",

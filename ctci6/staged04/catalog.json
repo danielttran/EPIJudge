@@ -918,6 +918,139 @@
     }
   },
   {
+    "ref": "4.11",
+    "method": "RandomBst",
+    "params": [
+      [
+        "operations",
+        "as"
+      ],
+      [
+        "arguments",
+        "aai"
+      ]
+    ],
+    "result": "state",
+    "mutation": "state",
+    "description": "Implement a binary search tree class RandomBst with Insert, Find, Delete and GetRandomNode. Insert adds one occurrence, including duplicates. Find returns any CURRENT tree node with the requested Data, or null. Delete removes exactly one matching occurrence and returns true, or returns false without change if absent. GetRandomNode returns an actual current node with equal probability 1/n for each of the n nodes, or null for an empty tree. Equal Data values still belong to distinct nodes and must not collapse their selection probabilities.",
+    "constraints": [
+      "Each new RandomBst starts empty and owns independent mutable tree state. Expose its actual root as readable Root (null when empty), using the provided RandomNode model with Data, Left and Right fields. The reachable graph must always be one proper BST: no cycles/shared child nodes, and a nondecreasing inorder Data sequence. Duplicates may occur on either side under that ordering; self-balancing is not required. Caller code never modifies Root or node fields directly.",
+      "Implement the exact displayed language API. Insert returns void/None, Delete returns a boolean, and Find/GetRandomNode return actual provided RandomNode objects or subclasses, not Data integers or newly allocated equal-valued copies. Returned references are borrowed and should be treated as invalidated by the next insertion/deletion or destruction. Find/GetRandomNode must preserve Root and every current node Data/Left/Right link; internal bookkeeping is allowed.",
+      "Use only the provided RandomSource.GetRandom(lower,upper), which returns an independent uniform integer on the two INCLUSIVE nonnegative signed-32-bit bounds. Do not use another randomness source or a cached/correlated node cycle. Each current node, including equal-valued occurrences, needs the same selection probability. Any correct sampling strategy is accepted; private cached size fields are not part of the required node API.",
+      "Test input is an operation transcript: operations starts with RandomBst, whose corresponding argument row is []; Insert/Find/Delete each have [value], while GetRandomNode has []. All values are signed 32-bit integers. There are 1..2005 operations, at most 1000 live nodes, and at most three GetRandomNode requests per fixture; the checker repeats those queries internally under injected choices. Preserve the input transcript arrays and rows.",
+      "Displayed output contains results and finalValues. Constructor/Insert results are null; Find/GetRandomNode display [] for null or [Data-at-call-time] for a returned node, while identity is checked separately. Delete displays true/false. finalValues is the tree inorder Data snapshot. A random query example is one valid outcome, not a required fixed choice. C++ owns and frees its allocated nodes; query pointers are borrowed."
+    ],
+    "why": "A random choice among root, left subtree and right subtree would be biased when the subtrees have different sizes. Cache each subtree node count, draw one uniform inorder rank in 0..n-1, and descend through contiguous rank ranges. Insert/delete update only ancestors of the physically added/removed node, so counts remain useful without rescanning the tree before each random query.",
+    "correctness": "Each new leaf has size 1. Insertion increments exactly its ancestors; deletion splices a zero/one-child node, or copies the right-subtree minimum Data and removes that successor, then decrements exactly ancestors of the physical removal. Thus cached counts equal actual subtree sizes after every update, and the weak BST ordering and occurrence multiset are preserved. Find follows the comparison-directed unique search region until a matching node or null. For a random query at a node with left size L, ranks 0..L-1 belong to the left subtree, rank L to that actual node, and larger ranks to the right subtree after subtracting L+1. This partitions all n ranks into one per original current node, even with equal Data, so a uniform rank selects each with probability 1/n. Queries change no tree links/data, and fresh independent primitive draws give independent selections.",
+    "walkthrough": "Insert 4,2,6,1. The root count is 4 and its left subtree count is 2. Inorder ranks 0,1,2,3 name the actual nodes with Data 1,2,4,6; a draw of 2 returns the root 4. Delete 2 by splicing its only child 1 into root.Left, reducing the root count to 3. Find(2) is now null. Ranks 0,1,2 name Data 1,4,6, so a draw of 1 again returns node 4. Choosing root/left/right each with probability 1/3 in the first tree would incorrectly give root probability 1/3 instead of 1/4.",
+    "example": [
+      [
+        [
+          "RandomBst",
+          "Insert",
+          "Insert",
+          "Insert",
+          "Insert",
+          "Find",
+          "GetRandomNode",
+          "Delete",
+          "Find",
+          "GetRandomNode"
+        ],
+        [
+          [],
+          [
+            4
+          ],
+          [
+            2
+          ],
+          [
+            6
+          ],
+          [
+            1
+          ],
+          [
+            2
+          ],
+          [],
+          [
+            2
+          ],
+          [
+            2
+          ],
+          []
+        ]
+      ],
+      {
+        "results": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          [
+            2
+          ],
+          [
+            4
+          ],
+          true,
+          [],
+          [
+            4
+          ]
+        ],
+        "finalValues": [
+          1,
+          4,
+          6
+        ]
+      }
+    ],
+    "time": "O(h) worst-case time per Insert, Find, Delete and GetRandomNode for current tree height h, with one primitive draw per nonempty random query. The tree is not balanced automatically, so h may equal n; O(log n) is not guaranteed.",
+    "space": "O(n) owned nodes including private cached counts, O(h) temporary ancestor paths for insertion/deletion, and O(1) query auxiliary state. C++ destruction uses an O(h) traversal stack and O(n) time.",
+    "edges": [
+      "Empty trees, absent find/delete, duplicate occurrences and independent instances.",
+      "Leaf, one-child and two-child deletion, repeated root deletion and duplicate successor values.",
+      "Original node identity, unequal subtree weights, unchanged query links and signed Data endpoints.",
+      "Sorted 1000-node chains without recursive stack overflow, plus repeated independent queries."
+    ],
+    "related": "Primary Java code establishes insertion/find and cached-rank node sampling; the author-linked JavaScript reference also establishes deletion but has implementation defects. The independent class completes all four operations, accepts alternate uniform samplers and never treats a copied Data value as a returned node.",
+    "id": "ctci6_4_11",
+    "title": "Random Node",
+    "testCount": 1604,
+    "languages": {
+      "csharp": {
+        "signature": "RandomBst(); RandomNode? Root { get; }; void Insert(int value); RandomNode? Find(int value); bool Delete(int value); RandomNode? GetRandomNode()",
+        "starterCode": "public class RandomBst\n{\n    public RandomNode? Root => null;\n    public void Insert(int value)\n    {\n    }\n    public RandomNode? Find(int value) => null;\n    public bool Delete(int value) => false;\n    public RandomNode? GetRandomNode() => null;\n}\n",
+        "solutionCode": "public class RandomBst\n{\n    private sealed class SizedNode(int value) : RandomNode\n    (value)\n    {\n        public int Size = 1;\n    }\n    public RandomNode? Root { get; private set; }\n    private static int Size(RandomNode? node) => node is null ? 0 : ((SizedNode)node).Size;\n    public void Insert(int value)\n    {\n        var added = new SizedNode(value);\n        if (Root is null)\n        {\n            Root = added;\n            return;\n        }\n        var path = new List<RandomNode>();\n        var node = Root;\n        while (true)\n        {\n            path.Add(node);\n            if (value <= node.Data)\n            {\n                if (node.Left is null)\n                {\n                    node.Left = added;\n                    break;\n                }\n                node = node.Left;\n            }\n            else\n            {\n                if (node.Right is null)\n                {\n                    node.Right = added;\n                    break;\n                }\n                node = node.Right;\n            }\n        }\n        foreach (var ancestor in path)\n            ((SizedNode)ancestor).Size++;\n    }\n    public RandomNode? Find(int value)\n    {\n        var node = Root;\n        while (node is not null)\n        {\n            if (value == node.Data)\n                return node;\n            node = value < node.Data ? node.Left : node.Right;\n        }\n        return null;\n    }\n    public bool Delete(int value)\n    {\n        var path = new List<RandomNode>();\n        var node = Root;\n        while (node is not null && node.Data != value)\n        {\n            path.Add(node);\n            node = value < node.Data ? node.Left : node.Right;\n        }\n        if (node is null)\n            return false;\n        if (node.Left is not null && node.Right is not null)\n        {\n            path.Add(node);\n            var successor = node.Right;\n            while (successor.Left is not null)\n            {\n                path.Add(successor);\n                successor = successor.Left;\n            }\n            node.Data = successor.Data;\n            node = successor;\n        }\n        var replacement = node.Left ?? node.Right;\n        if (path.Count == 0)\n            Root = replacement;\n        else\n        {\n            var parent = path[^1];\n            if (ReferenceEquals(parent.Left, node))\n                parent.Left = replacement;\n            else\n                parent.Right = replacement;\n        }\n        foreach (var ancestor in path)\n            ((SizedNode)ancestor).Size--;\n        return true;\n    }\n    public RandomNode? GetRandomNode()\n    {\n        if (Root is null)\n            return null;\n        int rank = RandomSource.GetRandom(0, Size(Root) - 1);\n        var node = Root;\n        while (node is not null)\n        {\n            int leftSize = Size(node.Left);\n            if (rank < leftSize)\n                node = node.Left;\n            else if (rank == leftSize)\n                return node;\n            else\n            {\n                rank -= leftSize + 1;\n                node = node.Right;\n            }\n        }\n        return null;\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "new RandomBst(); Root: RandomNode | null; Insert(value); Find(value) -> RandomNode | null; Delete(value) -> boolean; GetRandomNode() -> RandomNode | null",
+        "starterCode": "class RandomBst {\n  constructor() {\n    this.Root = null;\n  }\n  Insert(value) {}\n  Find(value) {\n    return null;\n  }\n  Delete(value) {\n    return false;\n  }\n  GetRandomNode() {\n    return null;\n  }\n}\n",
+        "solutionCode": "class RandomBst {\n  static SizedNode = class extends RandomNode {\n    constructor(value) {\n      super(value);\n      this.Size = 1;\n    }\n  };\n  constructor() {\n    this.Root = null;\n  }\n  Insert(value) {\n    const added = new RandomBst.SizedNode(value);\n    if (this.Root === null) {\n      this.Root = added;\n      return;\n    }\n    const path = [];\n    let node = this.Root;\n    while (true) {\n      path.push(node);\n      if (value <= node.Data) {\n        if (node.Left === null) {\n          node.Left = added;\n          break;\n        }\n        node = node.Left;\n      } else {\n        if (node.Right === null) {\n          node.Right = added;\n          break;\n        }\n        node = node.Right;\n      }\n    }\n    for (const ancestor of path) ++ancestor.Size;\n  }\n  Find(value) {\n    let node = this.Root;\n    while (node !== null) {\n      if (value === node.Data) return node;\n      node = value < node.Data ? node.Left : node.Right;\n    }\n    return null;\n  }\n  Delete(value) {\n    const path = [];\n    let node = this.Root;\n    while (node !== null && node.Data !== value) {\n      path.push(node);\n      node = value < node.Data ? node.Left : node.Right;\n    }\n    if (node === null) return false;\n    if (node.Left !== null && node.Right !== null) {\n      path.push(node);\n      let successor = node.Right;\n      while (successor.Left !== null) {\n        path.push(successor);\n        successor = successor.Left;\n      }\n      node.Data = successor.Data;\n      node = successor;\n    }\n    const replacement = node.Left !== null ? node.Left : node.Right;\n    if (path.length === 0) this.Root = replacement;\n    else {\n      const parent = path[path.length - 1];\n      if (parent.Left === node) parent.Left = replacement;\n      else parent.Right = replacement;\n    }\n    for (const ancestor of path) --ancestor.Size;\n    return true;\n  }\n  GetRandomNode() {\n    if (this.Root === null) return null;\n    let rank = RandomSource.GetRandom(0, this.Root.Size - 1),\n      node = this.Root;\n    while (node !== null) {\n      const leftSize = node.Left === null ? 0 : node.Left.Size;\n      if (rank < leftSize) node = node.Left;\n      else if (rank === leftSize) return node;\n      else {\n        rank -= leftSize + 1;\n        node = node.Right;\n      }\n    }\n    return null;\n  }\n}\n"
+      },
+      "python": {
+        "signature": "RandomBst(); Root: RandomNode | None; Insert(value: int) -> None; Find(value: int) -> RandomNode | None; Delete(value: int) -> bool; GetRandomNode() -> RandomNode | None",
+        "starterCode": "class RandomBst:\n    def __init__(self):\n        self.Root = None\n\n    def Insert(self, value: int) -> None:\n        pass\n\n    def Find(self, value: int) -> RandomNode | None:\n        return None\n\n    def Delete(self, value: int) -> bool:\n        return False\n\n    def GetRandomNode(self) -> RandomNode | None:\n        return None\n",
+        "solutionCode": "class RandomBst:\n    class _SizedNode(RandomNode):\n        def __init__(self, value: int):\n            super().__init__(value)\n            self.Size = 1\n\n    def __init__(self):\n        self.Root: RandomNode | None = None\n\n    def Insert(self, value: int) -> None:\n        added = RandomBst._SizedNode(value)\n        if self.Root is None:\n            self.Root = added\n            return\n        path = []\n        node = self.Root\n        while True:\n            path.append(node)\n            if value <= node.Data:\n                if node.Left is None:\n                    node.Left = added\n                    break\n                node = node.Left\n            else:\n                if node.Right is None:\n                    node.Right = added\n                    break\n                node = node.Right\n        for ancestor in path:\n            ancestor.Size += 1\n\n    def Find(self, value: int) -> RandomNode | None:\n        node = self.Root\n        while node is not None:\n            if value == node.Data:\n                return node\n            node = node.Left if value < node.Data else node.Right\n        return None\n\n    def Delete(self, value: int) -> bool:\n        path = []\n        node = self.Root\n        while node is not None and node.Data != value:\n            path.append(node)\n            node = node.Left if value < node.Data else node.Right\n        if node is None:\n            return False\n        if node.Left is not None and node.Right is not None:\n            path.append(node)\n            successor = node.Right\n            while successor.Left is not None:\n                path.append(successor)\n                successor = successor.Left\n            node.Data = successor.Data\n            node = successor\n        replacement = node.Left if node.Left is not None else node.Right\n        if not path:\n            self.Root = replacement\n        else:\n            parent = path[-1]\n            if parent.Left is node:\n                parent.Left = replacement\n            else:\n                parent.Right = replacement\n        for ancestor in path:\n            ancestor.Size -= 1\n        return True\n\n    def GetRandomNode(self) -> RandomNode | None:\n        if self.Root is None:\n            return None\n        rank = RandomSource.GetRandom(0, self.Root.Size - 1)\n        node = self.Root\n        while node is not None:\n            left_size = 0 if node.Left is None else node.Left.Size\n            if rank < left_size:\n                node = node.Left\n            elif rank == left_size:\n                return node\n            else:\n                rank -= left_size + 1\n                node = node.Right\n        return None\n"
+      },
+      "cpp": {
+        "signature": "RandomBst(); ~RandomBst(); RandomNode* Root; void Insert(int value); RandomNode* Find(int value); bool Delete(int value); RandomNode* GetRandomNode()",
+        "starterCode": "class RandomBst {\n public:\n  RandomNode* Root = nullptr;\n  void Insert(int value) {\n  }\n  RandomNode* Find(int value) {\n    return nullptr;\n  }\n  bool Delete(int value) {\n    return false;\n  }\n  RandomNode* GetRandomNode() {\n    return nullptr;\n  }\n};\n",
+        "solutionCode": "class RandomBst {\n  struct SizedNode final : RandomNode {\n    int Size = 1;\n    explicit SizedNode(int value) : RandomNode(value) {\n    }\n  };\n  static int size(RandomNode* node) {\n    return node == nullptr ? 0 : static_cast<SizedNode*>(node)->Size;\n  }\n\n public:\n  RandomNode* Root = nullptr;\n  RandomBst() = default;\n  RandomBst(const RandomBst&) = delete;\n  RandomBst& operator=(const RandomBst&) = delete;\n  ~RandomBst() {\n    std::vector<RandomNode*> pending;\n    if (Root != nullptr)\n      pending.push_back(Root);\n    while (!pending.empty()) {\n      auto node = pending.back();\n      pending.pop_back();\n      if (node->Left != nullptr)\n        pending.push_back(node->Left);\n      if (node->Right != nullptr)\n        pending.push_back(node->Right);\n      delete node;\n    }\n    Root = nullptr;\n  }\n  void Insert(int value) {\n    auto added = new SizedNode(value);\n    if (Root == nullptr) {\n      Root = added;\n      return;\n    }\n    std::vector<RandomNode*> path;\n    auto node = Root;\n    while (true) {\n      path.push_back(node);\n      if (value <= node->Data) {\n        if (node->Left == nullptr) {\n          node->Left = added;\n          break;\n        }\n        node = node->Left;\n      } else {\n        if (node->Right == nullptr) {\n          node->Right = added;\n          break;\n        }\n        node = node->Right;\n      }\n    }\n    for (auto ancestor : path)\n      ++static_cast<SizedNode*>(ancestor)->Size;\n  }\n  RandomNode* Find(int value) {\n    auto node = Root;\n    while (node != nullptr) {\n      if (value == node->Data)\n        return node;\n      node = value < node->Data ? node->Left : node->Right;\n    }\n    return nullptr;\n  }\n  bool Delete(int value) {\n    std::vector<RandomNode*> path;\n    auto node = Root;\n    while (node != nullptr && node->Data != value) {\n      path.push_back(node);\n      node = value < node->Data ? node->Left : node->Right;\n    }\n    if (node == nullptr)\n      return false;\n    if (node->Left != nullptr && node->Right != nullptr) {\n      path.push_back(node);\n      auto successor = node->Right;\n      while (successor->Left != nullptr) {\n        path.push_back(successor);\n        successor = successor->Left;\n      }\n      node->Data = successor->Data;\n      node = successor;\n    }\n    auto replacement = node->Left != nullptr ? node->Left : node->Right;\n    if (path.empty())\n      Root = replacement;\n    else {\n      auto parent = path.back();\n      if (parent->Left == node)\n        parent->Left = replacement;\n      else\n        parent->Right = replacement;\n    }\n    for (auto ancestor : path)\n      --static_cast<SizedNode*>(ancestor)->Size;\n    delete node;\n    return true;\n  }\n  RandomNode* GetRandomNode() {\n    if (Root == nullptr)\n      return nullptr;\n    int rank = RandomSource::GetRandom(0, size(Root) - 1);\n    auto node = Root;\n    while (node != nullptr) {\n      int leftSize = size(node->Left);\n      if (rank < leftSize)\n        node = node->Left;\n      else if (rank == leftSize)\n        return node;\n      else {\n        rank -= leftSize + 1;\n        node = node->Right;\n      }\n    }\n    return nullptr;\n  }\n};\n"
+      },
+      "java": {
+        "signature": "RandomBst(); RandomNode Root; void Insert(int value); RandomNode Find(int value); boolean Delete(int value); RandomNode GetRandomNode()",
+        "starterCode": "class RandomBst {\n  public RandomNode Root = null;\n  public void Insert(int value) {\n  }\n  public RandomNode Find(int value) {\n    return null;\n  }\n  public boolean Delete(int value) {\n    return false;\n  }\n  public RandomNode GetRandomNode() {\n    return null;\n  }\n}\n",
+        "solutionCode": "class RandomBst {\n  private static final class SizedNode extends RandomNode {\n    int Size = 1;\n    SizedNode(int value) {\n      super(value);\n    }\n  }\n  public RandomNode Root;\n  private static int size(RandomNode node) {\n    return node == null ? 0 : ((SizedNode) node).Size;\n  }\n  public void Insert(int value) {\n    var added = new SizedNode(value);\n    if (Root == null) {\n      Root = added;\n      return;\n    }\n    var path = new ArrayList<RandomNode>();\n    RandomNode node = Root;\n    while (true) {\n      path.add(node);\n      if (value <= node.Data) {\n        if (node.Left == null) {\n          node.Left = added;\n          break;\n        }\n        node = node.Left;\n      } else {\n        if (node.Right == null) {\n          node.Right = added;\n          break;\n        }\n        node = node.Right;\n      }\n    }\n    for (var ancestor : path)\n      ((SizedNode) ancestor).Size++;\n  }\n  public RandomNode Find(int value) {\n    RandomNode node = Root;\n    while (node != null) {\n      if (value == node.Data)\n        return node;\n      node = value < node.Data ? node.Left : node.Right;\n    }\n    return null;\n  }\n  public boolean Delete(int value) {\n    var path = new ArrayList<RandomNode>();\n    RandomNode node = Root;\n    while (node != null && node.Data != value) {\n      path.add(node);\n      node = value < node.Data ? node.Left : node.Right;\n    }\n    if (node == null)\n      return false;\n    if (node.Left != null && node.Right != null) {\n      path.add(node);\n      RandomNode successor = node.Right;\n      while (successor.Left != null) {\n        path.add(successor);\n        successor = successor.Left;\n      }\n      node.Data = successor.Data;\n      node = successor;\n    }\n    RandomNode replacement = node.Left != null ? node.Left : node.Right;\n    if (path.isEmpty())\n      Root = replacement;\n    else {\n      RandomNode parent = path.get(path.size() - 1);\n      if (parent.Left == node)\n        parent.Left = replacement;\n      else\n        parent.Right = replacement;\n    }\n    for (var ancestor : path)\n      ((SizedNode) ancestor).Size--;\n    return true;\n  }\n  public RandomNode GetRandomNode() {\n    if (Root == null)\n      return null;\n    int rank = RandomSource.GetRandom(0, size(Root) - 1);\n    RandomNode node = Root;\n    while (node != null) {\n      int leftSize = size(node.Left);\n      if (rank < leftSize)\n        node = node.Left;\n      else if (rank == leftSize)\n        return node;\n      else {\n        rank -= leftSize + 1;\n        node = node.Right;\n      }\n    }\n    return null;\n  }\n}\n"
+      }
+    }
+  },
+  {
     "ref": "4.12",
     "method": "CountDownwardSumPaths",
     "params": [

@@ -326,12 +326,60 @@ public static class CtciStagingGrader
         return canonical.Order(StringComparer.Ordinal).ToArray();
     }
 
+    private static string? RandomTreeFailure(TestCase test, JsonElement observed)
+    {
+        if (observed.GetProperty("mutationOk").ValueKind != JsonValueKind.True || observed.GetProperty("uniformOk").ValueKind != JsonValueKind.True) return "Preserve node identity and readonly queries; select every current physical node uniformly.";
+        var operations = Strings(test.Arguments[0]);
+        var arguments = test.Arguments[1];
+        var actual = observed.GetProperty("actual");
+        var results = actual.GetProperty("results");
+        var changes = observed.GetProperty("changes");
+        if (results.GetArrayLength() != operations.Length || changes.GetArrayLength() != operations.Length) return "Return one observation for each operation.";
+        var counts = new SortedDictionary<int, int>();
+        int total = 0;
+        for (int i = 0; i < operations.Length; ++i)
+        {
+            var result = results[i];
+            int[] added = [], removed = [];
+            int value = arguments[i].GetArrayLength() == 0 ? 0 : arguments[i][0].GetInt32();
+            switch (operations[i])
+            {
+                case "RandomBst":
+                    if (result.ValueKind != JsonValueKind.Null) return "Construct an empty independent tree.";
+                    break;
+                case "Insert":
+                    if (result.ValueKind != JsonValueKind.Null) return "Insert returns void.";
+                    counts[value] = counts.GetValueOrDefault(value) + 1; total++; added = [value];
+                    break;
+                case "Delete":
+                    bool present = counts.GetValueOrDefault(value) > 0;
+                    if (result.ValueKind is not (JsonValueKind.True or JsonValueKind.False) || result.GetBoolean() != present) return "Delete one matching occurrence and report whether it existed.";
+                    if (present) { if (--counts[value] == 0) counts.Remove(value); total--; removed = [value]; }
+                    break;
+                case "Find":
+                    int[] wanted = counts.GetValueOrDefault(value) > 0 ? [value] : [];
+                    if (!Integers(result).SequenceEqual(wanted)) return "Find returns a current matching node or null when absent.";
+                    break;
+                case "GetRandomNode":
+                    var projection = Integers(result);
+                    if (total == 0 ? projection.Length != 0 : projection.Length != 1 || counts.GetValueOrDefault(projection[0]) == 0) return "Return a current node, or null only for an empty tree.";
+                    break;
+                default: return "Unknown tree operation.";
+            }
+            var change = changes[i];
+            if (!Integers(change.GetProperty("added")).SequenceEqual(added) || !Integers(change.GetProperty("removed")).SequenceEqual(removed) || change.GetProperty("count").GetInt32() != total) return "Each mutation must make exactly its requested multiset change; queries preserve the tree.";
+        }
+        var finalValues = counts.SelectMany(pair => Enumerable.Repeat(pair.Key, pair.Value));
+        return Integers(actual.GetProperty("finalValues")).SequenceEqual(finalValues) ? null : "Preserve all remaining occurrences in BST order.";
+    }
+
     public static string? FailureReason(CtciStagingDefinition definition, TestCase test, JsonElement observed)
     {
         try
         {
             if (observed.ValueKind != JsonValueKind.Object || observed.TryGetProperty("error", out var error) && error.ValueKind != JsonValueKind.Null)
                 return "Your code did not finish this case successfully.";
+            if (definition.Ref == "4.11") return RandomTreeFailure(test, observed);
             if (definition.Ref is "17.2" or "17.3")
             {
                 if (observed.GetProperty("mutationOk").ValueKind != JsonValueKind.True || observed.GetProperty("uniformOk").ValueKind != JsonValueKind.True) return "Respect mutation contracts and use the supplied primitive to produce the required uniform distribution.";

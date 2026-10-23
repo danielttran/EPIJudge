@@ -1,6 +1,7 @@
 """Graph primitives and the explicit shared parent-linked tree-node API."""
 from models08 import declare as typed_declare,header as base_header,TYPES
 from core import starter_body
+import models_random04
 
 TREE_INPUT_REFS=('4.4','4.5','4.6','4.8','4.10','4.12')
 TREE_OUTPUT_REFS=('4.2','4.3','4.9')
@@ -25,16 +26,20 @@ for _language,_types in TYPES.items():
     _types['sequences']=_types['sets']
 
 def reference(ref,language):
+    if ref=="4.11":return models_random04.REFERENCE[language]
     return (TREE[language] if ref in TREE_REFS else '')+(DEPTH[language] if ref=='4.3' else '')
 
 def declare(spec,language,body,class_name='Solution'):
+    if spec['ref']=='4.11':return models_random04.SIGNATURE[language],body
 
     return typed_declare(spec,language,body,class_name)
 
 def header(ref,language):
+    if ref=="4.11":return base_header(ref,language)+models_random04.NODE[language]+models_random04.RANDOM[language]
     return base_header(ref,language)+((('#include <unordered_map>\n' if language=='cpp' else '')+reference(ref,language)) if ref in TREE_REFS else '')
 
 def neutral(spec,language):
+    if spec["ref"]=="4.11":return models_random04.neutral(language)
     if spec['result'] in ('tree','newtree'):return 'return None' if language=='python' else 'return nullptr;' if language=='cpp' else 'return null;'
     if spec['result'] in ('depths','sequences'):
         return 'return new ArrayList<>();' if language=='java' else 'return []' if language=='python' else 'return [];' if language in ('csharp','javascript') else 'return {};'

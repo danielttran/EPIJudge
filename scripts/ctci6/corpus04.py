@@ -310,3 +310,23 @@ def valid_observation(ref,case,observed):
     if ref=='4.3':return actual==case['expected']
     canonical=[tuple(row) for row in actual]
     return len(canonical)==len(set(canonical)) and set(canonical)=={tuple(row) for row in case['expected']}
+
+# Random-node state semantics are independent of tree shape and cache layout.
+_before_random_oracle=oracle
+_before_random_cases=cases
+_before_random_observation=valid_observation
+def oracle(ref,args):
+    if ref=='4.11':
+        from corpus_random04 import oracle as run
+        return run(ref,args)
+    return _before_random_oracle(ref,args)
+def cases(spec):
+    if spec['ref']=='4.11':
+        from corpus_random04 import cases as run
+        return run(spec)
+    return _before_random_cases(spec)
+def valid_observation(ref,case,observed):
+    if ref=='4.11':
+        from corpus_random04 import valid_observation as run
+        return run(ref,case,observed)
+    return _before_random_observation(ref,case,observed)
