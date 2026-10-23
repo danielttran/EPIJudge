@@ -2105,5 +2105,251 @@
         "reference": "class BankError extends RuntimeException { public final String Code; public BankError(String code) { super(code); Code=code; } }\nfinal class Animal { public final int Id; public final String Species; public Animal(int id,String species) { Id=id; Species=species; } }\n"
       }
     }
+  },
+  {
+    "id": "ctci6_5_1",
+    "ref": "5.1",
+    "title": "Insertion",
+    "description": "Replace bits low through high, inclusively, of word with insert's bit pattern aligned so its bit zero lands at low. Preserve every bit outside that interval and return the resulting word.",
+    "constraints": [
+      "Inputs and results are signed 32-bit integers. Interpret them as exactly 32 two's-complement bits, numbered 0 (least significant) through 31. Convert the resulting pattern back to its signed 32-bit value. Do not sign-extend into an unbounded Python integer or an extra JavaScript bit.",
+      "0 <= low <= high <= 31. The unsigned 32-bit interpretation of insert fits within high-low+1 bits. Negative insert values are therefore valid only for a full-width interval. Inputs satisfy these preconditions; invalid bounds are not a request to return zero.",
+      "Do not mutate inputs. The full-width interval [0,31] is valid and returns insert."
+    ],
+    "method": "InsertBits",
+    "params": [
+      [
+        "word",
+        "i"
+      ],
+      [
+        "insert",
+        "i"
+      ],
+      [
+        "low",
+        "i"
+      ],
+      [
+        "high",
+        "i"
+      ]
+    ],
+    "result": "i",
+    "mutation": "none",
+    "testCount": 1677,
+    "batch": 5,
+    "stagingDirectory": "staged05",
+    "example": [
+      [
+        240,
+        5,
+        1,
+        3
+      ],
+      250
+    ],
+    "languages": {
+      "csharp": {
+        "signature": "int InsertBits(int word, int insert, int low, int high)",
+        "starterCode": "public class Solution\n{\n    public int InsertBits(int word, int insert, int low, int high)\n    {\n        return 0;\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public int InsertBits(int word, int insert, int low, int high)\n    {\n        int width = high - low + 1;\n        uint mask = width == 32 ? uint.MaxValue : (1u << width) - 1u;\n        uint bits = unchecked((uint)word), replacement = unchecked((uint)insert);\n        uint result = (bits & ~(mask << low)) | ((replacement & mask) << low);\n        return unchecked((int)result);\n    }\n}\n",
+        "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\n",
+        "suffix": "",
+        "harness": "using System;\nusing System.Collections.Generic;\nusing System.Text;\nusing System.IO;\nusing System.Text.Json;\n\nclass Harness {\nstatic int Invoke(JsonElement row){string reference=row.GetProperty(\"ref\").GetString()!;var args=row.GetProperty(\"arguments\");if (reference == \"5.1\") return new Solution().InsertBits(args[0].GetInt32(),args[1].GetInt32(),args[2].GetInt32(),args[3].GetInt32());throw new Exception(\"Unknown reference\");}\nstatic object Execute(JsonElement row){return new {actual=Invoke(row),mutationOk=true};}\nstatic object TimedExecute(JsonElement row) {\nvar clock=System.Diagnostics.Stopwatch.StartNew();object observed;\ntry { observed=Execute(row); } catch(Exception error) { observed=new {error=error.ToString()}; }\nreturn new {observation=observed,elapsedMs=clock.Elapsed.TotalMilliseconds};\n}\nstatic void Main(){using var document=JsonDocument.Parse(File.ReadAllText(\"cases.json\"));var results=new List<object>();foreach(var row in document.RootElement.EnumerateArray()){try{results.Add(TimedExecute(row));}catch(Exception error){results.Add(new {error=error.ToString()});}}File.WriteAllText(\"results.json\",JsonSerializer.Serialize(results));}\n}\n",
+        "reference": ""
+      },
+      "javascript": {
+        "signature": "function InsertBits(word, insert, low, high)",
+        "starterCode": "function InsertBits(word, insert, low, high) {\n  return 0;\n}\n",
+        "solutionCode": "function InsertBits(word, insert, low, high) {\n  const width = high - low + 1,\n    mask = (2 ** width - 1) >>> 0;\n  return (word & ~(mask << low)) | ((insert & mask) << low);\n}\n",
+        "prefix": "'use strict';\n",
+        "suffix": "\nmodule.exports = {InsertBits};\n",
+        "harness": "const user = require('./solution.js');\nconst InsertBits = user.InsertBits;\n\nconst fs=require('node:fs');\nfunction invoke(row){const ref=row.ref,args=row.arguments;if(ref===\"5.1\")return InsertBits(...args);throw new Error('Unknown reference');}\nconst results=JSON.parse(fs.readFileSync('cases.json','utf8')).map(timed(row=>{try{const actual=invoke(row);return {actual,mutationOk:Number.isInteger(actual)&&actual>=-2147483648&&actual<=2147483647};}catch(error){return {error:String(error)};}}));\nfs.writeFileSync('results.json',JSON.stringify(results));\n\nfunction timed(fn) { return row => { const start=performance.now(); let observation; try { observation=fn(row); } catch(error) { observation={error:String(error)}; } return {observation,elapsedMs:performance.now()-start}; }; }\n",
+        "reference": ""
+      },
+      "python": {
+        "signature": "def InsertBits(word: int, insert: int, low: int, high: int) -> int",
+        "starterCode": "def InsertBits(word: int, insert: int, low: int, high: int) -> int:\n    return 0\n",
+        "solutionCode": "def InsertBits(word: int, insert: int, low: int, high: int) -> int:\n    width = high - low + 1\n    mask = (1 << width) - 1\n    bits = ((word & 0xFFFFFFFF) & ~(mask << low)) | ((insert & mask) << low)\n    return bits if bits < 0x80000000 else bits - 0x100000000\n",
+        "prefix": "",
+        "suffix": "",
+        "harness": "import time\nimport solution as user\nInsertBits = user.InsertBits\n\nimport json\ndef invoke(row):\n    ref,args=row['ref'],row['arguments']\n    if ref == '5.1': return InsertBits(*args)\n    raise ValueError('Unknown reference')\ndef execute(row):\n    value=invoke(row)\n    return dict(actual=value,mutationOk=type(value) is int and -2147483648<=value<=2147483647)\nresults=[]\nfor row in json.load(open('cases.json',encoding='utf-8')):\n    clock = time.perf_counter()\n    try:results.append(execute(row))\n    except Exception as error:results.append(dict(error=repr(error)))\n    results[-1] = dict(observation=results[-1], elapsedMs=(time.perf_counter()-clock)*1000)\njson.dump(results,open('results.json','w',encoding='utf-8'))\n",
+        "reference": ""
+      },
+      "cpp": {
+        "signature": "int InsertBits(int word, int insert, int low, int high)",
+        "starterCode": "class Solution {\n public:\n  int InsertBits(int word, int insert, int low, int high) {\n    return 0;\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  int InsertBits(int word, int insert, int low, int high) {\n    int width = high - low + 1;\n    std::uint64_t mask = (1ULL << width) - 1ULL;\n    std::uint64_t bits = static_cast<std::uint32_t>(word),\n                  replacement = static_cast<std::uint32_t>(insert);\n    std::uint64_t result = (bits & ~(mask << low)) | ((replacement & mask) << low);\n    if (result >= 2147483648ULL)\n      return static_cast<int>(static_cast<long long>(result) - 4294967296LL);\n    return static_cast<int>(result);\n  }\n};\n",
+        "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n",
+        "suffix": "",
+        "harness": "#include <chrono>\n#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include \"solution.cpp\"\n#include <fstream>\n#include \"test_framework/json.h\"\nusing json=nlohmann::json;\n\nint invoke(const json& row){std::string reference=row[\"ref\"].get<std::string>();const auto& args=row[\"arguments\"];if (reference == \"5.1\") return Solution().InsertBits(args[0].get<int>(),args[1].get<int>(),args[2].get<int>(),args[3].get<int>());throw std::runtime_error(\"Unknown reference\");}\njson execute(const json& row){return json{{\"actual\",invoke(row)},{\"mutationOk\",true}};}\njson timedExecute(const json& row) {\nauto start=std::chrono::steady_clock::now();json observed;\ntry { observed=execute(row); } catch(const std::exception& error) { observed=json{{\"error\",error.what()}}; }\ndouble elapsed=std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-start).count();\nreturn json{{\"observation\",observed},{\"elapsedMs\",elapsed}};\n}\nint main(){std::ifstream input(\"cases.json\");json rows;input>>rows;json results=json::array();for(const auto& row:rows){try{results.push_back(timedExecute(row));}catch(const std::exception& error){results.push_back(json{{\"error\",error.what()}});}}std::ofstream(\"results.json\")<<results;}\n",
+        "reference": ""
+      },
+      "java": {
+        "signature": "int InsertBits(int word, int insert, int low, int high)",
+        "starterCode": "class Solution {\n  public int InsertBits(int word, int insert, int low, int high) {\n    return 0;\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public int InsertBits(int word, int insert, int low, int high) {\n    int width = high - low + 1;\n    long mask = (1L << width) - 1L;\n    long bits = word & 0xffffffffL, replacement = insert & 0xffffffffL;\n    long result = (bits & ~(mask << low)) | ((replacement & mask) << low);\n    return (int) result;\n  }\n}\n",
+        "prefix": "import java.util.*;\n",
+        "suffix": "",
+        "harness": "import java.util.*;\nimport java.nio.file.*;\nimport epi.test_framework.minimal_json.*;\n\npublic class Harness {\nstatic JsonValue invoke(JsonObject row){String reference=row.get(\"ref\").asString();var args=row.get(\"arguments\").asArray();if (reference.equals(\"5.1\")) return Json.value(new Solution().InsertBits(args.get(0).asInt(),args.get(1).asInt(),args.get(2).asInt(),args.get(3).asInt()));throw new RuntimeException(\"Unknown reference\");}\nstatic JsonValue execute(JsonObject row){return new JsonObject().add(\"actual\",invoke(row)).add(\"mutationOk\",true);}\nstatic JsonValue timedExecute(JsonObject row) {\nlong start=System.nanoTime();JsonValue observed;\ntry { observed=execute(row); } catch(Throwable error) { observed=new JsonObject().add(\"error\",error.toString()); }\nreturn new JsonObject().add(\"observation\",observed).add(\"elapsedMs\",(System.nanoTime()-start)/1000000.0);\n}\npublic static void main(String[] ignored)throws Exception{var results=new JsonArray();for(var row:Json.parse(Files.readString(Path.of(\"cases.json\"))).asArray()){try{results.add(timedExecute(row.asObject()));}catch(Throwable error){results.add(new JsonObject().add(\"error\",error.toString()));}}Files.writeString(Path.of(\"results.json\"),results.toString());}\n}\n",
+        "reference": ""
+      }
+    }
+  },
+  {
+    "id": "ctci6_5_6",
+    "ref": "5.6",
+    "title": "Conversion",
+    "description": "Return the minimum number of individual bit flips needed to turn first's 32-bit representation into second's. A flip changes one chosen zero to one or one to zero; no other operation is available.",
+    "constraints": [
+      "Inputs and results are signed 32-bit integers. Interpret them as exactly 32 two's-complement bits, numbered 0 (least significant) through 31. Convert the resulting pattern back to its signed 32-bit value. Do not sign-extend into an unbounded Python integer or an extra JavaScript bit.",
+      "All signed 32-bit input values are valid. The result is an integer from 0 through 32. Preserve inputs."
+    ],
+    "method": "CountBitChanges",
+    "params": [
+      [
+        "first",
+        "i"
+      ],
+      [
+        "second",
+        "i"
+      ]
+    ],
+    "result": "i",
+    "mutation": "none",
+    "testCount": 280,
+    "batch": 5,
+    "stagingDirectory": "staged05",
+    "example": [
+      [
+        29,
+        15
+      ],
+      2
+    ],
+    "languages": {
+      "csharp": {
+        "signature": "int CountBitChanges(int first, int second)",
+        "starterCode": "public class Solution\n{\n    public int CountBitChanges(int first, int second)\n    {\n        return 0;\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public int CountBitChanges(int first, int second)\n    {\n        uint difference = unchecked((uint)(first ^ second));\n        int count = 0;\n        while (difference != 0)\n        {\n            difference &= difference - 1;\n            ++count;\n        }\n        return count;\n    }\n}\n",
+        "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\n",
+        "suffix": "",
+        "harness": "using System;\nusing System.Collections.Generic;\nusing System.Text;\nusing System.IO;\nusing System.Text.Json;\n\nclass Harness {\nstatic int Invoke(JsonElement row){string reference=row.GetProperty(\"ref\").GetString()!;var args=row.GetProperty(\"arguments\");if (reference == \"5.6\") return new Solution().CountBitChanges(args[0].GetInt32(),args[1].GetInt32());throw new Exception(\"Unknown reference\");}\nstatic object Execute(JsonElement row){return new {actual=Invoke(row),mutationOk=true};}\nstatic object TimedExecute(JsonElement row) {\nvar clock=System.Diagnostics.Stopwatch.StartNew();object observed;\ntry { observed=Execute(row); } catch(Exception error) { observed=new {error=error.ToString()}; }\nreturn new {observation=observed,elapsedMs=clock.Elapsed.TotalMilliseconds};\n}\nstatic void Main(){using var document=JsonDocument.Parse(File.ReadAllText(\"cases.json\"));var results=new List<object>();foreach(var row in document.RootElement.EnumerateArray()){try{results.Add(TimedExecute(row));}catch(Exception error){results.Add(new {error=error.ToString()});}}File.WriteAllText(\"results.json\",JsonSerializer.Serialize(results));}\n}\n",
+        "reference": ""
+      },
+      "javascript": {
+        "signature": "function CountBitChanges(first, second)",
+        "starterCode": "function CountBitChanges(first, second) {\n  return 0;\n}\n",
+        "solutionCode": "function CountBitChanges(first, second) {\n  let difference = (first ^ second) >>> 0,\n    count = 0;\n  while (difference !== 0) {\n    difference = (difference & (difference - 1)) >>> 0;\n    ++count;\n  }\n  return count;\n}\n",
+        "prefix": "'use strict';\n",
+        "suffix": "\nmodule.exports = {CountBitChanges};\n",
+        "harness": "const user = require('./solution.js');\nconst CountBitChanges = user.CountBitChanges;\n\nconst fs=require('node:fs');\nfunction invoke(row){const ref=row.ref,args=row.arguments;if(ref===\"5.6\")return CountBitChanges(...args);throw new Error('Unknown reference');}\nconst results=JSON.parse(fs.readFileSync('cases.json','utf8')).map(timed(row=>{try{const actual=invoke(row);return {actual,mutationOk:Number.isInteger(actual)&&actual>=-2147483648&&actual<=2147483647};}catch(error){return {error:String(error)};}}));\nfs.writeFileSync('results.json',JSON.stringify(results));\n\nfunction timed(fn) { return row => { const start=performance.now(); let observation; try { observation=fn(row); } catch(error) { observation={error:String(error)}; } return {observation,elapsedMs:performance.now()-start}; }; }\n",
+        "reference": ""
+      },
+      "python": {
+        "signature": "def CountBitChanges(first: int, second: int) -> int",
+        "starterCode": "def CountBitChanges(first: int, second: int) -> int:\n    return 0\n",
+        "solutionCode": "def CountBitChanges(first: int, second: int) -> int:\n    difference = (first ^ second) & 0xFFFFFFFF\n    count = 0\n    while difference:\n        difference &= difference - 1\n        count += 1\n    return count\n",
+        "prefix": "",
+        "suffix": "",
+        "harness": "import time\nimport solution as user\nCountBitChanges = user.CountBitChanges\n\nimport json\ndef invoke(row):\n    ref,args=row['ref'],row['arguments']\n    if ref == '5.6': return CountBitChanges(*args)\n    raise ValueError('Unknown reference')\ndef execute(row):\n    value=invoke(row)\n    return dict(actual=value,mutationOk=type(value) is int and -2147483648<=value<=2147483647)\nresults=[]\nfor row in json.load(open('cases.json',encoding='utf-8')):\n    clock = time.perf_counter()\n    try:results.append(execute(row))\n    except Exception as error:results.append(dict(error=repr(error)))\n    results[-1] = dict(observation=results[-1], elapsedMs=(time.perf_counter()-clock)*1000)\njson.dump(results,open('results.json','w',encoding='utf-8'))\n",
+        "reference": ""
+      },
+      "cpp": {
+        "signature": "int CountBitChanges(int first, int second)",
+        "starterCode": "class Solution {\n public:\n  int CountBitChanges(int first, int second) {\n    return 0;\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  int CountBitChanges(int first, int second) {\n    std::uint32_t difference =\n        static_cast<std::uint32_t>(first) ^ static_cast<std::uint32_t>(second);\n    int count = 0;\n    while (difference != 0) {\n      difference &= difference - 1;\n      ++count;\n    }\n    return count;\n  }\n};\n",
+        "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n",
+        "suffix": "",
+        "harness": "#include <chrono>\n#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include \"solution.cpp\"\n#include <fstream>\n#include \"test_framework/json.h\"\nusing json=nlohmann::json;\n\nint invoke(const json& row){std::string reference=row[\"ref\"].get<std::string>();const auto& args=row[\"arguments\"];if (reference == \"5.6\") return Solution().CountBitChanges(args[0].get<int>(),args[1].get<int>());throw std::runtime_error(\"Unknown reference\");}\njson execute(const json& row){return json{{\"actual\",invoke(row)},{\"mutationOk\",true}};}\njson timedExecute(const json& row) {\nauto start=std::chrono::steady_clock::now();json observed;\ntry { observed=execute(row); } catch(const std::exception& error) { observed=json{{\"error\",error.what()}}; }\ndouble elapsed=std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-start).count();\nreturn json{{\"observation\",observed},{\"elapsedMs\",elapsed}};\n}\nint main(){std::ifstream input(\"cases.json\");json rows;input>>rows;json results=json::array();for(const auto& row:rows){try{results.push_back(timedExecute(row));}catch(const std::exception& error){results.push_back(json{{\"error\",error.what()}});}}std::ofstream(\"results.json\")<<results;}\n",
+        "reference": ""
+      },
+      "java": {
+        "signature": "int CountBitChanges(int first, int second)",
+        "starterCode": "class Solution {\n  public int CountBitChanges(int first, int second) {\n    return 0;\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public int CountBitChanges(int first, int second) {\n    int difference = first ^ second, count = 0;\n    while (difference != 0) {\n      difference &= difference - 1;\n      ++count;\n    }\n    return count;\n  }\n}\n",
+        "prefix": "import java.util.*;\n",
+        "suffix": "",
+        "harness": "import java.util.*;\nimport java.nio.file.*;\nimport epi.test_framework.minimal_json.*;\n\npublic class Harness {\nstatic JsonValue invoke(JsonObject row){String reference=row.get(\"ref\").asString();var args=row.get(\"arguments\").asArray();if (reference.equals(\"5.6\")) return Json.value(new Solution().CountBitChanges(args.get(0).asInt(),args.get(1).asInt()));throw new RuntimeException(\"Unknown reference\");}\nstatic JsonValue execute(JsonObject row){return new JsonObject().add(\"actual\",invoke(row)).add(\"mutationOk\",true);}\nstatic JsonValue timedExecute(JsonObject row) {\nlong start=System.nanoTime();JsonValue observed;\ntry { observed=execute(row); } catch(Throwable error) { observed=new JsonObject().add(\"error\",error.toString()); }\nreturn new JsonObject().add(\"observation\",observed).add(\"elapsedMs\",(System.nanoTime()-start)/1000000.0);\n}\npublic static void main(String[] ignored)throws Exception{var results=new JsonArray();for(var row:Json.parse(Files.readString(Path.of(\"cases.json\"))).asArray()){try{results.add(timedExecute(row.asObject()));}catch(Throwable error){results.add(new JsonObject().add(\"error\",error.toString()));}}Files.writeString(Path.of(\"results.json\"),results.toString());}\n}\n",
+        "reference": ""
+      }
+    }
+  },
+  {
+    "id": "ctci6_5_7",
+    "ref": "5.7",
+    "title": "Pairwise Swap",
+    "description": "Swap every adjacent pair of bits in word's fixed 32-bit representation: positions (0,1), (2,3), and so on through (30,31). Return the signed integer represented by the resulting bits.",
+    "constraints": [
+      "Inputs and results are signed 32-bit integers. Interpret them as exactly 32 two's-complement bits, numbered 0 (least significant) through 31. Convert the resulting pattern back to its signed 32-bit value. Do not sign-extend into an unbounded Python integer or an extra JavaScript bit.",
+      "All signed 32-bit input values are valid. All sixteen pairs are swapped simultaneously; there is no pair-selection argument. Preserve the input."
+    ],
+    "method": "SwapAdjacentBits",
+    "params": [
+      [
+        "word",
+        "i"
+      ]
+    ],
+    "result": "i",
+    "mutation": "none",
+    "testCount": 238,
+    "batch": 5,
+    "stagingDirectory": "staged05",
+    "example": [
+      [
+        101
+      ],
+      154
+    ],
+    "languages": {
+      "csharp": {
+        "signature": "int SwapAdjacentBits(int word)",
+        "starterCode": "public class Solution\n{\n    public int SwapAdjacentBits(int word)\n    {\n        return 0;\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public int SwapAdjacentBits(int word)\n    {\n        uint bits = unchecked((uint)word);\n        uint result = ((bits & 0x55555555u) << 1) | ((bits & 0xaaaaaaaau) >> 1);\n        return unchecked((int)result);\n    }\n}\n",
+        "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\n",
+        "suffix": "",
+        "harness": "using System;\nusing System.Collections.Generic;\nusing System.Text;\nusing System.IO;\nusing System.Text.Json;\n\nclass Harness {\nstatic int Invoke(JsonElement row){string reference=row.GetProperty(\"ref\").GetString()!;var args=row.GetProperty(\"arguments\");if (reference == \"5.7\") return new Solution().SwapAdjacentBits(args[0].GetInt32());throw new Exception(\"Unknown reference\");}\nstatic object Execute(JsonElement row){return new {actual=Invoke(row),mutationOk=true};}\nstatic object TimedExecute(JsonElement row) {\nvar clock=System.Diagnostics.Stopwatch.StartNew();object observed;\ntry { observed=Execute(row); } catch(Exception error) { observed=new {error=error.ToString()}; }\nreturn new {observation=observed,elapsedMs=clock.Elapsed.TotalMilliseconds};\n}\nstatic void Main(){using var document=JsonDocument.Parse(File.ReadAllText(\"cases.json\"));var results=new List<object>();foreach(var row in document.RootElement.EnumerateArray()){try{results.Add(TimedExecute(row));}catch(Exception error){results.Add(new {error=error.ToString()});}}File.WriteAllText(\"results.json\",JsonSerializer.Serialize(results));}\n}\n",
+        "reference": ""
+      },
+      "javascript": {
+        "signature": "function SwapAdjacentBits(word)",
+        "starterCode": "function SwapAdjacentBits(word) {\n  return 0;\n}\n",
+        "solutionCode": "function SwapAdjacentBits(word) {\n  return ((word & 0x55555555) << 1) | ((word & 0xaaaaaaaa) >>> 1);\n}\n",
+        "prefix": "'use strict';\n",
+        "suffix": "\nmodule.exports = {SwapAdjacentBits};\n",
+        "harness": "const user = require('./solution.js');\nconst SwapAdjacentBits = user.SwapAdjacentBits;\n\nconst fs=require('node:fs');\nfunction invoke(row){const ref=row.ref,args=row.arguments;if(ref===\"5.7\")return SwapAdjacentBits(...args);throw new Error('Unknown reference');}\nconst results=JSON.parse(fs.readFileSync('cases.json','utf8')).map(timed(row=>{try{const actual=invoke(row);return {actual,mutationOk:Number.isInteger(actual)&&actual>=-2147483648&&actual<=2147483647};}catch(error){return {error:String(error)};}}));\nfs.writeFileSync('results.json',JSON.stringify(results));\n\nfunction timed(fn) { return row => { const start=performance.now(); let observation; try { observation=fn(row); } catch(error) { observation={error:String(error)}; } return {observation,elapsedMs:performance.now()-start}; }; }\n",
+        "reference": ""
+      },
+      "python": {
+        "signature": "def SwapAdjacentBits(word: int) -> int",
+        "starterCode": "def SwapAdjacentBits(word: int) -> int:\n    return 0\n",
+        "solutionCode": "def SwapAdjacentBits(word: int) -> int:\n    bits = word & 0xFFFFFFFF\n    result = ((bits & 0x55555555) << 1) | ((bits & 0xAAAAAAAA) >> 1)\n    return result if result < 0x80000000 else result - 0x100000000\n",
+        "prefix": "",
+        "suffix": "",
+        "harness": "import time\nimport solution as user\nSwapAdjacentBits = user.SwapAdjacentBits\n\nimport json\ndef invoke(row):\n    ref,args=row['ref'],row['arguments']\n    if ref == '5.7': return SwapAdjacentBits(*args)\n    raise ValueError('Unknown reference')\ndef execute(row):\n    value=invoke(row)\n    return dict(actual=value,mutationOk=type(value) is int and -2147483648<=value<=2147483647)\nresults=[]\nfor row in json.load(open('cases.json',encoding='utf-8')):\n    clock = time.perf_counter()\n    try:results.append(execute(row))\n    except Exception as error:results.append(dict(error=repr(error)))\n    results[-1] = dict(observation=results[-1], elapsedMs=(time.perf_counter()-clock)*1000)\njson.dump(results,open('results.json','w',encoding='utf-8'))\n",
+        "reference": ""
+      },
+      "cpp": {
+        "signature": "int SwapAdjacentBits(int word)",
+        "starterCode": "class Solution {\n public:\n  int SwapAdjacentBits(int word) {\n    return 0;\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  int SwapAdjacentBits(int word) {\n    std::uint32_t bits = static_cast<std::uint32_t>(word);\n    std::uint32_t result = ((bits & 0x55555555u) << 1) | ((bits & 0xaaaaaaaau) >> 1);\n    if (result >= 2147483648u)\n      return static_cast<int>(static_cast<long long>(result) - 4294967296LL);\n    return static_cast<int>(result);\n  }\n};\n",
+        "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n",
+        "suffix": "",
+        "harness": "#include <chrono>\n#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include \"solution.cpp\"\n#include <fstream>\n#include \"test_framework/json.h\"\nusing json=nlohmann::json;\n\nint invoke(const json& row){std::string reference=row[\"ref\"].get<std::string>();const auto& args=row[\"arguments\"];if (reference == \"5.7\") return Solution().SwapAdjacentBits(args[0].get<int>());throw std::runtime_error(\"Unknown reference\");}\njson execute(const json& row){return json{{\"actual\",invoke(row)},{\"mutationOk\",true}};}\njson timedExecute(const json& row) {\nauto start=std::chrono::steady_clock::now();json observed;\ntry { observed=execute(row); } catch(const std::exception& error) { observed=json{{\"error\",error.what()}}; }\ndouble elapsed=std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-start).count();\nreturn json{{\"observation\",observed},{\"elapsedMs\",elapsed}};\n}\nint main(){std::ifstream input(\"cases.json\");json rows;input>>rows;json results=json::array();for(const auto& row:rows){try{results.push_back(timedExecute(row));}catch(const std::exception& error){results.push_back(json{{\"error\",error.what()}});}}std::ofstream(\"results.json\")<<results;}\n",
+        "reference": ""
+      },
+      "java": {
+        "signature": "int SwapAdjacentBits(int word)",
+        "starterCode": "class Solution {\n  public int SwapAdjacentBits(int word) {\n    return 0;\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public int SwapAdjacentBits(int word) {\n    return ((word & 0x55555555) << 1) | ((word & 0xaaaaaaaa) >>> 1);\n  }\n}\n",
+        "prefix": "import java.util.*;\n",
+        "suffix": "",
+        "harness": "import java.util.*;\nimport java.nio.file.*;\nimport epi.test_framework.minimal_json.*;\n\npublic class Harness {\nstatic JsonValue invoke(JsonObject row){String reference=row.get(\"ref\").asString();var args=row.get(\"arguments\").asArray();if (reference.equals(\"5.7\")) return Json.value(new Solution().SwapAdjacentBits(args.get(0).asInt()));throw new RuntimeException(\"Unknown reference\");}\nstatic JsonValue execute(JsonObject row){return new JsonObject().add(\"actual\",invoke(row)).add(\"mutationOk\",true);}\nstatic JsonValue timedExecute(JsonObject row) {\nlong start=System.nanoTime();JsonValue observed;\ntry { observed=execute(row); } catch(Throwable error) { observed=new JsonObject().add(\"error\",error.toString()); }\nreturn new JsonObject().add(\"observation\",observed).add(\"elapsedMs\",(System.nanoTime()-start)/1000000.0);\n}\npublic static void main(String[] ignored)throws Exception{var results=new JsonArray();for(var row:Json.parse(Files.readString(Path.of(\"cases.json\"))).asArray()){try{results.add(timedExecute(row.asObject()));}catch(Throwable error){results.add(new JsonObject().add(\"error\",error.toString()));}}Files.writeString(Path.of(\"results.json\"),results.toString());}\n}\n",
+        "reference": ""
+      }
+    }
   }
 ]

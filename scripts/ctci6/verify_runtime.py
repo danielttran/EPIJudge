@@ -130,7 +130,9 @@ def verify(only_ref=None, only_language=None, starters=False):
                         cases=cases,
                         tool=tools[language],
                         grader=grader_hashes[
-                            {1: "core", 2: "lists", 3: "state"}[entry["batch"]]
+                            {1: "core", 2: "lists", 3: "state", 5: "core"}[
+                                entry["batch"]
+                            ]
                         ],
                     )
                 )
@@ -186,7 +188,7 @@ def verify(only_ref=None, only_language=None, starters=False):
                 try:
                     accepted = (
                         core_match(case, observed)
-                        if entry["batch"] == 1
+                        if entry["batch"] in (1, 5)
                         else valid_observation(entry["ref"], case, observed)
                         if entry["batch"] == 2
                         else state_match(case, observed)

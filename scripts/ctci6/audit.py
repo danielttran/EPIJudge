@@ -48,12 +48,18 @@ def audit(publication=False):
         row["classification"] == "algorithm-candidate" for row in rows
     ):
         raise ValueError("Candidate count is stale")
+    if scope["requiresIndividualClassification"] != sum(
+        row["classification"] == "classification-pending" for row in rows
+    ):
+        raise ValueError("Individual-classification count is stale")
+    metadata = {row["ref"]: row for row in rows}
     reviewed = set()
     executed = set()
     for staging_name, review_file in (
         ("staged", "review01.json"),
         ("staged02", "review02.json"),
         ("staged03", "review03.json"),
+        ("staged05", "review05.json"),
     ):
         review = json.loads((ROOT / "ctci6" / review_file).read_text())
         batch_reviewed = {row["ref"] for row in review["questions"]}
@@ -106,7 +112,28 @@ def audit(publication=False):
         ):
             raise ValueError("Execution totals differ from individual pair records")
         executed.update(batch_executed)
+        record_keys = [
+            (record["ref"], record["language"], record["variant"])
+            for record in report["executions"]
+        ]
+        if (
+            len(record_keys) != len(set(record_keys))
+            or len(record_keys) != len(expected) * 2
+        ):
+            raise ValueError("Duplicated or extraneous standalone execution records")
         for row in staged:
+            if row["title"] != metadata[row["ref"]]["title"]:
+                raise ValueError(
+                    "Staged title differs from the source-established reference"
+                )
+            if any(
+                record["cases"] != row["testCount"]
+                for record in report["executions"]
+                if record["ref"] == row["ref"]
+            ):
+                raise ValueError(
+                    "Pair execution count differs from its authored corpus"
+                )
             if set(row["languages"]) != languages:
                 raise ValueError("Missing staged language: " + row["ref"])
             cases = json.loads(
@@ -114,6 +141,8 @@ def audit(publication=False):
             )
             if len(cases) != row["testCount"]:
                 raise ValueError("Staged case count differs: " + row["ref"])
+    if {row["ref"] for row in rows if row["classification"] == "coding"} != reviewed:
+        raise ValueError("Coding inventory differs from explicit reviewed scope")
     if scope["stagedExercises"] != len(reviewed) or scope[
         "stagedLanguageSolutions"
     ] != len(executed):

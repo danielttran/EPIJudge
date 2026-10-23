@@ -40,3 +40,24 @@ Structural inventory validation proves numbering and source-record consistency.
 It does **not** prove statement clarity, solution correctness, test adequacy, or
 completed semantic review. Those are separately recorded and executed before the
 collection is published.
+
+The current local checkpoint stages 26 exercises (chapters 1–3 plus 5.1, 5.6 and
+5.7), with 130 language implementations. Their standalone and separate-submission
+runs each cover 20,430 positive cases and the same number of starter observations.
+A starter passes its negative check only when at least one case rejects it; this
+is not a claim that every starter fails every case.
+
+`review01.json`, `review02.json`, `review03.json` and `review05.json` record the
+specific algorithms, bindings and semantic review scope. The independently
+computed case oracles are under `scripts/ctci6/corpus*.py`. Inventory/evidence
+integrity is checked by `python3 scripts/ctci6/audit.py`; its `--publication` mode
+intentionally fails until full acceptance is complete.
+
+Application-runner evidence is scoped by compiled source fingerprint. The first
+23 exercises passed both submission formats at checkpoint `d0c604a8`, recorded in
+`runtime/application-validation-through03.json`. The three new bit exercises
+passed both formats on the later runner build in `runtime/application-validation.json`.
+These historical/current batches must not be described as one final combined
+current-build acceptance run. Full final collection integration, whole-bank runs,
+rendered checks and publication remain pending. Nothing in staging changes the
+live library, progress or drafts.

@@ -21,7 +21,7 @@ public sealed class CtciStagingTests
     {
         Assert.DoesNotContain(new ProblemCatalog().Problems, problem => problem.Collection == "ctci6");
         var staged = CtciStagingCatalog.Load(Root);
-        Assert.Equal(23, staged.Count);
+        Assert.Equal(26, staged.Count);
         Assert.All(staged, definition => Assert.Equal(5, definition.Languages.Count));
     }
 
@@ -51,6 +51,15 @@ public sealed class CtciStagingTests
     {
         var entry = Definition("1.1").Callable("csharp") with { Filename = filename };
         Assert.Throws<ArgumentException>(() => CallableCodeCatalog.PrepareCallable(entry, entry.SolutionCode));
+    }
+
+    [Fact]
+    public void BitResultsMustUseTheSignedPatternRatherThanAnUnsignedAlias()
+    {
+        var test = Case([0, -1, 0, 31], -1);
+        Assert.Null(CtciStagingGrader.FailureReason(Definition("5.1"), test, Json(new { actual = -1, mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(Definition("5.1"), test, Json(new { actual = 4294967295L, mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(Definition("5.1"), test, Json(new { actual = true, mutationOk = true })));
     }
 
     [Fact]

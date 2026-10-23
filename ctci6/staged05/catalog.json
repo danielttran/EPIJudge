@@ -1,0 +1,215 @@
+[
+  {
+    "ref": "5.1",
+    "method": "InsertBits",
+    "params": [
+      [
+        "word",
+        "i"
+      ],
+      [
+        "insert",
+        "i"
+      ],
+      [
+        "low",
+        "i"
+      ],
+      [
+        "high",
+        "i"
+      ]
+    ],
+    "result": "i",
+    "mutation": "none",
+    "description": "Replace bits low through high, inclusively, of word with insert's bit pattern aligned so its bit zero lands at low. Preserve every bit outside that interval and return the resulting word.",
+    "constraints": [
+      "Inputs and results are signed 32-bit integers. Interpret them as exactly 32 two's-complement bits, numbered 0 (least significant) through 31. Convert the resulting pattern back to its signed 32-bit value. Do not sign-extend into an unbounded Python integer or an extra JavaScript bit.",
+      "0 <= low <= high <= 31. The unsigned 32-bit interpretation of insert fits within high-low+1 bits. Negative insert values are therefore valid only for a full-width interval. Inputs satisfy these preconditions; invalid bounds are not a request to return zero.",
+      "Do not mutate inputs. The full-width interval [0,31] is valid and returns insert."
+    ],
+    "why": "OR alone cannot replace an existing one with zero. First clear exactly the destination interval, then OR the aligned replacement into that cleared region. A width-sized mask describes the replacement independently of its destination.",
+    "correctness": "The mask has ones exactly at the interval positions. AND with its complement keeps every outside bit and clears every inside bit. The fitting insertion has no bits beyond that interval after shifting. OR therefore sets each inside bit to the corresponding insertion bit and cannot affect an outside bit. The signed conversion changes only the numerical interpretation, not the 32-bit pattern.",
+    "walkthrough": "For word 240 (binary 11110000), insert 5 (101), low 1 and high 3, clearing positions 1..3 leaves 11110000. Aligning 101 yields 00001010. OR produces 11111010, or 250. Inserting zero into those positions would clear them rather than preserving old ones.",
+    "example": [
+      [
+        240,
+        5,
+        1,
+        3
+      ],
+      250
+    ],
+    "time": "O(1) time for a fixed 32-bit word: a constant number of masks, shifts and bitwise operations.",
+    "space": "O(1) auxiliary space.",
+    "edges": [
+      "Full-width replacement, including a negative insertion.",
+      "A one-bit interval at position zero or 31.",
+      "Zero insertion clears old one bits; unrelated bits remain set."
+    ],
+    "related": "swap_bits changes only two positions and is not this inclusive-range replacement.",
+    "id": "ctci6_5_1",
+    "title": "Insertion",
+    "testCount": 1677,
+    "languages": {
+      "csharp": {
+        "signature": "int InsertBits(int word, int insert, int low, int high)",
+        "starterCode": "public class Solution\n{\n    public int InsertBits(int word, int insert, int low, int high)\n    {\n        return 0;\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public int InsertBits(int word, int insert, int low, int high)\n    {\n        int width = high - low + 1;\n        uint mask = width == 32 ? uint.MaxValue : (1u << width) - 1u;\n        uint bits = unchecked((uint)word), replacement = unchecked((uint)insert);\n        uint result = (bits & ~(mask << low)) | ((replacement & mask) << low);\n        return unchecked((int)result);\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function InsertBits(word, insert, low, high)",
+        "starterCode": "function InsertBits(word, insert, low, high) {\n  return 0;\n}\n",
+        "solutionCode": "function InsertBits(word, insert, low, high) {\n  const width = high - low + 1,\n    mask = (2 ** width - 1) >>> 0;\n  return (word & ~(mask << low)) | ((insert & mask) << low);\n}\n"
+      },
+      "python": {
+        "signature": "def InsertBits(word: int, insert: int, low: int, high: int) -> int",
+        "starterCode": "def InsertBits(word: int, insert: int, low: int, high: int) -> int:\n    return 0\n",
+        "solutionCode": "def InsertBits(word: int, insert: int, low: int, high: int) -> int:\n    width = high - low + 1\n    mask = (1 << width) - 1\n    bits = ((word & 0xFFFFFFFF) & ~(mask << low)) | ((insert & mask) << low)\n    return bits if bits < 0x80000000 else bits - 0x100000000\n"
+      },
+      "cpp": {
+        "signature": "int InsertBits(int word, int insert, int low, int high)",
+        "starterCode": "class Solution {\n public:\n  int InsertBits(int word, int insert, int low, int high) {\n    return 0;\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  int InsertBits(int word, int insert, int low, int high) {\n    int width = high - low + 1;\n    std::uint64_t mask = (1ULL << width) - 1ULL;\n    std::uint64_t bits = static_cast<std::uint32_t>(word),\n                  replacement = static_cast<std::uint32_t>(insert);\n    std::uint64_t result = (bits & ~(mask << low)) | ((replacement & mask) << low);\n    if (result >= 2147483648ULL)\n      return static_cast<int>(static_cast<long long>(result) - 4294967296LL);\n    return static_cast<int>(result);\n  }\n};\n"
+      },
+      "java": {
+        "signature": "int InsertBits(int word, int insert, int low, int high)",
+        "starterCode": "class Solution {\n  public int InsertBits(int word, int insert, int low, int high) {\n    return 0;\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public int InsertBits(int word, int insert, int low, int high) {\n    int width = high - low + 1;\n    long mask = (1L << width) - 1L;\n    long bits = word & 0xffffffffL, replacement = insert & 0xffffffffL;\n    long result = (bits & ~(mask << low)) | ((replacement & mask) << low);\n    return (int) result;\n  }\n}\n"
+      }
+    }
+  },
+  {
+    "ref": "5.6",
+    "method": "CountBitChanges",
+    "params": [
+      [
+        "first",
+        "i"
+      ],
+      [
+        "second",
+        "i"
+      ]
+    ],
+    "result": "i",
+    "mutation": "none",
+    "description": "Return the minimum number of individual bit flips needed to turn first's 32-bit representation into second's. A flip changes one chosen zero to one or one to zero; no other operation is available.",
+    "constraints": [
+      "Inputs and results are signed 32-bit integers. Interpret them as exactly 32 two's-complement bits, numbered 0 (least significant) through 31. Convert the resulting pattern back to its signed 32-bit value. Do not sign-extend into an unbounded Python integer or an extra JavaScript bit.",
+      "All signed 32-bit input values are valid. The result is an integer from 0 through 32. Preserve inputs."
+    ],
+    "why": "A differing position must be flipped at least once, while an equal position needs no flip. XOR marks exactly the differing positions, so counting its set bits attains that lower bound. Clearing its lowest set bit counts one difference per iteration without scanning equal positions.",
+    "correctness": "Each XOR bit is one exactly when the two input bits differ. Every such position needs a flip, and flipping exactly those positions transforms the first word into the second. For a nonzero pattern d, d AND (d-1) clears exactly its lowest set bit and leaves every higher set bit unchanged. Thus the loop performs one iteration per required flip and stops after counting them all.",
+    "walkthrough": "For 29 (11101) and 15 (01111), XOR is 10010. Clearing the lowest one changes it to 10000; clearing again yields zero. Two flips suffice and both differing positions necessarily need a flip.",
+    "example": [
+      [
+        29,
+        15
+      ],
+      2
+    ],
+    "time": "O(k) bit operations for k differing bits, with k <= 32; O(1) for the fixed 32-bit domain. The loop clears a set bit rather than shifting through all positions.",
+    "space": "O(1) auxiliary space.",
+    "edges": [
+      "Equal inputs require zero flips.",
+      "Zero and -1 differ at all 32 positions.",
+      "The sign bit alone differs between 0 and the minimum signed integer."
+    ],
+    "related": "A population-count helper may be reused only after establishing the 32-bit XOR domain; unbounded signed popcount is not equivalent.",
+    "id": "ctci6_5_6",
+    "title": "Conversion",
+    "testCount": 280,
+    "languages": {
+      "csharp": {
+        "signature": "int CountBitChanges(int first, int second)",
+        "starterCode": "public class Solution\n{\n    public int CountBitChanges(int first, int second)\n    {\n        return 0;\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public int CountBitChanges(int first, int second)\n    {\n        uint difference = unchecked((uint)(first ^ second));\n        int count = 0;\n        while (difference != 0)\n        {\n            difference &= difference - 1;\n            ++count;\n        }\n        return count;\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function CountBitChanges(first, second)",
+        "starterCode": "function CountBitChanges(first, second) {\n  return 0;\n}\n",
+        "solutionCode": "function CountBitChanges(first, second) {\n  let difference = (first ^ second) >>> 0,\n    count = 0;\n  while (difference !== 0) {\n    difference = (difference & (difference - 1)) >>> 0;\n    ++count;\n  }\n  return count;\n}\n"
+      },
+      "python": {
+        "signature": "def CountBitChanges(first: int, second: int) -> int",
+        "starterCode": "def CountBitChanges(first: int, second: int) -> int:\n    return 0\n",
+        "solutionCode": "def CountBitChanges(first: int, second: int) -> int:\n    difference = (first ^ second) & 0xFFFFFFFF\n    count = 0\n    while difference:\n        difference &= difference - 1\n        count += 1\n    return count\n"
+      },
+      "cpp": {
+        "signature": "int CountBitChanges(int first, int second)",
+        "starterCode": "class Solution {\n public:\n  int CountBitChanges(int first, int second) {\n    return 0;\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  int CountBitChanges(int first, int second) {\n    std::uint32_t difference =\n        static_cast<std::uint32_t>(first) ^ static_cast<std::uint32_t>(second);\n    int count = 0;\n    while (difference != 0) {\n      difference &= difference - 1;\n      ++count;\n    }\n    return count;\n  }\n};\n"
+      },
+      "java": {
+        "signature": "int CountBitChanges(int first, int second)",
+        "starterCode": "class Solution {\n  public int CountBitChanges(int first, int second) {\n    return 0;\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public int CountBitChanges(int first, int second) {\n    int difference = first ^ second, count = 0;\n    while (difference != 0) {\n      difference &= difference - 1;\n      ++count;\n    }\n    return count;\n  }\n}\n"
+      }
+    }
+  },
+  {
+    "ref": "5.7",
+    "method": "SwapAdjacentBits",
+    "params": [
+      [
+        "word",
+        "i"
+      ]
+    ],
+    "result": "i",
+    "mutation": "none",
+    "description": "Swap every adjacent pair of bits in word's fixed 32-bit representation: positions (0,1), (2,3), and so on through (30,31). Return the signed integer represented by the resulting bits.",
+    "constraints": [
+      "Inputs and results are signed 32-bit integers. Interpret them as exactly 32 two's-complement bits, numbered 0 (least significant) through 31. Convert the resulting pattern back to its signed 32-bit value. Do not sign-extend into an unbounded Python integer or an extra JavaScript bit.",
+      "All signed 32-bit input values are valid. All sixteen pairs are swapped simultaneously; there is no pair-selection argument. Preserve the input."
+    ],
+    "why": "The even-position mask selects one member of every pair, and the odd-position mask selects the other. Shift the even bits left and the odd bits logically right, then combine them. Separating the groups prevents a moved bit from being moved again.",
+    "correctness": "Every original even-position bit moves exactly one place left into its paired odd position; every original odd-position bit moves exactly one place right into its paired even position. The masks partition all 32 positions, and their destinations are disjoint, so OR combines exactly one source for each destination. Logical shifting avoids introducing new leading ones. No position crosses between different pairs.",
+    "walkthrough": "The low byte 01100101 (101) has pairs 01,10,01,01 when read from its high end. Swapping within each pair gives 10011010 (154). Applying the operation again returns 01100101. A top-bit move may make the signed result negative without changing the bit rule.",
+    "example": [
+      [
+        101
+      ],
+      154
+    ],
+    "time": "O(1) time for fixed-width masks, two shifts and one OR.",
+    "space": "O(1) auxiliary space.",
+    "edges": [
+      "Zero and all ones are unchanged.",
+      "A one at position 31 moves to 30 without sign extension.",
+      "Alternating masks swap with one another; applying twice restores the original."
+    ],
+    "related": "swap_bits accepts two selected positions; this exercise swaps all sixteen pairs.",
+    "id": "ctci6_5_7",
+    "title": "Pairwise Swap",
+    "testCount": 238,
+    "languages": {
+      "csharp": {
+        "signature": "int SwapAdjacentBits(int word)",
+        "starterCode": "public class Solution\n{\n    public int SwapAdjacentBits(int word)\n    {\n        return 0;\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public int SwapAdjacentBits(int word)\n    {\n        uint bits = unchecked((uint)word);\n        uint result = ((bits & 0x55555555u) << 1) | ((bits & 0xaaaaaaaau) >> 1);\n        return unchecked((int)result);\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function SwapAdjacentBits(word)",
+        "starterCode": "function SwapAdjacentBits(word) {\n  return 0;\n}\n",
+        "solutionCode": "function SwapAdjacentBits(word) {\n  return ((word & 0x55555555) << 1) | ((word & 0xaaaaaaaa) >>> 1);\n}\n"
+      },
+      "python": {
+        "signature": "def SwapAdjacentBits(word: int) -> int",
+        "starterCode": "def SwapAdjacentBits(word: int) -> int:\n    return 0\n",
+        "solutionCode": "def SwapAdjacentBits(word: int) -> int:\n    bits = word & 0xFFFFFFFF\n    result = ((bits & 0x55555555) << 1) | ((bits & 0xAAAAAAAA) >> 1)\n    return result if result < 0x80000000 else result - 0x100000000\n"
+      },
+      "cpp": {
+        "signature": "int SwapAdjacentBits(int word)",
+        "starterCode": "class Solution {\n public:\n  int SwapAdjacentBits(int word) {\n    return 0;\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  int SwapAdjacentBits(int word) {\n    std::uint32_t bits = static_cast<std::uint32_t>(word);\n    std::uint32_t result = ((bits & 0x55555555u) << 1) | ((bits & 0xaaaaaaaau) >> 1);\n    if (result >= 2147483648u)\n      return static_cast<int>(static_cast<long long>(result) - 4294967296LL);\n    return static_cast<int>(result);\n  }\n};\n"
+      },
+      "java": {
+        "signature": "int SwapAdjacentBits(int word)",
+        "starterCode": "class Solution {\n  public int SwapAdjacentBits(int word) {\n    return 0;\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public int SwapAdjacentBits(int word) {\n    return ((word & 0x55555555) << 1) | ((word & 0xaaaaaaaa) >>> 1);\n  }\n}\n"
+      }
+    }
+  }
+]

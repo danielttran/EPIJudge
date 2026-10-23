@@ -1,0 +1,78 @@
+"""Independent initial bit-manipulation contracts; not the complete chapter."""
+
+WORD = "Inputs and results are signed 32-bit integers. Interpret them as exactly 32 two's-complement bits, numbered 0 (least significant) through 31. Convert the resulting pattern back to its signed 32-bit value. Do not sign-extend into an unbounded Python integer or an extra JavaScript bit."
+SPECS = [
+    dict(
+        ref="5.1",
+        method="InsertBits",
+        params=[("word", "i"), ("insert", "i"), ("low", "i"), ("high", "i")],
+        result="i",
+        mutation="none",
+        description="Replace bits low through high, inclusively, of word with insert's bit pattern aligned so its bit zero lands at low. Preserve every bit outside that interval and return the resulting word.",
+        constraints=[
+            WORD,
+            "0 <= low <= high <= 31. The unsigned 32-bit interpretation of insert fits within high-low+1 bits. Negative insert values are therefore valid only for a full-width interval. Inputs satisfy these preconditions; invalid bounds are not a request to return zero.",
+            "Do not mutate inputs. The full-width interval [0,31] is valid and returns insert.",
+        ],
+        why="OR alone cannot replace an existing one with zero. First clear exactly the destination interval, then OR the aligned replacement into that cleared region. A width-sized mask describes the replacement independently of its destination.",
+        correctness="The mask has ones exactly at the interval positions. AND with its complement keeps every outside bit and clears every inside bit. The fitting insertion has no bits beyond that interval after shifting. OR therefore sets each inside bit to the corresponding insertion bit and cannot affect an outside bit. The signed conversion changes only the numerical interpretation, not the 32-bit pattern.",
+        walkthrough="For word 240 (binary 11110000), insert 5 (101), low 1 and high 3, clearing positions 1..3 leaves 11110000. Aligning 101 yields 00001010. OR produces 11111010, or 250. Inserting zero into those positions would clear them rather than preserving old ones.",
+        example=([240, 5, 1, 3], 250),
+        time="O(1) time for a fixed 32-bit word: a constant number of masks, shifts and bitwise operations.",
+        space="O(1) auxiliary space.",
+        edges=[
+            "Full-width replacement, including a negative insertion.",
+            "A one-bit interval at position zero or 31.",
+            "Zero insertion clears old one bits; unrelated bits remain set.",
+        ],
+        related="swap_bits changes only two positions and is not this inclusive-range replacement.",
+    ),
+    dict(
+        ref="5.6",
+        method="CountBitChanges",
+        params=[("first", "i"), ("second", "i")],
+        result="i",
+        mutation="none",
+        description="Return the minimum number of individual bit flips needed to turn first's 32-bit representation into second's. A flip changes one chosen zero to one or one to zero; no other operation is available.",
+        constraints=[
+            WORD,
+            "All signed 32-bit input values are valid. The result is an integer from 0 through 32. Preserve inputs.",
+        ],
+        why="A differing position must be flipped at least once, while an equal position needs no flip. XOR marks exactly the differing positions, so counting its set bits attains that lower bound. Clearing its lowest set bit counts one difference per iteration without scanning equal positions.",
+        correctness="Each XOR bit is one exactly when the two input bits differ. Every such position needs a flip, and flipping exactly those positions transforms the first word into the second. For a nonzero pattern d, d AND (d-1) clears exactly its lowest set bit and leaves every higher set bit unchanged. Thus the loop performs one iteration per required flip and stops after counting them all.",
+        walkthrough="For 29 (11101) and 15 (01111), XOR is 10010. Clearing the lowest one changes it to 10000; clearing again yields zero. Two flips suffice and both differing positions necessarily need a flip.",
+        example=([29, 15], 2),
+        time="O(k) bit operations for k differing bits, with k <= 32; O(1) for the fixed 32-bit domain. The loop clears a set bit rather than shifting through all positions.",
+        space="O(1) auxiliary space.",
+        edges=[
+            "Equal inputs require zero flips.",
+            "Zero and -1 differ at all 32 positions.",
+            "The sign bit alone differs between 0 and the minimum signed integer.",
+        ],
+        related="A population-count helper may be reused only after establishing the 32-bit XOR domain; unbounded signed popcount is not equivalent.",
+    ),
+    dict(
+        ref="5.7",
+        method="SwapAdjacentBits",
+        params=[("word", "i")],
+        result="i",
+        mutation="none",
+        description="Swap every adjacent pair of bits in word's fixed 32-bit representation: positions (0,1), (2,3), and so on through (30,31). Return the signed integer represented by the resulting bits.",
+        constraints=[
+            WORD,
+            "All signed 32-bit input values are valid. All sixteen pairs are swapped simultaneously; there is no pair-selection argument. Preserve the input.",
+        ],
+        why="The even-position mask selects one member of every pair, and the odd-position mask selects the other. Shift the even bits left and the odd bits logically right, then combine them. Separating the groups prevents a moved bit from being moved again.",
+        correctness="Every original even-position bit moves exactly one place left into its paired odd position; every original odd-position bit moves exactly one place right into its paired even position. The masks partition all 32 positions, and their destinations are disjoint, so OR combines exactly one source for each destination. Logical shifting avoids introducing new leading ones. No position crosses between different pairs.",
+        walkthrough="The low byte 01100101 (101) has pairs 01,10,01,01 when read from its high end. Swapping within each pair gives 10011010 (154). Applying the operation again returns 01100101. A top-bit move may make the signed result negative without changing the bit rule.",
+        example=([101], 154),
+        time="O(1) time for fixed-width masks, two shifts and one OR.",
+        space="O(1) auxiliary space.",
+        edges=[
+            "Zero and all ones are unchanged.",
+            "A one at position 31 moves to 30 without sign extension.",
+            "Alternating masks swap with one another; applying twice restores the original.",
+        ],
+        related="swap_bits accepts two selected positions; this exercise swaps all sixteen pairs.",
+    ),
+]

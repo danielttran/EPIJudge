@@ -1,0 +1,22 @@
+{
+  "explanation": "OR alone cannot replace an existing one with zero. First clear exactly the destination interval, then OR the aligned replacement into that cleared region. A width-sized mask describes the replacement independently of its destination.",
+  "correctness": "The mask has ones exactly at the interval positions. AND with its complement keeps every outside bit and clears every inside bit. The fitting insertion has no bits beyond that interval after shifting. OR therefore sets each inside bit to the corresponding insertion bit and cannot affect an outside bit. The signed conversion changes only the numerical interpretation, not the 32-bit pattern.",
+  "walkthrough": "For word 240 (binary 11110000), insert 5 (101), low 1 and high 3, clearing positions 1..3 leaves 11110000. Aligning 101 yields 00001010. OR produces 11111010, or 250. Inserting zero into those positions would clear them rather than preserving old ones.",
+  "walkthroughCase": {
+    "arguments": [
+      240,
+      5,
+      1,
+      3
+    ],
+    "expected": 250
+  },
+  "timeComplexity": "O(1) time for a fixed 32-bit word: a constant number of masks, shifts and bitwise operations.",
+  "spaceComplexity": "O(1) auxiliary space.",
+  "edgeCases": [
+    "Full-width replacement, including a negative insertion.",
+    "A one-bit interval at position zero or 31.",
+    "Zero insertion clears old one bits; unrelated bits remain set."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 5.1. No affiliation is implied."
+}

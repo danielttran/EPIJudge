@@ -1,0 +1,19 @@
+{
+  "explanation": "The even-position mask selects one member of every pair, and the odd-position mask selects the other. Shift the even bits left and the odd bits logically right, then combine them. Separating the groups prevents a moved bit from being moved again.",
+  "correctness": "Every original even-position bit moves exactly one place left into its paired odd position; every original odd-position bit moves exactly one place right into its paired even position. The masks partition all 32 positions, and their destinations are disjoint, so OR combines exactly one source for each destination. Logical shifting avoids introducing new leading ones. No position crosses between different pairs.",
+  "walkthrough": "The low byte 01100101 (101) has pairs 01,10,01,01 when read from its high end. Swapping within each pair gives 10011010 (154). Applying the operation again returns 01100101. A top-bit move may make the signed result negative without changing the bit rule.",
+  "walkthroughCase": {
+    "arguments": [
+      101
+    ],
+    "expected": 154
+  },
+  "timeComplexity": "O(1) time for fixed-width masks, two shifts and one OR.",
+  "spaceComplexity": "O(1) auxiliary space.",
+  "edgeCases": [
+    "Zero and all ones are unchanged.",
+    "A one at position 31 moves to 30 without sign extension.",
+    "Alternating masks swap with one another; applying twice restores the original."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 5.7. No affiliation is implied."
+}

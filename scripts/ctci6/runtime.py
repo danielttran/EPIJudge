@@ -11,6 +11,7 @@ import re
 import harness01
 import harness02
 import harness03
+import harness05
 import models03
 from core import HEADERS, LANGUAGES, ROOT
 from models02 import MODELS, header
@@ -101,8 +102,20 @@ return json{{{{"observation",observed}},{{"elapsedMs",elapsed}}}};
     ).replace("int main()", helper + "int main()", 1)
 
 
+def submission_prefix(batch, language):
+    if batch in (1, 5):
+        return HEADERS[language] + (
+            "#include <cstdint>\n" if batch == 5 and language == "cpp" else ""
+        )
+    if batch == 2:
+        return header(language)
+    if batch == 3:
+        return models03.header("3.5", language) + models03.ANIMAL[language]
+    raise ValueError("Unsupported submission batch")
+
+
 def adapter(entry, language, batch):
-    module = {1: harness01, 2: harness02, 3: harness03}[batch]
+    module = {1: harness01, 2: harness02, 3: harness03, 5: harness05}[batch]
     bank = module.source(language, only_ref=entry["ref"])
     code = entry["languages"][language]["solutionCode"]
     name = "Solution_" + entry["ref"].replace(".", "_")
@@ -114,13 +127,7 @@ def adapter(entry, language, batch):
     if bank.count(declaration) != 1:
         raise ValueError("Judge source does not contain the exact owned declaration")
     bank = bank.replace(declaration, "", 1).replace(name, "Solution")
-    owned_header = (
-        HEADERS[language]
-        if batch == 1
-        else header(language)
-        if batch == 2
-        else models03.header("3.5", language) + models03.ANIMAL[language]
-    )
+    owned_header = submission_prefix(batch, language)
     if owned_header:
         if bank.count(owned_header) != 1:
             raise ValueError("Judge header does not match its recorded owned header")
@@ -164,7 +171,12 @@ def adapter(entry, language, batch):
 
 def generate_runtime():
     rows = []
-    for batch, folder in ((1, "staged"), (2, "staged02"), (3, "staged03")):
+    for batch, folder in (
+        (1, "staged"),
+        (2, "staged02"),
+        (3, "staged03"),
+        (5, "staged05"),
+    ):
         for entry in json.loads((ROOT / "ctci6" / folder / "catalog.json").read_text()):
             item = {
                 k: entry[k]
@@ -189,13 +201,7 @@ def generate_runtime():
             )
             for language in LANGUAGES:
                 code = entry["languages"][language]
-                prefix = (
-                    HEADERS[language]
-                    if batch == 1
-                    else header(language)
-                    if batch == 2
-                    else models03.header("3.5", language) + models03.ANIMAL[language]
-                )
+                prefix = submission_prefix(batch, language)
                 exports = (
                     ["LinkedListNode"]
                     if batch == 2
