@@ -1,0 +1,29 @@
+{
+  "stage": "standalone-authoring-and-separate-module",
+  "liveIntegration": "pending-local-export",
+  "reviewScope": "Two directed-graph tasks and ten actual language bodies; directed reachability, zero-edge paths, dependency direction, duplicate contributions and acceptance of all valid full build orders.",
+  "questions": [
+    {
+      "ref": "4.1",
+      "algorithm": "Build directed adjacency and explore reachable nodes with visited-at-enqueue flags and an indexed append-only queue.",
+      "review": "Read all five bodies. start==target is explicitly true before exploration. Edges are one-way; labels are distinct node IDs. Marking before queue append prevents cycles, self-loops and duplicate edges from repeated expansion. Python/JS adjacency rows are independent allocations, not shared repeated references. Queue head indices avoid front-removal shifts in every language. A separate repeated-edge-relaxation oracle checks all three-node directed graphs with every query pair and four-node graphs with a fixed endpoint pair, plus 1000-node chains, 10000 duplicate edges and random graphs. Boolean observations reject numeric substitutes. Original edge arrays/rows are unchanged."
+    },
+    {
+      "ref": "4.7",
+      "algorithm": "Queue-based indegree elimination, returning the full project list or an empty result when not all projects can be emitted.",
+      "review": "Read every actual language body and the author nested EdgeRemoval source. A pair [before,after] increments after's indegree and appends after to before's adjacency. Repeated pairs are counted and decremented with the same multiplicity; a project enters only on its one transition to zero. Self-dependencies and cycles in a separate component cannot produce an accepted partial prefix. The grader accepts every valid permutation respecting all dependencies rather than requiring incidental queue order. Independent exhaustive permutations decide small-graph feasibility, with a heap/set oracle for large graphs. All four-node directed graphs, duplicate edges, no projects, 200-project chains/cycles and isolated nodes are executed."
+    }
+  ],
+  "languagesReviewed": ["csharp", "javascript", "python", "cpp", "java"],
+  "languageBindingReview": {
+    "csharp": "Read exact bool/int[] methods. List<int>[] adjacency rows are separately constructed, and List<int> queues use a growing head index. Readonly observation preserves original jagged-array row identities. BuildOrder returns a materialized array only after all projects have been emitted.",
+    "javascript": "Read exact functions. Array.from allocates independent adjacency lists. Boolean results have exact boolean type; Number integer node IDs and degrees stay well below precision limits. Every returned order is a concrete array; input edges are not sorted or modified.",
+    "python": "Read exact annotated functions. Independent adjacency-list comprehensions and index-based work queues avoid aliasing and quadratic pop(0). Reachability returns bool, which is validated separately from int. Build-order failure discards partial queue output.",
+    "cpp": "Read actual C++17 const vector references, vector<bool> visited flags and indexed vector queues. Dynamic queue growth does not invalidate iteration because the loop stores an index and adjacency traversal belongs to a different vector. Counts/IDs fit signed int; bounds are checked by input preconditions.",
+    "java": "Read actual methods, List<List<Integer>> adjacency and int[] result conversion. Boolean JSON encoding is explicit for reachability. Enhanced-for traverses adjacency lists while appending only to the separate queue, avoiding concurrent modification. Input row arrays remain unchanged."
+  },
+  "executionEvidence": "staged04/validation.json",
+  "submissionEvidence": "runtime/validation.json",
+  "graderRegressions": ["scripts/ctci6/test_graph04.py", "EpiJudge.Tests/CtciStagingTests.cs"],
+  "remainingAcceptance": ["remaining tree/graph and other known collection content", "source/classification gaps", "final whole-bank execution and rendered checks", "authorized push and exact-commit CI"]
+}

@@ -1,0 +1,39 @@
+{
+  "explanation": "Explore only nodes reachable from start. A visited flag set when a node enters the work queue prevents cycles or duplicate edges from causing repeated expansion. If target is encountered it is reachable; exhausting the queue proves no reachable path was omitted.",
+  "correctness": "Initially start is reachable by the zero-edge path. Every newly queued neighbor extends a known reachable path by one directed edge, so every discovered node is reachable. Conversely, along any path from start, induction on path length shows that expanding the preceding discovered node will discover its next node. Thus every reachable node is eventually discovered. Marking at enqueue time avoids duplicate work without removing any unexplored reachable node. Equality at start handles the explicit zero-edge case; otherwise target is returned true exactly on discovery, and queue exhaustion proves absence.",
+  "walkthrough": "With edges [[0,1],[1,2],[2,0],[3,2]], start 0 reaches 1 and then 2, but cannot reach 3 because [3,2] points toward the cycle. Return false for target 3 and true for target 2. With start=target=3 return true without requiring an outgoing edge.",
+  "walkthroughCase": {
+    "arguments": [
+      4,
+      [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          2
+        ]
+      ],
+      0,
+      3
+    ],
+    "expected": false
+  },
+  "timeComplexity": "O(V+E) time to allocate adjacency/visited storage, read all edges and explore each reachable node/edge at most once.",
+  "spaceComplexity": "O(V+E) adjacency, visited and queue storage, where V=nodeCount and E=edge count.",
+  "edgeCases": [
+    "An isolated node reaching itself and distinct disconnected nodes.",
+    "One-way edges, cycles, repeated edges and self-loops.",
+    "A 1000-node chain must not overflow a recursive stack."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 4.1. No affiliation is implied."
+}

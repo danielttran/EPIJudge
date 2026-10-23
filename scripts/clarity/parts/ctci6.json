@@ -1593,6 +1593,149 @@
         ]
       }
     },
+    "ctci6_4_1": {
+      "description": "Determine whether target is reachable from start in a directed graph. Nodes have identities 0..nodeCount-1. Each edge row [from,to] permits travel only from from to to; it does not imply a reverse edge.",
+      "constraints": [
+        "1 <= nodeCount <= 1000. edges has 0..10000 rows of exactly two valid node IDs. Self-loops, duplicate edges, cycles and isolated nodes are allowed. start and target are valid IDs.",
+        "A route may have zero edges, so start==target returns true, even for an isolated node. Preserve the edge array, every original row and all values. Graph-node labels/objects are represented by their distinct numeric IDs, not by comparing potentially repeated display labels."
+      ],
+      "examples": [
+        {
+          "input": "[4, [[0, 1], [1, 2], [2, 0], [3, 2]], 0, 3]",
+          "output": "false",
+          "explanation": "With edges [[0,1],[1,2],[2,0],[3,2]], start 0 reaches 1 and then 2, but cannot reach 3 because [3,2] points toward the cycle. Return false for target 3 and true for target 2. With start=target=3 return true without requiring an outgoing edge."
+        }
+      ],
+      "exampleCases": [
+        {
+          "arguments": [
+            4,
+            [
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                2
+              ],
+              [
+                2,
+                0
+              ],
+              [
+                3,
+                2
+              ]
+            ],
+            0,
+            3
+          ],
+          "expected": false
+        }
+      ],
+      "contracts": {
+        "csharp": [
+          "Callable: bool HasDirectedRoute(int nodeCount, int[][] edges, int start, int target)",
+          "1 <= nodeCount <= 1000. edges has 0..10000 rows of exactly two valid node IDs. Self-loops, duplicate edges, cycles and isolated nodes are allowed. start and target are valid IDs.",
+          "A route may have zero edges, so start==target returns true, even for an isolated node. Preserve the edge array, every original row and all values. Graph-node labels/objects are represented by their distinct numeric IDs, not by comparing potentially repeated display labels."
+        ],
+        "javascript": [
+          "Callable: function HasDirectedRoute(nodeCount, edges, start, target)",
+          "1 <= nodeCount <= 1000. edges has 0..10000 rows of exactly two valid node IDs. Self-loops, duplicate edges, cycles and isolated nodes are allowed. start and target are valid IDs.",
+          "A route may have zero edges, so start==target returns true, even for an isolated node. Preserve the edge array, every original row and all values. Graph-node labels/objects are represented by their distinct numeric IDs, not by comparing potentially repeated display labels."
+        ],
+        "python": [
+          "Callable: def HasDirectedRoute(nodeCount: int, edges: list[list[int]], start: int, target: int) -> bool",
+          "1 <= nodeCount <= 1000. edges has 0..10000 rows of exactly two valid node IDs. Self-loops, duplicate edges, cycles and isolated nodes are allowed. start and target are valid IDs.",
+          "A route may have zero edges, so start==target returns true, even for an isolated node. Preserve the edge array, every original row and all values. Graph-node labels/objects are represented by their distinct numeric IDs, not by comparing potentially repeated display labels."
+        ],
+        "cpp": [
+          "Callable: bool HasDirectedRoute(int nodeCount, const std::vector<std::vector<int>>& edges, int start, int target)",
+          "1 <= nodeCount <= 1000. edges has 0..10000 rows of exactly two valid node IDs. Self-loops, duplicate edges, cycles and isolated nodes are allowed. start and target are valid IDs.",
+          "A route may have zero edges, so start==target returns true, even for an isolated node. Preserve the edge array, every original row and all values. Graph-node labels/objects are represented by their distinct numeric IDs, not by comparing potentially repeated display labels."
+        ],
+        "java": [
+          "Callable: boolean HasDirectedRoute(int nodeCount, int[][] edges, int start, int target)",
+          "1 <= nodeCount <= 1000. edges has 0..10000 rows of exactly two valid node IDs. Self-loops, duplicate edges, cycles and isolated nodes are allowed. start and target are valid IDs.",
+          "A route may have zero edges, so start==target returns true, even for an isolated node. Preserve the edge array, every original row and all values. Graph-node labels/objects are represented by their distinct numeric IDs, not by comparing potentially repeated display labels."
+        ]
+      }
+    },
+    "ctci6_4_7": {
+      "description": "Return a build order for projects 0..projectCount-1. A dependency [before,after] requires before to appear earlier than after. Any valid full build order is accepted. Return [] when a dependency cycle makes building every project impossible.",
+      "constraints": [
+        "0 <= projectCount <= 200. dependencies has 0..10000 rows of two valid project IDs; for zero projects it is empty. Duplicate pairs and self-dependencies are allowed. Preserve the input array, every row and all values.",
+        "Every project must occur exactly once in a successful result, including isolated projects. Output order is unrestricted among dependency-respecting full orders. For no projects the valid order is []. Any nonempty cyclic input also returns [], never a partial prefix.",
+        "A pair [a,b] means a must be built before b. It does not mean a depends on b. Project numbers represent the original named project identities."
+      ],
+      "examples": [
+        {
+          "input": "[4, [[0, 2], [1, 2], [2, 3]]]",
+          "output": "[0, 1, 2, 3]",
+          "explanation": "For four projects with dependencies [[0,2],[1,2],[2,3]], projects 0 and 1 are initially available. The reference queues 0 then 1, making 2 available, then build 3: [0,1,2,3]. Adding [3,1] creates cycle 1->2->3->1, so return [] even though project 0 alone could be built."
+        }
+      ],
+      "exampleCases": [
+        {
+          "arguments": [
+            4,
+            [
+              [
+                0,
+                2
+              ],
+              [
+                1,
+                2
+              ],
+              [
+                2,
+                3
+              ]
+            ]
+          ],
+          "expected": [
+            0,
+            1,
+            2,
+            3
+          ]
+        }
+      ],
+      "contracts": {
+        "csharp": [
+          "Callable: int[] BuildOrder(int projectCount, int[][] dependencies)",
+          "0 <= projectCount <= 200. dependencies has 0..10000 rows of two valid project IDs; for zero projects it is empty. Duplicate pairs and self-dependencies are allowed. Preserve the input array, every row and all values.",
+          "Every project must occur exactly once in a successful result, including isolated projects. Output order is unrestricted among dependency-respecting full orders. For no projects the valid order is []. Any nonempty cyclic input also returns [], never a partial prefix.",
+          "A pair [a,b] means a must be built before b. It does not mean a depends on b. Project numbers represent the original named project identities."
+        ],
+        "javascript": [
+          "Callable: function BuildOrder(projectCount, dependencies)",
+          "0 <= projectCount <= 200. dependencies has 0..10000 rows of two valid project IDs; for zero projects it is empty. Duplicate pairs and self-dependencies are allowed. Preserve the input array, every row and all values.",
+          "Every project must occur exactly once in a successful result, including isolated projects. Output order is unrestricted among dependency-respecting full orders. For no projects the valid order is []. Any nonempty cyclic input also returns [], never a partial prefix.",
+          "A pair [a,b] means a must be built before b. It does not mean a depends on b. Project numbers represent the original named project identities."
+        ],
+        "python": [
+          "Callable: def BuildOrder(projectCount: int, dependencies: list[list[int]]) -> list[int]",
+          "0 <= projectCount <= 200. dependencies has 0..10000 rows of two valid project IDs; for zero projects it is empty. Duplicate pairs and self-dependencies are allowed. Preserve the input array, every row and all values.",
+          "Every project must occur exactly once in a successful result, including isolated projects. Output order is unrestricted among dependency-respecting full orders. For no projects the valid order is []. Any nonempty cyclic input also returns [], never a partial prefix.",
+          "A pair [a,b] means a must be built before b. It does not mean a depends on b. Project numbers represent the original named project identities."
+        ],
+        "cpp": [
+          "Callable: std::vector<int> BuildOrder(int projectCount, const std::vector<std::vector<int>>& dependencies)",
+          "0 <= projectCount <= 200. dependencies has 0..10000 rows of two valid project IDs; for zero projects it is empty. Duplicate pairs and self-dependencies are allowed. Preserve the input array, every row and all values.",
+          "Every project must occur exactly once in a successful result, including isolated projects. Output order is unrestricted among dependency-respecting full orders. For no projects the valid order is []. Any nonempty cyclic input also returns [], never a partial prefix.",
+          "A pair [a,b] means a must be built before b. It does not mean a depends on b. Project numbers represent the original named project identities."
+        ],
+        "java": [
+          "Callable: int[] BuildOrder(int projectCount, int[][] dependencies)",
+          "0 <= projectCount <= 200. dependencies has 0..10000 rows of two valid project IDs; for zero projects it is empty. Duplicate pairs and self-dependencies are allowed. Preserve the input array, every row and all values.",
+          "Every project must occur exactly once in a successful result, including isolated projects. Output order is unrestricted among dependency-respecting full orders. For no projects the valid order is []. Any nonempty cyclic input also returns [], never a partial prefix.",
+          "A pair [a,b] means a must be built before b. It does not mean a depends on b. Project numbers represent the original named project identities."
+        ]
+      }
+    },
     "ctci6_5_1": {
       "description": "Replace bits low through high, inclusively, of word with insert's bit pattern aligned so its bit zero lands at low. Preserve every bit outside that interval and return the resulting word.",
       "constraints": [

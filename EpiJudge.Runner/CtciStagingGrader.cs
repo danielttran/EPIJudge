@@ -129,6 +129,19 @@ public static class CtciStagingGrader
             if (observed.ValueKind != JsonValueKind.Object || observed.TryGetProperty("error", out var error) && error.ValueKind != JsonValueKind.Null)
                 return "Your code did not finish this case successfully.";
             if (definition.Batch == 10) return SortingFailure(definition, test, observed);
+            if (definition.Batch == 4 && definition.Ref == "4.7")
+            {
+                if (observed.GetProperty("mutationOk").ValueKind != JsonValueKind.True) return "Preserve the dependency array and its original rows.";
+                var order = Integers(observed.GetProperty("actual"));
+                if (order.Length == 0) return test.Expected.GetArrayLength() == 0 ? null : "A full build order exists.";
+                int count = test.Arguments[0].GetInt32();
+                if (order.Length != count || order.Distinct().Count() != count || order.Any(project => project < 0 || project >= count)) return "Include every project exactly once.";
+                var positions = new int[count];
+                for (int i = 0; i < order.Length; i++) positions[order[i]] = i;
+                foreach (var edge in test.Arguments[1].EnumerateArray())
+                    if (positions[edge[0].GetInt32()] >= positions[edge[1].GetInt32()]) return "Build each prerequisite before its dependent project.";
+                return null;
+            }
             if (definition.Batch == 8 && definition.Ref == "8.2")
             {
                 if (observed.GetProperty("mutationOk").ValueKind != JsonValueKind.True) return "Preserve the grid and its original rows.";
@@ -162,7 +175,7 @@ public static class CtciStagingGrader
                 return CanonicalCollection(definition.Result, observed.GetProperty("actual")).SequenceEqual(CanonicalCollection(definition.Result, test.Expected), StringComparer.Ordinal)
                     ? null : "Return every required subset or string exactly once. Output order is unrestricted.";
             }
-            if (definition.Batch is 1 or 3 or 5 or 8 or 16 or 17)
+            if (definition.Batch is 1 or 3 or 4 or 5 or 8 or 16 or 17)
             {
                 if (observed.GetProperty("mutationOk").ValueKind != JsonValueKind.True)
                     return definition.Batch == 3 ? "Preserve the required stack and original Animal identities, fields and return types." : "Preserve the required input, row, or buffer identities.";
@@ -251,7 +264,7 @@ public static class CtciStagingGrader
     {
         try
         {
-            if (definition.Batch is 1 or 3 or 5 or 8 or 10 or 16 or 17) return observed.GetProperty("actual").Clone();
+            if (definition.Batch is 1 or 3 or 4 or 5 or 8 or 10 or 16 or 17) return observed.GetProperty("actual").Clone();
             if (definition.Ref is "2.1" or "2.4" or "2.5") return observed.GetProperty("reachableValues").Clone();
             if (definition.Ref == "2.3") return Encode(new { success = observed.GetProperty("returnedBool"), values = observed.GetProperty("reachableValues") });
             if (definition.Ref == "2.6") return observed.GetProperty("returnedBool").Clone();

@@ -1,0 +1,37 @@
+{
+  "explanation": "A project can be built exactly when all incoming prerequisite edges have been removed. Queue all initially available projects, then emit them and remove their outgoing dependency contributions. A project joins the queue when its last prerequisite contribution is removed, so no repeated scan for available projects is needed.",
+  "correctness": "Initially each indegree counts all listed prerequisite contributions. Removing a built project decreases exactly its outgoing contributions, so an unbuilt project has indegree zero precisely when all prerequisites have been built. Emitting such a project preserves every dependency. If no candidate exists while projects remain, following remaining prerequisites must revisit a project in the finite graph, proving a cycle; discard the partial prefix and return []. Otherwise every project is emitted exactly once. Every emitted project has no outstanding prerequisite, so their full sequence is a valid build order. Duplicate edges are counted and removed with equal multiplicity.",
+  "walkthrough": "For four projects with dependencies [[0,2],[1,2],[2,3]], projects 0 and 1 are initially available. The reference queues 0 then 1, making 2 available, then build 3: [0,1,2,3]. Adding [3,1] creates cycle 1->2->3->1, so return [] even though project 0 alone could be built.",
+  "walkthroughCase": {
+    "arguments": [
+      4,
+      [
+        [
+          0,
+          2
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          3
+        ]
+      ]
+    ],
+    "expected": [
+      0,
+      1,
+      2,
+      3
+    ]
+  },
+  "timeComplexity": "O(V+E) time: each project enters/exits the queue once, and every listed dependency contribution is read and removed once.",
+  "spaceComplexity": "O(V+E) adjacency, indegree, emitted flags and output.",
+  "edgeCases": [
+    "No projects, isolated projects and several simultaneously available IDs.",
+    "Repeated dependencies, self-dependency, a cycle in only one component and a long chain."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 4.7. No affiliation is implied."
+}

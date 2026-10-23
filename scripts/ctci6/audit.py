@@ -85,6 +85,7 @@ def audit(publication=False):
         ("staged", "review01.json"),
         ("staged02", "review02.json"),
         ("staged03", "review03.json"),
+        ("staged04", "review04.json"),
         ("staged05", "review05.json"),
         ("staged08", "review08.json"),
         ("staged10", "review10.json"),

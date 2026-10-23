@@ -165,6 +165,25 @@ public sealed class CtciStagingTests
     }
 
     [Fact]
+    public void BuildOrderAcceptsEveryValidFullOrdering()
+    {
+        var definition = Definition("4.7");
+        var test = Case([4, new int[][] { [0, 2], [1, 2], [2, 3] }], new[] { 0, 1, 2, 3 });
+        Assert.Null(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new[] { 1, 0, 2, 3 }, mutationOk = true })));
+        foreach (var order in new int[][] { [], [0, 1, 2], [0, 0, 2, 3], [2, 0, 1, 3] })
+            Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = order, mutationOk = true })));
+    }
+
+    [Fact]
+    public void BuildOrderRejectsPartialOutputFromACyclicComponent()
+    {
+        var definition = Definition("4.7");
+        var test = Case([3, new int[][] { [0, 1], [1, 0] }], Array.Empty<int>());
+        Assert.Null(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = Array.Empty<int>(), mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new[] { 2 }, mutationOk = true })));
+    }
+
+    [Fact]
     public void AntRenderingUsesVisitedBoundsAndOverlaysTheFinalDirection()
     {
         var definition = Definition("16.22");

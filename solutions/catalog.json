@@ -31015,6 +31015,171 @@
     ]
   },
   {
+    "problemId": "ctci6_4_1",
+    "collection": "ctci6",
+    "language": "csharp",
+    "code": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic class Solution\n{\n    public bool HasDirectedRoute(int nodeCount, int[][] edges, int start, int target)\n    {\n        if (start == target)\n            return true;\n        var adjacent = new List<int>[nodeCount];\n        for (int i = 0; i < nodeCount; ++i)\n            adjacent[i] = new List<int>();\n        foreach (var edge in edges)\n            adjacent[edge[0]].Add(edge[1]);\n        bool[] visited = new bool[nodeCount];\n        var queue = new List<int> { start };\n        visited[start] = true;\n        for (int head = 0; head < queue.Count; ++head)\n            foreach (int neighbor in adjacent[queue[head]])\n                if (!visited[neighbor])\n                {\n                    if (neighbor == target)\n                        return true;\n                    visited[neighbor] = true;\n                    queue.Add(neighbor);\n                }\n        return false;\n    }\n}\n",
+    "explanation": "Explore only nodes reachable from start. A visited flag set when a node enters the work queue prevents cycles or duplicate edges from causing repeated expansion. If target is encountered it is reachable; exhausting the queue proves no reachable path was omitted.",
+    "timeComplexity": "O(V+E) time to allocate adjacency/visited storage, read all edges and explore each reachable node/edge at most once.",
+    "spaceComplexity": "O(V+E) adjacency, visited and queue storage, where V=nodeCount and E=edge count.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 4.1. No affiliation is implied.",
+    "correctness": "Initially start is reachable by the zero-edge path. Every newly queued neighbor extends a known reachable path by one directed edge, so every discovered node is reachable. Conversely, along any path from start, induction on path length shows that expanding the preceding discovered node will discover its next node. Thus every reachable node is eventually discovered. Marking at enqueue time avoids duplicate work without removing any unexplored reachable node. Equality at start handles the explicit zero-edge case; otherwise target is returned true exactly on discovery, and queue exhaustion proves absence.",
+    "walkthrough": "With edges [[0,1],[1,2],[2,0],[3,2]], start 0 reaches 1 and then 2, but cannot reach 3 because [3,2] points toward the cycle. Return false for target 3 and true for target 2. With start=target=3 return true without requiring an outgoing edge.",
+    "edgeCases": [
+      "An isolated node reaching itself and distinct disconnected nodes.",
+      "One-way edges, cycles, repeated edges and self-loops.",
+      "A 1000-node chain must not overflow a recursive stack."
+    ]
+  },
+  {
+    "problemId": "ctci6_4_1",
+    "collection": "ctci6",
+    "language": "javascript",
+    "code": "'use strict';\nfunction HasDirectedRoute(nodeCount, edges, start, target) {\n  if (start === target) return true;\n  const adjacent = Array.from({ length: nodeCount }, () => []),\n    visited = new Array(nodeCount).fill(false),\n    queue = [start];\n  for (const [source, destination] of edges) adjacent[source].push(destination);\n  visited[start] = true;\n  for (let head = 0; head < queue.length; ++head)\n    for (const neighbor of adjacent[queue[head]])\n      if (!visited[neighbor]) {\n        if (neighbor === target) return true;\n        visited[neighbor] = true;\n        queue.push(neighbor);\n      }\n  return false;\n}\n\nmodule.exports = {HasDirectedRoute};\n",
+    "explanation": "Explore only nodes reachable from start. A visited flag set when a node enters the work queue prevents cycles or duplicate edges from causing repeated expansion. If target is encountered it is reachable; exhausting the queue proves no reachable path was omitted.",
+    "timeComplexity": "O(V+E) time to allocate adjacency/visited storage, read all edges and explore each reachable node/edge at most once.",
+    "spaceComplexity": "O(V+E) adjacency, visited and queue storage, where V=nodeCount and E=edge count.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 4.1. No affiliation is implied.",
+    "correctness": "Initially start is reachable by the zero-edge path. Every newly queued neighbor extends a known reachable path by one directed edge, so every discovered node is reachable. Conversely, along any path from start, induction on path length shows that expanding the preceding discovered node will discover its next node. Thus every reachable node is eventually discovered. Marking at enqueue time avoids duplicate work without removing any unexplored reachable node. Equality at start handles the explicit zero-edge case; otherwise target is returned true exactly on discovery, and queue exhaustion proves absence.",
+    "walkthrough": "With edges [[0,1],[1,2],[2,0],[3,2]], start 0 reaches 1 and then 2, but cannot reach 3 because [3,2] points toward the cycle. Return false for target 3 and true for target 2. With start=target=3 return true without requiring an outgoing edge.",
+    "edgeCases": [
+      "An isolated node reaching itself and distinct disconnected nodes.",
+      "One-way edges, cycles, repeated edges and self-loops.",
+      "A 1000-node chain must not overflow a recursive stack."
+    ]
+  },
+  {
+    "problemId": "ctci6_4_1",
+    "collection": "ctci6",
+    "language": "python",
+    "code": "def HasDirectedRoute(nodeCount: int, edges: list[list[int]], start: int, target: int) -> bool:\n    if start == target:\n        return True\n    adjacent = [[] for _ in range(nodeCount)]\n    for source, destination in edges:\n        adjacent[source].append(destination)\n    visited = [False] * nodeCount\n    visited[start] = True\n    queue = [start]\n    head = 0\n    while head < len(queue):\n        node = queue[head]\n        head += 1\n        for neighbor in adjacent[node]:\n            if not visited[neighbor]:\n                if neighbor == target:\n                    return True\n                visited[neighbor] = True\n                queue.append(neighbor)\n    return False\n",
+    "explanation": "Explore only nodes reachable from start. A visited flag set when a node enters the work queue prevents cycles or duplicate edges from causing repeated expansion. If target is encountered it is reachable; exhausting the queue proves no reachable path was omitted.",
+    "timeComplexity": "O(V+E) time to allocate adjacency/visited storage, read all edges and explore each reachable node/edge at most once.",
+    "spaceComplexity": "O(V+E) adjacency, visited and queue storage, where V=nodeCount and E=edge count.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 4.1. No affiliation is implied.",
+    "correctness": "Initially start is reachable by the zero-edge path. Every newly queued neighbor extends a known reachable path by one directed edge, so every discovered node is reachable. Conversely, along any path from start, induction on path length shows that expanding the preceding discovered node will discover its next node. Thus every reachable node is eventually discovered. Marking at enqueue time avoids duplicate work without removing any unexplored reachable node. Equality at start handles the explicit zero-edge case; otherwise target is returned true exactly on discovery, and queue exhaustion proves absence.",
+    "walkthrough": "With edges [[0,1],[1,2],[2,0],[3,2]], start 0 reaches 1 and then 2, but cannot reach 3 because [3,2] points toward the cycle. Return false for target 3 and true for target 2. With start=target=3 return true without requiring an outgoing edge.",
+    "edgeCases": [
+      "An isolated node reaching itself and distinct disconnected nodes.",
+      "One-way edges, cycles, repeated edges and self-loops.",
+      "A 1000-node chain must not overflow a recursive stack."
+    ]
+  },
+  {
+    "problemId": "ctci6_4_1",
+    "collection": "ctci6",
+    "language": "cpp",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\nclass Solution {\n public:\n  bool HasDirectedRoute(int nodeCount, const std::vector<std::vector<int>>& edges, int start,\n                        int target) {\n    if (start == target)\n      return true;\n    std::vector<std::vector<int>> adjacent(nodeCount);\n    for (const auto& edge : edges)\n      adjacent[edge[0]].push_back(edge[1]);\n    std::vector<bool> visited(nodeCount, false);\n    std::vector<int> queue{start};\n    visited[start] = true;\n    for (size_t head = 0; head < queue.size(); ++head)\n      for (int neighbor : adjacent[queue[head]])\n        if (!visited[neighbor]) {\n          if (neighbor == target)\n            return true;\n          visited[neighbor] = true;\n          queue.push_back(neighbor);\n        }\n    return false;\n  }\n};\n",
+    "explanation": "Explore only nodes reachable from start. A visited flag set when a node enters the work queue prevents cycles or duplicate edges from causing repeated expansion. If target is encountered it is reachable; exhausting the queue proves no reachable path was omitted.",
+    "timeComplexity": "O(V+E) time to allocate adjacency/visited storage, read all edges and explore each reachable node/edge at most once.",
+    "spaceComplexity": "O(V+E) adjacency, visited and queue storage, where V=nodeCount and E=edge count.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 4.1. No affiliation is implied.",
+    "correctness": "Initially start is reachable by the zero-edge path. Every newly queued neighbor extends a known reachable path by one directed edge, so every discovered node is reachable. Conversely, along any path from start, induction on path length shows that expanding the preceding discovered node will discover its next node. Thus every reachable node is eventually discovered. Marking at enqueue time avoids duplicate work without removing any unexplored reachable node. Equality at start handles the explicit zero-edge case; otherwise target is returned true exactly on discovery, and queue exhaustion proves absence.",
+    "walkthrough": "With edges [[0,1],[1,2],[2,0],[3,2]], start 0 reaches 1 and then 2, but cannot reach 3 because [3,2] points toward the cycle. Return false for target 3 and true for target 2. With start=target=3 return true without requiring an outgoing edge.",
+    "edgeCases": [
+      "An isolated node reaching itself and distinct disconnected nodes.",
+      "One-way edges, cycles, repeated edges and self-loops.",
+      "A 1000-node chain must not overflow a recursive stack."
+    ]
+  },
+  {
+    "problemId": "ctci6_4_1",
+    "collection": "ctci6",
+    "language": "java",
+    "code": "import java.util.*;\nclass Solution {\n  public boolean HasDirectedRoute(int nodeCount, int[][] edges, int start, int target) {\n    if (start == target)\n      return true;\n    List<List<Integer>> adjacent = new ArrayList<>();\n    for (int i = 0; i < nodeCount; ++i)\n      adjacent.add(new ArrayList<>());\n    for (int[] edge : edges)\n      adjacent.get(edge[0]).add(edge[1]);\n    boolean[] visited = new boolean[nodeCount];\n    List<Integer> queue = new ArrayList<>();\n    queue.add(start);\n    visited[start] = true;\n    for (int head = 0; head < queue.size(); ++head)\n      for (int neighbor : adjacent.get(queue.get(head)))\n        if (!visited[neighbor]) {\n          if (neighbor == target)\n            return true;\n          visited[neighbor] = true;\n          queue.add(neighbor);\n        }\n    return false;\n  }\n}\n",
+    "explanation": "Explore only nodes reachable from start. A visited flag set when a node enters the work queue prevents cycles or duplicate edges from causing repeated expansion. If target is encountered it is reachable; exhausting the queue proves no reachable path was omitted.",
+    "timeComplexity": "O(V+E) time to allocate adjacency/visited storage, read all edges and explore each reachable node/edge at most once.",
+    "spaceComplexity": "O(V+E) adjacency, visited and queue storage, where V=nodeCount and E=edge count.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 4.1. No affiliation is implied.",
+    "correctness": "Initially start is reachable by the zero-edge path. Every newly queued neighbor extends a known reachable path by one directed edge, so every discovered node is reachable. Conversely, along any path from start, induction on path length shows that expanding the preceding discovered node will discover its next node. Thus every reachable node is eventually discovered. Marking at enqueue time avoids duplicate work without removing any unexplored reachable node. Equality at start handles the explicit zero-edge case; otherwise target is returned true exactly on discovery, and queue exhaustion proves absence.",
+    "walkthrough": "With edges [[0,1],[1,2],[2,0],[3,2]], start 0 reaches 1 and then 2, but cannot reach 3 because [3,2] points toward the cycle. Return false for target 3 and true for target 2. With start=target=3 return true without requiring an outgoing edge.",
+    "edgeCases": [
+      "An isolated node reaching itself and distinct disconnected nodes.",
+      "One-way edges, cycles, repeated edges and self-loops.",
+      "A 1000-node chain must not overflow a recursive stack."
+    ]
+  },
+  {
+    "problemId": "ctci6_4_7",
+    "collection": "ctci6",
+    "language": "csharp",
+    "code": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic class Solution\n{\n    public int[] BuildOrder(int projectCount, int[][] dependencies)\n    {\n        var adjacent = new List<int>[projectCount];\n        for (int i = 0; i < projectCount; ++i)\n            adjacent[i] = new List<int>();\n        int[] indegree = new int[projectCount];\n        foreach (var edge in dependencies)\n        {\n            adjacent[edge[0]].Add(edge[1]);\n            ++indegree[edge[1]];\n        }\n        var order = new List<int>();\n        for (int i = 0; i < projectCount; ++i)\n            if (indegree[i] == 0)\n                order.Add(i);\n        for (int head = 0; head < order.Count; ++head)\n            foreach (int dependent in adjacent[order[head]])\n            {\n                --indegree[dependent];\n                if (indegree[dependent] == 0)\n                    order.Add(dependent);\n            }\n        return order.Count == projectCount ? order.ToArray() : [];\n    }\n}\n",
+    "explanation": "A project can be built exactly when all incoming prerequisite edges have been removed. Queue all initially available projects, then emit them and remove their outgoing dependency contributions. A project joins the queue when its last prerequisite contribution is removed, so no repeated scan for available projects is needed.",
+    "timeComplexity": "O(V+E) time: each project enters/exits the queue once, and every listed dependency contribution is read and removed once.",
+    "spaceComplexity": "O(V+E) adjacency, indegree, emitted flags and output.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 4.7. No affiliation is implied.",
+    "correctness": "Initially each indegree counts all listed prerequisite contributions. Removing a built project decreases exactly its outgoing contributions, so an unbuilt project has indegree zero precisely when all prerequisites have been built. Emitting such a project preserves every dependency. If no candidate exists while projects remain, following remaining prerequisites must revisit a project in the finite graph, proving a cycle; discard the partial prefix and return []. Otherwise every project is emitted exactly once. Every emitted project has no outstanding prerequisite, so their full sequence is a valid build order. Duplicate edges are counted and removed with equal multiplicity.",
+    "walkthrough": "For four projects with dependencies [[0,2],[1,2],[2,3]], projects 0 and 1 are initially available. The reference queues 0 then 1, making 2 available, then build 3: [0,1,2,3]. Adding [3,1] creates cycle 1->2->3->1, so return [] even though project 0 alone could be built.",
+    "edgeCases": [
+      "No projects, isolated projects and several simultaneously available IDs.",
+      "Repeated dependencies, self-dependency, a cycle in only one component and a long chain."
+    ]
+  },
+  {
+    "problemId": "ctci6_4_7",
+    "collection": "ctci6",
+    "language": "javascript",
+    "code": "'use strict';\nfunction BuildOrder(projectCount, dependencies) {\n  const adjacent = Array.from({ length: projectCount }, () => []),\n    indegree = new Array(projectCount).fill(0),\n    order = [];\n  for (const [before, after] of dependencies) {\n    adjacent[before].push(after);\n    ++indegree[after];\n  }\n  for (let i = 0; i < projectCount; ++i) if (indegree[i] === 0) order.push(i);\n  for (let head = 0; head < order.length; ++head)\n    for (const dependent of adjacent[order[head]]) {\n      --indegree[dependent];\n      if (indegree[dependent] === 0) order.push(dependent);\n    }\n  return order.length === projectCount ? order : [];\n}\n\nmodule.exports = {BuildOrder};\n",
+    "explanation": "A project can be built exactly when all incoming prerequisite edges have been removed. Queue all initially available projects, then emit them and remove their outgoing dependency contributions. A project joins the queue when its last prerequisite contribution is removed, so no repeated scan for available projects is needed.",
+    "timeComplexity": "O(V+E) time: each project enters/exits the queue once, and every listed dependency contribution is read and removed once.",
+    "spaceComplexity": "O(V+E) adjacency, indegree, emitted flags and output.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 4.7. No affiliation is implied.",
+    "correctness": "Initially each indegree counts all listed prerequisite contributions. Removing a built project decreases exactly its outgoing contributions, so an unbuilt project has indegree zero precisely when all prerequisites have been built. Emitting such a project preserves every dependency. If no candidate exists while projects remain, following remaining prerequisites must revisit a project in the finite graph, proving a cycle; discard the partial prefix and return []. Otherwise every project is emitted exactly once. Every emitted project has no outstanding prerequisite, so their full sequence is a valid build order. Duplicate edges are counted and removed with equal multiplicity.",
+    "walkthrough": "For four projects with dependencies [[0,2],[1,2],[2,3]], projects 0 and 1 are initially available. The reference queues 0 then 1, making 2 available, then build 3: [0,1,2,3]. Adding [3,1] creates cycle 1->2->3->1, so return [] even though project 0 alone could be built.",
+    "edgeCases": [
+      "No projects, isolated projects and several simultaneously available IDs.",
+      "Repeated dependencies, self-dependency, a cycle in only one component and a long chain."
+    ]
+  },
+  {
+    "problemId": "ctci6_4_7",
+    "collection": "ctci6",
+    "language": "python",
+    "code": "def BuildOrder(projectCount: int, dependencies: list[list[int]]) -> list[int]:\n    adjacent = [[] for _ in range(projectCount)]\n    indegree = [0] * projectCount\n    for before, after in dependencies:\n        adjacent[before].append(after)\n        indegree[after] += 1\n    order = [i for i in range(projectCount) if indegree[i] == 0]\n    head = 0\n    while head < len(order):\n        project = order[head]\n        head += 1\n        for dependent in adjacent[project]:\n            indegree[dependent] -= 1\n            if indegree[dependent] == 0:\n                order.append(dependent)\n    return order if len(order) == projectCount else []\n",
+    "explanation": "A project can be built exactly when all incoming prerequisite edges have been removed. Queue all initially available projects, then emit them and remove their outgoing dependency contributions. A project joins the queue when its last prerequisite contribution is removed, so no repeated scan for available projects is needed.",
+    "timeComplexity": "O(V+E) time: each project enters/exits the queue once, and every listed dependency contribution is read and removed once.",
+    "spaceComplexity": "O(V+E) adjacency, indegree, emitted flags and output.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 4.7. No affiliation is implied.",
+    "correctness": "Initially each indegree counts all listed prerequisite contributions. Removing a built project decreases exactly its outgoing contributions, so an unbuilt project has indegree zero precisely when all prerequisites have been built. Emitting such a project preserves every dependency. If no candidate exists while projects remain, following remaining prerequisites must revisit a project in the finite graph, proving a cycle; discard the partial prefix and return []. Otherwise every project is emitted exactly once. Every emitted project has no outstanding prerequisite, so their full sequence is a valid build order. Duplicate edges are counted and removed with equal multiplicity.",
+    "walkthrough": "For four projects with dependencies [[0,2],[1,2],[2,3]], projects 0 and 1 are initially available. The reference queues 0 then 1, making 2 available, then build 3: [0,1,2,3]. Adding [3,1] creates cycle 1->2->3->1, so return [] even though project 0 alone could be built.",
+    "edgeCases": [
+      "No projects, isolated projects and several simultaneously available IDs.",
+      "Repeated dependencies, self-dependency, a cycle in only one component and a long chain."
+    ]
+  },
+  {
+    "problemId": "ctci6_4_7",
+    "collection": "ctci6",
+    "language": "cpp",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\nclass Solution {\n public:\n  std::vector<int> BuildOrder(int projectCount, const std::vector<std::vector<int>>& dependencies) {\n    std::vector<std::vector<int>> adjacent(projectCount);\n    std::vector<int> indegree(projectCount, 0), order;\n    for (const auto& edge : dependencies) {\n      adjacent[edge[0]].push_back(edge[1]);\n      ++indegree[edge[1]];\n    }\n    for (int i = 0; i < projectCount; ++i)\n      if (indegree[i] == 0)\n        order.push_back(i);\n    for (size_t head = 0; head < order.size(); ++head)\n      for (int dependent : adjacent[order[head]]) {\n        --indegree[dependent];\n        if (indegree[dependent] == 0)\n          order.push_back(dependent);\n      }\n    if (order.size() != static_cast<size_t>(projectCount))\n      return {};\n    return order;\n  }\n};\n",
+    "explanation": "A project can be built exactly when all incoming prerequisite edges have been removed. Queue all initially available projects, then emit them and remove their outgoing dependency contributions. A project joins the queue when its last prerequisite contribution is removed, so no repeated scan for available projects is needed.",
+    "timeComplexity": "O(V+E) time: each project enters/exits the queue once, and every listed dependency contribution is read and removed once.",
+    "spaceComplexity": "O(V+E) adjacency, indegree, emitted flags and output.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 4.7. No affiliation is implied.",
+    "correctness": "Initially each indegree counts all listed prerequisite contributions. Removing a built project decreases exactly its outgoing contributions, so an unbuilt project has indegree zero precisely when all prerequisites have been built. Emitting such a project preserves every dependency. If no candidate exists while projects remain, following remaining prerequisites must revisit a project in the finite graph, proving a cycle; discard the partial prefix and return []. Otherwise every project is emitted exactly once. Every emitted project has no outstanding prerequisite, so their full sequence is a valid build order. Duplicate edges are counted and removed with equal multiplicity.",
+    "walkthrough": "For four projects with dependencies [[0,2],[1,2],[2,3]], projects 0 and 1 are initially available. The reference queues 0 then 1, making 2 available, then build 3: [0,1,2,3]. Adding [3,1] creates cycle 1->2->3->1, so return [] even though project 0 alone could be built.",
+    "edgeCases": [
+      "No projects, isolated projects and several simultaneously available IDs.",
+      "Repeated dependencies, self-dependency, a cycle in only one component and a long chain."
+    ]
+  },
+  {
+    "problemId": "ctci6_4_7",
+    "collection": "ctci6",
+    "language": "java",
+    "code": "import java.util.*;\nclass Solution {\n  public int[] BuildOrder(int projectCount, int[][] dependencies) {\n    List<List<Integer>> adjacent = new ArrayList<>();\n    for (int i = 0; i < projectCount; ++i)\n      adjacent.add(new ArrayList<>());\n    int[] indegree = new int[projectCount];\n    for (int[] edge : dependencies) {\n      adjacent.get(edge[0]).add(edge[1]);\n      ++indegree[edge[1]];\n    }\n    List<Integer> order = new ArrayList<>();\n    for (int i = 0; i < projectCount; ++i)\n      if (indegree[i] == 0)\n        order.add(i);\n    for (int head = 0; head < order.size(); ++head)\n      for (int dependent : adjacent.get(order.get(head))) {\n        --indegree[dependent];\n        if (indegree[dependent] == 0)\n          order.add(dependent);\n      }\n    if (order.size() != projectCount)\n      return new int[0];\n    int[] result = new int[projectCount];\n    for (int i = 0; i < projectCount; ++i)\n      result[i] = order.get(i);\n    return result;\n  }\n}\n",
+    "explanation": "A project can be built exactly when all incoming prerequisite edges have been removed. Queue all initially available projects, then emit them and remove their outgoing dependency contributions. A project joins the queue when its last prerequisite contribution is removed, so no repeated scan for available projects is needed.",
+    "timeComplexity": "O(V+E) time: each project enters/exits the queue once, and every listed dependency contribution is read and removed once.",
+    "spaceComplexity": "O(V+E) adjacency, indegree, emitted flags and output.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 4.7. No affiliation is implied.",
+    "correctness": "Initially each indegree counts all listed prerequisite contributions. Removing a built project decreases exactly its outgoing contributions, so an unbuilt project has indegree zero precisely when all prerequisites have been built. Emitting such a project preserves every dependency. If no candidate exists while projects remain, following remaining prerequisites must revisit a project in the finite graph, proving a cycle; discard the partial prefix and return []. Otherwise every project is emitted exactly once. Every emitted project has no outstanding prerequisite, so their full sequence is a valid build order. Duplicate edges are counted and removed with equal multiplicity.",
+    "walkthrough": "For four projects with dependencies [[0,2],[1,2],[2,3]], projects 0 and 1 are initially available. The reference queues 0 then 1, making 2 available, then build 3: [0,1,2,3]. Adding [3,1] creates cycle 1->2->3->1, so return [] even though project 0 alone could be built.",
+    "edgeCases": [
+      "No projects, isolated projects and several simultaneously available IDs.",
+      "Repeated dependencies, self-dependency, a cycle in only one component and a long chain."
+    ]
+  },
+  {
     "problemId": "ctci6_5_1",
     "collection": "ctci6",
     "language": "csharp",

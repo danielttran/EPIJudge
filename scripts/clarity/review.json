@@ -10196,6 +10196,46 @@
         "ctci6/runtime/validation.json",
         "ctci6/cases/ctci6_16_25.json"
       ]
+    },
+    "ctci6_4_1": {
+      "collection": "ctci6",
+      "statementSha256": "29fa23a3d74dc9c3df521d145a6c5e497464febfcf5a515e65998cd169e06040",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "inputDomain": "1 <= nodeCount <= 1000. edges has 0..10000 rows of exactly two valid node IDs. Self-loops, duplicate edges, cycles and isolated nodes are allowed. start and target are valid IDs. A route may have zero edges, so start==target returns true, even for an isolated node. Preserve the edge array, every original row and all values. Graph-node labels/objects are represented by their distinct numeric IDs, not by comparing potentially repeated display labels.",
+        "outputAndTies": "Determine whether target is reachable from start in a directed graph. Nodes have identities 0..nodeCount-1. Each edge row [from,to] permits travel only from from to to; it does not imply a reverse edge.",
+        "mutationAndIdentity": "Read all five bodies. start==target is explicitly true before exploration. Edges are one-way; labels are distinct node IDs. Marking before queue append prevents cycles, self-loops and duplicate edges from repeated expansion. Python/JS adjacency rows are independent allocations, not shared repeated references. Queue head indices avoid front-removal shifts in every language. A separate repeated-edge-relaxation oracle checks all three-node directed graphs with every query pair and four-node graphs with a fixed endpoint pair, plus 1000-node chains, 10000 duplicate edges and random graphs. Boolean observations reject numeric substitutes. Original edge arrays/rows are unchanged.",
+        "boundaryBehavior": "An isolated node reaching itself and distinct disconnected nodes. One-way edges, cycles, repeated edges and self-loops. A 1000-node chain must not overflow a recursive stack.",
+        "examples": "The independently checked displayed example and algorithm trace agree with the executed five-language bodies.",
+        "languageContracts": "{\"csharp\": \"Read exact bool/int[] methods. List<int>[] adjacency rows are separately constructed, and List<int> queues use a growing head index. Readonly observation preserves original jagged-array row identities. BuildOrder returns a materialized array only after all projects have been emitted.\", \"javascript\": \"Read exact functions. Array.from allocates independent adjacency lists. Boolean results have exact boolean type; Number integer node IDs and degrees stay well below precision limits. Every returned order is a concrete array; input edges are not sorted or modified.\", \"python\": \"Read exact annotated functions. Independent adjacency-list comprehensions and index-based work queues avoid aliasing and quadratic pop(0). Reachability returns bool, which is validated separately from int. Build-order failure discards partial queue output.\", \"cpp\": \"Read actual C++17 const vector references, vector<bool> visited flags and indexed vector queues. Dynamic queue growth does not invalidate iteration because the loop stores an index and adjacency traversal belongs to a different vector. Counts/IDs fit signed int; bounds are checked by input preconditions.\", \"java\": \"Read actual methods, List<List<Integer>> adjacency and int[] result conversion. Boolean JSON encoding is explicit for reachability. Enhanced-for traverses adjacency lists while appending only to the separate queue, avoiding concurrent modification. Input row arrays remain unchanged.\"}",
+        "judgeAgreement": "Read all five bodies. start==target is explicitly true before exploration. Edges are one-way; labels are distinct node IDs. Marking before queue append prevents cycles, self-loops and duplicate edges from repeated expansion. Python/JS adjacency rows are independent allocations, not shared repeated references. Queue head indices avoid front-removal shifts in every language. A separate repeated-edge-relaxation oracle checks all three-node directed graphs with every query pair and four-node graphs with a fixed endpoint pair, plus 1000-node chains, 10000 duplicate edges and random graphs. Boolean observations reject numeric substitutes. Original edge arrays/rows are unchanged."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_1.json"
+      ]
+    },
+    "ctci6_4_7": {
+      "collection": "ctci6",
+      "statementSha256": "1eda2f8d61074c550775232017752d47e5f2516e3928376cc35d3a7b53f979cf",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "inputDomain": "0 <= projectCount <= 200. dependencies has 0..10000 rows of two valid project IDs; for zero projects it is empty. Duplicate pairs and self-dependencies are allowed. Preserve the input array, every row and all values. Every project must occur exactly once in a successful result, including isolated projects. Output order is unrestricted among dependency-respecting full orders. For no projects the valid order is []. Any nonempty cyclic input also returns [], never a partial prefix. A pair [a,b] means a must be built before b. It does not mean a depends on b. Project numbers represent the original named project identities.",
+        "outputAndTies": "Return a build order for projects 0..projectCount-1. A dependency [before,after] requires before to appear earlier than after. Any valid full build order is accepted. Return [] when a dependency cycle makes building every project impossible.",
+        "mutationAndIdentity": "Read every actual language body and the author nested EdgeRemoval source. A pair [before,after] increments after's indegree and appends after to before's adjacency. Repeated pairs are counted and decremented with the same multiplicity; a project enters only on its one transition to zero. Self-dependencies and cycles in a separate component cannot produce an accepted partial prefix. The grader accepts every valid permutation respecting all dependencies rather than requiring incidental queue order. Independent exhaustive permutations decide small-graph feasibility, with a heap/set oracle for large graphs. All four-node directed graphs, duplicate edges, no projects, 200-project chains/cycles and isolated nodes are executed.",
+        "boundaryBehavior": "No projects, isolated projects and several simultaneously available IDs. Repeated dependencies, self-dependency, a cycle in only one component and a long chain.",
+        "examples": "The independently checked displayed example and algorithm trace agree with the executed five-language bodies.",
+        "languageContracts": "{\"csharp\": \"Read exact bool/int[] methods. List<int>[] adjacency rows are separately constructed, and List<int> queues use a growing head index. Readonly observation preserves original jagged-array row identities. BuildOrder returns a materialized array only after all projects have been emitted.\", \"javascript\": \"Read exact functions. Array.from allocates independent adjacency lists. Boolean results have exact boolean type; Number integer node IDs and degrees stay well below precision limits. Every returned order is a concrete array; input edges are not sorted or modified.\", \"python\": \"Read exact annotated functions. Independent adjacency-list comprehensions and index-based work queues avoid aliasing and quadratic pop(0). Reachability returns bool, which is validated separately from int. Build-order failure discards partial queue output.\", \"cpp\": \"Read actual C++17 const vector references, vector<bool> visited flags and indexed vector queues. Dynamic queue growth does not invalidate iteration because the loop stores an index and adjacency traversal belongs to a different vector. Counts/IDs fit signed int; bounds are checked by input preconditions.\", \"java\": \"Read actual methods, List<List<Integer>> adjacency and int[] result conversion. Boolean JSON encoding is explicit for reachability. Enhanced-for traverses adjacency lists while appending only to the separate queue, avoiding concurrent modification. Input row arrays remain unchanged.\"}",
+        "judgeAgreement": "Read every actual language body and the author nested EdgeRemoval source. A pair [before,after] increments after's indegree and appends after to before's adjacency. Repeated pairs are counted and decremented with the same multiplicity; a project enters only on its one transition to zero. Self-dependencies and cycles in a separate component cannot produce an accepted partial prefix. The grader accepts every valid permutation respecting all dependencies rather than requiring incidental queue order. Independent exhaustive permutations decide small-graph feasibility, with a heap/set oracle for large graphs. All four-node directed graphs, duplicate edges, no projects, 200-project chains/cycles and isolated nodes are executed."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_7.json"
+      ]
     }
   },
   "solutions": {
@@ -59666,6 +59706,236 @@
         "ctci6/cases/ctci6_16_25.json",
         "solutions/java/ctci6_16_25.java",
         "solutions/notes/java/ctci6_16_25.json"
+      ]
+    },
+    "ctci6_4_1/csharp": {
+      "codePath": "solutions/csharp/ctci6_4_1.cs",
+      "notesPath": "solutions/notes/ctci6_4_1.json",
+      "contentSha256": "c13a8d38ca65166983389c214560578f3a8387969bda4dcd238b202a435dfe49",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "actualAlgorithm": "Build directed adjacency and explore reachable nodes with visited-at-enqueue flags and an indexed append-only queue.",
+        "correctness": "Initially start is reachable by the zero-edge path. Every newly queued neighbor extends a known reachable path by one directed edge, so every discovered node is reachable. Conversely, along any path from start, induction on path length shows that expanding the preceding discovered node will discover its next node. Thus every reachable node is eventually discovered. Marking at enqueue time avoids duplicate work without removing any unexplored reachable node. Equality at start handles the explicit zero-edge case; otherwise target is returned true exactly on discovery, and queue exhaustion proves absence.",
+        "workedTrace": "With edges [[0,1],[1,2],[2,0],[3,2]], start 0 reaches 1 and then 2, but cannot reach 3 because [3,2] points toward the cycle. Return false for target 3 and true for target 2. With start=target=3 return true without requiring an outgoing edge.",
+        "edgeCases": "An isolated node reaching itself and distinct disconnected nodes. One-way edges, cycles, repeated edges and self-loops. A 1000-node chain must not overflow a recursive stack.",
+        "timeDerivation": "O(V+E) time to allocate adjacency/visited storage, read all edges and explore each reachable node/edge at most once.",
+        "spaceDerivation": "O(V+E) adjacency, visited and queue storage, where V=nodeCount and E=edge count.",
+        "callableAgreement": "Read all five bodies. start==target is explicitly true before exploration. Edges are one-way; labels are distinct node IDs. Marking before queue append prevents cycles, self-loops and duplicate edges from repeated expansion. Python/JS adjacency rows are independent allocations, not shared repeated references. Queue head indices avoid front-removal shifts in every language. A separate repeated-edge-relaxation oracle checks all three-node directed graphs with every query pair and four-node graphs with a fixed endpoint pair, plus 1000-node chains, 10000 duplicate edges and random graphs. Boolean observations reject numeric substitutes. Original edge arrays/rows are unchanged. Read exact bool/int[] methods. List<int>[] adjacency rows are separately constructed, and List<int> queues use a growing head index. Readonly observation preserves original jagged-array row identities. BuildOrder returns a materialized array only after all projects have been emitted."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_1.json",
+        "solutions/csharp/ctci6_4_1.cs",
+        "solutions/notes/ctci6_4_1.json"
+      ]
+    },
+    "ctci6_4_1/javascript": {
+      "codePath": "solutions/javascript/ctci6_4_1.js",
+      "notesPath": "solutions/notes/javascript/ctci6_4_1.json",
+      "contentSha256": "730d1b957f1a18d2a96f1170dcee89d14de9df10d7e8e21aea7b480df3846fe9",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "actualAlgorithm": "Build directed adjacency and explore reachable nodes with visited-at-enqueue flags and an indexed append-only queue.",
+        "correctness": "Initially start is reachable by the zero-edge path. Every newly queued neighbor extends a known reachable path by one directed edge, so every discovered node is reachable. Conversely, along any path from start, induction on path length shows that expanding the preceding discovered node will discover its next node. Thus every reachable node is eventually discovered. Marking at enqueue time avoids duplicate work without removing any unexplored reachable node. Equality at start handles the explicit zero-edge case; otherwise target is returned true exactly on discovery, and queue exhaustion proves absence.",
+        "workedTrace": "With edges [[0,1],[1,2],[2,0],[3,2]], start 0 reaches 1 and then 2, but cannot reach 3 because [3,2] points toward the cycle. Return false for target 3 and true for target 2. With start=target=3 return true without requiring an outgoing edge.",
+        "edgeCases": "An isolated node reaching itself and distinct disconnected nodes. One-way edges, cycles, repeated edges and self-loops. A 1000-node chain must not overflow a recursive stack.",
+        "timeDerivation": "O(V+E) time to allocate adjacency/visited storage, read all edges and explore each reachable node/edge at most once.",
+        "spaceDerivation": "O(V+E) adjacency, visited and queue storage, where V=nodeCount and E=edge count.",
+        "callableAgreement": "Read all five bodies. start==target is explicitly true before exploration. Edges are one-way; labels are distinct node IDs. Marking before queue append prevents cycles, self-loops and duplicate edges from repeated expansion. Python/JS adjacency rows are independent allocations, not shared repeated references. Queue head indices avoid front-removal shifts in every language. A separate repeated-edge-relaxation oracle checks all three-node directed graphs with every query pair and four-node graphs with a fixed endpoint pair, plus 1000-node chains, 10000 duplicate edges and random graphs. Boolean observations reject numeric substitutes. Original edge arrays/rows are unchanged. Read exact functions. Array.from allocates independent adjacency lists. Boolean results have exact boolean type; Number integer node IDs and degrees stay well below precision limits. Every returned order is a concrete array; input edges are not sorted or modified."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_1.json",
+        "solutions/javascript/ctci6_4_1.js",
+        "solutions/notes/javascript/ctci6_4_1.json"
+      ]
+    },
+    "ctci6_4_1/python": {
+      "codePath": "solutions/python/ctci6_4_1.py",
+      "notesPath": "solutions/notes/python/ctci6_4_1.json",
+      "contentSha256": "e32971b082c4222237231f81555faf41b1a15882af5693975f8ab7927ce650ba",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "actualAlgorithm": "Build directed adjacency and explore reachable nodes with visited-at-enqueue flags and an indexed append-only queue.",
+        "correctness": "Initially start is reachable by the zero-edge path. Every newly queued neighbor extends a known reachable path by one directed edge, so every discovered node is reachable. Conversely, along any path from start, induction on path length shows that expanding the preceding discovered node will discover its next node. Thus every reachable node is eventually discovered. Marking at enqueue time avoids duplicate work without removing any unexplored reachable node. Equality at start handles the explicit zero-edge case; otherwise target is returned true exactly on discovery, and queue exhaustion proves absence.",
+        "workedTrace": "With edges [[0,1],[1,2],[2,0],[3,2]], start 0 reaches 1 and then 2, but cannot reach 3 because [3,2] points toward the cycle. Return false for target 3 and true for target 2. With start=target=3 return true without requiring an outgoing edge.",
+        "edgeCases": "An isolated node reaching itself and distinct disconnected nodes. One-way edges, cycles, repeated edges and self-loops. A 1000-node chain must not overflow a recursive stack.",
+        "timeDerivation": "O(V+E) time to allocate adjacency/visited storage, read all edges and explore each reachable node/edge at most once.",
+        "spaceDerivation": "O(V+E) adjacency, visited and queue storage, where V=nodeCount and E=edge count.",
+        "callableAgreement": "Read all five bodies. start==target is explicitly true before exploration. Edges are one-way; labels are distinct node IDs. Marking before queue append prevents cycles, self-loops and duplicate edges from repeated expansion. Python/JS adjacency rows are independent allocations, not shared repeated references. Queue head indices avoid front-removal shifts in every language. A separate repeated-edge-relaxation oracle checks all three-node directed graphs with every query pair and four-node graphs with a fixed endpoint pair, plus 1000-node chains, 10000 duplicate edges and random graphs. Boolean observations reject numeric substitutes. Original edge arrays/rows are unchanged. Read exact annotated functions. Independent adjacency-list comprehensions and index-based work queues avoid aliasing and quadratic pop(0). Reachability returns bool, which is validated separately from int. Build-order failure discards partial queue output."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_1.json",
+        "solutions/python/ctci6_4_1.py",
+        "solutions/notes/python/ctci6_4_1.json"
+      ]
+    },
+    "ctci6_4_1/cpp": {
+      "codePath": "solutions/cpp/ctci6_4_1.cpp",
+      "notesPath": "solutions/notes/cpp/ctci6_4_1.json",
+      "contentSha256": "8abd598a47fcaa47351fa489f02952cc5bd8cb645787dbe36c75a88c2b5f05aa",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "actualAlgorithm": "Build directed adjacency and explore reachable nodes with visited-at-enqueue flags and an indexed append-only queue.",
+        "correctness": "Initially start is reachable by the zero-edge path. Every newly queued neighbor extends a known reachable path by one directed edge, so every discovered node is reachable. Conversely, along any path from start, induction on path length shows that expanding the preceding discovered node will discover its next node. Thus every reachable node is eventually discovered. Marking at enqueue time avoids duplicate work without removing any unexplored reachable node. Equality at start handles the explicit zero-edge case; otherwise target is returned true exactly on discovery, and queue exhaustion proves absence.",
+        "workedTrace": "With edges [[0,1],[1,2],[2,0],[3,2]], start 0 reaches 1 and then 2, but cannot reach 3 because [3,2] points toward the cycle. Return false for target 3 and true for target 2. With start=target=3 return true without requiring an outgoing edge.",
+        "edgeCases": "An isolated node reaching itself and distinct disconnected nodes. One-way edges, cycles, repeated edges and self-loops. A 1000-node chain must not overflow a recursive stack.",
+        "timeDerivation": "O(V+E) time to allocate adjacency/visited storage, read all edges and explore each reachable node/edge at most once.",
+        "spaceDerivation": "O(V+E) adjacency, visited and queue storage, where V=nodeCount and E=edge count.",
+        "callableAgreement": "Read all five bodies. start==target is explicitly true before exploration. Edges are one-way; labels are distinct node IDs. Marking before queue append prevents cycles, self-loops and duplicate edges from repeated expansion. Python/JS adjacency rows are independent allocations, not shared repeated references. Queue head indices avoid front-removal shifts in every language. A separate repeated-edge-relaxation oracle checks all three-node directed graphs with every query pair and four-node graphs with a fixed endpoint pair, plus 1000-node chains, 10000 duplicate edges and random graphs. Boolean observations reject numeric substitutes. Original edge arrays/rows are unchanged. Read actual C++17 const vector references, vector<bool> visited flags and indexed vector queues. Dynamic queue growth does not invalidate iteration because the loop stores an index and adjacency traversal belongs to a different vector. Counts/IDs fit signed int; bounds are checked by input preconditions."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_1.json",
+        "solutions/cpp/ctci6_4_1.cpp",
+        "solutions/notes/cpp/ctci6_4_1.json"
+      ]
+    },
+    "ctci6_4_1/java": {
+      "codePath": "solutions/java/ctci6_4_1.java",
+      "notesPath": "solutions/notes/java/ctci6_4_1.json",
+      "contentSha256": "9b632625388d53f0305ab73001f9137fbfb1f170211e1ccdcab1663886cef9c9",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "actualAlgorithm": "Build directed adjacency and explore reachable nodes with visited-at-enqueue flags and an indexed append-only queue.",
+        "correctness": "Initially start is reachable by the zero-edge path. Every newly queued neighbor extends a known reachable path by one directed edge, so every discovered node is reachable. Conversely, along any path from start, induction on path length shows that expanding the preceding discovered node will discover its next node. Thus every reachable node is eventually discovered. Marking at enqueue time avoids duplicate work without removing any unexplored reachable node. Equality at start handles the explicit zero-edge case; otherwise target is returned true exactly on discovery, and queue exhaustion proves absence.",
+        "workedTrace": "With edges [[0,1],[1,2],[2,0],[3,2]], start 0 reaches 1 and then 2, but cannot reach 3 because [3,2] points toward the cycle. Return false for target 3 and true for target 2. With start=target=3 return true without requiring an outgoing edge.",
+        "edgeCases": "An isolated node reaching itself and distinct disconnected nodes. One-way edges, cycles, repeated edges and self-loops. A 1000-node chain must not overflow a recursive stack.",
+        "timeDerivation": "O(V+E) time to allocate adjacency/visited storage, read all edges and explore each reachable node/edge at most once.",
+        "spaceDerivation": "O(V+E) adjacency, visited and queue storage, where V=nodeCount and E=edge count.",
+        "callableAgreement": "Read all five bodies. start==target is explicitly true before exploration. Edges are one-way; labels are distinct node IDs. Marking before queue append prevents cycles, self-loops and duplicate edges from repeated expansion. Python/JS adjacency rows are independent allocations, not shared repeated references. Queue head indices avoid front-removal shifts in every language. A separate repeated-edge-relaxation oracle checks all three-node directed graphs with every query pair and four-node graphs with a fixed endpoint pair, plus 1000-node chains, 10000 duplicate edges and random graphs. Boolean observations reject numeric substitutes. Original edge arrays/rows are unchanged. Read actual methods, List<List<Integer>> adjacency and int[] result conversion. Boolean JSON encoding is explicit for reachability. Enhanced-for traverses adjacency lists while appending only to the separate queue, avoiding concurrent modification. Input row arrays remain unchanged."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_1.json",
+        "solutions/java/ctci6_4_1.java",
+        "solutions/notes/java/ctci6_4_1.json"
+      ]
+    },
+    "ctci6_4_7/csharp": {
+      "codePath": "solutions/csharp/ctci6_4_7.cs",
+      "notesPath": "solutions/notes/ctci6_4_7.json",
+      "contentSha256": "bbddab96410a5cfe67e81878a511f70ffb1f5876a4e82c9d49399fb468a4fd48",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "actualAlgorithm": "Queue-based indegree elimination, returning the full project list or an empty result when not all projects can be emitted.",
+        "correctness": "Initially each indegree counts all listed prerequisite contributions. Removing a built project decreases exactly its outgoing contributions, so an unbuilt project has indegree zero precisely when all prerequisites have been built. Emitting such a project preserves every dependency. If no candidate exists while projects remain, following remaining prerequisites must revisit a project in the finite graph, proving a cycle; discard the partial prefix and return []. Otherwise every project is emitted exactly once. Every emitted project has no outstanding prerequisite, so their full sequence is a valid build order. Duplicate edges are counted and removed with equal multiplicity.",
+        "workedTrace": "For four projects with dependencies [[0,2],[1,2],[2,3]], projects 0 and 1 are initially available. The reference queues 0 then 1, making 2 available, then build 3: [0,1,2,3]. Adding [3,1] creates cycle 1->2->3->1, so return [] even though project 0 alone could be built.",
+        "edgeCases": "No projects, isolated projects and several simultaneously available IDs. Repeated dependencies, self-dependency, a cycle in only one component and a long chain.",
+        "timeDerivation": "O(V+E) time: each project enters/exits the queue once, and every listed dependency contribution is read and removed once.",
+        "spaceDerivation": "O(V+E) adjacency, indegree, emitted flags and output.",
+        "callableAgreement": "Read every actual language body and the author nested EdgeRemoval source. A pair [before,after] increments after's indegree and appends after to before's adjacency. Repeated pairs are counted and decremented with the same multiplicity; a project enters only on its one transition to zero. Self-dependencies and cycles in a separate component cannot produce an accepted partial prefix. The grader accepts every valid permutation respecting all dependencies rather than requiring incidental queue order. Independent exhaustive permutations decide small-graph feasibility, with a heap/set oracle for large graphs. All four-node directed graphs, duplicate edges, no projects, 200-project chains/cycles and isolated nodes are executed. Read exact bool/int[] methods. List<int>[] adjacency rows are separately constructed, and List<int> queues use a growing head index. Readonly observation preserves original jagged-array row identities. BuildOrder returns a materialized array only after all projects have been emitted."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_7.json",
+        "solutions/csharp/ctci6_4_7.cs",
+        "solutions/notes/ctci6_4_7.json"
+      ]
+    },
+    "ctci6_4_7/javascript": {
+      "codePath": "solutions/javascript/ctci6_4_7.js",
+      "notesPath": "solutions/notes/javascript/ctci6_4_7.json",
+      "contentSha256": "e172bbd59f55578f22695e97b83f763e98fa3cb7841ce4dad3c0d643ffc2e9c2",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "actualAlgorithm": "Queue-based indegree elimination, returning the full project list or an empty result when not all projects can be emitted.",
+        "correctness": "Initially each indegree counts all listed prerequisite contributions. Removing a built project decreases exactly its outgoing contributions, so an unbuilt project has indegree zero precisely when all prerequisites have been built. Emitting such a project preserves every dependency. If no candidate exists while projects remain, following remaining prerequisites must revisit a project in the finite graph, proving a cycle; discard the partial prefix and return []. Otherwise every project is emitted exactly once. Every emitted project has no outstanding prerequisite, so their full sequence is a valid build order. Duplicate edges are counted and removed with equal multiplicity.",
+        "workedTrace": "For four projects with dependencies [[0,2],[1,2],[2,3]], projects 0 and 1 are initially available. The reference queues 0 then 1, making 2 available, then build 3: [0,1,2,3]. Adding [3,1] creates cycle 1->2->3->1, so return [] even though project 0 alone could be built.",
+        "edgeCases": "No projects, isolated projects and several simultaneously available IDs. Repeated dependencies, self-dependency, a cycle in only one component and a long chain.",
+        "timeDerivation": "O(V+E) time: each project enters/exits the queue once, and every listed dependency contribution is read and removed once.",
+        "spaceDerivation": "O(V+E) adjacency, indegree, emitted flags and output.",
+        "callableAgreement": "Read every actual language body and the author nested EdgeRemoval source. A pair [before,after] increments after's indegree and appends after to before's adjacency. Repeated pairs are counted and decremented with the same multiplicity; a project enters only on its one transition to zero. Self-dependencies and cycles in a separate component cannot produce an accepted partial prefix. The grader accepts every valid permutation respecting all dependencies rather than requiring incidental queue order. Independent exhaustive permutations decide small-graph feasibility, with a heap/set oracle for large graphs. All four-node directed graphs, duplicate edges, no projects, 200-project chains/cycles and isolated nodes are executed. Read exact functions. Array.from allocates independent adjacency lists. Boolean results have exact boolean type; Number integer node IDs and degrees stay well below precision limits. Every returned order is a concrete array; input edges are not sorted or modified."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_7.json",
+        "solutions/javascript/ctci6_4_7.js",
+        "solutions/notes/javascript/ctci6_4_7.json"
+      ]
+    },
+    "ctci6_4_7/python": {
+      "codePath": "solutions/python/ctci6_4_7.py",
+      "notesPath": "solutions/notes/python/ctci6_4_7.json",
+      "contentSha256": "5ce43b5d31d6fa1b9695b9dd8f10fe261b45070b3ffb2319f1bfa27f8d9cef07",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "actualAlgorithm": "Queue-based indegree elimination, returning the full project list or an empty result when not all projects can be emitted.",
+        "correctness": "Initially each indegree counts all listed prerequisite contributions. Removing a built project decreases exactly its outgoing contributions, so an unbuilt project has indegree zero precisely when all prerequisites have been built. Emitting such a project preserves every dependency. If no candidate exists while projects remain, following remaining prerequisites must revisit a project in the finite graph, proving a cycle; discard the partial prefix and return []. Otherwise every project is emitted exactly once. Every emitted project has no outstanding prerequisite, so their full sequence is a valid build order. Duplicate edges are counted and removed with equal multiplicity.",
+        "workedTrace": "For four projects with dependencies [[0,2],[1,2],[2,3]], projects 0 and 1 are initially available. The reference queues 0 then 1, making 2 available, then build 3: [0,1,2,3]. Adding [3,1] creates cycle 1->2->3->1, so return [] even though project 0 alone could be built.",
+        "edgeCases": "No projects, isolated projects and several simultaneously available IDs. Repeated dependencies, self-dependency, a cycle in only one component and a long chain.",
+        "timeDerivation": "O(V+E) time: each project enters/exits the queue once, and every listed dependency contribution is read and removed once.",
+        "spaceDerivation": "O(V+E) adjacency, indegree, emitted flags and output.",
+        "callableAgreement": "Read every actual language body and the author nested EdgeRemoval source. A pair [before,after] increments after's indegree and appends after to before's adjacency. Repeated pairs are counted and decremented with the same multiplicity; a project enters only on its one transition to zero. Self-dependencies and cycles in a separate component cannot produce an accepted partial prefix. The grader accepts every valid permutation respecting all dependencies rather than requiring incidental queue order. Independent exhaustive permutations decide small-graph feasibility, with a heap/set oracle for large graphs. All four-node directed graphs, duplicate edges, no projects, 200-project chains/cycles and isolated nodes are executed. Read exact annotated functions. Independent adjacency-list comprehensions and index-based work queues avoid aliasing and quadratic pop(0). Reachability returns bool, which is validated separately from int. Build-order failure discards partial queue output."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_7.json",
+        "solutions/python/ctci6_4_7.py",
+        "solutions/notes/python/ctci6_4_7.json"
+      ]
+    },
+    "ctci6_4_7/cpp": {
+      "codePath": "solutions/cpp/ctci6_4_7.cpp",
+      "notesPath": "solutions/notes/cpp/ctci6_4_7.json",
+      "contentSha256": "812e9bf24be7f44acfee54c78a356a356a66744d3da0deb098eaf3ebe80bd554",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "actualAlgorithm": "Queue-based indegree elimination, returning the full project list or an empty result when not all projects can be emitted.",
+        "correctness": "Initially each indegree counts all listed prerequisite contributions. Removing a built project decreases exactly its outgoing contributions, so an unbuilt project has indegree zero precisely when all prerequisites have been built. Emitting such a project preserves every dependency. If no candidate exists while projects remain, following remaining prerequisites must revisit a project in the finite graph, proving a cycle; discard the partial prefix and return []. Otherwise every project is emitted exactly once. Every emitted project has no outstanding prerequisite, so their full sequence is a valid build order. Duplicate edges are counted and removed with equal multiplicity.",
+        "workedTrace": "For four projects with dependencies [[0,2],[1,2],[2,3]], projects 0 and 1 are initially available. The reference queues 0 then 1, making 2 available, then build 3: [0,1,2,3]. Adding [3,1] creates cycle 1->2->3->1, so return [] even though project 0 alone could be built.",
+        "edgeCases": "No projects, isolated projects and several simultaneously available IDs. Repeated dependencies, self-dependency, a cycle in only one component and a long chain.",
+        "timeDerivation": "O(V+E) time: each project enters/exits the queue once, and every listed dependency contribution is read and removed once.",
+        "spaceDerivation": "O(V+E) adjacency, indegree, emitted flags and output.",
+        "callableAgreement": "Read every actual language body and the author nested EdgeRemoval source. A pair [before,after] increments after's indegree and appends after to before's adjacency. Repeated pairs are counted and decremented with the same multiplicity; a project enters only on its one transition to zero. Self-dependencies and cycles in a separate component cannot produce an accepted partial prefix. The grader accepts every valid permutation respecting all dependencies rather than requiring incidental queue order. Independent exhaustive permutations decide small-graph feasibility, with a heap/set oracle for large graphs. All four-node directed graphs, duplicate edges, no projects, 200-project chains/cycles and isolated nodes are executed. Read actual C++17 const vector references, vector<bool> visited flags and indexed vector queues. Dynamic queue growth does not invalidate iteration because the loop stores an index and adjacency traversal belongs to a different vector. Counts/IDs fit signed int; bounds are checked by input preconditions."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_7.json",
+        "solutions/cpp/ctci6_4_7.cpp",
+        "solutions/notes/cpp/ctci6_4_7.json"
+      ]
+    },
+    "ctci6_4_7/java": {
+      "codePath": "solutions/java/ctci6_4_7.java",
+      "notesPath": "solutions/notes/java/ctci6_4_7.json",
+      "contentSha256": "6ebc07fc192baaf0a77ba3b471b04d31b9c1a8eb7c8e7b636ea06a4895b9a788",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "actualAlgorithm": "Queue-based indegree elimination, returning the full project list or an empty result when not all projects can be emitted.",
+        "correctness": "Initially each indegree counts all listed prerequisite contributions. Removing a built project decreases exactly its outgoing contributions, so an unbuilt project has indegree zero precisely when all prerequisites have been built. Emitting such a project preserves every dependency. If no candidate exists while projects remain, following remaining prerequisites must revisit a project in the finite graph, proving a cycle; discard the partial prefix and return []. Otherwise every project is emitted exactly once. Every emitted project has no outstanding prerequisite, so their full sequence is a valid build order. Duplicate edges are counted and removed with equal multiplicity.",
+        "workedTrace": "For four projects with dependencies [[0,2],[1,2],[2,3]], projects 0 and 1 are initially available. The reference queues 0 then 1, making 2 available, then build 3: [0,1,2,3]. Adding [3,1] creates cycle 1->2->3->1, so return [] even though project 0 alone could be built.",
+        "edgeCases": "No projects, isolated projects and several simultaneously available IDs. Repeated dependencies, self-dependency, a cycle in only one component and a long chain.",
+        "timeDerivation": "O(V+E) time: each project enters/exits the queue once, and every listed dependency contribution is read and removed once.",
+        "spaceDerivation": "O(V+E) adjacency, indegree, emitted flags and output.",
+        "callableAgreement": "Read every actual language body and the author nested EdgeRemoval source. A pair [before,after] increments after's indegree and appends after to before's adjacency. Repeated pairs are counted and decremented with the same multiplicity; a project enters only on its one transition to zero. Self-dependencies and cycles in a separate component cannot produce an accepted partial prefix. The grader accepts every valid permutation respecting all dependencies rather than requiring incidental queue order. Independent exhaustive permutations decide small-graph feasibility, with a heap/set oracle for large graphs. All four-node directed graphs, duplicate edges, no projects, 200-project chains/cycles and isolated nodes are executed. Read actual methods, List<List<Integer>> adjacency and int[] result conversion. Boolean JSON encoding is explicit for reachability. Enhanced-for traverses adjacency lists while appending only to the separate queue, avoiding concurrent modification. Input row arrays remain unchanged."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_7.json",
+        "solutions/java/ctci6_4_7.java",
+        "solutions/notes/java/ctci6_4_7.json"
       ]
     }
   }
