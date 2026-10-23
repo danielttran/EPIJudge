@@ -1,0 +1,27 @@
+{
+  "explanation": "Work from the final position backward. At position i, choose uniformly among the i+1 occurrences still available in positions 0..i and exchange that choice into position i. The finalized suffix is never touched again. Restricting the random range to the remaining prefix prevents choices from favoring already finalized positions.",
+  "correctness": "Before processing i, the suffix i+1..n-1 is final and the prefix contains exactly the remaining occurrences. Each remaining occurrence is equally likely to fill position i because its index is selected with probability 1/(i+1). The swap removes that occurrence from later choices while preserving the multiset. For any target occurrence permutation, the conditional choices needed to build it have probability 1/n,1/(n-1),...,1/2, whose product is 1/n!. Independent primitive calls and no retained cross-call state give independent shuffles. Equal-valued occurrences do not change this reasoning.",
+  "walkthrough": "For [10,20,30], suppose GetRandom(0,2) returns 0: swap positions 2 and 0 to obtain [30,20,10]. Then GetRandom(0,1) returns 1, so the self-swap leaves [30,20,10]. That outcome has probability 1/3*1/2=1/6, as does each of the six occurrence permutations. Skipping self-swaps as possible choices would bias the result.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        10,
+        20,
+        30
+      ]
+    ],
+    "expected": [
+      30,
+      20,
+      10
+    ]
+  },
+  "timeComplexity": "O(n) time and exactly max(0,n-1) primitive draws for this implementation.",
+  "spaceComplexity": "O(1) auxiliary state; all exchanges occur in the supplied array.",
+  "edgeCases": [
+    "Empty/singleton arrays, duplicate occurrences and all-equal arrays.",
+    "Inclusive random bounds, self-swaps, signed endpoints and 1000 elements.",
+    "Repeated calls must use fresh independent choices."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.2. No affiliation is implied."
+}

@@ -29,6 +29,7 @@ from corpus_geometry import valid_observation as geometry_match
 from corpus_bits17 import valid_observation as bits_match
 from corpus_file10 import valid_observation as file_match
 from corpus_rand16 import valid_observation as rand_match
+from corpus_random17 import valid_observation as random_match
 from runtime import generate_runtime
 from verify01 import execute
 
@@ -76,6 +77,7 @@ def verify(only_ref=None, only_language=None, starters=False):
     completed = {row["key"]: row for row in previous.get("executions", [])}
     tools = tool_versions()
     grader_hashes = dict(
+        random=hashlib.sha256((ROOT / "scripts/ctci6/corpus_random17.py").read_bytes()).hexdigest(),
         rand=hashlib.sha256((ROOT / "scripts/ctci6/corpus_rand16.py").read_bytes()).hexdigest(),
         file=hashlib.sha256((ROOT / "scripts/ctci6/corpus_file10.py").read_bytes()).hexdigest(),
         bits=hashlib.sha256((ROOT / "scripts/ctci6/corpus_bits17.py").read_bytes()).hexdigest(),
@@ -154,7 +156,7 @@ def verify(only_ref=None, only_language=None, starters=False):
                         cases=cases,
                         tool=tools[language],
                         grader=grader_hashes[
-                            "rand" if entry["ref"]=="16.23" else "file" if entry["ref"]=="10.7" else "bits" if entry["ref"]=="17.4" else "geometry" if entry["ref"] in ("16.3","16.13") else "numeric" if entry["ref"] in ("16.26","17.20") else "line" if entry["ref"] == "16.14" else "names" if entry["ref"] == "17.7" else
+                            "random" if entry["ref"] in ("17.2","17.3") else "rand" if entry["ref"]=="16.23" else "file" if entry["ref"]=="10.7" else "bits" if entry["ref"]=="17.4" else "geometry" if entry["ref"] in ("16.3","16.13") else "numeric" if entry["ref"] in ("16.26","17.20") else "line" if entry["ref"] == "16.14" else "names" if entry["ref"] == "17.7" else
                             "hard" if entry["batch"] == 17 and entry["ref"] in STRUCTURED_REFS else
                             "searching" if entry["batch"] == 10 else
                             "combinatorial"
@@ -225,6 +227,7 @@ def verify(only_ref=None, only_language=None, starters=False):
                 elapsed += value["elapsedMs"]
                 try:
                     accepted = (
+                        random_match(entry["ref"], case, observed) if entry["ref"] in ("17.2","17.3") else
                         rand_match(entry["ref"], case, observed) if entry["ref"]=="16.23" else
                         file_match(entry["ref"], case, observed) if entry["ref"]=="10.7" else
                         bits_match(entry["ref"], case, observed) if entry["ref"]=="17.4" else

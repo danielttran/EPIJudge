@@ -36720,6 +36720,176 @@
     ]
   },
   {
+    "problemId": "ctci6_17_2",
+    "collection": "ctci6",
+    "language": "csharp",
+    "code": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic static class RandomSource { internal static Func<int,int,int> Draw=(lower,upper)=>throw new InvalidOperationException(\"Provided by the judge\"); public static int GetRandom(int lower,int upper)=>Draw(lower,upper); }\npublic class Solution\n{\n    public void Shuffle(int[] values)\n    {\n        for (int index = values.Length - 1; index > 0; --index)\n        {\n            int other = RandomSource.GetRandom(0, index);\n            (values[index], values[other]) = (values[other], values[index]);\n        }\n    }\n}\n",
+    "explanation": "Work from the final position backward. At position i, choose uniformly among the i+1 occurrences still available in positions 0..i and exchange that choice into position i. The finalized suffix is never touched again. Restricting the random range to the remaining prefix prevents choices from favoring already finalized positions.",
+    "timeComplexity": "O(n) time and exactly max(0,n-1) primitive draws for this implementation.",
+    "spaceComplexity": "O(1) auxiliary state; all exchanges occur in the supplied array.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.2. No affiliation is implied.",
+    "correctness": "Before processing i, the suffix i+1..n-1 is final and the prefix contains exactly the remaining occurrences. Each remaining occurrence is equally likely to fill position i because its index is selected with probability 1/(i+1). The swap removes that occurrence from later choices while preserving the multiset. For any target occurrence permutation, the conditional choices needed to build it have probability 1/n,1/(n-1),...,1/2, whose product is 1/n!. Independent primitive calls and no retained cross-call state give independent shuffles. Equal-valued occurrences do not change this reasoning.",
+    "walkthrough": "For [10,20,30], suppose GetRandom(0,2) returns 0: swap positions 2 and 0 to obtain [30,20,10]. Then GetRandom(0,1) returns 1, so the self-swap leaves [30,20,10]. That outcome has probability 1/3*1/2=1/6, as does each of the six occurrence permutations. Skipping self-swaps as possible choices would bias the result.",
+    "edgeCases": [
+      "Empty/singleton arrays, duplicate occurrences and all-equal arrays.",
+      "Inclusive random bounds, self-swaps, signed endpoints and 1000 elements.",
+      "Repeated calls must use fresh independent choices."
+    ]
+  },
+  {
+    "problemId": "ctci6_17_2",
+    "collection": "ctci6",
+    "language": "javascript",
+    "code": "'use strict';\nclass RandomSource {static Draw=(lower,upper)=>{throw new Error(\"Provided by the judge\");};static GetRandom(lower,upper){return RandomSource.Draw(lower,upper);}}\nfunction Shuffle(values) {\n  for (let index = values.length - 1; index > 0; --index) {\n    const other = RandomSource.GetRandom(0, index);\n    [values[index], values[other]] = [values[other], values[index]];\n  }\n}\n\nmodule.exports = {RandomSource,Shuffle};\n",
+    "explanation": "Work from the final position backward. At position i, choose uniformly among the i+1 occurrences still available in positions 0..i and exchange that choice into position i. The finalized suffix is never touched again. Restricting the random range to the remaining prefix prevents choices from favoring already finalized positions.",
+    "timeComplexity": "O(n) time and exactly max(0,n-1) primitive draws for this implementation.",
+    "spaceComplexity": "O(1) auxiliary state; all exchanges occur in the supplied array.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.2. No affiliation is implied.",
+    "correctness": "Before processing i, the suffix i+1..n-1 is final and the prefix contains exactly the remaining occurrences. Each remaining occurrence is equally likely to fill position i because its index is selected with probability 1/(i+1). The swap removes that occurrence from later choices while preserving the multiset. For any target occurrence permutation, the conditional choices needed to build it have probability 1/n,1/(n-1),...,1/2, whose product is 1/n!. Independent primitive calls and no retained cross-call state give independent shuffles. Equal-valued occurrences do not change this reasoning.",
+    "walkthrough": "For [10,20,30], suppose GetRandom(0,2) returns 0: swap positions 2 and 0 to obtain [30,20,10]. Then GetRandom(0,1) returns 1, so the self-swap leaves [30,20,10]. That outcome has probability 1/3*1/2=1/6, as does each of the six occurrence permutations. Skipping self-swaps as possible choices would bias the result.",
+    "edgeCases": [
+      "Empty/singleton arrays, duplicate occurrences and all-equal arrays.",
+      "Inclusive random bounds, self-swaps, signed endpoints and 1000 elements.",
+      "Repeated calls must use fresh independent choices."
+    ]
+  },
+  {
+    "problemId": "ctci6_17_2",
+    "collection": "ctci6",
+    "language": "python",
+    "code": "class RandomSource:\n    @staticmethod\n    def GetRandom(lower: int,upper: int) -> int:\n        return RandomSource.Draw(lower,upper)\ndef Shuffle(values: list[int]) -> None:\n    for index in range(len(values) - 1, 0, -1):\n        other = RandomSource.GetRandom(0, index)\n        values[index], values[other] = values[other], values[index]\n",
+    "explanation": "Work from the final position backward. At position i, choose uniformly among the i+1 occurrences still available in positions 0..i and exchange that choice into position i. The finalized suffix is never touched again. Restricting the random range to the remaining prefix prevents choices from favoring already finalized positions.",
+    "timeComplexity": "O(n) time and exactly max(0,n-1) primitive draws for this implementation.",
+    "spaceComplexity": "O(1) auxiliary state; all exchanges occur in the supplied array.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.2. No affiliation is implied.",
+    "correctness": "Before processing i, the suffix i+1..n-1 is final and the prefix contains exactly the remaining occurrences. Each remaining occurrence is equally likely to fill position i because its index is selected with probability 1/(i+1). The swap removes that occurrence from later choices while preserving the multiset. For any target occurrence permutation, the conditional choices needed to build it have probability 1/n,1/(n-1),...,1/2, whose product is 1/n!. Independent primitive calls and no retained cross-call state give independent shuffles. Equal-valued occurrences do not change this reasoning.",
+    "walkthrough": "For [10,20,30], suppose GetRandom(0,2) returns 0: swap positions 2 and 0 to obtain [30,20,10]. Then GetRandom(0,1) returns 1, so the self-swap leaves [30,20,10]. That outcome has probability 1/3*1/2=1/6, as does each of the six occurrence permutations. Skipping self-swaps as possible choices would bias the result.",
+    "edgeCases": [
+      "Empty/singleton arrays, duplicate occurrences and all-equal arrays.",
+      "Inclusive random bounds, self-swaps, signed endpoints and 1000 elements.",
+      "Repeated calls must use fresh independent choices."
+    ]
+  },
+  {
+    "problemId": "ctci6_17_2",
+    "collection": "ctci6",
+    "language": "cpp",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n#include <stdexcept>\nstruct RandomSource { inline static std::function<int(int,int)> Draw=[](int,int)->int{throw std::runtime_error(\"Provided by the judge\");}; static int GetRandom(int lower,int upper){return Draw(lower,upper);} };\nclass Solution {\n public:\n  void Shuffle(std::vector<int>& values) {\n    for (int index = static_cast<int>(values.size()) - 1; index > 0; --index) {\n      int other = RandomSource::GetRandom(0, index);\n      std::swap(values[index], values[other]);\n    }\n  }\n};\n",
+    "explanation": "Work from the final position backward. At position i, choose uniformly among the i+1 occurrences still available in positions 0..i and exchange that choice into position i. The finalized suffix is never touched again. Restricting the random range to the remaining prefix prevents choices from favoring already finalized positions.",
+    "timeComplexity": "O(n) time and exactly max(0,n-1) primitive draws for this implementation.",
+    "spaceComplexity": "O(1) auxiliary state; all exchanges occur in the supplied array.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.2. No affiliation is implied.",
+    "correctness": "Before processing i, the suffix i+1..n-1 is final and the prefix contains exactly the remaining occurrences. Each remaining occurrence is equally likely to fill position i because its index is selected with probability 1/(i+1). The swap removes that occurrence from later choices while preserving the multiset. For any target occurrence permutation, the conditional choices needed to build it have probability 1/n,1/(n-1),...,1/2, whose product is 1/n!. Independent primitive calls and no retained cross-call state give independent shuffles. Equal-valued occurrences do not change this reasoning.",
+    "walkthrough": "For [10,20,30], suppose GetRandom(0,2) returns 0: swap positions 2 and 0 to obtain [30,20,10]. Then GetRandom(0,1) returns 1, so the self-swap leaves [30,20,10]. That outcome has probability 1/3*1/2=1/6, as does each of the six occurrence permutations. Skipping self-swaps as possible choices would bias the result.",
+    "edgeCases": [
+      "Empty/singleton arrays, duplicate occurrences and all-equal arrays.",
+      "Inclusive random bounds, self-swaps, signed endpoints and 1000 elements.",
+      "Repeated calls must use fresh independent choices."
+    ]
+  },
+  {
+    "problemId": "ctci6_17_2",
+    "collection": "ctci6",
+    "language": "java",
+    "code": "import java.util.*;\nclass RandomSource { static java.util.function.IntBinaryOperator Draw=(lower,upper)->{throw new IllegalStateException(\"Provided by the judge\");}; public static int GetRandom(int lower,int upper){return Draw.applyAsInt(lower,upper);} }\nclass Solution {\n  public void Shuffle(int[] values) {\n    for (int index = values.length - 1; index > 0; --index) {\n      int other = RandomSource.GetRandom(0, index), saved = values[index];\n      values[index] = values[other];\n      values[other] = saved;\n    }\n  }\n}\n",
+    "explanation": "Work from the final position backward. At position i, choose uniformly among the i+1 occurrences still available in positions 0..i and exchange that choice into position i. The finalized suffix is never touched again. Restricting the random range to the remaining prefix prevents choices from favoring already finalized positions.",
+    "timeComplexity": "O(n) time and exactly max(0,n-1) primitive draws for this implementation.",
+    "spaceComplexity": "O(1) auxiliary state; all exchanges occur in the supplied array.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.2. No affiliation is implied.",
+    "correctness": "Before processing i, the suffix i+1..n-1 is final and the prefix contains exactly the remaining occurrences. Each remaining occurrence is equally likely to fill position i because its index is selected with probability 1/(i+1). The swap removes that occurrence from later choices while preserving the multiset. For any target occurrence permutation, the conditional choices needed to build it have probability 1/n,1/(n-1),...,1/2, whose product is 1/n!. Independent primitive calls and no retained cross-call state give independent shuffles. Equal-valued occurrences do not change this reasoning.",
+    "walkthrough": "For [10,20,30], suppose GetRandom(0,2) returns 0: swap positions 2 and 0 to obtain [30,20,10]. Then GetRandom(0,1) returns 1, so the self-swap leaves [30,20,10]. That outcome has probability 1/3*1/2=1/6, as does each of the six occurrence permutations. Skipping self-swaps as possible choices would bias the result.",
+    "edgeCases": [
+      "Empty/singleton arrays, duplicate occurrences and all-equal arrays.",
+      "Inclusive random bounds, self-swaps, signed endpoints and 1000 elements.",
+      "Repeated calls must use fresh independent choices."
+    ]
+  },
+  {
+    "problemId": "ctci6_17_3",
+    "collection": "ctci6",
+    "language": "csharp",
+    "code": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic static class RandomSource { internal static Func<int,int,int> Draw=(lower,upper)=>throw new InvalidOperationException(\"Provided by the judge\"); public static int GetRandom(int lower,int upper)=>Draw(lower,upper); }\npublic class Solution\n{\n    public int[] RandomSubset(int[] values, int count)\n    {\n        var reservoir = values.Take(count).ToArray();\n        if (count == 0)\n            return reservoir;\n        for (int index = count; index < values.Length; ++index)\n        {\n            int slot = RandomSource.GetRandom(0, index);\n            if (slot < count)\n                reservoir[slot] = values[index];\n        }\n        return reservoir;\n    }\n}\n",
+    "explanation": "Keep a reservoir containing the first count occurrences. For the next original index i, draw uniformly from 0..i. If the draw addresses a reservoir slot, replace that slot with the new value; otherwise leave the reservoir unchanged. This gives the new occurrence its required count/(i+1) inclusion chance without saving or shuffling an input-sized copy.",
+    "timeComplexity": "O(n) time, with n-count primitive draws when count>0; count=0 returns immediately.",
+    "spaceComplexity": "O(count) returned reservoir storage and O(1) other scalar state. No input-sized copy is allocated.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.3. No affiliation is implied.",
+    "correctness": "Initially the only count-subset of the first count occurrences is present. Assume the reservoir is uniform over count-subsets of i processed occurrences. For a target subset not containing the new occurrence, its previous reservoir survives with probability (i+1-count)/(i+1). For a target containing the new occurrence, there are i-count+1 possible prior extra members; each corresponding prior reservoir has probability 1/C(i,count), and the draw replaces that particular member with probability 1/(i+1). Both cases give 1/C(i+1,count). Induction proves a uniform final occurrence subset, including duplicates by their original indices. The original array is only read. Zero count is handled before scanning, and the returned reservoir order need not be uniform.",
+    "walkthrough": "For [10,20,30,40] and count=2, start with reservoir [10,20]. At i=2 a draw of 1 replaces 20 with 30, giving [10,30]. At i=3 a draw of 3 keeps the reservoir. The final [10,30] represents selected original indices {0,2}. Other orders of those two selected values are also valid. For [7,7,9] and count=1, value 7 must occur with probability 2/3, because it has two source occurrences; selecting distinct values with probability 1/2 each would be biased.",
+    "edgeCases": [
+      "Zero/full count, empty input and one selected occurrence.",
+      "Repeated values require occurrence-weighted probabilities, not uniform distinct values.",
+      "Input preservation, arbitrary result order and 1000-element boundaries."
+    ]
+  },
+  {
+    "problemId": "ctci6_17_3",
+    "collection": "ctci6",
+    "language": "javascript",
+    "code": "'use strict';\nclass RandomSource {static Draw=(lower,upper)=>{throw new Error(\"Provided by the judge\");};static GetRandom(lower,upper){return RandomSource.Draw(lower,upper);}}\nfunction RandomSubset(values, count) {\n  const reservoir = values.slice(0, count);\n  if (count === 0) return reservoir;\n  for (let index = count; index < values.length; ++index) {\n    const slot = RandomSource.GetRandom(0, index);\n    if (slot < count) reservoir[slot] = values[index];\n  }\n  return reservoir;\n}\n\nmodule.exports = {RandomSource,RandomSubset};\n",
+    "explanation": "Keep a reservoir containing the first count occurrences. For the next original index i, draw uniformly from 0..i. If the draw addresses a reservoir slot, replace that slot with the new value; otherwise leave the reservoir unchanged. This gives the new occurrence its required count/(i+1) inclusion chance without saving or shuffling an input-sized copy.",
+    "timeComplexity": "O(n) time, with n-count primitive draws when count>0; count=0 returns immediately.",
+    "spaceComplexity": "O(count) returned reservoir storage and O(1) other scalar state. No input-sized copy is allocated.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.3. No affiliation is implied.",
+    "correctness": "Initially the only count-subset of the first count occurrences is present. Assume the reservoir is uniform over count-subsets of i processed occurrences. For a target subset not containing the new occurrence, its previous reservoir survives with probability (i+1-count)/(i+1). For a target containing the new occurrence, there are i-count+1 possible prior extra members; each corresponding prior reservoir has probability 1/C(i,count), and the draw replaces that particular member with probability 1/(i+1). Both cases give 1/C(i+1,count). Induction proves a uniform final occurrence subset, including duplicates by their original indices. The original array is only read. Zero count is handled before scanning, and the returned reservoir order need not be uniform.",
+    "walkthrough": "For [10,20,30,40] and count=2, start with reservoir [10,20]. At i=2 a draw of 1 replaces 20 with 30, giving [10,30]. At i=3 a draw of 3 keeps the reservoir. The final [10,30] represents selected original indices {0,2}. Other orders of those two selected values are also valid. For [7,7,9] and count=1, value 7 must occur with probability 2/3, because it has two source occurrences; selecting distinct values with probability 1/2 each would be biased.",
+    "edgeCases": [
+      "Zero/full count, empty input and one selected occurrence.",
+      "Repeated values require occurrence-weighted probabilities, not uniform distinct values.",
+      "Input preservation, arbitrary result order and 1000-element boundaries."
+    ]
+  },
+  {
+    "problemId": "ctci6_17_3",
+    "collection": "ctci6",
+    "language": "python",
+    "code": "class RandomSource:\n    @staticmethod\n    def GetRandom(lower: int,upper: int) -> int:\n        return RandomSource.Draw(lower,upper)\ndef RandomSubset(values: list[int], count: int) -> list[int]:\n    reservoir = values[:count]\n    if count == 0:\n        return reservoir\n    for index in range(count, len(values)):\n        slot = RandomSource.GetRandom(0, index)\n        if slot < count:\n            reservoir[slot] = values[index]\n    return reservoir\n",
+    "explanation": "Keep a reservoir containing the first count occurrences. For the next original index i, draw uniformly from 0..i. If the draw addresses a reservoir slot, replace that slot with the new value; otherwise leave the reservoir unchanged. This gives the new occurrence its required count/(i+1) inclusion chance without saving or shuffling an input-sized copy.",
+    "timeComplexity": "O(n) time, with n-count primitive draws when count>0; count=0 returns immediately.",
+    "spaceComplexity": "O(count) returned reservoir storage and O(1) other scalar state. No input-sized copy is allocated.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.3. No affiliation is implied.",
+    "correctness": "Initially the only count-subset of the first count occurrences is present. Assume the reservoir is uniform over count-subsets of i processed occurrences. For a target subset not containing the new occurrence, its previous reservoir survives with probability (i+1-count)/(i+1). For a target containing the new occurrence, there are i-count+1 possible prior extra members; each corresponding prior reservoir has probability 1/C(i,count), and the draw replaces that particular member with probability 1/(i+1). Both cases give 1/C(i+1,count). Induction proves a uniform final occurrence subset, including duplicates by their original indices. The original array is only read. Zero count is handled before scanning, and the returned reservoir order need not be uniform.",
+    "walkthrough": "For [10,20,30,40] and count=2, start with reservoir [10,20]. At i=2 a draw of 1 replaces 20 with 30, giving [10,30]. At i=3 a draw of 3 keeps the reservoir. The final [10,30] represents selected original indices {0,2}. Other orders of those two selected values are also valid. For [7,7,9] and count=1, value 7 must occur with probability 2/3, because it has two source occurrences; selecting distinct values with probability 1/2 each would be biased.",
+    "edgeCases": [
+      "Zero/full count, empty input and one selected occurrence.",
+      "Repeated values require occurrence-weighted probabilities, not uniform distinct values.",
+      "Input preservation, arbitrary result order and 1000-element boundaries."
+    ]
+  },
+  {
+    "problemId": "ctci6_17_3",
+    "collection": "ctci6",
+    "language": "cpp",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n#include <stdexcept>\nstruct RandomSource { inline static std::function<int(int,int)> Draw=[](int,int)->int{throw std::runtime_error(\"Provided by the judge\");}; static int GetRandom(int lower,int upper){return Draw(lower,upper);} };\nclass Solution {\n public:\n  std::vector<int> RandomSubset(const std::vector<int>& values, int count) {\n    std::vector<int> reservoir(values.begin(), values.begin() + count);\n    if (count == 0)\n      return reservoir;\n    for (int index = count; index < static_cast<int>(values.size()); ++index) {\n      int slot = RandomSource::GetRandom(0, index);\n      if (slot < count)\n        reservoir[slot] = values[index];\n    }\n    return reservoir;\n  }\n};\n",
+    "explanation": "Keep a reservoir containing the first count occurrences. For the next original index i, draw uniformly from 0..i. If the draw addresses a reservoir slot, replace that slot with the new value; otherwise leave the reservoir unchanged. This gives the new occurrence its required count/(i+1) inclusion chance without saving or shuffling an input-sized copy.",
+    "timeComplexity": "O(n) time, with n-count primitive draws when count>0; count=0 returns immediately.",
+    "spaceComplexity": "O(count) returned reservoir storage and O(1) other scalar state. No input-sized copy is allocated.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.3. No affiliation is implied.",
+    "correctness": "Initially the only count-subset of the first count occurrences is present. Assume the reservoir is uniform over count-subsets of i processed occurrences. For a target subset not containing the new occurrence, its previous reservoir survives with probability (i+1-count)/(i+1). For a target containing the new occurrence, there are i-count+1 possible prior extra members; each corresponding prior reservoir has probability 1/C(i,count), and the draw replaces that particular member with probability 1/(i+1). Both cases give 1/C(i+1,count). Induction proves a uniform final occurrence subset, including duplicates by their original indices. The original array is only read. Zero count is handled before scanning, and the returned reservoir order need not be uniform.",
+    "walkthrough": "For [10,20,30,40] and count=2, start with reservoir [10,20]. At i=2 a draw of 1 replaces 20 with 30, giving [10,30]. At i=3 a draw of 3 keeps the reservoir. The final [10,30] represents selected original indices {0,2}. Other orders of those two selected values are also valid. For [7,7,9] and count=1, value 7 must occur with probability 2/3, because it has two source occurrences; selecting distinct values with probability 1/2 each would be biased.",
+    "edgeCases": [
+      "Zero/full count, empty input and one selected occurrence.",
+      "Repeated values require occurrence-weighted probabilities, not uniform distinct values.",
+      "Input preservation, arbitrary result order and 1000-element boundaries."
+    ]
+  },
+  {
+    "problemId": "ctci6_17_3",
+    "collection": "ctci6",
+    "language": "java",
+    "code": "import java.util.*;\nclass RandomSource { static java.util.function.IntBinaryOperator Draw=(lower,upper)->{throw new IllegalStateException(\"Provided by the judge\");}; public static int GetRandom(int lower,int upper){return Draw.applyAsInt(lower,upper);} }\nclass Solution {\n  public int[] RandomSubset(int[] values, int count) {\n    int[] reservoir = Arrays.copyOf(values, count);\n    if (count == 0)\n      return reservoir;\n    for (int index = count; index < values.length; ++index) {\n      int slot = RandomSource.GetRandom(0, index);\n      if (slot < count)\n        reservoir[slot] = values[index];\n    }\n    return reservoir;\n  }\n}\n",
+    "explanation": "Keep a reservoir containing the first count occurrences. For the next original index i, draw uniformly from 0..i. If the draw addresses a reservoir slot, replace that slot with the new value; otherwise leave the reservoir unchanged. This gives the new occurrence its required count/(i+1) inclusion chance without saving or shuffling an input-sized copy.",
+    "timeComplexity": "O(n) time, with n-count primitive draws when count>0; count=0 returns immediately.",
+    "spaceComplexity": "O(count) returned reservoir storage and O(1) other scalar state. No input-sized copy is allocated.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.3. No affiliation is implied.",
+    "correctness": "Initially the only count-subset of the first count occurrences is present. Assume the reservoir is uniform over count-subsets of i processed occurrences. For a target subset not containing the new occurrence, its previous reservoir survives with probability (i+1-count)/(i+1). For a target containing the new occurrence, there are i-count+1 possible prior extra members; each corresponding prior reservoir has probability 1/C(i,count), and the draw replaces that particular member with probability 1/(i+1). Both cases give 1/C(i+1,count). Induction proves a uniform final occurrence subset, including duplicates by their original indices. The original array is only read. Zero count is handled before scanning, and the returned reservoir order need not be uniform.",
+    "walkthrough": "For [10,20,30,40] and count=2, start with reservoir [10,20]. At i=2 a draw of 1 replaces 20 with 30, giving [10,30]. At i=3 a draw of 3 keeps the reservoir. The final [10,30] represents selected original indices {0,2}. Other orders of those two selected values are also valid. For [7,7,9] and count=1, value 7 must occur with probability 2/3, because it has two source occurrences; selecting distinct values with probability 1/2 each would be biased.",
+    "edgeCases": [
+      "Zero/full count, empty input and one selected occurrence.",
+      "Repeated values require occurrence-weighted probabilities, not uniform distinct values.",
+      "Input preservation, arbitrary result order and 1000-element boundaries."
+    ]
+  },
+  {
     "problemId": "ctci6_17_4",
     "collection": "ctci6",
     "language": "csharp",

@@ -576,3 +576,19 @@ return head'''
     if language=='csharp':return 'var stack=new Stack<BiNode>();BiNode? current=root,previous=null,head=null;while(current is not null||stack.Count>0){while(current is not null){stack.Push(current);current=current.Node1;}var node=stack.Pop();var right=node.Node2;node.Node1=previous;if(previous is null)head=node;else previous.Node2=node;previous=node;current=right;}if(previous is not null)previous.Node2=null;return head;'
     if language=='java':return 'var stack=new ArrayDeque<BiNode>();BiNode current=root,previous=null,head=null;while(current!=null||!stack.isEmpty()){while(current!=null){stack.push(current);current=current.Node1;}BiNode node=stack.pop(),right=node.Node2;node.Node1=previous;if(previous==null)head=node;else previous.Node2=node;previous=node;current=right;}if(previous!=null)previous.Node2=null;return head;'
     return 'std::vector<BiNode*> stack;BiNode* current=root;BiNode* previous=nullptr;BiNode* head=nullptr;while(current!=nullptr||!stack.empty()){while(current!=nullptr){stack.push_back(current);current=current->Node1;}BiNode* node=stack.back();stack.pop_back();BiNode* right=node->Node2;node->Node1=previous;if(previous==nullptr)head=node;else previous->Node2=node;previous=node;current=right;}if(previous!=nullptr)previous->Node2=nullptr;return head;'
+
+_previous_random_body=body
+
+def body(ref,language):
+    if ref not in ('17.2','17.3'):return _previous_random_body(ref,language)
+    if ref=='17.2':
+        if language=='python':return 'for index in range(len(values)-1,0,-1):\n    other = RandomSource.GetRandom(0,index)\n    values[index], values[other] = values[other], values[index]'
+        if language=='javascript':return 'for(let index=values.length-1;index>0;--index){const other=RandomSource.GetRandom(0,index);[values[index],values[other]]=[values[other],values[index]];}'
+        if language=='csharp':return 'for(int index=values.Length-1;index>0;--index){int other=RandomSource.GetRandom(0,index);(values[index],values[other])=(values[other],values[index]);}'
+        if language=='java':return 'for(int index=values.length-1;index>0;--index){int other=RandomSource.GetRandom(0,index),saved=values[index];values[index]=values[other];values[other]=saved;}'
+        return 'for(int index=static_cast<int>(values.size())-1;index>0;--index){int other=RandomSource::GetRandom(0,index);std::swap(values[index],values[other]);}'
+    if language=='python':return 'reservoir = values[:count]\nif count == 0:\n    return reservoir\nfor index in range(count,len(values)):\n    slot = RandomSource.GetRandom(0,index)\n    if slot < count:\n        reservoir[slot] = values[index]\nreturn reservoir'
+    if language=='javascript':return 'const reservoir=values.slice(0,count);if(count===0)return reservoir;for(let index=count;index<values.length;++index){const slot=RandomSource.GetRandom(0,index);if(slot<count)reservoir[slot]=values[index];}return reservoir;'
+    if language=='csharp':return 'var reservoir=values.Take(count).ToArray();if(count==0)return reservoir;for(int index=count;index<values.Length;++index){int slot=RandomSource.GetRandom(0,index);if(slot<count)reservoir[slot]=values[index];}return reservoir;'
+    if language=='java':return 'int[] reservoir=Arrays.copyOf(values,count);if(count==0)return reservoir;for(int index=count;index<values.length;++index){int slot=RandomSource.GetRandom(0,index);if(slot<count)reservoir[slot]=values[index];}return reservoir;'
+    return 'std::vector<int> reservoir(values.begin(),values.begin()+count);if(count==0)return reservoir;for(int index=count;index<static_cast<int>(values.size());++index){int slot=RandomSource::GetRandom(0,index);if(slot<count)reservoir[slot]=values[index];}return reservoir;'

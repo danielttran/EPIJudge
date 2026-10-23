@@ -682,4 +682,21 @@ public sealed class CtciStagingTests
         Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = 7, mutationOk = true, uniformOk = true })));
         Assert.Contains(definition.Callable("python").References, reference => reference.Names.Contains("Rand5Source"));
     }
+    [Fact]
+    public void RandomCollectionsAcceptFreeOutputOrderAndPreserveOccurrenceCounts()
+    {
+        var shuffle = Definition("17.2");
+        var shuffleCase = Case([new[] { 1, 1, 2 }], new[] { 2, 1, 1 });
+        Assert.Null(CtciStagingGrader.FailureReason(shuffle, shuffleCase, Json(new { actual = new[] { 1, 2, 1 }, mutationOk = true, uniformOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(shuffle, shuffleCase, Json(new { actual = new[] { 1, 2, 2 }, mutationOk = true, uniformOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(shuffle, shuffleCase, Json(new { actual = new[] { 1, 2, 1 }, mutationOk = true, uniformOk = false })));
+        var subset = Definition("17.3");
+        var subsetCase = Case([new[] { 7, 7, 9 }, 2], new[] { 7, 9 });
+        foreach (int[] actual in new int[][] { [9, 7], [7, 7] }) Assert.Null(CtciStagingGrader.FailureReason(subset, subsetCase, Json(new { actual, mutationOk = true, uniformOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(subset, subsetCase, Json(new { actual = new[] { 9, 9 }, mutationOk = true, uniformOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(subset, subsetCase, Json(new { actual = new[] { 7, 9 }, mutationOk = false, uniformOk = true })));
+        var reference = Assert.Single(subset.Callable("python").References);
+        Assert.Contains("RandomSource", reference.Names);
+        Assert.DoesNotContain("Draw", reference.Code);
+    }
 }

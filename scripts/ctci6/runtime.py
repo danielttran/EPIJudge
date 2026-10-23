@@ -21,6 +21,7 @@ import models08
 import models10
 import models16
 import models17
+import models_random17
 import models03
 import models04
 from core import HEADERS, LANGUAGES, ROOT
@@ -171,6 +172,8 @@ def adapter(entry, language, batch):
             imports += "BitArray = user.BitArray\n"
         elif batch == 17 and entry["ref"] == "17.12":
             imports += "BiNode = user.BiNode\n"
+        elif batch == 17 and entry["ref"] in ("17.2","17.3"):
+            imports += "RandomSource = user.RandomSource\n"
         elif batch == 16 and entry["ref"] == "16.23":
             imports += "Rand5Source = user.Rand5Source\n"
         elif batch == 10 and entry["ref"] == "10.4":
@@ -196,6 +199,8 @@ def adapter(entry, language, batch):
             imports += "const BitArray = user.BitArray;\n"
         elif batch == 17 and entry["ref"] == "17.12":
             imports += "const BiNode = user.BiNode;\n"
+        elif batch == 17 and entry["ref"] in ("17.2","17.3"):
+            imports += "const RandomSource = user.RandomSource;\n"
         elif batch == 16 and entry["ref"] == "16.23":
             imports += "const Rand5Source = user.Rand5Source;\n"
         elif batch == 10 and entry["ref"] == "10.4":
@@ -261,6 +266,7 @@ def generate_runtime():
                     else (["TreeNode", "DepthLink"] if entry["ref"] == "4.3" else ["TreeNode"]) if batch == 4 and entry["ref"] in models04.TREE_REFS
                     else ["BiNode"] if batch == 17 and entry["ref"] == "17.12"
                     else ["BitArray"] if batch == 17 and entry["ref"] == "17.4"
+                    else ["RandomSource"] if batch == 17 and entry["ref"] in ("17.2","17.3")
                     else ["Rand5Source"] if batch == 16 and entry["ref"] == "16.23"
                     else ["NumberFile"] if batch == 10 and entry["ref"] == "10.7"
                     else ["Listy"] if batch == 10 and entry["ref"] == "10.4"
@@ -285,7 +291,7 @@ def generate_runtime():
                             HEADERS[language]
                         )
                         if batch == 3
-                        else models17.BINODE[language] if batch == 17 and entry["ref"] == "17.12" else models17.BITS[language] if batch == 17 and entry["ref"] == "17.4" else models04.reference(entry["ref"],language) if batch == 4 and entry["ref"] in models04.TREE_REFS else models16.RAND5[language] if batch == 16 and entry["ref"] == "16.23" else models10.NUMBER_FILE[language] if batch == 10 and entry["ref"] == "10.7" else models10.LISTY[language] if batch == 10 and entry["ref"] == "10.4" else ""
+                        else models17.BINODE[language] if batch == 17 and entry["ref"] == "17.12" else models17.BITS[language] if batch == 17 and entry["ref"] == "17.4" else models04.reference(entry["ref"],language) if batch == 4 and entry["ref"] in models04.TREE_REFS else models_random17.REFERENCE[language] if batch == 17 and entry["ref"] in ("17.2","17.3") else models16.RAND5[language] if batch == 16 and entry["ref"] == "16.23" else models10.NUMBER_FILE[language] if batch == 10 and entry["ref"] == "10.7" else models10.LISTY[language] if batch == 10 and entry["ref"] == "10.4" else ""
                     ),
                 )
             rows.append(item)

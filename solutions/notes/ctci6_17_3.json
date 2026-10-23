@@ -1,0 +1,28 @@
+{
+  "explanation": "Keep a reservoir containing the first count occurrences. For the next original index i, draw uniformly from 0..i. If the draw addresses a reservoir slot, replace that slot with the new value; otherwise leave the reservoir unchanged. This gives the new occurrence its required count/(i+1) inclusion chance without saving or shuffling an input-sized copy.",
+  "correctness": "Initially the only count-subset of the first count occurrences is present. Assume the reservoir is uniform over count-subsets of i processed occurrences. For a target subset not containing the new occurrence, its previous reservoir survives with probability (i+1-count)/(i+1). For a target containing the new occurrence, there are i-count+1 possible prior extra members; each corresponding prior reservoir has probability 1/C(i,count), and the draw replaces that particular member with probability 1/(i+1). Both cases give 1/C(i+1,count). Induction proves a uniform final occurrence subset, including duplicates by their original indices. The original array is only read. Zero count is handled before scanning, and the returned reservoir order need not be uniform.",
+  "walkthrough": "For [10,20,30,40] and count=2, start with reservoir [10,20]. At i=2 a draw of 1 replaces 20 with 30, giving [10,30]. At i=3 a draw of 3 keeps the reservoir. The final [10,30] represents selected original indices {0,2}. Other orders of those two selected values are also valid. For [7,7,9] and count=1, value 7 must occur with probability 2/3, because it has two source occurrences; selecting distinct values with probability 1/2 each would be biased.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        10,
+        20,
+        30,
+        40
+      ],
+      2
+    ],
+    "expected": [
+      10,
+      30
+    ]
+  },
+  "timeComplexity": "O(n) time, with n-count primitive draws when count>0; count=0 returns immediately.",
+  "spaceComplexity": "O(count) returned reservoir storage and O(1) other scalar state. No input-sized copy is allocated.",
+  "edgeCases": [
+    "Zero/full count, empty input and one selected occurrence.",
+    "Repeated values require occurrence-weighted probabilities, not uniform distinct values.",
+    "Input preservation, arbitrary result order and 1000-element boundaries."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.3. No affiliation is implied."
+}

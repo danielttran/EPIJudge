@@ -332,6 +332,21 @@ public static class CtciStagingGrader
         {
             if (observed.ValueKind != JsonValueKind.Object || observed.TryGetProperty("error", out var error) && error.ValueKind != JsonValueKind.Null)
                 return "Your code did not finish this case successfully.";
+            if (definition.Ref is "17.2" or "17.3")
+            {
+                if (observed.GetProperty("mutationOk").ValueKind != JsonValueKind.True || observed.GetProperty("uniformOk").ValueKind != JsonValueKind.True) return "Respect mutation contracts and use the supplied primitive to produce the required uniform distribution.";
+                var actual = Integers(observed.GetProperty("actual"));
+                var inputValues = Integers(test.Arguments[0]);
+                int required = definition.Ref == "17.2" ? inputValues.Length : test.Arguments[1].GetInt32();
+                var counts = inputValues.GroupBy(value => value).ToDictionary(group => group.Key, group => group.Count());
+                if (actual.Length != required) return "Return the required number of original element occurrences.";
+                foreach (int value in actual)
+                {
+                    if (counts.GetValueOrDefault(value) <= 0) return "Preserve original occurrence multiplicities; repeated values are not discarded.";
+                    counts[value]--;
+                }
+                return null;
+            }
             if (definition.Ref == "16.23")
             {
                 var actual = observed.GetProperty("actual");
