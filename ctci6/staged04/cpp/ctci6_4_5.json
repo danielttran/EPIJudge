@@ -1,0 +1,33 @@
+{
+  "explanation": "Each node inherits a strict lower bound and an inclusive upper bound from its ancestors. Sending the current value as the left upper bound and right lower bound encodes duplicate-left ordering exactly. Widened initial sentinels permit both signed 32-bit endpoints without adding/subtracting one from a node value. C++ frames store long long bounds and compare the signed int Data after safe widening. No unsigned subtraction or Data+1/Data-1 boundary adjustment is used, so both signed endpoints retain their intended ordering.",
+  "correctness": "A stack frame represents all ancestor restrictions as lower<Data<=upper. Root bounds include every signed 32-bit value. A left child inherits the lower bound and upper=parent.Data, enforcing <=; a right child inherits lower=parent.Data and the upper bound, enforcing >. Intersecting inherited bounds carries restrictions through arbitrary depth. Rejecting a bound violation therefore finds a genuine search-tree violation, and if every frame passes then every descendant respects every ancestor restriction, which is precisely the stated BST rule.",
+  "walkthrough": "For root 5 with a left child 5, the left interval includes its upper bound 5, so equality is valid. A right child 5 fails the strict lower bound. A node 12 inside root 10's left subtree is invalid even if its immediate parent is 5 and 12 is correctly on that parent's right.",
+  "walkthroughCase": {
+    "arguments": [
+      {
+        "nodes": [
+          [
+            5,
+            1,
+            -1
+          ],
+          [
+            5,
+            -1,
+            -1
+          ]
+        ],
+        "selected": 0
+      }
+    ],
+    "expected": true
+  },
+  "timeComplexity": "O(n) time, checking one inherited interval per selected-subtree node.",
+  "spaceComplexity": "O(h) explicit DFS frames for subtree height h; bounds are signed 64-bit or exact wider host integers.",
+  "edgeCases": [
+    "Null tree and signed endpoints.",
+    "Equal left versus equal right values, and distant ancestor violations.",
+    "Selected internal subtree whose external Parent has unrelated bounds."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 4.5. No affiliation is implied."
+}

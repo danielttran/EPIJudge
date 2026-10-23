@@ -10236,6 +10236,126 @@
         "ctci6/runtime/validation.json",
         "ctci6/cases/ctci6_4_7.json"
       ]
+    },
+    "ctci6_4_4": {
+      "collection": "ctci6",
+      "statementSha256": "a9c282afeb66dc5973dcc304f5ebdad38ec2f2c9213073a18104b7ff289b2365",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "inputDomain": "Displayed tree arguments are {\"nodes\":[[Data,leftId,rightId],...],\"selected\":id}. Row indices are distinct node identities; -1 denotes a null link/selection. The table is a valid acyclic binary forest with at most one incoming child link per node. The judge constructs TreeNode objects, connects Left/Right, computes Parent, and passes only the selected TreeNode, not the table. There are 0..1000 rows with signed 32-bit Data, and repeated Data values are allowed unless stated otherwise. Use the provided TreeNode API (Data,Left,Right,Parent). Preserve every original node object, data value and link, including Parent and unselected nodes. A returned node must be an original object; displayed node results are its row ID, or -1 for null. C++ input nodes are judge-owned and must not be deleted. Data values do not determine balance; this need not be a search tree. Only the selected root and descendants belong to the checked subtree, even if its Parent is nonnull.",
+        "outputAndTies": "Return whether the binary subtree rooted at root is height-balanced: at EVERY node, the heights of its left and right subtrees differ by at most one. Define empty height as zero and leaf height as one. The empty tree is balanced. This is not a check of root heights alone.",
+        "mutationAndIdentity": "Read all five actual bodies. Children enter before parent exit, null heights are zero, and every node local difference is checked rather than only the root. The height map retains all processed entries, so the stated storage is O(n), not O(h). Java immutable frames, C# tuples, C++ value frames and Python/JS tuple arrays avoid recursive stack depth. An independent repeated level-height oracle checks all ordered shapes through seven nodes, selected internal subtrees and 1000-node skewed chains. Data is irrelevant and duplicate values do not merge node keys.",
+        "boundaryBehavior": "Null root, leaf and two-node tree. Long skewed chain, equal root heights hiding a deeper violation, repeated Data.",
+        "examples": "The independently checked displayed example and algorithm trace agree with the executed five-language bodies.",
+        "languageContracts": "{\"csharp\": \"Read exact bool/int[] methods. List<int>[] adjacency rows are separately constructed, and List<int> queues use a growing head index. Readonly observation preserves original jagged-array row identities. BuildOrder returns a materialized array only after all projects have been emitted. TreeNode nullable fields are supplied before the solution. Enter/exit tuples carry explicit state; dictionary node keys identify objects. Node returns become original private IDs. All Data/Left/Right/Parent snapshots must remain unchanged. KMP uses nullable traversal entries and invariant integer tokens.\", \"javascript\": \"Read exact functions. Array.from allocates independent adjacency lists. Boolean results have exact boolean type; Number integer node IDs and degrees stay well below precision limits. Every returned order is a concrete array; input edges are not sorted or modified. The observer aliases the provided user-module TreeNode class and maps actual objects to private IDs. Deleted/replaced links become unknown IDs and fail snapshots. Number bounds remain exact; Boolean/int results are checked separately. Parent alignment uses strict object equality.\", \"python\": \"Read exact annotated functions. Independent adjacency-list comprehensions and index-based work queues avoid aliasing and quadratic pop(0). Reachability returns bool, which is validated separately from int. Build-order failure discards partial queue output. The observer maps id(node), not Data equality, and validates bool separately from int. Provided TreeNode annotations match the real user-module class. Explicit stacks support depth 1000; nullable entries are retained for structural KMP tokens. Snapshot checks also reject bool masquerading as Data int.\", \"cpp\": \"Read actual C++17 const vector references, vector<bool> visited flags and indexed vector queues. Dynamic queue growth does not invalidate iteration because the loop stores an index and adjacency traversal belongs to a different vector. Counts/IDs fit signed int; bounds are checked by input preconditions. TreeNode raw input pointers refer to judge-owned unique_ptr objects, whose addresses remain stable across vector growth. Solutions must not delete them. Pointer-key height maps, widened bounds and local value frames are explicit. Original-node returns are looked up by address, and every original field is resnapshotted.\", \"java\": \"Read actual methods, List<List<Integer>> adjacency and int[] result conversion. Boolean JSON encoding is explicit for reachability. Enhanced-for traverses adjacency lists while appending only to the separate queue, avoiding concurrent modification. Input row arrays remain unchanged. TreeNode fields/constructor are supplied, and the observer uses IdentityHashMap for original IDs. Traversal records never place null frames in ArrayDeque; KMP uses an ArrayList precisely because its stack contains null nodes. Boolean and Integer results have explicit JSON encoding.\"}",
+        "judgeAgreement": "Read all five actual bodies. Children enter before parent exit, null heights are zero, and every node local difference is checked rather than only the root. The height map retains all processed entries, so the stated storage is O(n), not O(h). Java immutable frames, C# tuples, C++ value frames and Python/JS tuple arrays avoid recursive stack depth. An independent repeated level-height oracle checks all ordered shapes through seven nodes, selected internal subtrees and 1000-node skewed chains. Data is irrelevant and duplicate values do not merge node keys."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_4.json"
+      ]
+    },
+    "ctci6_4_5": {
+      "collection": "ctci6",
+      "statementSha256": "514c2bb203d73f62cb14618870037410b19dd70df8ba333ac1801ec1151e6c86",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "inputDomain": "Displayed tree arguments are {\"nodes\":[[Data,leftId,rightId],...],\"selected\":id}. Row indices are distinct node identities; -1 denotes a null link/selection. The table is a valid acyclic binary forest with at most one incoming child link per node. The judge constructs TreeNode objects, connects Left/Right, computes Parent, and passes only the selected TreeNode, not the table. There are 0..1000 rows with signed 32-bit Data, and repeated Data values are allowed unless stated otherwise. Use the provided TreeNode API (Data,Left,Right,Parent). Preserve every original node object, data value and link, including Parent and unselected nodes. A returned node must be an original object; displayed node results are its row ID, or -1 for null. C++ input nodes are judge-owned and must not be deleted. Check constraints from ALL ancestors, not just immediate children. Parent links outside the selected subtree do not impose additional bounds. Signed endpoints are valid values and must not overflow a bound calculation.",
+        "outputAndTies": "Return whether the selected binary subtree obeys the search-tree rule: every value in a node's left subtree is <= that node's Data, and every value in its right subtree is > it. Duplicates are permitted only on the left side of each relevant ancestor. The empty tree is valid.",
+        "mutationAndIdentity": "Read the public QuestionB condition and all actual language bounds. C#/Java/C++ use widened signed limits; Python exact integers and JS exact Number represent the below-minimum sentinel. No int endpoint +/-1 adjustment occurs. A separate descendant-value oracle checks every ancestor against every left/right descendant, including exhaustive short shapes/value assignments, signed endpoints and 1000-node duplicate chains. External Parent bounds do not affect a selected internal subtree. Language-specific WHY notes explain actual widening/representation choices.",
+        "boundaryBehavior": "Null tree and signed endpoints. Equal left versus equal right values, and distant ancestor violations. Selected internal subtree whose external Parent has unrelated bounds.",
+        "examples": "The independently checked displayed example and algorithm trace agree with the executed five-language bodies.",
+        "languageContracts": "{\"csharp\": \"Read exact bool/int[] methods. List<int>[] adjacency rows are separately constructed, and List<int> queues use a growing head index. Readonly observation preserves original jagged-array row identities. BuildOrder returns a materialized array only after all projects have been emitted. TreeNode nullable fields are supplied before the solution. Enter/exit tuples carry explicit state; dictionary node keys identify objects. Node returns become original private IDs. All Data/Left/Right/Parent snapshots must remain unchanged. KMP uses nullable traversal entries and invariant integer tokens.\", \"javascript\": \"Read exact functions. Array.from allocates independent adjacency lists. Boolean results have exact boolean type; Number integer node IDs and degrees stay well below precision limits. Every returned order is a concrete array; input edges are not sorted or modified. The observer aliases the provided user-module TreeNode class and maps actual objects to private IDs. Deleted/replaced links become unknown IDs and fail snapshots. Number bounds remain exact; Boolean/int results are checked separately. Parent alignment uses strict object equality.\", \"python\": \"Read exact annotated functions. Independent adjacency-list comprehensions and index-based work queues avoid aliasing and quadratic pop(0). Reachability returns bool, which is validated separately from int. Build-order failure discards partial queue output. The observer maps id(node), not Data equality, and validates bool separately from int. Provided TreeNode annotations match the real user-module class. Explicit stacks support depth 1000; nullable entries are retained for structural KMP tokens. Snapshot checks also reject bool masquerading as Data int.\", \"cpp\": \"Read actual C++17 const vector references, vector<bool> visited flags and indexed vector queues. Dynamic queue growth does not invalidate iteration because the loop stores an index and adjacency traversal belongs to a different vector. Counts/IDs fit signed int; bounds are checked by input preconditions. TreeNode raw input pointers refer to judge-owned unique_ptr objects, whose addresses remain stable across vector growth. Solutions must not delete them. Pointer-key height maps, widened bounds and local value frames are explicit. Original-node returns are looked up by address, and every original field is resnapshotted.\", \"java\": \"Read actual methods, List<List<Integer>> adjacency and int[] result conversion. Boolean JSON encoding is explicit for reachability. Enhanced-for traverses adjacency lists while appending only to the separate queue, avoiding concurrent modification. Input row arrays remain unchanged. TreeNode fields/constructor are supplied, and the observer uses IdentityHashMap for original IDs. Traversal records never place null frames in ArrayDeque; KMP uses an ArrayList precisely because its stack contains null nodes. Boolean and Integer results have explicit JSON encoding.\"}",
+        "judgeAgreement": "Read the public QuestionB condition and all actual language bounds. C#/Java/C++ use widened signed limits; Python exact integers and JS exact Number represent the below-minimum sentinel. No int endpoint +/-1 adjustment occurs. A separate descendant-value oracle checks every ancestor against every left/right descendant, including exhaustive short shapes/value assignments, signed endpoints and 1000-node duplicate chains. External Parent bounds do not affect a selected internal subtree. Language-specific WHY notes explain actual widening/representation choices."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_5.json"
+      ]
+    },
+    "ctci6_4_6": {
+      "collection": "ctci6",
+      "statementSha256": "75188366148fe6b8067c4a65d7ad21377f836b7a0eca7c68f047560dc821fc25",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "inputDomain": "Displayed tree arguments are {\"nodes\":[[Data,leftId,rightId],...],\"selected\":id}. Row indices are distinct node identities; -1 denotes a null link/selection. The table is a valid acyclic binary forest with at most one incoming child link per node. The judge constructs TreeNode objects, connects Left/Right, computes Parent, and passes only the selected TreeNode, not the table. There are 0..1000 rows with signed 32-bit Data, and repeated Data values are allowed unless stated otherwise. Use the provided TreeNode API (Data,Left,Right,Parent). Preserve every original node object, data value and link, including Parent and unselected nodes. A returned node must be an original object; displayed node results are its row ID, or -1 for null. C++ input nodes are judge-owned and must not be deleted. The selected node belongs to a valid duplicate-left BST. Its complete component is found through Parent links, rather than treating the selected node as a new root. Return an original TreeNode, not its value, a row index or a newly allocated equal node.",
+        "outputAndTies": "Return the original node immediately after node in an inorder (left,node,right) traversal of its complete binary search tree. Parent links are provided. Return null for a null input or the final inorder node. Compare node identities when walking links; equal Data values still represent different nodes.",
+        "mutationAndIdentity": "Read all five actual bodies. Comparisons use reference identity and never equal Data; null and final-node results are explicit. A separate complete-component inorder-ID oracle checks every selected node in all small ordered BST shapes, duplicate-left 1000-node chains and signed endpoints. The decoder passes actual provided TreeNode objects, and results are projected through private original-object IDs. Five compiled clone-return counterexamples yield unknown identity -2 despite equal Data; five parent-mutating examples return the correct original result but fail readonly snapshots.",
+        "boundaryBehavior": "Null node, root, leftmost/rightmost node and a deep right-subtree left chain. Equal-valued original nodes and multiple upward right-child edges.",
+        "examples": "The independently checked displayed example and algorithm trace agree with the executed five-language bodies.",
+        "languageContracts": "{\"csharp\": \"Read exact bool/int[] methods. List<int>[] adjacency rows are separately constructed, and List<int> queues use a growing head index. Readonly observation preserves original jagged-array row identities. BuildOrder returns a materialized array only after all projects have been emitted. TreeNode nullable fields are supplied before the solution. Enter/exit tuples carry explicit state; dictionary node keys identify objects. Node returns become original private IDs. All Data/Left/Right/Parent snapshots must remain unchanged. KMP uses nullable traversal entries and invariant integer tokens.\", \"javascript\": \"Read exact functions. Array.from allocates independent adjacency lists. Boolean results have exact boolean type; Number integer node IDs and degrees stay well below precision limits. Every returned order is a concrete array; input edges are not sorted or modified. The observer aliases the provided user-module TreeNode class and maps actual objects to private IDs. Deleted/replaced links become unknown IDs and fail snapshots. Number bounds remain exact; Boolean/int results are checked separately. Parent alignment uses strict object equality.\", \"python\": \"Read exact annotated functions. Independent adjacency-list comprehensions and index-based work queues avoid aliasing and quadratic pop(0). Reachability returns bool, which is validated separately from int. Build-order failure discards partial queue output. The observer maps id(node), not Data equality, and validates bool separately from int. Provided TreeNode annotations match the real user-module class. Explicit stacks support depth 1000; nullable entries are retained for structural KMP tokens. Snapshot checks also reject bool masquerading as Data int.\", \"cpp\": \"Read actual C++17 const vector references, vector<bool> visited flags and indexed vector queues. Dynamic queue growth does not invalidate iteration because the loop stores an index and adjacency traversal belongs to a different vector. Counts/IDs fit signed int; bounds are checked by input preconditions. TreeNode raw input pointers refer to judge-owned unique_ptr objects, whose addresses remain stable across vector growth. Solutions must not delete them. Pointer-key height maps, widened bounds and local value frames are explicit. Original-node returns are looked up by address, and every original field is resnapshotted.\", \"java\": \"Read actual methods, List<List<Integer>> adjacency and int[] result conversion. Boolean JSON encoding is explicit for reachability. Enhanced-for traverses adjacency lists while appending only to the separate queue, avoiding concurrent modification. Input row arrays remain unchanged. TreeNode fields/constructor are supplied, and the observer uses IdentityHashMap for original IDs. Traversal records never place null frames in ArrayDeque; KMP uses an ArrayList precisely because its stack contains null nodes. Boolean and Integer results have explicit JSON encoding.\"}",
+        "judgeAgreement": "Read all five actual bodies. Comparisons use reference identity and never equal Data; null and final-node results are explicit. A separate complete-component inorder-ID oracle checks every selected node in all small ordered BST shapes, duplicate-left 1000-node chains and signed endpoints. The decoder passes actual provided TreeNode objects, and results are projected through private original-object IDs. Five compiled clone-return counterexamples yield unknown identity -2 despite equal Data; five parent-mutating examples return the correct original result but fail readonly snapshots."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_6.json"
+      ]
+    },
+    "ctci6_4_8": {
+      "collection": "ctci6",
+      "statementSha256": "cdcfa24c57862bc3f4e35015825e98cd55d9aa719f7934397a6d416005e5387a",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "inputDomain": "Displayed tree arguments are {\"nodes\":[[Data,leftId,rightId],...],\"selected\":id}. Row indices are distinct node identities; -1 denotes a null link/selection. The table is a valid acyclic binary forest with at most one incoming child link per node. The judge constructs TreeNode objects, connects Left/Right, computes Parent, and passes only the selected TreeNode, not the table. There are 0..1000 rows with signed 32-bit Data, and repeated Data values are allowed unless stated otherwise. Use the provided TreeNode API (Data,Left,Right,Parent). Preserve every original node object, data value and link, including Parent and unselected nodes. A returned node must be an original object; displayed node results are its row ID, or -1 for null. C++ input nodes are judge-owned and must not be deleted. For this shared-identity exercise, the first displayed argument defines the forest and selects first. The second displayed argument is a row ID from that SAME table (or -1), decoded to the original second TreeNode. The callable receives two node objects, not the table or integer IDs. The forest need not be a BST, and repeated Data values do not identify a node. Use O(1) auxiliary pointer/count storage with the parent-link variant.",
+        "outputAndTies": "Return the deepest original node that is an ancestor of both first and second, using provided Parent links. A node is its own ancestor. Return null if either argument is null or if the nodes belong to different trees. No search-tree ordering is assumed.",
+        "mutationAndIdentity": "Read the author parent-link variant and all actual bodies. Null inputs exit immediately, a node is its own ancestor, and two separate tree components converge only at null. No Data ordering is assumed. Python is, JS strict equality, C# ReferenceEquals and Java/C++ reference/pointer comparisons preserve identity. The independent oracle builds one ancestor-ID set and walks the second chain. All small-shape node pairs, same-valued nodes, disjoint components and 1000-node depth differences are executed. Auxiliary storage is constant.",
+        "boundaryBehavior": "Either/both null, the same original node and one node already an ancestor. Different components, equal Data values and very different depths.",
+        "examples": "The independently checked displayed example and algorithm trace agree with the executed five-language bodies.",
+        "languageContracts": "{\"csharp\": \"Read exact bool/int[] methods. List<int>[] adjacency rows are separately constructed, and List<int> queues use a growing head index. Readonly observation preserves original jagged-array row identities. BuildOrder returns a materialized array only after all projects have been emitted. TreeNode nullable fields are supplied before the solution. Enter/exit tuples carry explicit state; dictionary node keys identify objects. Node returns become original private IDs. All Data/Left/Right/Parent snapshots must remain unchanged. KMP uses nullable traversal entries and invariant integer tokens.\", \"javascript\": \"Read exact functions. Array.from allocates independent adjacency lists. Boolean results have exact boolean type; Number integer node IDs and degrees stay well below precision limits. Every returned order is a concrete array; input edges are not sorted or modified. The observer aliases the provided user-module TreeNode class and maps actual objects to private IDs. Deleted/replaced links become unknown IDs and fail snapshots. Number bounds remain exact; Boolean/int results are checked separately. Parent alignment uses strict object equality.\", \"python\": \"Read exact annotated functions. Independent adjacency-list comprehensions and index-based work queues avoid aliasing and quadratic pop(0). Reachability returns bool, which is validated separately from int. Build-order failure discards partial queue output. The observer maps id(node), not Data equality, and validates bool separately from int. Provided TreeNode annotations match the real user-module class. Explicit stacks support depth 1000; nullable entries are retained for structural KMP tokens. Snapshot checks also reject bool masquerading as Data int.\", \"cpp\": \"Read actual C++17 const vector references, vector<bool> visited flags and indexed vector queues. Dynamic queue growth does not invalidate iteration because the loop stores an index and adjacency traversal belongs to a different vector. Counts/IDs fit signed int; bounds are checked by input preconditions. TreeNode raw input pointers refer to judge-owned unique_ptr objects, whose addresses remain stable across vector growth. Solutions must not delete them. Pointer-key height maps, widened bounds and local value frames are explicit. Original-node returns are looked up by address, and every original field is resnapshotted.\", \"java\": \"Read actual methods, List<List<Integer>> adjacency and int[] result conversion. Boolean JSON encoding is explicit for reachability. Enhanced-for traverses adjacency lists while appending only to the separate queue, avoiding concurrent modification. Input row arrays remain unchanged. TreeNode fields/constructor are supplied, and the observer uses IdentityHashMap for original IDs. Traversal records never place null frames in ArrayDeque; KMP uses an ArrayList precisely because its stack contains null nodes. Boolean and Integer results have explicit JSON encoding.\"}",
+        "judgeAgreement": "Read the author parent-link variant and all actual bodies. Null inputs exit immediately, a node is its own ancestor, and two separate tree components converge only at null. No Data ordering is assumed. Python is, JS strict equality, C# ReferenceEquals and Java/C++ reference/pointer comparisons preserve identity. The independent oracle builds one ancestor-ID set and walks the second chain. All small-shape node pairs, same-valued nodes, disjoint components and 1000-node depth differences are executed. Auxiliary storage is constant."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_8.json"
+      ]
+    },
+    "ctci6_4_10": {
+      "collection": "ctci6",
+      "statementSha256": "7ecca3056c1afc13602b30ae08214f339427b5f8642218a7bfcf44c98830aa6c",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "inputDomain": "Displayed tree arguments are {\"nodes\":[[Data,leftId,rightId],...],\"selected\":id}. Row indices are distinct node identities; -1 denotes a null link/selection. The table is a valid acyclic binary forest with at most one incoming child link per node. The judge constructs TreeNode objects, connects Left/Right, computes Parent, and passes only the selected TreeNode, not the table. There are 0..1000 rows with signed 32-bit Data, and repeated Data values are allowed unless stated otherwise. Use the provided TreeNode API (Data,Left,Right,Parent). Preserve every original node object, data value and link, including Parent and unselected nodes. A returned node must be an original object; displayed node results are its row ID, or -1 for null. C++ input nodes are judge-owned and must not be deleted. Each displayed argument defines its own independent forest and selects its subtree root. Each has at most 1000 rows; repeated values and signed endpoints are allowed. Parent links outside the selected subtree do not participate in matching.",
+        "outputAndTies": "Return whether some node in large roots a subtree identical to small in Data and complete left/right structure. The match includes every descendant and null child position; merely containing the same values or a path is insufficient. The empty small tree is a subtree of every tree, including empty large.",
+        "mutationAndIdentity": "Read every actual token producer, prefix-table loop and search loop. Empty small returns true; explicit # markers and V-prefixed complete integer tokens distinguish shape and 2 from 12. Java uses a null-tolerant ArrayList traversal stack, C# nullable Stack, and other languages nullable pointer/list arrays. C# value formatting is invariant. All subtree comparisons ignore external Parent links while preserving them. A separate candidate-root/direct-structure-pair oracle checks every small tree pair, mirrored equal-value shapes, numeric boundaries and repeated-value 1000/500-node chains. Per-language WHY notes match actual containers and comparisons.",
+        "boundaryBehavior": "Empty small/large trees, leaf and full-tree equality. Repeated values, 2 versus 12, mirrored child positions and long chains.",
+        "examples": "The independently checked displayed example and algorithm trace agree with the executed five-language bodies.",
+        "languageContracts": "{\"csharp\": \"Read exact bool/int[] methods. List<int>[] adjacency rows are separately constructed, and List<int> queues use a growing head index. Readonly observation preserves original jagged-array row identities. BuildOrder returns a materialized array only after all projects have been emitted. TreeNode nullable fields are supplied before the solution. Enter/exit tuples carry explicit state; dictionary node keys identify objects. Node returns become original private IDs. All Data/Left/Right/Parent snapshots must remain unchanged. KMP uses nullable traversal entries and invariant integer tokens.\", \"javascript\": \"Read exact functions. Array.from allocates independent adjacency lists. Boolean results have exact boolean type; Number integer node IDs and degrees stay well below precision limits. Every returned order is a concrete array; input edges are not sorted or modified. The observer aliases the provided user-module TreeNode class and maps actual objects to private IDs. Deleted/replaced links become unknown IDs and fail snapshots. Number bounds remain exact; Boolean/int results are checked separately. Parent alignment uses strict object equality.\", \"python\": \"Read exact annotated functions. Independent adjacency-list comprehensions and index-based work queues avoid aliasing and quadratic pop(0). Reachability returns bool, which is validated separately from int. Build-order failure discards partial queue output. The observer maps id(node), not Data equality, and validates bool separately from int. Provided TreeNode annotations match the real user-module class. Explicit stacks support depth 1000; nullable entries are retained for structural KMP tokens. Snapshot checks also reject bool masquerading as Data int.\", \"cpp\": \"Read actual C++17 const vector references, vector<bool> visited flags and indexed vector queues. Dynamic queue growth does not invalidate iteration because the loop stores an index and adjacency traversal belongs to a different vector. Counts/IDs fit signed int; bounds are checked by input preconditions. TreeNode raw input pointers refer to judge-owned unique_ptr objects, whose addresses remain stable across vector growth. Solutions must not delete them. Pointer-key height maps, widened bounds and local value frames are explicit. Original-node returns are looked up by address, and every original field is resnapshotted.\", \"java\": \"Read actual methods, List<List<Integer>> adjacency and int[] result conversion. Boolean JSON encoding is explicit for reachability. Enhanced-for traverses adjacency lists while appending only to the separate queue, avoiding concurrent modification. Input row arrays remain unchanged. TreeNode fields/constructor are supplied, and the observer uses IdentityHashMap for original IDs. Traversal records never place null frames in ArrayDeque; KMP uses an ArrayList precisely because its stack contains null nodes. Boolean and Integer results have explicit JSON encoding.\"}",
+        "judgeAgreement": "Read every actual token producer, prefix-table loop and search loop. Empty small returns true; explicit # markers and V-prefixed complete integer tokens distinguish shape and 2 from 12. Java uses a null-tolerant ArrayList traversal stack, C# nullable Stack, and other languages nullable pointer/list arrays. C# value formatting is invariant. All subtree comparisons ignore external Parent links while preserving them. A separate candidate-root/direct-structure-pair oracle checks every small tree pair, mirrored equal-value shapes, numeric boundaries and repeated-value 1000/500-node chains. Per-language WHY notes match actual containers and comparisons."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_10.json"
+      ]
+    },
+    "ctci6_4_12": {
+      "collection": "ctci6",
+      "statementSha256": "35e658c3c275112dfbdf42d5a71293c71da219afb6ffd39972cda68352832aee",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "inputDomain": "Displayed tree arguments are {\"nodes\":[[Data,leftId,rightId],...],\"selected\":id}. Row indices are distinct node identities; -1 denotes a null link/selection. The table is a valid acyclic binary forest with at most one incoming child link per node. The judge constructs TreeNode objects, connects Left/Right, computes Parent, and passes only the selected TreeNode, not the table. There are 0..1000 rows with signed 32-bit Data, and repeated Data values are allowed unless stated otherwise. Use the provided TreeNode API (Data,Left,Right,Parent). Preserve every original node object, data value and link, including Parent and unselected nodes. A returned node must be an original object; displayed node results are its row ID, or -1 for null. C++ input nodes are judge-owned and must not be deleted. For this exercise every Data is in -1000..1000 and target is in -1000000..1000000. With at most 1000 nodes, all running sums/differences and at most 500500 counted paths fit signed 32-bit integers. Empty root returns zero. Only the selected root and descendants participate; external Parent links do not extend a path. Count different start/end node occurrences separately, even when their values agree. Empty paths do not count, including for target zero.",
+        "outputAndTies": "Count all nonempty downward paths whose Data values sum to target. A path may start at any selected-subtree node and end at any descendant, following only child links. It need not start at root or end at a leaf, and it cannot go upward or cross between branches.",
+        "mutationAndIdentity": "Read all five bodies. Querying running-target occurs before inserting the current prefix, excluding empty paths. Exit events decrement the exact prefix and remove zero-frequency keys before a sibling is visited. Initial prefix zero remains once after traversal, and every method call owns a fresh map. Actual O(h) storage includes active frames/frequencies only. Independent enumeration from every start node covers exhaustive small signed-value shapes and targets, zero siblings, selected internal subtrees, a 1000-zero chain with 500500 nonempty paths and signed admitted bounds. No upward/cross-branch path is counted.",
+        "boundaryBehavior": "Null tree, non-root starts, non-leaf ends and negative values. Zero chains with many overlapping paths and siblings sharing equal prefix sums. Deep 1000-node paths require explicit stack handling.",
+        "examples": "The independently checked displayed example and algorithm trace agree with the executed five-language bodies.",
+        "languageContracts": "{\"csharp\": \"Read exact bool/int[] methods. List<int>[] adjacency rows are separately constructed, and List<int> queues use a growing head index. Readonly observation preserves original jagged-array row identities. BuildOrder returns a materialized array only after all projects have been emitted. TreeNode nullable fields are supplied before the solution. Enter/exit tuples carry explicit state; dictionary node keys identify objects. Node returns become original private IDs. All Data/Left/Right/Parent snapshots must remain unchanged. KMP uses nullable traversal entries and invariant integer tokens.\", \"javascript\": \"Read exact functions. Array.from allocates independent adjacency lists. Boolean results have exact boolean type; Number integer node IDs and degrees stay well below precision limits. Every returned order is a concrete array; input edges are not sorted or modified. The observer aliases the provided user-module TreeNode class and maps actual objects to private IDs. Deleted/replaced links become unknown IDs and fail snapshots. Number bounds remain exact; Boolean/int results are checked separately. Parent alignment uses strict object equality.\", \"python\": \"Read exact annotated functions. Independent adjacency-list comprehensions and index-based work queues avoid aliasing and quadratic pop(0). Reachability returns bool, which is validated separately from int. Build-order failure discards partial queue output. The observer maps id(node), not Data equality, and validates bool separately from int. Provided TreeNode annotations match the real user-module class. Explicit stacks support depth 1000; nullable entries are retained for structural KMP tokens. Snapshot checks also reject bool masquerading as Data int.\", \"cpp\": \"Read actual C++17 const vector references, vector<bool> visited flags and indexed vector queues. Dynamic queue growth does not invalidate iteration because the loop stores an index and adjacency traversal belongs to a different vector. Counts/IDs fit signed int; bounds are checked by input preconditions. TreeNode raw input pointers refer to judge-owned unique_ptr objects, whose addresses remain stable across vector growth. Solutions must not delete them. Pointer-key height maps, widened bounds and local value frames are explicit. Original-node returns are looked up by address, and every original field is resnapshotted.\", \"java\": \"Read actual methods, List<List<Integer>> adjacency and int[] result conversion. Boolean JSON encoding is explicit for reachability. Enhanced-for traverses adjacency lists while appending only to the separate queue, avoiding concurrent modification. Input row arrays remain unchanged. TreeNode fields/constructor are supplied, and the observer uses IdentityHashMap for original IDs. Traversal records never place null frames in ArrayDeque; KMP uses an ArrayList precisely because its stack contains null nodes. Boolean and Integer results have explicit JSON encoding.\"}",
+        "judgeAgreement": "Read all five bodies. Querying running-target occurs before inserting the current prefix, excluding empty paths. Exit events decrement the exact prefix and remove zero-frequency keys before a sibling is visited. Initial prefix zero remains once after traversal, and every method call owns a fresh map. Actual O(h) storage includes active frames/frequencies only. Independent enumeration from every start node covers exhaustive small signed-value shapes and targets, zero siblings, selected internal subtrees, a 1000-zero chain with 500500 nonempty paths and signed admitted bounds. No upward/cross-branch path is counted."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_12.json"
+      ]
     }
   },
   "solutions": {
@@ -59936,6 +60056,696 @@
         "ctci6/cases/ctci6_4_7.json",
         "solutions/java/ctci6_4_7.java",
         "solutions/notes/java/ctci6_4_7.json"
+      ]
+    },
+    "ctci6_4_4/csharp": {
+      "codePath": "solutions/csharp/ctci6_4_4.cs",
+      "notesPath": "solutions/notes/ctci6_4_4.json",
+      "contentSha256": "33ba096c234e4251e0d1c8049e74baf72171b101bd91c841182594a71eab72ba",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "actualAlgorithm": "Explicit postorder enter/exit frames compute each node height once in an identity-keyed map.",
+        "correctness": "When a node exits the stack, both existing children have already exited, so their stored heights are correct by induction; null children have height zero. Taking one plus the larger child height computes the exact node height. If a difference exceeds one, that node witnesses an unbalanced tree. Otherwise each visited node satisfies the defining condition. Every descendant is processed once, so successful exhaustion means every required node is balanced. An initially null root returns true.",
+        "workedTrace": "A three-node chain with links 0.Left=1 and 1.Left=2 has child heights 1 and 0 at node 1, then 2 and 0 at node 0. The root difference is two, so return false. A deeper violation in either child subtree also causes false even when the root child heights happen to agree.",
+        "edgeCases": "Null root, leaf and two-node tree. Long skewed chain, equal root heights hiding a deeper violation, repeated Data.",
+        "timeDerivation": "O(n) time for n nodes in the selected subtree: each enters/exits once and has one height computation.",
+        "spaceDerivation": "O(n) stored node heights plus an O(h) traversal stack for height h; the actual implementation retains completed height entries.",
+        "callableAgreement": "Read all five actual bodies. Children enter before parent exit, null heights are zero, and every node local difference is checked rather than only the root. The height map retains all processed entries, so the stated storage is O(n), not O(h). Java immutable frames, C# tuples, C++ value frames and Python/JS tuple arrays avoid recursive stack depth. An independent repeated level-height oracle checks all ordered shapes through seven nodes, selected internal subtrees and 1000-node skewed chains. Data is irrelevant and duplicate values do not merge node keys. Read exact bool/int[] methods. List<int>[] adjacency rows are separately constructed, and List<int> queues use a growing head index. Readonly observation preserves original jagged-array row identities. BuildOrder returns a materialized array only after all projects have been emitted. TreeNode nullable fields are supplied before the solution. Enter/exit tuples carry explicit state; dictionary node keys identify objects. Node returns become original private IDs. All Data/Left/Right/Parent snapshots must remain unchanged. KMP uses nullable traversal entries and invariant integer tokens."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_4.json",
+        "solutions/csharp/ctci6_4_4.cs",
+        "solutions/notes/ctci6_4_4.json"
+      ]
+    },
+    "ctci6_4_4/javascript": {
+      "codePath": "solutions/javascript/ctci6_4_4.js",
+      "notesPath": "solutions/notes/javascript/ctci6_4_4.json",
+      "contentSha256": "d7f6d6fe7603a0d1508e4ba05a6707b670725298b04705a9109cee7892d86184",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "actualAlgorithm": "Explicit postorder enter/exit frames compute each node height once in an identity-keyed map.",
+        "correctness": "When a node exits the stack, both existing children have already exited, so their stored heights are correct by induction; null children have height zero. Taking one plus the larger child height computes the exact node height. If a difference exceeds one, that node witnesses an unbalanced tree. Otherwise each visited node satisfies the defining condition. Every descendant is processed once, so successful exhaustion means every required node is balanced. An initially null root returns true.",
+        "workedTrace": "A three-node chain with links 0.Left=1 and 1.Left=2 has child heights 1 and 0 at node 1, then 2 and 0 at node 0. The root difference is two, so return false. A deeper violation in either child subtree also causes false even when the root child heights happen to agree.",
+        "edgeCases": "Null root, leaf and two-node tree. Long skewed chain, equal root heights hiding a deeper violation, repeated Data.",
+        "timeDerivation": "O(n) time for n nodes in the selected subtree: each enters/exits once and has one height computation.",
+        "spaceDerivation": "O(n) stored node heights plus an O(h) traversal stack for height h; the actual implementation retains completed height entries.",
+        "callableAgreement": "Read all five actual bodies. Children enter before parent exit, null heights are zero, and every node local difference is checked rather than only the root. The height map retains all processed entries, so the stated storage is O(n), not O(h). Java immutable frames, C# tuples, C++ value frames and Python/JS tuple arrays avoid recursive stack depth. An independent repeated level-height oracle checks all ordered shapes through seven nodes, selected internal subtrees and 1000-node skewed chains. Data is irrelevant and duplicate values do not merge node keys. Read exact functions. Array.from allocates independent adjacency lists. Boolean results have exact boolean type; Number integer node IDs and degrees stay well below precision limits. Every returned order is a concrete array; input edges are not sorted or modified. The observer aliases the provided user-module TreeNode class and maps actual objects to private IDs. Deleted/replaced links become unknown IDs and fail snapshots. Number bounds remain exact; Boolean/int results are checked separately. Parent alignment uses strict object equality."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_4.json",
+        "solutions/javascript/ctci6_4_4.js",
+        "solutions/notes/javascript/ctci6_4_4.json"
+      ]
+    },
+    "ctci6_4_4/python": {
+      "codePath": "solutions/python/ctci6_4_4.py",
+      "notesPath": "solutions/notes/python/ctci6_4_4.json",
+      "contentSha256": "52d8137f4483021494537cb1a9ddb0cf3d601853d7d26b4fb2a81b0ab8b05b0e",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "actualAlgorithm": "Explicit postorder enter/exit frames compute each node height once in an identity-keyed map.",
+        "correctness": "When a node exits the stack, both existing children have already exited, so their stored heights are correct by induction; null children have height zero. Taking one plus the larger child height computes the exact node height. If a difference exceeds one, that node witnesses an unbalanced tree. Otherwise each visited node satisfies the defining condition. Every descendant is processed once, so successful exhaustion means every required node is balanced. An initially null root returns true.",
+        "workedTrace": "A three-node chain with links 0.Left=1 and 1.Left=2 has child heights 1 and 0 at node 1, then 2 and 0 at node 0. The root difference is two, so return false. A deeper violation in either child subtree also causes false even when the root child heights happen to agree.",
+        "edgeCases": "Null root, leaf and two-node tree. Long skewed chain, equal root heights hiding a deeper violation, repeated Data.",
+        "timeDerivation": "O(n) time for n nodes in the selected subtree: each enters/exits once and has one height computation.",
+        "spaceDerivation": "O(n) stored node heights plus an O(h) traversal stack for height h; the actual implementation retains completed height entries.",
+        "callableAgreement": "Read all five actual bodies. Children enter before parent exit, null heights are zero, and every node local difference is checked rather than only the root. The height map retains all processed entries, so the stated storage is O(n), not O(h). Java immutable frames, C# tuples, C++ value frames and Python/JS tuple arrays avoid recursive stack depth. An independent repeated level-height oracle checks all ordered shapes through seven nodes, selected internal subtrees and 1000-node skewed chains. Data is irrelevant and duplicate values do not merge node keys. Read exact annotated functions. Independent adjacency-list comprehensions and index-based work queues avoid aliasing and quadratic pop(0). Reachability returns bool, which is validated separately from int. Build-order failure discards partial queue output. The observer maps id(node), not Data equality, and validates bool separately from int. Provided TreeNode annotations match the real user-module class. Explicit stacks support depth 1000; nullable entries are retained for structural KMP tokens. Snapshot checks also reject bool masquerading as Data int."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_4.json",
+        "solutions/python/ctci6_4_4.py",
+        "solutions/notes/python/ctci6_4_4.json"
+      ]
+    },
+    "ctci6_4_4/cpp": {
+      "codePath": "solutions/cpp/ctci6_4_4.cpp",
+      "notesPath": "solutions/notes/cpp/ctci6_4_4.json",
+      "contentSha256": "1b7f94b0c0c18c7239fe1315254a292c07ed406e8729a7755d753a7fc6c95d2c",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "actualAlgorithm": "Explicit postorder enter/exit frames compute each node height once in an identity-keyed map.",
+        "correctness": "When a node exits the stack, both existing children have already exited, so their stored heights are correct by induction; null children have height zero. Taking one plus the larger child height computes the exact node height. If a difference exceeds one, that node witnesses an unbalanced tree. Otherwise each visited node satisfies the defining condition. Every descendant is processed once, so successful exhaustion means every required node is balanced. An initially null root returns true.",
+        "workedTrace": "A three-node chain with links 0.Left=1 and 1.Left=2 has child heights 1 and 0 at node 1, then 2 and 0 at node 0. The root difference is two, so return false. A deeper violation in either child subtree also causes false even when the root child heights happen to agree.",
+        "edgeCases": "Null root, leaf and two-node tree. Long skewed chain, equal root heights hiding a deeper violation, repeated Data.",
+        "timeDerivation": "O(n) time for n nodes in the selected subtree: each enters/exits once and has one height computation.",
+        "spaceDerivation": "O(n) stored node heights plus an O(h) traversal stack for height h; the actual implementation retains completed height entries.",
+        "callableAgreement": "Read all five actual bodies. Children enter before parent exit, null heights are zero, and every node local difference is checked rather than only the root. The height map retains all processed entries, so the stated storage is O(n), not O(h). Java immutable frames, C# tuples, C++ value frames and Python/JS tuple arrays avoid recursive stack depth. An independent repeated level-height oracle checks all ordered shapes through seven nodes, selected internal subtrees and 1000-node skewed chains. Data is irrelevant and duplicate values do not merge node keys. Read actual C++17 const vector references, vector<bool> visited flags and indexed vector queues. Dynamic queue growth does not invalidate iteration because the loop stores an index and adjacency traversal belongs to a different vector. Counts/IDs fit signed int; bounds are checked by input preconditions. TreeNode raw input pointers refer to judge-owned unique_ptr objects, whose addresses remain stable across vector growth. Solutions must not delete them. Pointer-key height maps, widened bounds and local value frames are explicit. Original-node returns are looked up by address, and every original field is resnapshotted."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_4.json",
+        "solutions/cpp/ctci6_4_4.cpp",
+        "solutions/notes/cpp/ctci6_4_4.json"
+      ]
+    },
+    "ctci6_4_4/java": {
+      "codePath": "solutions/java/ctci6_4_4.java",
+      "notesPath": "solutions/notes/java/ctci6_4_4.json",
+      "contentSha256": "19cd6fdd143b7d59247498d5a059c886a87a92bed097306a2322e8b62c13a17d",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "actualAlgorithm": "Explicit postorder enter/exit frames compute each node height once in an identity-keyed map.",
+        "correctness": "When a node exits the stack, both existing children have already exited, so their stored heights are correct by induction; null children have height zero. Taking one plus the larger child height computes the exact node height. If a difference exceeds one, that node witnesses an unbalanced tree. Otherwise each visited node satisfies the defining condition. Every descendant is processed once, so successful exhaustion means every required node is balanced. An initially null root returns true.",
+        "workedTrace": "A three-node chain with links 0.Left=1 and 1.Left=2 has child heights 1 and 0 at node 1, then 2 and 0 at node 0. The root difference is two, so return false. A deeper violation in either child subtree also causes false even when the root child heights happen to agree.",
+        "edgeCases": "Null root, leaf and two-node tree. Long skewed chain, equal root heights hiding a deeper violation, repeated Data.",
+        "timeDerivation": "O(n) time for n nodes in the selected subtree: each enters/exits once and has one height computation.",
+        "spaceDerivation": "O(n) stored node heights plus an O(h) traversal stack for height h; the actual implementation retains completed height entries.",
+        "callableAgreement": "Read all five actual bodies. Children enter before parent exit, null heights are zero, and every node local difference is checked rather than only the root. The height map retains all processed entries, so the stated storage is O(n), not O(h). Java immutable frames, C# tuples, C++ value frames and Python/JS tuple arrays avoid recursive stack depth. An independent repeated level-height oracle checks all ordered shapes through seven nodes, selected internal subtrees and 1000-node skewed chains. Data is irrelevant and duplicate values do not merge node keys. Read actual methods, List<List<Integer>> adjacency and int[] result conversion. Boolean JSON encoding is explicit for reachability. Enhanced-for traverses adjacency lists while appending only to the separate queue, avoiding concurrent modification. Input row arrays remain unchanged. TreeNode fields/constructor are supplied, and the observer uses IdentityHashMap for original IDs. Traversal records never place null frames in ArrayDeque; KMP uses an ArrayList precisely because its stack contains null nodes. Boolean and Integer results have explicit JSON encoding."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_4.json",
+        "solutions/java/ctci6_4_4.java",
+        "solutions/notes/java/ctci6_4_4.json"
+      ]
+    },
+    "ctci6_4_5/csharp": {
+      "codePath": "solutions/csharp/ctci6_4_5.cs",
+      "notesPath": "solutions/notes/ctci6_4_5.json",
+      "contentSha256": "beddf9054cf7278df49cd5918fc7199d62652942d010169cfee1b2cb66f0ebac",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "actualAlgorithm": "Iterative inherited lower-exclusive/upper-inclusive intervals enforce duplicate-left BST ordering at every depth.",
+        "correctness": "A stack frame represents all ancestor restrictions as lower<Data<=upper. Root bounds include every signed 32-bit value. A left child inherits the lower bound and upper=parent.Data, enforcing <=; a right child inherits lower=parent.Data and the upper bound, enforcing >. Intersecting inherited bounds carries restrictions through arbitrary depth. Rejecting a bound violation therefore finds a genuine search-tree violation, and if every frame passes then every descendant respects every ancestor restriction, which is precisely the stated BST rule.",
+        "workedTrace": "For root 5 with a left child 5, the left interval includes its upper bound 5, so equality is valid. A right child 5 fails the strict lower bound. A node 12 inside root 10's left subtree is invalid even if its immediate parent is 5 and 12 is correctly on that parent's right.",
+        "edgeCases": "Null tree and signed endpoints. Equal left versus equal right values, and distant ancestor violations. Selected internal subtree whose external Parent has unrelated bounds.",
+        "timeDerivation": "O(n) time, checking one inherited interval per selected-subtree node.",
+        "spaceDerivation": "O(h) explicit DFS frames for subtree height h; bounds are signed 64-bit or exact wider host integers.",
+        "callableAgreement": "Read the public QuestionB condition and all actual language bounds. C#/Java/C++ use widened signed limits; Python exact integers and JS exact Number represent the below-minimum sentinel. No int endpoint +/-1 adjustment occurs. A separate descendant-value oracle checks every ancestor against every left/right descendant, including exhaustive short shapes/value assignments, signed endpoints and 1000-node duplicate chains. External Parent bounds do not affect a selected internal subtree. Language-specific WHY notes explain actual widening/representation choices. Read exact bool/int[] methods. List<int>[] adjacency rows are separately constructed, and List<int> queues use a growing head index. Readonly observation preserves original jagged-array row identities. BuildOrder returns a materialized array only after all projects have been emitted. TreeNode nullable fields are supplied before the solution. Enter/exit tuples carry explicit state; dictionary node keys identify objects. Node returns become original private IDs. All Data/Left/Right/Parent snapshots must remain unchanged. KMP uses nullable traversal entries and invariant integer tokens."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_5.json",
+        "solutions/csharp/ctci6_4_5.cs",
+        "solutions/notes/ctci6_4_5.json"
+      ]
+    },
+    "ctci6_4_5/javascript": {
+      "codePath": "solutions/javascript/ctci6_4_5.js",
+      "notesPath": "solutions/notes/javascript/ctci6_4_5.json",
+      "contentSha256": "24006ea4a87048af77702f734ff06e5ec91c2f19abcf3485da057fcd35e13ca7",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "actualAlgorithm": "Iterative inherited lower-exclusive/upper-inclusive intervals enforce duplicate-left BST ordering at every depth.",
+        "correctness": "A stack frame represents all ancestor restrictions as lower<Data<=upper. Root bounds include every signed 32-bit value. A left child inherits the lower bound and upper=parent.Data, enforcing <=; a right child inherits lower=parent.Data and the upper bound, enforcing >. Intersecting inherited bounds carries restrictions through arbitrary depth. Rejecting a bound violation therefore finds a genuine search-tree violation, and if every frame passes then every descendant respects every ancestor restriction, which is precisely the stated BST rule.",
+        "workedTrace": "For root 5 with a left child 5, the left interval includes its upper bound 5, so equality is valid. A right child 5 fails the strict lower bound. A node 12 inside root 10's left subtree is invalid even if its immediate parent is 5 and 12 is correctly on that parent's right.",
+        "edgeCases": "Null tree and signed endpoints. Equal left versus equal right values, and distant ancestor violations. Selected internal subtree whose external Parent has unrelated bounds.",
+        "timeDerivation": "O(n) time, checking one inherited interval per selected-subtree node.",
+        "spaceDerivation": "O(h) explicit DFS frames for subtree height h; bounds are signed 64-bit or exact wider host integers.",
+        "callableAgreement": "Read the public QuestionB condition and all actual language bounds. C#/Java/C++ use widened signed limits; Python exact integers and JS exact Number represent the below-minimum sentinel. No int endpoint +/-1 adjustment occurs. A separate descendant-value oracle checks every ancestor against every left/right descendant, including exhaustive short shapes/value assignments, signed endpoints and 1000-node duplicate chains. External Parent bounds do not affect a selected internal subtree. Language-specific WHY notes explain actual widening/representation choices. Read exact functions. Array.from allocates independent adjacency lists. Boolean results have exact boolean type; Number integer node IDs and degrees stay well below precision limits. Every returned order is a concrete array; input edges are not sorted or modified. The observer aliases the provided user-module TreeNode class and maps actual objects to private IDs. Deleted/replaced links become unknown IDs and fail snapshots. Number bounds remain exact; Boolean/int results are checked separately. Parent alignment uses strict object equality."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_5.json",
+        "solutions/javascript/ctci6_4_5.js",
+        "solutions/notes/javascript/ctci6_4_5.json"
+      ]
+    },
+    "ctci6_4_5/python": {
+      "codePath": "solutions/python/ctci6_4_5.py",
+      "notesPath": "solutions/notes/python/ctci6_4_5.json",
+      "contentSha256": "d25a5d780b28cb63a6d6250c722b4e0f799e44440a007e382dccb32ab336e092",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "actualAlgorithm": "Iterative inherited lower-exclusive/upper-inclusive intervals enforce duplicate-left BST ordering at every depth.",
+        "correctness": "A stack frame represents all ancestor restrictions as lower<Data<=upper. Root bounds include every signed 32-bit value. A left child inherits the lower bound and upper=parent.Data, enforcing <=; a right child inherits lower=parent.Data and the upper bound, enforcing >. Intersecting inherited bounds carries restrictions through arbitrary depth. Rejecting a bound violation therefore finds a genuine search-tree violation, and if every frame passes then every descendant respects every ancestor restriction, which is precisely the stated BST rule.",
+        "workedTrace": "For root 5 with a left child 5, the left interval includes its upper bound 5, so equality is valid. A right child 5 fails the strict lower bound. A node 12 inside root 10's left subtree is invalid even if its immediate parent is 5 and 12 is correctly on that parent's right.",
+        "edgeCases": "Null tree and signed endpoints. Equal left versus equal right values, and distant ancestor violations. Selected internal subtree whose external Parent has unrelated bounds.",
+        "timeDerivation": "O(n) time, checking one inherited interval per selected-subtree node.",
+        "spaceDerivation": "O(h) explicit DFS frames for subtree height h; bounds are signed 64-bit or exact wider host integers.",
+        "callableAgreement": "Read the public QuestionB condition and all actual language bounds. C#/Java/C++ use widened signed limits; Python exact integers and JS exact Number represent the below-minimum sentinel. No int endpoint +/-1 adjustment occurs. A separate descendant-value oracle checks every ancestor against every left/right descendant, including exhaustive short shapes/value assignments, signed endpoints and 1000-node duplicate chains. External Parent bounds do not affect a selected internal subtree. Language-specific WHY notes explain actual widening/representation choices. Read exact annotated functions. Independent adjacency-list comprehensions and index-based work queues avoid aliasing and quadratic pop(0). Reachability returns bool, which is validated separately from int. Build-order failure discards partial queue output. The observer maps id(node), not Data equality, and validates bool separately from int. Provided TreeNode annotations match the real user-module class. Explicit stacks support depth 1000; nullable entries are retained for structural KMP tokens. Snapshot checks also reject bool masquerading as Data int."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_5.json",
+        "solutions/python/ctci6_4_5.py",
+        "solutions/notes/python/ctci6_4_5.json"
+      ]
+    },
+    "ctci6_4_5/cpp": {
+      "codePath": "solutions/cpp/ctci6_4_5.cpp",
+      "notesPath": "solutions/notes/cpp/ctci6_4_5.json",
+      "contentSha256": "56f96ccf8ae476e7a9c5e6aad043ca9133d9fc3115e7d323caa450bb649a5a56",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "actualAlgorithm": "Iterative inherited lower-exclusive/upper-inclusive intervals enforce duplicate-left BST ordering at every depth.",
+        "correctness": "A stack frame represents all ancestor restrictions as lower<Data<=upper. Root bounds include every signed 32-bit value. A left child inherits the lower bound and upper=parent.Data, enforcing <=; a right child inherits lower=parent.Data and the upper bound, enforcing >. Intersecting inherited bounds carries restrictions through arbitrary depth. Rejecting a bound violation therefore finds a genuine search-tree violation, and if every frame passes then every descendant respects every ancestor restriction, which is precisely the stated BST rule.",
+        "workedTrace": "For root 5 with a left child 5, the left interval includes its upper bound 5, so equality is valid. A right child 5 fails the strict lower bound. A node 12 inside root 10's left subtree is invalid even if its immediate parent is 5 and 12 is correctly on that parent's right.",
+        "edgeCases": "Null tree and signed endpoints. Equal left versus equal right values, and distant ancestor violations. Selected internal subtree whose external Parent has unrelated bounds.",
+        "timeDerivation": "O(n) time, checking one inherited interval per selected-subtree node.",
+        "spaceDerivation": "O(h) explicit DFS frames for subtree height h; bounds are signed 64-bit or exact wider host integers.",
+        "callableAgreement": "Read the public QuestionB condition and all actual language bounds. C#/Java/C++ use widened signed limits; Python exact integers and JS exact Number represent the below-minimum sentinel. No int endpoint +/-1 adjustment occurs. A separate descendant-value oracle checks every ancestor against every left/right descendant, including exhaustive short shapes/value assignments, signed endpoints and 1000-node duplicate chains. External Parent bounds do not affect a selected internal subtree. Language-specific WHY notes explain actual widening/representation choices. Read actual C++17 const vector references, vector<bool> visited flags and indexed vector queues. Dynamic queue growth does not invalidate iteration because the loop stores an index and adjacency traversal belongs to a different vector. Counts/IDs fit signed int; bounds are checked by input preconditions. TreeNode raw input pointers refer to judge-owned unique_ptr objects, whose addresses remain stable across vector growth. Solutions must not delete them. Pointer-key height maps, widened bounds and local value frames are explicit. Original-node returns are looked up by address, and every original field is resnapshotted."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_5.json",
+        "solutions/cpp/ctci6_4_5.cpp",
+        "solutions/notes/cpp/ctci6_4_5.json"
+      ]
+    },
+    "ctci6_4_5/java": {
+      "codePath": "solutions/java/ctci6_4_5.java",
+      "notesPath": "solutions/notes/java/ctci6_4_5.json",
+      "contentSha256": "7b6f243e71e563a8105ff599a0b2249d4fcdaf540e9121d0f7b03a4ee6e4d500",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "actualAlgorithm": "Iterative inherited lower-exclusive/upper-inclusive intervals enforce duplicate-left BST ordering at every depth.",
+        "correctness": "A stack frame represents all ancestor restrictions as lower<Data<=upper. Root bounds include every signed 32-bit value. A left child inherits the lower bound and upper=parent.Data, enforcing <=; a right child inherits lower=parent.Data and the upper bound, enforcing >. Intersecting inherited bounds carries restrictions through arbitrary depth. Rejecting a bound violation therefore finds a genuine search-tree violation, and if every frame passes then every descendant respects every ancestor restriction, which is precisely the stated BST rule.",
+        "workedTrace": "For root 5 with a left child 5, the left interval includes its upper bound 5, so equality is valid. A right child 5 fails the strict lower bound. A node 12 inside root 10's left subtree is invalid even if its immediate parent is 5 and 12 is correctly on that parent's right.",
+        "edgeCases": "Null tree and signed endpoints. Equal left versus equal right values, and distant ancestor violations. Selected internal subtree whose external Parent has unrelated bounds.",
+        "timeDerivation": "O(n) time, checking one inherited interval per selected-subtree node.",
+        "spaceDerivation": "O(h) explicit DFS frames for subtree height h; bounds are signed 64-bit or exact wider host integers.",
+        "callableAgreement": "Read the public QuestionB condition and all actual language bounds. C#/Java/C++ use widened signed limits; Python exact integers and JS exact Number represent the below-minimum sentinel. No int endpoint +/-1 adjustment occurs. A separate descendant-value oracle checks every ancestor against every left/right descendant, including exhaustive short shapes/value assignments, signed endpoints and 1000-node duplicate chains. External Parent bounds do not affect a selected internal subtree. Language-specific WHY notes explain actual widening/representation choices. Read actual methods, List<List<Integer>> adjacency and int[] result conversion. Boolean JSON encoding is explicit for reachability. Enhanced-for traverses adjacency lists while appending only to the separate queue, avoiding concurrent modification. Input row arrays remain unchanged. TreeNode fields/constructor are supplied, and the observer uses IdentityHashMap for original IDs. Traversal records never place null frames in ArrayDeque; KMP uses an ArrayList precisely because its stack contains null nodes. Boolean and Integer results have explicit JSON encoding."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_5.json",
+        "solutions/java/ctci6_4_5.java",
+        "solutions/notes/java/ctci6_4_5.json"
+      ]
+    },
+    "ctci6_4_6/csharp": {
+      "codePath": "solutions/csharp/ctci6_4_6.cs",
+      "notesPath": "solutions/notes/ctci6_4_6.json",
+      "contentSha256": "527f2dae8e7c571b77d0e2db370a674566453517d0c61069fb481919fc3669aa",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "actualAlgorithm": "Return the right-subtree leftmost original node, or climb Parent links past completed right-child subtrees.",
+        "correctness": "Inorder visits node's entire right subtree immediately after node, starting at that subtree's leftmost descendant, proving the first case. Without a right subtree, node's own subtree is complete. Every upward right-child edge also completes an ancestor's right subtree, so those ancestors precede node. The first upward left-child edge reaches an ancestor whose left subtree has just completed and whose own visit is next. If no such edge exists, traversal is complete and null is correct. Link comparisons preserve original identity even with equal values.",
+        "workedTrace": "For rows [[2,1,2],[1,-1,-1],[3,-1,-1]] selecting node 1 (Data=1), it has no right child and is its parent's left child, so return original node 0. Selecting node 0 returns the leftmost node of its right subtree, node 2; selecting node 2 returns null.",
+        "edgeCases": "Null node, root, leftmost/rightmost node and a deep right-subtree left chain. Equal-valued original nodes and multiple upward right-child edges.",
+        "timeDerivation": "O(h) link traversals for component height h.",
+        "spaceDerivation": "O(1) auxiliary pointer storage; no traversal array or cloned node is created.",
+        "callableAgreement": "Read all five actual bodies. Comparisons use reference identity and never equal Data; null and final-node results are explicit. A separate complete-component inorder-ID oracle checks every selected node in all small ordered BST shapes, duplicate-left 1000-node chains and signed endpoints. The decoder passes actual provided TreeNode objects, and results are projected through private original-object IDs. Five compiled clone-return counterexamples yield unknown identity -2 despite equal Data; five parent-mutating examples return the correct original result but fail readonly snapshots. Read exact bool/int[] methods. List<int>[] adjacency rows are separately constructed, and List<int> queues use a growing head index. Readonly observation preserves original jagged-array row identities. BuildOrder returns a materialized array only after all projects have been emitted. TreeNode nullable fields are supplied before the solution. Enter/exit tuples carry explicit state; dictionary node keys identify objects. Node returns become original private IDs. All Data/Left/Right/Parent snapshots must remain unchanged. KMP uses nullable traversal entries and invariant integer tokens."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_6.json",
+        "solutions/csharp/ctci6_4_6.cs",
+        "solutions/notes/ctci6_4_6.json"
+      ]
+    },
+    "ctci6_4_6/javascript": {
+      "codePath": "solutions/javascript/ctci6_4_6.js",
+      "notesPath": "solutions/notes/javascript/ctci6_4_6.json",
+      "contentSha256": "ed2b0711cc26598ad5c24a877e3e8856ad9da8d7d13eb8ede12d4e0fb3d0b14c",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "actualAlgorithm": "Return the right-subtree leftmost original node, or climb Parent links past completed right-child subtrees.",
+        "correctness": "Inorder visits node's entire right subtree immediately after node, starting at that subtree's leftmost descendant, proving the first case. Without a right subtree, node's own subtree is complete. Every upward right-child edge also completes an ancestor's right subtree, so those ancestors precede node. The first upward left-child edge reaches an ancestor whose left subtree has just completed and whose own visit is next. If no such edge exists, traversal is complete and null is correct. Link comparisons preserve original identity even with equal values.",
+        "workedTrace": "For rows [[2,1,2],[1,-1,-1],[3,-1,-1]] selecting node 1 (Data=1), it has no right child and is its parent's left child, so return original node 0. Selecting node 0 returns the leftmost node of its right subtree, node 2; selecting node 2 returns null.",
+        "edgeCases": "Null node, root, leftmost/rightmost node and a deep right-subtree left chain. Equal-valued original nodes and multiple upward right-child edges.",
+        "timeDerivation": "O(h) link traversals for component height h.",
+        "spaceDerivation": "O(1) auxiliary pointer storage; no traversal array or cloned node is created.",
+        "callableAgreement": "Read all five actual bodies. Comparisons use reference identity and never equal Data; null and final-node results are explicit. A separate complete-component inorder-ID oracle checks every selected node in all small ordered BST shapes, duplicate-left 1000-node chains and signed endpoints. The decoder passes actual provided TreeNode objects, and results are projected through private original-object IDs. Five compiled clone-return counterexamples yield unknown identity -2 despite equal Data; five parent-mutating examples return the correct original result but fail readonly snapshots. Read exact functions. Array.from allocates independent adjacency lists. Boolean results have exact boolean type; Number integer node IDs and degrees stay well below precision limits. Every returned order is a concrete array; input edges are not sorted or modified. The observer aliases the provided user-module TreeNode class and maps actual objects to private IDs. Deleted/replaced links become unknown IDs and fail snapshots. Number bounds remain exact; Boolean/int results are checked separately. Parent alignment uses strict object equality."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_6.json",
+        "solutions/javascript/ctci6_4_6.js",
+        "solutions/notes/javascript/ctci6_4_6.json"
+      ]
+    },
+    "ctci6_4_6/python": {
+      "codePath": "solutions/python/ctci6_4_6.py",
+      "notesPath": "solutions/notes/python/ctci6_4_6.json",
+      "contentSha256": "60b65d44a0b4c1fc0699f0c09fb029472b39f981a376af661c6b4d7b5aa8ae3f",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "actualAlgorithm": "Return the right-subtree leftmost original node, or climb Parent links past completed right-child subtrees.",
+        "correctness": "Inorder visits node's entire right subtree immediately after node, starting at that subtree's leftmost descendant, proving the first case. Without a right subtree, node's own subtree is complete. Every upward right-child edge also completes an ancestor's right subtree, so those ancestors precede node. The first upward left-child edge reaches an ancestor whose left subtree has just completed and whose own visit is next. If no such edge exists, traversal is complete and null is correct. Link comparisons preserve original identity even with equal values.",
+        "workedTrace": "For rows [[2,1,2],[1,-1,-1],[3,-1,-1]] selecting node 1 (Data=1), it has no right child and is its parent's left child, so return original node 0. Selecting node 0 returns the leftmost node of its right subtree, node 2; selecting node 2 returns null.",
+        "edgeCases": "Null node, root, leftmost/rightmost node and a deep right-subtree left chain. Equal-valued original nodes and multiple upward right-child edges.",
+        "timeDerivation": "O(h) link traversals for component height h.",
+        "spaceDerivation": "O(1) auxiliary pointer storage; no traversal array or cloned node is created.",
+        "callableAgreement": "Read all five actual bodies. Comparisons use reference identity and never equal Data; null and final-node results are explicit. A separate complete-component inorder-ID oracle checks every selected node in all small ordered BST shapes, duplicate-left 1000-node chains and signed endpoints. The decoder passes actual provided TreeNode objects, and results are projected through private original-object IDs. Five compiled clone-return counterexamples yield unknown identity -2 despite equal Data; five parent-mutating examples return the correct original result but fail readonly snapshots. Read exact annotated functions. Independent adjacency-list comprehensions and index-based work queues avoid aliasing and quadratic pop(0). Reachability returns bool, which is validated separately from int. Build-order failure discards partial queue output. The observer maps id(node), not Data equality, and validates bool separately from int. Provided TreeNode annotations match the real user-module class. Explicit stacks support depth 1000; nullable entries are retained for structural KMP tokens. Snapshot checks also reject bool masquerading as Data int."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_6.json",
+        "solutions/python/ctci6_4_6.py",
+        "solutions/notes/python/ctci6_4_6.json"
+      ]
+    },
+    "ctci6_4_6/cpp": {
+      "codePath": "solutions/cpp/ctci6_4_6.cpp",
+      "notesPath": "solutions/notes/cpp/ctci6_4_6.json",
+      "contentSha256": "5e7416c20a570c3466668904d4dc7a12fc7b5b818d198d7fde8c28d919d02509",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "actualAlgorithm": "Return the right-subtree leftmost original node, or climb Parent links past completed right-child subtrees.",
+        "correctness": "Inorder visits node's entire right subtree immediately after node, starting at that subtree's leftmost descendant, proving the first case. Without a right subtree, node's own subtree is complete. Every upward right-child edge also completes an ancestor's right subtree, so those ancestors precede node. The first upward left-child edge reaches an ancestor whose left subtree has just completed and whose own visit is next. If no such edge exists, traversal is complete and null is correct. Link comparisons preserve original identity even with equal values.",
+        "workedTrace": "For rows [[2,1,2],[1,-1,-1],[3,-1,-1]] selecting node 1 (Data=1), it has no right child and is its parent's left child, so return original node 0. Selecting node 0 returns the leftmost node of its right subtree, node 2; selecting node 2 returns null.",
+        "edgeCases": "Null node, root, leftmost/rightmost node and a deep right-subtree left chain. Equal-valued original nodes and multiple upward right-child edges.",
+        "timeDerivation": "O(h) link traversals for component height h.",
+        "spaceDerivation": "O(1) auxiliary pointer storage; no traversal array or cloned node is created.",
+        "callableAgreement": "Read all five actual bodies. Comparisons use reference identity and never equal Data; null and final-node results are explicit. A separate complete-component inorder-ID oracle checks every selected node in all small ordered BST shapes, duplicate-left 1000-node chains and signed endpoints. The decoder passes actual provided TreeNode objects, and results are projected through private original-object IDs. Five compiled clone-return counterexamples yield unknown identity -2 despite equal Data; five parent-mutating examples return the correct original result but fail readonly snapshots. Read actual C++17 const vector references, vector<bool> visited flags and indexed vector queues. Dynamic queue growth does not invalidate iteration because the loop stores an index and adjacency traversal belongs to a different vector. Counts/IDs fit signed int; bounds are checked by input preconditions. TreeNode raw input pointers refer to judge-owned unique_ptr objects, whose addresses remain stable across vector growth. Solutions must not delete them. Pointer-key height maps, widened bounds and local value frames are explicit. Original-node returns are looked up by address, and every original field is resnapshotted."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_6.json",
+        "solutions/cpp/ctci6_4_6.cpp",
+        "solutions/notes/cpp/ctci6_4_6.json"
+      ]
+    },
+    "ctci6_4_6/java": {
+      "codePath": "solutions/java/ctci6_4_6.java",
+      "notesPath": "solutions/notes/java/ctci6_4_6.json",
+      "contentSha256": "96fe431b7012754f4af01b99e281a20305920eb10c241114abf34f7cd2d1dabd",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "actualAlgorithm": "Return the right-subtree leftmost original node, or climb Parent links past completed right-child subtrees.",
+        "correctness": "Inorder visits node's entire right subtree immediately after node, starting at that subtree's leftmost descendant, proving the first case. Without a right subtree, node's own subtree is complete. Every upward right-child edge also completes an ancestor's right subtree, so those ancestors precede node. The first upward left-child edge reaches an ancestor whose left subtree has just completed and whose own visit is next. If no such edge exists, traversal is complete and null is correct. Link comparisons preserve original identity even with equal values.",
+        "workedTrace": "For rows [[2,1,2],[1,-1,-1],[3,-1,-1]] selecting node 1 (Data=1), it has no right child and is its parent's left child, so return original node 0. Selecting node 0 returns the leftmost node of its right subtree, node 2; selecting node 2 returns null.",
+        "edgeCases": "Null node, root, leftmost/rightmost node and a deep right-subtree left chain. Equal-valued original nodes and multiple upward right-child edges.",
+        "timeDerivation": "O(h) link traversals for component height h.",
+        "spaceDerivation": "O(1) auxiliary pointer storage; no traversal array or cloned node is created.",
+        "callableAgreement": "Read all five actual bodies. Comparisons use reference identity and never equal Data; null and final-node results are explicit. A separate complete-component inorder-ID oracle checks every selected node in all small ordered BST shapes, duplicate-left 1000-node chains and signed endpoints. The decoder passes actual provided TreeNode objects, and results are projected through private original-object IDs. Five compiled clone-return counterexamples yield unknown identity -2 despite equal Data; five parent-mutating examples return the correct original result but fail readonly snapshots. Read actual methods, List<List<Integer>> adjacency and int[] result conversion. Boolean JSON encoding is explicit for reachability. Enhanced-for traverses adjacency lists while appending only to the separate queue, avoiding concurrent modification. Input row arrays remain unchanged. TreeNode fields/constructor are supplied, and the observer uses IdentityHashMap for original IDs. Traversal records never place null frames in ArrayDeque; KMP uses an ArrayList precisely because its stack contains null nodes. Boolean and Integer results have explicit JSON encoding."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_6.json",
+        "solutions/java/ctci6_4_6.java",
+        "solutions/notes/java/ctci6_4_6.json"
+      ]
+    },
+    "ctci6_4_8/csharp": {
+      "codePath": "solutions/csharp/ctci6_4_8.cs",
+      "notesPath": "solutions/notes/ctci6_4_8.json",
+      "contentSha256": "2cf43fb0ea354bf1860afad86caa31ebd5bad12b5e970bf182b9fd619067d003",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "actualAlgorithm": "Count Parent depths, align the deeper node, then advance original references together to their first meeting.",
+        "correctness": "Advancing only the deeper pointer cannot skip the common ancestor: every ancestor of the shallower node has depth no greater than that node. After alignment, both pointers are at the same depth. Moving them together preserves this equality and visits ancestors in decreasing depth order. A meeting is therefore common to both original paths, and any deeper common ancestor would have caused an earlier meeting. If their roots differ, they remain distinct until both become null, giving the required absence result. An explicit null-input check prevents treating a nonnull node as an ancestor of null.",
+        "workedTrace": "In rows [[9,1,2],[9,3,-1],[9,-1,-1],[9,-1,-1]], selecting first node 3 and second node 2 first aligns node 3 upward to node 1. Moving node 1 and node 2 upward together meets at original node 0. All Data values are 9, so value equality cannot solve the identity question.",
+        "edgeCases": "Either/both null, the same original node and one node already an ancestor. Different components, equal Data values and very different depths.",
+        "timeDerivation": "O(h1+h2) Parent traversals for the two component heights.",
+        "spaceDerivation": "O(1) auxiliary pointers and depth counters.",
+        "callableAgreement": "Read the author parent-link variant and all actual bodies. Null inputs exit immediately, a node is its own ancestor, and two separate tree components converge only at null. No Data ordering is assumed. Python is, JS strict equality, C# ReferenceEquals and Java/C++ reference/pointer comparisons preserve identity. The independent oracle builds one ancestor-ID set and walks the second chain. All small-shape node pairs, same-valued nodes, disjoint components and 1000-node depth differences are executed. Auxiliary storage is constant. Read exact bool/int[] methods. List<int>[] adjacency rows are separately constructed, and List<int> queues use a growing head index. Readonly observation preserves original jagged-array row identities. BuildOrder returns a materialized array only after all projects have been emitted. TreeNode nullable fields are supplied before the solution. Enter/exit tuples carry explicit state; dictionary node keys identify objects. Node returns become original private IDs. All Data/Left/Right/Parent snapshots must remain unchanged. KMP uses nullable traversal entries and invariant integer tokens."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_8.json",
+        "solutions/csharp/ctci6_4_8.cs",
+        "solutions/notes/ctci6_4_8.json"
+      ]
+    },
+    "ctci6_4_8/javascript": {
+      "codePath": "solutions/javascript/ctci6_4_8.js",
+      "notesPath": "solutions/notes/javascript/ctci6_4_8.json",
+      "contentSha256": "fecc171d167d0489fdc9b39487a38e881f54c85ece17d74b19dd140a42071989",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "actualAlgorithm": "Count Parent depths, align the deeper node, then advance original references together to their first meeting.",
+        "correctness": "Advancing only the deeper pointer cannot skip the common ancestor: every ancestor of the shallower node has depth no greater than that node. After alignment, both pointers are at the same depth. Moving them together preserves this equality and visits ancestors in decreasing depth order. A meeting is therefore common to both original paths, and any deeper common ancestor would have caused an earlier meeting. If their roots differ, they remain distinct until both become null, giving the required absence result. An explicit null-input check prevents treating a nonnull node as an ancestor of null.",
+        "workedTrace": "In rows [[9,1,2],[9,3,-1],[9,-1,-1],[9,-1,-1]], selecting first node 3 and second node 2 first aligns node 3 upward to node 1. Moving node 1 and node 2 upward together meets at original node 0. All Data values are 9, so value equality cannot solve the identity question.",
+        "edgeCases": "Either/both null, the same original node and one node already an ancestor. Different components, equal Data values and very different depths.",
+        "timeDerivation": "O(h1+h2) Parent traversals for the two component heights.",
+        "spaceDerivation": "O(1) auxiliary pointers and depth counters.",
+        "callableAgreement": "Read the author parent-link variant and all actual bodies. Null inputs exit immediately, a node is its own ancestor, and two separate tree components converge only at null. No Data ordering is assumed. Python is, JS strict equality, C# ReferenceEquals and Java/C++ reference/pointer comparisons preserve identity. The independent oracle builds one ancestor-ID set and walks the second chain. All small-shape node pairs, same-valued nodes, disjoint components and 1000-node depth differences are executed. Auxiliary storage is constant. Read exact functions. Array.from allocates independent adjacency lists. Boolean results have exact boolean type; Number integer node IDs and degrees stay well below precision limits. Every returned order is a concrete array; input edges are not sorted or modified. The observer aliases the provided user-module TreeNode class and maps actual objects to private IDs. Deleted/replaced links become unknown IDs and fail snapshots. Number bounds remain exact; Boolean/int results are checked separately. Parent alignment uses strict object equality."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_8.json",
+        "solutions/javascript/ctci6_4_8.js",
+        "solutions/notes/javascript/ctci6_4_8.json"
+      ]
+    },
+    "ctci6_4_8/python": {
+      "codePath": "solutions/python/ctci6_4_8.py",
+      "notesPath": "solutions/notes/python/ctci6_4_8.json",
+      "contentSha256": "e09e5d45844ffa099cdac908675874a8b88a170e0ecbbb0dba7c7ada503e7c40",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "actualAlgorithm": "Count Parent depths, align the deeper node, then advance original references together to their first meeting.",
+        "correctness": "Advancing only the deeper pointer cannot skip the common ancestor: every ancestor of the shallower node has depth no greater than that node. After alignment, both pointers are at the same depth. Moving them together preserves this equality and visits ancestors in decreasing depth order. A meeting is therefore common to both original paths, and any deeper common ancestor would have caused an earlier meeting. If their roots differ, they remain distinct until both become null, giving the required absence result. An explicit null-input check prevents treating a nonnull node as an ancestor of null.",
+        "workedTrace": "In rows [[9,1,2],[9,3,-1],[9,-1,-1],[9,-1,-1]], selecting first node 3 and second node 2 first aligns node 3 upward to node 1. Moving node 1 and node 2 upward together meets at original node 0. All Data values are 9, so value equality cannot solve the identity question.",
+        "edgeCases": "Either/both null, the same original node and one node already an ancestor. Different components, equal Data values and very different depths.",
+        "timeDerivation": "O(h1+h2) Parent traversals for the two component heights.",
+        "spaceDerivation": "O(1) auxiliary pointers and depth counters.",
+        "callableAgreement": "Read the author parent-link variant and all actual bodies. Null inputs exit immediately, a node is its own ancestor, and two separate tree components converge only at null. No Data ordering is assumed. Python is, JS strict equality, C# ReferenceEquals and Java/C++ reference/pointer comparisons preserve identity. The independent oracle builds one ancestor-ID set and walks the second chain. All small-shape node pairs, same-valued nodes, disjoint components and 1000-node depth differences are executed. Auxiliary storage is constant. Read exact annotated functions. Independent adjacency-list comprehensions and index-based work queues avoid aliasing and quadratic pop(0). Reachability returns bool, which is validated separately from int. Build-order failure discards partial queue output. The observer maps id(node), not Data equality, and validates bool separately from int. Provided TreeNode annotations match the real user-module class. Explicit stacks support depth 1000; nullable entries are retained for structural KMP tokens. Snapshot checks also reject bool masquerading as Data int."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_8.json",
+        "solutions/python/ctci6_4_8.py",
+        "solutions/notes/python/ctci6_4_8.json"
+      ]
+    },
+    "ctci6_4_8/cpp": {
+      "codePath": "solutions/cpp/ctci6_4_8.cpp",
+      "notesPath": "solutions/notes/cpp/ctci6_4_8.json",
+      "contentSha256": "fc4b4b376e9781a8ec371b8273e557d459f97f4dc162d82f20b27780e53e9fcf",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "actualAlgorithm": "Count Parent depths, align the deeper node, then advance original references together to their first meeting.",
+        "correctness": "Advancing only the deeper pointer cannot skip the common ancestor: every ancestor of the shallower node has depth no greater than that node. After alignment, both pointers are at the same depth. Moving them together preserves this equality and visits ancestors in decreasing depth order. A meeting is therefore common to both original paths, and any deeper common ancestor would have caused an earlier meeting. If their roots differ, they remain distinct until both become null, giving the required absence result. An explicit null-input check prevents treating a nonnull node as an ancestor of null.",
+        "workedTrace": "In rows [[9,1,2],[9,3,-1],[9,-1,-1],[9,-1,-1]], selecting first node 3 and second node 2 first aligns node 3 upward to node 1. Moving node 1 and node 2 upward together meets at original node 0. All Data values are 9, so value equality cannot solve the identity question.",
+        "edgeCases": "Either/both null, the same original node and one node already an ancestor. Different components, equal Data values and very different depths.",
+        "timeDerivation": "O(h1+h2) Parent traversals for the two component heights.",
+        "spaceDerivation": "O(1) auxiliary pointers and depth counters.",
+        "callableAgreement": "Read the author parent-link variant and all actual bodies. Null inputs exit immediately, a node is its own ancestor, and two separate tree components converge only at null. No Data ordering is assumed. Python is, JS strict equality, C# ReferenceEquals and Java/C++ reference/pointer comparisons preserve identity. The independent oracle builds one ancestor-ID set and walks the second chain. All small-shape node pairs, same-valued nodes, disjoint components and 1000-node depth differences are executed. Auxiliary storage is constant. Read actual C++17 const vector references, vector<bool> visited flags and indexed vector queues. Dynamic queue growth does not invalidate iteration because the loop stores an index and adjacency traversal belongs to a different vector. Counts/IDs fit signed int; bounds are checked by input preconditions. TreeNode raw input pointers refer to judge-owned unique_ptr objects, whose addresses remain stable across vector growth. Solutions must not delete them. Pointer-key height maps, widened bounds and local value frames are explicit. Original-node returns are looked up by address, and every original field is resnapshotted."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_8.json",
+        "solutions/cpp/ctci6_4_8.cpp",
+        "solutions/notes/cpp/ctci6_4_8.json"
+      ]
+    },
+    "ctci6_4_8/java": {
+      "codePath": "solutions/java/ctci6_4_8.java",
+      "notesPath": "solutions/notes/java/ctci6_4_8.json",
+      "contentSha256": "f26a1bdead6f600dce4e36f5ee52458c78d1741c3b62778bfa23744a7062e219",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "actualAlgorithm": "Count Parent depths, align the deeper node, then advance original references together to their first meeting.",
+        "correctness": "Advancing only the deeper pointer cannot skip the common ancestor: every ancestor of the shallower node has depth no greater than that node. After alignment, both pointers are at the same depth. Moving them together preserves this equality and visits ancestors in decreasing depth order. A meeting is therefore common to both original paths, and any deeper common ancestor would have caused an earlier meeting. If their roots differ, they remain distinct until both become null, giving the required absence result. An explicit null-input check prevents treating a nonnull node as an ancestor of null.",
+        "workedTrace": "In rows [[9,1,2],[9,3,-1],[9,-1,-1],[9,-1,-1]], selecting first node 3 and second node 2 first aligns node 3 upward to node 1. Moving node 1 and node 2 upward together meets at original node 0. All Data values are 9, so value equality cannot solve the identity question.",
+        "edgeCases": "Either/both null, the same original node and one node already an ancestor. Different components, equal Data values and very different depths.",
+        "timeDerivation": "O(h1+h2) Parent traversals for the two component heights.",
+        "spaceDerivation": "O(1) auxiliary pointers and depth counters.",
+        "callableAgreement": "Read the author parent-link variant and all actual bodies. Null inputs exit immediately, a node is its own ancestor, and two separate tree components converge only at null. No Data ordering is assumed. Python is, JS strict equality, C# ReferenceEquals and Java/C++ reference/pointer comparisons preserve identity. The independent oracle builds one ancestor-ID set and walks the second chain. All small-shape node pairs, same-valued nodes, disjoint components and 1000-node depth differences are executed. Auxiliary storage is constant. Read actual methods, List<List<Integer>> adjacency and int[] result conversion. Boolean JSON encoding is explicit for reachability. Enhanced-for traverses adjacency lists while appending only to the separate queue, avoiding concurrent modification. Input row arrays remain unchanged. TreeNode fields/constructor are supplied, and the observer uses IdentityHashMap for original IDs. Traversal records never place null frames in ArrayDeque; KMP uses an ArrayList precisely because its stack contains null nodes. Boolean and Integer results have explicit JSON encoding."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_8.json",
+        "solutions/java/ctci6_4_8.java",
+        "solutions/notes/java/ctci6_4_8.json"
+      ]
+    },
+    "ctci6_4_10/csharp": {
+      "codePath": "solutions/csharp/ctci6_4_10.cs",
+      "notesPath": "solutions/notes/ctci6_4_10.json",
+      "contentSha256": "228741db77c719b4de8738a143bd3a357f7d37f1b00ce0621ee980678d2e2a99",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "actualAlgorithm": "Iterative null-aware preorder tokenization followed by whole-token KMP search.",
+        "correctness": "A nonnull subtree contributes a contiguous preorder block containing its node token followed by complete left and right blocks; null markers make this encoding uniquely decodable. Thus every actual matching subtree creates a matching token block. Conversely a complete small-tree token match begins at a corresponding node/null token and its null-aware grammar consumes exactly that rooted subtree, so it cannot hide a structural difference or span an incomplete value. KMP preserves the longest pattern prefix matching the consumed suffix and tests every possible start without skipping a token match. Empty small is handled directly as true.",
+        "workedTrace": "For large rows [[2,1,2],[1,-1,-1],[3,-1,-1]], preorder tokens are [V2,V1,#,#,V3,#,#]. A small leaf 1 has [V1,#,#], which matches. A small root 1 with a left child 3 has different null positions and does not match, even though both values occur in large.",
+        "edgeCases": "Empty small/large trees, leaf and full-tree equality. Repeated values, 2 versus 12, mirrored child positions and long chains.",
+        "timeDerivation": "O(n+m) token generation and KMP time for n/m selected-subtree nodes. Signed 32-bit value token length is bounded.",
+        "spaceDerivation": "O(n+m) token strings/prefix table plus explicit traversal stacks; no recursive depth limit is used.",
+        "callableAgreement": "Read every actual token producer, prefix-table loop and search loop. Empty small returns true; explicit # markers and V-prefixed complete integer tokens distinguish shape and 2 from 12. Java uses a null-tolerant ArrayList traversal stack, C# nullable Stack, and other languages nullable pointer/list arrays. C# value formatting is invariant. All subtree comparisons ignore external Parent links while preserving them. A separate candidate-root/direct-structure-pair oracle checks every small tree pair, mirrored equal-value shapes, numeric boundaries and repeated-value 1000/500-node chains. Per-language WHY notes match actual containers and comparisons. Read exact bool/int[] methods. List<int>[] adjacency rows are separately constructed, and List<int> queues use a growing head index. Readonly observation preserves original jagged-array row identities. BuildOrder returns a materialized array only after all projects have been emitted. TreeNode nullable fields are supplied before the solution. Enter/exit tuples carry explicit state; dictionary node keys identify objects. Node returns become original private IDs. All Data/Left/Right/Parent snapshots must remain unchanged. KMP uses nullable traversal entries and invariant integer tokens."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_10.json",
+        "solutions/csharp/ctci6_4_10.cs",
+        "solutions/notes/ctci6_4_10.json"
+      ]
+    },
+    "ctci6_4_10/javascript": {
+      "codePath": "solutions/javascript/ctci6_4_10.js",
+      "notesPath": "solutions/notes/javascript/ctci6_4_10.json",
+      "contentSha256": "a63acf56f18412682a1e1bcebbb09f359a49863fd0928affd700b8368bbd42d3",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "actualAlgorithm": "Iterative null-aware preorder tokenization followed by whole-token KMP search.",
+        "correctness": "A nonnull subtree contributes a contiguous preorder block containing its node token followed by complete left and right blocks; null markers make this encoding uniquely decodable. Thus every actual matching subtree creates a matching token block. Conversely a complete small-tree token match begins at a corresponding node/null token and its null-aware grammar consumes exactly that rooted subtree, so it cannot hide a structural difference or span an incomplete value. KMP preserves the longest pattern prefix matching the consumed suffix and tests every possible start without skipping a token match. Empty small is handled directly as true.",
+        "workedTrace": "For large rows [[2,1,2],[1,-1,-1],[3,-1,-1]], preorder tokens are [V2,V1,#,#,V3,#,#]. A small leaf 1 has [V1,#,#], which matches. A small root 1 with a left child 3 has different null positions and does not match, even though both values occur in large.",
+        "edgeCases": "Empty small/large trees, leaf and full-tree equality. Repeated values, 2 versus 12, mirrored child positions and long chains.",
+        "timeDerivation": "O(n+m) token generation and KMP time for n/m selected-subtree nodes. Signed 32-bit value token length is bounded.",
+        "spaceDerivation": "O(n+m) token strings/prefix table plus explicit traversal stacks; no recursive depth limit is used.",
+        "callableAgreement": "Read every actual token producer, prefix-table loop and search loop. Empty small returns true; explicit # markers and V-prefixed complete integer tokens distinguish shape and 2 from 12. Java uses a null-tolerant ArrayList traversal stack, C# nullable Stack, and other languages nullable pointer/list arrays. C# value formatting is invariant. All subtree comparisons ignore external Parent links while preserving them. A separate candidate-root/direct-structure-pair oracle checks every small tree pair, mirrored equal-value shapes, numeric boundaries and repeated-value 1000/500-node chains. Per-language WHY notes match actual containers and comparisons. Read exact functions. Array.from allocates independent adjacency lists. Boolean results have exact boolean type; Number integer node IDs and degrees stay well below precision limits. Every returned order is a concrete array; input edges are not sorted or modified. The observer aliases the provided user-module TreeNode class and maps actual objects to private IDs. Deleted/replaced links become unknown IDs and fail snapshots. Number bounds remain exact; Boolean/int results are checked separately. Parent alignment uses strict object equality."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_10.json",
+        "solutions/javascript/ctci6_4_10.js",
+        "solutions/notes/javascript/ctci6_4_10.json"
+      ]
+    },
+    "ctci6_4_10/python": {
+      "codePath": "solutions/python/ctci6_4_10.py",
+      "notesPath": "solutions/notes/python/ctci6_4_10.json",
+      "contentSha256": "727f262f4fe278e2844de0342049bc8d8dd173dd7f0638e39438afd9e5d37a22",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "actualAlgorithm": "Iterative null-aware preorder tokenization followed by whole-token KMP search.",
+        "correctness": "A nonnull subtree contributes a contiguous preorder block containing its node token followed by complete left and right blocks; null markers make this encoding uniquely decodable. Thus every actual matching subtree creates a matching token block. Conversely a complete small-tree token match begins at a corresponding node/null token and its null-aware grammar consumes exactly that rooted subtree, so it cannot hide a structural difference or span an incomplete value. KMP preserves the longest pattern prefix matching the consumed suffix and tests every possible start without skipping a token match. Empty small is handled directly as true.",
+        "workedTrace": "For large rows [[2,1,2],[1,-1,-1],[3,-1,-1]], preorder tokens are [V2,V1,#,#,V3,#,#]. A small leaf 1 has [V1,#,#], which matches. A small root 1 with a left child 3 has different null positions and does not match, even though both values occur in large.",
+        "edgeCases": "Empty small/large trees, leaf and full-tree equality. Repeated values, 2 versus 12, mirrored child positions and long chains.",
+        "timeDerivation": "O(n+m) token generation and KMP time for n/m selected-subtree nodes. Signed 32-bit value token length is bounded.",
+        "spaceDerivation": "O(n+m) token strings/prefix table plus explicit traversal stacks; no recursive depth limit is used.",
+        "callableAgreement": "Read every actual token producer, prefix-table loop and search loop. Empty small returns true; explicit # markers and V-prefixed complete integer tokens distinguish shape and 2 from 12. Java uses a null-tolerant ArrayList traversal stack, C# nullable Stack, and other languages nullable pointer/list arrays. C# value formatting is invariant. All subtree comparisons ignore external Parent links while preserving them. A separate candidate-root/direct-structure-pair oracle checks every small tree pair, mirrored equal-value shapes, numeric boundaries and repeated-value 1000/500-node chains. Per-language WHY notes match actual containers and comparisons. Read exact annotated functions. Independent adjacency-list comprehensions and index-based work queues avoid aliasing and quadratic pop(0). Reachability returns bool, which is validated separately from int. Build-order failure discards partial queue output. The observer maps id(node), not Data equality, and validates bool separately from int. Provided TreeNode annotations match the real user-module class. Explicit stacks support depth 1000; nullable entries are retained for structural KMP tokens. Snapshot checks also reject bool masquerading as Data int."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_10.json",
+        "solutions/python/ctci6_4_10.py",
+        "solutions/notes/python/ctci6_4_10.json"
+      ]
+    },
+    "ctci6_4_10/cpp": {
+      "codePath": "solutions/cpp/ctci6_4_10.cpp",
+      "notesPath": "solutions/notes/cpp/ctci6_4_10.json",
+      "contentSha256": "8e450cc480f0ac8a5662f4f04a7ec35714221f724b3293f40985f4693bf3c0e3",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "actualAlgorithm": "Iterative null-aware preorder tokenization followed by whole-token KMP search.",
+        "correctness": "A nonnull subtree contributes a contiguous preorder block containing its node token followed by complete left and right blocks; null markers make this encoding uniquely decodable. Thus every actual matching subtree creates a matching token block. Conversely a complete small-tree token match begins at a corresponding node/null token and its null-aware grammar consumes exactly that rooted subtree, so it cannot hide a structural difference or span an incomplete value. KMP preserves the longest pattern prefix matching the consumed suffix and tests every possible start without skipping a token match. Empty small is handled directly as true.",
+        "workedTrace": "For large rows [[2,1,2],[1,-1,-1],[3,-1,-1]], preorder tokens are [V2,V1,#,#,V3,#,#]. A small leaf 1 has [V1,#,#], which matches. A small root 1 with a left child 3 has different null positions and does not match, even though both values occur in large.",
+        "edgeCases": "Empty small/large trees, leaf and full-tree equality. Repeated values, 2 versus 12, mirrored child positions and long chains.",
+        "timeDerivation": "O(n+m) token generation and KMP time for n/m selected-subtree nodes. Signed 32-bit value token length is bounded.",
+        "spaceDerivation": "O(n+m) token strings/prefix table plus explicit traversal stacks; no recursive depth limit is used.",
+        "callableAgreement": "Read every actual token producer, prefix-table loop and search loop. Empty small returns true; explicit # markers and V-prefixed complete integer tokens distinguish shape and 2 from 12. Java uses a null-tolerant ArrayList traversal stack, C# nullable Stack, and other languages nullable pointer/list arrays. C# value formatting is invariant. All subtree comparisons ignore external Parent links while preserving them. A separate candidate-root/direct-structure-pair oracle checks every small tree pair, mirrored equal-value shapes, numeric boundaries and repeated-value 1000/500-node chains. Per-language WHY notes match actual containers and comparisons. Read actual C++17 const vector references, vector<bool> visited flags and indexed vector queues. Dynamic queue growth does not invalidate iteration because the loop stores an index and adjacency traversal belongs to a different vector. Counts/IDs fit signed int; bounds are checked by input preconditions. TreeNode raw input pointers refer to judge-owned unique_ptr objects, whose addresses remain stable across vector growth. Solutions must not delete them. Pointer-key height maps, widened bounds and local value frames are explicit. Original-node returns are looked up by address, and every original field is resnapshotted."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_10.json",
+        "solutions/cpp/ctci6_4_10.cpp",
+        "solutions/notes/cpp/ctci6_4_10.json"
+      ]
+    },
+    "ctci6_4_10/java": {
+      "codePath": "solutions/java/ctci6_4_10.java",
+      "notesPath": "solutions/notes/java/ctci6_4_10.json",
+      "contentSha256": "1b66f39d71287b28341d8cb894a09014d4098e533635d2d32a762d03d4cfc478",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "actualAlgorithm": "Iterative null-aware preorder tokenization followed by whole-token KMP search.",
+        "correctness": "A nonnull subtree contributes a contiguous preorder block containing its node token followed by complete left and right blocks; null markers make this encoding uniquely decodable. Thus every actual matching subtree creates a matching token block. Conversely a complete small-tree token match begins at a corresponding node/null token and its null-aware grammar consumes exactly that rooted subtree, so it cannot hide a structural difference or span an incomplete value. KMP preserves the longest pattern prefix matching the consumed suffix and tests every possible start without skipping a token match. Empty small is handled directly as true.",
+        "workedTrace": "For large rows [[2,1,2],[1,-1,-1],[3,-1,-1]], preorder tokens are [V2,V1,#,#,V3,#,#]. A small leaf 1 has [V1,#,#], which matches. A small root 1 with a left child 3 has different null positions and does not match, even though both values occur in large.",
+        "edgeCases": "Empty small/large trees, leaf and full-tree equality. Repeated values, 2 versus 12, mirrored child positions and long chains.",
+        "timeDerivation": "O(n+m) token generation and KMP time for n/m selected-subtree nodes. Signed 32-bit value token length is bounded.",
+        "spaceDerivation": "O(n+m) token strings/prefix table plus explicit traversal stacks; no recursive depth limit is used.",
+        "callableAgreement": "Read every actual token producer, prefix-table loop and search loop. Empty small returns true; explicit # markers and V-prefixed complete integer tokens distinguish shape and 2 from 12. Java uses a null-tolerant ArrayList traversal stack, C# nullable Stack, and other languages nullable pointer/list arrays. C# value formatting is invariant. All subtree comparisons ignore external Parent links while preserving them. A separate candidate-root/direct-structure-pair oracle checks every small tree pair, mirrored equal-value shapes, numeric boundaries and repeated-value 1000/500-node chains. Per-language WHY notes match actual containers and comparisons. Read actual methods, List<List<Integer>> adjacency and int[] result conversion. Boolean JSON encoding is explicit for reachability. Enhanced-for traverses adjacency lists while appending only to the separate queue, avoiding concurrent modification. Input row arrays remain unchanged. TreeNode fields/constructor are supplied, and the observer uses IdentityHashMap for original IDs. Traversal records never place null frames in ArrayDeque; KMP uses an ArrayList precisely because its stack contains null nodes. Boolean and Integer results have explicit JSON encoding."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_10.json",
+        "solutions/java/ctci6_4_10.java",
+        "solutions/notes/java/ctci6_4_10.json"
+      ]
+    },
+    "ctci6_4_12/csharp": {
+      "codePath": "solutions/csharp/ctci6_4_12.cs",
+      "notesPath": "solutions/notes/ctci6_4_12.json",
+      "contentSha256": "e3a0b0ae767eb06dce84e830bfc3141ffea9aa8e0652e522c80d07a5a7336649",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "actualAlgorithm": "Iterative enter/exit events maintain frequencies only for ancestor-path prefix sums.",
+        "correctness": "Before entering a node, prefix frequencies count exactly prefixes ending before it on its ancestor chain, including the initial empty prefix. Each occurrence of runningSum-target therefore identifies one and only one nonempty downward path ending here with the desired sum. Counting before inserting the current prefix excludes an empty path. Inserting it makes it available to descendants; its exit event removes exactly that occurrence, restoring the ancestor-only invariant for later siblings. Every path has one endpoint at which it is counted, proving no omission or duplication.",
+        "workedTrace": "For a three-node chain of zeros and target 0, the successive active zero-prefix counts before insertion are 1,2,3. Those are the numbers of valid paths ending at the three nodes, totaling 6. In a branching tree, removing a finished child's prefix is essential: a path cannot begin in the left branch and end in the right branch.",
+        "edgeCases": "Null tree, non-root starts, non-leaf ends and negative values. Zero chains with many overlapping paths and siblings sharing equal prefix sums. Deep 1000-node paths require explicit stack handling.",
+        "timeDerivation": "Expected O(n) time with constant-time prefix-frequency dictionary access; hash collisions can worsen the bound.",
+        "spaceDerivation": "O(h) active prefix frequencies and explicit enter/exit stack for selected-subtree height h; zero-frequency keys are removed on exit.",
+        "callableAgreement": "Read all five bodies. Querying running-target occurs before inserting the current prefix, excluding empty paths. Exit events decrement the exact prefix and remove zero-frequency keys before a sibling is visited. Initial prefix zero remains once after traversal, and every method call owns a fresh map. Actual O(h) storage includes active frames/frequencies only. Independent enumeration from every start node covers exhaustive small signed-value shapes and targets, zero siblings, selected internal subtrees, a 1000-zero chain with 500500 nonempty paths and signed admitted bounds. No upward/cross-branch path is counted. Read exact bool/int[] methods. List<int>[] adjacency rows are separately constructed, and List<int> queues use a growing head index. Readonly observation preserves original jagged-array row identities. BuildOrder returns a materialized array only after all projects have been emitted. TreeNode nullable fields are supplied before the solution. Enter/exit tuples carry explicit state; dictionary node keys identify objects. Node returns become original private IDs. All Data/Left/Right/Parent snapshots must remain unchanged. KMP uses nullable traversal entries and invariant integer tokens."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_12.json",
+        "solutions/csharp/ctci6_4_12.cs",
+        "solutions/notes/ctci6_4_12.json"
+      ]
+    },
+    "ctci6_4_12/javascript": {
+      "codePath": "solutions/javascript/ctci6_4_12.js",
+      "notesPath": "solutions/notes/javascript/ctci6_4_12.json",
+      "contentSha256": "c265661e2f925fb71f8d8a37dd907192ceb949b2184412ca628f54fc82faa28f",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "actualAlgorithm": "Iterative enter/exit events maintain frequencies only for ancestor-path prefix sums.",
+        "correctness": "Before entering a node, prefix frequencies count exactly prefixes ending before it on its ancestor chain, including the initial empty prefix. Each occurrence of runningSum-target therefore identifies one and only one nonempty downward path ending here with the desired sum. Counting before inserting the current prefix excludes an empty path. Inserting it makes it available to descendants; its exit event removes exactly that occurrence, restoring the ancestor-only invariant for later siblings. Every path has one endpoint at which it is counted, proving no omission or duplication.",
+        "workedTrace": "For a three-node chain of zeros and target 0, the successive active zero-prefix counts before insertion are 1,2,3. Those are the numbers of valid paths ending at the three nodes, totaling 6. In a branching tree, removing a finished child's prefix is essential: a path cannot begin in the left branch and end in the right branch.",
+        "edgeCases": "Null tree, non-root starts, non-leaf ends and negative values. Zero chains with many overlapping paths and siblings sharing equal prefix sums. Deep 1000-node paths require explicit stack handling.",
+        "timeDerivation": "Expected O(n) time with constant-time prefix-frequency dictionary access; hash collisions can worsen the bound.",
+        "spaceDerivation": "O(h) active prefix frequencies and explicit enter/exit stack for selected-subtree height h; zero-frequency keys are removed on exit.",
+        "callableAgreement": "Read all five bodies. Querying running-target occurs before inserting the current prefix, excluding empty paths. Exit events decrement the exact prefix and remove zero-frequency keys before a sibling is visited. Initial prefix zero remains once after traversal, and every method call owns a fresh map. Actual O(h) storage includes active frames/frequencies only. Independent enumeration from every start node covers exhaustive small signed-value shapes and targets, zero siblings, selected internal subtrees, a 1000-zero chain with 500500 nonempty paths and signed admitted bounds. No upward/cross-branch path is counted. Read exact functions. Array.from allocates independent adjacency lists. Boolean results have exact boolean type; Number integer node IDs and degrees stay well below precision limits. Every returned order is a concrete array; input edges are not sorted or modified. The observer aliases the provided user-module TreeNode class and maps actual objects to private IDs. Deleted/replaced links become unknown IDs and fail snapshots. Number bounds remain exact; Boolean/int results are checked separately. Parent alignment uses strict object equality."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_12.json",
+        "solutions/javascript/ctci6_4_12.js",
+        "solutions/notes/javascript/ctci6_4_12.json"
+      ]
+    },
+    "ctci6_4_12/python": {
+      "codePath": "solutions/python/ctci6_4_12.py",
+      "notesPath": "solutions/notes/python/ctci6_4_12.json",
+      "contentSha256": "2336ab292e8c25cf94e5667a5ddeaa8d6a6493b8142d3c1592388e7e50c33ffd",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "actualAlgorithm": "Iterative enter/exit events maintain frequencies only for ancestor-path prefix sums.",
+        "correctness": "Before entering a node, prefix frequencies count exactly prefixes ending before it on its ancestor chain, including the initial empty prefix. Each occurrence of runningSum-target therefore identifies one and only one nonempty downward path ending here with the desired sum. Counting before inserting the current prefix excludes an empty path. Inserting it makes it available to descendants; its exit event removes exactly that occurrence, restoring the ancestor-only invariant for later siblings. Every path has one endpoint at which it is counted, proving no omission or duplication.",
+        "workedTrace": "For a three-node chain of zeros and target 0, the successive active zero-prefix counts before insertion are 1,2,3. Those are the numbers of valid paths ending at the three nodes, totaling 6. In a branching tree, removing a finished child's prefix is essential: a path cannot begin in the left branch and end in the right branch.",
+        "edgeCases": "Null tree, non-root starts, non-leaf ends and negative values. Zero chains with many overlapping paths and siblings sharing equal prefix sums. Deep 1000-node paths require explicit stack handling.",
+        "timeDerivation": "Expected O(n) time with constant-time prefix-frequency dictionary access; hash collisions can worsen the bound.",
+        "spaceDerivation": "O(h) active prefix frequencies and explicit enter/exit stack for selected-subtree height h; zero-frequency keys are removed on exit.",
+        "callableAgreement": "Read all five bodies. Querying running-target occurs before inserting the current prefix, excluding empty paths. Exit events decrement the exact prefix and remove zero-frequency keys before a sibling is visited. Initial prefix zero remains once after traversal, and every method call owns a fresh map. Actual O(h) storage includes active frames/frequencies only. Independent enumeration from every start node covers exhaustive small signed-value shapes and targets, zero siblings, selected internal subtrees, a 1000-zero chain with 500500 nonempty paths and signed admitted bounds. No upward/cross-branch path is counted. Read exact annotated functions. Independent adjacency-list comprehensions and index-based work queues avoid aliasing and quadratic pop(0). Reachability returns bool, which is validated separately from int. Build-order failure discards partial queue output. The observer maps id(node), not Data equality, and validates bool separately from int. Provided TreeNode annotations match the real user-module class. Explicit stacks support depth 1000; nullable entries are retained for structural KMP tokens. Snapshot checks also reject bool masquerading as Data int."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_12.json",
+        "solutions/python/ctci6_4_12.py",
+        "solutions/notes/python/ctci6_4_12.json"
+      ]
+    },
+    "ctci6_4_12/cpp": {
+      "codePath": "solutions/cpp/ctci6_4_12.cpp",
+      "notesPath": "solutions/notes/cpp/ctci6_4_12.json",
+      "contentSha256": "bd7c14c558e067b1a3efb738a8a257ebedef6c799027aae995bdb31724668125",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "actualAlgorithm": "Iterative enter/exit events maintain frequencies only for ancestor-path prefix sums.",
+        "correctness": "Before entering a node, prefix frequencies count exactly prefixes ending before it on its ancestor chain, including the initial empty prefix. Each occurrence of runningSum-target therefore identifies one and only one nonempty downward path ending here with the desired sum. Counting before inserting the current prefix excludes an empty path. Inserting it makes it available to descendants; its exit event removes exactly that occurrence, restoring the ancestor-only invariant for later siblings. Every path has one endpoint at which it is counted, proving no omission or duplication.",
+        "workedTrace": "For a three-node chain of zeros and target 0, the successive active zero-prefix counts before insertion are 1,2,3. Those are the numbers of valid paths ending at the three nodes, totaling 6. In a branching tree, removing a finished child's prefix is essential: a path cannot begin in the left branch and end in the right branch.",
+        "edgeCases": "Null tree, non-root starts, non-leaf ends and negative values. Zero chains with many overlapping paths and siblings sharing equal prefix sums. Deep 1000-node paths require explicit stack handling.",
+        "timeDerivation": "Expected O(n) time with constant-time prefix-frequency dictionary access; hash collisions can worsen the bound.",
+        "spaceDerivation": "O(h) active prefix frequencies and explicit enter/exit stack for selected-subtree height h; zero-frequency keys are removed on exit.",
+        "callableAgreement": "Read all five bodies. Querying running-target occurs before inserting the current prefix, excluding empty paths. Exit events decrement the exact prefix and remove zero-frequency keys before a sibling is visited. Initial prefix zero remains once after traversal, and every method call owns a fresh map. Actual O(h) storage includes active frames/frequencies only. Independent enumeration from every start node covers exhaustive small signed-value shapes and targets, zero siblings, selected internal subtrees, a 1000-zero chain with 500500 nonempty paths and signed admitted bounds. No upward/cross-branch path is counted. Read actual C++17 const vector references, vector<bool> visited flags and indexed vector queues. Dynamic queue growth does not invalidate iteration because the loop stores an index and adjacency traversal belongs to a different vector. Counts/IDs fit signed int; bounds are checked by input preconditions. TreeNode raw input pointers refer to judge-owned unique_ptr objects, whose addresses remain stable across vector growth. Solutions must not delete them. Pointer-key height maps, widened bounds and local value frames are explicit. Original-node returns are looked up by address, and every original field is resnapshotted."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_12.json",
+        "solutions/cpp/ctci6_4_12.cpp",
+        "solutions/notes/cpp/ctci6_4_12.json"
+      ]
+    },
+    "ctci6_4_12/java": {
+      "codePath": "solutions/java/ctci6_4_12.java",
+      "notesPath": "solutions/notes/java/ctci6_4_12.json",
+      "contentSha256": "650326b8bc0fb26475969945f5af18aed3b41c6ba7691bb15bc6043f1ee27bbc",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review04.json",
+      "checks": {
+        "actualAlgorithm": "Iterative enter/exit events maintain frequencies only for ancestor-path prefix sums.",
+        "correctness": "Before entering a node, prefix frequencies count exactly prefixes ending before it on its ancestor chain, including the initial empty prefix. Each occurrence of runningSum-target therefore identifies one and only one nonempty downward path ending here with the desired sum. Counting before inserting the current prefix excludes an empty path. Inserting it makes it available to descendants; its exit event removes exactly that occurrence, restoring the ancestor-only invariant for later siblings. Every path has one endpoint at which it is counted, proving no omission or duplication.",
+        "workedTrace": "For a three-node chain of zeros and target 0, the successive active zero-prefix counts before insertion are 1,2,3. Those are the numbers of valid paths ending at the three nodes, totaling 6. In a branching tree, removing a finished child's prefix is essential: a path cannot begin in the left branch and end in the right branch.",
+        "edgeCases": "Null tree, non-root starts, non-leaf ends and negative values. Zero chains with many overlapping paths and siblings sharing equal prefix sums. Deep 1000-node paths require explicit stack handling.",
+        "timeDerivation": "Expected O(n) time with constant-time prefix-frequency dictionary access; hash collisions can worsen the bound.",
+        "spaceDerivation": "O(h) active prefix frequencies and explicit enter/exit stack for selected-subtree height h; zero-frequency keys are removed on exit.",
+        "callableAgreement": "Read all five bodies. Querying running-target occurs before inserting the current prefix, excluding empty paths. Exit events decrement the exact prefix and remove zero-frequency keys before a sibling is visited. Initial prefix zero remains once after traversal, and every method call owns a fresh map. Actual O(h) storage includes active frames/frequencies only. Independent enumeration from every start node covers exhaustive small signed-value shapes and targets, zero siblings, selected internal subtrees, a 1000-zero chain with 500500 nonempty paths and signed admitted bounds. No upward/cross-branch path is counted. Read actual methods, List<List<Integer>> adjacency and int[] result conversion. Boolean JSON encoding is explicit for reachability. Enhanced-for traverses adjacency lists while appending only to the separate queue, avoiding concurrent modification. Input row arrays remain unchanged. TreeNode fields/constructor are supplied, and the observer uses IdentityHashMap for original IDs. Traversal records never place null frames in ArrayDeque; KMP uses an ArrayList precisely because its stack contains null nodes. Boolean and Integer results have explicit JSON encoding."
+      },
+      "evidence": [
+        "ctci6/review04.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_4_12.json",
+        "solutions/java/ctci6_4_12.java",
+        "solutions/notes/java/ctci6_4_12.json"
       ]
     }
   }

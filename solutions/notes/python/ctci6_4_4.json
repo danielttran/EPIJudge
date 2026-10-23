@@ -1,0 +1,37 @@
+{
+  "explanation": "A parent needs both child heights, so process nodes in postorder. An explicit enter/exit stack visits children before computing a parent height and avoids recursion-depth failures in a long chain. Store computed heights once and reject any local difference above one.",
+  "correctness": "When a node exits the stack, both existing children have already exited, so their stored heights are correct by induction; null children have height zero. Taking one plus the larger child height computes the exact node height. If a difference exceeds one, that node witnesses an unbalanced tree. Otherwise each visited node satisfies the defining condition. Every descendant is processed once, so successful exhaustion means every required node is balanced. An initially null root returns true.",
+  "walkthrough": "A three-node chain with links 0.Left=1 and 1.Left=2 has child heights 1 and 0 at node 1, then 2 and 0 at node 0. The root difference is two, so return false. A deeper violation in either child subtree also causes false even when the root child heights happen to agree.",
+  "walkthroughCase": {
+    "arguments": [
+      {
+        "nodes": [
+          [
+            8,
+            1,
+            -1
+          ],
+          [
+            8,
+            2,
+            -1
+          ],
+          [
+            8,
+            -1,
+            -1
+          ]
+        ],
+        "selected": 0
+      }
+    ],
+    "expected": false
+  },
+  "timeComplexity": "O(n) time for n nodes in the selected subtree: each enters/exits once and has one height computation.",
+  "spaceComplexity": "O(n) stored node heights plus an O(h) traversal stack for height h; the actual implementation retains completed height entries.",
+  "edgeCases": [
+    "Null root, leaf and two-node tree.",
+    "Long skewed chain, equal root heights hiding a deeper violation, repeated Data."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 4.4. No affiliation is implied."
+}

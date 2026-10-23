@@ -31100,6 +31100,251 @@
     ]
   },
   {
+    "problemId": "ctci6_4_4",
+    "collection": "ctci6",
+    "language": "csharp",
+    "code": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic class TreeNode {public int Data;public TreeNode? Left,Right,Parent;public TreeNode(int data){Data=data;}}\npublic class Solution\n{\n    public bool IsHeightBalanced(TreeNode? root)\n    {\n        if (root == null)\n            return true;\n        var heights = new Dictionary<TreeNode, int>();\n        var stack = new Stack<(TreeNode Node, bool Exit)>();\n        stack.Push((root, false));\n        while (stack.Count > 0)\n        {\n            var frame = stack.Pop();\n            var node = frame.Node;\n            if (!frame.Exit)\n            {\n                stack.Push((node, true));\n                if (node.Right != null)\n                    stack.Push((node.Right, false));\n                if (node.Left != null)\n                    stack.Push((node.Left, false));\n            }\n            else\n            {\n                int left = node.Left == null ? 0 : heights[node.Left],\n                    right = node.Right == null ? 0 : heights[node.Right];\n                if (Math.Abs(left - right) > 1)\n                    return false;\n                heights[node] = 1 + Math.Max(left, right);\n            }\n        }\n        return true;\n    }\n}\n",
+    "explanation": "A parent needs both child heights, so process nodes in postorder. An explicit enter/exit stack visits children before computing a parent height and avoids recursion-depth failures in a long chain. Store computed heights once and reject any local difference above one.",
+    "timeComplexity": "O(n) time for n nodes in the selected subtree: each enters/exits once and has one height computation.",
+    "spaceComplexity": "O(n) stored node heights plus an O(h) traversal stack for height h; the actual implementation retains completed height entries.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 4.4. No affiliation is implied.",
+    "correctness": "When a node exits the stack, both existing children have already exited, so their stored heights are correct by induction; null children have height zero. Taking one plus the larger child height computes the exact node height. If a difference exceeds one, that node witnesses an unbalanced tree. Otherwise each visited node satisfies the defining condition. Every descendant is processed once, so successful exhaustion means every required node is balanced. An initially null root returns true.",
+    "walkthrough": "A three-node chain with links 0.Left=1 and 1.Left=2 has child heights 1 and 0 at node 1, then 2 and 0 at node 0. The root difference is two, so return false. A deeper violation in either child subtree also causes false even when the root child heights happen to agree.",
+    "edgeCases": [
+      "Null root, leaf and two-node tree.",
+      "Long skewed chain, equal root heights hiding a deeper violation, repeated Data."
+    ]
+  },
+  {
+    "problemId": "ctci6_4_4",
+    "collection": "ctci6",
+    "language": "javascript",
+    "code": "'use strict';\nclass TreeNode {constructor(data){this.Data=data;this.Left=this.Right=this.Parent=null;}}\nfunction IsHeightBalanced(root) {\n  if (root === null) return true;\n  const heights = new Map(),\n    stack = [[root, false]];\n  while (stack.length) {\n    const [node, exiting] = stack.pop();\n    if (!exiting) {\n      stack.push([node, true]);\n      if (node.Right !== null) stack.push([node.Right, false]);\n      if (node.Left !== null) stack.push([node.Left, false]);\n    } else {\n      const left = heights.get(node.Left) || 0,\n        right = heights.get(node.Right) || 0;\n      if (Math.abs(left - right) > 1) return false;\n      heights.set(node, 1 + Math.max(left, right));\n    }\n  }\n  return true;\n}\n\nmodule.exports = {TreeNode,IsHeightBalanced};\n",
+    "explanation": "A parent needs both child heights, so process nodes in postorder. An explicit enter/exit stack visits children before computing a parent height and avoids recursion-depth failures in a long chain. Store computed heights once and reject any local difference above one.",
+    "timeComplexity": "O(n) time for n nodes in the selected subtree: each enters/exits once and has one height computation.",
+    "spaceComplexity": "O(n) stored node heights plus an O(h) traversal stack for height h; the actual implementation retains completed height entries.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 4.4. No affiliation is implied.",
+    "correctness": "When a node exits the stack, both existing children have already exited, so their stored heights are correct by induction; null children have height zero. Taking one plus the larger child height computes the exact node height. If a difference exceeds one, that node witnesses an unbalanced tree. Otherwise each visited node satisfies the defining condition. Every descendant is processed once, so successful exhaustion means every required node is balanced. An initially null root returns true.",
+    "walkthrough": "A three-node chain with links 0.Left=1 and 1.Left=2 has child heights 1 and 0 at node 1, then 2 and 0 at node 0. The root difference is two, so return false. A deeper violation in either child subtree also causes false even when the root child heights happen to agree.",
+    "edgeCases": [
+      "Null root, leaf and two-node tree.",
+      "Long skewed chain, equal root heights hiding a deeper violation, repeated Data."
+    ]
+  },
+  {
+    "problemId": "ctci6_4_4",
+    "collection": "ctci6",
+    "language": "python",
+    "code": "class TreeNode:\n    def __init__(self, data: int):\n        self.Data = data\n        self.Left = self.Right = self.Parent = None\ndef IsHeightBalanced(root: TreeNode | None) -> bool:\n    if root is None:\n        return True\n    heights = {}\n    stack = [(root, False)]\n    while stack:\n        node, exiting = stack.pop()\n        if not exiting:\n            stack.append((node, True))\n            if node.Right is not None:\n                stack.append((node.Right, False))\n            if node.Left is not None:\n                stack.append((node.Left, False))\n        else:\n            left = heights.get(node.Left, 0)\n            right = heights.get(node.Right, 0)\n            if abs(left - right) > 1:\n                return False\n            heights[node] = 1 + max(left, right)\n    return True\n",
+    "explanation": "A parent needs both child heights, so process nodes in postorder. An explicit enter/exit stack visits children before computing a parent height and avoids recursion-depth failures in a long chain. Store computed heights once and reject any local difference above one.",
+    "timeComplexity": "O(n) time for n nodes in the selected subtree: each enters/exits once and has one height computation.",
+    "spaceComplexity": "O(n) stored node heights plus an O(h) traversal stack for height h; the actual implementation retains completed height entries.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 4.4. No affiliation is implied.",
+    "correctness": "When a node exits the stack, both existing children have already exited, so their stored heights are correct by induction; null children have height zero. Taking one plus the larger child height computes the exact node height. If a difference exceeds one, that node witnesses an unbalanced tree. Otherwise each visited node satisfies the defining condition. Every descendant is processed once, so successful exhaustion means every required node is balanced. An initially null root returns true.",
+    "walkthrough": "A three-node chain with links 0.Left=1 and 1.Left=2 has child heights 1 and 0 at node 1, then 2 and 0 at node 0. The root difference is two, so return false. A deeper violation in either child subtree also causes false even when the root child heights happen to agree.",
+    "edgeCases": [
+      "Null root, leaf and two-node tree.",
+      "Long skewed chain, equal root heights hiding a deeper violation, repeated Data."
+    ]
+  },
+  {
+    "problemId": "ctci6_4_4",
+    "collection": "ctci6",
+    "language": "cpp",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n#include <unordered_map>\nstruct TreeNode {int Data;TreeNode* Left;TreeNode* Right;TreeNode* Parent;explicit TreeNode(int data):Data(data),Left(nullptr),Right(nullptr),Parent(nullptr){}};\nclass Solution {\n public:\n  bool IsHeightBalanced(TreeNode* root) {\n    if (!root)\n      return true;\n    struct Frame {\n      TreeNode* Node;\n      bool Exit;\n    };\n    std::vector<Frame> stack{{root, false}};\n    std::unordered_map<TreeNode*, int> heights;\n    while (!stack.empty()) {\n      auto frame = stack.back();\n      stack.pop_back();\n      TreeNode* node = frame.Node;\n      if (!frame.Exit) {\n        stack.push_back({node, true});\n        if (node->Right)\n          stack.push_back({node->Right, false});\n        if (node->Left)\n          stack.push_back({node->Left, false});\n      } else {\n        int left = node->Left ? heights.at(node->Left) : 0,\n            right = node->Right ? heights.at(node->Right) : 0;\n        if (left - right > 1 || right - left > 1)\n          return false;\n        heights[node] = 1 + std::max(left, right);\n      }\n    }\n    return true;\n  }\n};\n",
+    "explanation": "A parent needs both child heights, so process nodes in postorder. An explicit enter/exit stack visits children before computing a parent height and avoids recursion-depth failures in a long chain. Store computed heights once and reject any local difference above one.",
+    "timeComplexity": "O(n) time for n nodes in the selected subtree: each enters/exits once and has one height computation.",
+    "spaceComplexity": "O(n) stored node heights plus an O(h) traversal stack for height h; the actual implementation retains completed height entries.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 4.4. No affiliation is implied.",
+    "correctness": "When a node exits the stack, both existing children have already exited, so their stored heights are correct by induction; null children have height zero. Taking one plus the larger child height computes the exact node height. If a difference exceeds one, that node witnesses an unbalanced tree. Otherwise each visited node satisfies the defining condition. Every descendant is processed once, so successful exhaustion means every required node is balanced. An initially null root returns true.",
+    "walkthrough": "A three-node chain with links 0.Left=1 and 1.Left=2 has child heights 1 and 0 at node 1, then 2 and 0 at node 0. The root difference is two, so return false. A deeper violation in either child subtree also causes false even when the root child heights happen to agree.",
+    "edgeCases": [
+      "Null root, leaf and two-node tree.",
+      "Long skewed chain, equal root heights hiding a deeper violation, repeated Data."
+    ]
+  },
+  {
+    "problemId": "ctci6_4_4",
+    "collection": "ctci6",
+    "language": "java",
+    "code": "import java.util.*;\nclass TreeNode {public int Data;public TreeNode Left,Right,Parent;public TreeNode(int data){Data=data;}}\nclass Solution {\n  public boolean IsHeightBalanced(TreeNode root) {\n    if (root == null)\n      return true;\n    record Frame(TreeNode node, boolean exit) {}\n    Map<TreeNode, Integer> heights = new HashMap<>();\n    Deque<Frame> stack = new ArrayDeque<>();\n    stack.push(new Frame(root, false));\n    while (!stack.isEmpty()) {\n      var frame = stack.pop();\n      TreeNode node = frame.node();\n      if (!frame.exit()) {\n        stack.push(new Frame(node, true));\n        if (node.Right != null)\n          stack.push(new Frame(node.Right, false));\n        if (node.Left != null)\n          stack.push(new Frame(node.Left, false));\n      } else {\n        int left = node.Left == null ? 0 : heights.get(node.Left),\n            right = node.Right == null ? 0 : heights.get(node.Right);\n        if (Math.abs(left - right) > 1)\n          return false;\n        heights.put(node, 1 + Math.max(left, right));\n      }\n    }\n    return true;\n  }\n}\n",
+    "explanation": "A parent needs both child heights, so process nodes in postorder. An explicit enter/exit stack visits children before computing a parent height and avoids recursion-depth failures in a long chain. Store computed heights once and reject any local difference above one.",
+    "timeComplexity": "O(n) time for n nodes in the selected subtree: each enters/exits once and has one height computation.",
+    "spaceComplexity": "O(n) stored node heights plus an O(h) traversal stack for height h; the actual implementation retains completed height entries.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 4.4. No affiliation is implied.",
+    "correctness": "When a node exits the stack, both existing children have already exited, so their stored heights are correct by induction; null children have height zero. Taking one plus the larger child height computes the exact node height. If a difference exceeds one, that node witnesses an unbalanced tree. Otherwise each visited node satisfies the defining condition. Every descendant is processed once, so successful exhaustion means every required node is balanced. An initially null root returns true.",
+    "walkthrough": "A three-node chain with links 0.Left=1 and 1.Left=2 has child heights 1 and 0 at node 1, then 2 and 0 at node 0. The root difference is two, so return false. A deeper violation in either child subtree also causes false even when the root child heights happen to agree.",
+    "edgeCases": [
+      "Null root, leaf and two-node tree.",
+      "Long skewed chain, equal root heights hiding a deeper violation, repeated Data."
+    ]
+  },
+  {
+    "problemId": "ctci6_4_5",
+    "collection": "ctci6",
+    "language": "csharp",
+    "code": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic class TreeNode {public int Data;public TreeNode? Left,Right,Parent;public TreeNode(int data){Data=data;}}\npublic class Solution\n{\n    public bool IsDuplicateLeftBst(TreeNode? root)\n    {\n        var stack = new Stack<(TreeNode Node, long Lower, long Upper)>();\n        if (root != null)\n            stack.Push((root, -2147483649L, 2147483647L));\n        while (stack.Count > 0)\n        {\n            var frame = stack.Pop();\n            var node = frame.Node;\n            if (node.Data <= frame.Lower || node.Data > frame.Upper)\n                return false;\n            if (node.Right != null)\n                stack.Push((node.Right, node.Data, frame.Upper));\n            if (node.Left != null)\n                stack.Push((node.Left, frame.Lower, node.Data));\n        }\n        return true;\n    }\n}\n",
+    "explanation": "Each node inherits a strict lower bound and an inclusive upper bound from its ancestors. Sending the current value as the left upper bound and right lower bound encodes duplicate-left ordering exactly. Widened initial sentinels permit both signed 32-bit endpoints without adding/subtracting one from a node value. C# keeps interval limits as long even though Data is int. The lower sentinel -2147483649 lies outside int range, so int.MinValue remains a legitimate node value without an overflowing Data-1 adjustment.",
+    "timeComplexity": "O(n) time, checking one inherited interval per selected-subtree node.",
+    "spaceComplexity": "O(h) explicit DFS frames for subtree height h; bounds are signed 64-bit or exact wider host integers.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 4.5. No affiliation is implied.",
+    "correctness": "A stack frame represents all ancestor restrictions as lower<Data<=upper. Root bounds include every signed 32-bit value. A left child inherits the lower bound and upper=parent.Data, enforcing <=; a right child inherits lower=parent.Data and the upper bound, enforcing >. Intersecting inherited bounds carries restrictions through arbitrary depth. Rejecting a bound violation therefore finds a genuine search-tree violation, and if every frame passes then every descendant respects every ancestor restriction, which is precisely the stated BST rule.",
+    "walkthrough": "For root 5 with a left child 5, the left interval includes its upper bound 5, so equality is valid. A right child 5 fails the strict lower bound. A node 12 inside root 10's left subtree is invalid even if its immediate parent is 5 and 12 is correctly on that parent's right.",
+    "edgeCases": [
+      "Null tree and signed endpoints.",
+      "Equal left versus equal right values, and distant ancestor violations.",
+      "Selected internal subtree whose external Parent has unrelated bounds."
+    ]
+  },
+  {
+    "problemId": "ctci6_4_5",
+    "collection": "ctci6",
+    "language": "javascript",
+    "code": "'use strict';\nclass TreeNode {constructor(data){this.Data=data;this.Left=this.Right=this.Parent=null;}}\nfunction IsDuplicateLeftBst(root) {\n  const stack = root === null ? [] : [[root, -2147483649, 2147483647]];\n  while (stack.length) {\n    const [node, lower, upper] = stack.pop();\n    if (node.Data <= lower || node.Data > upper) return false;\n    if (node.Right !== null) stack.push([node.Right, node.Data, upper]);\n    if (node.Left !== null) stack.push([node.Left, lower, node.Data]);\n  }\n  return true;\n}\n\nmodule.exports = {TreeNode,IsDuplicateLeftBst};\n",
+    "explanation": "Each node inherits a strict lower bound and an inclusive upper bound from its ancestors. Sending the current value as the left upper bound and right lower bound encodes duplicate-left ordering exactly. Widened initial sentinels permit both signed 32-bit endpoints without adding/subtracting one from a node value. All Data and bound values, including -2147483649, are exact JavaScript Numbers in this range. The implementation uses ordinary comparisons rather than bitwise coercion, which would wrap that sentinel back into 32 bits.",
+    "timeComplexity": "O(n) time, checking one inherited interval per selected-subtree node.",
+    "spaceComplexity": "O(h) explicit DFS frames for subtree height h; bounds are signed 64-bit or exact wider host integers.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 4.5. No affiliation is implied.",
+    "correctness": "A stack frame represents all ancestor restrictions as lower<Data<=upper. Root bounds include every signed 32-bit value. A left child inherits the lower bound and upper=parent.Data, enforcing <=; a right child inherits lower=parent.Data and the upper bound, enforcing >. Intersecting inherited bounds carries restrictions through arbitrary depth. Rejecting a bound violation therefore finds a genuine search-tree violation, and if every frame passes then every descendant respects every ancestor restriction, which is precisely the stated BST rule.",
+    "walkthrough": "For root 5 with a left child 5, the left interval includes its upper bound 5, so equality is valid. A right child 5 fails the strict lower bound. A node 12 inside root 10's left subtree is invalid even if its immediate parent is 5 and 12 is correctly on that parent's right.",
+    "edgeCases": [
+      "Null tree and signed endpoints.",
+      "Equal left versus equal right values, and distant ancestor violations.",
+      "Selected internal subtree whose external Parent has unrelated bounds."
+    ]
+  },
+  {
+    "problemId": "ctci6_4_5",
+    "collection": "ctci6",
+    "language": "python",
+    "code": "class TreeNode:\n    def __init__(self, data: int):\n        self.Data = data\n        self.Left = self.Right = self.Parent = None\ndef IsDuplicateLeftBst(root: TreeNode | None) -> bool:\n    stack = [(root, -2147483649, 2147483647)] if root is not None else []\n    while stack:\n        node, lower, upper = stack.pop()\n        if node.Data <= lower or node.Data > upper:\n            return False\n        if node.Right is not None:\n            stack.append((node.Right, node.Data, upper))\n        if node.Left is not None:\n            stack.append((node.Left, lower, node.Data))\n    return True\n",
+    "explanation": "Each node inherits a strict lower bound and an inclusive upper bound from its ancestors. Sending the current value as the left upper bound and right lower bound encodes duplicate-left ordering exactly. Widened initial sentinels permit both signed 32-bit endpoints without adding/subtracting one from a node value. Python exact integers express the lower sentinel below the signed input domain directly. Each immutable frame carries its own inherited limits; a sibling cannot accidentally reuse a bound modified while exploring the other child.",
+    "timeComplexity": "O(n) time, checking one inherited interval per selected-subtree node.",
+    "spaceComplexity": "O(h) explicit DFS frames for subtree height h; bounds are signed 64-bit or exact wider host integers.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 4.5. No affiliation is implied.",
+    "correctness": "A stack frame represents all ancestor restrictions as lower<Data<=upper. Root bounds include every signed 32-bit value. A left child inherits the lower bound and upper=parent.Data, enforcing <=; a right child inherits lower=parent.Data and the upper bound, enforcing >. Intersecting inherited bounds carries restrictions through arbitrary depth. Rejecting a bound violation therefore finds a genuine search-tree violation, and if every frame passes then every descendant respects every ancestor restriction, which is precisely the stated BST rule.",
+    "walkthrough": "For root 5 with a left child 5, the left interval includes its upper bound 5, so equality is valid. A right child 5 fails the strict lower bound. A node 12 inside root 10's left subtree is invalid even if its immediate parent is 5 and 12 is correctly on that parent's right.",
+    "edgeCases": [
+      "Null tree and signed endpoints.",
+      "Equal left versus equal right values, and distant ancestor violations.",
+      "Selected internal subtree whose external Parent has unrelated bounds."
+    ]
+  },
+  {
+    "problemId": "ctci6_4_5",
+    "collection": "ctci6",
+    "language": "cpp",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n#include <unordered_map>\nstruct TreeNode {int Data;TreeNode* Left;TreeNode* Right;TreeNode* Parent;explicit TreeNode(int data):Data(data),Left(nullptr),Right(nullptr),Parent(nullptr){}};\nclass Solution {\n public:\n  bool IsDuplicateLeftBst(TreeNode* root) {\n    struct Frame {\n      TreeNode* Node;\n      long long Lower, Upper;\n    };\n    std::vector<Frame> stack;\n    if (root)\n      stack.push_back({root, -2147483649LL, 2147483647LL});\n    while (!stack.empty()) {\n      auto frame = stack.back();\n      stack.pop_back();\n      auto node = frame.Node;\n      if (node->Data <= frame.Lower || node->Data > frame.Upper)\n        return false;\n      if (node->Right)\n        stack.push_back({node->Right, node->Data, frame.Upper});\n      if (node->Left)\n        stack.push_back({node->Left, frame.Lower, node->Data});\n    }\n    return true;\n  }\n};\n",
+    "explanation": "Each node inherits a strict lower bound and an inclusive upper bound from its ancestors. Sending the current value as the left upper bound and right lower bound encodes duplicate-left ordering exactly. Widened initial sentinels permit both signed 32-bit endpoints without adding/subtracting one from a node value. C++ frames store long long bounds and compare the signed int Data after safe widening. No unsigned subtraction or Data+1/Data-1 boundary adjustment is used, so both signed endpoints retain their intended ordering.",
+    "timeComplexity": "O(n) time, checking one inherited interval per selected-subtree node.",
+    "spaceComplexity": "O(h) explicit DFS frames for subtree height h; bounds are signed 64-bit or exact wider host integers.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 4.5. No affiliation is implied.",
+    "correctness": "A stack frame represents all ancestor restrictions as lower<Data<=upper. Root bounds include every signed 32-bit value. A left child inherits the lower bound and upper=parent.Data, enforcing <=; a right child inherits lower=parent.Data and the upper bound, enforcing >. Intersecting inherited bounds carries restrictions through arbitrary depth. Rejecting a bound violation therefore finds a genuine search-tree violation, and if every frame passes then every descendant respects every ancestor restriction, which is precisely the stated BST rule.",
+    "walkthrough": "For root 5 with a left child 5, the left interval includes its upper bound 5, so equality is valid. A right child 5 fails the strict lower bound. A node 12 inside root 10's left subtree is invalid even if its immediate parent is 5 and 12 is correctly on that parent's right.",
+    "edgeCases": [
+      "Null tree and signed endpoints.",
+      "Equal left versus equal right values, and distant ancestor violations.",
+      "Selected internal subtree whose external Parent has unrelated bounds."
+    ]
+  },
+  {
+    "problemId": "ctci6_4_5",
+    "collection": "ctci6",
+    "language": "java",
+    "code": "import java.util.*;\nclass TreeNode {public int Data;public TreeNode Left,Right,Parent;public TreeNode(int data){Data=data;}}\nclass Solution {\n  public boolean IsDuplicateLeftBst(TreeNode root) {\n    record Frame(TreeNode node, long lower, long upper) {}\n    Deque<Frame> stack = new ArrayDeque<>();\n    if (root != null)\n      stack.push(new Frame(root, -2147483649L, 2147483647L));\n    while (!stack.isEmpty()) {\n      var frame = stack.pop();\n      TreeNode node = frame.node();\n      if (node.Data <= frame.lower() || node.Data > frame.upper())\n        return false;\n      if (node.Right != null)\n        stack.push(new Frame(node.Right, node.Data, frame.upper()));\n      if (node.Left != null)\n        stack.push(new Frame(node.Left, frame.lower(), node.Data));\n    }\n    return true;\n  }\n}\n",
+    "explanation": "Each node inherits a strict lower bound and an inclusive upper bound from its ancestors. Sending the current value as the left upper bound and right lower bound encodes duplicate-left ordering exactly. Widened initial sentinels permit both signed 32-bit endpoints without adding/subtracting one from a node value. Java record frames store long limits while TreeNode.Data stays int. Comparisons widen Data automatically, preserving the exclusive lower sentinel below Integer.MIN_VALUE and the inclusive Integer.MAX_VALUE upper endpoint.",
+    "timeComplexity": "O(n) time, checking one inherited interval per selected-subtree node.",
+    "spaceComplexity": "O(h) explicit DFS frames for subtree height h; bounds are signed 64-bit or exact wider host integers.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 4.5. No affiliation is implied.",
+    "correctness": "A stack frame represents all ancestor restrictions as lower<Data<=upper. Root bounds include every signed 32-bit value. A left child inherits the lower bound and upper=parent.Data, enforcing <=; a right child inherits lower=parent.Data and the upper bound, enforcing >. Intersecting inherited bounds carries restrictions through arbitrary depth. Rejecting a bound violation therefore finds a genuine search-tree violation, and if every frame passes then every descendant respects every ancestor restriction, which is precisely the stated BST rule.",
+    "walkthrough": "For root 5 with a left child 5, the left interval includes its upper bound 5, so equality is valid. A right child 5 fails the strict lower bound. A node 12 inside root 10's left subtree is invalid even if its immediate parent is 5 and 12 is correctly on that parent's right.",
+    "edgeCases": [
+      "Null tree and signed endpoints.",
+      "Equal left versus equal right values, and distant ancestor violations.",
+      "Selected internal subtree whose external Parent has unrelated bounds."
+    ]
+  },
+  {
+    "problemId": "ctci6_4_6",
+    "collection": "ctci6",
+    "language": "csharp",
+    "code": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic class TreeNode {public int Data;public TreeNode? Left,Right,Parent;public TreeNode(int data){Data=data;}}\npublic class Solution\n{\n    public TreeNode? InorderSuccessor(TreeNode? node)\n    {\n        if (node == null)\n            return null;\n        if (node.Right != null)\n        {\n            var following = node.Right;\n            while (following.Left != null)\n                following = following.Left;\n            return following;\n        }\n        TreeNode current = node;\n        TreeNode? parent = node.Parent;\n        while (parent != null && current == parent.Right)\n        {\n            current = parent;\n            parent = parent.Parent;\n        }\n        return parent;\n    }\n}\n",
+    "explanation": "If a right subtree exists, inorder next visits its leftmost node. Otherwise the next visit is the first ancestor reached by moving upward from a left child; moving upward from a right child means that ancestor has already been visited. Parent links let this search use constant auxiliary space.",
+    "timeComplexity": "O(h) link traversals for component height h.",
+    "spaceComplexity": "O(1) auxiliary pointer storage; no traversal array or cloned node is created.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 4.6. No affiliation is implied.",
+    "correctness": "Inorder visits node's entire right subtree immediately after node, starting at that subtree's leftmost descendant, proving the first case. Without a right subtree, node's own subtree is complete. Every upward right-child edge also completes an ancestor's right subtree, so those ancestors precede node. The first upward left-child edge reaches an ancestor whose left subtree has just completed and whose own visit is next. If no such edge exists, traversal is complete and null is correct. Link comparisons preserve original identity even with equal values.",
+    "walkthrough": "For rows [[2,1,2],[1,-1,-1],[3,-1,-1]] selecting node 1 (Data=1), it has no right child and is its parent's left child, so return original node 0. Selecting node 0 returns the leftmost node of its right subtree, node 2; selecting node 2 returns null.",
+    "edgeCases": [
+      "Null node, root, leftmost/rightmost node and a deep right-subtree left chain.",
+      "Equal-valued original nodes and multiple upward right-child edges."
+    ]
+  },
+  {
+    "problemId": "ctci6_4_6",
+    "collection": "ctci6",
+    "language": "javascript",
+    "code": "'use strict';\nclass TreeNode {constructor(data){this.Data=data;this.Left=this.Right=this.Parent=null;}}\nfunction InorderSuccessor(node) {\n  if (node === null) return null;\n  if (node.Right !== null) {\n    let following = node.Right;\n    while (following.Left !== null) following = following.Left;\n    return following;\n  }\n  let current = node,\n    parent = node.Parent;\n  while (parent !== null && current === parent.Right) {\n    current = parent;\n    parent = parent.Parent;\n  }\n  return parent;\n}\n\nmodule.exports = {TreeNode,InorderSuccessor};\n",
+    "explanation": "If a right subtree exists, inorder next visits its leftmost node. Otherwise the next visit is the first ancestor reached by moving upward from a left child; moving upward from a right child means that ancestor has already been visited. Parent links let this search use constant auxiliary space.",
+    "timeComplexity": "O(h) link traversals for component height h.",
+    "spaceComplexity": "O(1) auxiliary pointer storage; no traversal array or cloned node is created.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 4.6. No affiliation is implied.",
+    "correctness": "Inorder visits node's entire right subtree immediately after node, starting at that subtree's leftmost descendant, proving the first case. Without a right subtree, node's own subtree is complete. Every upward right-child edge also completes an ancestor's right subtree, so those ancestors precede node. The first upward left-child edge reaches an ancestor whose left subtree has just completed and whose own visit is next. If no such edge exists, traversal is complete and null is correct. Link comparisons preserve original identity even with equal values.",
+    "walkthrough": "For rows [[2,1,2],[1,-1,-1],[3,-1,-1]] selecting node 1 (Data=1), it has no right child and is its parent's left child, so return original node 0. Selecting node 0 returns the leftmost node of its right subtree, node 2; selecting node 2 returns null.",
+    "edgeCases": [
+      "Null node, root, leftmost/rightmost node and a deep right-subtree left chain.",
+      "Equal-valued original nodes and multiple upward right-child edges."
+    ]
+  },
+  {
+    "problemId": "ctci6_4_6",
+    "collection": "ctci6",
+    "language": "python",
+    "code": "class TreeNode:\n    def __init__(self, data: int):\n        self.Data = data\n        self.Left = self.Right = self.Parent = None\ndef InorderSuccessor(node: TreeNode | None) -> TreeNode | None:\n    if node is None:\n        return None\n    if node.Right is not None:\n        following = node.Right\n        while following.Left is not None:\n            following = following.Left\n        return following\n    current, parent = node, node.Parent\n    while parent is not None and current is parent.Right:\n        current, parent = parent, parent.Parent\n    return parent\n",
+    "explanation": "If a right subtree exists, inorder next visits its leftmost node. Otherwise the next visit is the first ancestor reached by moving upward from a left child; moving upward from a right child means that ancestor has already been visited. Parent links let this search use constant auxiliary space.",
+    "timeComplexity": "O(h) link traversals for component height h.",
+    "spaceComplexity": "O(1) auxiliary pointer storage; no traversal array or cloned node is created.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 4.6. No affiliation is implied.",
+    "correctness": "Inorder visits node's entire right subtree immediately after node, starting at that subtree's leftmost descendant, proving the first case. Without a right subtree, node's own subtree is complete. Every upward right-child edge also completes an ancestor's right subtree, so those ancestors precede node. The first upward left-child edge reaches an ancestor whose left subtree has just completed and whose own visit is next. If no such edge exists, traversal is complete and null is correct. Link comparisons preserve original identity even with equal values.",
+    "walkthrough": "For rows [[2,1,2],[1,-1,-1],[3,-1,-1]] selecting node 1 (Data=1), it has no right child and is its parent's left child, so return original node 0. Selecting node 0 returns the leftmost node of its right subtree, node 2; selecting node 2 returns null.",
+    "edgeCases": [
+      "Null node, root, leftmost/rightmost node and a deep right-subtree left chain.",
+      "Equal-valued original nodes and multiple upward right-child edges."
+    ]
+  },
+  {
+    "problemId": "ctci6_4_6",
+    "collection": "ctci6",
+    "language": "cpp",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n#include <unordered_map>\nstruct TreeNode {int Data;TreeNode* Left;TreeNode* Right;TreeNode* Parent;explicit TreeNode(int data):Data(data),Left(nullptr),Right(nullptr),Parent(nullptr){}};\nclass Solution {\n public:\n  TreeNode* InorderSuccessor(TreeNode* node) {\n    if (!node)\n      return nullptr;\n    if (node->Right) {\n      auto following = node->Right;\n      while (following->Left)\n        following = following->Left;\n      return following;\n    }\n    TreeNode* current = node;\n    TreeNode* parent = node->Parent;\n    while (parent && current == parent->Right) {\n      current = parent;\n      parent = parent->Parent;\n    }\n    return parent;\n  }\n};\n",
+    "explanation": "If a right subtree exists, inorder next visits its leftmost node. Otherwise the next visit is the first ancestor reached by moving upward from a left child; moving upward from a right child means that ancestor has already been visited. Parent links let this search use constant auxiliary space.",
+    "timeComplexity": "O(h) link traversals for component height h.",
+    "spaceComplexity": "O(1) auxiliary pointer storage; no traversal array or cloned node is created.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 4.6. No affiliation is implied.",
+    "correctness": "Inorder visits node's entire right subtree immediately after node, starting at that subtree's leftmost descendant, proving the first case. Without a right subtree, node's own subtree is complete. Every upward right-child edge also completes an ancestor's right subtree, so those ancestors precede node. The first upward left-child edge reaches an ancestor whose left subtree has just completed and whose own visit is next. If no such edge exists, traversal is complete and null is correct. Link comparisons preserve original identity even with equal values.",
+    "walkthrough": "For rows [[2,1,2],[1,-1,-1],[3,-1,-1]] selecting node 1 (Data=1), it has no right child and is its parent's left child, so return original node 0. Selecting node 0 returns the leftmost node of its right subtree, node 2; selecting node 2 returns null.",
+    "edgeCases": [
+      "Null node, root, leftmost/rightmost node and a deep right-subtree left chain.",
+      "Equal-valued original nodes and multiple upward right-child edges."
+    ]
+  },
+  {
+    "problemId": "ctci6_4_6",
+    "collection": "ctci6",
+    "language": "java",
+    "code": "import java.util.*;\nclass TreeNode {public int Data;public TreeNode Left,Right,Parent;public TreeNode(int data){Data=data;}}\nclass Solution {\n  public TreeNode InorderSuccessor(TreeNode node) {\n    if (node == null)\n      return null;\n    if (node.Right != null) {\n      var following = node.Right;\n      while (following.Left != null)\n        following = following.Left;\n      return following;\n    }\n    TreeNode current = node;\n    TreeNode parent = node.Parent;\n    while (parent != null && current == parent.Right) {\n      current = parent;\n      parent = parent.Parent;\n    }\n    return parent;\n  }\n}\n",
+    "explanation": "If a right subtree exists, inorder next visits its leftmost node. Otherwise the next visit is the first ancestor reached by moving upward from a left child; moving upward from a right child means that ancestor has already been visited. Parent links let this search use constant auxiliary space.",
+    "timeComplexity": "O(h) link traversals for component height h.",
+    "spaceComplexity": "O(1) auxiliary pointer storage; no traversal array or cloned node is created.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 4.6. No affiliation is implied.",
+    "correctness": "Inorder visits node's entire right subtree immediately after node, starting at that subtree's leftmost descendant, proving the first case. Without a right subtree, node's own subtree is complete. Every upward right-child edge also completes an ancestor's right subtree, so those ancestors precede node. The first upward left-child edge reaches an ancestor whose left subtree has just completed and whose own visit is next. If no such edge exists, traversal is complete and null is correct. Link comparisons preserve original identity even with equal values.",
+    "walkthrough": "For rows [[2,1,2],[1,-1,-1],[3,-1,-1]] selecting node 1 (Data=1), it has no right child and is its parent's left child, so return original node 0. Selecting node 0 returns the leftmost node of its right subtree, node 2; selecting node 2 returns null.",
+    "edgeCases": [
+      "Null node, root, leftmost/rightmost node and a deep right-subtree left chain.",
+      "Equal-valued original nodes and multiple upward right-child edges."
+    ]
+  },
+  {
     "problemId": "ctci6_4_7",
     "collection": "ctci6",
     "language": "csharp",
@@ -31177,6 +31422,251 @@
     "edgeCases": [
       "No projects, isolated projects and several simultaneously available IDs.",
       "Repeated dependencies, self-dependency, a cycle in only one component and a long chain."
+    ]
+  },
+  {
+    "problemId": "ctci6_4_8",
+    "collection": "ctci6",
+    "language": "csharp",
+    "code": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic class TreeNode {public int Data;public TreeNode? Left,Right,Parent;public TreeNode(int data){Data=data;}}\npublic class Solution\n{\n    public TreeNode? FirstCommonAncestor(TreeNode? first, TreeNode? second)\n    {\n        if (first == null || second == null)\n            return null;\n        int depthFirst = 0, depthSecond = 0;\n        for (var cursor = first; cursor != null; cursor = cursor.Parent)\n            ++depthFirst;\n        for (var cursor = second; cursor != null; cursor = cursor.Parent)\n            ++depthSecond;\n        while (depthFirst > depthSecond)\n        {\n            first = first!.Parent;\n            --depthFirst;\n        }\n        while (depthSecond > depthFirst)\n        {\n            second = second!.Parent;\n            --depthSecond;\n        }\n        while (!ReferenceEquals(first, second))\n        {\n            first = first?.Parent;\n            second = second?.Parent;\n        }\n        return first;\n    }\n}\n",
+    "explanation": "Count each node's depth and move the deeper node upward until both have equal depth. Then advance both Parent pointers together. Their first meeting is the deepest common ancestor because equal-depth nodes below that meeting are distinct; different tree roots eventually lead both pointers to null.",
+    "timeComplexity": "O(h1+h2) Parent traversals for the two component heights.",
+    "spaceComplexity": "O(1) auxiliary pointers and depth counters.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 4.8. No affiliation is implied.",
+    "correctness": "Advancing only the deeper pointer cannot skip the common ancestor: every ancestor of the shallower node has depth no greater than that node. After alignment, both pointers are at the same depth. Moving them together preserves this equality and visits ancestors in decreasing depth order. A meeting is therefore common to both original paths, and any deeper common ancestor would have caused an earlier meeting. If their roots differ, they remain distinct until both become null, giving the required absence result. An explicit null-input check prevents treating a nonnull node as an ancestor of null.",
+    "walkthrough": "In rows [[9,1,2],[9,3,-1],[9,-1,-1],[9,-1,-1]], selecting first node 3 and second node 2 first aligns node 3 upward to node 1. Moving node 1 and node 2 upward together meets at original node 0. All Data values are 9, so value equality cannot solve the identity question.",
+    "edgeCases": [
+      "Either/both null, the same original node and one node already an ancestor.",
+      "Different components, equal Data values and very different depths."
+    ]
+  },
+  {
+    "problemId": "ctci6_4_8",
+    "collection": "ctci6",
+    "language": "javascript",
+    "code": "'use strict';\nclass TreeNode {constructor(data){this.Data=data;this.Left=this.Right=this.Parent=null;}}\nfunction FirstCommonAncestor(first, second) {\n  if (first === null || second === null) return null;\n  let depthFirst = 0,\n    depthSecond = 0;\n  for (let cursor = first; cursor !== null; cursor = cursor.Parent) ++depthFirst;\n  for (let cursor = second; cursor !== null; cursor = cursor.Parent) ++depthSecond;\n  while (depthFirst > depthSecond) {\n    first = first.Parent;\n    --depthFirst;\n  }\n  while (depthSecond > depthFirst) {\n    second = second.Parent;\n    --depthSecond;\n  }\n  while (first !== second) {\n    first = first.Parent;\n    second = second.Parent;\n  }\n  return first;\n}\n\nmodule.exports = {TreeNode,FirstCommonAncestor};\n",
+    "explanation": "Count each node's depth and move the deeper node upward until both have equal depth. Then advance both Parent pointers together. Their first meeting is the deepest common ancestor because equal-depth nodes below that meeting are distinct; different tree roots eventually lead both pointers to null.",
+    "timeComplexity": "O(h1+h2) Parent traversals for the two component heights.",
+    "spaceComplexity": "O(1) auxiliary pointers and depth counters.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 4.8. No affiliation is implied.",
+    "correctness": "Advancing only the deeper pointer cannot skip the common ancestor: every ancestor of the shallower node has depth no greater than that node. After alignment, both pointers are at the same depth. Moving them together preserves this equality and visits ancestors in decreasing depth order. A meeting is therefore common to both original paths, and any deeper common ancestor would have caused an earlier meeting. If their roots differ, they remain distinct until both become null, giving the required absence result. An explicit null-input check prevents treating a nonnull node as an ancestor of null.",
+    "walkthrough": "In rows [[9,1,2],[9,3,-1],[9,-1,-1],[9,-1,-1]], selecting first node 3 and second node 2 first aligns node 3 upward to node 1. Moving node 1 and node 2 upward together meets at original node 0. All Data values are 9, so value equality cannot solve the identity question.",
+    "edgeCases": [
+      "Either/both null, the same original node and one node already an ancestor.",
+      "Different components, equal Data values and very different depths."
+    ]
+  },
+  {
+    "problemId": "ctci6_4_8",
+    "collection": "ctci6",
+    "language": "python",
+    "code": "class TreeNode:\n    def __init__(self, data: int):\n        self.Data = data\n        self.Left = self.Right = self.Parent = None\ndef FirstCommonAncestor(first: TreeNode | None, second: TreeNode | None) -> TreeNode | None:\n    if first is None or second is None:\n        return None\n    depth_first = depth_second = 0\n    cursor = first\n    while cursor is not None:\n        depth_first += 1\n        cursor = cursor.Parent\n    cursor = second\n    while cursor is not None:\n        depth_second += 1\n        cursor = cursor.Parent\n    while depth_first > depth_second:\n        first = first.Parent\n        depth_first -= 1\n    while depth_second > depth_first:\n        second = second.Parent\n        depth_second -= 1\n    while first is not second:\n        first = first.Parent\n        second = second.Parent\n    return first\n",
+    "explanation": "Count each node's depth and move the deeper node upward until both have equal depth. Then advance both Parent pointers together. Their first meeting is the deepest common ancestor because equal-depth nodes below that meeting are distinct; different tree roots eventually lead both pointers to null.",
+    "timeComplexity": "O(h1+h2) Parent traversals for the two component heights.",
+    "spaceComplexity": "O(1) auxiliary pointers and depth counters.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 4.8. No affiliation is implied.",
+    "correctness": "Advancing only the deeper pointer cannot skip the common ancestor: every ancestor of the shallower node has depth no greater than that node. After alignment, both pointers are at the same depth. Moving them together preserves this equality and visits ancestors in decreasing depth order. A meeting is therefore common to both original paths, and any deeper common ancestor would have caused an earlier meeting. If their roots differ, they remain distinct until both become null, giving the required absence result. An explicit null-input check prevents treating a nonnull node as an ancestor of null.",
+    "walkthrough": "In rows [[9,1,2],[9,3,-1],[9,-1,-1],[9,-1,-1]], selecting first node 3 and second node 2 first aligns node 3 upward to node 1. Moving node 1 and node 2 upward together meets at original node 0. All Data values are 9, so value equality cannot solve the identity question.",
+    "edgeCases": [
+      "Either/both null, the same original node and one node already an ancestor.",
+      "Different components, equal Data values and very different depths."
+    ]
+  },
+  {
+    "problemId": "ctci6_4_8",
+    "collection": "ctci6",
+    "language": "cpp",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n#include <unordered_map>\nstruct TreeNode {int Data;TreeNode* Left;TreeNode* Right;TreeNode* Parent;explicit TreeNode(int data):Data(data),Left(nullptr),Right(nullptr),Parent(nullptr){}};\nclass Solution {\n public:\n  TreeNode* FirstCommonAncestor(TreeNode* first, TreeNode* second) {\n    if (!first || !second)\n      return nullptr;\n    int depthFirst = 0, depthSecond = 0;\n    for (auto cursor = first; cursor; cursor = cursor->Parent)\n      ++depthFirst;\n    for (auto cursor = second; cursor; cursor = cursor->Parent)\n      ++depthSecond;\n    while (depthFirst > depthSecond) {\n      first = first->Parent;\n      --depthFirst;\n    }\n    while (depthSecond > depthFirst) {\n      second = second->Parent;\n      --depthSecond;\n    }\n    while (first != second) {\n      first = first->Parent;\n      second = second->Parent;\n    }\n    return first;\n  }\n};\n",
+    "explanation": "Count each node's depth and move the deeper node upward until both have equal depth. Then advance both Parent pointers together. Their first meeting is the deepest common ancestor because equal-depth nodes below that meeting are distinct; different tree roots eventually lead both pointers to null.",
+    "timeComplexity": "O(h1+h2) Parent traversals for the two component heights.",
+    "spaceComplexity": "O(1) auxiliary pointers and depth counters.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 4.8. No affiliation is implied.",
+    "correctness": "Advancing only the deeper pointer cannot skip the common ancestor: every ancestor of the shallower node has depth no greater than that node. After alignment, both pointers are at the same depth. Moving them together preserves this equality and visits ancestors in decreasing depth order. A meeting is therefore common to both original paths, and any deeper common ancestor would have caused an earlier meeting. If their roots differ, they remain distinct until both become null, giving the required absence result. An explicit null-input check prevents treating a nonnull node as an ancestor of null.",
+    "walkthrough": "In rows [[9,1,2],[9,3,-1],[9,-1,-1],[9,-1,-1]], selecting first node 3 and second node 2 first aligns node 3 upward to node 1. Moving node 1 and node 2 upward together meets at original node 0. All Data values are 9, so value equality cannot solve the identity question.",
+    "edgeCases": [
+      "Either/both null, the same original node and one node already an ancestor.",
+      "Different components, equal Data values and very different depths."
+    ]
+  },
+  {
+    "problemId": "ctci6_4_8",
+    "collection": "ctci6",
+    "language": "java",
+    "code": "import java.util.*;\nclass TreeNode {public int Data;public TreeNode Left,Right,Parent;public TreeNode(int data){Data=data;}}\nclass Solution {\n  public TreeNode FirstCommonAncestor(TreeNode first, TreeNode second) {\n    if (first == null || second == null)\n      return null;\n    int depthFirst = 0, depthSecond = 0;\n    for (TreeNode cursor = first; cursor != null; cursor = cursor.Parent)\n      ++depthFirst;\n    for (TreeNode cursor = second; cursor != null; cursor = cursor.Parent)\n      ++depthSecond;\n    while (depthFirst > depthSecond) {\n      first = first.Parent;\n      --depthFirst;\n    }\n    while (depthSecond > depthFirst) {\n      second = second.Parent;\n      --depthSecond;\n    }\n    while (first != second) {\n      first = first.Parent;\n      second = second.Parent;\n    }\n    return first;\n  }\n}\n",
+    "explanation": "Count each node's depth and move the deeper node upward until both have equal depth. Then advance both Parent pointers together. Their first meeting is the deepest common ancestor because equal-depth nodes below that meeting are distinct; different tree roots eventually lead both pointers to null.",
+    "timeComplexity": "O(h1+h2) Parent traversals for the two component heights.",
+    "spaceComplexity": "O(1) auxiliary pointers and depth counters.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 4.8. No affiliation is implied.",
+    "correctness": "Advancing only the deeper pointer cannot skip the common ancestor: every ancestor of the shallower node has depth no greater than that node. After alignment, both pointers are at the same depth. Moving them together preserves this equality and visits ancestors in decreasing depth order. A meeting is therefore common to both original paths, and any deeper common ancestor would have caused an earlier meeting. If their roots differ, they remain distinct until both become null, giving the required absence result. An explicit null-input check prevents treating a nonnull node as an ancestor of null.",
+    "walkthrough": "In rows [[9,1,2],[9,3,-1],[9,-1,-1],[9,-1,-1]], selecting first node 3 and second node 2 first aligns node 3 upward to node 1. Moving node 1 and node 2 upward together meets at original node 0. All Data values are 9, so value equality cannot solve the identity question.",
+    "edgeCases": [
+      "Either/both null, the same original node and one node already an ancestor.",
+      "Different components, equal Data values and very different depths."
+    ]
+  },
+  {
+    "problemId": "ctci6_4_10",
+    "collection": "ctci6",
+    "language": "csharp",
+    "code": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic class TreeNode {public int Data;public TreeNode? Left,Right,Parent;public TreeNode(int data){Data=data;}}\npublic class Solution\n{\n    public bool ContainsExactSubtree(TreeNode? large, TreeNode? small)\n    {\n        if (small == null)\n            return true;List<string> Encode(TreeNode? root)\n        {\n            var tokens = new List<string>();\n            var stack = new Stack<TreeNode?>();\n            stack.Push(root);\n            while (stack.Count > 0)\n            {\n                var node = stack.Pop();\n                if (node == null)\n                    tokens.Add(\"#\");\n                else\n                {\n                    tokens.Add(\"V\" + node.Data.ToString(\n                                         System.Globalization.CultureInfo.InvariantCulture));\n                    stack.Push(node.Right);\n                    stack.Push(node.Left);\n                }\n            }\n            return tokens;\n        }\n        var text = Encode(large);\n        var pattern = Encode(small);\n        int[] prefix = new int[pattern.Count];\n        for (int i = 1; i < pattern.Count; ++i)\n        {\n            int matched = prefix[i - 1];\n            while (matched > 0 && pattern[i] != pattern[matched])\n                matched = prefix[matched - 1];\n            if (pattern[i] == pattern[matched])\n                ++matched;\n            prefix[i] = matched;\n        }\n        int count = 0;\n        foreach (string token in text)\n        {\n            while (count > 0 && token != pattern[count])\n                count = prefix[count - 1];\n            if (token == pattern[count])\n                ++count;\n            if (count == pattern.Count)\n                return true;\n        }\n        return false;\n    }\n}\n",
+    "explanation": "Preorder tokens with explicit null markers uniquely describe tree values and shape. Exact token boundaries prevent a value 2 from accidentally matching inside 12. Searching small's complete token sequence inside large's sequence finds a rooted subtree; KMP prefix fallback avoids repeatedly rescanning long repeated-value prefixes. C# Stack<TreeNode?> intentionally stores null entries so missing-child positions become tokens. InvariantCulture formats signed values consistently. Keeping node/value tokens in a List<string> prevents matching a digit inside a different integer token.",
+    "timeComplexity": "O(n+m) token generation and KMP time for n/m selected-subtree nodes. Signed 32-bit value token length is bounded.",
+    "spaceComplexity": "O(n+m) token strings/prefix table plus explicit traversal stacks; no recursive depth limit is used.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 4.10. No affiliation is implied.",
+    "correctness": "A nonnull subtree contributes a contiguous preorder block containing its node token followed by complete left and right blocks; null markers make this encoding uniquely decodable. Thus every actual matching subtree creates a matching token block. Conversely a complete small-tree token match begins at a corresponding node/null token and its null-aware grammar consumes exactly that rooted subtree, so it cannot hide a structural difference or span an incomplete value. KMP preserves the longest pattern prefix matching the consumed suffix and tests every possible start without skipping a token match. Empty small is handled directly as true.",
+    "walkthrough": "For large rows [[2,1,2],[1,-1,-1],[3,-1,-1]], preorder tokens are [V2,V1,#,#,V3,#,#]. A small leaf 1 has [V1,#,#], which matches. A small root 1 with a left child 3 has different null positions and does not match, even though both values occur in large.",
+    "edgeCases": [
+      "Empty small/large trees, leaf and full-tree equality.",
+      "Repeated values, 2 versus 12, mirrored child positions and long chains."
+    ]
+  },
+  {
+    "problemId": "ctci6_4_10",
+    "collection": "ctci6",
+    "language": "javascript",
+    "code": "'use strict';\nclass TreeNode {constructor(data){this.Data=data;this.Left=this.Right=this.Parent=null;}}\nfunction ContainsExactSubtree(large, small) {\n  if (small === null) return true;\n  function encode(root) {\n    const tokens = [],\n      stack = [root];\n    while (stack.length) {\n      const node = stack.pop();\n      if (node === null) tokens.push(\"#\");\n      else {\n        tokens.push(\"V\" + String(node.Data));\n        stack.push(node.Right, node.Left);\n      }\n    }\n    return tokens;\n  }\n  const text = encode(large),\n    pattern = encode(small),\n    prefix = new Array(pattern.length).fill(0);\n  for (let i = 1; i < pattern.length; ++i) {\n    let matched = prefix[i - 1];\n    while (matched > 0 && pattern[i] !== pattern[matched]) matched = prefix[matched - 1];\n    if (pattern[i] === pattern[matched]) ++matched;\n    prefix[i] = matched;\n  }\n  let matched = 0;\n  for (const token of text) {\n    while (matched > 0 && token !== pattern[matched]) matched = prefix[matched - 1];\n    if (token === pattern[matched]) ++matched;\n    if (matched === pattern.length) return true;\n  }\n  return false;\n}\n\nmodule.exports = {TreeNode,ContainsExactSubtree};\n",
+    "explanation": "Preorder tokens with explicit null markers uniquely describe tree values and shape. Exact token boundaries prevent a value 2 from accidentally matching inside 12. Searching small's complete token sequence inside large's sequence finds a rooted subtree; KMP prefix fallback avoids repeatedly rescanning long repeated-value prefixes. JavaScript array stacks retain null children. Whole string tokens distinguish numeric values from null markers and from substrings of other values; Number-to-string conversion is exact for the admitted signed integers.",
+    "timeComplexity": "O(n+m) token generation and KMP time for n/m selected-subtree nodes. Signed 32-bit value token length is bounded.",
+    "spaceComplexity": "O(n+m) token strings/prefix table plus explicit traversal stacks; no recursive depth limit is used.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 4.10. No affiliation is implied.",
+    "correctness": "A nonnull subtree contributes a contiguous preorder block containing its node token followed by complete left and right blocks; null markers make this encoding uniquely decodable. Thus every actual matching subtree creates a matching token block. Conversely a complete small-tree token match begins at a corresponding node/null token and its null-aware grammar consumes exactly that rooted subtree, so it cannot hide a structural difference or span an incomplete value. KMP preserves the longest pattern prefix matching the consumed suffix and tests every possible start without skipping a token match. Empty small is handled directly as true.",
+    "walkthrough": "For large rows [[2,1,2],[1,-1,-1],[3,-1,-1]], preorder tokens are [V2,V1,#,#,V3,#,#]. A small leaf 1 has [V1,#,#], which matches. A small root 1 with a left child 3 has different null positions and does not match, even though both values occur in large.",
+    "edgeCases": [
+      "Empty small/large trees, leaf and full-tree equality.",
+      "Repeated values, 2 versus 12, mirrored child positions and long chains."
+    ]
+  },
+  {
+    "problemId": "ctci6_4_10",
+    "collection": "ctci6",
+    "language": "python",
+    "code": "class TreeNode:\n    def __init__(self, data: int):\n        self.Data = data\n        self.Left = self.Right = self.Parent = None\ndef ContainsExactSubtree(large: TreeNode | None, small: TreeNode | None) -> bool:\n    if small is None:\n        return True\n\n    def encode(root):\n        tokens = []\n        stack = [root]\n        while stack:\n            node = stack.pop()\n            if node is None:\n                tokens.append(\"#\")\n            else:\n                tokens.append(\"V\" + str(node.Data))\n                stack.append(node.Right)\n                stack.append(node.Left)\n        return tokens\n\n    text, pattern = encode(large), encode(small)\n    prefix = [0] * len(pattern)\n    for index in range(1, len(pattern)):\n        matched = prefix[index - 1]\n        while matched and pattern[index] != pattern[matched]:\n            matched = prefix[matched - 1]\n        if pattern[index] == pattern[matched]:\n            matched += 1\n        prefix[index] = matched\n    matched = 0\n    for token in text:\n        while matched and token != pattern[matched]:\n            matched = prefix[matched - 1]\n        if token == pattern[matched]:\n            matched += 1\n        if matched == len(pattern):\n            return True\n    return False\n",
+    "explanation": "Preorder tokens with explicit null markers uniquely describe tree values and shape. Exact token boundaries prevent a value 2 from accidentally matching inside 12. Searching small's complete token sequence inside large's sequence finds a rooted subtree; KMP prefix fallback avoids repeatedly rescanning long repeated-value prefixes. Python list stacks can retain None child entries, and each produces an explicit marker. KMP compares complete token strings, so value spellings and null positions both participate in structural equality.",
+    "timeComplexity": "O(n+m) token generation and KMP time for n/m selected-subtree nodes. Signed 32-bit value token length is bounded.",
+    "spaceComplexity": "O(n+m) token strings/prefix table plus explicit traversal stacks; no recursive depth limit is used.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 4.10. No affiliation is implied.",
+    "correctness": "A nonnull subtree contributes a contiguous preorder block containing its node token followed by complete left and right blocks; null markers make this encoding uniquely decodable. Thus every actual matching subtree creates a matching token block. Conversely a complete small-tree token match begins at a corresponding node/null token and its null-aware grammar consumes exactly that rooted subtree, so it cannot hide a structural difference or span an incomplete value. KMP preserves the longest pattern prefix matching the consumed suffix and tests every possible start without skipping a token match. Empty small is handled directly as true.",
+    "walkthrough": "For large rows [[2,1,2],[1,-1,-1],[3,-1,-1]], preorder tokens are [V2,V1,#,#,V3,#,#]. A small leaf 1 has [V1,#,#], which matches. A small root 1 with a left child 3 has different null positions and does not match, even though both values occur in large.",
+    "edgeCases": [
+      "Empty small/large trees, leaf and full-tree equality.",
+      "Repeated values, 2 versus 12, mirrored child positions and long chains."
+    ]
+  },
+  {
+    "problemId": "ctci6_4_10",
+    "collection": "ctci6",
+    "language": "cpp",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n#include <unordered_map>\nstruct TreeNode {int Data;TreeNode* Left;TreeNode* Right;TreeNode* Parent;explicit TreeNode(int data):Data(data),Left(nullptr),Right(nullptr),Parent(nullptr){}};\nclass Solution {\n public:\n  bool ContainsExactSubtree(TreeNode* large, TreeNode* small) {\n    if (!small)\n      return true;\n    auto encode = [](TreeNode* root) {\n      std::vector<std::string> tokens;\n      std::vector<TreeNode*> stack{root};\n      while (!stack.empty()) {\n        auto node = stack.back();\n        stack.pop_back();\n        if (!node)\n          tokens.push_back(\"#\");\n        else {\n          tokens.push_back(\"V\" + std::to_string(node->Data));\n          stack.push_back(node->Right);\n          stack.push_back(node->Left);\n        }\n      }\n      return tokens;\n    };\n    auto text = encode(large), pattern = encode(small);\n    std::vector<int> prefix(pattern.size(), 0);\n    for (size_t i = 1; i < pattern.size(); ++i) {\n      int matched = prefix[i - 1];\n      while (matched > 0 && pattern[i] != pattern[matched])\n        matched = prefix[matched - 1];\n      if (pattern[i] == pattern[matched])\n        ++matched;\n      prefix[i] = matched;\n    }\n    int matched = 0;\n    for (const auto& token : text) {\n      while (matched > 0 && token != pattern[matched])\n        matched = prefix[matched - 1];\n      if (token == pattern[matched])\n        ++matched;\n      if (matched == static_cast<int>(pattern.size()))\n        return true;\n    }\n    return false;\n  }\n};\n",
+    "explanation": "Preorder tokens with explicit null markers uniquely describe tree values and shape. Exact token boundaries prevent a value 2 from accidentally matching inside 12. Searching small's complete token sequence inside large's sequence finds a rooted subtree; KMP prefix fallback avoids repeatedly rescanning long repeated-value prefixes. C++ stores nullable TreeNode pointers in a vector stack and compares complete std::string tokens. A null pointer produces one marker without dereferencing it; decimal conversion stays separate from token boundaries.",
+    "timeComplexity": "O(n+m) token generation and KMP time for n/m selected-subtree nodes. Signed 32-bit value token length is bounded.",
+    "spaceComplexity": "O(n+m) token strings/prefix table plus explicit traversal stacks; no recursive depth limit is used.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 4.10. No affiliation is implied.",
+    "correctness": "A nonnull subtree contributes a contiguous preorder block containing its node token followed by complete left and right blocks; null markers make this encoding uniquely decodable. Thus every actual matching subtree creates a matching token block. Conversely a complete small-tree token match begins at a corresponding node/null token and its null-aware grammar consumes exactly that rooted subtree, so it cannot hide a structural difference or span an incomplete value. KMP preserves the longest pattern prefix matching the consumed suffix and tests every possible start without skipping a token match. Empty small is handled directly as true.",
+    "walkthrough": "For large rows [[2,1,2],[1,-1,-1],[3,-1,-1]], preorder tokens are [V2,V1,#,#,V3,#,#]. A small leaf 1 has [V1,#,#], which matches. A small root 1 with a left child 3 has different null positions and does not match, even though both values occur in large.",
+    "edgeCases": [
+      "Empty small/large trees, leaf and full-tree equality.",
+      "Repeated values, 2 versus 12, mirrored child positions and long chains."
+    ]
+  },
+  {
+    "problemId": "ctci6_4_10",
+    "collection": "ctci6",
+    "language": "java",
+    "code": "import java.util.*;\nclass TreeNode {public int Data;public TreeNode Left,Right,Parent;public TreeNode(int data){Data=data;}}\nclass Solution {\n  public boolean ContainsExactSubtree(TreeNode large, TreeNode small) {\n    if (small == null)\n      return true;\n    class Encoder {\n      List<String> encode(TreeNode root) {\n        List<String> tokens = new ArrayList<>();\n        List<TreeNode> stack = new ArrayList<>();\n        stack.add(root);\n        while (!stack.isEmpty()) {\n          TreeNode node = stack.remove(stack.size() - 1);\n          if (node == null)\n            tokens.add(\"#\");\n          else {\n            tokens.add(\"V\" + Integer.toString(node.Data));\n            stack.add(node.Right);\n            stack.add(node.Left);\n          }\n        }\n        return tokens;\n      }\n    }\n    Encoder encoder = new Encoder();\n    List<String> text = encoder.encode(large), pattern = encoder.encode(small);\n    int[] prefix = new int[pattern.size()];\n    for (int i = 1; i < pattern.size(); ++i) {\n      int matched = prefix[i - 1];\n      while (matched > 0 && !pattern.get(i).equals(pattern.get(matched)))\n        matched = prefix[matched - 1];\n      if (pattern.get(i).equals(pattern.get(matched)))\n        ++matched;\n      prefix[i] = matched;\n    }\n    int matched = 0;\n    for (String token : text) {\n      while (matched > 0 && !token.equals(pattern.get(matched)))\n        matched = prefix[matched - 1];\n      if (token.equals(pattern.get(matched)))\n        ++matched;\n      if (matched == pattern.size())\n        return true;\n    }\n    return false;\n  }\n}\n",
+    "explanation": "Preorder tokens with explicit null markers uniquely describe tree values and shape. Exact token boundaries prevent a value 2 from accidentally matching inside 12. Searching small's complete token sequence inside large's sequence finds a rooted subtree; KMP prefix fallback avoids repeatedly rescanning long repeated-value prefixes. Java uses an ArrayList as a stack because it accepts null children; ArrayDeque would reject them. String.equals compares token contents, and the prefix array follows whole tokens rather than characters in a concatenated number string.",
+    "timeComplexity": "O(n+m) token generation and KMP time for n/m selected-subtree nodes. Signed 32-bit value token length is bounded.",
+    "spaceComplexity": "O(n+m) token strings/prefix table plus explicit traversal stacks; no recursive depth limit is used.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 4.10. No affiliation is implied.",
+    "correctness": "A nonnull subtree contributes a contiguous preorder block containing its node token followed by complete left and right blocks; null markers make this encoding uniquely decodable. Thus every actual matching subtree creates a matching token block. Conversely a complete small-tree token match begins at a corresponding node/null token and its null-aware grammar consumes exactly that rooted subtree, so it cannot hide a structural difference or span an incomplete value. KMP preserves the longest pattern prefix matching the consumed suffix and tests every possible start without skipping a token match. Empty small is handled directly as true.",
+    "walkthrough": "For large rows [[2,1,2],[1,-1,-1],[3,-1,-1]], preorder tokens are [V2,V1,#,#,V3,#,#]. A small leaf 1 has [V1,#,#], which matches. A small root 1 with a left child 3 has different null positions and does not match, even though both values occur in large.",
+    "edgeCases": [
+      "Empty small/large trees, leaf and full-tree equality.",
+      "Repeated values, 2 versus 12, mirrored child positions and long chains."
+    ]
+  },
+  {
+    "problemId": "ctci6_4_12",
+    "collection": "ctci6",
+    "language": "csharp",
+    "code": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic class TreeNode {public int Data;public TreeNode? Left,Right,Parent;public TreeNode(int data){Data=data;}}\npublic class Solution\n{\n    public int CountDownwardSumPaths(TreeNode? root, int target)\n    {\n        if (root == null)\n            return 0;\n        var prefix = new Dictionary<int, int> { { 0, 1 } };\n        var stack = new Stack<(TreeNode Node, int Sum, bool Exit)>();\n        stack.Push((root, 0, false));\n        int answer = 0;\n        while (stack.Count > 0)\n        {\n            var frame = stack.Pop();\n            if (frame.Exit)\n            {\n                if (--prefix[frame.Sum] == 0)\n                    prefix.Remove(frame.Sum);\n                continue;\n            }\n            int running = frame.Sum + frame.Node.Data;\n            prefix.TryGetValue(running - target, out int count);\n            answer += count;\n            prefix.TryGetValue(running, out int previous);\n            prefix[running] = previous + 1;\n            stack.Push((frame.Node, running, true));\n            if (frame.Node.Right != null)\n                stack.Push((frame.Node.Right, running, false));\n            if (frame.Node.Left != null)\n                stack.Push((frame.Node.Left, running, false));\n        }\n        return answer;\n    }\n}\n",
+    "explanation": "A downward path ending at the current node has sum target exactly when an earlier prefix sum on the same ancestor path equals runningSum-target. Maintain frequencies of active prefixes, starting with one zero prefix before root. An explicit exit event removes the current prefix before processing a sibling branch, preventing nonexistent cross-branch paths.",
+    "timeComplexity": "Expected O(n) time with constant-time prefix-frequency dictionary access; hash collisions can worsen the bound.",
+    "spaceComplexity": "O(h) active prefix frequencies and explicit enter/exit stack for selected-subtree height h; zero-frequency keys are removed on exit.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 4.12. No affiliation is implied.",
+    "correctness": "Before entering a node, prefix frequencies count exactly prefixes ending before it on its ancestor chain, including the initial empty prefix. Each occurrence of runningSum-target therefore identifies one and only one nonempty downward path ending here with the desired sum. Counting before inserting the current prefix excludes an empty path. Inserting it makes it available to descendants; its exit event removes exactly that occurrence, restoring the ancestor-only invariant for later siblings. Every path has one endpoint at which it is counted, proving no omission or duplication.",
+    "walkthrough": "For a three-node chain of zeros and target 0, the successive active zero-prefix counts before insertion are 1,2,3. Those are the numbers of valid paths ending at the three nodes, totaling 6. In a branching tree, removing a finished child's prefix is essential: a path cannot begin in the left branch and end in the right branch.",
+    "edgeCases": [
+      "Null tree, non-root starts, non-leaf ends and negative values.",
+      "Zero chains with many overlapping paths and siblings sharing equal prefix sums.",
+      "Deep 1000-node paths require explicit stack handling."
+    ]
+  },
+  {
+    "problemId": "ctci6_4_12",
+    "collection": "ctci6",
+    "language": "javascript",
+    "code": "'use strict';\nclass TreeNode {constructor(data){this.Data=data;this.Left=this.Right=this.Parent=null;}}\nfunction CountDownwardSumPaths(root, target) {\n  if (root === null) return 0;\n  const prefix = new Map([[0, 1]]),\n    stack = [[root, 0, false]];\n  let answer = 0;\n  while (stack.length) {\n    let [node, running, exiting] = stack.pop();\n    if (exiting) {\n      const count = prefix.get(running) - 1;\n      if (count === 0) prefix.delete(running);\n      else prefix.set(running, count);\n      continue;\n    }\n    running += node.Data;\n    answer += prefix.get(running - target) || 0;\n    prefix.set(running, (prefix.get(running) || 0) + 1);\n    stack.push([node, running, true]);\n    if (node.Right !== null) stack.push([node.Right, running, false]);\n    if (node.Left !== null) stack.push([node.Left, running, false]);\n  }\n  return answer;\n}\n\nmodule.exports = {TreeNode,CountDownwardSumPaths};\n",
+    "explanation": "A downward path ending at the current node has sum target exactly when an earlier prefix sum on the same ancestor path equals runningSum-target. Maintain frequencies of active prefixes, starting with one zero prefix before root. An explicit exit event removes the current prefix before processing a sibling branch, preventing nonexistent cross-branch paths.",
+    "timeComplexity": "Expected O(n) time with constant-time prefix-frequency dictionary access; hash collisions can worsen the bound.",
+    "spaceComplexity": "O(h) active prefix frequencies and explicit enter/exit stack for selected-subtree height h; zero-frequency keys are removed on exit.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 4.12. No affiliation is implied.",
+    "correctness": "Before entering a node, prefix frequencies count exactly prefixes ending before it on its ancestor chain, including the initial empty prefix. Each occurrence of runningSum-target therefore identifies one and only one nonempty downward path ending here with the desired sum. Counting before inserting the current prefix excludes an empty path. Inserting it makes it available to descendants; its exit event removes exactly that occurrence, restoring the ancestor-only invariant for later siblings. Every path has one endpoint at which it is counted, proving no omission or duplication.",
+    "walkthrough": "For a three-node chain of zeros and target 0, the successive active zero-prefix counts before insertion are 1,2,3. Those are the numbers of valid paths ending at the three nodes, totaling 6. In a branching tree, removing a finished child's prefix is essential: a path cannot begin in the left branch and end in the right branch.",
+    "edgeCases": [
+      "Null tree, non-root starts, non-leaf ends and negative values.",
+      "Zero chains with many overlapping paths and siblings sharing equal prefix sums.",
+      "Deep 1000-node paths require explicit stack handling."
+    ]
+  },
+  {
+    "problemId": "ctci6_4_12",
+    "collection": "ctci6",
+    "language": "python",
+    "code": "class TreeNode:\n    def __init__(self, data: int):\n        self.Data = data\n        self.Left = self.Right = self.Parent = None\ndef CountDownwardSumPaths(root: TreeNode | None, target: int) -> int:\n    if root is None:\n        return 0\n    prefix = {0: 1}\n    stack = [(root, 0, False)]\n    answer = 0\n    while stack:\n        node, running, exiting = stack.pop()\n        if exiting:\n            prefix[running] -= 1\n            if prefix[running] == 0:\n                del prefix[running]\n            continue\n        running += node.Data\n        answer += prefix.get(running - target, 0)\n        prefix[running] = prefix.get(running, 0) + 1\n        stack.append((node, running, True))\n        if node.Right is not None:\n            stack.append((node.Right, running, False))\n        if node.Left is not None:\n            stack.append((node.Left, running, False))\n    return answer\n",
+    "explanation": "A downward path ending at the current node has sum target exactly when an earlier prefix sum on the same ancestor path equals runningSum-target. Maintain frequencies of active prefixes, starting with one zero prefix before root. An explicit exit event removes the current prefix before processing a sibling branch, preventing nonexistent cross-branch paths.",
+    "timeComplexity": "Expected O(n) time with constant-time prefix-frequency dictionary access; hash collisions can worsen the bound.",
+    "spaceComplexity": "O(h) active prefix frequencies and explicit enter/exit stack for selected-subtree height h; zero-frequency keys are removed on exit.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 4.12. No affiliation is implied.",
+    "correctness": "Before entering a node, prefix frequencies count exactly prefixes ending before it on its ancestor chain, including the initial empty prefix. Each occurrence of runningSum-target therefore identifies one and only one nonempty downward path ending here with the desired sum. Counting before inserting the current prefix excludes an empty path. Inserting it makes it available to descendants; its exit event removes exactly that occurrence, restoring the ancestor-only invariant for later siblings. Every path has one endpoint at which it is counted, proving no omission or duplication.",
+    "walkthrough": "For a three-node chain of zeros and target 0, the successive active zero-prefix counts before insertion are 1,2,3. Those are the numbers of valid paths ending at the three nodes, totaling 6. In a branching tree, removing a finished child's prefix is essential: a path cannot begin in the left branch and end in the right branch.",
+    "edgeCases": [
+      "Null tree, non-root starts, non-leaf ends and negative values.",
+      "Zero chains with many overlapping paths and siblings sharing equal prefix sums.",
+      "Deep 1000-node paths require explicit stack handling."
+    ]
+  },
+  {
+    "problemId": "ctci6_4_12",
+    "collection": "ctci6",
+    "language": "cpp",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n#include <unordered_map>\nstruct TreeNode {int Data;TreeNode* Left;TreeNode* Right;TreeNode* Parent;explicit TreeNode(int data):Data(data),Left(nullptr),Right(nullptr),Parent(nullptr){}};\nclass Solution {\n public:\n  int CountDownwardSumPaths(TreeNode* root, int target) {\n    if (!root)\n      return 0;\n    struct Frame {\n      TreeNode* Node;\n      int Sum;\n      bool Exit;\n    };\n    std::vector<Frame> stack{{root, 0, false}};\n    std::unordered_map<int, int> prefix{{0, 1}};\n    int answer = 0;\n    while (!stack.empty()) {\n      auto frame = stack.back();\n      stack.pop_back();\n      if (frame.Exit) {\n        if (--prefix[frame.Sum] == 0)\n          prefix.erase(frame.Sum);\n        continue;\n      }\n      int running = frame.Sum + frame.Node->Data;\n      auto found = prefix.find(running - target);\n      if (found != prefix.end())\n        answer += found->second;\n      ++prefix[running];\n      stack.push_back({frame.Node, running, true});\n      if (frame.Node->Right)\n        stack.push_back({frame.Node->Right, running, false});\n      if (frame.Node->Left)\n        stack.push_back({frame.Node->Left, running, false});\n    }\n    return answer;\n  }\n};\n",
+    "explanation": "A downward path ending at the current node has sum target exactly when an earlier prefix sum on the same ancestor path equals runningSum-target. Maintain frequencies of active prefixes, starting with one zero prefix before root. An explicit exit event removes the current prefix before processing a sibling branch, preventing nonexistent cross-branch paths.",
+    "timeComplexity": "Expected O(n) time with constant-time prefix-frequency dictionary access; hash collisions can worsen the bound.",
+    "spaceComplexity": "O(h) active prefix frequencies and explicit enter/exit stack for selected-subtree height h; zero-frequency keys are removed on exit.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 4.12. No affiliation is implied.",
+    "correctness": "Before entering a node, prefix frequencies count exactly prefixes ending before it on its ancestor chain, including the initial empty prefix. Each occurrence of runningSum-target therefore identifies one and only one nonempty downward path ending here with the desired sum. Counting before inserting the current prefix excludes an empty path. Inserting it makes it available to descendants; its exit event removes exactly that occurrence, restoring the ancestor-only invariant for later siblings. Every path has one endpoint at which it is counted, proving no omission or duplication.",
+    "walkthrough": "For a three-node chain of zeros and target 0, the successive active zero-prefix counts before insertion are 1,2,3. Those are the numbers of valid paths ending at the three nodes, totaling 6. In a branching tree, removing a finished child's prefix is essential: a path cannot begin in the left branch and end in the right branch.",
+    "edgeCases": [
+      "Null tree, non-root starts, non-leaf ends and negative values.",
+      "Zero chains with many overlapping paths and siblings sharing equal prefix sums.",
+      "Deep 1000-node paths require explicit stack handling."
+    ]
+  },
+  {
+    "problemId": "ctci6_4_12",
+    "collection": "ctci6",
+    "language": "java",
+    "code": "import java.util.*;\nclass TreeNode {public int Data;public TreeNode Left,Right,Parent;public TreeNode(int data){Data=data;}}\nclass Solution {\n  public int CountDownwardSumPaths(TreeNode root, int target) {\n    if (root == null)\n      return 0;\n    record Frame(TreeNode node, int sum, boolean exit) {}\n    Map<Integer, Integer> prefix = new HashMap<>();\n    prefix.put(0, 1);\n    Deque<Frame> stack = new ArrayDeque<>();\n    stack.push(new Frame(root, 0, false));\n    int answer = 0;\n    while (!stack.isEmpty()) {\n      var frame = stack.pop();\n      if (frame.exit()) {\n        int count = prefix.get(frame.sum()) - 1;\n        if (count == 0)\n          prefix.remove(frame.sum());\n        else\n          prefix.put(frame.sum(), count);\n        continue;\n      }\n      int running = frame.sum() + frame.node().Data;\n      answer += prefix.getOrDefault(running - target, 0);\n      prefix.put(running, prefix.getOrDefault(running, 0) + 1);\n      stack.push(new Frame(frame.node(), running, true));\n      if (frame.node().Right != null)\n        stack.push(new Frame(frame.node().Right, running, false));\n      if (frame.node().Left != null)\n        stack.push(new Frame(frame.node().Left, running, false));\n    }\n    return answer;\n  }\n}\n",
+    "explanation": "A downward path ending at the current node has sum target exactly when an earlier prefix sum on the same ancestor path equals runningSum-target. Maintain frequencies of active prefixes, starting with one zero prefix before root. An explicit exit event removes the current prefix before processing a sibling branch, preventing nonexistent cross-branch paths.",
+    "timeComplexity": "Expected O(n) time with constant-time prefix-frequency dictionary access; hash collisions can worsen the bound.",
+    "spaceComplexity": "O(h) active prefix frequencies and explicit enter/exit stack for selected-subtree height h; zero-frequency keys are removed on exit.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 4.12. No affiliation is implied.",
+    "correctness": "Before entering a node, prefix frequencies count exactly prefixes ending before it on its ancestor chain, including the initial empty prefix. Each occurrence of runningSum-target therefore identifies one and only one nonempty downward path ending here with the desired sum. Counting before inserting the current prefix excludes an empty path. Inserting it makes it available to descendants; its exit event removes exactly that occurrence, restoring the ancestor-only invariant for later siblings. Every path has one endpoint at which it is counted, proving no omission or duplication.",
+    "walkthrough": "For a three-node chain of zeros and target 0, the successive active zero-prefix counts before insertion are 1,2,3. Those are the numbers of valid paths ending at the three nodes, totaling 6. In a branching tree, removing a finished child's prefix is essential: a path cannot begin in the left branch and end in the right branch.",
+    "edgeCases": [
+      "Null tree, non-root starts, non-leaf ends and negative values.",
+      "Zero chains with many overlapping paths and siblings sharing equal prefix sums.",
+      "Deep 1000-node paths require explicit stack handling."
     ]
   },
   {

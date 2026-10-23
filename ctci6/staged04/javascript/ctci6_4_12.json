@@ -1,0 +1,39 @@
+{
+  "explanation": "A downward path ending at the current node has sum target exactly when an earlier prefix sum on the same ancestor path equals runningSum-target. Maintain frequencies of active prefixes, starting with one zero prefix before root. An explicit exit event removes the current prefix before processing a sibling branch, preventing nonexistent cross-branch paths.",
+  "correctness": "Before entering a node, prefix frequencies count exactly prefixes ending before it on its ancestor chain, including the initial empty prefix. Each occurrence of runningSum-target therefore identifies one and only one nonempty downward path ending here with the desired sum. Counting before inserting the current prefix excludes an empty path. Inserting it makes it available to descendants; its exit event removes exactly that occurrence, restoring the ancestor-only invariant for later siblings. Every path has one endpoint at which it is counted, proving no omission or duplication.",
+  "walkthrough": "For a three-node chain of zeros and target 0, the successive active zero-prefix counts before insertion are 1,2,3. Those are the numbers of valid paths ending at the three nodes, totaling 6. In a branching tree, removing a finished child's prefix is essential: a path cannot begin in the left branch and end in the right branch.",
+  "walkthroughCase": {
+    "arguments": [
+      {
+        "nodes": [
+          [
+            0,
+            1,
+            -1
+          ],
+          [
+            0,
+            2,
+            -1
+          ],
+          [
+            0,
+            -1,
+            -1
+          ]
+        ],
+        "selected": 0
+      },
+      0
+    ],
+    "expected": 6
+  },
+  "timeComplexity": "Expected O(n) time with constant-time prefix-frequency dictionary access; hash collisions can worsen the bound.",
+  "spaceComplexity": "O(h) active prefix frequencies and explicit enter/exit stack for selected-subtree height h; zero-frequency keys are removed on exit.",
+  "edgeCases": [
+    "Null tree, non-root starts, non-leaf ends and negative values.",
+    "Zero chains with many overlapping paths and siblings sharing equal prefix sums.",
+    "Deep 1000-node paths require explicit stack handling."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 4.12. No affiliation is implied."
+}

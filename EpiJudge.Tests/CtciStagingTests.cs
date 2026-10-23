@@ -183,6 +183,44 @@ public sealed class CtciStagingTests
         Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new[] { 2 }, mutationOk = true })));
     }
 
+    [Theory]
+    [InlineData("csharp")]
+    [InlineData("javascript")]
+    [InlineData("python")]
+    [InlineData("cpp")]
+    [InlineData("java")]
+    public void TreeNodeApiIsVisibleWithoutPrivateIdentityOrDecoderHelpers(string language)
+    {
+        var reference = Assert.Single(CallableCodeCatalog.Find("ctci6_4_6", language)!.References);
+        Assert.Contains("TreeNode", reference.Names);
+        foreach (string field in new[] { "Data", "Left", "Right", "Parent" }) Assert.Contains(field, reference.Code);
+        Assert.DoesNotContain("nodeId", reference.Code);
+        Assert.DoesNotContain("readTree", reference.Code);
+    }
+
+    [Fact]
+    public void SuccessorRequiresOriginalIdentityAndReadonlyParentLinks()
+    {
+        var definition = Definition("4.6");
+        var test = Case([new { nodes = new int[][] { [2, 1, -1], [1, -1, -1] }, selected = 1 }], 0);
+        Assert.Null(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = 0, mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = -2, mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = 0, mutationOk = false })));
+    }
+
+    [Fact]
+    public void DuplicateLeftBstAndDownwardPathContractsRemainDistinct()
+    {
+        var bst = Definition("4.5");
+        var validLeft = Case([new { nodes = new int[][] { [5, 1, -1], [5, -1, -1] }, selected = 0 }], true);
+        Assert.Null(CtciStagingGrader.FailureReason(bst, validLeft, Json(new { actual = true, mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(bst, validLeft, Json(new { actual = false, mutationOk = true })));
+        var paths = Definition("4.12");
+        var siblings = Case([new { nodes = new int[][] { [0, 1, 2], [0, -1, -1], [0, -1, -1] }, selected = 0 }, 0], 5);
+        Assert.Null(CtciStagingGrader.FailureReason(paths, siblings, Json(new { actual = 5, mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(paths, siblings, Json(new { actual = 6, mutationOk = true })));
+    }
+
     [Fact]
     public void AntRenderingUsesVisitedBoundsAndOverlaysTheFinalDirection()
     {

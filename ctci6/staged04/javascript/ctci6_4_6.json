@@ -1,0 +1,37 @@
+{
+  "explanation": "If a right subtree exists, inorder next visits its leftmost node. Otherwise the next visit is the first ancestor reached by moving upward from a left child; moving upward from a right child means that ancestor has already been visited. Parent links let this search use constant auxiliary space.",
+  "correctness": "Inorder visits node's entire right subtree immediately after node, starting at that subtree's leftmost descendant, proving the first case. Without a right subtree, node's own subtree is complete. Every upward right-child edge also completes an ancestor's right subtree, so those ancestors precede node. The first upward left-child edge reaches an ancestor whose left subtree has just completed and whose own visit is next. If no such edge exists, traversal is complete and null is correct. Link comparisons preserve original identity even with equal values.",
+  "walkthrough": "For rows [[2,1,2],[1,-1,-1],[3,-1,-1]] selecting node 1 (Data=1), it has no right child and is its parent's left child, so return original node 0. Selecting node 0 returns the leftmost node of its right subtree, node 2; selecting node 2 returns null.",
+  "walkthroughCase": {
+    "arguments": [
+      {
+        "nodes": [
+          [
+            2,
+            1,
+            2
+          ],
+          [
+            1,
+            -1,
+            -1
+          ],
+          [
+            3,
+            -1,
+            -1
+          ]
+        ],
+        "selected": 1
+      }
+    ],
+    "expected": 0
+  },
+  "timeComplexity": "O(h) link traversals for component height h.",
+  "spaceComplexity": "O(1) auxiliary pointer storage; no traversal array or cloned node is created.",
+  "edgeCases": [
+    "Null node, root, leftmost/rightmost node and a deep right-subtree left chain.",
+    "Equal-valued original nodes and multiple upward right-child edges."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 4.6. No affiliation is implied."
+}

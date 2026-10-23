@@ -1,0 +1,43 @@
+{
+  "explanation": "Count each node's depth and move the deeper node upward until both have equal depth. Then advance both Parent pointers together. Their first meeting is the deepest common ancestor because equal-depth nodes below that meeting are distinct; different tree roots eventually lead both pointers to null.",
+  "correctness": "Advancing only the deeper pointer cannot skip the common ancestor: every ancestor of the shallower node has depth no greater than that node. After alignment, both pointers are at the same depth. Moving them together preserves this equality and visits ancestors in decreasing depth order. A meeting is therefore common to both original paths, and any deeper common ancestor would have caused an earlier meeting. If their roots differ, they remain distinct until both become null, giving the required absence result. An explicit null-input check prevents treating a nonnull node as an ancestor of null.",
+  "walkthrough": "In rows [[9,1,2],[9,3,-1],[9,-1,-1],[9,-1,-1]], selecting first node 3 and second node 2 first aligns node 3 upward to node 1. Moving node 1 and node 2 upward together meets at original node 0. All Data values are 9, so value equality cannot solve the identity question.",
+  "walkthroughCase": {
+    "arguments": [
+      {
+        "nodes": [
+          [
+            9,
+            1,
+            2
+          ],
+          [
+            9,
+            3,
+            -1
+          ],
+          [
+            9,
+            -1,
+            -1
+          ],
+          [
+            9,
+            -1,
+            -1
+          ]
+        ],
+        "selected": 3
+      },
+      2
+    ],
+    "expected": 0
+  },
+  "timeComplexity": "O(h1+h2) Parent traversals for the two component heights.",
+  "spaceComplexity": "O(1) auxiliary pointers and depth counters.",
+  "edgeCases": [
+    "Either/both null, the same original node and one node already an ancestor.",
+    "Different components, equal Data values and very different depths."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 4.8. No affiliation is implied."
+}

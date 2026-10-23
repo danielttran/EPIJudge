@@ -1,0 +1,47 @@
+{
+  "explanation": "Preorder tokens with explicit null markers uniquely describe tree values and shape. Exact token boundaries prevent a value 2 from accidentally matching inside 12. Searching small's complete token sequence inside large's sequence finds a rooted subtree; KMP prefix fallback avoids repeatedly rescanning long repeated-value prefixes. C# Stack<TreeNode?> intentionally stores null entries so missing-child positions become tokens. InvariantCulture formats signed values consistently. Keeping node/value tokens in a List<string> prevents matching a digit inside a different integer token.",
+  "correctness": "A nonnull subtree contributes a contiguous preorder block containing its node token followed by complete left and right blocks; null markers make this encoding uniquely decodable. Thus every actual matching subtree creates a matching token block. Conversely a complete small-tree token match begins at a corresponding node/null token and its null-aware grammar consumes exactly that rooted subtree, so it cannot hide a structural difference or span an incomplete value. KMP preserves the longest pattern prefix matching the consumed suffix and tests every possible start without skipping a token match. Empty small is handled directly as true.",
+  "walkthrough": "For large rows [[2,1,2],[1,-1,-1],[3,-1,-1]], preorder tokens are [V2,V1,#,#,V3,#,#]. A small leaf 1 has [V1,#,#], which matches. A small root 1 with a left child 3 has different null positions and does not match, even though both values occur in large.",
+  "walkthroughCase": {
+    "arguments": [
+      {
+        "nodes": [
+          [
+            2,
+            1,
+            2
+          ],
+          [
+            1,
+            -1,
+            -1
+          ],
+          [
+            3,
+            -1,
+            -1
+          ]
+        ],
+        "selected": 0
+      },
+      {
+        "nodes": [
+          [
+            1,
+            -1,
+            -1
+          ]
+        ],
+        "selected": 0
+      }
+    ],
+    "expected": true
+  },
+  "timeComplexity": "O(n+m) token generation and KMP time for n/m selected-subtree nodes. Signed 32-bit value token length is bounded.",
+  "spaceComplexity": "O(n+m) token strings/prefix table plus explicit traversal stacks; no recursive depth limit is used.",
+  "edgeCases": [
+    "Empty small/large trees, leaf and full-tree equality.",
+    "Repeated values, 2 versus 12, mirrored child positions and long chains."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 4.10. No affiliation is implied."
+}

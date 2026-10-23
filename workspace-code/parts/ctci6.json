@@ -3603,6 +3603,516 @@
       }
     },
     {
+      "problemId": "ctci6_4_4",
+      "language": "csharp",
+      "filename": "Solution.cs",
+      "signature": "bool IsHeightBalanced(TreeNode? root)",
+      "starterCode": "public class Solution\n{\n    public bool IsHeightBalanced(TreeNode? root)\n    {\n        return false;\n    }\n}\n",
+      "solutionCode": "public class Solution\n{\n    public bool IsHeightBalanced(TreeNode? root)\n    {\n        if (root == null)\n            return true;\n        var heights = new Dictionary<TreeNode, int>();\n        var stack = new Stack<(TreeNode Node, bool Exit)>();\n        stack.Push((root, false));\n        while (stack.Count > 0)\n        {\n            var frame = stack.Pop();\n            var node = frame.Node;\n            if (!frame.Exit)\n            {\n                stack.Push((node, true));\n                if (node.Right != null)\n                    stack.Push((node.Right, false));\n                if (node.Left != null)\n                    stack.Push((node.Left, false));\n            }\n            else\n            {\n                int left = node.Left == null ? 0 : heights[node.Left],\n                    right = node.Right == null ? 0 : heights[node.Right];\n                if (Math.Abs(left - right) > 1)\n                    return false;\n                heights[node] = 1 + Math.Max(left, right);\n            }\n        }\n        return true;\n    }\n}\n",
+      "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic class TreeNode {public int Data;public TreeNode? Left,Right,Parent;public TreeNode(int data){Data=data;}}\n",
+      "suffix": "",
+      "references": [
+        {
+          "title": "Required callable model APIs",
+          "code": "public class TreeNode\n{\n    public int Data;\n    public TreeNode? Left, Right, Parent;\n    public TreeNode(int data)\n    {\n        Data = data;\n    }\n}\n",
+          "names": [
+            "TreeNode"
+          ]
+        }
+      ],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [
+        "TreeNode"
+      ],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/csharp/ctci6_4_4.cs"
+      ],
+      "sourceSha256": {
+        "starter": "cf76a01e3983b9fab0ab296b8bf6c1f617fe0c54db937bdc63ad5f51edc55a3d",
+        "solution": "3d73482ea692d9e2142336dd8bc8a09d311ff9f86ebb98af820ad9471b63bf1b"
+      }
+    },
+    {
+      "problemId": "ctci6_4_4",
+      "language": "javascript",
+      "filename": "solution.js",
+      "signature": "function IsHeightBalanced(root)",
+      "starterCode": "function IsHeightBalanced(root) {\n  return false;\n}\n",
+      "solutionCode": "function IsHeightBalanced(root) {\n  if (root === null) return true;\n  const heights = new Map(),\n    stack = [[root, false]];\n  while (stack.length) {\n    const [node, exiting] = stack.pop();\n    if (!exiting) {\n      stack.push([node, true]);\n      if (node.Right !== null) stack.push([node.Right, false]);\n      if (node.Left !== null) stack.push([node.Left, false]);\n    } else {\n      const left = heights.get(node.Left) || 0,\n        right = heights.get(node.Right) || 0;\n      if (Math.abs(left - right) > 1) return false;\n      heights.set(node, 1 + Math.max(left, right));\n    }\n  }\n  return true;\n}\n",
+      "prefix": "'use strict';\nclass TreeNode {constructor(data){this.Data=data;this.Left=this.Right=this.Parent=null;}}\n",
+      "suffix": "\nmodule.exports = {TreeNode,IsHeightBalanced};\n",
+      "references": [
+        {
+          "title": "Required callable model APIs",
+          "code": "class TreeNode {\n  constructor(data) {\n    this.Data = data;\n    this.Left = this.Right = this.Parent = null;\n  }\n}\n",
+          "names": [
+            "TreeNode"
+          ]
+        }
+      ],
+      "visibleSymbols": [
+        "IsHeightBalanced"
+      ],
+      "hiddenSymbols": [
+        "TreeNode"
+      ],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/javascript/ctci6_4_4.js"
+      ],
+      "sourceSha256": {
+        "starter": "b6d05eae2b60d2c380639a052c69fb84d85edb9043770cb6941c2a690ae9f4cb",
+        "solution": "412119be568b0abe472a31a344b245408097dc88dc767b0204970d8369ad8c5c"
+      }
+    },
+    {
+      "problemId": "ctci6_4_4",
+      "language": "python",
+      "filename": "solution.py",
+      "signature": "def IsHeightBalanced(root: TreeNode | None) -> bool",
+      "starterCode": "def IsHeightBalanced(root: TreeNode | None) -> bool:\n    return False\n",
+      "solutionCode": "def IsHeightBalanced(root: TreeNode | None) -> bool:\n    if root is None:\n        return True\n    heights = {}\n    stack = [(root, False)]\n    while stack:\n        node, exiting = stack.pop()\n        if not exiting:\n            stack.append((node, True))\n            if node.Right is not None:\n                stack.append((node.Right, False))\n            if node.Left is not None:\n                stack.append((node.Left, False))\n        else:\n            left = heights.get(node.Left, 0)\n            right = heights.get(node.Right, 0)\n            if abs(left - right) > 1:\n                return False\n            heights[node] = 1 + max(left, right)\n    return True\n",
+      "prefix": "class TreeNode:\n    def __init__(self, data: int):\n        self.Data = data\n        self.Left = self.Right = self.Parent = None\n",
+      "suffix": "",
+      "references": [
+        {
+          "title": "Required callable model APIs",
+          "code": "class TreeNode:\n    def __init__(self, data: int):\n        self.Data = data\n        self.Left = self.Right = self.Parent = None\n",
+          "names": [
+            "TreeNode"
+          ]
+        }
+      ],
+      "visibleSymbols": [
+        "IsHeightBalanced"
+      ],
+      "hiddenSymbols": [
+        "TreeNode"
+      ],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/python/ctci6_4_4.py"
+      ],
+      "sourceSha256": {
+        "starter": "c7562ac4955c431a9e0774eb69b1a35f242ee2d81f1df8ff93648fbad8df131a",
+        "solution": "554e19c557cdca47d616f90538ede8e028b56e13d59089695e4cc2e878ac71d3"
+      }
+    },
+    {
+      "problemId": "ctci6_4_4",
+      "language": "cpp",
+      "filename": "solution.cpp",
+      "signature": "bool IsHeightBalanced(TreeNode* root)",
+      "starterCode": "class Solution {\n public:\n  bool IsHeightBalanced(TreeNode* root) {\n    return false;\n  }\n};\n",
+      "solutionCode": "class Solution {\n public:\n  bool IsHeightBalanced(TreeNode* root) {\n    if (!root)\n      return true;\n    struct Frame {\n      TreeNode* Node;\n      bool Exit;\n    };\n    std::vector<Frame> stack{{root, false}};\n    std::unordered_map<TreeNode*, int> heights;\n    while (!stack.empty()) {\n      auto frame = stack.back();\n      stack.pop_back();\n      TreeNode* node = frame.Node;\n      if (!frame.Exit) {\n        stack.push_back({node, true});\n        if (node->Right)\n          stack.push_back({node->Right, false});\n        if (node->Left)\n          stack.push_back({node->Left, false});\n      } else {\n        int left = node->Left ? heights.at(node->Left) : 0,\n            right = node->Right ? heights.at(node->Right) : 0;\n        if (left - right > 1 || right - left > 1)\n          return false;\n        heights[node] = 1 + std::max(left, right);\n      }\n    }\n    return true;\n  }\n};\n",
+      "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n#include <unordered_map>\nstruct TreeNode {int Data;TreeNode* Left;TreeNode* Right;TreeNode* Parent;explicit TreeNode(int data):Data(data),Left(nullptr),Right(nullptr),Parent(nullptr){}};\n",
+      "suffix": "",
+      "references": [
+        {
+          "title": "Required callable model APIs",
+          "code": "struct TreeNode {\n  int Data;\n  TreeNode* Left;\n  TreeNode* Right;\n  TreeNode* Parent;\n  explicit TreeNode(int data) : Data(data), Left(nullptr), Right(nullptr), Parent(nullptr) {\n  }\n};\n",
+          "names": [
+            "TreeNode"
+          ]
+        }
+      ],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [
+        "TreeNode"
+      ],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/cpp/ctci6_4_4.cpp"
+      ],
+      "sourceSha256": {
+        "starter": "4d8bf1668ee4ed1d8ed43839f7842be3495c410078371b4d4eaae387a1cc06be",
+        "solution": "b12f7f35cfa99b10bc50d975c7b680752779471ac0c9006369513c08a2d6974e"
+      }
+    },
+    {
+      "problemId": "ctci6_4_4",
+      "language": "java",
+      "filename": "Solution.java",
+      "signature": "boolean IsHeightBalanced(TreeNode root)",
+      "starterCode": "class Solution {\n  public boolean IsHeightBalanced(TreeNode root) {\n    return false;\n  }\n}\n",
+      "solutionCode": "class Solution {\n  public boolean IsHeightBalanced(TreeNode root) {\n    if (root == null)\n      return true;\n    record Frame(TreeNode node, boolean exit) {}\n    Map<TreeNode, Integer> heights = new HashMap<>();\n    Deque<Frame> stack = new ArrayDeque<>();\n    stack.push(new Frame(root, false));\n    while (!stack.isEmpty()) {\n      var frame = stack.pop();\n      TreeNode node = frame.node();\n      if (!frame.exit()) {\n        stack.push(new Frame(node, true));\n        if (node.Right != null)\n          stack.push(new Frame(node.Right, false));\n        if (node.Left != null)\n          stack.push(new Frame(node.Left, false));\n      } else {\n        int left = node.Left == null ? 0 : heights.get(node.Left),\n            right = node.Right == null ? 0 : heights.get(node.Right);\n        if (Math.abs(left - right) > 1)\n          return false;\n        heights.put(node, 1 + Math.max(left, right));\n      }\n    }\n    return true;\n  }\n}\n",
+      "prefix": "import java.util.*;\nclass TreeNode {public int Data;public TreeNode Left,Right,Parent;public TreeNode(int data){Data=data;}}\n",
+      "suffix": "",
+      "references": [
+        {
+          "title": "Required callable model APIs",
+          "code": "class TreeNode {\n  public int Data;\n  public TreeNode Left, Right, Parent;\n  public TreeNode(int data) {\n    Data = data;\n  }\n}\n",
+          "names": [
+            "TreeNode"
+          ]
+        }
+      ],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [
+        "TreeNode"
+      ],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/java/ctci6_4_4.java"
+      ],
+      "sourceSha256": {
+        "starter": "cde14f978e9647f4b1afa2c3c7f986343c3eb8477d2e28fa85c61a1fc2c11897",
+        "solution": "eed193a6e53e4d7c98aa7f30c4fa4a42809cc82aba2116ffaa4a4f4b256da5b1"
+      }
+    },
+    {
+      "problemId": "ctci6_4_5",
+      "language": "csharp",
+      "filename": "Solution.cs",
+      "signature": "bool IsDuplicateLeftBst(TreeNode? root)",
+      "starterCode": "public class Solution\n{\n    public bool IsDuplicateLeftBst(TreeNode? root)\n    {\n        return false;\n    }\n}\n",
+      "solutionCode": "public class Solution\n{\n    public bool IsDuplicateLeftBst(TreeNode? root)\n    {\n        var stack = new Stack<(TreeNode Node, long Lower, long Upper)>();\n        if (root != null)\n            stack.Push((root, -2147483649L, 2147483647L));\n        while (stack.Count > 0)\n        {\n            var frame = stack.Pop();\n            var node = frame.Node;\n            if (node.Data <= frame.Lower || node.Data > frame.Upper)\n                return false;\n            if (node.Right != null)\n                stack.Push((node.Right, node.Data, frame.Upper));\n            if (node.Left != null)\n                stack.Push((node.Left, frame.Lower, node.Data));\n        }\n        return true;\n    }\n}\n",
+      "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic class TreeNode {public int Data;public TreeNode? Left,Right,Parent;public TreeNode(int data){Data=data;}}\n",
+      "suffix": "",
+      "references": [
+        {
+          "title": "Required callable model APIs",
+          "code": "public class TreeNode\n{\n    public int Data;\n    public TreeNode? Left, Right, Parent;\n    public TreeNode(int data)\n    {\n        Data = data;\n    }\n}\n",
+          "names": [
+            "TreeNode"
+          ]
+        }
+      ],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [
+        "TreeNode"
+      ],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/csharp/ctci6_4_5.cs"
+      ],
+      "sourceSha256": {
+        "starter": "8d21bd8a938139719e92a3b79fa5f037e12ed8b27a484ae169e74cd2f6e67511",
+        "solution": "aba1b73fb6340f608740aa804edf30179806ca387c51c429f096e3fe0eda0354"
+      }
+    },
+    {
+      "problemId": "ctci6_4_5",
+      "language": "javascript",
+      "filename": "solution.js",
+      "signature": "function IsDuplicateLeftBst(root)",
+      "starterCode": "function IsDuplicateLeftBst(root) {\n  return false;\n}\n",
+      "solutionCode": "function IsDuplicateLeftBst(root) {\n  const stack = root === null ? [] : [[root, -2147483649, 2147483647]];\n  while (stack.length) {\n    const [node, lower, upper] = stack.pop();\n    if (node.Data <= lower || node.Data > upper) return false;\n    if (node.Right !== null) stack.push([node.Right, node.Data, upper]);\n    if (node.Left !== null) stack.push([node.Left, lower, node.Data]);\n  }\n  return true;\n}\n",
+      "prefix": "'use strict';\nclass TreeNode {constructor(data){this.Data=data;this.Left=this.Right=this.Parent=null;}}\n",
+      "suffix": "\nmodule.exports = {TreeNode,IsDuplicateLeftBst};\n",
+      "references": [
+        {
+          "title": "Required callable model APIs",
+          "code": "class TreeNode {\n  constructor(data) {\n    this.Data = data;\n    this.Left = this.Right = this.Parent = null;\n  }\n}\n",
+          "names": [
+            "TreeNode"
+          ]
+        }
+      ],
+      "visibleSymbols": [
+        "IsDuplicateLeftBst"
+      ],
+      "hiddenSymbols": [
+        "TreeNode"
+      ],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/javascript/ctci6_4_5.js"
+      ],
+      "sourceSha256": {
+        "starter": "4b7888d54cb82a55e462568c055b346996043391ab6ae605e874e6d5740b967d",
+        "solution": "d3388a18ebb90653fb1b4b66b780d8686913923915258477666c9ea293e50049"
+      }
+    },
+    {
+      "problemId": "ctci6_4_5",
+      "language": "python",
+      "filename": "solution.py",
+      "signature": "def IsDuplicateLeftBst(root: TreeNode | None) -> bool",
+      "starterCode": "def IsDuplicateLeftBst(root: TreeNode | None) -> bool:\n    return False\n",
+      "solutionCode": "def IsDuplicateLeftBst(root: TreeNode | None) -> bool:\n    stack = [(root, -2147483649, 2147483647)] if root is not None else []\n    while stack:\n        node, lower, upper = stack.pop()\n        if node.Data <= lower or node.Data > upper:\n            return False\n        if node.Right is not None:\n            stack.append((node.Right, node.Data, upper))\n        if node.Left is not None:\n            stack.append((node.Left, lower, node.Data))\n    return True\n",
+      "prefix": "class TreeNode:\n    def __init__(self, data: int):\n        self.Data = data\n        self.Left = self.Right = self.Parent = None\n",
+      "suffix": "",
+      "references": [
+        {
+          "title": "Required callable model APIs",
+          "code": "class TreeNode:\n    def __init__(self, data: int):\n        self.Data = data\n        self.Left = self.Right = self.Parent = None\n",
+          "names": [
+            "TreeNode"
+          ]
+        }
+      ],
+      "visibleSymbols": [
+        "IsDuplicateLeftBst"
+      ],
+      "hiddenSymbols": [
+        "TreeNode"
+      ],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/python/ctci6_4_5.py"
+      ],
+      "sourceSha256": {
+        "starter": "5e3857297581bb78cc02a6aa129b402992addfaa64015d0d867d03b936ebd08b",
+        "solution": "fe8af4017ffb65db33f79e6b87980ab137f2ac9edae5ed97151c615342fdc2ac"
+      }
+    },
+    {
+      "problemId": "ctci6_4_5",
+      "language": "cpp",
+      "filename": "solution.cpp",
+      "signature": "bool IsDuplicateLeftBst(TreeNode* root)",
+      "starterCode": "class Solution {\n public:\n  bool IsDuplicateLeftBst(TreeNode* root) {\n    return false;\n  }\n};\n",
+      "solutionCode": "class Solution {\n public:\n  bool IsDuplicateLeftBst(TreeNode* root) {\n    struct Frame {\n      TreeNode* Node;\n      long long Lower, Upper;\n    };\n    std::vector<Frame> stack;\n    if (root)\n      stack.push_back({root, -2147483649LL, 2147483647LL});\n    while (!stack.empty()) {\n      auto frame = stack.back();\n      stack.pop_back();\n      auto node = frame.Node;\n      if (node->Data <= frame.Lower || node->Data > frame.Upper)\n        return false;\n      if (node->Right)\n        stack.push_back({node->Right, node->Data, frame.Upper});\n      if (node->Left)\n        stack.push_back({node->Left, frame.Lower, node->Data});\n    }\n    return true;\n  }\n};\n",
+      "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n#include <unordered_map>\nstruct TreeNode {int Data;TreeNode* Left;TreeNode* Right;TreeNode* Parent;explicit TreeNode(int data):Data(data),Left(nullptr),Right(nullptr),Parent(nullptr){}};\n",
+      "suffix": "",
+      "references": [
+        {
+          "title": "Required callable model APIs",
+          "code": "struct TreeNode {\n  int Data;\n  TreeNode* Left;\n  TreeNode* Right;\n  TreeNode* Parent;\n  explicit TreeNode(int data) : Data(data), Left(nullptr), Right(nullptr), Parent(nullptr) {\n  }\n};\n",
+          "names": [
+            "TreeNode"
+          ]
+        }
+      ],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [
+        "TreeNode"
+      ],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/cpp/ctci6_4_5.cpp"
+      ],
+      "sourceSha256": {
+        "starter": "655fa0b2f9f223626c5dc211b177cd12b78033293cc822112a10565b2c05fd3d",
+        "solution": "dc61e217e25d4fef3c38894c4e1d82eccc9879aa3e972daa4cdfc20c1b4f4e48"
+      }
+    },
+    {
+      "problemId": "ctci6_4_5",
+      "language": "java",
+      "filename": "Solution.java",
+      "signature": "boolean IsDuplicateLeftBst(TreeNode root)",
+      "starterCode": "class Solution {\n  public boolean IsDuplicateLeftBst(TreeNode root) {\n    return false;\n  }\n}\n",
+      "solutionCode": "class Solution {\n  public boolean IsDuplicateLeftBst(TreeNode root) {\n    record Frame(TreeNode node, long lower, long upper) {}\n    Deque<Frame> stack = new ArrayDeque<>();\n    if (root != null)\n      stack.push(new Frame(root, -2147483649L, 2147483647L));\n    while (!stack.isEmpty()) {\n      var frame = stack.pop();\n      TreeNode node = frame.node();\n      if (node.Data <= frame.lower() || node.Data > frame.upper())\n        return false;\n      if (node.Right != null)\n        stack.push(new Frame(node.Right, node.Data, frame.upper()));\n      if (node.Left != null)\n        stack.push(new Frame(node.Left, frame.lower(), node.Data));\n    }\n    return true;\n  }\n}\n",
+      "prefix": "import java.util.*;\nclass TreeNode {public int Data;public TreeNode Left,Right,Parent;public TreeNode(int data){Data=data;}}\n",
+      "suffix": "",
+      "references": [
+        {
+          "title": "Required callable model APIs",
+          "code": "class TreeNode {\n  public int Data;\n  public TreeNode Left, Right, Parent;\n  public TreeNode(int data) {\n    Data = data;\n  }\n}\n",
+          "names": [
+            "TreeNode"
+          ]
+        }
+      ],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [
+        "TreeNode"
+      ],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/java/ctci6_4_5.java"
+      ],
+      "sourceSha256": {
+        "starter": "b6ca0af29916bc47415b10008e32f2c10fb9e1f660f2c60aa7916f8460edcce0",
+        "solution": "8bd770e50c8a21d595fea7bb3ee3764d88630c9ac1dbc074858660a35979ddeb"
+      }
+    },
+    {
+      "problemId": "ctci6_4_6",
+      "language": "csharp",
+      "filename": "Solution.cs",
+      "signature": "TreeNode? InorderSuccessor(TreeNode? node)",
+      "starterCode": "public class Solution\n{\n    public TreeNode? InorderSuccessor(TreeNode? node)\n    {\n        return null;\n    }\n}\n",
+      "solutionCode": "public class Solution\n{\n    public TreeNode? InorderSuccessor(TreeNode? node)\n    {\n        if (node == null)\n            return null;\n        if (node.Right != null)\n        {\n            var following = node.Right;\n            while (following.Left != null)\n                following = following.Left;\n            return following;\n        }\n        TreeNode current = node;\n        TreeNode? parent = node.Parent;\n        while (parent != null && current == parent.Right)\n        {\n            current = parent;\n            parent = parent.Parent;\n        }\n        return parent;\n    }\n}\n",
+      "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic class TreeNode {public int Data;public TreeNode? Left,Right,Parent;public TreeNode(int data){Data=data;}}\n",
+      "suffix": "",
+      "references": [
+        {
+          "title": "Required callable model APIs",
+          "code": "public class TreeNode\n{\n    public int Data;\n    public TreeNode? Left, Right, Parent;\n    public TreeNode(int data)\n    {\n        Data = data;\n    }\n}\n",
+          "names": [
+            "TreeNode"
+          ]
+        }
+      ],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [
+        "TreeNode"
+      ],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/csharp/ctci6_4_6.cs"
+      ],
+      "sourceSha256": {
+        "starter": "9d84f9eb2557db2dc51a9b5df4219c10878b2090c95eeb993f884e7f250722c3",
+        "solution": "7bc459594c9ab79ec6a4c88d3c5122af13025fb2bc9a37a77d14b382cf1bdbf2"
+      }
+    },
+    {
+      "problemId": "ctci6_4_6",
+      "language": "javascript",
+      "filename": "solution.js",
+      "signature": "function InorderSuccessor(node)",
+      "starterCode": "function InorderSuccessor(node) {\n  return null;\n}\n",
+      "solutionCode": "function InorderSuccessor(node) {\n  if (node === null) return null;\n  if (node.Right !== null) {\n    let following = node.Right;\n    while (following.Left !== null) following = following.Left;\n    return following;\n  }\n  let current = node,\n    parent = node.Parent;\n  while (parent !== null && current === parent.Right) {\n    current = parent;\n    parent = parent.Parent;\n  }\n  return parent;\n}\n",
+      "prefix": "'use strict';\nclass TreeNode {constructor(data){this.Data=data;this.Left=this.Right=this.Parent=null;}}\n",
+      "suffix": "\nmodule.exports = {TreeNode,InorderSuccessor};\n",
+      "references": [
+        {
+          "title": "Required callable model APIs",
+          "code": "class TreeNode {\n  constructor(data) {\n    this.Data = data;\n    this.Left = this.Right = this.Parent = null;\n  }\n}\n",
+          "names": [
+            "TreeNode"
+          ]
+        }
+      ],
+      "visibleSymbols": [
+        "InorderSuccessor"
+      ],
+      "hiddenSymbols": [
+        "TreeNode"
+      ],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/javascript/ctci6_4_6.js"
+      ],
+      "sourceSha256": {
+        "starter": "5b1b11c66cc025abf5c5cfbb23461b9e215c6081aec45ba79b387a16602a96d1",
+        "solution": "6e543938f774af664ef06243e710697e99383284c92caf5ac4e32802faff91ee"
+      }
+    },
+    {
+      "problemId": "ctci6_4_6",
+      "language": "python",
+      "filename": "solution.py",
+      "signature": "def InorderSuccessor(node: TreeNode | None) -> TreeNode | None",
+      "starterCode": "def InorderSuccessor(node: TreeNode | None) -> TreeNode | None:\n    return None\n",
+      "solutionCode": "def InorderSuccessor(node: TreeNode | None) -> TreeNode | None:\n    if node is None:\n        return None\n    if node.Right is not None:\n        following = node.Right\n        while following.Left is not None:\n            following = following.Left\n        return following\n    current, parent = node, node.Parent\n    while parent is not None and current is parent.Right:\n        current, parent = parent, parent.Parent\n    return parent\n",
+      "prefix": "class TreeNode:\n    def __init__(self, data: int):\n        self.Data = data\n        self.Left = self.Right = self.Parent = None\n",
+      "suffix": "",
+      "references": [
+        {
+          "title": "Required callable model APIs",
+          "code": "class TreeNode:\n    def __init__(self, data: int):\n        self.Data = data\n        self.Left = self.Right = self.Parent = None\n",
+          "names": [
+            "TreeNode"
+          ]
+        }
+      ],
+      "visibleSymbols": [
+        "InorderSuccessor"
+      ],
+      "hiddenSymbols": [
+        "TreeNode"
+      ],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/python/ctci6_4_6.py"
+      ],
+      "sourceSha256": {
+        "starter": "29786c4288f0eb9f9d09f73dc17171a0aa62d4168731bc6ef2aabf9c5aca7d4d",
+        "solution": "e26a2747712369e082955f4d5ecc845286111bdd50ed93097a160b52e85be4af"
+      }
+    },
+    {
+      "problemId": "ctci6_4_6",
+      "language": "cpp",
+      "filename": "solution.cpp",
+      "signature": "TreeNode* InorderSuccessor(TreeNode* node)",
+      "starterCode": "class Solution {\n public:\n  TreeNode* InorderSuccessor(TreeNode* node) {\n    return nullptr;\n  }\n};\n",
+      "solutionCode": "class Solution {\n public:\n  TreeNode* InorderSuccessor(TreeNode* node) {\n    if (!node)\n      return nullptr;\n    if (node->Right) {\n      auto following = node->Right;\n      while (following->Left)\n        following = following->Left;\n      return following;\n    }\n    TreeNode* current = node;\n    TreeNode* parent = node->Parent;\n    while (parent && current == parent->Right) {\n      current = parent;\n      parent = parent->Parent;\n    }\n    return parent;\n  }\n};\n",
+      "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n#include <unordered_map>\nstruct TreeNode {int Data;TreeNode* Left;TreeNode* Right;TreeNode* Parent;explicit TreeNode(int data):Data(data),Left(nullptr),Right(nullptr),Parent(nullptr){}};\n",
+      "suffix": "",
+      "references": [
+        {
+          "title": "Required callable model APIs",
+          "code": "struct TreeNode {\n  int Data;\n  TreeNode* Left;\n  TreeNode* Right;\n  TreeNode* Parent;\n  explicit TreeNode(int data) : Data(data), Left(nullptr), Right(nullptr), Parent(nullptr) {\n  }\n};\n",
+          "names": [
+            "TreeNode"
+          ]
+        }
+      ],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [
+        "TreeNode"
+      ],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/cpp/ctci6_4_6.cpp"
+      ],
+      "sourceSha256": {
+        "starter": "f18ce91dc9d4a482c3d6c34a84db4a09de904b1c7ecb7b4c94756dc089fefa1d",
+        "solution": "7d91bf380c8c9fbbc6d03511d9bc9867c678c93e6f7678049ff44ef1efce7acd"
+      }
+    },
+    {
+      "problemId": "ctci6_4_6",
+      "language": "java",
+      "filename": "Solution.java",
+      "signature": "TreeNode InorderSuccessor(TreeNode node)",
+      "starterCode": "class Solution {\n  public TreeNode InorderSuccessor(TreeNode node) {\n    return null;\n  }\n}\n",
+      "solutionCode": "class Solution {\n  public TreeNode InorderSuccessor(TreeNode node) {\n    if (node == null)\n      return null;\n    if (node.Right != null) {\n      var following = node.Right;\n      while (following.Left != null)\n        following = following.Left;\n      return following;\n    }\n    TreeNode current = node;\n    TreeNode parent = node.Parent;\n    while (parent != null && current == parent.Right) {\n      current = parent;\n      parent = parent.Parent;\n    }\n    return parent;\n  }\n}\n",
+      "prefix": "import java.util.*;\nclass TreeNode {public int Data;public TreeNode Left,Right,Parent;public TreeNode(int data){Data=data;}}\n",
+      "suffix": "",
+      "references": [
+        {
+          "title": "Required callable model APIs",
+          "code": "class TreeNode {\n  public int Data;\n  public TreeNode Left, Right, Parent;\n  public TreeNode(int data) {\n    Data = data;\n  }\n}\n",
+          "names": [
+            "TreeNode"
+          ]
+        }
+      ],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [
+        "TreeNode"
+      ],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/java/ctci6_4_6.java"
+      ],
+      "sourceSha256": {
+        "starter": "62bf246601fffa0b52b8da2243195b7fb659c4daff20ebfe0174856097785fe1",
+        "solution": "232eb461ffb5b87f2e8f85fb015adaa41c5e8c982b7b9a7ed9348eab9f5d2639"
+      }
+    },
+    {
       "problemId": "ctci6_4_7",
       "language": "csharp",
       "filename": "Solution.cs",
@@ -3720,6 +4230,516 @@
       "sourceSha256": {
         "starter": "760df2eb08a65201f5cdeb3fd50a7fdb1a211d20e79bada899fe57df82e92d2f",
         "solution": "0b7d5f2544a297c5ee4ffa9221c3c9d98bace272deedc34cdaaf17cd79b41fcf"
+      }
+    },
+    {
+      "problemId": "ctci6_4_8",
+      "language": "csharp",
+      "filename": "Solution.cs",
+      "signature": "TreeNode? FirstCommonAncestor(TreeNode? first, TreeNode? second)",
+      "starterCode": "public class Solution\n{\n    public TreeNode? FirstCommonAncestor(TreeNode? first, TreeNode? second)\n    {\n        return null;\n    }\n}\n",
+      "solutionCode": "public class Solution\n{\n    public TreeNode? FirstCommonAncestor(TreeNode? first, TreeNode? second)\n    {\n        if (first == null || second == null)\n            return null;\n        int depthFirst = 0, depthSecond = 0;\n        for (var cursor = first; cursor != null; cursor = cursor.Parent)\n            ++depthFirst;\n        for (var cursor = second; cursor != null; cursor = cursor.Parent)\n            ++depthSecond;\n        while (depthFirst > depthSecond)\n        {\n            first = first!.Parent;\n            --depthFirst;\n        }\n        while (depthSecond > depthFirst)\n        {\n            second = second!.Parent;\n            --depthSecond;\n        }\n        while (!ReferenceEquals(first, second))\n        {\n            first = first?.Parent;\n            second = second?.Parent;\n        }\n        return first;\n    }\n}\n",
+      "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic class TreeNode {public int Data;public TreeNode? Left,Right,Parent;public TreeNode(int data){Data=data;}}\n",
+      "suffix": "",
+      "references": [
+        {
+          "title": "Required callable model APIs",
+          "code": "public class TreeNode\n{\n    public int Data;\n    public TreeNode? Left, Right, Parent;\n    public TreeNode(int data)\n    {\n        Data = data;\n    }\n}\n",
+          "names": [
+            "TreeNode"
+          ]
+        }
+      ],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [
+        "TreeNode"
+      ],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/csharp/ctci6_4_8.cs"
+      ],
+      "sourceSha256": {
+        "starter": "ce655e8888a3ba681a68fadd1f89f6fc6980fd1d1456c5d519bccc7e5c526045",
+        "solution": "a79b9d914b94f6300645137149cfe6fdc45c77ef821752bff01b259fbe7e2c03"
+      }
+    },
+    {
+      "problemId": "ctci6_4_8",
+      "language": "javascript",
+      "filename": "solution.js",
+      "signature": "function FirstCommonAncestor(first, second)",
+      "starterCode": "function FirstCommonAncestor(first, second) {\n  return null;\n}\n",
+      "solutionCode": "function FirstCommonAncestor(first, second) {\n  if (first === null || second === null) return null;\n  let depthFirst = 0,\n    depthSecond = 0;\n  for (let cursor = first; cursor !== null; cursor = cursor.Parent) ++depthFirst;\n  for (let cursor = second; cursor !== null; cursor = cursor.Parent) ++depthSecond;\n  while (depthFirst > depthSecond) {\n    first = first.Parent;\n    --depthFirst;\n  }\n  while (depthSecond > depthFirst) {\n    second = second.Parent;\n    --depthSecond;\n  }\n  while (first !== second) {\n    first = first.Parent;\n    second = second.Parent;\n  }\n  return first;\n}\n",
+      "prefix": "'use strict';\nclass TreeNode {constructor(data){this.Data=data;this.Left=this.Right=this.Parent=null;}}\n",
+      "suffix": "\nmodule.exports = {TreeNode,FirstCommonAncestor};\n",
+      "references": [
+        {
+          "title": "Required callable model APIs",
+          "code": "class TreeNode {\n  constructor(data) {\n    this.Data = data;\n    this.Left = this.Right = this.Parent = null;\n  }\n}\n",
+          "names": [
+            "TreeNode"
+          ]
+        }
+      ],
+      "visibleSymbols": [
+        "FirstCommonAncestor"
+      ],
+      "hiddenSymbols": [
+        "TreeNode"
+      ],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/javascript/ctci6_4_8.js"
+      ],
+      "sourceSha256": {
+        "starter": "731bf4e700685943d2d97200a768aa27049d9c204b5e1dcd532ac53d737a0ad8",
+        "solution": "99766d7ed2aee88a594d1ed631d774bbaac07e531df58b2ae61fa0b1261c674b"
+      }
+    },
+    {
+      "problemId": "ctci6_4_8",
+      "language": "python",
+      "filename": "solution.py",
+      "signature": "def FirstCommonAncestor(first: TreeNode | None, second: TreeNode | None) -> TreeNode | None",
+      "starterCode": "def FirstCommonAncestor(first: TreeNode | None, second: TreeNode | None) -> TreeNode | None:\n    return None\n",
+      "solutionCode": "def FirstCommonAncestor(first: TreeNode | None, second: TreeNode | None) -> TreeNode | None:\n    if first is None or second is None:\n        return None\n    depth_first = depth_second = 0\n    cursor = first\n    while cursor is not None:\n        depth_first += 1\n        cursor = cursor.Parent\n    cursor = second\n    while cursor is not None:\n        depth_second += 1\n        cursor = cursor.Parent\n    while depth_first > depth_second:\n        first = first.Parent\n        depth_first -= 1\n    while depth_second > depth_first:\n        second = second.Parent\n        depth_second -= 1\n    while first is not second:\n        first = first.Parent\n        second = second.Parent\n    return first\n",
+      "prefix": "class TreeNode:\n    def __init__(self, data: int):\n        self.Data = data\n        self.Left = self.Right = self.Parent = None\n",
+      "suffix": "",
+      "references": [
+        {
+          "title": "Required callable model APIs",
+          "code": "class TreeNode:\n    def __init__(self, data: int):\n        self.Data = data\n        self.Left = self.Right = self.Parent = None\n",
+          "names": [
+            "TreeNode"
+          ]
+        }
+      ],
+      "visibleSymbols": [
+        "FirstCommonAncestor"
+      ],
+      "hiddenSymbols": [
+        "TreeNode"
+      ],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/python/ctci6_4_8.py"
+      ],
+      "sourceSha256": {
+        "starter": "c7c16421001b2f3deef6ec422e127f405ea9a6ee7eb0c8cdc609b58c799a7b37",
+        "solution": "4b138cb327e97fe32b0d17ae0b97ada1ed704075ec1ffbf19de12a7b66e672c0"
+      }
+    },
+    {
+      "problemId": "ctci6_4_8",
+      "language": "cpp",
+      "filename": "solution.cpp",
+      "signature": "TreeNode* FirstCommonAncestor(TreeNode* first, TreeNode* second)",
+      "starterCode": "class Solution {\n public:\n  TreeNode* FirstCommonAncestor(TreeNode* first, TreeNode* second) {\n    return nullptr;\n  }\n};\n",
+      "solutionCode": "class Solution {\n public:\n  TreeNode* FirstCommonAncestor(TreeNode* first, TreeNode* second) {\n    if (!first || !second)\n      return nullptr;\n    int depthFirst = 0, depthSecond = 0;\n    for (auto cursor = first; cursor; cursor = cursor->Parent)\n      ++depthFirst;\n    for (auto cursor = second; cursor; cursor = cursor->Parent)\n      ++depthSecond;\n    while (depthFirst > depthSecond) {\n      first = first->Parent;\n      --depthFirst;\n    }\n    while (depthSecond > depthFirst) {\n      second = second->Parent;\n      --depthSecond;\n    }\n    while (first != second) {\n      first = first->Parent;\n      second = second->Parent;\n    }\n    return first;\n  }\n};\n",
+      "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n#include <unordered_map>\nstruct TreeNode {int Data;TreeNode* Left;TreeNode* Right;TreeNode* Parent;explicit TreeNode(int data):Data(data),Left(nullptr),Right(nullptr),Parent(nullptr){}};\n",
+      "suffix": "",
+      "references": [
+        {
+          "title": "Required callable model APIs",
+          "code": "struct TreeNode {\n  int Data;\n  TreeNode* Left;\n  TreeNode* Right;\n  TreeNode* Parent;\n  explicit TreeNode(int data) : Data(data), Left(nullptr), Right(nullptr), Parent(nullptr) {\n  }\n};\n",
+          "names": [
+            "TreeNode"
+          ]
+        }
+      ],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [
+        "TreeNode"
+      ],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/cpp/ctci6_4_8.cpp"
+      ],
+      "sourceSha256": {
+        "starter": "325b21a57e243ce956b74a3bbca9b21b47b4eba190cd506661cf49f87fbf3ec7",
+        "solution": "a79699c3f25dc0bcf9c7768448f319ac904d64181c9d30007a5fed392fa8d6ef"
+      }
+    },
+    {
+      "problemId": "ctci6_4_8",
+      "language": "java",
+      "filename": "Solution.java",
+      "signature": "TreeNode FirstCommonAncestor(TreeNode first, TreeNode second)",
+      "starterCode": "class Solution {\n  public TreeNode FirstCommonAncestor(TreeNode first, TreeNode second) {\n    return null;\n  }\n}\n",
+      "solutionCode": "class Solution {\n  public TreeNode FirstCommonAncestor(TreeNode first, TreeNode second) {\n    if (first == null || second == null)\n      return null;\n    int depthFirst = 0, depthSecond = 0;\n    for (TreeNode cursor = first; cursor != null; cursor = cursor.Parent)\n      ++depthFirst;\n    for (TreeNode cursor = second; cursor != null; cursor = cursor.Parent)\n      ++depthSecond;\n    while (depthFirst > depthSecond) {\n      first = first.Parent;\n      --depthFirst;\n    }\n    while (depthSecond > depthFirst) {\n      second = second.Parent;\n      --depthSecond;\n    }\n    while (first != second) {\n      first = first.Parent;\n      second = second.Parent;\n    }\n    return first;\n  }\n}\n",
+      "prefix": "import java.util.*;\nclass TreeNode {public int Data;public TreeNode Left,Right,Parent;public TreeNode(int data){Data=data;}}\n",
+      "suffix": "",
+      "references": [
+        {
+          "title": "Required callable model APIs",
+          "code": "class TreeNode {\n  public int Data;\n  public TreeNode Left, Right, Parent;\n  public TreeNode(int data) {\n    Data = data;\n  }\n}\n",
+          "names": [
+            "TreeNode"
+          ]
+        }
+      ],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [
+        "TreeNode"
+      ],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/java/ctci6_4_8.java"
+      ],
+      "sourceSha256": {
+        "starter": "0ffc97b23d6735da7a6518141b1ef8beb4e6aac6ad2374004327660ad5672362",
+        "solution": "fcb320d6720f769f5a924b8e9d8cccff75f1e65b899d8a552bcdd10fa01b5fcf"
+      }
+    },
+    {
+      "problemId": "ctci6_4_10",
+      "language": "csharp",
+      "filename": "Solution.cs",
+      "signature": "bool ContainsExactSubtree(TreeNode? large, TreeNode? small)",
+      "starterCode": "public class Solution\n{\n    public bool ContainsExactSubtree(TreeNode? large, TreeNode? small)\n    {\n        return false;\n    }\n}\n",
+      "solutionCode": "public class Solution\n{\n    public bool ContainsExactSubtree(TreeNode? large, TreeNode? small)\n    {\n        if (small == null)\n            return true;List<string> Encode(TreeNode? root)\n        {\n            var tokens = new List<string>();\n            var stack = new Stack<TreeNode?>();\n            stack.Push(root);\n            while (stack.Count > 0)\n            {\n                var node = stack.Pop();\n                if (node == null)\n                    tokens.Add(\"#\");\n                else\n                {\n                    tokens.Add(\"V\" + node.Data.ToString(\n                                         System.Globalization.CultureInfo.InvariantCulture));\n                    stack.Push(node.Right);\n                    stack.Push(node.Left);\n                }\n            }\n            return tokens;\n        }\n        var text = Encode(large);\n        var pattern = Encode(small);\n        int[] prefix = new int[pattern.Count];\n        for (int i = 1; i < pattern.Count; ++i)\n        {\n            int matched = prefix[i - 1];\n            while (matched > 0 && pattern[i] != pattern[matched])\n                matched = prefix[matched - 1];\n            if (pattern[i] == pattern[matched])\n                ++matched;\n            prefix[i] = matched;\n        }\n        int count = 0;\n        foreach (string token in text)\n        {\n            while (count > 0 && token != pattern[count])\n                count = prefix[count - 1];\n            if (token == pattern[count])\n                ++count;\n            if (count == pattern.Count)\n                return true;\n        }\n        return false;\n    }\n}\n",
+      "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic class TreeNode {public int Data;public TreeNode? Left,Right,Parent;public TreeNode(int data){Data=data;}}\n",
+      "suffix": "",
+      "references": [
+        {
+          "title": "Required callable model APIs",
+          "code": "public class TreeNode\n{\n    public int Data;\n    public TreeNode? Left, Right, Parent;\n    public TreeNode(int data)\n    {\n        Data = data;\n    }\n}\n",
+          "names": [
+            "TreeNode"
+          ]
+        }
+      ],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [
+        "TreeNode"
+      ],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/csharp/ctci6_4_10.cs"
+      ],
+      "sourceSha256": {
+        "starter": "ab55f30578e30217075a313a54b7cbd93c1a4973cfa99c62895b91a73875a7e7",
+        "solution": "cfbfe2fc6d161c83a9a428425c752afe7e5050f6da04f03c980f78a1a0b1717f"
+      }
+    },
+    {
+      "problemId": "ctci6_4_10",
+      "language": "javascript",
+      "filename": "solution.js",
+      "signature": "function ContainsExactSubtree(large, small)",
+      "starterCode": "function ContainsExactSubtree(large, small) {\n  return false;\n}\n",
+      "solutionCode": "function ContainsExactSubtree(large, small) {\n  if (small === null) return true;\n  function encode(root) {\n    const tokens = [],\n      stack = [root];\n    while (stack.length) {\n      const node = stack.pop();\n      if (node === null) tokens.push(\"#\");\n      else {\n        tokens.push(\"V\" + String(node.Data));\n        stack.push(node.Right, node.Left);\n      }\n    }\n    return tokens;\n  }\n  const text = encode(large),\n    pattern = encode(small),\n    prefix = new Array(pattern.length).fill(0);\n  for (let i = 1; i < pattern.length; ++i) {\n    let matched = prefix[i - 1];\n    while (matched > 0 && pattern[i] !== pattern[matched]) matched = prefix[matched - 1];\n    if (pattern[i] === pattern[matched]) ++matched;\n    prefix[i] = matched;\n  }\n  let matched = 0;\n  for (const token of text) {\n    while (matched > 0 && token !== pattern[matched]) matched = prefix[matched - 1];\n    if (token === pattern[matched]) ++matched;\n    if (matched === pattern.length) return true;\n  }\n  return false;\n}\n",
+      "prefix": "'use strict';\nclass TreeNode {constructor(data){this.Data=data;this.Left=this.Right=this.Parent=null;}}\n",
+      "suffix": "\nmodule.exports = {TreeNode,ContainsExactSubtree};\n",
+      "references": [
+        {
+          "title": "Required callable model APIs",
+          "code": "class TreeNode {\n  constructor(data) {\n    this.Data = data;\n    this.Left = this.Right = this.Parent = null;\n  }\n}\n",
+          "names": [
+            "TreeNode"
+          ]
+        }
+      ],
+      "visibleSymbols": [
+        "ContainsExactSubtree"
+      ],
+      "hiddenSymbols": [
+        "TreeNode"
+      ],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/javascript/ctci6_4_10.js"
+      ],
+      "sourceSha256": {
+        "starter": "ca9f0fb757784af17da6baedb0640a36e61e25cf087b3be1b3f66fcd906ec323",
+        "solution": "1b1af79e6f044157a813570099f78554b1e557e72b827efdd133cf84b6327375"
+      }
+    },
+    {
+      "problemId": "ctci6_4_10",
+      "language": "python",
+      "filename": "solution.py",
+      "signature": "def ContainsExactSubtree(large: TreeNode | None, small: TreeNode | None) -> bool",
+      "starterCode": "def ContainsExactSubtree(large: TreeNode | None, small: TreeNode | None) -> bool:\n    return False\n",
+      "solutionCode": "def ContainsExactSubtree(large: TreeNode | None, small: TreeNode | None) -> bool:\n    if small is None:\n        return True\n\n    def encode(root):\n        tokens = []\n        stack = [root]\n        while stack:\n            node = stack.pop()\n            if node is None:\n                tokens.append(\"#\")\n            else:\n                tokens.append(\"V\" + str(node.Data))\n                stack.append(node.Right)\n                stack.append(node.Left)\n        return tokens\n\n    text, pattern = encode(large), encode(small)\n    prefix = [0] * len(pattern)\n    for index in range(1, len(pattern)):\n        matched = prefix[index - 1]\n        while matched and pattern[index] != pattern[matched]:\n            matched = prefix[matched - 1]\n        if pattern[index] == pattern[matched]:\n            matched += 1\n        prefix[index] = matched\n    matched = 0\n    for token in text:\n        while matched and token != pattern[matched]:\n            matched = prefix[matched - 1]\n        if token == pattern[matched]:\n            matched += 1\n        if matched == len(pattern):\n            return True\n    return False\n",
+      "prefix": "class TreeNode:\n    def __init__(self, data: int):\n        self.Data = data\n        self.Left = self.Right = self.Parent = None\n",
+      "suffix": "",
+      "references": [
+        {
+          "title": "Required callable model APIs",
+          "code": "class TreeNode:\n    def __init__(self, data: int):\n        self.Data = data\n        self.Left = self.Right = self.Parent = None\n",
+          "names": [
+            "TreeNode"
+          ]
+        }
+      ],
+      "visibleSymbols": [
+        "ContainsExactSubtree"
+      ],
+      "hiddenSymbols": [
+        "TreeNode"
+      ],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/python/ctci6_4_10.py"
+      ],
+      "sourceSha256": {
+        "starter": "33edcf631596f619562d8652da550ea757718b7d0ec571cbcedc166d9f36d63d",
+        "solution": "5e5583a7c438a7416d6ead13527cbd3648100b1a1636a5f667a1963fec979613"
+      }
+    },
+    {
+      "problemId": "ctci6_4_10",
+      "language": "cpp",
+      "filename": "solution.cpp",
+      "signature": "bool ContainsExactSubtree(TreeNode* large, TreeNode* small)",
+      "starterCode": "class Solution {\n public:\n  bool ContainsExactSubtree(TreeNode* large, TreeNode* small) {\n    return false;\n  }\n};\n",
+      "solutionCode": "class Solution {\n public:\n  bool ContainsExactSubtree(TreeNode* large, TreeNode* small) {\n    if (!small)\n      return true;\n    auto encode = [](TreeNode* root) {\n      std::vector<std::string> tokens;\n      std::vector<TreeNode*> stack{root};\n      while (!stack.empty()) {\n        auto node = stack.back();\n        stack.pop_back();\n        if (!node)\n          tokens.push_back(\"#\");\n        else {\n          tokens.push_back(\"V\" + std::to_string(node->Data));\n          stack.push_back(node->Right);\n          stack.push_back(node->Left);\n        }\n      }\n      return tokens;\n    };\n    auto text = encode(large), pattern = encode(small);\n    std::vector<int> prefix(pattern.size(), 0);\n    for (size_t i = 1; i < pattern.size(); ++i) {\n      int matched = prefix[i - 1];\n      while (matched > 0 && pattern[i] != pattern[matched])\n        matched = prefix[matched - 1];\n      if (pattern[i] == pattern[matched])\n        ++matched;\n      prefix[i] = matched;\n    }\n    int matched = 0;\n    for (const auto& token : text) {\n      while (matched > 0 && token != pattern[matched])\n        matched = prefix[matched - 1];\n      if (token == pattern[matched])\n        ++matched;\n      if (matched == static_cast<int>(pattern.size()))\n        return true;\n    }\n    return false;\n  }\n};\n",
+      "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n#include <unordered_map>\nstruct TreeNode {int Data;TreeNode* Left;TreeNode* Right;TreeNode* Parent;explicit TreeNode(int data):Data(data),Left(nullptr),Right(nullptr),Parent(nullptr){}};\n",
+      "suffix": "",
+      "references": [
+        {
+          "title": "Required callable model APIs",
+          "code": "struct TreeNode {\n  int Data;\n  TreeNode* Left;\n  TreeNode* Right;\n  TreeNode* Parent;\n  explicit TreeNode(int data) : Data(data), Left(nullptr), Right(nullptr), Parent(nullptr) {\n  }\n};\n",
+          "names": [
+            "TreeNode"
+          ]
+        }
+      ],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [
+        "TreeNode"
+      ],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/cpp/ctci6_4_10.cpp"
+      ],
+      "sourceSha256": {
+        "starter": "526f1748ff946504b865a05945cf91a8099c1508dcc02132d538da3149ec1795",
+        "solution": "e3e05d5c9756769583d218b90d0be8bcfd26ca735624486cebfee06d810fc0b7"
+      }
+    },
+    {
+      "problemId": "ctci6_4_10",
+      "language": "java",
+      "filename": "Solution.java",
+      "signature": "boolean ContainsExactSubtree(TreeNode large, TreeNode small)",
+      "starterCode": "class Solution {\n  public boolean ContainsExactSubtree(TreeNode large, TreeNode small) {\n    return false;\n  }\n}\n",
+      "solutionCode": "class Solution {\n  public boolean ContainsExactSubtree(TreeNode large, TreeNode small) {\n    if (small == null)\n      return true;\n    class Encoder {\n      List<String> encode(TreeNode root) {\n        List<String> tokens = new ArrayList<>();\n        List<TreeNode> stack = new ArrayList<>();\n        stack.add(root);\n        while (!stack.isEmpty()) {\n          TreeNode node = stack.remove(stack.size() - 1);\n          if (node == null)\n            tokens.add(\"#\");\n          else {\n            tokens.add(\"V\" + Integer.toString(node.Data));\n            stack.add(node.Right);\n            stack.add(node.Left);\n          }\n        }\n        return tokens;\n      }\n    }\n    Encoder encoder = new Encoder();\n    List<String> text = encoder.encode(large), pattern = encoder.encode(small);\n    int[] prefix = new int[pattern.size()];\n    for (int i = 1; i < pattern.size(); ++i) {\n      int matched = prefix[i - 1];\n      while (matched > 0 && !pattern.get(i).equals(pattern.get(matched)))\n        matched = prefix[matched - 1];\n      if (pattern.get(i).equals(pattern.get(matched)))\n        ++matched;\n      prefix[i] = matched;\n    }\n    int matched = 0;\n    for (String token : text) {\n      while (matched > 0 && !token.equals(pattern.get(matched)))\n        matched = prefix[matched - 1];\n      if (token.equals(pattern.get(matched)))\n        ++matched;\n      if (matched == pattern.size())\n        return true;\n    }\n    return false;\n  }\n}\n",
+      "prefix": "import java.util.*;\nclass TreeNode {public int Data;public TreeNode Left,Right,Parent;public TreeNode(int data){Data=data;}}\n",
+      "suffix": "",
+      "references": [
+        {
+          "title": "Required callable model APIs",
+          "code": "class TreeNode {\n  public int Data;\n  public TreeNode Left, Right, Parent;\n  public TreeNode(int data) {\n    Data = data;\n  }\n}\n",
+          "names": [
+            "TreeNode"
+          ]
+        }
+      ],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [
+        "TreeNode"
+      ],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/java/ctci6_4_10.java"
+      ],
+      "sourceSha256": {
+        "starter": "029dbb0031d04efdb38e91000731ed4fc8b039d7348b201e3c7c4b2ed3da8314",
+        "solution": "705380fd619dac466a5e368470eee2d31623890b9f8554d3ff7061f922c9ce41"
+      }
+    },
+    {
+      "problemId": "ctci6_4_12",
+      "language": "csharp",
+      "filename": "Solution.cs",
+      "signature": "int CountDownwardSumPaths(TreeNode? root, int target)",
+      "starterCode": "public class Solution\n{\n    public int CountDownwardSumPaths(TreeNode? root, int target)\n    {\n        return 0;\n    }\n}\n",
+      "solutionCode": "public class Solution\n{\n    public int CountDownwardSumPaths(TreeNode? root, int target)\n    {\n        if (root == null)\n            return 0;\n        var prefix = new Dictionary<int, int> { { 0, 1 } };\n        var stack = new Stack<(TreeNode Node, int Sum, bool Exit)>();\n        stack.Push((root, 0, false));\n        int answer = 0;\n        while (stack.Count > 0)\n        {\n            var frame = stack.Pop();\n            if (frame.Exit)\n            {\n                if (--prefix[frame.Sum] == 0)\n                    prefix.Remove(frame.Sum);\n                continue;\n            }\n            int running = frame.Sum + frame.Node.Data;\n            prefix.TryGetValue(running - target, out int count);\n            answer += count;\n            prefix.TryGetValue(running, out int previous);\n            prefix[running] = previous + 1;\n            stack.Push((frame.Node, running, true));\n            if (frame.Node.Right != null)\n                stack.Push((frame.Node.Right, running, false));\n            if (frame.Node.Left != null)\n                stack.Push((frame.Node.Left, running, false));\n        }\n        return answer;\n    }\n}\n",
+      "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic class TreeNode {public int Data;public TreeNode? Left,Right,Parent;public TreeNode(int data){Data=data;}}\n",
+      "suffix": "",
+      "references": [
+        {
+          "title": "Required callable model APIs",
+          "code": "public class TreeNode\n{\n    public int Data;\n    public TreeNode? Left, Right, Parent;\n    public TreeNode(int data)\n    {\n        Data = data;\n    }\n}\n",
+          "names": [
+            "TreeNode"
+          ]
+        }
+      ],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [
+        "TreeNode"
+      ],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/csharp/ctci6_4_12.cs"
+      ],
+      "sourceSha256": {
+        "starter": "19e1568f59abdb3ff62673754cd04ed78c2d41f6af74271a766f917699200c50",
+        "solution": "9e7bdb5442931ebf6e65378606262a584737c1004ee9f22ae6e9fa9573e1fff2"
+      }
+    },
+    {
+      "problemId": "ctci6_4_12",
+      "language": "javascript",
+      "filename": "solution.js",
+      "signature": "function CountDownwardSumPaths(root, target)",
+      "starterCode": "function CountDownwardSumPaths(root, target) {\n  return 0;\n}\n",
+      "solutionCode": "function CountDownwardSumPaths(root, target) {\n  if (root === null) return 0;\n  const prefix = new Map([[0, 1]]),\n    stack = [[root, 0, false]];\n  let answer = 0;\n  while (stack.length) {\n    let [node, running, exiting] = stack.pop();\n    if (exiting) {\n      const count = prefix.get(running) - 1;\n      if (count === 0) prefix.delete(running);\n      else prefix.set(running, count);\n      continue;\n    }\n    running += node.Data;\n    answer += prefix.get(running - target) || 0;\n    prefix.set(running, (prefix.get(running) || 0) + 1);\n    stack.push([node, running, true]);\n    if (node.Right !== null) stack.push([node.Right, running, false]);\n    if (node.Left !== null) stack.push([node.Left, running, false]);\n  }\n  return answer;\n}\n",
+      "prefix": "'use strict';\nclass TreeNode {constructor(data){this.Data=data;this.Left=this.Right=this.Parent=null;}}\n",
+      "suffix": "\nmodule.exports = {TreeNode,CountDownwardSumPaths};\n",
+      "references": [
+        {
+          "title": "Required callable model APIs",
+          "code": "class TreeNode {\n  constructor(data) {\n    this.Data = data;\n    this.Left = this.Right = this.Parent = null;\n  }\n}\n",
+          "names": [
+            "TreeNode"
+          ]
+        }
+      ],
+      "visibleSymbols": [
+        "CountDownwardSumPaths"
+      ],
+      "hiddenSymbols": [
+        "TreeNode"
+      ],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/javascript/ctci6_4_12.js"
+      ],
+      "sourceSha256": {
+        "starter": "e4fc1fd7f07dfbeae101dfc345c82c49d8530908aa4ff08181cb40673faefca8",
+        "solution": "ac7d2ccb827d1e89d819b02842925b3208dfdde10410051719ed031b11e49ca2"
+      }
+    },
+    {
+      "problemId": "ctci6_4_12",
+      "language": "python",
+      "filename": "solution.py",
+      "signature": "def CountDownwardSumPaths(root: TreeNode | None, target: int) -> int",
+      "starterCode": "def CountDownwardSumPaths(root: TreeNode | None, target: int) -> int:\n    return 0\n",
+      "solutionCode": "def CountDownwardSumPaths(root: TreeNode | None, target: int) -> int:\n    if root is None:\n        return 0\n    prefix = {0: 1}\n    stack = [(root, 0, False)]\n    answer = 0\n    while stack:\n        node, running, exiting = stack.pop()\n        if exiting:\n            prefix[running] -= 1\n            if prefix[running] == 0:\n                del prefix[running]\n            continue\n        running += node.Data\n        answer += prefix.get(running - target, 0)\n        prefix[running] = prefix.get(running, 0) + 1\n        stack.append((node, running, True))\n        if node.Right is not None:\n            stack.append((node.Right, running, False))\n        if node.Left is not None:\n            stack.append((node.Left, running, False))\n    return answer\n",
+      "prefix": "class TreeNode:\n    def __init__(self, data: int):\n        self.Data = data\n        self.Left = self.Right = self.Parent = None\n",
+      "suffix": "",
+      "references": [
+        {
+          "title": "Required callable model APIs",
+          "code": "class TreeNode:\n    def __init__(self, data: int):\n        self.Data = data\n        self.Left = self.Right = self.Parent = None\n",
+          "names": [
+            "TreeNode"
+          ]
+        }
+      ],
+      "visibleSymbols": [
+        "CountDownwardSumPaths"
+      ],
+      "hiddenSymbols": [
+        "TreeNode"
+      ],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/python/ctci6_4_12.py"
+      ],
+      "sourceSha256": {
+        "starter": "ec58b4cc918a71e0b35d9f5131770ab5df9ad3f750d7a1d864ee24db12aec9fd",
+        "solution": "0bb75fe48e2a58bac43350e32e13751a8bd27e8a6d0f5fecf840dbce45a9dd19"
+      }
+    },
+    {
+      "problemId": "ctci6_4_12",
+      "language": "cpp",
+      "filename": "solution.cpp",
+      "signature": "int CountDownwardSumPaths(TreeNode* root, int target)",
+      "starterCode": "class Solution {\n public:\n  int CountDownwardSumPaths(TreeNode* root, int target) {\n    return 0;\n  }\n};\n",
+      "solutionCode": "class Solution {\n public:\n  int CountDownwardSumPaths(TreeNode* root, int target) {\n    if (!root)\n      return 0;\n    struct Frame {\n      TreeNode* Node;\n      int Sum;\n      bool Exit;\n    };\n    std::vector<Frame> stack{{root, 0, false}};\n    std::unordered_map<int, int> prefix{{0, 1}};\n    int answer = 0;\n    while (!stack.empty()) {\n      auto frame = stack.back();\n      stack.pop_back();\n      if (frame.Exit) {\n        if (--prefix[frame.Sum] == 0)\n          prefix.erase(frame.Sum);\n        continue;\n      }\n      int running = frame.Sum + frame.Node->Data;\n      auto found = prefix.find(running - target);\n      if (found != prefix.end())\n        answer += found->second;\n      ++prefix[running];\n      stack.push_back({frame.Node, running, true});\n      if (frame.Node->Right)\n        stack.push_back({frame.Node->Right, running, false});\n      if (frame.Node->Left)\n        stack.push_back({frame.Node->Left, running, false});\n    }\n    return answer;\n  }\n};\n",
+      "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n#include <unordered_map>\nstruct TreeNode {int Data;TreeNode* Left;TreeNode* Right;TreeNode* Parent;explicit TreeNode(int data):Data(data),Left(nullptr),Right(nullptr),Parent(nullptr){}};\n",
+      "suffix": "",
+      "references": [
+        {
+          "title": "Required callable model APIs",
+          "code": "struct TreeNode {\n  int Data;\n  TreeNode* Left;\n  TreeNode* Right;\n  TreeNode* Parent;\n  explicit TreeNode(int data) : Data(data), Left(nullptr), Right(nullptr), Parent(nullptr) {\n  }\n};\n",
+          "names": [
+            "TreeNode"
+          ]
+        }
+      ],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [
+        "TreeNode"
+      ],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/cpp/ctci6_4_12.cpp"
+      ],
+      "sourceSha256": {
+        "starter": "e40b544dd808d514cf5122e702bd8f73230716076458f95c3b3ae3d5d6811179",
+        "solution": "359dfbf4060add4d22b3a972ab629f540d1805bbd3f0a0652564bbc931f40522"
+      }
+    },
+    {
+      "problemId": "ctci6_4_12",
+      "language": "java",
+      "filename": "Solution.java",
+      "signature": "int CountDownwardSumPaths(TreeNode root, int target)",
+      "starterCode": "class Solution {\n  public int CountDownwardSumPaths(TreeNode root, int target) {\n    return 0;\n  }\n}\n",
+      "solutionCode": "class Solution {\n  public int CountDownwardSumPaths(TreeNode root, int target) {\n    if (root == null)\n      return 0;\n    record Frame(TreeNode node, int sum, boolean exit) {}\n    Map<Integer, Integer> prefix = new HashMap<>();\n    prefix.put(0, 1);\n    Deque<Frame> stack = new ArrayDeque<>();\n    stack.push(new Frame(root, 0, false));\n    int answer = 0;\n    while (!stack.isEmpty()) {\n      var frame = stack.pop();\n      if (frame.exit()) {\n        int count = prefix.get(frame.sum()) - 1;\n        if (count == 0)\n          prefix.remove(frame.sum());\n        else\n          prefix.put(frame.sum(), count);\n        continue;\n      }\n      int running = frame.sum() + frame.node().Data;\n      answer += prefix.getOrDefault(running - target, 0);\n      prefix.put(running, prefix.getOrDefault(running, 0) + 1);\n      stack.push(new Frame(frame.node(), running, true));\n      if (frame.node().Right != null)\n        stack.push(new Frame(frame.node().Right, running, false));\n      if (frame.node().Left != null)\n        stack.push(new Frame(frame.node().Left, running, false));\n    }\n    return answer;\n  }\n}\n",
+      "prefix": "import java.util.*;\nclass TreeNode {public int Data;public TreeNode Left,Right,Parent;public TreeNode(int data){Data=data;}}\n",
+      "suffix": "",
+      "references": [
+        {
+          "title": "Required callable model APIs",
+          "code": "class TreeNode {\n  public int Data;\n  public TreeNode Left, Right, Parent;\n  public TreeNode(int data) {\n    Data = data;\n  }\n}\n",
+          "names": [
+            "TreeNode"
+          ]
+        }
+      ],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [
+        "TreeNode"
+      ],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/java/ctci6_4_12.java"
+      ],
+      "sourceSha256": {
+        "starter": "28a93fbc2c56ec75f33a99ebadcc11f27e27c2640c68860ac8d897ba3cb6eec0",
+        "solution": "2e1ed4d8583408641aa6ee0437afe05398f38baf0d2fec3735bc6c2672959115"
       }
     },
     {

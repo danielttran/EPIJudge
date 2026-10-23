@@ -60,3 +60,153 @@ def valid_observation(ref,case,observed):
     if len(actual)!=n or set(actual)!=set(range(n)):return False
     positions={node:index for index,node in enumerate(actual)}
     return all(positions[a]<positions[b] for a,b in edges)
+
+_previous_tree_oracle=oracle
+_previous_tree_cases=cases
+_previous_tree_observation=valid_observation
+from functools import lru_cache
+
+@lru_cache(None)
+def shapes(size):
+    if size==0:return (None,)
+    return tuple((left,right) for count in range(size) for left in shapes(count) for right in shapes(size-count-1))
+
+def tree_view(shape,values=None):
+    rows=[]
+    def build(part):
+        if part is None:return -1
+        index=len(rows);rows.append([0,-1,-1])
+        rows[index][1]=build(part[0]);rows[index][2]=build(part[1]);return index
+    selected=build(shape)
+    if values is not None:
+        for row,value in zip(rows,values):row[0]=value
+    return dict(nodes=rows,selected=selected)
+
+def descendants(rows,start):
+    result=[];stack=[start] if start!=-1 else []
+    while stack:
+        node=stack.pop();result.append(node)
+        for child in rows[node][1:]:
+            if child!=-1:stack.append(child)
+    return result
+
+def parents(rows):
+    result=[-1]*len(rows)
+    for index,row in enumerate(rows):
+        for child in row[1:]:
+            if child!=-1:result[child]=index
+    return result
+
+def inorder(rows,start):
+    result=[];stack=[];node=start
+    while node!=-1 or stack:
+        while node!=-1:stack.append(node);node=rows[node][1]
+        node=stack.pop();result.append(node);node=rows[node][2]
+    return result
+
+def bst_view(shape):
+    view=tree_view(shape)
+    for value,index in enumerate(inorder(view['nodes'],view['selected'])):view['nodes'][index][0]=value-3
+    return view
+
+def chain(size,value=0,right=False):
+    return dict(nodes=[[value(i) if callable(value) else value,-1 if right or i+1==size else i+1,i+1 if right and i+1<size else -1] for i in range(size)],selected=0 if size else -1)
+
+def shuffled(view,rng):
+    n=len(view['nodes']);order=list(range(n));rng.shuffle(order);mapping={old:new for new,old in enumerate(order)}
+    return dict(nodes=[[view['nodes'][old][0]]+[mapping[child] if child!=-1 else -1 for child in view['nodes'][old][1:]] for old in order],selected=mapping[view['selected']] if view['selected']!=-1 else -1)
+
+def oracle(ref,args):
+    if ref not in ('4.4','4.5','4.6','4.8','4.10','4.12'):return _previous_tree_oracle(ref,args)
+    view=args[0];rows=view['nodes'];root=view['selected']
+    if ref=='4.4':
+        def height(start):
+            frontier=[start] if start!=-1 else [];result=0
+            while frontier:
+                result+=1;frontier=[child for node in frontier for child in rows[node][1:] if child!=-1]
+            return result
+        return all(abs(height(rows[node][1])-height(rows[node][2]))<=1 for node in descendants(rows,root))
+    if ref=='4.5':
+        return all(all(rows[child][0]<=rows[node][0] for child in descendants(rows,rows[node][1])) and all(rows[child][0]>rows[node][0] for child in descendants(rows,rows[node][2])) for node in descendants(rows,root))
+    if ref=='4.6':
+        if root==-1:return -1
+        parent=parents(rows);component=root
+        while parent[component]!=-1:component=parent[component]
+        order=inorder(rows,component);index=order.index(root)+1
+        return order[index] if index<len(order) else -1
+    if ref=='4.8':
+        parent=parents(rows);ancestors=set();node=root
+        while node!=-1:ancestors.add(node);node=parent[node]
+        node=args[1]
+        while node!=-1:
+            if node in ancestors:return node
+            node=parent[node]
+        return -1
+    if ref=='4.10':
+        other=args[1];smallrows=other['nodes'];small=other['selected']
+        if small==-1:return True
+        for candidate in descendants(rows,root):
+            stack=[(candidate,small)];valid=True
+            while stack:
+                a,b=stack.pop()
+                if a==-1 or b==-1:
+                    if a!=b:valid=False;break
+                elif rows[a][0]!=smallrows[b][0]:valid=False;break
+                else:stack.extend(zip(rows[a][1:],smallrows[b][1:]))
+            if valid:return True
+        return False
+    target=args[1];answer=0
+    for start in descendants(rows,root):
+        stack=[(start,0)]
+        while stack:
+            node,total=stack.pop();total+=rows[node][0];answer+=total==target
+            stack.extend((child,total) for child in rows[node][1:] if child!=-1)
+    return answer
+
+def cases(spec):
+    ref=spec['ref']
+    if ref not in ('4.4','4.5','4.6','4.8','4.10','4.12'):return _previous_tree_cases(spec)
+    rng=random.Random(int(ref.replace('.',''))+400000);args=[spec['example'][0]]
+    if ref=='4.4':
+        args += [[tree_view(shape)] for n in range(8) for shape in shapes(n)]
+        args += [[chain(1000)],[chain(1000,right=True)]]
+        for _ in range(50):
+            view=tree_view(rng.choice(shapes(rng.randrange(1,8))));view['selected']=rng.randrange(len(view['nodes']));args.append([shuffled(view,rng)])
+    elif ref in ('4.5','4.12'):
+        for n in range(5):
+            for shape in shapes(n):
+                for values in itertools.product((-1,0,1),repeat=n):
+                    view=tree_view(shape,values)
+                    args += [[view]] if ref=='4.5' else [[view,target] for target in (-2,-1,0,1,2)]
+        if ref=='4.5':
+            args += [[chain(1000,0)],[chain(1000,0,right=True)],[chain(1000,lambda i:i-500,right=True)],[{'nodes':[[-2147483648,-1,1],[2147483647,-1,-1]],'selected':0}],[{'nodes':[[2147483647,1,-1],[-2147483648,-1,-1]],'selected':0}],[{'nodes':[[10,1,-1],[5,-1,2],[12,-1,-1]],'selected':1}]]
+        else:
+            args += [[chain(1000),0],[chain(1000,1000),1000000],[chain(1000,-1000),-1000000],[{'nodes':[[0,1,2],[0,-1,-1],[0,-1,-1]],'selected':0},0],[{'nodes':[[99,1,-1],[1,2,-1],[2,-1,-1]],'selected':1},3]]
+    elif ref=='4.6':
+        for n in range(6):
+            for shape in shapes(n):
+                base=bst_view(shape)
+                for selected in range(-1,n):args.append([dict(base,selected=selected)])
+        args += [[dict(chain(1000,0),selected=i)] for i in (0,1,500,999,-1)]
+        args += [[dict(chain(1000,lambda i:i-500,right=True),selected=i)] for i in (0,1,500,999)]
+        args += [[{'nodes':[[0,1,2],[-2147483648,-1,-1],[2147483647,-1,-1]],'selected':i}] for i in range(3)]
+    elif ref=='4.8':
+        for n in range(6):
+            for shape in shapes(n):
+                base=tree_view(shape,[7]*n)
+                args += [[dict(base,selected=a),b] for a in range(-1,n) for b in range(-1,n)]
+        forest={'nodes':[[9,1,-1],[9,-1,-1],[9,-1,3],[9,-1,-1]],'selected':0}
+        args += [[dict(forest,selected=a),b] for a in range(-1,4) for b in range(-1,4)]
+        args += [[dict(chain(1000),selected=a),b] for a,b in ((999,0),(999,500),(998,999),(500,500),(-1,999))]
+    else:
+        views=[tree_view(shape,values) for n in range(4) for shape in shapes(n) for values in itertools.product((-1,1),repeat=n)]
+        args += [[large,small] for large in views for small in views]
+        args += [[chain(1000),chain(500)],[chain(1000),chain(500,lambda i:1 if i==499 else 0)],[{'nodes':[[12,-1,-1]],'selected':0},{'nodes':[[2,-1,-1]],'selected':0}],[{'nodes':[[1,1,-1],[1,-1,-1]],'selected':0},{'nodes':[[1,-1,1],[1,-1,-1]],'selected':0}]]
+    distinct={json.dumps(a):a for a in args}
+    return [dict(arguments=a,expected=oracle(ref,a)) for a in distinct.values()]
+
+def valid_observation(ref,case,observed):
+    if ref not in ('4.4','4.5','4.6','4.8','4.10','4.12'):return _previous_tree_observation(ref,case,observed)
+    if not isinstance(observed,dict) or observed.get('mutationOk') is not True:return False
+    actual=observed.get('actual');expected=case['expected']
+    return type(actual) is type(expected) and actual==expected

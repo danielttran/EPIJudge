@@ -161,6 +161,8 @@ def adapter(entry, language, batch):
         )
         if batch == 2:
             imports += "LinkedListNode = user.LinkedListNode\n"
+        elif batch == 4 and entry["ref"] in models04.TREE_REFS:
+            imports += "TreeNode = user.TreeNode\n"
         elif batch == 10 and entry["ref"] == "10.4":
             imports += "Listy = user.Listy\n"
         elif batch == 3:
@@ -175,6 +177,8 @@ def adapter(entry, language, batch):
         )
         if batch == 2:
             imports += "const LinkedListNode = user.LinkedListNode;\n"
+        elif batch == 4 and entry["ref"] in models04.TREE_REFS:
+            imports += "const TreeNode = user.TreeNode;\n"
         elif batch == 10 and entry["ref"] == "10.4":
             imports += "const Listy = user.Listy;\n"
         elif batch == 3:
@@ -233,6 +237,7 @@ def generate_runtime():
                 exports = (
                     ["LinkedListNode"]
                     if batch == 2
+                    else ["TreeNode"] if batch == 4 and entry["ref"] in models04.TREE_REFS
                     else ["Listy"] if batch == 10 and entry["ref"] == "10.4"
                     else ["BankError", "IntStack", "Animal"]
                     if batch == 3
@@ -255,7 +260,7 @@ def generate_runtime():
                             HEADERS[language]
                         )
                         if batch == 3
-                        else models10.LISTY[language] if batch == 10 and entry["ref"] == "10.4" else ""
+                        else models04.TREE[language] if batch == 4 and entry["ref"] in models04.TREE_REFS else models10.LISTY[language] if batch == 10 and entry["ref"] == "10.4" else ""
                     ),
                 )
             rows.append(item)

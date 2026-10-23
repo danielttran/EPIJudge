@@ -129,6 +129,13 @@ public static class CtciStagingGrader
             if (observed.ValueKind != JsonValueKind.Object || observed.TryGetProperty("error", out var error) && error.ValueKind != JsonValueKind.Null)
                 return "Your code did not finish this case successfully.";
             if (definition.Batch == 10) return SortingFailure(definition, test, observed);
+            if (definition.Batch == 4 && definition.Result == "tree")
+            {
+                if (observed.GetProperty("mutationOk").ValueKind != JsonValueKind.True) return "Preserve every original node's Data, Left, Right and Parent fields.";
+                var nodeObservation = observed.GetProperty("actual");
+                if (nodeObservation.ValueKind != JsonValueKind.Number || !nodeObservation.TryGetInt32(out int identity) || identity < -1) return "Return an original TreeNode object or null; a newly allocated equal-valued node is not the original node.";
+                return Equal(nodeObservation, test.Expected) ? null : "Return the required original successor/common-ancestor node, or null when it does not exist.";
+            }
             if (definition.Batch == 4 && definition.Ref == "4.7")
             {
                 if (observed.GetProperty("mutationOk").ValueKind != JsonValueKind.True) return "Preserve the dependency array and its original rows.";
