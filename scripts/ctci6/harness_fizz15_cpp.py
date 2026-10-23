@@ -1,5 +1,7 @@
 """Native std::thread four-role printing with blocking condition-variable permits."""
 CORE=r'''
+#include <type_traits>
+static_assert(std::is_same_v<decltype(std::declval<Solution_15_7&>().RunFizzBuzz(0,0,std::declval<FizzContext&>())),void>,"RunFizzBuzz must return void");
 struct FizzState15{
  std::mutex mutex;std::condition_variable changed;int permits[4]={1,0,0,0},ready=0,limit,next=1;bool start=false,printing=false;std::vector<std::string> events,errors;
  explicit FizzState15(int limit):limit(limit){}static int owner(int v){return v%15==0?3:v%3==0?1:v%5==0?2:0;}

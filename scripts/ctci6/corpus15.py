@@ -44,3 +44,22 @@ def valid_observation(ref,case,observed):
         from corpus_dining15 import valid_observation as run
         return run(ref,case,observed)
     return _fizz_observation(ref,case,observed)
+
+_dining_cases=cases
+_dining_oracle=oracle
+_dining_observation=valid_observation
+def cases(spec):
+    if spec['ref']=='15.4':
+        from corpus_locks15 import cases as run
+        return run(spec)
+    return _dining_cases(spec)
+def oracle(ref,args):
+    if ref=='15.4':
+        from corpus_locks15 import oracle as run
+        return run(ref,args)
+    return _dining_oracle(ref,args)
+def valid_observation(ref,case,observed):
+    if ref=='15.4':
+        from corpus_locks15 import valid_observation as run
+        return run(ref,case,observed)
+    return _dining_observation(ref,case,observed)

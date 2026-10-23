@@ -518,7 +518,7 @@ def expected_references(entry: dict) -> set[str] | None:
         if row["ref"]=="10.6":
             return {"LineRecord", "TextFile", "TextWorkspace"}
         if row["batch"] == 15:
-            return {"ForkContext"} if row["ref"]=="15.3" else {"FizzContext"} if row["ref"]=="15.7" else {"SyncContext"}
+            return {"ResourceLock", "LockPool"} if row["ref"]=="15.4" else {"ForkContext"} if row["ref"]=="15.3" else {"FizzContext"} if row["ref"]=="15.7" else {"SyncContext"}
         if row["batch"] == 13:
             return {"FairCoinSource"} if row["ref"]=="13.8" else {"Country"}
         if row["ref"] == "4.11":

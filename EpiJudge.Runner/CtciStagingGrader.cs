@@ -537,7 +537,7 @@ public static class CtciStagingGrader
             if (definition.Batch is 1 or 3 or 4 or 5 or 7 or 8 or 13 or 15 or 16 or 17)
             {
                 if (observed.GetProperty("mutationOk").ValueKind != JsonValueKind.True)
-                    return definition.Batch == 3 ? "Preserve the required stack and original Animal identities, fields and return types." : "Preserve the required input, row, or buffer identities.";
+                    return definition.Ref == "15.4" ? "Preserve declaration arrays, return the exact provided locks and allow granted orders to complete safely." : definition.Ref == "15.5" ? "Complete each worker work exactly once after its predecessor completes, using the provided synchronization API." : definition.Ref == "15.7" ? "Print every item once from its assigned worker, in order without overlapping print calls." : definition.Batch == 3 ? "Preserve the required stack and original Animal identities, fields and return types." : "Preserve the required input, row, or buffer identities.";
                 return Equal(observed.GetProperty("actual"), test.Expected) ? null : "The returned or mutated result does not match the stated contract.";
             }
             var before = observed.GetProperty("before");

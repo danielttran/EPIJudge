@@ -16,7 +16,7 @@ class OwnedForkContext15 extends ForkContext{
 }
 '''
 INSIDE=r'''
-static JsonValue execute(JsonObject row)throws Exception{var args=row.get("arguments").asArray();int n=args.get(0).asInt(),bites=args.get(1).asInt(),mask=args.get(3).asInt();var state=new DiningState15(n,bites);var threads=new ArrayList<Thread>();
+static JsonValue execute(JsonObject row)throws Exception{if(Solution_15_3.class.getMethod("Dine",int.class,int.class,int.class,ForkContext.class).getReturnType()!=void.class)throw new IllegalArgumentException("Dine must return void");var args=row.get("arguments").asArray();int n=args.get(0).asInt(),bites=args.get(1).asInt(),mask=args.get(3).asInt();var state=new DiningState15(n,bites);var threads=new ArrayList<Thread>();
  for(var element:args.get(2).asArray()){int role=element.asInt();var thread=new Thread(()->{try{var context=new OwnedForkContext15(state,role);state.ready.countDown();if(!state.start.await(1000,java.util.concurrent.TimeUnit.MILLISECONDS))throw new IllegalStateException("Workers did not start");if(((mask>>role)&1)!=0)Thread.sleep(4);new Solution_15_3().Dine(role,n,bites,context);}catch(Throwable error){synchronized(state.mutex){state.errors.add(error.toString());}}});thread.setDaemon(true);threads.add(thread);}
  for(var thread:threads)thread.start();boolean ready=state.ready.await(1000,java.util.concurrent.TimeUnit.MILLISECONDS);state.start.countDown();for(var thread:threads)thread.join(1500);
  synchronized(state.mutex){boolean valid=ready&&state.errors.isEmpty();for(int v:state.meals)valid&=v==bites;for(int v:state.owners)valid&=v== -1;for(var thread:threads)valid&=!thread.isAlive();var actual=new JsonArray();for(int role:state.events)actual.add(role);return new JsonObject().add("actual",actual).add("mutationOk",valid);}

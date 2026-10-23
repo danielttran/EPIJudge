@@ -296,5 +296,157 @@
         "solutionCode": "class Solution {\n  public void Dine(int role, int philosophers, int bites, ForkContext context) {\n    int left = role, right = (role + 1) % philosophers, lower = Math.min(left, right),\n        higher = Math.max(left, right);\n    for (int bite = 0; bite < bites; ++bite) {\n      context.Take(lower);\n      context.Take(higher);\n      context.Eat();\n      context.Drop(higher);\n      context.Drop(lower);\n    }\n  }\n}\n"
       }
     }
+  },
+  {
+    "ref": "15.4",
+    "method": "DeadlockFreeLocks",
+    "params": [
+      [
+        "resourceCount",
+        "i"
+      ],
+      [
+        "declarations",
+        "aai"
+      ],
+      [
+        "requests",
+        "aai"
+      ],
+      [
+        "pool",
+        "lockpool"
+      ]
+    ],
+    "result": "state",
+    "mutation": "state",
+    "description": "Implement a deadlock-preventing lock factory. Owners declare the order in which they intend to acquire resource locks. Admit a declaration exactly when replacing that owner previous order leaves the union resource-dependency graph acyclic. Then grant locks only in each owner accepted order. Return the exact native lock from the provided pool, not a resource number, boolean or newly created independent lock.",
+    "constraints": [
+      "Construct DeadlockFreeLocks(resourceCount,pool), where resourceCount is 1..6 and the supplied LockPool has one stable ResourceLock per resource index 0..resourceCount-1. pool.Get(resource) returns that same borrowed lock object each time. Each ResourceLock exposes Lock()/Unlock() for actual exclusive native locking. The factory must not acquire/release locks during construction, Declare or GetLock, and must not delete or replace pool-owned locks.",
+      "Owners are signed integer IDs, with supported IDs 0..3. Declare(owner,order) returns a boolean. Invalid owner/resource indices or duplicate resource IDs return false atomically. An empty order is valid. For a valid candidate, form directed edges between consecutive resources in every active owner order, replacing only the candidate owner previous order. Return true and store a copy only if that graph is acyclic; otherwise return false and preserve every prior accepted order and next-request position. A successfully replaced order resets that owner next-request position to its beginning.",
+      "All Declare calls occur before GetLock calls. These administration calls are serialized; this interface does not require concurrent mutation of factory bookkeeping. The caller may mutate its order array after Declare returns: stored dependencies and pending order must remain unchanged. Declare itself preserves the caller array. Different factory instances own independent declaration/progress state, even when they borrow the same pool.",
+      "GetLock(owner,resource) returns the exact pool.Get(resource) object only when resource is the next not-yet-granted resource in that owner accepted order; advance only then. Unknown/invalid owners, wrong/out-of-bounds resource, no declaration, empty/exhausted order or out-of-order requests return null/None/nullptr without consuming a pending resource. Lookup does not acquire the returned lock.",
+      "Clients must acquire granted locks in the order received, hold them until their work finishes, and then release them. The deadlock-prevention guarantee applies to this protocol; direct rogue pool access or out-of-order acquisition is not covered. The judge executes real competing native clients on granted orders and checks exclusive lock identity/ownership and completion. JavaScript marshals the checked stable lock identities to shared native worker mutexes; it does not run a sequential graph-only substitute.",
+      "JSON fixtures contain resourceCount, up to 20 declaration rows [owner,...orderedResources], up to 40 request pairs [owner,resource], and [] for the injected pool. Each row/resource/owner member is a signed 32-bit integer. The callable is the full factory class, not a function returning a transcript. Private display is {\"declarations\":[admission booleans],\"grants\":[whether each GetLock returned a native lock]}; it is an observation, not the class return value."
+    ],
+    "why": "A resource-dependency edge means an owner can hold one lock before requesting the next. A directed cycle permits circular waiting, so admit only an acyclic combined dependency graph. Build each candidate graph from the complete active per-owner orders before committing: deleting candidate edges on rejection can accidentally remove an edge still needed by another owner. Keep per-owner request positions separately so an invalid lookup never silently skips a required acquisition.",
+    "correctness": "Initially every owner order is empty and the graph has no edges. For Declare, validate bounds/distinctness before indexing. Rebuild the candidate union using the new path only for the target owner, and compute reachability by Floyd-Warshall. After processing intermediate vertices through k, reach[i][j] exactly describes paths whose internal vertices are among those processed; induction over k establishes complete reachability. A true diagonal entry is exactly a directed cycle, so rejection and admission follow the stated graph policy. No live state changes until admission; cloning the order and resetting only its cursor preserves other owners and caller independence. GetLock compares only the next pending resource and advances exactly on a match, returning the stable provided identity. Thus clients following granted orders obey the admitted resource DAG. A circular wait would imply a resource-dependency cycle, impossible in that DAG; finite clients under eventual scheduling complete and release their locks.",
+    "walkthrough": "With 3 resources, owner 0 declares [0,1] (accept), owner 1 declares [1,2] (accept), and owner 2 declares [2,0] (reject: 0\u21921\u21922\u21920 would be cyclic). GetLock(0,1) returns null and leaves 0 pending. GetLock(0,0) then GetLock(0,1) return the actual locks 0 and 1. Owner 1 can obtain 1 then 2; owner 2 has no accepted order. After owner 0 is exhausted, another GetLock(0,1) returns null. The native clients may contend on lock 1, but no circular wait exists.",
+    "example": [
+      [
+        3,
+        [
+          [
+            0,
+            0,
+            1
+          ],
+          [
+            1,
+            1,
+            2
+          ],
+          [
+            2,
+            2,
+            0
+          ]
+        ],
+        [
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            2
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        []
+      ],
+      {
+        "declarations": [
+          true,
+          true,
+          false
+        ],
+        "grants": [
+          false,
+          true,
+          true,
+          true,
+          true,
+          false,
+          false
+        ]
+      }
+    ],
+    "time": "Declare takes O(R^3 + sum(active order lengths) + new order length), dominated by O(R^3) for R resources and four owners with distinct-resource paths. GetLock takes O(1) bookkeeping plus the provided constant-time pool lookup. Native client acquisition waiting is outside these administration-method costs.",
+    "space": "O(sum(active order lengths)+4) persistent factory state and O(R^2) temporary reachability/seen storage per Declare, excluding the borrowed native lock pool and client threads. Returned locks are borrowed identities, not copies or owned allocations.",
+    "edges": [
+      "Empty order, invalid signed indices, repeated resources and exhausted lookups.",
+      "Atomic rejection, shared edges belonging to several owners and replacement that removes only one owner old dependencies.",
+      "Out-of-order GetLock must not consume the next resource.",
+      "Caller changes its old array; independent factory instances share a pool without sharing orders.",
+      "Acyclic nonnumeric resource orders are valid; no global ascending-order restriction is imposed."
+    ],
+    "related": "The primary LockFactory establishes upfront declaration, cycle admission and enforcing declared acquisition order. This independent class makes empty orders, owner replacement, rollback/shared-edge preservation, input ownership and the client protocol explicit. It supplies stable native locks rather than replacing the task with a cycle-detection boolean.",
+    "languageWhy": {
+      "csharp": "C# rebuilds a bool[,] reachability matrix and clones accepted int[] orders with ToArray. Each owner cursor is private instance state. ResourceLock? signals a rejected request; a successful GetLock returns the same supplied pool object without acquiring it.",
+      "java": "Java owns int[4][] order copies and next positions. order.clone prevents caller mutation from corrupting a later candidate graph. The boolean[][] closure has independent rows, and GetLock returns the exact borrowed ResourceLock or null.",
+      "cpp": "C++ owns copied vector<int> orders and size_t cursors in fixed four-owner arrays, while borrowing LockPool&. vector<vector<bool>> stores reachability; explicit logical expressions assign its proxy bits safely. Returned ResourceLock* remains pool-owned; the class never deletes native locks.",
+      "python": "Python creates independent reachability rows and copies accepted paths. Candidate rebuild selects the new path without modifying active orders, so rejection requires no destructive rollback. None is distinct from a granted ResourceLock object, and each constructed factory owns separate order/cursor lists.",
+      "javascript": "JavaScript uses fresh reachability rows and order.slice on admission. A candidate replaces only one owner path for cycle checking; failed checks leave orders and positions unchanged. GetLock returns the original pool object or null, enabling identity checks before real worker-thread acquisition."
+    },
+    "id": "ctci6_15_4",
+    "title": "Deadlock Free Class",
+    "testCount": 65,
+    "languages": {
+      "csharp": {
+        "signature": "DeadlockFreeLocks(int resourceCount,LockPool pool); bool Declare(int owner,int[] order); ResourceLock? GetLock(int owner,int resource)",
+        "starterCode": "public class DeadlockFreeLocks\n{\n    public DeadlockFreeLocks(int resourceCount, LockPool pool)\n    {\n    }\n    public bool Declare(int owner, int[] order) => false;\n    public ResourceLock? GetLock(int owner, int resource) => null;\n}\n",
+        "solutionCode": "public class DeadlockFreeLocks\n{\n    private readonly int count;\n    private readonly LockPool pool;\n    private readonly int[][] orders = Enumerable.Range(0, 4)\n                                          .Select(\n                                              _ => Array.Empty<int>())\n                                          .ToArray();\n    private readonly int[] next = new int[4];\n    public DeadlockFreeLocks(int resourceCount, LockPool pool)\n    {\n        count = resourceCount;\n        this.pool = pool;\n    }\n    public bool Declare(int owner, int[] order)\n    {\n        if (owner < 0 || owner >= 4)\n            return false;\n        var seen = new bool[count];\n        foreach (int resource in order)\n        {\n            if (resource < 0 || resource >= count || seen[resource])\n                return false;\n            seen[resource] = true;\n        }\n        var reach = new bool[count, count];\n        for (int candidate = 0; candidate < 4; ++candidate)\n        {\n            var path = candidate == owner ? order : orders[candidate];\n            for (int i = 1; i < path.Length; ++i)\n                reach[path[i - 1], path[i]] = true;\n        }\n        for (int middle = 0; middle < count; ++middle)\n            for (int first = 0; first < count; ++first)\n                for (int second = 0; second < count; ++second)\n                    reach[first, second] |= reach[first, middle] && reach[middle, second];\n        for (int i = 0; i < count; ++i)\n            if (reach[i, i])\n                return false;\n        orders[owner] = order.ToArray();\n        next[owner] = 0;\n        return true;\n    }\n    public ResourceLock? GetLock(int owner, int resource)\n    {\n        if (owner < 0 || owner >= 4)\n            return null;\n        var path = orders[owner];\n        if (next[owner] == path.Length || path[next[owner]] != resource)\n            return null;\n        next[owner]++;\n        return pool.Get(resource);\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "new DeadlockFreeLocks(resourceCount,pool); Declare(owner,order); GetLock(owner,resource)",
+        "starterCode": "class DeadlockFreeLocks {\n  constructor(resourceCount, pool) {}\n  Declare(owner, order) {\n    return false;\n  }\n  GetLock(owner, resource) {\n    return null;\n  }\n}\n",
+        "solutionCode": "class DeadlockFreeLocks {\n  constructor(resourceCount, pool) {\n    this.count = resourceCount;\n    this.pool = pool;\n    this.orders = Array.from({ length: 4 }, () => []);\n    this.next = Array(4).fill(0);\n  }\n  Declare(owner, order) {\n    if (owner < 0 || owner >= 4) return false;\n    const seen = Array(this.count).fill(false);\n    for (const resource of order) {\n      if (resource < 0 || resource >= this.count || seen[resource]) return false;\n      seen[resource] = true;\n    }\n    const reach = Array.from({ length: this.count }, () => Array(this.count).fill(false));\n    for (let candidate = 0; candidate < 4; ++candidate) {\n      const path = candidate === owner ? order : this.orders[candidate];\n      for (let i = 1; i < path.length; ++i) reach[path[i - 1]][path[i]] = true;\n    }\n    for (let middle = 0; middle < this.count; ++middle)\n      for (let first = 0; first < this.count; ++first)\n        for (let second = 0; second < this.count; ++second)\n          reach[first][second] =\n            reach[first][second] || (reach[first][middle] && reach[middle][second]);\n    for (let i = 0; i < this.count; ++i) if (reach[i][i]) return false;\n    this.orders[owner] = order.slice();\n    this.next[owner] = 0;\n    return true;\n  }\n  GetLock(owner, resource) {\n    if (owner < 0 || owner >= 4) return null;\n    const path = this.orders[owner],\n      position = this.next[owner];\n    if (position === path.length || path[position] !== resource) return null;\n    ++this.next[owner];\n    return this.pool.Get(resource);\n  }\n}\n"
+      },
+      "python": {
+        "signature": "DeadlockFreeLocks(resourceCount: int,pool: LockPool); Declare(owner: int,order: list[int]) -> bool; GetLock(owner: int,resource: int) -> ResourceLock | None",
+        "starterCode": "class DeadlockFreeLocks:\n    def __init__(self, resourceCount: int, pool: LockPool):\n        self._unused = resourceCount\n\n    def Declare(self, owner: int, order: list[int]) -> bool:\n        return False\n\n    def GetLock(self, owner: int, resource: int) -> ResourceLock | None:\n        return None\n",
+        "solutionCode": "class DeadlockFreeLocks:\n    def __init__(self, resourceCount: int, pool: LockPool):\n        self._count = resourceCount\n        self._pool = pool\n        self._orders = [[] for _ in range(4)]\n        self._next = [0] * 4\n\n    def Declare(self, owner: int, order: list[int]) -> bool:\n        if not 0 <= owner < 4:\n            return False\n        seen = [False] * self._count\n        for resource in order:\n            if not 0 <= resource < self._count or seen[resource]:\n                return False\n            seen[resource] = True\n        reach = [[False] * self._count for _ in range(self._count)]\n        for candidate in range(4):\n            path = order if candidate == owner else self._orders[candidate]\n            for first, second in zip(path, path[1:]):\n                reach[first][second] = True\n        for middle in range(self._count):\n            for first in range(self._count):\n                for second in range(self._count):\n                    reach[first][second] |= reach[first][middle] and reach[middle][second]\n        if any(reach[i][i] for i in range(self._count)):\n            return False\n        self._orders[owner] = order.copy()\n        self._next[owner] = 0\n        return True\n\n    def GetLock(self, owner: int, resource: int) -> ResourceLock | None:\n        if not 0 <= owner < 4:\n            return None\n        path = self._orders[owner]\n        position = self._next[owner]\n        if position == len(path) or path[position] != resource:\n            return None\n        self._next[owner] += 1\n        return self._pool.Get(resource)\n"
+      },
+      "cpp": {
+        "signature": "DeadlockFreeLocks(int resourceCount,LockPool& pool); bool Declare(int owner,const std::vector<int>& order); ResourceLock* GetLock(int owner,int resource)",
+        "starterCode": "class DeadlockFreeLocks {\n public:\n  DeadlockFreeLocks(int resourceCount, LockPool& pool) {\n  }\n  bool Declare(int owner, const std::vector<int>& order) {\n    return false;\n  }\n  ResourceLock* GetLock(int owner, int resource) {\n    return nullptr;\n  }\n};\n",
+        "solutionCode": "class DeadlockFreeLocks {\n  int count;\n  LockPool& pool;\n  std::array<std::vector<int>, 4> orders;\n  std::array<std::size_t, 4> next{};\n\n public:\n  DeadlockFreeLocks(int resourceCount, LockPool& pool) : count(resourceCount), pool(pool) {\n  }\n  bool Declare(int owner, const std::vector<int>& order) {\n    if (owner < 0 || owner >= 4)\n      return false;\n    std::vector<bool> seen(count, false);\n    for (int resource : order) {\n      if (resource < 0 || resource >= count || seen[resource])\n        return false;\n      seen[resource] = true;\n    }\n    std::vector<std::vector<bool>> reach(count, std::vector<bool>(count, false));\n    for (int candidate = 0; candidate < 4; ++candidate) {\n      const auto& path = candidate == owner ? order : orders[candidate];\n      for (std::size_t i = 1; i < path.size(); ++i)\n        reach[path[i - 1]][path[i]] = true;\n    }\n    for (int middle = 0; middle < count; ++middle)\n      for (int first = 0; first < count; ++first)\n        for (int second = 0; second < count; ++second)\n          reach[first][second] =\n              reach[first][second] || (reach[first][middle] && reach[middle][second]);\n    for (int i = 0; i < count; ++i)\n      if (reach[i][i])\n        return false;\n    orders[owner] = order;\n    next[owner] = 0;\n    return true;\n  }\n  ResourceLock* GetLock(int owner, int resource) {\n    if (owner < 0 || owner >= 4)\n      return nullptr;\n    const auto& path = orders[owner];\n    if (next[owner] == path.size() || path[next[owner]] != resource)\n      return nullptr;\n    ++next[owner];\n    return pool.Get(resource);\n  }\n};\n"
+      },
+      "java": {
+        "signature": "DeadlockFreeLocks(int resourceCount,LockPool pool); boolean Declare(int owner,int[] order); ResourceLock GetLock(int owner,int resource)",
+        "starterCode": "class DeadlockFreeLocks {\n  public DeadlockFreeLocks(int resourceCount, LockPool pool) {\n  }\n  public boolean Declare(int owner, int[] order) {\n    return false;\n  }\n  public ResourceLock GetLock(int owner, int resource) {\n    return null;\n  }\n}\n",
+        "solutionCode": "class DeadlockFreeLocks {\n  private final int count;\n  private final LockPool pool;\n  private final int[][] orders = new int[4][0];\n  private final int[] next = new int[4];\n  public DeadlockFreeLocks(int resourceCount, LockPool pool) {\n    count = resourceCount;\n    this.pool = pool;\n  }\n  public boolean Declare(int owner, int[] order) {\n    if (owner < 0 || owner >= 4)\n      return false;\n    boolean[] seen = new boolean[count];\n    for (int resource : order) {\n      if (resource < 0 || resource >= count || seen[resource])\n        return false;\n      seen[resource] = true;\n    }\n    boolean[][] reach = new boolean[count][count];\n    for (int candidate = 0; candidate < 4; ++candidate) {\n      int[] path = candidate == owner ? order : orders[candidate];\n      for (int i = 1; i < path.length; ++i)\n        reach[path[i - 1]][path[i]] = true;\n    }\n    for (int middle = 0; middle < count; ++middle)\n      for (int first = 0; first < count; ++first)\n        for (int second = 0; second < count; ++second)\n          reach[first][second] |= reach[first][middle] && reach[middle][second];\n    for (int i = 0; i < count; ++i)\n      if (reach[i][i])\n        return false;\n    orders[owner] = order.clone();\n    next[owner] = 0;\n    return true;\n  }\n  public ResourceLock GetLock(int owner, int resource) {\n    if (owner < 0 || owner >= 4)\n      return null;\n    int[] path = orders[owner];\n    if (next[owner] == path.length || path[next[owner]] != resource)\n      return null;\n    next[owner]++;\n    return pool.Get(resource);\n  }\n}\n"
+      }
+    }
   }
 ]

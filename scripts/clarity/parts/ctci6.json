@@ -6400,6 +6400,142 @@
         ]
       }
     },
+    "ctci6_15_4": {
+      "description": "Implement a deadlock-preventing lock factory. Owners declare the order in which they intend to acquire resource locks. Admit a declaration exactly when replacing that owner previous order leaves the union resource-dependency graph acyclic. Then grant locks only in each owner accepted order. Return the exact native lock from the provided pool, not a resource number, boolean or newly created independent lock.",
+      "constraints": [
+        "Construct DeadlockFreeLocks(resourceCount,pool), where resourceCount is 1..6 and the supplied LockPool has one stable ResourceLock per resource index 0..resourceCount-1. pool.Get(resource) returns that same borrowed lock object each time. Each ResourceLock exposes Lock()/Unlock() for actual exclusive native locking. The factory must not acquire/release locks during construction, Declare or GetLock, and must not delete or replace pool-owned locks.",
+        "Owners are signed integer IDs, with supported IDs 0..3. Declare(owner,order) returns a boolean. Invalid owner/resource indices or duplicate resource IDs return false atomically. An empty order is valid. For a valid candidate, form directed edges between consecutive resources in every active owner order, replacing only the candidate owner previous order. Return true and store a copy only if that graph is acyclic; otherwise return false and preserve every prior accepted order and next-request position. A successfully replaced order resets that owner next-request position to its beginning.",
+        "All Declare calls occur before GetLock calls. These administration calls are serialized; this interface does not require concurrent mutation of factory bookkeeping. The caller may mutate its order array after Declare returns: stored dependencies and pending order must remain unchanged. Declare itself preserves the caller array. Different factory instances own independent declaration/progress state, even when they borrow the same pool.",
+        "GetLock(owner,resource) returns the exact pool.Get(resource) object only when resource is the next not-yet-granted resource in that owner accepted order; advance only then. Unknown/invalid owners, wrong/out-of-bounds resource, no declaration, empty/exhausted order or out-of-order requests return null/None/nullptr without consuming a pending resource. Lookup does not acquire the returned lock.",
+        "Clients must acquire granted locks in the order received, hold them until their work finishes, and then release them. The deadlock-prevention guarantee applies to this protocol; direct rogue pool access or out-of-order acquisition is not covered. The judge executes real competing native clients on granted orders and checks exclusive lock identity/ownership and completion. JavaScript marshals the checked stable lock identities to shared native worker mutexes; it does not run a sequential graph-only substitute.",
+        "JSON fixtures contain resourceCount, up to 20 declaration rows [owner,...orderedResources], up to 40 request pairs [owner,resource], and [] for the injected pool. Each row/resource/owner member is a signed 32-bit integer. The callable is the full factory class, not a function returning a transcript. Private display is {\"declarations\":[admission booleans],\"grants\":[whether each GetLock returned a native lock]}; it is an observation, not the class return value."
+      ],
+      "examples": [
+        {
+          "input": "[3, [[0, 0, 1], [1, 1, 2], [2, 2, 0]], [[0, 1], [0, 0], [0, 1], [1, 1], [1, 2], [2, 2], [0, 1]], []]",
+          "output": "{\"declarations\": [true, true, false], \"grants\": [false, true, true, true, true, false, false]}",
+          "explanation": "With 3 resources, owner 0 declares [0,1] (accept), owner 1 declares [1,2] (accept), and owner 2 declares [2,0] (reject: 0→1→2→0 would be cyclic). GetLock(0,1) returns null and leaves 0 pending. GetLock(0,0) then GetLock(0,1) return the actual locks 0 and 1. Owner 1 can obtain 1 then 2; owner 2 has no accepted order. After owner 0 is exhausted, another GetLock(0,1) returns null. The native clients may contend on lock 1, but no circular wait exists."
+        }
+      ],
+      "exampleCases": [
+        {
+          "arguments": [
+            3,
+            [
+              [
+                0,
+                0,
+                1
+              ],
+              [
+                1,
+                1,
+                2
+              ],
+              [
+                2,
+                2,
+                0
+              ]
+            ],
+            [
+              [
+                0,
+                1
+              ],
+              [
+                0,
+                0
+              ],
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                1
+              ],
+              [
+                1,
+                2
+              ],
+              [
+                2,
+                2
+              ],
+              [
+                0,
+                1
+              ]
+            ],
+            []
+          ],
+          "expected": {
+            "declarations": [
+              true,
+              true,
+              false
+            ],
+            "grants": [
+              false,
+              true,
+              true,
+              true,
+              true,
+              false,
+              false
+            ]
+          }
+        }
+      ],
+      "contracts": {
+        "csharp": [
+          "Callable: DeadlockFreeLocks(int resourceCount,LockPool pool); bool Declare(int owner,int[] order); ResourceLock? GetLock(int owner,int resource)",
+          "Construct DeadlockFreeLocks(resourceCount,pool), where resourceCount is 1..6 and the supplied LockPool has one stable ResourceLock per resource index 0..resourceCount-1. pool.Get(resource) returns that same borrowed lock object each time. Each ResourceLock exposes Lock()/Unlock() for actual exclusive native locking. The factory must not acquire/release locks during construction, Declare or GetLock, and must not delete or replace pool-owned locks.",
+          "Owners are signed integer IDs, with supported IDs 0..3. Declare(owner,order) returns a boolean. Invalid owner/resource indices or duplicate resource IDs return false atomically. An empty order is valid. For a valid candidate, form directed edges between consecutive resources in every active owner order, replacing only the candidate owner previous order. Return true and store a copy only if that graph is acyclic; otherwise return false and preserve every prior accepted order and next-request position. A successfully replaced order resets that owner next-request position to its beginning.",
+          "All Declare calls occur before GetLock calls. These administration calls are serialized; this interface does not require concurrent mutation of factory bookkeeping. The caller may mutate its order array after Declare returns: stored dependencies and pending order must remain unchanged. Declare itself preserves the caller array. Different factory instances own independent declaration/progress state, even when they borrow the same pool.",
+          "GetLock(owner,resource) returns the exact pool.Get(resource) object only when resource is the next not-yet-granted resource in that owner accepted order; advance only then. Unknown/invalid owners, wrong/out-of-bounds resource, no declaration, empty/exhausted order or out-of-order requests return null/None/nullptr without consuming a pending resource. Lookup does not acquire the returned lock.",
+          "Clients must acquire granted locks in the order received, hold them until their work finishes, and then release them. The deadlock-prevention guarantee applies to this protocol; direct rogue pool access or out-of-order acquisition is not covered. The judge executes real competing native clients on granted orders and checks exclusive lock identity/ownership and completion. JavaScript marshals the checked stable lock identities to shared native worker mutexes; it does not run a sequential graph-only substitute.",
+          "JSON fixtures contain resourceCount, up to 20 declaration rows [owner,...orderedResources], up to 40 request pairs [owner,resource], and [] for the injected pool. Each row/resource/owner member is a signed 32-bit integer. The callable is the full factory class, not a function returning a transcript. Private display is {\"declarations\":[admission booleans],\"grants\":[whether each GetLock returned a native lock]}; it is an observation, not the class return value."
+        ],
+        "javascript": [
+          "Callable: new DeadlockFreeLocks(resourceCount,pool); Declare(owner,order); GetLock(owner,resource)",
+          "Construct DeadlockFreeLocks(resourceCount,pool), where resourceCount is 1..6 and the supplied LockPool has one stable ResourceLock per resource index 0..resourceCount-1. pool.Get(resource) returns that same borrowed lock object each time. Each ResourceLock exposes Lock()/Unlock() for actual exclusive native locking. The factory must not acquire/release locks during construction, Declare or GetLock, and must not delete or replace pool-owned locks.",
+          "Owners are signed integer IDs, with supported IDs 0..3. Declare(owner,order) returns a boolean. Invalid owner/resource indices or duplicate resource IDs return false atomically. An empty order is valid. For a valid candidate, form directed edges between consecutive resources in every active owner order, replacing only the candidate owner previous order. Return true and store a copy only if that graph is acyclic; otherwise return false and preserve every prior accepted order and next-request position. A successfully replaced order resets that owner next-request position to its beginning.",
+          "All Declare calls occur before GetLock calls. These administration calls are serialized; this interface does not require concurrent mutation of factory bookkeeping. The caller may mutate its order array after Declare returns: stored dependencies and pending order must remain unchanged. Declare itself preserves the caller array. Different factory instances own independent declaration/progress state, even when they borrow the same pool.",
+          "GetLock(owner,resource) returns the exact pool.Get(resource) object only when resource is the next not-yet-granted resource in that owner accepted order; advance only then. Unknown/invalid owners, wrong/out-of-bounds resource, no declaration, empty/exhausted order or out-of-order requests return null/None/nullptr without consuming a pending resource. Lookup does not acquire the returned lock.",
+          "Clients must acquire granted locks in the order received, hold them until their work finishes, and then release them. The deadlock-prevention guarantee applies to this protocol; direct rogue pool access or out-of-order acquisition is not covered. The judge executes real competing native clients on granted orders and checks exclusive lock identity/ownership and completion. JavaScript marshals the checked stable lock identities to shared native worker mutexes; it does not run a sequential graph-only substitute.",
+          "JSON fixtures contain resourceCount, up to 20 declaration rows [owner,...orderedResources], up to 40 request pairs [owner,resource], and [] for the injected pool. Each row/resource/owner member is a signed 32-bit integer. The callable is the full factory class, not a function returning a transcript. Private display is {\"declarations\":[admission booleans],\"grants\":[whether each GetLock returned a native lock]}; it is an observation, not the class return value."
+        ],
+        "python": [
+          "Callable: DeadlockFreeLocks(resourceCount: int,pool: LockPool); Declare(owner: int,order: list[int]) -> bool; GetLock(owner: int,resource: int) -> ResourceLock | None",
+          "Construct DeadlockFreeLocks(resourceCount,pool), where resourceCount is 1..6 and the supplied LockPool has one stable ResourceLock per resource index 0..resourceCount-1. pool.Get(resource) returns that same borrowed lock object each time. Each ResourceLock exposes Lock()/Unlock() for actual exclusive native locking. The factory must not acquire/release locks during construction, Declare or GetLock, and must not delete or replace pool-owned locks.",
+          "Owners are signed integer IDs, with supported IDs 0..3. Declare(owner,order) returns a boolean. Invalid owner/resource indices or duplicate resource IDs return false atomically. An empty order is valid. For a valid candidate, form directed edges between consecutive resources in every active owner order, replacing only the candidate owner previous order. Return true and store a copy only if that graph is acyclic; otherwise return false and preserve every prior accepted order and next-request position. A successfully replaced order resets that owner next-request position to its beginning.",
+          "All Declare calls occur before GetLock calls. These administration calls are serialized; this interface does not require concurrent mutation of factory bookkeeping. The caller may mutate its order array after Declare returns: stored dependencies and pending order must remain unchanged. Declare itself preserves the caller array. Different factory instances own independent declaration/progress state, even when they borrow the same pool.",
+          "GetLock(owner,resource) returns the exact pool.Get(resource) object only when resource is the next not-yet-granted resource in that owner accepted order; advance only then. Unknown/invalid owners, wrong/out-of-bounds resource, no declaration, empty/exhausted order or out-of-order requests return null/None/nullptr without consuming a pending resource. Lookup does not acquire the returned lock.",
+          "Clients must acquire granted locks in the order received, hold them until their work finishes, and then release them. The deadlock-prevention guarantee applies to this protocol; direct rogue pool access or out-of-order acquisition is not covered. The judge executes real competing native clients on granted orders and checks exclusive lock identity/ownership and completion. JavaScript marshals the checked stable lock identities to shared native worker mutexes; it does not run a sequential graph-only substitute.",
+          "JSON fixtures contain resourceCount, up to 20 declaration rows [owner,...orderedResources], up to 40 request pairs [owner,resource], and [] for the injected pool. Each row/resource/owner member is a signed 32-bit integer. The callable is the full factory class, not a function returning a transcript. Private display is {\"declarations\":[admission booleans],\"grants\":[whether each GetLock returned a native lock]}; it is an observation, not the class return value."
+        ],
+        "cpp": [
+          "Callable: DeadlockFreeLocks(int resourceCount,LockPool& pool); bool Declare(int owner,const std::vector<int>& order); ResourceLock* GetLock(int owner,int resource)",
+          "Construct DeadlockFreeLocks(resourceCount,pool), where resourceCount is 1..6 and the supplied LockPool has one stable ResourceLock per resource index 0..resourceCount-1. pool.Get(resource) returns that same borrowed lock object each time. Each ResourceLock exposes Lock()/Unlock() for actual exclusive native locking. The factory must not acquire/release locks during construction, Declare or GetLock, and must not delete or replace pool-owned locks.",
+          "Owners are signed integer IDs, with supported IDs 0..3. Declare(owner,order) returns a boolean. Invalid owner/resource indices or duplicate resource IDs return false atomically. An empty order is valid. For a valid candidate, form directed edges between consecutive resources in every active owner order, replacing only the candidate owner previous order. Return true and store a copy only if that graph is acyclic; otherwise return false and preserve every prior accepted order and next-request position. A successfully replaced order resets that owner next-request position to its beginning.",
+          "All Declare calls occur before GetLock calls. These administration calls are serialized; this interface does not require concurrent mutation of factory bookkeeping. The caller may mutate its order array after Declare returns: stored dependencies and pending order must remain unchanged. Declare itself preserves the caller array. Different factory instances own independent declaration/progress state, even when they borrow the same pool.",
+          "GetLock(owner,resource) returns the exact pool.Get(resource) object only when resource is the next not-yet-granted resource in that owner accepted order; advance only then. Unknown/invalid owners, wrong/out-of-bounds resource, no declaration, empty/exhausted order or out-of-order requests return null/None/nullptr without consuming a pending resource. Lookup does not acquire the returned lock.",
+          "Clients must acquire granted locks in the order received, hold them until their work finishes, and then release them. The deadlock-prevention guarantee applies to this protocol; direct rogue pool access or out-of-order acquisition is not covered. The judge executes real competing native clients on granted orders and checks exclusive lock identity/ownership and completion. JavaScript marshals the checked stable lock identities to shared native worker mutexes; it does not run a sequential graph-only substitute.",
+          "JSON fixtures contain resourceCount, up to 20 declaration rows [owner,...orderedResources], up to 40 request pairs [owner,resource], and [] for the injected pool. Each row/resource/owner member is a signed 32-bit integer. The callable is the full factory class, not a function returning a transcript. Private display is {\"declarations\":[admission booleans],\"grants\":[whether each GetLock returned a native lock]}; it is an observation, not the class return value."
+        ],
+        "java": [
+          "Callable: DeadlockFreeLocks(int resourceCount,LockPool pool); boolean Declare(int owner,int[] order); ResourceLock GetLock(int owner,int resource)",
+          "Construct DeadlockFreeLocks(resourceCount,pool), where resourceCount is 1..6 and the supplied LockPool has one stable ResourceLock per resource index 0..resourceCount-1. pool.Get(resource) returns that same borrowed lock object each time. Each ResourceLock exposes Lock()/Unlock() for actual exclusive native locking. The factory must not acquire/release locks during construction, Declare or GetLock, and must not delete or replace pool-owned locks.",
+          "Owners are signed integer IDs, with supported IDs 0..3. Declare(owner,order) returns a boolean. Invalid owner/resource indices or duplicate resource IDs return false atomically. An empty order is valid. For a valid candidate, form directed edges between consecutive resources in every active owner order, replacing only the candidate owner previous order. Return true and store a copy only if that graph is acyclic; otherwise return false and preserve every prior accepted order and next-request position. A successfully replaced order resets that owner next-request position to its beginning.",
+          "All Declare calls occur before GetLock calls. These administration calls are serialized; this interface does not require concurrent mutation of factory bookkeeping. The caller may mutate its order array after Declare returns: stored dependencies and pending order must remain unchanged. Declare itself preserves the caller array. Different factory instances own independent declaration/progress state, even when they borrow the same pool.",
+          "GetLock(owner,resource) returns the exact pool.Get(resource) object only when resource is the next not-yet-granted resource in that owner accepted order; advance only then. Unknown/invalid owners, wrong/out-of-bounds resource, no declaration, empty/exhausted order or out-of-order requests return null/None/nullptr without consuming a pending resource. Lookup does not acquire the returned lock.",
+          "Clients must acquire granted locks in the order received, hold them until their work finishes, and then release them. The deadlock-prevention guarantee applies to this protocol; direct rogue pool access or out-of-order acquisition is not covered. The judge executes real competing native clients on granted orders and checks exclusive lock identity/ownership and completion. JavaScript marshals the checked stable lock identities to shared native worker mutexes; it does not run a sequential graph-only substitute.",
+          "JSON fixtures contain resourceCount, up to 20 declaration rows [owner,...orderedResources], up to 40 request pairs [owner,resource], and [] for the injected pool. Each row/resource/owner member is a signed 32-bit integer. The callable is the full factory class, not a function returning a transcript. Private display is {\"declarations\":[admission booleans],\"grants\":[whether each GetLock returned a native lock]}; it is an observation, not the class return value."
+        ]
+      }
+    },
     "ctci6_15_5": {
       "description": "Coordinate three independently running workers so their work completes in role order 0, 1, 2, regardless of thread launch or scheduling order. Implement RunOrdered(role,context), called once by each worker with its role. Call that worker context.Work() exactly once. Work for role 1 must not begin until role 0 work finishes; role 2 must wait for role 1 work to finish. Returning or sorting a list does not perform the work.",
       "constraints": [

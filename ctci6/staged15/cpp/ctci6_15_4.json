@@ -1,0 +1,84 @@
+{
+  "explanation": "A resource-dependency edge means an owner can hold one lock before requesting the next. A directed cycle permits circular waiting, so admit only an acyclic combined dependency graph. Build each candidate graph from the complete active per-owner orders before committing: deleting candidate edges on rejection can accidentally remove an edge still needed by another owner. Keep per-owner request positions separately so an invalid lookup never silently skips a required acquisition. C++ owns copied vector<int> orders and size_t cursors in fixed four-owner arrays, while borrowing LockPool&. vector<vector<bool>> stores reachability; explicit logical expressions assign its proxy bits safely. Returned ResourceLock* remains pool-owned; the class never deletes native locks.",
+  "correctness": "Initially every owner order is empty and the graph has no edges. For Declare, validate bounds/distinctness before indexing. Rebuild the candidate union using the new path only for the target owner, and compute reachability by Floyd-Warshall. After processing intermediate vertices through k, reach[i][j] exactly describes paths whose internal vertices are among those processed; induction over k establishes complete reachability. A true diagonal entry is exactly a directed cycle, so rejection and admission follow the stated graph policy. No live state changes until admission; cloning the order and resetting only its cursor preserves other owners and caller independence. GetLock compares only the next pending resource and advances exactly on a match, returning the stable provided identity. Thus clients following granted orders obey the admitted resource DAG. A circular wait would imply a resource-dependency cycle, impossible in that DAG; finite clients under eventual scheduling complete and release their locks.",
+  "walkthrough": "With 3 resources, owner 0 declares [0,1] (accept), owner 1 declares [1,2] (accept), and owner 2 declares [2,0] (reject: 0\u21921\u21922\u21920 would be cyclic). GetLock(0,1) returns null and leaves 0 pending. GetLock(0,0) then GetLock(0,1) return the actual locks 0 and 1. Owner 1 can obtain 1 then 2; owner 2 has no accepted order. After owner 0 is exhausted, another GetLock(0,1) returns null. The native clients may contend on lock 1, but no circular wait exists.",
+  "walkthroughCase": {
+    "arguments": [
+      3,
+      [
+        [
+          0,
+          0,
+          1
+        ],
+        [
+          1,
+          1,
+          2
+        ],
+        [
+          2,
+          2,
+          0
+        ]
+      ],
+      [
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          0,
+          1
+        ]
+      ],
+      []
+    ],
+    "expected": {
+      "declarations": [
+        true,
+        true,
+        false
+      ],
+      "grants": [
+        false,
+        true,
+        true,
+        true,
+        true,
+        false,
+        false
+      ]
+    }
+  },
+  "timeComplexity": "Declare takes O(R^3 + sum(active order lengths) + new order length), dominated by O(R^3) for R resources and four owners with distinct-resource paths. GetLock takes O(1) bookkeeping plus the provided constant-time pool lookup. Native client acquisition waiting is outside these administration-method costs.",
+  "spaceComplexity": "O(sum(active order lengths)+4) persistent factory state and O(R^2) temporary reachability/seen storage per Declare, excluding the borrowed native lock pool and client threads. Returned locks are borrowed identities, not copies or owned allocations.",
+  "edgeCases": [
+    "Empty order, invalid signed indices, repeated resources and exhausted lookups.",
+    "Atomic rejection, shared edges belonging to several owners and replacement that removes only one owner old dependencies.",
+    "Out-of-order GetLock must not consume the next resource.",
+    "Caller changes its old array; independent factory instances share a pool without sharing orders.",
+    "Acyclic nonnumeric resource orders are valid; no global ascending-order restriction is imposed."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 15.4. No affiliation is implied."
+}

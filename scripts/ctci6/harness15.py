@@ -40,7 +40,7 @@ def source(language,starters=False,only_ref=None):
     if not selected:raise ValueError(only_ref)
     declarations=[];cores=[];insides=[];branches=[];worker_branches=[]
     for entry in selected:
-        ref=entry['ref'];tag={'15.5':'Order15','15.7':'Fizz15','15.3':'Dining15'}[ref];helper=importlib.import_module({'15.5':'harness_order15_','15.7':'harness_fizz15_','15.3':'harness_dining15_'}[ref]+language)
+        ref=entry['ref'];tag={'15.5':'Order15','15.7':'Fizz15','15.3':'Dining15','15.4':'Locks15'}[ref];helper=importlib.import_module({'15.5':'harness_order15_','15.7':'harness_fizz15_','15.3':'harness_dining15_','15.4':'harness_locks15_'}[ref]+language)
         code=entry['languages'][language]['starterCode' if starters else 'solutionCode']
         if language not in ('python','javascript'):code=code.replace('class Solution','class Solution_'+ref.replace('.','_'),1)
         declarations.append(reference(ref,language)+code)
@@ -49,7 +49,7 @@ def source(language,starters=False,only_ref=None):
         elif language=='javascript':
             core=core.replace("const {Worker,isMainThread,workerData,threadId}=require('node:worker_threads');",'').replace('function execute(row){','function execute'+tag+'(row){',1)
             branches.append('if(row.ref==='+json.dumps(ref)+')return execute'+tag+'(row);')
-            worker_branches.append("if(!isMainThread&&workerData&&workerData."+{'15.5':'order15','15.7':'fizz15','15.3':'dining15'}[ref]+"){\n"+{'15.5':'orderWorker15','15.7':'fizzWorker15','15.3':'diningWorker15'}[ref]+'();}')
+            worker_branches.append("if(!isMainThread&&workerData&&workerData."+{'15.5':'order15','15.7':'fizz15','15.3':'dining15','15.4':'locks15'}[ref]+"){\n"+{'15.5':'orderWorker15','15.7':'fizzWorker15','15.3':'diningWorker15','15.4':'lockClientWorker15'}[ref]+'();}')
         elif language=='csharp':insides.append(helper.INSIDE.replace('static object Execute(JsonElement row)','static object Execute'+tag+'(JsonElement row)',1));branches.append('if(row.GetProperty("ref").GetString()=='+json.dumps(ref)+')return Execute'+tag+'(row);')
         elif language=='java':insides.append(helper.INSIDE.replace('static JsonValue execute(JsonObject row)','static JsonValue execute'+tag+'(JsonObject row)',1));branches.append('if(row.get("ref").asString().equals('+json.dumps(ref)+'))return execute'+tag+'(row);')
         else:core=core.replace('json execute(const json& row)','json execute'+tag+'(const json& row)',1);branches.append('if(row["ref"]=='+json.dumps(ref)+')return execute'+tag+'(row);')

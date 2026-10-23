@@ -82,6 +82,7 @@ def verify(only_ref=None, only_language=None, starters=False):
     completed = {row["key"]: row for row in previous.get("executions", [])}
     tools = tool_versions()
     grader_hashes = dict(
+        strict_state=digest(inspect.getsource(state_match)),
         dining=hashlib.sha256((ROOT / "scripts/ctci6/corpus_dining15.py").read_bytes()).hexdigest(),
         jigsaw=hashlib.sha256((ROOT / "scripts/ctci6/corpus_jigsaw07.py").read_bytes()).hexdigest(),
         external=hashlib.sha256((ROOT / "scripts/ctci6/corpus_external10.py").read_bytes()).hexdigest(),
@@ -178,10 +179,10 @@ def verify(only_ref=None, only_language=None, starters=False):
                                 3: "state",
                                 4: "graphs",
                                 5: "core",
-                                7: "core",
+                                7: "strict_state",
                                 8: "core",
-                                13: "core",
-                                15: "core",
+                                13: "strict_state",
+                                15: "strict_state",
                                 16: "core",
                                 17: "core",
                             }[entry["batch"]]

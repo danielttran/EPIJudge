@@ -17,7 +17,7 @@ sealed class OwnedOrderContext15:SyncContext {
 INSIDE=r'''
 static object Execute(JsonElement row){
  var args=row.GetProperty("arguments");var order=JsonSerializer.Deserialize<int[]>(args[0].GetRawText())!;int mask=args[1].GetInt32();var state=new OrderState15();
- var threads=order.Select(role=>new System.Threading.Thread(()=>{try{var context=new OwnedOrderContext15(state,role);state.Ready.Signal();if(!state.Start.Wait(1000))throw new Exception("Workers did not start");if(((mask>>role)&1)!=0)System.Threading.Thread.Sleep(4);new Solution_15_5().RunOrdered(role,context);}catch(Exception error){lock(state.Mutex)state.Errors.Add(error.Message);}}){IsBackground=true}).ToArray();
+ var threads=order.Select(role=>new System.Threading.Thread(()=>{try{var context=new OwnedOrderContext15(state,role);state.Ready.Signal();if(!state.Start.Wait(1000))throw new Exception("Workers did not start");if(((mask>>role)&1)!=0)System.Threading.Thread.Sleep(4);System.Action<int,SyncContext> invoke=new Solution_15_5().RunOrdered;invoke(role,context);}catch(Exception error){lock(state.Mutex)state.Errors.Add(error.Message);}}){IsBackground=true}).ToArray();
  foreach(var thread in threads)thread.Start();bool ready=state.Ready.Wait(1000);state.Start.Set();bool finished=true;foreach(var thread in threads)finished&=thread.Join(1500);
  lock(state.Mutex)return new {actual=state.Events.ToArray(),mutationOk=ready&&finished&&state.Errors.Count==0&&state.Complete.All(v=>v)};
 }

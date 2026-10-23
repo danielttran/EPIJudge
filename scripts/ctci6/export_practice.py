@@ -13,7 +13,7 @@ import sys
 
 from core import EXT, LANGUAGES, ROOT
 from corpus17 import STRUCTURED_REFS
-from verify_runtime import core_match, digest, tool_versions
+from verify_runtime import core_match, digest, tool_versions, state_match
 
 sys.path.insert(0, str(ROOT / "scripts/code_workspace"))
 from ctci import callable_entry
@@ -122,6 +122,8 @@ def export():
                 and (row["result"] in ("sets", "strings", "arrangements") or ref in ("8.2", "8.3"))
                 else digest(inspect.getsource(core_match))
             )
+            if row["batch"] in (7,13,15) and ref not in ("7.6","13.8","15.3"):
+                grader = digest(inspect.getsource(state_match))
             for variant, field, outcome in (
                 ("solution", "solutionCode", "passed"),
                 ("starter", "starterCode", "rejected"),

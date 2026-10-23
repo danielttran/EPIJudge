@@ -16,7 +16,7 @@ class OwnedFizzContext15 extends FizzContext{
 }
 '''
 INSIDE=r'''
-static JsonValue execute(JsonObject row)throws Exception{var args=row.get("arguments").asArray();int limit=args.get(0).asInt(),mask=args.get(2).asInt();var state=new FizzState15(limit);var threads=new ArrayList<Thread>();
+static JsonValue execute(JsonObject row)throws Exception{if(Solution_15_7.class.getMethod("RunFizzBuzz",int.class,int.class,FizzContext.class).getReturnType()!=void.class)throw new IllegalArgumentException("RunFizzBuzz must return void");var args=row.get("arguments").asArray();int limit=args.get(0).asInt(),mask=args.get(2).asInt();var state=new FizzState15(limit);var threads=new ArrayList<Thread>();
  for(var element:args.get(1).asArray()){int role=element.asInt();var thread=new Thread(()->{try{var context=new OwnedFizzContext15(state,role);state.ready.countDown();if(!state.start.await(1000,java.util.concurrent.TimeUnit.MILLISECONDS))throw new IllegalStateException("Workers did not start");if(((mask>>role)&1)!=0)Thread.sleep(4);new Solution_15_7().RunFizzBuzz(role,limit,context);}catch(Throwable error){synchronized(state.mutex){state.errors.add(error.toString());}}});thread.setDaemon(true);threads.add(thread);}
  for(var thread:threads)thread.start();boolean ready=state.ready.await(1000,java.util.concurrent.TimeUnit.MILLISECONDS);state.start.countDown();for(var thread:threads)thread.join(1500);
  synchronized(state.mutex){boolean valid=ready&&state.errors.isEmpty()&&state.next==limit+1&&!state.printing;for(var thread:threads)valid&=!thread.isAlive();var actual=new JsonArray();for(String text:state.events)actual.add(text);return new JsonObject().add("actual",actual).add("mutationOk",valid);}

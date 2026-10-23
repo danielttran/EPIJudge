@@ -1,15 +1,26 @@
 {
-  "status": "open-before-final-acceptance",
+  "status": "resolved-local-checks-complete-final-bank-acceptance-pending",
   "items": [
     {
       "id": "native-worker-void-contract",
       "finding": "C#/Java/C++ worker observers currently invoke the methods as statements, so an otherwise correct method returning a value could be accepted despite the documented void signature. Actual authored references return void.",
-      "requiredFix": "Enforce void at binding/compile/reflection boundaries, add wrong-return-type regressions, regenerate and reexecute affected worker/variant receipts against final harnesses."
+      "requiredFix": "Enforce void at binding/compile/reflection boundaries, add wrong-return-type regressions, regenerate and reexecute affected worker/variant receipts against final harnesses.",
+      "status": "fixed-and-reexecuted"
     },
     {
       "id": "matcher-fingerprint-fidelity",
       "finding": "Non-custom batches 7, 13 and 15 use strict corpus03.state_match at acceptance but their receipt grader key points to core_match. Current source has not changed and executed references pass; future invalidation must hash the actual used matcher.",
-      "requiredFix": "Align receipt/export grader fingerprints with the actual strict matcher without weakening nested type checks; rerun only affected pairs once final sources are stable."
+      "requiredFix": "Align receipt/export grader fingerprints with the actual strict matcher without weakening nested type checks; rerun only affected pairs once final sources are stable.",
+      "status": "fixed-and-reexecuted"
     }
-  ]
+  ],
+  "evidence": [
+    "return15-validation.json",
+    "order15-validation.json",
+    "fizz15-validation.json",
+    "dining15-validation.json",
+    "locks15-validation.json",
+    "runtime/validation.json"
+  ],
+  "matcherScopeRepair": "An overly broad text replacement temporarily changed chapter 17 receipt scope. It was corrected to its actual core matcher; original unmodified receipts were restored and every fingerprint rechecked against final source/harness/cases/toolchain. Reconciliation passed with reuse in 5.50 seconds. Raw extra execution evidence is retained under .epi-runs."
 }

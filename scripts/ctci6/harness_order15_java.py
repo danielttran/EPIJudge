@@ -15,7 +15,7 @@ class OwnedOrderContext15 extends SyncContext {
 }
 '''
 INSIDE=r'''
-static JsonValue execute(JsonObject row)throws Exception{
+static JsonValue execute(JsonObject row)throws Exception{if(Solution_15_5.class.getMethod("RunOrdered",int.class,SyncContext.class).getReturnType()!=void.class)throw new IllegalArgumentException("RunOrdered must return void");
  var args=row.get("arguments").asArray();int mask=args.get(1).asInt();var state=new OrderState15();var threads=new ArrayList<Thread>();
  for(var element:args.get(0).asArray()){int role=element.asInt();var thread=new Thread(()->{try{var context=new OwnedOrderContext15(state,role);state.ready.countDown();if(!state.start.await(1000,java.util.concurrent.TimeUnit.MILLISECONDS))throw new IllegalStateException("Workers did not start");if(((mask>>role)&1)!=0)Thread.sleep(4);new Solution_15_5().RunOrdered(role,context);}catch(Throwable error){synchronized(state.mutex){state.errors.add(error.toString());}}});thread.setDaemon(true);threads.add(thread);}
  for(var thread:threads)thread.start();boolean ready=state.ready.await(1000,java.util.concurrent.TimeUnit.MILLISECONDS);state.start.countDown();for(var thread:threads)thread.join(1500);

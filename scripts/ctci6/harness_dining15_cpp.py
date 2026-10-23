@@ -1,5 +1,7 @@
 """Native philosopher threads and conditional-permit fork locks with real ownership."""
 CORE=r'''
+#include <type_traits>
+static_assert(std::is_same_v<decltype(std::declval<Solution_15_3&>().Dine(0,0,0,std::declval<ForkContext&>())),void>,"Dine must return void");
 struct DiningState15{
  std::mutex mutex;std::condition_variable changed;int n,bites,ready=0;bool start=false,phase=false;std::vector<int> permits,owners,meals,events,firstForks;std::vector<bool> firstAcquired;std::vector<std::string> errors;
  DiningState15(int n,int bites):n(n),bites(bites),permits(n,1),owners(n,-1),meals(n,0),firstForks(n,-1),firstAcquired(n,false){}

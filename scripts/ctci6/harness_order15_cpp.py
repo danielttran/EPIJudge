@@ -1,5 +1,7 @@
 """Native std::thread workers; semaphore permits and callback state are private."""
 CORE=r'''
+#include <type_traits>
+static_assert(std::is_same_v<decltype(std::declval<Solution_15_5&>().RunOrdered(0,std::declval<SyncContext&>())),void>,"RunOrdered must return void");
 struct OrderState15 {
  std::mutex mutex;std::condition_variable changed;int permits[2]={0,0},ready=0;bool start=false,complete[3]={false,false,false},invoked[3]={false,false,false};std::vector<int> events;std::vector<std::string> errors;
 };

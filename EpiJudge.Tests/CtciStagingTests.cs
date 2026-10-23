@@ -855,4 +855,17 @@ public sealed class CtciStagingTests
             Assert.Equal(new[] {"ForkContext"}, Assert.Single(definition.Callable(language).References).Names);
     }
 
+    [Fact]
+    public void DeadlockFactoryUsesActualClassAndBorrowedNativeLockContract()
+    {
+        var definition = Definition("15.4");
+        var test = new TestCase(definition.Example[0].EnumerateArray().Select(value => value.Clone()).ToArray(), definition.Example[1].Clone());
+        Assert.Null(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = test.Expected, mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = test.Expected, mutationOk = false })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new {declarations=new[]{true,true,true}, grants=new[]{true}}, mutationOk = true })));
+        Assert.Equal("DeadlockFreeLocks.java", definition.Callable("java").Filename);
+        foreach (string language in SolutionCatalog.Languages)
+            Assert.Equal(new[] {"LockPool","ResourceLock"}, Assert.Single(definition.Callable(language).References).Names.Order().ToArray());
+    }
+
 }

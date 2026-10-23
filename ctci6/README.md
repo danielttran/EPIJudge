@@ -1,6 +1,6 @@
 # Cracking the Coding Interview, sixth edition
 
-This collection is being authored. **129 verified coding exercises are registered in the local website; the collection has not been pushed.**
+This collection is being authored. **130 verified coding exercises are registered in the local website; the collection has not been pushed.**
 The advertised 189 is a book question count, not a count of executable exercises.
 
 `inventory.json` records numbered references established from the author's public
@@ -41,19 +41,19 @@ It does **not** prove statement clarity, solution correctness, test adequacy, or
 completed semantic review. Those are separately recorded and executed before the
 collection is published.
 
-The current local checkpoint stages 129 coding exercises: all references in
+The current local checkpoint stages 130 coding exercises: all references in
 chapters 1–4, seven coding tasks from chapter 5, generic Circular Array/Hash Table 7.9/7.12, all fourteen chapter-8 tasks,
 all eleven chapter-10 tasks, both functional tasks 13.7–13.8, and all twenty-six tasks in each of chapters 16 and 17.
-Their 645 actual language solutions pass standalone and separate-submission runs,
-with 990,960 solution case executions per layer and the same number of starter
+Their 650 actual language solutions pass standalone and separate-submission runs,
+with 991,285 solution case executions per layer and the same number of starter
 observations. Each starter is rejected by at least one case; it need not fail
 every case. Random Node additionally has fifteen compiled alternative/negative
 programs covering twenty-five fixtures, including physical duplicate identities,
 clone returns, missing mutations and the generic random source's signed bounds.
 All five current Random Node HTTP submissions pass all 1,604 cases, and the
-current backend suite passes 327 tests.
+current backend suite passes 328 tests.
 
-The 160 located references currently comprise 129 coding exercises and one reviewed concurrency coding candidate awaiting implementation, fifteen
+The 160 located references currently comprise 130 coding exercises, with no remaining identified coding candidate, fifteen
 conceptual references and fifteen design references. The ten chapter-6
 reasoning puzzles now have explicit individual classification and source-clarity
 findings. Another twenty-nine advertised references remain unlocated; neither
@@ -92,3 +92,5 @@ Call in Order 15.5 checkpoint: three real native workers in all five languages, 
 Concurrent FizzBuzz 15.7 checkpoint: four real workers, role-bound nonoverlapping actual print callbacks and semaphore handoffs in all five languages. All five HTTP submissions pass 51 fixtures each. Twenty compiled worker programs reject missing synchronization, incorrect multiple-of-15 ownership and handoff bugs while accepting strided per-role loops. Current local acceptance is 640 solutions / 990,725 cases per layer, all starters rejected and 326 backend tests passed. Dining Philosophers, Deadlock Free Class, source gaps and final acceptance remain.
 
 Dining Philosophers 15.3 checkpoint: all five native workers/HTTP submissions pass 47 fixtures per language, including real exclusive fork ownership and complete release. A controlled first-acquisition schedule exposes a circular wait without guessed sleeps; twenty compiled variants reject circular wait, missing ownership and leaks while accepting descending global acquisition. Current local acceptance is 645 solutions / 990,960 cases per layer, all starters rejected and 327 backend tests passed. Deadlock Free Class, source gaps, documented pending audit findings and final gates remain.
+
+Deadlock Free Class 15.4 checkpoint: the full factory class executes in five languages with transactional DAG admission, copied orders, cursor enforcement, exact native lock identities and real concurrent clients. All five HTTP submissions pass 65 fixtures each. Twenty compiled class variants pass rejection/alternative checks. Final worker return/type checks and actual-matcher fingerprints are repaired and reexecuted: 75 worker/client variant programs pass, and 16 return-contract attempts comprise seven intended compile rejections and nine executed rejections. Current local acceptance is 650 solutions / 991,285 cases per layer, all starters rejected, 328 backend tests and 247 frontend tests passed, production frontend build passed. All 160 located references are individually classified (130 coding, 15 conceptual, 15 design); 29 advertised references remain unlocated. This is not a claim of complete 189-question coverage. Whole-bank/rendered acceptance and publication remain pending.
