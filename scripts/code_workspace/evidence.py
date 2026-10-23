@@ -435,9 +435,9 @@ def inventory(root: Path):
     )
     counts = Counter()
     for pid in questions:
-        collections = {live[(pid, lang)]["collection"] for lang in LANGUAGES}
-        require(len(collections) == 1, f"Conflicting collection for {pid}")
-        counts[next(iter(collections))] += 1
+        memberships = {live[(pid, lang)]["collection"] for lang in LANGUAGES}
+        require(len(memberships) == 1, f"Conflicting collection for {pid}")
+        counts[next(iter(memberships))] += 1
     require(dict(counts) == collections, "Collection membership differs")
     document = read_json(root / "workspace-code/catalog.json")
     require(

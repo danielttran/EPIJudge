@@ -485,11 +485,34 @@ class JudgeContractTests(unittest.TestCase):
             )
 
 
-if __name__ == "__main__":
-    unittest.main()
-
-
 class CtciInventoryExtensionTests(unittest.TestCase):
+    def test_complete_live_inventory_retains_collection_counts(self):
+        live, entries, artifacts = evidence.inventory(evidence.ROOT)
+        counts = evidence.expected_collections(evidence.ROOT)
+        self.assertEqual(sum(counts.values()) * 5, len(live))
+        self.assertEqual(live.keys(), entries.keys())
+        self.assertEqual(len(entries) * 2, len(artifacts))
+
+    def test_consistent_per_problem_misclassification_is_rejected(self):
+        read_json = evidence.read_json
+        target = evidence.ROOT / "solutions/coverage.json"
+        document = read_json(target)
+        pid = document["entries"][0]["problemId"]
+        for row in document["entries"]:
+            if row["problemId"] == pid:
+                row["collection"] = "unregistered"
+        with (
+            patch.object(
+                evidence,
+                "read_json",
+                side_effect=lambda path: (
+                    document if path == target else read_json(path)
+                ),
+            ),
+            self.assertRaisesRegex(evidence.EvidenceError, "Collection membership"),
+        ):
+            evidence.inventory(evidence.ROOT)
+
     def test_original_counts_remain_required_without_ctci_snapshot(self):
         with tempfile.TemporaryDirectory() as directory:
             self.assertEqual(
@@ -516,3 +539,7 @@ class CtciInventoryExtensionTests(unittest.TestCase):
                 (root / "ctci6/catalog.json").write_text(json.dumps(invalid))
                 with self.assertRaises(evidence.EvidenceError):
                     evidence.expected_collections(root)
+
+
+if __name__ == "__main__":
+    unittest.main()
