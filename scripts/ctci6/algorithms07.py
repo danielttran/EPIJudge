@@ -102,3 +102,10 @@ def body(ref,language):
         from algorithms_mines07 import body as run
         return run(language)
     return _jigsaw_previous_body(ref,language)
+
+_mines_previous_body=body
+def body(ref,language):
+    if ref=='7.8':
+        from algorithms_othello07 import body as run
+        return run(language)
+    return _mines_previous_body(ref,language)

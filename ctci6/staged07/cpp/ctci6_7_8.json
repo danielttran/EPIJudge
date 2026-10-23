@@ -1,0 +1,99 @@
+{
+  "explanation": "A move is legal only when at least one straight ray has an opponent run bracketed by the mover. Collect every flippable run before changing the board, so an illegal request cannot leave partial mutation and one ray cannot influence another ray test. Once captures are applied, test move availability for the opponent and then the mover; this implements automatic passes and detects completion independently of whether the board is full. C++ lambdas return owned coordinate vectors. References to caller actions remain const. Ray coordinates are bounds-checked before indexing, and complete flip lists are collected before board mutation. Snapshot moves its new vector into the trace.",
+  "correctness": "The ray scan starts next to the proposed empty square, collects only consecutive opponent pieces, and accepts that collection exactly when its next in-bounds cell has the mover color. This is precisely the bracketing rule; the eight directions cover every possible capture and distinct rays do not overlap away from the placed cell. Collecting all captures before mutation therefore identifies the exact legal move and exact cells to flip. If no captures or the request is invalid, no state changes. Otherwise placement/flips produce the next board. Testing every empty square with the same complete legality predicate finds whether each player has any move, so opponent-first selection, automatic pass and terminal state are correct. Recounting each color in a fresh snapshot yields exact scores, and repeated terminal/rejected requests preserve the prior state.",
+  "walkthrough": "On a 4x4 board the initial row is [1,0,2,2,0,0,0,0,0,2,1,0,0,1,2,0,0,0,0,0]. Black move [0,1,1] brackets white [1,1] against black [2,1]; place at [0,1] and flip [1,1]. Counts become black 4 and white 1, and turn becomes white (2). Repeating the same black request is rejected because it is now white turn and the target is occupied. A diagonal opponent run also flips when its far endpoint is own color; reaching the edge without that endpoint never captures.",
+  "walkthroughCase": {
+    "arguments": [
+      4,
+      [
+        [
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          1,
+          1
+        ]
+      ]
+    ],
+    "expected": [
+      [
+        1,
+        0,
+        2,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        2,
+        1,
+        0,
+        0,
+        1,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        2,
+        1,
+        4,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        1,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        2,
+        0,
+        4,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        1,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ]
+  },
+  "timeComplexity": "O((Q+1)*S^3) conservative worst-case time for side S and Q requests: checking move availability tries S^2 squares and scans eight rays of length O(S). Producing each snapshot costs O(S^2).",
+  "spaceComplexity": "O(S^2) owned board plus O(S) temporary capture/ray coordinates for one proposed square, and O((Q+1)*S^2) returned snapshots. There is no recursive direction scan.",
+  "edgeCases": [
+    "Initially full 2x2 board, invalid colors/coordinates and occupied cells.",
+    "All eight capture directions, multiple simultaneous rays, unbracketed runs and empty gaps.",
+    "Wrong-player requests and atomic rejection of no-capture moves.",
+    "Automatic passes, game over with remaining empty cells and immutable terminal snapshots."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 7.8. No affiliation is implied."
+}

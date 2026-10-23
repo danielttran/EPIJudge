@@ -1419,6 +1419,42 @@
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 7.6. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
   {
+    "id": "ctci6_7_8",
+    "title": "Othello",
+    "topic": "Generic data structures",
+    "difficulty": "Unrated",
+    "description": "Implement a two-player Othello game engine with legal placement, capture in all eight directions, score tracking and automatic passes. Start from the standard four center pieces, with black moving first. Process requested moves in order and return the initial board plus a snapshot after every request. No AI, random move choice or console UI is required.",
+    "constraints": [
+      "size is even and in 2..8. The square board uses 0 empty, 1 black, 2 white. With m=size/2, initial white cells are [m-1,m-1] and [m,m]; black cells are [m-1,m] and [m,m-1]. All other cells are empty. Black moves first if it has a legal move; size 2 is already full and starts terminal.",
+      "actions contains 0..100 triples [row,column,color]. Coordinates and color are signed 32-bit integers. Only the current player (1 or 2) may move. Invalid colors, out-of-bounds coordinates, occupied cells and placements capturing no opponent piece are rejected atomically. A rejected request does not change board, score or turn.",
+      "A legal move places a piece on an empty cell. In each of the eight straight directions, capture the nonempty consecutive run of opponent pieces immediately beside the new piece only when that run ends at an existing own-color piece before an empty square or board boundary. Flip all such bracketed runs; diagonal captures count. Unbracketed pieces remain unchanged.",
+      "After a legal move, the opponent moves next if it has any legal move. Otherwise automatically pass back to the player who just moved if that player has a legal move. If neither player can move, the game ends even if empty cells remain. Do not require a manual pass request. All requests after the terminal state are rejected.",
+      "Return actions.length+1 integer rows [turn,accepted,blackCount,whiteCount,...cellsInRowMajorOrder]. turn is 1 or 2 for the next player, or 0 for game over. accepted is 1 only for a legal accepted move; the initial row has accepted=0. Counts describe the resulting board. Keep a fresh snapshot for every request and preserve the caller action matrix/rows.",
+      "The callable makes the public Board/Game/Player exercise executable with explicit official-game turn and capture rules. It does not copy bugs in public answer examples or require their singleton class hierarchy."
+    ],
+    "signature": "int[][] PlayOthello(int size, int[][] actions)",
+    "starterCode": "public class Solution\n{\n    public int[][] PlayOthello(int size, int[][] actions)\n    {\n        return [];\n    }\n}\n",
+    "examples": [
+      {
+        "input": "[4, [[0, 1, 1], [0, 1, 1]]]",
+        "output": "[[1, 0, 2, 2, 0, 0, 0, 0, 0, 2, 1, 0, 0, 1, 2, 0, 0, 0, 0, 0], [2, 1, 4, 1, 0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 2, 0, 0, 0, 0, 0], [2, 0, 4, 1, 0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 2, 0, 0, 0, 0, 0]]",
+        "explanation": "On a 4x4 board the initial row is [1,0,2,2,0,0,0,0,0,2,1,0,0,1,2,0,0,0,0,0]. Black move [0,1,1] brackets white [1,1] against black [2,1]; place at [0,1] and flip [1,1]. Counts become black 4 and white 1, and turn becomes white (2). Repeating the same black request is rejected because it is now white turn and the target is occupied. A diagonal opponent run also flips when its far endpoint is own color; reaching the edge without that endpoint never captures."
+      }
+    ],
+    "invocation": "",
+    "argumentCount": 2,
+    "testCount": 948,
+    "resultType": "json",
+    "jsSignature": "function PlayOthello(size, actions)",
+    "jsStarterCode": "function PlayOthello(size, actions) {\n  return [];\n}\n",
+    "pySignature": "def PlayOthello(size: int, actions: list[list[int]]) -> list[list[int]]",
+    "pyStarterCode": "def PlayOthello(size: int, actions: list[list[int]]) -> list[list[int]]:\n    return []\n",
+    "collection": "ctci6",
+    "position": 44,
+    "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2007.%20Object-Oriented%20Design/Q7_08_Othello",
+    "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 7.8. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
+  },
+  {
     "id": "ctci6_7_9",
     "title": "Circular Array",
     "topic": "Generic data structures",
@@ -1449,7 +1485,7 @@
     "pySignature": "CircularArray(initialValues: list[T]); Get(index: int) -> T; Set(index: int,value: T) -> None; Rotate(shift: int) -> None; __iter__() -> Iterator[T]",
     "pyStarterCode": "from typing import Generic, TypeVar, Iterator\n\n_T = TypeVar(\"_T\")\n\n\nclass CircularArray(Generic[_T]):\n    def __init__(self, initialValues: list[_T]):\n        pass\n\n    def Get(self, index: int) -> _T:\n        raise IndexError(index)\n\n    def Set(self, index: int, value: _T) -> None:\n        raise IndexError(index)\n\n    def Rotate(self, shift: int) -> None:\n        pass\n\n    def __iter__(self) -> Iterator[_T]:\n        return iter([])\n",
     "collection": "ctci6",
-    "position": 44,
+    "position": 45,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2007.%20Object-Oriented%20Design/Q7_09_Circular_Array",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 7.9. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -1485,7 +1521,7 @@
     "pySignature": "def PlayMinesweeper(bombs: list[list[int]], actions: list[list[int]]) -> list[list[int]]",
     "pyStarterCode": "def PlayMinesweeper(bombs: list[list[int]], actions: list[list[int]]) -> list[list[int]]:\n    return []\n",
     "collection": "ctci6",
-    "position": 45,
+    "position": 46,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2007.%20Object-Oriented%20Design/Q7_10_Minesweeper",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 7.10. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -1520,7 +1556,7 @@
     "pySignature": "HashTable[K,V](capacity: int); Put(key: K,value: V) -> None; Get(key: K) -> V; Remove(key: K) -> bool; Contains(key: K) -> bool",
     "pyStarterCode": "from typing import Generic, TypeVar, Hashable\n\n_K = TypeVar(\"_K\", bound=Hashable)\n_V = TypeVar(\"_V\")\n\n\nclass HashTable(Generic[_K, _V]):\n    def __init__(self, capacity: int):\n        pass\n\n    def Put(self, key: _K, value: _V) -> None:\n        pass\n\n    def Get(self, key: _K) -> _V:\n        raise KeyError(key)\n\n    def Remove(self, key: _K) -> bool:\n        return False\n\n    def Contains(self, key: _K) -> bool:\n        return False\n",
     "collection": "ctci6",
-    "position": 46,
+    "position": 47,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2007.%20Object-Oriented%20Design/Q7_12_Hash_Table",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 7.12. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -1552,7 +1588,7 @@
     "pySignature": "def CountTripleSteps(steps: int) -> int",
     "pyStarterCode": "def CountTripleSteps(steps: int) -> int:\n    return 0\n",
     "collection": "ctci6",
-    "position": 47,
+    "position": 48,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2008.%20Recursion%20and%20Dynamic%20Programming/Q8_01_Triple_Step",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 8.1. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -1584,7 +1620,7 @@
     "pySignature": "def FindRobotPath(grid: list[list[int]]) -> list[list[int]]",
     "pyStarterCode": "def FindRobotPath(grid: list[list[int]]) -> list[list[int]]:\n    return []\n",
     "collection": "ctci6",
-    "position": 48,
+    "position": 49,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2008.%20Recursion%20and%20Dynamic%20Programming/Q8_02_Robot_in_a_Grid",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 8.2. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -1616,7 +1652,7 @@
     "pySignature": "def FindMagicIndex(values: list[int], distinctValues: bool) -> int",
     "pyStarterCode": "def FindMagicIndex(values: list[int], distinctValues: bool) -> int:\n    return 0\n",
     "collection": "ctci6",
-    "position": 49,
+    "position": 50,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2008.%20Recursion%20and%20Dynamic%20Programming/Q8_03_Magic_Index",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 8.3. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -1651,7 +1687,7 @@
     "pySignature": "def PowerSet(values: list[int]) -> list[list[int]]",
     "pyStarterCode": "def PowerSet(values: list[int]) -> list[list[int]]:\n    return []\n",
     "collection": "ctci6",
-    "position": 50,
+    "position": 51,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2008.%20Recursion%20and%20Dynamic%20Programming/Q8_04_Power_Set",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 8.4. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -1683,7 +1719,7 @@
     "pySignature": "def RecursiveMultiply(first: int, second: int) -> int",
     "pyStarterCode": "def RecursiveMultiply(first: int, second: int) -> int:\n    return 0\n",
     "collection": "ctci6",
-    "position": 51,
+    "position": 52,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2008.%20Recursion%20and%20Dynamic%20Programming/Q8_05_Recursive_Multiply",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 8.5. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -1715,7 +1751,7 @@
     "pySignature": "def SolveHanoi(disks: int) -> list[list[int]]",
     "pyStarterCode": "def SolveHanoi(disks: int) -> list[list[int]]:\n    return []\n",
     "collection": "ctci6",
-    "position": 52,
+    "position": 53,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2008.%20Recursion%20and%20Dynamic%20Programming/Q8_06_Towers_of_Hanoi",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 8.6. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -1748,7 +1784,7 @@
     "pySignature": "def PermutationsDistinct(text: str) -> list[str]",
     "pyStarterCode": "def PermutationsDistinct(text: str) -> list[str]:\n    return []\n",
     "collection": "ctci6",
-    "position": 53,
+    "position": 54,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2008.%20Recursion%20and%20Dynamic%20Programming/Q8_07_Permutations_Without_Dups",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 8.7. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -1781,7 +1817,7 @@
     "pySignature": "def PermutationsWithDuplicates(text: str) -> list[str]",
     "pyStarterCode": "def PermutationsWithDuplicates(text: str) -> list[str]:\n    return []\n",
     "collection": "ctci6",
-    "position": 54,
+    "position": 55,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2008.%20Recursion%20and%20Dynamic%20Programming/Q8_08_Permutations_With_Dups",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 8.8. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -1814,7 +1850,7 @@
     "pySignature": "def GenerateParentheses(pairs: int) -> list[str]",
     "pyStarterCode": "def GenerateParentheses(pairs: int) -> list[str]:\n    return []\n",
     "collection": "ctci6",
-    "position": 55,
+    "position": 56,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2008.%20Recursion%20and%20Dynamic%20Programming/Q8_09_Parens",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 8.9. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -1847,7 +1883,7 @@
     "pySignature": "def PaintFill(screen: list[list[int]], row: int, column: int, newColor: int) -> list[list[int]]",
     "pyStarterCode": "def PaintFill(screen: list[list[int]], row: int, column: int, newColor: int) -> list[list[int]]:\n    return []\n",
     "collection": "ctci6",
-    "position": 56,
+    "position": 57,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2008.%20Recursion%20and%20Dynamic%20Programming/Q8_10_Paint_Fill",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 8.10. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -1879,7 +1915,7 @@
     "pySignature": "def CountCoinCombinations(amount: int) -> int",
     "pyStarterCode": "def CountCoinCombinations(amount: int) -> int:\n    return 0\n",
     "collection": "ctci6",
-    "position": 57,
+    "position": 58,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2008.%20Recursion%20and%20Dynamic%20Programming/Q8_11_Coins",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 8.11. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -1911,7 +1947,7 @@
     "pySignature": "def EightQueens() -> list[list[int]]",
     "pyStarterCode": "def EightQueens() -> list[list[int]]:\n    return []\n",
     "collection": "ctci6",
-    "position": 58,
+    "position": 59,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2008.%20Recursion%20and%20Dynamic%20Programming/Q8_12_Eight_Queens",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 8.12. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -1943,7 +1979,7 @@
     "pySignature": "def MaximumBoxStackHeight(boxes: list[list[int]]) -> int",
     "pyStarterCode": "def MaximumBoxStackHeight(boxes: list[list[int]]) -> int:\n    return 0\n",
     "collection": "ctci6",
-    "position": 59,
+    "position": 60,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2008.%20Recursion%20and%20Dynamic%20Programming/Q8_13_Stack_of_Boxes",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 8.13. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -1976,7 +2012,7 @@
     "pySignature": "def CountBooleanParenthesizations(expression: str, desired: bool) -> int",
     "pyStarterCode": "def CountBooleanParenthesizations(expression: str, desired: bool) -> int:\n    return 0\n",
     "collection": "ctci6",
-    "position": 60,
+    "position": 61,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2008.%20Recursion%20and%20Dynamic%20Programming/Q8_14_Boolean_Evaluation",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 8.14. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -2009,7 +2045,7 @@
     "pySignature": "def MergeSortedIntoFirst(first: list[int], realCount: int, second: list[int]) -> list[int]",
     "pyStarterCode": "def MergeSortedIntoFirst(first: list[int], realCount: int, second: list[int]) -> list[int]:\n    return []\n",
     "collection": "ctci6",
-    "position": 61,
+    "position": 62,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2010.%20Sorting%20and%20Searching/Q10_01_Sorted_Merge",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 10.1. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -2042,7 +2078,7 @@
     "pySignature": "def GroupAnagrams(words: list[str]) -> list[str]",
     "pyStarterCode": "def GroupAnagrams(words: list[str]) -> list[str]:\n    return []\n",
     "collection": "ctci6",
-    "position": 62,
+    "position": 63,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2010.%20Sorting%20and%20Searching/Q10_02_Group_Anagrams",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 10.2. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -2074,7 +2110,7 @@
     "pySignature": "def SearchRotated(values: list[int], target: int) -> int",
     "pyStarterCode": "def SearchRotated(values: list[int], target: int) -> int:\n    return 0\n",
     "collection": "ctci6",
-    "position": 63,
+    "position": 64,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2010.%20Sorting%20and%20Searching/Q10_03_Search_in_Rotated_Array",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 10.3. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -2107,7 +2143,7 @@
     "pySignature": "def SearchWithoutSize(values: Listy, target: int) -> int",
     "pyStarterCode": "def SearchWithoutSize(values: Listy, target: int) -> int:\n    return 0\n",
     "collection": "ctci6",
-    "position": 64,
+    "position": 65,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2010.%20Sorting%20and%20Searching/Q10_04_Sorted_Search_No_Size",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 10.4. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -2139,7 +2175,7 @@
     "pySignature": "def SparseSearch(words: list[str], target: str) -> int",
     "pyStarterCode": "def SparseSearch(words: list[str], target: str) -> int:\n    return 0\n",
     "collection": "ctci6",
-    "position": 65,
+    "position": 66,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2010.%20Sorting%20and%20Searching/Q10_05_Sparse_Search",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 10.5. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -2174,7 +2210,7 @@
     "pySignature": "def SortExternalFile(inputFile: TextFile, bufferLimit: int, workspace: TextWorkspace) -> TextFile",
     "pyStarterCode": "def SortExternalFile(inputFile: TextFile, bufferLimit: int, workspace: TextWorkspace) -> TextFile:\n    return inputFile\n",
     "collection": "ctci6",
-    "position": 66,
+    "position": 67,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition-JavaScript/tree/33830739629d3d3f9a4b0f122ba5150431a9d506/chapter10/10.06%20-%20Sort%20Big%20File",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 10.6. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -2208,7 +2244,7 @@
     "pySignature": "def FindMissingInt(file: NumberFile, smallMemory: bool) -> int",
     "pyStarterCode": "def FindMissingInt(file: NumberFile, smallMemory: bool) -> int:\n    return 0\n",
     "collection": "ctci6",
-    "position": 67,
+    "position": 68,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2010.%20Sorting%20and%20Searching/Q10_07_Missing_Int",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 10.7. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -2241,7 +2277,7 @@
     "pySignature": "def RepeatedOccurrences(values: list[int]) -> list[int]",
     "pyStarterCode": "def RepeatedOccurrences(values: list[int]) -> list[int]:\n    return []\n",
     "collection": "ctci6",
-    "position": 68,
+    "position": 69,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2010.%20Sorting%20and%20Searching/Q10_08_Find_Duplicates",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 10.8. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -2273,7 +2309,7 @@
     "pySignature": "def SearchSortedMatrix(matrix: list[list[int]], target: int) -> list[int]",
     "pyStarterCode": "def SearchSortedMatrix(matrix: list[list[int]], target: int) -> list[int]:\n    return []\n",
     "collection": "ctci6",
-    "position": 69,
+    "position": 70,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2010.%20Sorting%20and%20Searching/Q10_09_Sorted_Matrix_Search",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 10.9. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -2306,7 +2342,7 @@
     "pySignature": "RankTracker(); Track(value: int) -> None; GetRank(value: int) -> int",
     "pyStarterCode": "class RankTracker:\n    def __init__(self):\n        pass\n\n    def Track(self, value: int) -> None:\n        pass\n\n    def GetRank(self, value: int) -> int:\n        return -1\n",
     "collection": "ctci6",
-    "position": 70,
+    "position": 71,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2010.%20Sorting%20and%20Searching/Q10_10_Rank_from_Stream",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 10.10. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -2338,7 +2374,7 @@
     "pySignature": "def ArrangePeaksValleys(values: list[int]) -> list[int]",
     "pyStarterCode": "def ArrangePeaksValleys(values: list[int]) -> list[int]:\n    return []\n",
     "collection": "ctci6",
-    "position": 71,
+    "position": 72,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2010.%20Sorting%20and%20Searching/Q10_11_Peaks_and_Valleys",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 10.11. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -2371,7 +2407,7 @@
     "pySignature": "def PopulationByContinent(countries: list[Country], continent: str) -> int",
     "pyStarterCode": "def PopulationByContinent(countries: list[Country], continent: str) -> int:\n    return 0\n",
     "collection": "ctci6",
-    "position": 72,
+    "position": 73,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2013.%20Java/Q13_07_Lambda_Expressions",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 13.7. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -2404,7 +2440,7 @@
     "pySignature": "def RandomSubset(values: list[int], coins: FairCoinSource) -> list[int]",
     "pyStarterCode": "def RandomSubset(values: list[int], coins: FairCoinSource) -> list[int]:\n    return []\n",
     "collection": "ctci6",
-    "position": 73,
+    "position": 74,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2013.%20Java/Q13_08_Lambda_Random",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 13.8. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -2436,7 +2472,7 @@
     "pySignature": "def SwapWithoutTemporary(first: int, second: int) -> list[int]",
     "pyStarterCode": "def SwapWithoutTemporary(first: int, second: int) -> list[int]:\n    return []\n",
     "collection": "ctci6",
-    "position": 74,
+    "position": 75,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2016.%20Moderate/Q16_01_Number_Swapper",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 16.1. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -2468,7 +2504,7 @@
     "pySignature": "def WordFrequencies(book: list[str], queries: list[str]) -> list[int]",
     "pyStarterCode": "def WordFrequencies(book: list[str], queries: list[str]) -> list[int]:\n    return []\n",
     "collection": "ctci6",
-    "position": 75,
+    "position": 76,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2016.%20Moderate/Q16_02_Word_Frequencies",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 16.2. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -2500,7 +2536,7 @@
     "pySignature": "def SegmentIntersection(endpoints: list[list[int]]) -> list[float]",
     "pyStarterCode": "def SegmentIntersection(endpoints: list[list[int]]) -> list[float]:\n    return []\n",
     "collection": "ctci6",
-    "position": 76,
+    "position": 77,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2016.%20Moderate/Q16_03_Intersection",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 16.3. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -2532,7 +2568,7 @@
     "pySignature": "def TicTacWinner(board: list[list[int]]) -> int",
     "pyStarterCode": "def TicTacWinner(board: list[list[int]]) -> int:\n    return 0\n",
     "collection": "ctci6",
-    "position": 77,
+    "position": 78,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2016.%20Moderate/Q16_04_Tic_Tac_Win",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 16.4. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -2563,7 +2599,7 @@
     "pySignature": "def CountFactorialZeros(n: int) -> int",
     "pyStarterCode": "def CountFactorialZeros(n: int) -> int:\n    return 0\n",
     "collection": "ctci6",
-    "position": 78,
+    "position": 79,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2016.%20Moderate/Q16_05_Factorial_Zeros",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 16.5. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -2595,7 +2631,7 @@
     "pySignature": "def SmallestDifference(first: list[int], second: list[int]) -> int",
     "pyStarterCode": "def SmallestDifference(first: list[int], second: list[int]) -> int:\n    return 0\n",
     "collection": "ctci6",
-    "position": 79,
+    "position": 80,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2016.%20Moderate/Q16_06_Smallest_Difference",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 16.6. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -2627,7 +2663,7 @@
     "pySignature": "def MaximumWithoutComparison(first: int, second: int) -> int",
     "pyStarterCode": "def MaximumWithoutComparison(first: int, second: int) -> int:\n    return 0\n",
     "collection": "ctci6",
-    "position": 80,
+    "position": 81,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2016.%20Moderate/Q16_07_Number_Max",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 16.7. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -2659,7 +2695,7 @@
     "pySignature": "def EnglishInteger(value: int) -> str",
     "pyStarterCode": "def EnglishInteger(value: int) -> str:\n    return \"\"\n",
     "collection": "ctci6",
-    "position": 81,
+    "position": 82,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2016.%20Moderate/Q16_08_English_Int",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 16.8. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -2692,7 +2728,7 @@
     "pySignature": "def AdditionOnlyArithmetic(first: int, second: int, operation: str) -> int",
     "pyStarterCode": "def AdditionOnlyArithmetic(first: int, second: int, operation: str) -> int:\n    return 0\n",
     "collection": "ctci6",
-    "position": 82,
+    "position": 83,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2016.%20Moderate/Q16_09_Operations",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 16.9. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -2724,7 +2760,7 @@
     "pySignature": "def MostPopulatedYear(people: list[list[int]]) -> int",
     "pyStarterCode": "def MostPopulatedYear(people: list[list[int]]) -> int:\n    return 0\n",
     "collection": "ctci6",
-    "position": 83,
+    "position": 84,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2016.%20Moderate/Q16_10_Living_People",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 16.10. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -2756,7 +2792,7 @@
     "pySignature": "def DivingBoardLengths(planks: int, shorter: int, longer: int) -> list[int]",
     "pyStarterCode": "def DivingBoardLengths(planks: int, shorter: int, longer: int) -> list[int]:\n    return []\n",
     "collection": "ctci6",
-    "position": 84,
+    "position": 85,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2016.%20Moderate/Q16_11_Diving_Board",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 16.11. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -2790,7 +2826,7 @@
     "pySignature": "def EncodeXml(elementNames: list[str], elementTexts: list[str], children: list[list[int]], attributeOwners: list[int], attributeNames: list[str], attributeValues: list[str], codeNames: list[str], codes: list[int]) -> list[str]",
     "pyStarterCode": "def EncodeXml(\n    elementNames: list[str],\n    elementTexts: list[str],\n    children: list[list[int]],\n    attributeOwners: list[int],\n    attributeNames: list[str],\n    attributeValues: list[str],\n    codeNames: list[str],\n    codes: list[int],\n) -> list[str]:\n    return []\n",
     "collection": "ctci6",
-    "position": 85,
+    "position": 86,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2016.%20Moderate/Q16_12_XML_Encoding",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 16.12. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -2822,7 +2858,7 @@
     "pySignature": "def BisectSquares(squares: list[list[int]]) -> list[float]",
     "pyStarterCode": "def BisectSquares(squares: list[list[int]]) -> list[float]:\n    return []\n",
     "collection": "ctci6",
-    "position": 86,
+    "position": 87,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2016.%20Moderate/Q16_13_Bisect_Squares",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 16.13. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -2854,7 +2890,7 @@
     "pySignature": "def BestLine(points: list[list[int]]) -> list[int]",
     "pyStarterCode": "def BestLine(points: list[list[int]]) -> list[int]:\n    return []\n",
     "collection": "ctci6",
-    "position": 87,
+    "position": 88,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2016.%20Moderate/Q16_14_Best_Line",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 16.14. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -2886,7 +2922,7 @@
     "pySignature": "def ScoreMasterMind(guess: str, secret: str) -> list[int]",
     "pyStarterCode": "def ScoreMasterMind(guess: str, secret: str) -> list[int]:\n    return []\n",
     "collection": "ctci6",
-    "position": 88,
+    "position": 89,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2016.%20Moderate/Q16_15_Master_Mind",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 16.15. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -2918,7 +2954,7 @@
     "pySignature": "def ShortestSortWindow(values: list[int]) -> list[int]",
     "pyStarterCode": "def ShortestSortWindow(values: list[int]) -> list[int]:\n    return []\n",
     "collection": "ctci6",
-    "position": 89,
+    "position": 90,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2016.%20Moderate/Q16_16_Sub_Sort",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 16.16. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -2950,7 +2986,7 @@
     "pySignature": "def MaximumContiguousSum(values: list[int]) -> int",
     "pyStarterCode": "def MaximumContiguousSum(values: list[int]) -> int:\n    return 0\n",
     "collection": "ctci6",
-    "position": 90,
+    "position": 91,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2016.%20Moderate/Q16_17_Contiguous_Sequence",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 16.17. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -2982,7 +3018,7 @@
     "pySignature": "def MatchesPattern(pattern: str, text: str) -> bool",
     "pyStarterCode": "def MatchesPattern(pattern: str, text: str) -> bool:\n    return False\n",
     "collection": "ctci6",
-    "position": 91,
+    "position": 92,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2016.%20Moderate/Q16_18_Pattern_Matcher",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 16.18. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -3014,7 +3050,7 @@
     "pySignature": "def PondSizes(land: list[list[int]]) -> list[int]",
     "pyStarterCode": "def PondSizes(land: list[list[int]]) -> list[int]:\n    return []\n",
     "collection": "ctci6",
-    "position": 92,
+    "position": 93,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2016.%20Moderate/Q16_19_Pond_Sizes",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 16.19. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -3046,7 +3082,7 @@
     "pySignature": "def T9Words(digits: str, dictionary: list[str]) -> list[str]",
     "pyStarterCode": "def T9Words(digits: str, dictionary: list[str]) -> list[str]:\n    return []\n",
     "collection": "ctci6",
-    "position": 93,
+    "position": 94,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2016.%20Moderate/Q16_20_T9",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 16.20. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -3078,7 +3114,7 @@
     "pySignature": "def SumSwap(first: list[int], second: list[int]) -> list[int]",
     "pyStarterCode": "def SumSwap(first: list[int], second: list[int]) -> list[int]:\n    return []\n",
     "collection": "ctci6",
-    "position": 94,
+    "position": 95,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2016.%20Moderate/Q16_21_Sum_Swap",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 16.21. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -3111,7 +3147,7 @@
     "pySignature": "def LangtonBoard(steps: int) -> list[str]",
     "pyStarterCode": "def LangtonBoard(steps: int) -> list[str]:\n    return []\n",
     "collection": "ctci6",
-    "position": 95,
+    "position": 96,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2016.%20Moderate/Q16_22_Langtons_Ant",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 16.22. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -3144,7 +3180,7 @@
     "pySignature": "def UniformSeven(source: Rand5Source) -> int",
     "pyStarterCode": "def UniformSeven(source: Rand5Source) -> int:\n    return 0\n",
     "collection": "ctci6",
-    "position": 96,
+    "position": 97,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2016.%20Moderate/Q16_23_Rand7_From_Rand5",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 16.23. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -3176,7 +3212,7 @@
     "pySignature": "def PairsWithSum(values: list[int], target: int) -> list[list[int]]",
     "pyStarterCode": "def PairsWithSum(values: list[int], target: int) -> list[list[int]]:\n    return []\n",
     "collection": "ctci6",
-    "position": 97,
+    "position": 98,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2016.%20Moderate/Q16_24_Pairs_With_Sum",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 16.24. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -3209,7 +3245,7 @@
     "pySignature": "LRUCache(capacity: int); Get(key: int) -> str | None; Set(key: int, value: str) -> None",
     "pyStarterCode": "class LRUCache:\n    def __init__(self, capacity: int):\n        pass\n\n    def Get(self, key: int) -> str | None:\n        return None\n\n    def Set(self, key: int, value: str) -> None:\n        pass\n",
     "collection": "ctci6",
-    "position": 98,
+    "position": 99,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2016.%20Moderate/Q16_25_LRU_Cache",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 16.25. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -3241,7 +3277,7 @@
     "pySignature": "def Calculate(expression: str) -> float",
     "pyStarterCode": "def Calculate(expression: str) -> float:\n    return 0.0\n",
     "collection": "ctci6",
-    "position": 99,
+    "position": 100,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2016.%20Moderate/Q16_26_Calculator",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 16.26. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -3273,7 +3309,7 @@
     "pySignature": "def AddWithoutArithmetic(first: int, second: int) -> int",
     "pyStarterCode": "def AddWithoutArithmetic(first: int, second: int) -> int:\n    return 0\n",
     "collection": "ctci6",
-    "position": 100,
+    "position": 101,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2017.%20Hard/Q17_01_Add_Without_Plus",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 17.1. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -3306,7 +3342,7 @@
     "pySignature": "def Shuffle(values: list[int]) -> None",
     "pyStarterCode": "def Shuffle(values: list[int]) -> None:\n    return\n",
     "collection": "ctci6",
-    "position": 101,
+    "position": 102,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2017.%20Hard/Q17_02_Shuffle",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 17.2. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -3339,7 +3375,7 @@
     "pySignature": "def RandomSubset(values: list[int], count: int) -> list[int]",
     "pyStarterCode": "def RandomSubset(values: list[int], count: int) -> list[int]:\n    return []\n",
     "collection": "ctci6",
-    "position": 102,
+    "position": 103,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2017.%20Hard/Q17_03_Random_Set",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 17.3. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -3372,7 +3408,7 @@
     "pySignature": "def MissingNumberBits(numbers: BitArray) -> int",
     "pyStarterCode": "def MissingNumberBits(numbers: BitArray) -> int:\n    return 0\n",
     "collection": "ctci6",
-    "position": 103,
+    "position": 104,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2017.%20Hard/Q17_04_Missing_Number",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 17.4. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -3404,7 +3440,7 @@
     "pySignature": "def LongestLettersDigits(text: str) -> list[int]",
     "pyStarterCode": "def LongestLettersDigits(text: str) -> list[int]:\n    return []\n",
     "collection": "ctci6",
-    "position": 104,
+    "position": 105,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2017.%20Hard/Q17_05_Letters_and_Numbers",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 17.5. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -3436,7 +3472,7 @@
     "pySignature": "def CountDigitTwos(n: int) -> int",
     "pyStarterCode": "def CountDigitTwos(n: int) -> int:\n    return 0\n",
     "collection": "ctci6",
-    "position": 105,
+    "position": 106,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2017.%20Hard/Q17_06_Count_of_2s",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 17.6. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -3469,7 +3505,7 @@
     "pySignature": "def TrueNameFrequencies(names: list[str], frequencies: list[int], synonyms: list[list[int]]) -> list[list[int]]",
     "pyStarterCode": "def TrueNameFrequencies(\n    names: list[str], frequencies: list[int], synonyms: list[list[int]]\n) -> list[list[int]]:\n    return []\n",
     "collection": "ctci6",
-    "position": 106,
+    "position": 107,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2017.%20Hard/Q17_07_Baby_Names",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 17.7. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -3501,7 +3537,7 @@
     "pySignature": "def CircusTower(people: list[list[int]]) -> list[int]",
     "pyStarterCode": "def CircusTower(people: list[list[int]]) -> list[int]:\n    return []\n",
     "collection": "ctci6",
-    "position": 107,
+    "position": 108,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2017.%20Hard/Q17_08_Circus_Tower",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 17.8. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -3533,7 +3569,7 @@
     "pySignature": "def KthMultiple357(k: int) -> int",
     "pyStarterCode": "def KthMultiple357(k: int) -> int:\n    return 0\n",
     "collection": "ctci6",
-    "position": 108,
+    "position": 109,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2017.%20Hard/Q17_09_Kth_Multiple",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 17.9. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -3565,7 +3601,7 @@
     "pySignature": "def MajorityElement(values: list[int]) -> list[int]",
     "pyStarterCode": "def MajorityElement(values: list[int]) -> list[int]:\n    return []\n",
     "collection": "ctci6",
-    "position": 109,
+    "position": 110,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2017.%20Hard/Q17_10_Majority_Element",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 17.10. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -3597,7 +3633,7 @@
     "pySignature": "def WordDistance(words: list[str], first: str, second: str) -> int",
     "pyStarterCode": "def WordDistance(words: list[str], first: str, second: str) -> int:\n    return 0\n",
     "collection": "ctci6",
-    "position": 110,
+    "position": 111,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2017.%20Hard/Q17_11_Word_Distance",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 17.11. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -3630,7 +3666,7 @@
     "pySignature": "def ConvertBiNode(root: BiNode | None) -> BiNode | None",
     "pyStarterCode": "def ConvertBiNode(root: BiNode | None) -> BiNode | None:\n    return None\n",
     "collection": "ctci6",
-    "position": 111,
+    "position": 112,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2017.%20Hard/Q17_12_BiNode",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 17.12. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -3662,7 +3698,7 @@
     "pySignature": "def ReSpace(text: str, dictionary: list[str]) -> list[str]",
     "pyStarterCode": "def ReSpace(text: str, dictionary: list[str]) -> list[str]:\n    return []\n",
     "collection": "ctci6",
-    "position": 112,
+    "position": 113,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2017.%20Hard/Q17_13_ReSpace",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 17.13. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -3694,7 +3730,7 @@
     "pySignature": "def SmallestK(values: list[int], k: int) -> list[int]",
     "pyStarterCode": "def SmallestK(values: list[int], k: int) -> list[int]:\n    return []\n",
     "collection": "ctci6",
-    "position": 113,
+    "position": 114,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2017.%20Hard/Q17_14_Smallest_K",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 17.14. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -3726,7 +3762,7 @@
     "pySignature": "def LongestComposedWord(words: list[str]) -> str",
     "pyStarterCode": "def LongestComposedWord(words: list[str]) -> str:\n    return \"\"\n",
     "collection": "ctci6",
-    "position": 114,
+    "position": 115,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2017.%20Hard/Q17_15_Longest_Word",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 17.15. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -3758,7 +3794,7 @@
     "pySignature": "def MaximumMassageMinutes(appointments: list[int]) -> int",
     "pyStarterCode": "def MaximumMassageMinutes(appointments: list[int]) -> int:\n    return 0\n",
     "collection": "ctci6",
-    "position": 115,
+    "position": 116,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2017.%20Hard/Q17_16_The_Masseuse",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 17.16. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -3790,7 +3826,7 @@
     "pySignature": "def MultiSearch(text: str, patterns: list[str]) -> list[list[int]]",
     "pyStarterCode": "def MultiSearch(text: str, patterns: list[str]) -> list[list[int]]:\n    return []\n",
     "collection": "ctci6",
-    "position": 116,
+    "position": 117,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2017.%20Hard/Q17_17_Multi_Search",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 17.17. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -3822,7 +3858,7 @@
     "pySignature": "def ShortestCoveringRange(big: list[int], small: list[int]) -> list[int]",
     "pyStarterCode": "def ShortestCoveringRange(big: list[int], small: list[int]) -> list[int]:\n    return []\n",
     "collection": "ctci6",
-    "position": 117,
+    "position": 118,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2017.%20Hard/Q17_18_Shortest_Supersequence",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 17.18. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -3854,7 +3890,7 @@
     "pySignature": "def MissingTwo(values: list[int]) -> list[int]",
     "pyStarterCode": "def MissingTwo(values: list[int]) -> list[int]:\n    return []\n",
     "collection": "ctci6",
-    "position": 118,
+    "position": 119,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2017.%20Hard/Q17_19_Missing_Two",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 17.19. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -3886,7 +3922,7 @@
     "pySignature": "def ContinuousMedians(values: list[int]) -> list[float]",
     "pyStarterCode": "def ContinuousMedians(values: list[int]) -> list[float]:\n    return []\n",
     "collection": "ctci6",
-    "position": 119,
+    "position": 120,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2017.%20Hard/Q17_20_Continuous_Median",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 17.20. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -3918,7 +3954,7 @@
     "pySignature": "def HistogramWaterVolume(heights: list[int]) -> int",
     "pyStarterCode": "def HistogramWaterVolume(heights: list[int]) -> int:\n    return 0\n",
     "collection": "ctci6",
-    "position": 120,
+    "position": 121,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2017.%20Hard/Q17_21_Volume_of_Histogram",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 17.21. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -3950,7 +3986,7 @@
     "pySignature": "def WordTransformation(start: str, stop: str, dictionary: list[str]) -> list[str]",
     "pyStarterCode": "def WordTransformation(start: str, stop: str, dictionary: list[str]) -> list[str]:\n    return []\n",
     "collection": "ctci6",
-    "position": 121,
+    "position": 122,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2017.%20Hard/Q17_22_Word_Transformer",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 17.22. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -3982,7 +4018,7 @@
     "pySignature": "def LargestBlackBorder(matrix: list[list[int]]) -> list[int]",
     "pyStarterCode": "def LargestBlackBorder(matrix: list[list[int]]) -> list[int]:\n    return []\n",
     "collection": "ctci6",
-    "position": 122,
+    "position": 123,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2017.%20Hard/Q17_23_Max_Black_Square",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 17.23. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -4014,7 +4050,7 @@
     "pySignature": "def MaximumSubmatrix(matrix: list[list[int]]) -> list[int]",
     "pyStarterCode": "def MaximumSubmatrix(matrix: list[list[int]]) -> list[int]:\n    return []\n",
     "collection": "ctci6",
-    "position": 123,
+    "position": 124,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2017.%20Hard/Q17_24_Max_Submatrix",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 17.24. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -4046,7 +4082,7 @@
     "pySignature": "def LargestWordRectangle(words: list[str]) -> list[str]",
     "pyStarterCode": "def LargestWordRectangle(words: list[str]) -> list[str]:\n    return []\n",
     "collection": "ctci6",
-    "position": 124,
+    "position": 125,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2017.%20Hard/Q17_25_Word_Rectangle",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 17.25. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   },
@@ -4078,7 +4114,7 @@
     "pySignature": "def SparseSimilarities(documentIds: list[int], documents: list[list[int]]) -> list[list[int]]",
     "pyStarterCode": "def SparseSimilarities(documentIds: list[int], documents: list[list[int]]) -> list[list[int]]:\n    return []\n",
     "collection": "ctci6",
-    "position": 125,
+    "position": 126,
     "sourceUrl": "https://github.com/careercup/CtCI-6th-Edition/tree/59018cfcb90292209275db1c4b3ed306d4b07d7f/Java/Ch%2017.%20Hard/Q17_26_Sparse_Similarity",
     "sourceAttribution": "Exercise reference: Cracking the Coding Interview, sixth edition, 17.26. Independently authored wording, implementations, explanations and tests; no affiliation is implied."
   }

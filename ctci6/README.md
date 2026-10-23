@@ -1,6 +1,6 @@
 # Cracking the Coding Interview, sixth edition
 
-This collection is being authored. **125 verified coding exercises are registered in the local website; the collection has not been pushed.**
+This collection is being authored. **126 verified coding exercises are registered in the local website; the collection has not been pushed.**
 The advertised 189 is a book question count, not a count of executable exercises.
 
 `inventory.json` records numbered references established from the author's public
@@ -41,11 +41,11 @@ It does **not** prove statement clarity, solution correctness, test adequacy, or
 completed semantic review. Those are separately recorded and executed before the
 collection is published.
 
-The current local checkpoint stages 125 coding exercises: all references in
+The current local checkpoint stages 126 coding exercises: all references in
 chapters 1–4, seven coding tasks from chapter 5, generic Circular Array/Hash Table 7.9/7.12, all fourteen chapter-8 tasks,
 all eleven chapter-10 tasks, both functional tasks 13.7–13.8, and all twenty-six tasks in each of chapters 16 and 17.
-Their 625 actual language solutions pass standalone and separate-submission runs,
-with 985,610 solution case executions per layer and the same number of starter
+Their 630 actual language solutions pass standalone and separate-submission runs,
+with 990,350 solution case executions per layer and the same number of starter
 observations. Each starter is rejected by at least one case; it need not fail
 every case. Random Node additionally has fifteen compiled alternative/negative
 programs covering twenty-five fixtures, including physical duplicate identities,
@@ -53,8 +53,7 @@ clone returns, missing mutations and the generic random source's signed bounds.
 All five current Random Node HTTP submissions pass all 1,604 cases, and the
 current backend suite passes 324 tests.
 
-The 160 located references currently comprise 125 coding exercises, one known
-coding candidate (Othello), four concurrency references awaiting individual classification, fifteen
+The 160 located references currently comprise 126 coding exercises and four concurrency references awaiting individual classification, fifteen
 conceptual references and fifteen design references. The ten chapter-6
 reasoning puzzles now have explicit individual classification and source-clarity
 findings. Another twenty-nine advertised references remain unlocated; neither
@@ -83,3 +82,5 @@ External-file checkpoint: 10.6 now executes genuine disk-backed external merging
 Jigsaw 7.6 checkpoint: all five HTTP submissions pass 318 fixtures each. A property grader accepts any valid assembly without forcing original hidden coordinates; fifteen compiled negative/alternative programs pass. Current source-bound receipts cover 620 solutions and 976,710 cases per layer, with all starters rejected. This remains local and does not complete the outstanding inventory or final whole-bank gates.
 
 Minesweeper 7.10 checkpoint: deterministic full reveal/flag/flood/win/loss engine, with 1780 fixtures per implementation and all five HTTP submissions accepted. Ten compiled flag/diagonal regressions are rejected. Current local acceptance is 625 solutions / 985,610 case executions per layer, all starters rejected, 324 backend tests passed. Final collection and publication gates remain pending.
+
+Othello 7.8 checkpoint: all eight capture directions, atomic move rejection, turns, scores, automatic passes and terminal behavior execute in five languages. Each HTTP submission passes 948 fixtures; ten compiled diagonal/pass regressions are rejected. Current acceptance is 630 solutions / 990,350 case executions per layer, all starters rejected, 324 backend tests passed. Four concurrency references and 29 source gaps remain; final whole-bank/browser acceptance and publishing are pending.

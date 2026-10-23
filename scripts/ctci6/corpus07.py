@@ -102,3 +102,22 @@ def valid_observation(ref,case,observed):
         from corpus_mines07 import valid_observation as run
         return run(ref,case,observed)
     return _jigsaw_observation(ref,case,observed)
+
+_mines_oracle=oracle
+_mines_cases=cases
+_mines_observation=valid_observation
+def oracle(ref,args):
+    if ref=='7.8':
+        from corpus_othello07 import oracle as run
+        return run(ref,args)
+    return _mines_oracle(ref,args)
+def cases(spec):
+    if spec['ref']=='7.8':
+        from corpus_othello07 import cases as run
+        return run(spec)
+    return _mines_cases(spec)
+def valid_observation(ref,case,observed):
+    if ref=='7.8':
+        from corpus_othello07 import valid_observation as run
+        return run(ref,case,observed)
+    return _mines_observation(ref,case,observed)

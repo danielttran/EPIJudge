@@ -572,5 +572,164 @@
         "solutionCode": "class Solution {\n  public int[][] PlayMinesweeper(int[][] bombs, int[][] actions) {\n    int rows = bombs.length, columns = bombs[0].length;\n    int[][] visible = new int[rows][columns];\n    for (int[] row : visible)\n      Arrays.fill(row, 9);\n    int[] remaining = {0}, state = {0};\n    for (int[] row : bombs)\n      for (int value : row)\n        if (value == 0)\n          remaining[0]++;\n    var trace = new ArrayList<int[]>();\n    class Observer {\n      void snapshot(int accepted) {\n        int[] result = new int[2 + rows * columns];\n        result[0] = state[0];\n        result[1] = accepted;\n        for (int r = 0; r < rows; r++)\n          for (int c = 0; c < columns; c++)\n            result[2 + r * columns + c] = visible[r][c];\n        trace.add(result);\n      }\n      void expose(int row, int column, ArrayList<int[]> queue) {\n        if (visible[row][column] != 9 || bombs[row][column] != 0)\n          return;\n        int number = 0;\n        for (int r = Math.max(0, row - 1); r < Math.min(rows, row + 2); ++r)\n          for (int c = Math.max(0, column - 1); c < Math.min(columns, column + 2); ++c)\n            number += bombs[r][c];\n        visible[row][column] = number;\n        --remaining[0];\n        if (number == 0)\n          queue.add(new int[] {row, column});\n      }\n    }\n    var observer = new Observer();\n    observer.snapshot(0);\n    for (int[] action : actions) {\n      int row = action[0], column = action[1], kind = action[2], accepted = 0;\n      if (state[0] == 0 && row >= 0 && row < rows && column >= 0 && column < columns) {\n        if (kind == 1 && (visible[row][column] == 9 || visible[row][column] == 10)) {\n          visible[row][column] = 19 - visible[row][column];\n          accepted = 1;\n        } else if (kind == 0 && visible[row][column] == 9) {\n          accepted = 1;\n          if (bombs[row][column] != 0) {\n            visible[row][column] = 11;\n            state[0] = 2;\n          } else {\n            var queue = new ArrayList<int[]>();\n            observer.expose(row, column, queue);\n            for (int head = 0; head < queue.size(); ++head) {\n              int r = queue.get(head)[0], c = queue.get(head)[1];\n              for (int nr = Math.max(0, r - 1); nr < Math.min(rows, r + 2); ++nr)\n                for (int nc = Math.max(0, c - 1); nc < Math.min(columns, c + 2); ++nc)\n                  observer.expose(nr, nc, queue);\n            }\n            if (remaining[0] == 0)\n              state[0] = 1;\n          }\n        }\n      }\n      observer.snapshot(accepted);\n    }\n    return trace.toArray(new int[0][]);\n  }\n}\n"
       }
     }
+  },
+  {
+    "ref": "7.8",
+    "method": "PlayOthello",
+    "params": [
+      [
+        "size",
+        "i"
+      ],
+      [
+        "actions",
+        "aai"
+      ]
+    ],
+    "result": "aai",
+    "mutation": "none",
+    "description": "Implement a two-player Othello game engine with legal placement, capture in all eight directions, score tracking and automatic passes. Start from the standard four center pieces, with black moving first. Process requested moves in order and return the initial board plus a snapshot after every request. No AI, random move choice or console UI is required.",
+    "constraints": [
+      "size is even and in 2..8. The square board uses 0 empty, 1 black, 2 white. With m=size/2, initial white cells are [m-1,m-1] and [m,m]; black cells are [m-1,m] and [m,m-1]. All other cells are empty. Black moves first if it has a legal move; size 2 is already full and starts terminal.",
+      "actions contains 0..100 triples [row,column,color]. Coordinates and color are signed 32-bit integers. Only the current player (1 or 2) may move. Invalid colors, out-of-bounds coordinates, occupied cells and placements capturing no opponent piece are rejected atomically. A rejected request does not change board, score or turn.",
+      "A legal move places a piece on an empty cell. In each of the eight straight directions, capture the nonempty consecutive run of opponent pieces immediately beside the new piece only when that run ends at an existing own-color piece before an empty square or board boundary. Flip all such bracketed runs; diagonal captures count. Unbracketed pieces remain unchanged.",
+      "After a legal move, the opponent moves next if it has any legal move. Otherwise automatically pass back to the player who just moved if that player has a legal move. If neither player can move, the game ends even if empty cells remain. Do not require a manual pass request. All requests after the terminal state are rejected.",
+      "Return actions.length+1 integer rows [turn,accepted,blackCount,whiteCount,...cellsInRowMajorOrder]. turn is 1 or 2 for the next player, or 0 for game over. accepted is 1 only for a legal accepted move; the initial row has accepted=0. Counts describe the resulting board. Keep a fresh snapshot for every request and preserve the caller action matrix/rows.",
+      "The callable makes the public Board/Game/Player exercise executable with explicit official-game turn and capture rules. It does not copy bugs in public answer examples or require their singleton class hierarchy."
+    ],
+    "why": "A move is legal only when at least one straight ray has an opponent run bracketed by the mover. Collect every flippable run before changing the board, so an illegal request cannot leave partial mutation and one ray cannot influence another ray test. Once captures are applied, test move availability for the opponent and then the mover; this implements automatic passes and detects completion independently of whether the board is full.",
+    "correctness": "The ray scan starts next to the proposed empty square, collects only consecutive opponent pieces, and accepts that collection exactly when its next in-bounds cell has the mover color. This is precisely the bracketing rule; the eight directions cover every possible capture and distinct rays do not overlap away from the placed cell. Collecting all captures before mutation therefore identifies the exact legal move and exact cells to flip. If no captures or the request is invalid, no state changes. Otherwise placement/flips produce the next board. Testing every empty square with the same complete legality predicate finds whether each player has any move, so opponent-first selection, automatic pass and terminal state are correct. Recounting each color in a fresh snapshot yields exact scores, and repeated terminal/rejected requests preserve the prior state.",
+    "walkthrough": "On a 4x4 board the initial row is [1,0,2,2,0,0,0,0,0,2,1,0,0,1,2,0,0,0,0,0]. Black move [0,1,1] brackets white [1,1] against black [2,1]; place at [0,1] and flip [1,1]. Counts become black 4 and white 1, and turn becomes white (2). Repeating the same black request is rejected because it is now white turn and the target is occupied. A diagonal opponent run also flips when its far endpoint is own color; reaching the edge without that endpoint never captures.",
+    "example": [
+      [
+        4,
+        [
+          [
+            0,
+            1,
+            1
+          ],
+          [
+            0,
+            1,
+            1
+          ]
+        ]
+      ],
+      [
+        [
+          1,
+          0,
+          2,
+          2,
+          0,
+          0,
+          0,
+          0,
+          0,
+          2,
+          1,
+          0,
+          0,
+          1,
+          2,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          2,
+          1,
+          4,
+          1,
+          0,
+          1,
+          0,
+          0,
+          0,
+          1,
+          1,
+          0,
+          0,
+          1,
+          2,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          2,
+          0,
+          4,
+          1,
+          0,
+          1,
+          0,
+          0,
+          0,
+          1,
+          1,
+          0,
+          0,
+          1,
+          2,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      ]
+    ],
+    "time": "O((Q+1)*S^3) conservative worst-case time for side S and Q requests: checking move availability tries S^2 squares and scans eight rays of length O(S). Producing each snapshot costs O(S^2).",
+    "space": "O(S^2) owned board plus O(S) temporary capture/ray coordinates for one proposed square, and O((Q+1)*S^2) returned snapshots. There is no recursive direction scan.",
+    "edges": [
+      "Initially full 2x2 board, invalid colors/coordinates and occupied cells.",
+      "All eight capture directions, multiple simultaneous rays, unbracketed runs and empty gaps.",
+      "Wrong-player requests and atomic rejection of no-capture moves.",
+      "Automatic passes, game over with remaining empty cells and immutable terminal snapshots."
+    ],
+    "related": "The primary Java board example scans only four directions and its flipped<0 test admits some no-capture placements; the linked JavaScript eight-direction sketch has unchecked ray boundaries and a nonadvancing flip loop. Neither defect is copied. This independent engine states complete eight-direction Othello rules and deterministic next-turn behavior.",
+    "languageWhy": {
+      "csharp": "C# local Captures returns owned coordinate pairs, while CanMove reuses that predicate before modifying turn. Snapshot allocates a fresh row and recounts the owned board, avoiding score drift from multi-direction flips.",
+      "java": "Java local Rules and Snapshotter classes capture the owned board/trace. Snapshot receives currentTurn as an argument rather than capturing a reassigned local. Each ray path and combined flip list owns its pair arrays; toArray returns concrete snapshot rows.",
+      "cpp": "C++ lambdas return owned coordinate vectors. References to caller actions remain const. Ray coordinates are bounds-checked before indexing, and complete flip lists are collected before board mutation. Snapshot moves its new vector into the trace.",
+      "python": "Python captures returns coordinate tuples and extends only bracketed paths. The can_move generator short-circuits on the first legal square; snapshot copies primitive board values. Turn selection tests opponent before allowing a same-player turn.",
+      "javascript": "JavaScript creates fresh path/pair arrays and checks bounds on every ray step. It accumulates captures before applying any flip. Each flat snapshot is independent of board rows and earlier trace rows; boolean move availability is separate from capture-array length."
+    },
+    "id": "ctci6_7_8",
+    "title": "Othello",
+    "testCount": 948,
+    "languages": {
+      "csharp": {
+        "signature": "int[][] PlayOthello(int size, int[][] actions)",
+        "starterCode": "public class Solution\n{\n    public int[][] PlayOthello(int size, int[][] actions)\n    {\n        return [];\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public int[][] PlayOthello(int size, int[][] actions)\n    {\n        var board = Enumerable.Range(0, size)\n                        .Select(\n                            _ => new int[size])\n                        .ToArray();\n        var trace = new List<int[]>();\n        int middle = size / 2;\n        board[middle - 1][middle - 1] = board[middle][middle] = 2;\n        board[middle - 1][middle] = board[middle][middle - 1] = 1;\n        List<int[]> Captures(int row, int column, int color)\n        {\n            var result = new List<int[]>();\n            if (row < 0 || row >= size || column < 0 || column >= size || board[row][column] != 0)\n                return result;\n            for (int dr = -1; dr <= 1; ++dr)\n                for (int dc = -1; dc <= 1; ++dc)\n                {\n                    if (dr == 0 && dc == 0)\n                        continue;\n                    int r = row + dr, c = column + dc;\n                    var path = new List<int[]>();\n                    while (r >= 0 && r < size && c >= 0 && c < size && board[r][c] == 3 - color)\n                    {\n                        path.Add(new int[] { r, c });\n                        r += dr;\n                        c += dc;\n                    }\n                    if (path.Count > 0 && r >= 0 && r < size && c >= 0 && c < size &&\n                        board[r][c] == color)\n                        result.AddRange(path);\n                }\n            return result;\n        }\n        bool CanMove(int color)\n        {\n            for (int r = 0; r < size; ++r)\n                for (int c = 0; c < size; ++c)\n                    if (Captures(r, c, color).Count > 0)\n                        return true;\n            return false;\n        }\n        int turn = CanMove(1) ? 1 : 0;\n        void Snapshot(int accepted)\n        {\n            int black = 0, white = 0;\n            foreach (var row in board)\n                foreach (int v in row)\n                {\n                    if (v == 1)\n                        black++;\n                    if (v == 2)\n                        white++;\n                }\n            var result = new int[4 + size * size];\n            result[0] = turn;\n            result[1] = accepted;\n            result[2] = black;\n            result[3] = white;\n            for (int r = 0; r < size; r++)\n                for (int c = 0; c < size; c++)\n                    result[4 + r * size + c] = board[r][c];\n            trace.Add(result);\n        }\n        Snapshot(0);\n        foreach (var action in actions)\n        {\n            int row = action[0], column = action[1], color = action[2], accepted = 0;\n            if (turn != 0 && color == turn)\n            {\n                var flipped = Captures(row, column, color);\n                if (flipped.Count > 0)\n                {\n                    board[row][column] = color;\n                    foreach (var p in flipped)\n                        board[p[0]][p[1]] = color;\n                    accepted = 1;\n                    turn = CanMove(3 - color) ? 3 - color : CanMove(color) ? color : 0;\n                }\n            }\n            Snapshot(accepted);\n        }\n        return trace.ToArray();\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function PlayOthello(size, actions)",
+        "starterCode": "function PlayOthello(size, actions) {\n  return [];\n}\n",
+        "solutionCode": "function PlayOthello(size, actions) {\n  const board = Array.from({ length: size }, () => Array(size).fill(0)),\n    middle = Math.floor(size / 2),\n    trace = [];\n  board[middle - 1][middle - 1] = board[middle][middle] = 2;\n  board[middle - 1][middle] = board[middle][middle - 1] = 1;\n  function captures(row, column, color) {\n    if (row < 0 || row >= size || column < 0 || column >= size || board[row][column] !== 0)\n      return [];\n    const result = [];\n    for (let dr = -1; dr <= 1; ++dr)\n      for (let dc = -1; dc <= 1; ++dc) {\n        if (dr === 0 && dc === 0) continue;\n        let r = row + dr,\n          c = column + dc;\n        const path = [];\n        while (r >= 0 && r < size && c >= 0 && c < size && board[r][c] === 3 - color) {\n          path.push([r, c]);\n          r += dr;\n          c += dc;\n        }\n        if (path.length && r >= 0 && r < size && c >= 0 && c < size && board[r][c] === color)\n          result.push(...path);\n      }\n    return result;\n  }\n  function canMove(color) {\n    for (let r = 0; r < size; ++r)\n      for (let c = 0; c < size; ++c) if (captures(r, c, color).length) return true;\n    return false;\n  }\n  let turn = canMove(1) ? 1 : 0;\n  function snapshot(accepted) {\n    const flat = board.flat();\n    trace.push([\n      turn,\n      accepted,\n      flat.filter((v) => v === 1).length,\n      flat.filter((v) => v === 2).length,\n      ...flat,\n    ]);\n  }\n  snapshot(0);\n  for (const [row, column, color] of actions) {\n    let accepted = 0;\n    if (turn && color === turn) {\n      const flipped = captures(row, column, color);\n      if (flipped.length) {\n        board[row][column] = color;\n        for (const [r, c] of flipped) board[r][c] = color;\n        accepted = 1;\n        turn = canMove(3 - color) ? 3 - color : canMove(color) ? color : 0;\n      }\n    }\n    snapshot(accepted);\n  }\n  return trace;\n}\n"
+      },
+      "python": {
+        "signature": "def PlayOthello(size: int, actions: list[list[int]]) -> list[list[int]]",
+        "starterCode": "def PlayOthello(size: int, actions: list[list[int]]) -> list[list[int]]:\n    return []\n",
+        "solutionCode": "def PlayOthello(size: int, actions: list[list[int]]) -> list[list[int]]:\n    board = [[0] * size for _ in range(size)]\n    middle = size // 2\n    board[middle - 1][middle - 1] = board[middle][middle] = 2\n    board[middle - 1][middle] = board[middle][middle - 1] = 1\n    trace = []\n\n    def captures(row, column, color):\n        if not (0 <= row < size and 0 <= column < size) or board[row][column] != 0:\n            return []\n        result = []\n        for dr in (-1, 0, 1):\n            for dc in (-1, 0, 1):\n                if dr == dc == 0:\n                    continue\n                r, c = row + dr, column + dc\n                path = []\n                while 0 <= r < size and 0 <= c < size and board[r][c] == 3 - color:\n                    path.append((r, c))\n                    r += dr\n                    c += dc\n                if path and 0 <= r < size and 0 <= c < size and board[r][c] == color:\n                    result.extend(path)\n        return result\n\n    def can_move(color):\n        return any(captures(r, c, color) for r in range(size) for c in range(size))\n\n    def snapshot(accepted):\n        flat = [v for row in board for v in row]\n        trace.append([turn, accepted, flat.count(1), flat.count(2)] + flat)\n\n    turn = 1 if can_move(1) else 0\n    snapshot(0)\n    for row, column, color in actions:\n        accepted = 0\n        if turn and color == turn:\n            flipped = captures(row, column, color)\n            if flipped:\n                board[row][column] = color\n                for r, c in flipped:\n                    board[r][c] = color\n                accepted = 1\n                turn = 3 - color if can_move(3 - color) else color if can_move(color) else 0\n        snapshot(accepted)\n    return trace\n"
+      },
+      "cpp": {
+        "signature": "std::vector<std::vector<int>> PlayOthello(int size, const std::vector<std::vector<int>>& actions)",
+        "starterCode": "class Solution {\n public:\n  std::vector<std::vector<int>> PlayOthello(int size,\n                                            const std::vector<std::vector<int>>& actions) {\n    return {};\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  std::vector<std::vector<int>> PlayOthello(int size,\n                                            const std::vector<std::vector<int>>& actions) {\n    std::vector<std::vector<int>> board(size, std::vector<int>(size)), trace;\n    int middle = size / 2;\n    board[middle - 1][middle - 1] = board[middle][middle] = 2;\n    board[middle - 1][middle] = board[middle][middle - 1] = 1;\n    auto captures = [&](int row, int column, int color) {\n      std::vector<std::pair<int, int>> result;\n      if (row < 0 || row >= size || column < 0 || column >= size || board[row][column] != 0)\n        return result;\n      for (int dr = -1; dr <= 1; ++dr)\n        for (int dc = -1; dc <= 1; ++dc) {\n          if (dr == 0 && dc == 0)\n            continue;\n          int r = row + dr, c = column + dc;\n          std::vector<std::pair<int, int>> path;\n          while (r >= 0 && r < size && c >= 0 && c < size && board[r][c] == 3 - color) {\n            path.push_back({r, c});\n            r += dr;\n            c += dc;\n          }\n          if (!path.empty() && r >= 0 && r < size && c >= 0 && c < size && board[r][c] == color)\n            result.insert(result.end(), path.begin(), path.end());\n        }\n      return result;\n    };\n    auto canMove = [&](int color) {\n      for (int r = 0; r < size; ++r)\n        for (int c = 0; c < size; ++c)\n          if (!captures(r, c, color).empty())\n            return true;\n      return false;\n    };\n    int turn = canMove(1) ? 1 : 0;\n    auto snapshot = [&](int accepted) {\n      int black = 0, white = 0;\n      for (const auto& row : board)\n        for (int v : row) {\n          black += v == 1;\n          white += v == 2;\n        }\n      std::vector<int> result{turn, accepted, black, white};\n      for (const auto& row : board)\n        result.insert(result.end(), row.begin(), row.end());\n      trace.push_back(std::move(result));\n    };\n    snapshot(0);\n    for (const auto& action : actions) {\n      int row = action[0], column = action[1], color = action[2], accepted = 0;\n      if (turn && color == turn) {\n        auto flipped = captures(row, column, color);\n        if (!flipped.empty()) {\n          board[row][column] = color;\n          for (auto [r, c] : flipped)\n            board[r][c] = color;\n          accepted = 1;\n          turn = canMove(3 - color) ? 3 - color : canMove(color) ? color : 0;\n        }\n      }\n      snapshot(accepted);\n    }\n    return trace;\n  }\n};\n"
+      },
+      "java": {
+        "signature": "int[][] PlayOthello(int size, int[][] actions)",
+        "starterCode": "class Solution {\n  public int[][] PlayOthello(int size, int[][] actions) {\n    return new int[0][];\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public int[][] PlayOthello(int size, int[][] actions) {\n    int[][] board = new int[size][size];\n    var trace = new ArrayList<int[]>();\n    int middle = size / 2;\n    board[middle - 1][middle - 1] = board[middle][middle] = 2;\n    board[middle - 1][middle] = board[middle][middle - 1] = 1;\n    class Rules {\n      ArrayList<int[]> captures(int row, int column, int color) {\n        var result = new ArrayList<int[]>();\n        if (row < 0 || row >= size || column < 0 || column >= size || board[row][column] != 0)\n          return result;\n        for (int dr = -1; dr <= 1; ++dr)\n          for (int dc = -1; dc <= 1; ++dc) {\n            if (dr == 0 && dc == 0)\n              continue;\n            int r = row + dr, c = column + dc;\n            var path = new ArrayList<int[]>();\n            while (r >= 0 && r < size && c >= 0 && c < size && board[r][c] == 3 - color) {\n              path.add(new int[] {r, c});\n              r += dr;\n              c += dc;\n            }\n            if (path.size() > 0 && r >= 0 && r < size && c >= 0 && c < size && board[r][c] == color)\n              result.addAll(path);\n          }\n        return result;\n      }\n      boolean canMove(int color) {\n        for (int r = 0; r < size; ++r)\n          for (int c = 0; c < size; ++c)\n            if (captures(r, c, color).size() > 0)\n              return true;\n        return false;\n      }\n    }\n    var rules = new Rules();\n    int turn = rules.canMove(1) ? 1 : 0;\n    class Snapshotter {\n      void snapshot(int accepted, int currentTurn) {\n        int black = 0, white = 0;\n        for (int[] row : board)\n          for (int v : row) {\n            if (v == 1)\n              black++;\n            if (v == 2)\n              white++;\n          }\n        var result = new int[4 + size * size];\n        result[0] = currentTurn;\n        result[1] = accepted;\n        result[2] = black;\n        result[3] = white;\n        for (int r = 0; r < size; r++)\n          for (int c = 0; c < size; c++)\n            result[4 + r * size + c] = board[r][c];\n        trace.add(result);\n      }\n    }\n    var observer = new Snapshotter();\n    observer.snapshot(0, turn);\n    for (int[] action : actions) {\n      int row = action[0], column = action[1], color = action[2], accepted = 0;\n      if (turn != 0 && color == turn) {\n        var flipped = rules.captures(row, column, color);\n        if (flipped.size() > 0) {\n          board[row][column] = color;\n          for (int[] p : flipped)\n            board[p[0]][p[1]] = color;\n          accepted = 1;\n          turn = rules.canMove(3 - color) ? 3 - color : rules.canMove(color) ? color : 0;\n        }\n      }\n      observer.snapshot(accepted, turn);\n    }\n    return trace.toArray(new int[0][]);\n  }\n}\n"
+      }
+    }
   }
 ]
