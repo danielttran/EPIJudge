@@ -44,7 +44,9 @@ def audit(root=ROOT):
         item.get("Id", item.get("id")) for items in catalogs for item in items
     } <= problems
     ctci_path = root / "ctci6/catalog.json"
-    ctci = json.loads(ctci_path.read_text(encoding="utf-8")) if ctci_path.is_file() else []
+    ctci = (
+        json.loads(ctci_path.read_text(encoding="utf-8")) if ctci_path.is_file() else []
+    )
     assert len(problems) == 334 + len(ctci)
     assert {item["id"] for item in ctci} <= problems
     topics = {}
