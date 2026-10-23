@@ -1,0 +1,22 @@
+{
+  "explanation": "XOR removes a repeated operand: x xor x is zero and x xor zero is x. The first assignment stores the combined information of both inputs. XORing that combination with the old second recovers the original first, then XORing it with the recovered first recovers the original second. No addition/subtraction overflow is required.",
+  "correctness": "Let the original values be a and b. After the first assignment, first=a xor b and second=b. The second assignment makes second=(a xor b) xor b=a. The third makes first=(a xor b) xor a=b. XOR associativity and cancellation therefore exchange the two values exactly. This remains valid for equal values and all signed bit patterns because the two variables are distinct locations.",
+  "walkthrough": "With first=9 and second=4, the assignments produce first=13, then second=9, then first=4. The returned pair is [4,9]. If both values are 7, the intermediate first becomes zero but the following assignments recover [7,7].",
+  "walkthroughCase": {
+    "arguments": [
+      9,
+      4
+    ],
+    "expected": [
+      4,
+      9
+    ]
+  },
+  "timeComplexity": "O(1) fixed-width XOR operations.",
+  "spaceComplexity": "O(1) auxiliary storage; no swap temporary, plus the two-integer output.",
+  "edgeCases": [
+    "Equal inputs, zeros and negative values.",
+    "Both signed endpoints; arithmetic overflow must not break exchange."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.1. No affiliation is implied."
+}

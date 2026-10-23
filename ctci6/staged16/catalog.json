@@ -1,5 +1,155 @@
 [
   {
+    "ref": "16.1",
+    "method": "SwapWithoutTemporary",
+    "params": [
+      [
+        "first",
+        "i"
+      ],
+      [
+        "second",
+        "i"
+      ]
+    ],
+    "result": "ai",
+    "mutation": "none",
+    "description": "Exchange the values of two independent local integer variables without a third temporary variable, then return their final values as [first,second]. Perform the exchange using arithmetic or bit operations on those two variables; do not merely construct the reversed result directly.",
+    "constraints": [
+      "Both arguments may be any signed 32-bit integer. The variables are independent value arguments, even when their values are equal; aliasing two references to the same storage location is not part of this callable.",
+      "Do not use a temporary swap variable, tuple/destructuring swap, swap helper, or a preconstructed reversed pair. Allocate the returned two-integer collection only after exchanging the two variables. The callable returns the swapped values instead of printing them; caller value arguments remain unchanged."
+    ],
+    "why": "XOR removes a repeated operand: x xor x is zero and x xor zero is x. The first assignment stores the combined information of both inputs. XORing that combination with the old second recovers the original first, then XORing it with the recovered first recovers the original second. No addition/subtraction overflow is required.",
+    "correctness": "Let the original values be a and b. After the first assignment, first=a xor b and second=b. The second assignment makes second=(a xor b) xor b=a. The third makes first=(a xor b) xor a=b. XOR associativity and cancellation therefore exchange the two values exactly. This remains valid for equal values and all signed bit patterns because the two variables are distinct locations.",
+    "walkthrough": "With first=9 and second=4, the assignments produce first=13, then second=9, then first=4. The returned pair is [4,9]. If both values are 7, the intermediate first becomes zero but the following assignments recover [7,7].",
+    "example": [
+      [
+        9,
+        4
+      ],
+      [
+        4,
+        9
+      ]
+    ],
+    "time": "O(1) fixed-width XOR operations.",
+    "space": "O(1) auxiliary storage; no swap temporary, plus the two-integer output.",
+    "edges": [
+      "Equal inputs, zeros and negative values.",
+      "Both signed endpoints; arithmetic overflow must not break exchange."
+    ],
+    "related": "The public function swaps local Java values and prints them; returning those values makes the same exchange observable in the bank.",
+    "id": "ctci6_16_1",
+    "title": "Number Swapper",
+    "testCount": 581,
+    "languages": {
+      "csharp": {
+        "signature": "int[] SwapWithoutTemporary(int first, int second)",
+        "starterCode": "public class Solution\n{\n    public int[] SwapWithoutTemporary(int first, int second)\n    {\n        return [];\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public int[] SwapWithoutTemporary(int first, int second)\n    {\n        first ^= second;\n        second ^= first;\n        first ^= second;\n        return [first, second];\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function SwapWithoutTemporary(first, second)",
+        "starterCode": "function SwapWithoutTemporary(first, second) {\n  return [];\n}\n",
+        "solutionCode": "function SwapWithoutTemporary(first, second) {\n  first ^= second;\n  second ^= first;\n  first ^= second;\n  return [first, second];\n}\n"
+      },
+      "python": {
+        "signature": "def SwapWithoutTemporary(first: int, second: int) -> list[int]",
+        "starterCode": "def SwapWithoutTemporary(first: int, second: int) -> list[int]:\n    return []\n",
+        "solutionCode": "def SwapWithoutTemporary(first: int, second: int) -> list[int]:\n    first ^= second\n    second ^= first\n    first ^= second\n    return [first, second]\n"
+      },
+      "cpp": {
+        "signature": "std::vector<int> SwapWithoutTemporary(int first, int second)",
+        "starterCode": "class Solution {\n public:\n  std::vector<int> SwapWithoutTemporary(int first, int second) {\n    return {};\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  std::vector<int> SwapWithoutTemporary(int first, int second) {\n    first ^= second;\n    second ^= first;\n    first ^= second;\n    return {first, second};\n  }\n};\n"
+      },
+      "java": {
+        "signature": "int[] SwapWithoutTemporary(int first, int second)",
+        "starterCode": "class Solution {\n  public int[] SwapWithoutTemporary(int first, int second) {\n    return new int[0];\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public int[] SwapWithoutTemporary(int first, int second) {\n    first ^= second;\n    second ^= first;\n    first ^= second;\n    return new int[] {first, second};\n  }\n}\n"
+      }
+    }
+  },
+  {
+    "ref": "16.4",
+    "method": "TicTacWinner",
+    "params": [
+      [
+        "board",
+        "aai"
+      ]
+    ],
+    "result": "i",
+    "mutation": "none",
+    "description": "Inspect an n by n tic-tac-toe board and return its winning player: 1 or 2. A win requires a complete nonempty row, complete column, or one of the two full corner-to-corner diagonals occupied by that player. Empty cells are 0. Return 0 when neither player has such a line.",
+    "constraints": [
+      "0 <= n <= 50. The board is square, nonnull, and contains only 0,1,2. The input promises that at most one player has a winning line, so the result is unambiguous. An empty board has no winner.",
+      "Preserve the outer array, every original row and all cell values. This callable inspects winning lines, not move legality, turn counts or whether the game should have stopped earlier. A shorter line inside a larger board is not a win."
+    ],
+    "why": "A winning line can only belong to one of a finite set: n rows, n columns and two full diagonals. For each candidate, take its first cell as the proposed player and verify the remaining cells; an empty first cell immediately disqualifies the line. This covers the generic square-board follow-up without assuming the board is always 3 by 3.",
+    "correctness": "A candidate is reported only when its first cell is nonzero and every cell in that full line equals it, so every reported player has a genuine winning line. Conversely every allowed winning line appears among the examined rows, columns or two diagonals and therefore will be detected. The at-most-one-winner promise makes early return safe even if that player has several winning lines. If no candidate succeeds, neither player has a win and zero is correct.",
+    "walkthrough": "For [[1,0,2],[0,1,2],[0,0,1]], no row or column is complete, but the main diagonal contains 1,1,1, so player 1 wins. Three adjacent 1 cells on one row of a 4 by 4 board would not be a complete winning line.",
+    "example": [
+      [
+        [
+          [
+            1,
+            0,
+            2
+          ],
+          [
+            0,
+            1,
+            2
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ]
+      ],
+      1
+    ],
+    "time": "O(n^2) time: examine at most 2n+2 lines of length n.",
+    "space": "O(1) auxiliary space; no board copy or history is needed.",
+    "edges": [
+      "Empty and one-cell boards, all-empty board, full board without a winner.",
+      "Both diagonal directions, full columns, and nonwinning partial lines in larger boards."
+    ],
+    "related": "The generic n by n form is established by the author's public implementation; no invented game-history validation is added.",
+    "id": "ctci6_16_4",
+    "title": "Tic Tac Win",
+    "testCount": 19453,
+    "languages": {
+      "csharp": {
+        "signature": "int TicTacWinner(int[][] board)",
+        "starterCode": "public class Solution\n{\n    public int TicTacWinner(int[][] board)\n    {\n        return 0;\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public int TicTacWinner(int[][] board)\n    {\n        int n = board.Length;\n        if (n == 0)\n            return 0;\n        for (int i = 0; i < n; ++i)\n        {\n            int row = board[i][0], column = board[0][i];\n            for (int j = 0; j < n; ++j)\n            {\n                if (board[i][j] != row)\n                    row = 0;\n                if (board[j][i] != column)\n                    column = 0;\n            }\n            if (row != 0)\n                return row;\n            if (column != 0)\n                return column;\n        }\n        int main = board[0][0], other = board[0][n - 1];\n        for (int i = 0; i < n; ++i)\n        {\n            if (board[i][i] != main)\n                main = 0;\n            if (board[i][n - 1 - i] != other)\n                other = 0;\n        }\n        if (main != 0)\n            return main;\n        return other;\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function TicTacWinner(board)",
+        "starterCode": "function TicTacWinner(board) {\n  return 0;\n}\n",
+        "solutionCode": "function TicTacWinner(board) {\n  const n = board.length;\n  if (n === 0) return 0;\n  for (let i = 0; i < n; ++i) {\n    let row = board[i][0],\n      column = board[0][i];\n    for (let j = 0; j < n; ++j) {\n      if (board[i][j] !== row) row = 0;\n      if (board[j][i] !== column) column = 0;\n    }\n    if (row) return row;\n    if (column) return column;\n  }\n  let main = board[0][0],\n    other = board[0][n - 1];\n  for (let i = 0; i < n; ++i) {\n    if (board[i][i] !== main) main = 0;\n    if (board[i][n - 1 - i] !== other) other = 0;\n  }\n  if (main) return main;\n  return other;\n}\n"
+      },
+      "python": {
+        "signature": "def TicTacWinner(board: list[list[int]]) -> int",
+        "starterCode": "def TicTacWinner(board: list[list[int]]) -> int:\n    return 0\n",
+        "solutionCode": "def TicTacWinner(board: list[list[int]]) -> int:\n    n = len(board)\n    if n == 0:\n        return 0\n    for index in range(n):\n        row_player = board[index][0]\n        column_player = board[0][index]\n        if row_player and all(board[index][j] == row_player for j in range(n)):\n            return row_player\n        if column_player and all(board[j][index] == column_player for j in range(n)):\n            return column_player\n    main = board[0][0]\n    other = board[0][n - 1]\n    if main and all(board[i][i] == main for i in range(n)):\n        return main\n    if other and all(board[i][n - 1 - i] == other for i in range(n)):\n        return other\n    return 0\n"
+      },
+      "cpp": {
+        "signature": "int TicTacWinner(const std::vector<std::vector<int>>& board)",
+        "starterCode": "class Solution {\n public:\n  int TicTacWinner(const std::vector<std::vector<int>>& board) {\n    return 0;\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  int TicTacWinner(const std::vector<std::vector<int>>& board) {\n    int n = static_cast<int>(board.size());\n    if (n == 0)\n      return 0;\n    for (int i = 0; i < n; ++i) {\n      int row = board[i][0], column = board[0][i];\n      for (int j = 0; j < n; ++j) {\n        if (board[i][j] != row)\n          row = 0;\n        if (board[j][i] != column)\n          column = 0;\n      }\n      if (row != 0)\n        return row;\n      if (column != 0)\n        return column;\n    }\n    int main = board[0][0], other = board[0][n - 1];\n    for (int i = 0; i < n; ++i) {\n      if (board[i][i] != main)\n        main = 0;\n      if (board[i][n - 1 - i] != other)\n        other = 0;\n    }\n    if (main != 0)\n      return main;\n    return other;\n  }\n};\n"
+      },
+      "java": {
+        "signature": "int TicTacWinner(int[][] board)",
+        "starterCode": "class Solution {\n  public int TicTacWinner(int[][] board) {\n    return 0;\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public int TicTacWinner(int[][] board) {\n    int n = board.length;\n    if (n == 0)\n      return 0;\n    for (int i = 0; i < n; ++i) {\n      int row = board[i][0], column = board[0][i];\n      for (int j = 0; j < n; ++j) {\n        if (board[i][j] != row)\n          row = 0;\n        if (board[j][i] != column)\n          column = 0;\n      }\n      if (row != 0)\n        return row;\n      if (column != 0)\n        return column;\n    }\n    int main = board[0][0], other = board[0][n - 1];\n    for (int i = 0; i < n; ++i) {\n      if (board[i][i] != main)\n        main = 0;\n      if (board[i][n - 1 - i] != other)\n        other = 0;\n    }\n    if (main != 0)\n      return main;\n    return other;\n  }\n}\n"
+      }
+    }
+  },
+  {
     "ref": "16.5",
     "method": "CountFactorialZeros",
     "params": [
@@ -126,6 +276,82 @@
         "signature": "int MaximumWithoutComparison(int first, int second)",
         "starterCode": "class Solution {\n  public int MaximumWithoutComparison(int first, int second) {\n    return 0;\n  }\n}\n",
         "solutionCode": "class Solution {\n  public int MaximumWithoutComparison(int first, int second) {\n    int negativeFirst = first >>> 31, negativeSecond = second >>> 31,\n        negativeDifference = (first - second) >>> 31;\n    int different = negativeFirst ^ negativeSecond,\n        chooseFirst = different * (negativeFirst ^ 1) + (different ^ 1) * (negativeDifference ^ 1),\n        mask = -chooseFirst;\n    return (first & mask) | (second & ~mask);\n  }\n}\n"
+      }
+    }
+  },
+  {
+    "ref": "16.10",
+    "method": "MostPopulatedYear",
+    "params": [
+      [
+        "people",
+        "aai"
+      ]
+    ],
+    "result": "i",
+    "mutation": "none",
+    "description": "Return the earliest year from 1900 through 2000, inclusive, in which the greatest number of the supplied people were alive. Each row is [birthYear,deathYear], and a person counts in both their birth and death years. Rows describe distinct people even if their dates agree.",
+    "constraints": [
+      "There are 0..1000 people; every row has exactly two integers with 1900 <= birthYear <= deathYear <= 2000. Preserve the outer array, row objects, dates and input order.",
+      "Resolve all population ties by the earliest year. For no people every year has population zero, so return 1900. A person born and deceased in the same year contributes in that year."
+    ],
+    "why": "A birth increases the population starting in its own year. A death decreases it only in the following year because the death year is included. Recording those changes and taking a prefix sum counts all lifetimes without visiting every person in every year. Scan years in increasing order and update the winner only on a strictly larger population to retain the earliest tie.",
+    "correctness": "Each person contributes +1 at birth and -1 at death+1. Their contribution to the running sum is consequently one exactly during their inclusive lifetime and zero elsewhere. Summing all contributions yields the exact living population in every scanned year. The running best records the largest population seen and changes its year only when that count increases. Increasing-year order therefore chooses the earliest global maximizer, including 1900 for the all-zero empty case.",
+    "walkthrough": "For [[1900,1901],[1901,1902],[1902,1902]], populations in 1900,1901,1902 are 1,2,2. The first person still counts in 1901 and the third counts in 1902. The maximum is tied, so return 1901 rather than the last tied year.",
+    "example": [
+      [
+        [
+          [
+            1900,
+            1901
+          ],
+          [
+            1901,
+            1902
+          ],
+          [
+            1902,
+            1902
+          ]
+        ]
+      ],
+      1901
+    ],
+    "time": "O(p+Y) time for p people and Y=101 admitted years, hence O(p+1) for this fixed domain.",
+    "space": "O(Y) change counters including a death-after-2000 sentinel; Y is fixed at 101.",
+    "edges": [
+      "No people, same-year lifetimes, duplicate date rows.",
+      "Birth coinciding with another death; earliest tied year and the 2000 endpoint."
+    ],
+    "related": "Date rows replace the public Person wrapper; inclusive lifetime and earliest-tie behavior match its delta implementation.",
+    "id": "ctci6_16_10",
+    "title": "Living People",
+    "testCount": 561,
+    "languages": {
+      "csharp": {
+        "signature": "int MostPopulatedYear(int[][] people)",
+        "starterCode": "public class Solution\n{\n    public int MostPopulatedYear(int[][] people)\n    {\n        return 0;\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public int MostPopulatedYear(int[][] people)\n    {\n        int[] changes = new int[102];\n        foreach (var person in people)\n        {\n            ++changes[person[0] - 1900];\n            --changes[person[1] - 1900 + 1];\n        }\n        int alive = 0, best = 0, answer = 1900;\n        for (int offset = 0; offset < 101; ++offset)\n        {\n            alive += changes[offset];\n            if (alive > best)\n            {\n                best = alive;\n                answer = 1900 + offset;\n            }\n        }\n        return answer;\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function MostPopulatedYear(people)",
+        "starterCode": "function MostPopulatedYear(people) {\n  return 0;\n}\n",
+        "solutionCode": "function MostPopulatedYear(people) {\n  const changes = Array(102).fill(0);\n  for (const [birth, death] of people) {\n    ++changes[birth - 1900];\n    --changes[death - 1900 + 1];\n  }\n  let alive = 0,\n    best = 0,\n    answer = 1900;\n  for (let offset = 0; offset < 101; ++offset) {\n    alive += changes[offset];\n    if (alive > best) {\n      best = alive;\n      answer = 1900 + offset;\n    }\n  }\n  return answer;\n}\n"
+      },
+      "python": {
+        "signature": "def MostPopulatedYear(people: list[list[int]]) -> int",
+        "starterCode": "def MostPopulatedYear(people: list[list[int]]) -> int:\n    return 0\n",
+        "solutionCode": "def MostPopulatedYear(people: list[list[int]]) -> int:\n    changes = [0] * 102\n    for birth, death in people:\n        changes[birth - 1900] += 1\n        changes[death - 1900 + 1] -= 1\n    alive = 0\n    best = 0\n    answer = 1900\n    for offset in range(101):\n        alive += changes[offset]\n        if alive > best:\n            best = alive\n            answer = 1900 + offset\n    return answer\n"
+      },
+      "cpp": {
+        "signature": "int MostPopulatedYear(const std::vector<std::vector<int>>& people)",
+        "starterCode": "class Solution {\n public:\n  int MostPopulatedYear(const std::vector<std::vector<int>>& people) {\n    return 0;\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  int MostPopulatedYear(const std::vector<std::vector<int>>& people) {\n    int changes[102] = {};\n    for (const auto& person : people) {\n      ++changes[person[0] - 1900];\n      --changes[person[1] - 1900 + 1];\n    }\n    int alive = 0, best = 0, answer = 1900;\n    for (int offset = 0; offset < 101; ++offset) {\n      alive += changes[offset];\n      if (alive > best) {\n        best = alive;\n        answer = 1900 + offset;\n      }\n    }\n    return answer;\n  }\n};\n"
+      },
+      "java": {
+        "signature": "int MostPopulatedYear(int[][] people)",
+        "starterCode": "class Solution {\n  public int MostPopulatedYear(int[][] people) {\n    return 0;\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public int MostPopulatedYear(int[][] people) {\n    int[] changes = new int[102];\n    for (int[] person : people) {\n      ++changes[person[0] - 1900];\n      --changes[person[1] - 1900 + 1];\n    }\n    int alive = 0, best = 0, answer = 1900;\n    for (int offset = 0; offset < 101; ++offset) {\n      alive += changes[offset];\n      if (alive > best) {\n        best = alive;\n        answer = 1900 + offset;\n      }\n    }\n    return answer;\n  }\n}\n"
       }
     }
   },
@@ -418,6 +644,87 @@
         "signature": "int MaximumContiguousSum(int[] values)",
         "starterCode": "class Solution {\n  public int MaximumContiguousSum(int[] values) {\n    return 0;\n  }\n}\n",
         "solutionCode": "class Solution {\n  public int MaximumContiguousSum(int[] values) {\n    int running = 0, best = 0;\n    for (int value : values) {\n      running = Math.max(0, running + value);\n      best = Math.max(best, running);\n    }\n    return best;\n  }\n}\n"
+      }
+    }
+  },
+  {
+    "ref": "16.19",
+    "method": "PondSizes",
+    "params": [
+      [
+        "land",
+        "aai"
+      ]
+    ],
+    "result": "ai",
+    "mutation": "none",
+    "description": "Find every pond in a rectangular elevation grid and return its size in cells, sorted in increasing order. Elevation 0 is water; positive elevations are land. Water cells belong to one pond when connected horizontally, vertically or diagonally, through any number of water cells. Keep one size per pond, including repeated equal sizes.",
+    "constraints": [
+      "land is nonnull with 0..50 rows and 0..50 columns, rectangular rows, and integer elevations 0..10000. Empty dimensions or a grid without water return an empty collection.",
+      "Preserve the outer array, original rows and every elevation. Use a separate visited structure instead of overwriting water or land. Eight-neighbor connectivity is intentional and differs from four-neighbor paint fill. Return a materialized integer array/list/vector in increasing order."
+    ],
+    "why": "Start a search only at an unvisited water cell, mark it on discovery, and count every water cell reached through eight-neighbor steps. Every such search consumes exactly one connected component. Separate visited flags preserve the elevation input; marking before pushing avoids counting a water cell twice. Sorting the component counts provides the bank's deterministic output order without merging equal-sized ponds.",
+    "correctness": "The search starts within one pond, and each discovered water neighbor is connected to a reached water cell, so it remains in that same pond. Every water cell in the pond has a water path from the start; induction along that path shows it is eventually reached. Marking at discovery gives exactly one count per cell. The outer scan starts no later search in an already visited component, while every other pond eventually supplies an unvisited starting cell. Thus the recorded sizes include every pond once. Sorting changes only their order, not multiplicity, and the elevation grid is never changed.",
+    "walkthrough": "In [[0,1,0],[1,0,1],[0,1,0]], the center water cell touches every corner diagonally. All five zeros are therefore one pond, so return [5]. Four-neighbor searches would incorrectly report five ponds of size one.",
+    "example": [
+      [
+        [
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            1,
+            0,
+            1
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ]
+      ],
+      [
+        5
+      ]
+    ],
+    "time": "O(rows*columns + p*log(p+1)) time for the scan/search and sorting p pond sizes. Each cell and its eight neighbors are checked a constant number of times.",
+    "space": "O(rows*columns) visited flags and worst-case work stack, excluding the p returned sizes.",
+    "edges": [
+      "No water, all water, empty dimensions.",
+      "Diagonal-only connections, separate equal-sized ponds, and boundary/corner cells."
+    ],
+    "related": "Increasing size order is a bank convention; preserving inputs follows the author's separate-visited variant rather than its mutating alternative.",
+    "id": "ctci6_16_19",
+    "title": "Pond Sizes",
+    "testCount": 567,
+    "languages": {
+      "csharp": {
+        "signature": "int[] PondSizes(int[][] land)",
+        "starterCode": "public class Solution\n{\n    public int[] PondSizes(int[][] land)\n    {\n        return [];\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public int[] PondSizes(int[][] land)\n    {\n        int rows = land.Length, columns = rows == 0 ? 0 : land[0].Length;\n        bool[,] seen = new bool[rows, columns];\n        var sizes = new List<int>();\n        for (int row = 0; row < rows; ++row)\n        {\n            for (int column = 0; column < columns; ++column)\n            {\n                if (land[row][column] != 0 || seen[row, column])\n                    continue;\n                seen[row, column] = true;\n                var work = new Stack<(int, int)>();\n                work.Push((row, column));\n                int size = 0;\n                while (work.Count > 0)\n                {\n                    var (r, c) = work.Pop();\n                    ++size;\n                    for (int dr = -1; dr <= 1; ++dr)\n                    {\n                        for (int dc = -1; dc <= 1; ++dc)\n                        {\n                            if (dr == 0 && dc == 0)\n                                continue;\n                            int nr = r + dr, nc = c + dc;\n                            if (nr >= 0 && nr < rows && nc >= 0 && nc < columns &&\n                                land[nr][nc] == 0 && !seen[nr, nc])\n                            {\n                                seen[nr, nc] = true;\n                                work.Push((nr, nc));\n                            }\n                        }\n                    }\n                }\n                sizes.Add(size);\n            }\n        }\n        sizes.Sort();\n        return sizes.ToArray();\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function PondSizes(land)",
+        "starterCode": "function PondSizes(land) {\n  return [];\n}\n",
+        "solutionCode": "function PondSizes(land) {\n  const rows = land.length,\n    columns = rows ? land[0].length : 0,\n    seen = Array.from({ length: rows }, () => Array(columns).fill(false)),\n    sizes = [];\n  for (let row = 0; row < rows; ++row) {\n    for (let column = 0; column < columns; ++column) {\n      if (land[row][column] !== 0 || seen[row][column]) continue;\n      seen[row][column] = true;\n      const work = [[row, column]];\n      let size = 0;\n      while (work.length) {\n        const [r, c] = work.pop();\n        ++size;\n        for (let dr = -1; dr <= 1; ++dr) {\n          for (let dc = -1; dc <= 1; ++dc) {\n            if (dr === 0 && dc === 0) continue;\n            const nr = r + dr,\n              nc = c + dc;\n            if (\n              nr >= 0 &&\n              nr < rows &&\n              nc >= 0 &&\n              nc < columns &&\n              land[nr][nc] === 0 &&\n              !seen[nr][nc]\n            ) {\n              seen[nr][nc] = true;\n              work.push([nr, nc]);\n            }\n          }\n        }\n      }\n      sizes.push(size);\n    }\n  }\n  sizes.sort((a, b) => a - b);\n  return sizes;\n}\n"
+      },
+      "python": {
+        "signature": "def PondSizes(land: list[list[int]]) -> list[int]",
+        "starterCode": "def PondSizes(land: list[list[int]]) -> list[int]:\n    return []\n",
+        "solutionCode": "def PondSizes(land: list[list[int]]) -> list[int]:\n    rows = len(land)\n    columns = len(land[0]) if rows else 0\n    seen = [[False] * columns for _ in range(rows)]\n    sizes = []\n    for row in range(rows):\n        for column in range(columns):\n            if land[row][column] != 0 or seen[row][column]:\n                continue\n            seen[row][column] = True\n            work = [(row, column)]\n            size = 0\n            while work:\n                r, c = work.pop()\n                size += 1\n                for dr in range(-1, 2):\n                    for dc in range(-1, 2):\n                        if dr == 0 and dc == 0:\n                            continue\n                        nr, nc = r + dr, c + dc\n                        if (\n                            0 <= nr < rows\n                            and 0 <= nc < columns\n                            and land[nr][nc] == 0\n                            and not seen[nr][nc]\n                        ):\n                            seen[nr][nc] = True\n                            work.append((nr, nc))\n            sizes.append(size)\n    sizes.sort()\n    return sizes\n"
+      },
+      "cpp": {
+        "signature": "std::vector<int> PondSizes(const std::vector<std::vector<int>>& land)",
+        "starterCode": "class Solution {\n public:\n  std::vector<int> PondSizes(const std::vector<std::vector<int>>& land) {\n    return {};\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  std::vector<int> PondSizes(const std::vector<std::vector<int>>& land) {\n    int rows = static_cast<int>(land.size()),\n        columns = rows == 0 ? 0 : static_cast<int>(land[0].size());\n    std::vector<std::vector<bool>> seen(rows, std::vector<bool>(columns));\n    std::vector<int> sizes;\n    for (int row = 0; row < rows; ++row) {\n      for (int column = 0; column < columns; ++column) {\n        if (land[row][column] != 0 || seen[row][column])\n          continue;\n        seen[row][column] = true;\n        std::vector<std::pair<int, int>> work{{row, column}};\n        int size = 0;\n        while (!work.empty()) {\n          auto [r, c] = work.back();\n          work.pop_back();\n          ++size;\n          for (int dr = -1; dr <= 1; ++dr) {\n            for (int dc = -1; dc <= 1; ++dc) {\n              if (dr == 0 && dc == 0)\n                continue;\n              int nr = r + dr, nc = c + dc;\n              if (nr >= 0 && nr < rows && nc >= 0 && nc < columns && land[nr][nc] == 0 &&\n                  !seen[nr][nc]) {\n                seen[nr][nc] = true;\n                work.push_back({nr, nc});\n              }\n            }\n          }\n        }\n        sizes.push_back(size);\n      }\n    }\n    std::sort(sizes.begin(), sizes.end());\n    return sizes;\n  }\n};\n"
+      },
+      "java": {
+        "signature": "int[] PondSizes(int[][] land)",
+        "starterCode": "class Solution {\n  public int[] PondSizes(int[][] land) {\n    return new int[0];\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public int[] PondSizes(int[][] land) {\n    int rows = land.length, columns = rows == 0 ? 0 : land[0].length;\n    boolean[][] seen = new boolean[rows][columns];\n    List<Integer> sizes = new ArrayList<>();\n    for (int row = 0; row < rows; ++row) {\n      for (int column = 0; column < columns; ++column) {\n        if (land[row][column] != 0 || seen[row][column])\n          continue;\n        seen[row][column] = true;\n        Deque<int[]> work = new ArrayDeque<>();\n        work.push(new int[] {row, column});\n        int size = 0;\n        while (!work.isEmpty()) {\n          var cell = work.pop();\n          int r = cell[0], c = cell[1];\n          ++size;\n          for (int dr = -1; dr <= 1; ++dr) {\n            for (int dc = -1; dc <= 1; ++dc) {\n              if (dr == 0 && dc == 0)\n                continue;\n              int nr = r + dr, nc = c + dc;\n              if (nr >= 0 && nr < rows && nc >= 0 && nc < columns && land[nr][nc] == 0\n                  && !seen[nr][nc]) {\n                seen[nr][nc] = true;\n                work.push(new int[] {nr, nc});\n              }\n            }\n          }\n        }\n        sizes.add(size);\n      }\n    }\n    Collections.sort(sizes);\n    int[] result = new int[sizes.size()];\n    for (int i = 0; i < result.length; ++i)\n      result[i] = sizes.get(i);\n    return result;\n  }\n}\n"
       }
     }
   }

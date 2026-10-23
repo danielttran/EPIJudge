@@ -30,4 +30,24 @@ class ModerateContractTests(unittest.TestCase):
         self.assertEqual(5,oracle('16.17',[[2,-8,3,-2,4,-10]]))
         self.assertFalse(valid_observation('16.17',dict(expected=5),dict(actual=9,mutationOk=True)))
 
+
+class FurtherModerateTests(unittest.TestCase):
+    def test_swap_equal_and_signed_endpoints(self):
+        self.assertEqual([7,7],oracle('16.1',[7,7]))
+        self.assertEqual([2147483647,-2147483648],oracle('16.1',[-2147483648,2147483647]))
+    def test_winning_lines_are_full_nonempty_lines(self):
+        self.assertEqual(0,oracle('16.4',[[[0,0],[0,0]]]))
+        self.assertEqual(1,oracle('16.4',[[[1,0,2],[0,1,2],[0,0,1]]]))
+        self.assertEqual(2,oracle('16.4',[[[0,0,2],[0,2,0],[2,0,0]]]))
+        self.assertEqual(0,oracle('16.4',[[[1,1,1,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]]]))
+    def test_living_people_counts_death_and_earliest_tie(self):
+        self.assertEqual(1900,oracle('16.10',[[]]))
+        self.assertEqual(1901,oracle('16.10',[[[1900,1901],[1901,1902],[1902,1902]]]))
+        self.assertEqual(2000,oracle('16.10',[[[2000,2000]]]))
+    def test_ponds_use_eight_neighbors_and_keep_equal_sizes(self):
+        self.assertEqual([5],oracle('16.19',[[[0,1,0],[1,0,1],[0,1,0]]]))
+        self.assertEqual([1,1,1],oracle('16.19',[[[0,1,0,1,0]]]))
+        self.assertEqual([],oracle('16.19',[[[1,2],[3,4]]]))
+        self.assertFalse(valid_observation('16.19',dict(expected=[5]),dict(actual=[1,1,1,1,1],mutationOk=True)))
+
 if __name__=='__main__':unittest.main()

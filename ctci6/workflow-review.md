@@ -97,3 +97,33 @@ run: 15.17 seconds; final verifier-input reconciliation run: 13.78 seconds.
 accepted the new API shapes; local bank registration is 375 problems.
 A new C# grader local-variable name collision was caught at compile time and
 fixed before integration. Final whole-bank acceptance remains pending.
+
+## Immediate implementation results
+
+The requested plan was applied without waiting for approval. The known-exercise
+batches progressed from 37 to 41, 44, 50 and 54 reviewed/local coding problems.
+The corresponding submitted-module invocations took 72.68, 85.85, 60.82 and
+41.13 seconds. The last batch reused unchanged earlier receipts and tested only
+new/changed packets. Current coverage is 270 solutions / 270 rejected starters /
+235,700 correct cases per execution layer. All 263 backend tests pass; the local
+bank contains 388 problems and the current semantic ledger has 388 statements
+and 1,940 solutions. Whole-bank final acceptance and publication are still pending.
+
+The batch-four module runner reused earlier adapters and ran to completion before
+this diagnostic handoff. There is no startup/usage/permission blocker. Progress
+commentary was emitted; why the parent read view omitted it is uncertain. Current
+artifacts and local commits provide independent, timestamped execution evidence.
+
+Small changes made: all-example/corpus preflight before chapter-eight writes,
+per-module compilation/execution wall time, shared typed adapter and standalone
+loop for chapter sixteen, and receipt-preserving batches. No extra AI agents,
+new optimization framework, denied-source retry or discarded test requirement.
+No further inventory-gap research was done while known candidates remained.
+
+Next bounded batch: six known chapter-17 candidates (17.1, 17.6, 17.9, 17.10,
+17.16, 17.21), after checking their legitimate source contracts. Reuse current
+primitive/array adapters. Checkpoint target is 60 approved local coding problems /
+300 executed language pairs, actual case counts and packet wall times. If any
+candidate needs a distinct model or cannot preserve its original task, keep it
+explicitly pending and substitute another already established coding candidate;
+do not invent a replacement exercise. No calendar ETA is supported by the logs.

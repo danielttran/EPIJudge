@@ -1,0 +1,31 @@
+{
+  "explanation": "A birth increases the population starting in its own year. A death decreases it only in the following year because the death year is included. Recording those changes and taking a prefix sum counts all lifetimes without visiting every person in every year. Scan years in increasing order and update the winner only on a strictly larger population to retain the earliest tie.",
+  "correctness": "Each person contributes +1 at birth and -1 at death+1. Their contribution to the running sum is consequently one exactly during their inclusive lifetime and zero elsewhere. Summing all contributions yields the exact living population in every scanned year. The running best records the largest population seen and changes its year only when that count increases. Increasing-year order therefore chooses the earliest global maximizer, including 1900 for the all-zero empty case.",
+  "walkthrough": "For [[1900,1901],[1901,1902],[1902,1902]], populations in 1900,1901,1902 are 1,2,2. The first person still counts in 1901 and the third counts in 1902. The maximum is tied, so return 1901 rather than the last tied year.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          1900,
+          1901
+        ],
+        [
+          1901,
+          1902
+        ],
+        [
+          1902,
+          1902
+        ]
+      ]
+    ],
+    "expected": 1901
+  },
+  "timeComplexity": "O(p+Y) time for p people and Y=101 admitted years, hence O(p+1) for this fixed domain.",
+  "spaceComplexity": "O(Y) change counters including a death-after-2000 sentinel; Y is fixed at 101.",
+  "edgeCases": [
+    "No people, same-year lifetimes, duplicate date rows.",
+    "Birth coinciding with another death; earliest tied year and the 2000 endpoint."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.10. No affiliation is implied."
+}

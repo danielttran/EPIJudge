@@ -77,3 +77,89 @@ return [left, right]'''
         loop='foreach(int value in values)' if language=='csharp' else 'for(int value:values)'
         return f'int running=0,best=0;{loop}{{running={maximum}(0,running+value);best={maximum}(best,running);}}return best;'
     raise ValueError(ref)
+
+_previous_body=body
+
+def body(ref,language):
+    if ref not in ('16.1','16.4','16.10','16.19'):
+        return _previous_body(ref,language)
+    if ref=='16.1':
+        if language=='python':return 'first ^= second\nsecond ^= first\nfirst ^= second\nreturn [first, second]'
+        pair='[first,second]' if language in ('csharp','javascript') else 'new int[]{first,second}' if language=='java' else '{first,second}'
+        return 'first^=second;second^=first;first^=second;return '+pair+';'
+    if ref=='16.4':
+        if language=='python':return '''n = len(board)
+if n == 0:
+    return 0
+for index in range(n):
+    row_player = board[index][0]
+    column_player = board[0][index]
+    if row_player and all(board[index][j] == row_player for j in range(n)):
+        return row_player
+    if column_player and all(board[j][index] == column_player for j in range(n)):
+        return column_player
+main = board[0][0]
+other = board[0][n - 1]
+if main and all(board[i][i] == main for i in range(n)):
+    return main
+if other and all(board[i][n - 1 - i] == other for i in range(n)):
+    return other
+return 0'''
+        if language=='javascript':return 'const n=board.length;if(n===0)return 0;for(let i=0;i<n;++i){let row=board[i][0],column=board[0][i];for(let j=0;j<n;++j){if(board[i][j]!==row)row=0;if(board[j][i]!==column)column=0;}if(row)return row;if(column)return column;}let main=board[0][0],other=board[0][n-1];for(let i=0;i<n;++i){if(board[i][i]!==main)main=0;if(board[i][n-1-i]!==other)other=0;}if(main)return main;return other;'
+        size='board.Length' if language=='csharp' else 'board.length' if language=='java' else 'static_cast<int>(board.size())'
+        return f'int n={size};if(n==0)return 0;for(int i=0;i<n;++i){{int row=board[i][0],column=board[0][i];for(int j=0;j<n;++j){{if(board[i][j]!=row)row=0;if(board[j][i]!=column)column=0;}}if(row!=0)return row;if(column!=0)return column;}}int main=board[0][0],other=board[0][n-1];for(int i=0;i<n;++i){{if(board[i][i]!=main)main=0;if(board[i][n-1-i]!=other)other=0;}}if(main!=0)return main;return other;'
+    if ref=='16.10':
+        if language=='python':return '''changes = [0] * 102
+for birth, death in people:
+    changes[birth - 1900] += 1
+    changes[death - 1900 + 1] -= 1
+alive = 0
+best = 0
+answer = 1900
+for offset in range(101):
+    alive += changes[offset]
+    if alive > best:
+        best = alive
+        answer = 1900 + offset
+return answer'''
+        if language=='javascript':return 'const changes=Array(102).fill(0);for(const [birth,death] of people){++changes[birth-1900];--changes[death-1900+1];}let alive=0,best=0,answer=1900;for(let offset=0;offset<101;++offset){alive+=changes[offset];if(alive>best){best=alive;answer=1900+offset;}}return answer;'
+        table='int[] changes=new int[102];' if language!='cpp' else 'int changes[102]={};'
+        loop='foreach(var person in people)' if language=='csharp' else 'for(int[] person:people)' if language=='java' else 'for(const auto& person:people)'
+        return table+loop+'{++changes[person[0]-1900];--changes[person[1]-1900+1];}int alive=0,best=0,answer=1900;for(int offset=0;offset<101;++offset){alive+=changes[offset];if(alive>best){best=alive;answer=1900+offset;}}return answer;'
+    if language=='python':return '''rows = len(land)
+columns = len(land[0]) if rows else 0
+seen = [[False] * columns for _ in range(rows)]
+sizes = []
+for row in range(rows):
+    for column in range(columns):
+        if land[row][column] != 0 or seen[row][column]:
+            continue
+        seen[row][column] = True
+        work = [(row, column)]
+        size = 0
+        while work:
+            r, c = work.pop()
+            size += 1
+            for dr in range(-1, 2):
+                for dc in range(-1, 2):
+                    if dr == 0 and dc == 0:
+                        continue
+                    nr, nc = r + dr, c + dc
+                    if 0 <= nr < rows and 0 <= nc < columns and land[nr][nc] == 0 and not seen[nr][nc]:
+                        seen[nr][nc] = True
+                        work.append((nr, nc))
+        sizes.append(size)
+sizes.sort()
+return sizes'''
+    if language=='javascript':return 'const rows=land.length,columns=rows?land[0].length:0,seen=Array.from({length:rows},()=>Array(columns).fill(false)),sizes=[];for(let row=0;row<rows;++row){for(let column=0;column<columns;++column){if(land[row][column]!==0||seen[row][column])continue;seen[row][column]=true;const work=[[row,column]];let size=0;while(work.length){const [r,c]=work.pop();++size;for(let dr=-1;dr<=1;++dr){for(let dc=-1;dc<=1;++dc){if(dr===0&&dc===0)continue;const nr=r+dr,nc=c+dc;if(nr>=0&&nr<rows&&nc>=0&&nc<columns&&land[nr][nc]===0&&!seen[nr][nc]){seen[nr][nc]=true;work.push([nr,nc]);}}}}sizes.push(size);}}sizes.sort((a,b)=>a-b);return sizes;'
+    rows='land.Length' if language=='csharp' else 'land.length' if language=='java' else 'static_cast<int>(land.size())'
+    cols='land[0].Length' if language=='csharp' else 'land[0].length' if language=='java' else 'static_cast<int>(land[0].size())'
+    setup='bool[,] seen=new bool[rows,columns];var sizes=new List<int>();' if language=='csharp' else 'boolean[][] seen=new boolean[rows][columns];List<Integer> sizes=new ArrayList<>();' if language=='java' else 'std::vector<std::vector<bool>> seen(rows,std::vector<bool>(columns));std::vector<int> sizes;'
+    at=lambda r,c:f'seen[{r},{c}]' if language=='csharp' else f'seen[{r}][{c}]'
+    work='var work=new Stack<(int,int)>();work.Push((row,column));' if language=='csharp' else 'Deque<int[]> work=new ArrayDeque<>();work.push(new int[]{row,column});' if language=='java' else 'std::vector<std::pair<int,int>> work{{row,column}};'
+    count='work.Count>0' if language=='csharp' else '!work.isEmpty()' if language=='java' else '!work.empty()'
+    pop='var (r,c)=work.Pop();' if language=='csharp' else 'var cell=work.pop();int r=cell[0],c=cell[1];' if language=='java' else 'auto [r,c]=work.back();work.pop_back();'
+    push='work.Push((nr,nc));' if language=='csharp' else 'work.push(new int[]{nr,nc});' if language=='java' else 'work.push_back({nr,nc});'
+    add='sizes.Add(size);' if language=='csharp' else 'sizes.add(size);' if language=='java' else 'sizes.push_back(size);'
+    finish='sizes.Sort();return sizes.ToArray();' if language=='csharp' else 'Collections.sort(sizes);int[] result=new int[sizes.size()];for(int i=0;i<result.length;++i)result[i]=sizes.get(i);return result;' if language=='java' else 'std::sort(sizes.begin(),sizes.end());return sizes;'
+    return f'int rows={rows},columns=rows==0?0:{cols};{setup}for(int row=0;row<rows;++row){{for(int column=0;column<columns;++column){{if(land[row][column]!=0||{at("row","column")})continue;{at("row","column")}=true;{work}int size=0;while({count}){{{pop}++size;for(int dr=-1;dr<=1;++dr){{for(int dc=-1;dc<=1;++dc){{if(dr==0&&dc==0)continue;int nr=r+dr,nc=c+dc;if(nr>=0&&nr<rows&&nc>=0&&nc<columns&&land[nr][nc]==0&&!{at("nr","nc")}){{{at("nr","nc")}=true;{push}}}}}}}}}{add}}}}}{finish}'

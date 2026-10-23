@@ -73,3 +73,74 @@ def valid_observation(ref,case,observed):
     actual=observed.get('actual');expected=case['expected']
     if type(expected) is int:return type(actual) is int and actual==expected
     return type(actual) is list and all(type(v) is int for v in actual) and actual==expected
+
+_previous_oracle=oracle
+_previous_cases=cases
+
+def winners(board):
+    if not board:return set()
+    n=len(board)
+    lines=list(board)+[[board[r][c] for r in range(n)] for c in range(n)]
+    lines += [[board[i][i] for i in range(n)],[board[i][n-1-i] for i in range(n)]]
+    return {line[0] for line in lines if line[0]!=0 and len(set(line))==1}
+
+def oracle(ref,args):
+    if ref=='16.1':return [args[1],args[0]]
+    if ref=='16.4':
+        found=winners(args[0])
+        if len(found)>1:raise ValueError('Dual winner outside admitted domain')
+        return next(iter(found),0)
+    if ref=='16.10':
+        people=args[0]
+        return max(range(1900,2001),key=lambda year:sum(birth<=year<=death for birth,death in people))
+    if ref=='16.19':
+        land=args[0]
+        # Independent disjoint-set union of water cells, not component DFS.
+        parent={(r,c):(r,c) for r,row in enumerate(land) for c,height in enumerate(row) if height==0}
+        def find(p):
+            while parent[p]!=p:
+                parent[p]=parent[parent[p]];p=parent[p]
+            return p
+        for r,c in parent:
+            for dr,dc in itertools.product((-1,0,1),repeat=2):
+                neighbor=(r+dr,c+dc)
+                if neighbor in parent:
+                    a,b=find((r,c)),find(neighbor)
+                    if a!=b:parent[a]=b
+        from collections import Counter
+        return sorted(Counter(find(p) for p in parent).values())
+    return _previous_oracle(ref,args)
+
+def cases(spec):
+    ref=spec['ref']
+    if ref not in ('16.1','16.4','16.10','16.19'):return _previous_cases(spec)
+    rng=random.Random(160000+int(ref.split('.')[1]));args=[spec['example'][0]]
+    if ref=='16.1':
+        boundary=[-2147483648,-2147483647,-1,0,1,2147483646,2147483647]
+        args += [[a,b] for a in boundary for b in boundary]
+        args += [[a,b] for a in range(-10,11) for b in range(-10,11)]
+        args += [[rng.randrange(-2147483648,2147483648),rng.randrange(-2147483648,2147483648)] for _ in range(100)]
+    elif ref=='16.4':
+        args += [[[]]]
+        for n in range(1,4):
+            for cells in itertools.product((0,1,2),repeat=n*n):
+                board=[list(cells[r*n:(r+1)*n]) for r in range(n)]
+                if len(winners(board))<=1:args.append([board])
+        args += [[[[1]*50 for _ in range(50)]],[[[0]*50 for _ in range(50)]]]
+        board=[[0]*50 for _ in range(50)]
+        for i in range(50):board[i][49-i]=2
+        args.append([board])
+    elif ref=='16.10':
+        periods=[[birth,death] for birth in range(1900,1903) for death in range(birth,1903)]
+        args += [[list(people)] for n in range(6) for people in itertools.combinations_with_replacement(periods,n)]
+        args += [[[[1900,2000]]*1000],[[[2000,2000]]*1000],[[[1900,1900],[2000,2000]]]]
+        for _ in range(100):
+            births=[rng.randrange(1900,2001) for _ in range(rng.randrange(30))]
+            args.append([[[b,rng.randrange(b,2001)] for b in births]])
+    else:
+        args += [[[]],[[[]]]]
+        args += [[[[cells[r*3+c] for c in range(3)] for r in range(3)]] for cells in itertools.product((0,1),repeat=9)]
+        args += [[[[0]*50 for _ in range(50)]],[[[10000]*50 for _ in range(50)]], [[[0,1,0,1,0]]]]
+        args += [[[[rng.randrange(4) for _ in range(8)] for _ in range(9)]] for _ in range(50)]
+    distinct={json.dumps(a):a for a in args}
+    return [dict(arguments=a,expected=oracle(ref,a)) for a in distinct.values()]

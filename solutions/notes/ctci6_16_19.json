@@ -1,0 +1,36 @@
+{
+  "explanation": "Start a search only at an unvisited water cell, mark it on discovery, and count every water cell reached through eight-neighbor steps. Every such search consumes exactly one connected component. Separate visited flags preserve the elevation input; marking before pushing avoids counting a water cell twice. Sorting the component counts provides the bank's deterministic output order without merging equal-sized ponds.",
+  "correctness": "The search starts within one pond, and each discovered water neighbor is connected to a reached water cell, so it remains in that same pond. Every water cell in the pond has a water path from the start; induction along that path shows it is eventually reached. Marking at discovery gives exactly one count per cell. The outer scan starts no later search in an already visited component, while every other pond eventually supplies an unvisited starting cell. Thus the recorded sizes include every pond once. Sorting changes only their order, not multiplicity, and the elevation grid is never changed.",
+  "walkthrough": "In [[0,1,0],[1,0,1],[0,1,0]], the center water cell touches every corner diagonally. All five zeros are therefore one pond, so return [5]. Four-neighbor searches would incorrectly report five ponds of size one.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          1,
+          0,
+          1
+        ],
+        [
+          0,
+          1,
+          0
+        ]
+      ]
+    ],
+    "expected": [
+      5
+    ]
+  },
+  "timeComplexity": "O(rows*columns + p*log(p+1)) time for the scan/search and sorting p pond sizes. Each cell and its eight neighbors are checked a constant number of times.",
+  "spaceComplexity": "O(rows*columns) visited flags and worst-case work stack, excluding the p returned sizes.",
+  "edgeCases": [
+    "No water, all water, empty dimensions.",
+    "Diagonal-only connections, separate equal-sized ponds, and boundary/corner cells."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.19. No affiliation is implied."
+}

@@ -9436,6 +9436,86 @@
         "ctci6/runtime/validation.json",
         "ctci6/cases/ctci6_16_17.json"
       ]
+    },
+    "ctci6_16_1": {
+      "collection": "ctci6",
+      "statementSha256": "692fc95ed4321789e72aa6b801fb89f581f0ab59ad286aa33ab54c3989565133",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "inputDomain": "Both arguments may be any signed 32-bit integer. The variables are independent value arguments, even when their values are equal; aliasing two references to the same storage location is not part of this callable. Do not use a temporary swap variable, tuple/destructuring swap, swap helper, or a preconstructed reversed pair. Allocate the returned two-integer collection only after exchanging the two variables. The callable returns the swapped values instead of printing them; caller value arguments remain unchanged.",
+        "outputAndTies": "Exchange the values of two independent local integer variables without a third temporary variable, then return their final values as [first,second]. Perform the exchange using arithmetic or bit operations on those two variables; do not merely construct the reversed result directly.",
+        "mutationAndIdentity": "Read all five bodies: exactly two swap variables, no tuple/destructuring swap, reversed-pair shortcut or temporary. The returned collection is allocated only after the exchange. Values are independent function arguments, matching the public local-variable task; caller aliasing is not invented. Equal values, zeros and opposite signed endpoints are executed; no arithmetic-overflow assumption is used.",
+        "boundaryBehavior": "Equal inputs, zeros and negative values. Both signed endpoints; arithmetic overflow must not break exchange.",
+        "examples": "The independently checked displayed example and algorithm trace agree with the executed five-language bodies.",
+        "languageContracts": "{\"csharp\": \"Read all actual signed-int bodies. Array return expressions match int[] signatures. NumberMax uses uint sign extraction and an explicit unchecked difference, then signed masks; no conditional comparison helper. MasterMind IndexOf uses the admitted ASCII alphabet. Mutable array inputs are read only in this batch.\", \"javascript\": \"Read all actual functions. Factorial division is floored, NumberMax bit operations coerce the intended signed 32-bit patterns, and bounded ordinary arithmetic stays exactly representable. All array results are materialized, not generators. Inputs remain unchanged.\", \"python\": \"Read all actual function bodies and exact annotations. NumberMax masks the potentially wider difference before extracting its 32-bit sign; the signed selection mask works with arbitrary-width bitwise operations. Arrays are concrete lists and bool is not an integer observation. The admitted numeric bounds remain shared.\", \"cpp\": \"Read all actual methods with const vector/string references. NumberMax difference is uint32_t and final operand multiplication by 0/1 cannot overflow. No undefined signed subtraction or implementation-defined unsigned narrowing is used. Returned vectors own their values; prefix/suffix scans index only nonempty input.\", \"java\": \"Read all actual methods. Integer arithmetic uses justified bounds, except the intentionally wrapping subtraction whose bit pattern is observed with >>>. Returned int[] arrays match declared types, String indexing uses charAt, and the frequency table is local per call. Inputs are unchanged.\"}",
+        "judgeAgreement": "Read all five bodies: exactly two swap variables, no tuple/destructuring swap, reversed-pair shortcut or temporary. The returned collection is allocated only after the exchange. Values are independent function arguments, matching the public local-variable task; caller aliasing is not invented. Equal values, zeros and opposite signed endpoints are executed; no arithmetic-overflow assumption is used."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_1.json"
+      ]
+    },
+    "ctci6_16_4": {
+      "collection": "ctci6",
+      "statementSha256": "9f607ced2a34b31f08b0db600ecb0704d79b076b93fc707391beaf6e2229e814",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "inputDomain": "0 <= n <= 50. The board is square, nonnull, and contains only 0,1,2. The input promises that at most one player has a winning line, so the result is unambiguous. An empty board has no winner. Preserve the outer array, every original row and all cell values. This callable inspects winning lines, not move legality, turn counts or whether the game should have stopped earlier. A shorter line inside a larger board is not a win.",
+        "outputAndTies": "Inspect an n by n tic-tac-toe board and return its winning player: 1 or 2. A win requires a complete nonempty row, complete column, or one of the two full corner-to-corner diagonals occupied by that player. Empty cells are 0. Return 0 when neither player has such a line.",
+        "mutationAndIdentity": "Input encoding explicitly distinguishes empty from the two players. All five bodies reject an empty candidate line and preserve board outer/row identity. Every n<=3 board with at most one winning player is tested, including states not constrained by move-history validation. Larger n=50 bounds and partial lines verify that generic wins require a full n-cell line. No dual-winner tie rule is invented.",
+        "boundaryBehavior": "Empty and one-cell boards, all-empty board, full board without a winner. Both diagonal directions, full columns, and nonwinning partial lines in larger boards.",
+        "examples": "The independently checked displayed example and algorithm trace agree with the executed five-language bodies.",
+        "languageContracts": "{\"csharp\": \"Read all actual signed-int bodies. Array return expressions match int[] signatures. NumberMax uses uint sign extraction and an explicit unchecked difference, then signed masks; no conditional comparison helper. MasterMind IndexOf uses the admitted ASCII alphabet. Mutable array inputs are read only in this batch.\", \"javascript\": \"Read all actual functions. Factorial division is floored, NumberMax bit operations coerce the intended signed 32-bit patterns, and bounded ordinary arithmetic stays exactly representable. All array results are materialized, not generators. Inputs remain unchanged.\", \"python\": \"Read all actual function bodies and exact annotations. NumberMax masks the potentially wider difference before extracting its 32-bit sign; the signed selection mask works with arbitrary-width bitwise operations. Arrays are concrete lists and bool is not an integer observation. The admitted numeric bounds remain shared.\", \"cpp\": \"Read all actual methods with const vector/string references. NumberMax difference is uint32_t and final operand multiplication by 0/1 cannot overflow. No undefined signed subtraction or implementation-defined unsigned narrowing is used. Returned vectors own their values; prefix/suffix scans index only nonempty input.\", \"java\": \"Read all actual methods. Integer arithmetic uses justified bounds, except the intentionally wrapping subtraction whose bit pattern is observed with >>>. Returned int[] arrays match declared types, String indexing uses charAt, and the frequency table is local per call. Inputs are unchanged.\"}",
+        "judgeAgreement": "Input encoding explicitly distinguishes empty from the two players. All five bodies reject an empty candidate line and preserve board outer/row identity. Every n<=3 board with at most one winning player is tested, including states not constrained by move-history validation. Larger n=50 bounds and partial lines verify that generic wins require a full n-cell line. No dual-winner tie rule is invented."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_4.json"
+      ]
+    },
+    "ctci6_16_10": {
+      "collection": "ctci6",
+      "statementSha256": "7bf247a95b8073a5a91b0a5f06a779f606fddf3aa9cda79a31608660985012fd",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "inputDomain": "There are 0..1000 people; every row has exactly two integers with 1900 <= birthYear <= deathYear <= 2000. Preserve the outer array, row objects, dates and input order. Resolve all population ties by the earliest year. For no people every year has population zero, so return 1900. A person born and deceased in the same year contributes in that year.",
+        "outputAndTies": "Return the earliest year from 1900 through 2000, inclusive, in which the greatest number of the supplied people were alive. Each row is [birthYear,deathYear], and a person counts in both their birth and death years. Rows describe distinct people even if their dates agree.",
+        "mutationAndIdentity": "All five use 102 zero counters for 101 admitted years plus the final sentinel. Decrement occurs at death+1, preserving the inclusive death year. Strict best updates retain earliest ties and return 1900 for no people. Independent direct population counting covers small lifetime multisets, repeated people, same-year lifetimes and year 2000.",
+        "boundaryBehavior": "No people, same-year lifetimes, duplicate date rows. Birth coinciding with another death; earliest tied year and the 2000 endpoint.",
+        "examples": "The independently checked displayed example and algorithm trace agree with the executed five-language bodies.",
+        "languageContracts": "{\"csharp\": \"Read all actual signed-int bodies. Array return expressions match int[] signatures. NumberMax uses uint sign extraction and an explicit unchecked difference, then signed masks; no conditional comparison helper. MasterMind IndexOf uses the admitted ASCII alphabet. Mutable array inputs are read only in this batch.\", \"javascript\": \"Read all actual functions. Factorial division is floored, NumberMax bit operations coerce the intended signed 32-bit patterns, and bounded ordinary arithmetic stays exactly representable. All array results are materialized, not generators. Inputs remain unchanged.\", \"python\": \"Read all actual function bodies and exact annotations. NumberMax masks the potentially wider difference before extracting its 32-bit sign; the signed selection mask works with arbitrary-width bitwise operations. Arrays are concrete lists and bool is not an integer observation. The admitted numeric bounds remain shared.\", \"cpp\": \"Read all actual methods with const vector/string references. NumberMax difference is uint32_t and final operand multiplication by 0/1 cannot overflow. No undefined signed subtraction or implementation-defined unsigned narrowing is used. Returned vectors own their values; prefix/suffix scans index only nonempty input.\", \"java\": \"Read all actual methods. Integer arithmetic uses justified bounds, except the intentionally wrapping subtraction whose bit pattern is observed with >>>. Returned int[] arrays match declared types, String indexing uses charAt, and the frequency table is local per call. Inputs are unchanged.\"}",
+        "judgeAgreement": "All five use 102 zero counters for 101 admitted years plus the final sentinel. Decrement occurs at death+1, preserving the inclusive death year. Strict best updates retain earliest ties and return 1900 for no people. Independent direct population counting covers small lifetime multisets, repeated people, same-year lifetimes and year 2000."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_10.json"
+      ]
+    },
+    "ctci6_16_19": {
+      "collection": "ctci6",
+      "statementSha256": "6ea3ffc1752ff9aabf27b591d23ce2eec0d2475efac377d12aec2b55fff9978d",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "inputDomain": "land is nonnull with 0..50 rows and 0..50 columns, rectangular rows, and integer elevations 0..10000. Empty dimensions or a grid without water return an empty collection. Preserve the outer array, original rows and every elevation. Use a separate visited structure instead of overwriting water or land. Eight-neighbor connectivity is intentional and differs from four-neighbor paint fill. Return a materialized integer array/list/vector in increasing order.",
+        "outputAndTies": "Find every pond in a rectangular elevation grid and return its size in cells, sorted in increasing order. Elevation 0 is water; positive elevations are land. Water cells belong to one pond when connected horizontally, vertically or diagonally, through any number of water cells. Keep one size per pond, including repeated equal sizes.",
+        "mutationAndIdentity": "Every language marks water at discovery, preserves elevations and input row identities, and explores diagonals. Python/JS allocate independent visited rows, C# uses a rectangular Boolean table, Java Boolean rows, C++ nested vector<bool>. Each cell enters one work stack once. Independent DSU unions establish components, including all binary 3x3 grids, all-water 50x50, diagonal-only links and equal-sized separate ponds. Sorting p sizes is included in the time bound.",
+        "boundaryBehavior": "No water, all water, empty dimensions. Diagonal-only connections, separate equal-sized ponds, and boundary/corner cells.",
+        "examples": "The independently checked displayed example and algorithm trace agree with the executed five-language bodies.",
+        "languageContracts": "{\"csharp\": \"Read all actual signed-int bodies. Array return expressions match int[] signatures. NumberMax uses uint sign extraction and an explicit unchecked difference, then signed masks; no conditional comparison helper. MasterMind IndexOf uses the admitted ASCII alphabet. Mutable array inputs are read only in this batch.\", \"javascript\": \"Read all actual functions. Factorial division is floored, NumberMax bit operations coerce the intended signed 32-bit patterns, and bounded ordinary arithmetic stays exactly representable. All array results are materialized, not generators. Inputs remain unchanged.\", \"python\": \"Read all actual function bodies and exact annotations. NumberMax masks the potentially wider difference before extracting its 32-bit sign; the signed selection mask works with arbitrary-width bitwise operations. Arrays are concrete lists and bool is not an integer observation. The admitted numeric bounds remain shared.\", \"cpp\": \"Read all actual methods with const vector/string references. NumberMax difference is uint32_t and final operand multiplication by 0/1 cannot overflow. No undefined signed subtraction or implementation-defined unsigned narrowing is used. Returned vectors own their values; prefix/suffix scans index only nonempty input.\", \"java\": \"Read all actual methods. Integer arithmetic uses justified bounds, except the intentionally wrapping subtraction whose bit pattern is observed with >>>. Returned int[] arrays match declared types, String indexing uses charAt, and the frequency table is local per call. Inputs are unchanged.\"}",
+        "judgeAgreement": "Every language marks water at discovery, preserves elevations and input row identities, and explores diagonals. Python/JS allocate independent visited rows, C# uses a rectangular Boolean table, Java Boolean rows, C++ nested vector<bool>. Each cell enters one work stack once. Independent DSU unions establish components, including all binary 3x3 grids, all-water 50x50, diagonal-only links and equal-sized separate ponds. Sorting p sizes is included in the time bound."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_19.json"
+      ]
     }
   },
   "solutions": {
@@ -54536,6 +54616,466 @@
         "ctci6/cases/ctci6_16_17.json",
         "solutions/java/ctci6_16_17.java",
         "solutions/notes/java/ctci6_16_17.json"
+      ]
+    },
+    "ctci6_16_1/csharp": {
+      "codePath": "solutions/csharp/ctci6_16_1.cs",
+      "notesPath": "solutions/notes/ctci6_16_1.json",
+      "contentSha256": "4fbf0bb29158550b4e831d4299d84fb14ba1bde9f3f86797236b0e4ebc9f5405",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Three XOR assignments exchange independent local operands before returning their final values.",
+        "correctness": "Let the original values be a and b. After the first assignment, first=a xor b and second=b. The second assignment makes second=(a xor b) xor b=a. The third makes first=(a xor b) xor a=b. XOR associativity and cancellation therefore exchange the two values exactly. This remains valid for equal values and all signed bit patterns because the two variables are distinct locations.",
+        "workedTrace": "With first=9 and second=4, the assignments produce first=13, then second=9, then first=4. The returned pair is [4,9]. If both values are 7, the intermediate first becomes zero but the following assignments recover [7,7].",
+        "edgeCases": "Equal inputs, zeros and negative values. Both signed endpoints; arithmetic overflow must not break exchange.",
+        "timeDerivation": "O(1) fixed-width XOR operations.",
+        "spaceDerivation": "O(1) auxiliary storage; no swap temporary, plus the two-integer output.",
+        "callableAgreement": "Read all five bodies: exactly two swap variables, no tuple/destructuring swap, reversed-pair shortcut or temporary. The returned collection is allocated only after the exchange. Values are independent function arguments, matching the public local-variable task; caller aliasing is not invented. Equal values, zeros and opposite signed endpoints are executed; no arithmetic-overflow assumption is used. Read all actual signed-int bodies. Array return expressions match int[] signatures. NumberMax uses uint sign extraction and an explicit unchecked difference, then signed masks; no conditional comparison helper. MasterMind IndexOf uses the admitted ASCII alphabet. Mutable array inputs are read only in this batch."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_1.json",
+        "solutions/csharp/ctci6_16_1.cs",
+        "solutions/notes/ctci6_16_1.json"
+      ]
+    },
+    "ctci6_16_1/javascript": {
+      "codePath": "solutions/javascript/ctci6_16_1.js",
+      "notesPath": "solutions/notes/javascript/ctci6_16_1.json",
+      "contentSha256": "e9bb3bc485dbc9810ecf17bbe5a14e58271920be557acb8e6d174c90d670c5c3",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Three XOR assignments exchange independent local operands before returning their final values.",
+        "correctness": "Let the original values be a and b. After the first assignment, first=a xor b and second=b. The second assignment makes second=(a xor b) xor b=a. The third makes first=(a xor b) xor a=b. XOR associativity and cancellation therefore exchange the two values exactly. This remains valid for equal values and all signed bit patterns because the two variables are distinct locations.",
+        "workedTrace": "With first=9 and second=4, the assignments produce first=13, then second=9, then first=4. The returned pair is [4,9]. If both values are 7, the intermediate first becomes zero but the following assignments recover [7,7].",
+        "edgeCases": "Equal inputs, zeros and negative values. Both signed endpoints; arithmetic overflow must not break exchange.",
+        "timeDerivation": "O(1) fixed-width XOR operations.",
+        "spaceDerivation": "O(1) auxiliary storage; no swap temporary, plus the two-integer output.",
+        "callableAgreement": "Read all five bodies: exactly two swap variables, no tuple/destructuring swap, reversed-pair shortcut or temporary. The returned collection is allocated only after the exchange. Values are independent function arguments, matching the public local-variable task; caller aliasing is not invented. Equal values, zeros and opposite signed endpoints are executed; no arithmetic-overflow assumption is used. Read all actual functions. Factorial division is floored, NumberMax bit operations coerce the intended signed 32-bit patterns, and bounded ordinary arithmetic stays exactly representable. All array results are materialized, not generators. Inputs remain unchanged."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_1.json",
+        "solutions/javascript/ctci6_16_1.js",
+        "solutions/notes/javascript/ctci6_16_1.json"
+      ]
+    },
+    "ctci6_16_1/python": {
+      "codePath": "solutions/python/ctci6_16_1.py",
+      "notesPath": "solutions/notes/python/ctci6_16_1.json",
+      "contentSha256": "762659a7a0685d8d20564f2005e3a2eac7e1d5e15bde00996f56ad1e46dce3c1",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Three XOR assignments exchange independent local operands before returning their final values.",
+        "correctness": "Let the original values be a and b. After the first assignment, first=a xor b and second=b. The second assignment makes second=(a xor b) xor b=a. The third makes first=(a xor b) xor a=b. XOR associativity and cancellation therefore exchange the two values exactly. This remains valid for equal values and all signed bit patterns because the two variables are distinct locations.",
+        "workedTrace": "With first=9 and second=4, the assignments produce first=13, then second=9, then first=4. The returned pair is [4,9]. If both values are 7, the intermediate first becomes zero but the following assignments recover [7,7].",
+        "edgeCases": "Equal inputs, zeros and negative values. Both signed endpoints; arithmetic overflow must not break exchange.",
+        "timeDerivation": "O(1) fixed-width XOR operations.",
+        "spaceDerivation": "O(1) auxiliary storage; no swap temporary, plus the two-integer output.",
+        "callableAgreement": "Read all five bodies: exactly two swap variables, no tuple/destructuring swap, reversed-pair shortcut or temporary. The returned collection is allocated only after the exchange. Values are independent function arguments, matching the public local-variable task; caller aliasing is not invented. Equal values, zeros and opposite signed endpoints are executed; no arithmetic-overflow assumption is used. Read all actual function bodies and exact annotations. NumberMax masks the potentially wider difference before extracting its 32-bit sign; the signed selection mask works with arbitrary-width bitwise operations. Arrays are concrete lists and bool is not an integer observation. The admitted numeric bounds remain shared."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_1.json",
+        "solutions/python/ctci6_16_1.py",
+        "solutions/notes/python/ctci6_16_1.json"
+      ]
+    },
+    "ctci6_16_1/cpp": {
+      "codePath": "solutions/cpp/ctci6_16_1.cpp",
+      "notesPath": "solutions/notes/cpp/ctci6_16_1.json",
+      "contentSha256": "0b26bfdb81ef2de2866d9b9cfcac3aabb1c973c503677f845c722d33387d4d9b",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Three XOR assignments exchange independent local operands before returning their final values.",
+        "correctness": "Let the original values be a and b. After the first assignment, first=a xor b and second=b. The second assignment makes second=(a xor b) xor b=a. The third makes first=(a xor b) xor a=b. XOR associativity and cancellation therefore exchange the two values exactly. This remains valid for equal values and all signed bit patterns because the two variables are distinct locations.",
+        "workedTrace": "With first=9 and second=4, the assignments produce first=13, then second=9, then first=4. The returned pair is [4,9]. If both values are 7, the intermediate first becomes zero but the following assignments recover [7,7].",
+        "edgeCases": "Equal inputs, zeros and negative values. Both signed endpoints; arithmetic overflow must not break exchange.",
+        "timeDerivation": "O(1) fixed-width XOR operations.",
+        "spaceDerivation": "O(1) auxiliary storage; no swap temporary, plus the two-integer output.",
+        "callableAgreement": "Read all five bodies: exactly two swap variables, no tuple/destructuring swap, reversed-pair shortcut or temporary. The returned collection is allocated only after the exchange. Values are independent function arguments, matching the public local-variable task; caller aliasing is not invented. Equal values, zeros and opposite signed endpoints are executed; no arithmetic-overflow assumption is used. Read all actual methods with const vector/string references. NumberMax difference is uint32_t and final operand multiplication by 0/1 cannot overflow. No undefined signed subtraction or implementation-defined unsigned narrowing is used. Returned vectors own their values; prefix/suffix scans index only nonempty input."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_1.json",
+        "solutions/cpp/ctci6_16_1.cpp",
+        "solutions/notes/cpp/ctci6_16_1.json"
+      ]
+    },
+    "ctci6_16_1/java": {
+      "codePath": "solutions/java/ctci6_16_1.java",
+      "notesPath": "solutions/notes/java/ctci6_16_1.json",
+      "contentSha256": "8bbfde282dea716a4004302854caeb83d0d8fa3f6717b9c82d93ffe666946d18",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Three XOR assignments exchange independent local operands before returning their final values.",
+        "correctness": "Let the original values be a and b. After the first assignment, first=a xor b and second=b. The second assignment makes second=(a xor b) xor b=a. The third makes first=(a xor b) xor a=b. XOR associativity and cancellation therefore exchange the two values exactly. This remains valid for equal values and all signed bit patterns because the two variables are distinct locations.",
+        "workedTrace": "With first=9 and second=4, the assignments produce first=13, then second=9, then first=4. The returned pair is [4,9]. If both values are 7, the intermediate first becomes zero but the following assignments recover [7,7].",
+        "edgeCases": "Equal inputs, zeros and negative values. Both signed endpoints; arithmetic overflow must not break exchange.",
+        "timeDerivation": "O(1) fixed-width XOR operations.",
+        "spaceDerivation": "O(1) auxiliary storage; no swap temporary, plus the two-integer output.",
+        "callableAgreement": "Read all five bodies: exactly two swap variables, no tuple/destructuring swap, reversed-pair shortcut or temporary. The returned collection is allocated only after the exchange. Values are independent function arguments, matching the public local-variable task; caller aliasing is not invented. Equal values, zeros and opposite signed endpoints are executed; no arithmetic-overflow assumption is used. Read all actual methods. Integer arithmetic uses justified bounds, except the intentionally wrapping subtraction whose bit pattern is observed with >>>. Returned int[] arrays match declared types, String indexing uses charAt, and the frequency table is local per call. Inputs are unchanged."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_1.json",
+        "solutions/java/ctci6_16_1.java",
+        "solutions/notes/java/ctci6_16_1.json"
+      ]
+    },
+    "ctci6_16_4/csharp": {
+      "codePath": "solutions/csharp/ctci6_16_4.cs",
+      "notesPath": "solutions/notes/ctci6_16_4.json",
+      "contentSha256": "2a900ac9323a5a2505794fa440d93e714ee3b36a03f3329e7b2db0fe094d71c5",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Inspect every full row, column and two corner diagonals of a generic square board.",
+        "correctness": "A candidate is reported only when its first cell is nonzero and every cell in that full line equals it, so every reported player has a genuine winning line. Conversely every allowed winning line appears among the examined rows, columns or two diagonals and therefore will be detected. The at-most-one-winner promise makes early return safe even if that player has several winning lines. If no candidate succeeds, neither player has a win and zero is correct.",
+        "workedTrace": "For [[1,0,2],[0,1,2],[0,0,1]], no row or column is complete, but the main diagonal contains 1,1,1, so player 1 wins. Three adjacent 1 cells on one row of a 4 by 4 board would not be a complete winning line.",
+        "edgeCases": "Empty and one-cell boards, all-empty board, full board without a winner. Both diagonal directions, full columns, and nonwinning partial lines in larger boards.",
+        "timeDerivation": "O(n^2) time: examine at most 2n+2 lines of length n.",
+        "spaceDerivation": "O(1) auxiliary space; no board copy or history is needed.",
+        "callableAgreement": "Input encoding explicitly distinguishes empty from the two players. All five bodies reject an empty candidate line and preserve board outer/row identity. Every n<=3 board with at most one winning player is tested, including states not constrained by move-history validation. Larger n=50 bounds and partial lines verify that generic wins require a full n-cell line. No dual-winner tie rule is invented. Read all actual signed-int bodies. Array return expressions match int[] signatures. NumberMax uses uint sign extraction and an explicit unchecked difference, then signed masks; no conditional comparison helper. MasterMind IndexOf uses the admitted ASCII alphabet. Mutable array inputs are read only in this batch."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_4.json",
+        "solutions/csharp/ctci6_16_4.cs",
+        "solutions/notes/ctci6_16_4.json"
+      ]
+    },
+    "ctci6_16_4/javascript": {
+      "codePath": "solutions/javascript/ctci6_16_4.js",
+      "notesPath": "solutions/notes/javascript/ctci6_16_4.json",
+      "contentSha256": "eac1ca7bca3f866f43fd3ba2af2847f8f626fa69cdad8d5a3de2cf6951dff23f",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Inspect every full row, column and two corner diagonals of a generic square board.",
+        "correctness": "A candidate is reported only when its first cell is nonzero and every cell in that full line equals it, so every reported player has a genuine winning line. Conversely every allowed winning line appears among the examined rows, columns or two diagonals and therefore will be detected. The at-most-one-winner promise makes early return safe even if that player has several winning lines. If no candidate succeeds, neither player has a win and zero is correct.",
+        "workedTrace": "For [[1,0,2],[0,1,2],[0,0,1]], no row or column is complete, but the main diagonal contains 1,1,1, so player 1 wins. Three adjacent 1 cells on one row of a 4 by 4 board would not be a complete winning line.",
+        "edgeCases": "Empty and one-cell boards, all-empty board, full board without a winner. Both diagonal directions, full columns, and nonwinning partial lines in larger boards.",
+        "timeDerivation": "O(n^2) time: examine at most 2n+2 lines of length n.",
+        "spaceDerivation": "O(1) auxiliary space; no board copy or history is needed.",
+        "callableAgreement": "Input encoding explicitly distinguishes empty from the two players. All five bodies reject an empty candidate line and preserve board outer/row identity. Every n<=3 board with at most one winning player is tested, including states not constrained by move-history validation. Larger n=50 bounds and partial lines verify that generic wins require a full n-cell line. No dual-winner tie rule is invented. Read all actual functions. Factorial division is floored, NumberMax bit operations coerce the intended signed 32-bit patterns, and bounded ordinary arithmetic stays exactly representable. All array results are materialized, not generators. Inputs remain unchanged."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_4.json",
+        "solutions/javascript/ctci6_16_4.js",
+        "solutions/notes/javascript/ctci6_16_4.json"
+      ]
+    },
+    "ctci6_16_4/python": {
+      "codePath": "solutions/python/ctci6_16_4.py",
+      "notesPath": "solutions/notes/python/ctci6_16_4.json",
+      "contentSha256": "34bcf215ac52966a07cb356b1829176c553395ca3b373a5065223a7113a3cb6c",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Inspect every full row, column and two corner diagonals of a generic square board.",
+        "correctness": "A candidate is reported only when its first cell is nonzero and every cell in that full line equals it, so every reported player has a genuine winning line. Conversely every allowed winning line appears among the examined rows, columns or two diagonals and therefore will be detected. The at-most-one-winner promise makes early return safe even if that player has several winning lines. If no candidate succeeds, neither player has a win and zero is correct.",
+        "workedTrace": "For [[1,0,2],[0,1,2],[0,0,1]], no row or column is complete, but the main diagonal contains 1,1,1, so player 1 wins. Three adjacent 1 cells on one row of a 4 by 4 board would not be a complete winning line.",
+        "edgeCases": "Empty and one-cell boards, all-empty board, full board without a winner. Both diagonal directions, full columns, and nonwinning partial lines in larger boards.",
+        "timeDerivation": "O(n^2) time: examine at most 2n+2 lines of length n.",
+        "spaceDerivation": "O(1) auxiliary space; no board copy or history is needed.",
+        "callableAgreement": "Input encoding explicitly distinguishes empty from the two players. All five bodies reject an empty candidate line and preserve board outer/row identity. Every n<=3 board with at most one winning player is tested, including states not constrained by move-history validation. Larger n=50 bounds and partial lines verify that generic wins require a full n-cell line. No dual-winner tie rule is invented. Read all actual function bodies and exact annotations. NumberMax masks the potentially wider difference before extracting its 32-bit sign; the signed selection mask works with arbitrary-width bitwise operations. Arrays are concrete lists and bool is not an integer observation. The admitted numeric bounds remain shared."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_4.json",
+        "solutions/python/ctci6_16_4.py",
+        "solutions/notes/python/ctci6_16_4.json"
+      ]
+    },
+    "ctci6_16_4/cpp": {
+      "codePath": "solutions/cpp/ctci6_16_4.cpp",
+      "notesPath": "solutions/notes/cpp/ctci6_16_4.json",
+      "contentSha256": "1ad798db4a7fc0667f6102ed7b5738bd153c28b2d8ceb3f3760f0bec8914b3e1",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Inspect every full row, column and two corner diagonals of a generic square board.",
+        "correctness": "A candidate is reported only when its first cell is nonzero and every cell in that full line equals it, so every reported player has a genuine winning line. Conversely every allowed winning line appears among the examined rows, columns or two diagonals and therefore will be detected. The at-most-one-winner promise makes early return safe even if that player has several winning lines. If no candidate succeeds, neither player has a win and zero is correct.",
+        "workedTrace": "For [[1,0,2],[0,1,2],[0,0,1]], no row or column is complete, but the main diagonal contains 1,1,1, so player 1 wins. Three adjacent 1 cells on one row of a 4 by 4 board would not be a complete winning line.",
+        "edgeCases": "Empty and one-cell boards, all-empty board, full board without a winner. Both diagonal directions, full columns, and nonwinning partial lines in larger boards.",
+        "timeDerivation": "O(n^2) time: examine at most 2n+2 lines of length n.",
+        "spaceDerivation": "O(1) auxiliary space; no board copy or history is needed.",
+        "callableAgreement": "Input encoding explicitly distinguishes empty from the two players. All five bodies reject an empty candidate line and preserve board outer/row identity. Every n<=3 board with at most one winning player is tested, including states not constrained by move-history validation. Larger n=50 bounds and partial lines verify that generic wins require a full n-cell line. No dual-winner tie rule is invented. Read all actual methods with const vector/string references. NumberMax difference is uint32_t and final operand multiplication by 0/1 cannot overflow. No undefined signed subtraction or implementation-defined unsigned narrowing is used. Returned vectors own their values; prefix/suffix scans index only nonempty input."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_4.json",
+        "solutions/cpp/ctci6_16_4.cpp",
+        "solutions/notes/cpp/ctci6_16_4.json"
+      ]
+    },
+    "ctci6_16_4/java": {
+      "codePath": "solutions/java/ctci6_16_4.java",
+      "notesPath": "solutions/notes/java/ctci6_16_4.json",
+      "contentSha256": "f6b5b62133339f23eaadbcfba309c90a4cb6fa6e98ec968a13cb714e7e39e85e",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Inspect every full row, column and two corner diagonals of a generic square board.",
+        "correctness": "A candidate is reported only when its first cell is nonzero and every cell in that full line equals it, so every reported player has a genuine winning line. Conversely every allowed winning line appears among the examined rows, columns or two diagonals and therefore will be detected. The at-most-one-winner promise makes early return safe even if that player has several winning lines. If no candidate succeeds, neither player has a win and zero is correct.",
+        "workedTrace": "For [[1,0,2],[0,1,2],[0,0,1]], no row or column is complete, but the main diagonal contains 1,1,1, so player 1 wins. Three adjacent 1 cells on one row of a 4 by 4 board would not be a complete winning line.",
+        "edgeCases": "Empty and one-cell boards, all-empty board, full board without a winner. Both diagonal directions, full columns, and nonwinning partial lines in larger boards.",
+        "timeDerivation": "O(n^2) time: examine at most 2n+2 lines of length n.",
+        "spaceDerivation": "O(1) auxiliary space; no board copy or history is needed.",
+        "callableAgreement": "Input encoding explicitly distinguishes empty from the two players. All five bodies reject an empty candidate line and preserve board outer/row identity. Every n<=3 board with at most one winning player is tested, including states not constrained by move-history validation. Larger n=50 bounds and partial lines verify that generic wins require a full n-cell line. No dual-winner tie rule is invented. Read all actual methods. Integer arithmetic uses justified bounds, except the intentionally wrapping subtraction whose bit pattern is observed with >>>. Returned int[] arrays match declared types, String indexing uses charAt, and the frequency table is local per call. Inputs are unchanged."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_4.json",
+        "solutions/java/ctci6_16_4.java",
+        "solutions/notes/java/ctci6_16_4.json"
+      ]
+    },
+    "ctci6_16_10/csharp": {
+      "codePath": "solutions/csharp/ctci6_16_10.cs",
+      "notesPath": "solutions/notes/ctci6_16_10.json",
+      "contentSha256": "ad6eeda14774f7f2975dce911a23a245e539373e335038714d408196cecd5b32",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Accumulate birth/death-after-year deltas, then retain the first strictly maximal population prefix.",
+        "correctness": "Each person contributes +1 at birth and -1 at death+1. Their contribution to the running sum is consequently one exactly during their inclusive lifetime and zero elsewhere. Summing all contributions yields the exact living population in every scanned year. The running best records the largest population seen and changes its year only when that count increases. Increasing-year order therefore chooses the earliest global maximizer, including 1900 for the all-zero empty case.",
+        "workedTrace": "For [[1900,1901],[1901,1902],[1902,1902]], populations in 1900,1901,1902 are 1,2,2. The first person still counts in 1901 and the third counts in 1902. The maximum is tied, so return 1901 rather than the last tied year.",
+        "edgeCases": "No people, same-year lifetimes, duplicate date rows. Birth coinciding with another death; earliest tied year and the 2000 endpoint.",
+        "timeDerivation": "O(p+Y) time for p people and Y=101 admitted years, hence O(p+1) for this fixed domain.",
+        "spaceDerivation": "O(Y) change counters including a death-after-2000 sentinel; Y is fixed at 101.",
+        "callableAgreement": "All five use 102 zero counters for 101 admitted years plus the final sentinel. Decrement occurs at death+1, preserving the inclusive death year. Strict best updates retain earliest ties and return 1900 for no people. Independent direct population counting covers small lifetime multisets, repeated people, same-year lifetimes and year 2000. Read all actual signed-int bodies. Array return expressions match int[] signatures. NumberMax uses uint sign extraction and an explicit unchecked difference, then signed masks; no conditional comparison helper. MasterMind IndexOf uses the admitted ASCII alphabet. Mutable array inputs are read only in this batch."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_10.json",
+        "solutions/csharp/ctci6_16_10.cs",
+        "solutions/notes/ctci6_16_10.json"
+      ]
+    },
+    "ctci6_16_10/javascript": {
+      "codePath": "solutions/javascript/ctci6_16_10.js",
+      "notesPath": "solutions/notes/javascript/ctci6_16_10.json",
+      "contentSha256": "2de614522012a6de41ca7f858cf0742ed8d26718fea0790aadb366b6d79b7bb5",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Accumulate birth/death-after-year deltas, then retain the first strictly maximal population prefix.",
+        "correctness": "Each person contributes +1 at birth and -1 at death+1. Their contribution to the running sum is consequently one exactly during their inclusive lifetime and zero elsewhere. Summing all contributions yields the exact living population in every scanned year. The running best records the largest population seen and changes its year only when that count increases. Increasing-year order therefore chooses the earliest global maximizer, including 1900 for the all-zero empty case.",
+        "workedTrace": "For [[1900,1901],[1901,1902],[1902,1902]], populations in 1900,1901,1902 are 1,2,2. The first person still counts in 1901 and the third counts in 1902. The maximum is tied, so return 1901 rather than the last tied year.",
+        "edgeCases": "No people, same-year lifetimes, duplicate date rows. Birth coinciding with another death; earliest tied year and the 2000 endpoint.",
+        "timeDerivation": "O(p+Y) time for p people and Y=101 admitted years, hence O(p+1) for this fixed domain.",
+        "spaceDerivation": "O(Y) change counters including a death-after-2000 sentinel; Y is fixed at 101.",
+        "callableAgreement": "All five use 102 zero counters for 101 admitted years plus the final sentinel. Decrement occurs at death+1, preserving the inclusive death year. Strict best updates retain earliest ties and return 1900 for no people. Independent direct population counting covers small lifetime multisets, repeated people, same-year lifetimes and year 2000. Read all actual functions. Factorial division is floored, NumberMax bit operations coerce the intended signed 32-bit patterns, and bounded ordinary arithmetic stays exactly representable. All array results are materialized, not generators. Inputs remain unchanged."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_10.json",
+        "solutions/javascript/ctci6_16_10.js",
+        "solutions/notes/javascript/ctci6_16_10.json"
+      ]
+    },
+    "ctci6_16_10/python": {
+      "codePath": "solutions/python/ctci6_16_10.py",
+      "notesPath": "solutions/notes/python/ctci6_16_10.json",
+      "contentSha256": "20bac73e493ed2c7dea36e3c213807b8df74a7400bda53f9614b05591b8b0617",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Accumulate birth/death-after-year deltas, then retain the first strictly maximal population prefix.",
+        "correctness": "Each person contributes +1 at birth and -1 at death+1. Their contribution to the running sum is consequently one exactly during their inclusive lifetime and zero elsewhere. Summing all contributions yields the exact living population in every scanned year. The running best records the largest population seen and changes its year only when that count increases. Increasing-year order therefore chooses the earliest global maximizer, including 1900 for the all-zero empty case.",
+        "workedTrace": "For [[1900,1901],[1901,1902],[1902,1902]], populations in 1900,1901,1902 are 1,2,2. The first person still counts in 1901 and the third counts in 1902. The maximum is tied, so return 1901 rather than the last tied year.",
+        "edgeCases": "No people, same-year lifetimes, duplicate date rows. Birth coinciding with another death; earliest tied year and the 2000 endpoint.",
+        "timeDerivation": "O(p+Y) time for p people and Y=101 admitted years, hence O(p+1) for this fixed domain.",
+        "spaceDerivation": "O(Y) change counters including a death-after-2000 sentinel; Y is fixed at 101.",
+        "callableAgreement": "All five use 102 zero counters for 101 admitted years plus the final sentinel. Decrement occurs at death+1, preserving the inclusive death year. Strict best updates retain earliest ties and return 1900 for no people. Independent direct population counting covers small lifetime multisets, repeated people, same-year lifetimes and year 2000. Read all actual function bodies and exact annotations. NumberMax masks the potentially wider difference before extracting its 32-bit sign; the signed selection mask works with arbitrary-width bitwise operations. Arrays are concrete lists and bool is not an integer observation. The admitted numeric bounds remain shared."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_10.json",
+        "solutions/python/ctci6_16_10.py",
+        "solutions/notes/python/ctci6_16_10.json"
+      ]
+    },
+    "ctci6_16_10/cpp": {
+      "codePath": "solutions/cpp/ctci6_16_10.cpp",
+      "notesPath": "solutions/notes/cpp/ctci6_16_10.json",
+      "contentSha256": "407f233e1b710f083fac513b78023e4630889dad885a7e65c3e7613d04bb74d5",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Accumulate birth/death-after-year deltas, then retain the first strictly maximal population prefix.",
+        "correctness": "Each person contributes +1 at birth and -1 at death+1. Their contribution to the running sum is consequently one exactly during their inclusive lifetime and zero elsewhere. Summing all contributions yields the exact living population in every scanned year. The running best records the largest population seen and changes its year only when that count increases. Increasing-year order therefore chooses the earliest global maximizer, including 1900 for the all-zero empty case.",
+        "workedTrace": "For [[1900,1901],[1901,1902],[1902,1902]], populations in 1900,1901,1902 are 1,2,2. The first person still counts in 1901 and the third counts in 1902. The maximum is tied, so return 1901 rather than the last tied year.",
+        "edgeCases": "No people, same-year lifetimes, duplicate date rows. Birth coinciding with another death; earliest tied year and the 2000 endpoint.",
+        "timeDerivation": "O(p+Y) time for p people and Y=101 admitted years, hence O(p+1) for this fixed domain.",
+        "spaceDerivation": "O(Y) change counters including a death-after-2000 sentinel; Y is fixed at 101.",
+        "callableAgreement": "All five use 102 zero counters for 101 admitted years plus the final sentinel. Decrement occurs at death+1, preserving the inclusive death year. Strict best updates retain earliest ties and return 1900 for no people. Independent direct population counting covers small lifetime multisets, repeated people, same-year lifetimes and year 2000. Read all actual methods with const vector/string references. NumberMax difference is uint32_t and final operand multiplication by 0/1 cannot overflow. No undefined signed subtraction or implementation-defined unsigned narrowing is used. Returned vectors own their values; prefix/suffix scans index only nonempty input."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_10.json",
+        "solutions/cpp/ctci6_16_10.cpp",
+        "solutions/notes/cpp/ctci6_16_10.json"
+      ]
+    },
+    "ctci6_16_10/java": {
+      "codePath": "solutions/java/ctci6_16_10.java",
+      "notesPath": "solutions/notes/java/ctci6_16_10.json",
+      "contentSha256": "d9d73a2ead575c6b083390989902561ae3f2c2a16b5670027d3c60a06c7ac918",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Accumulate birth/death-after-year deltas, then retain the first strictly maximal population prefix.",
+        "correctness": "Each person contributes +1 at birth and -1 at death+1. Their contribution to the running sum is consequently one exactly during their inclusive lifetime and zero elsewhere. Summing all contributions yields the exact living population in every scanned year. The running best records the largest population seen and changes its year only when that count increases. Increasing-year order therefore chooses the earliest global maximizer, including 1900 for the all-zero empty case.",
+        "workedTrace": "For [[1900,1901],[1901,1902],[1902,1902]], populations in 1900,1901,1902 are 1,2,2. The first person still counts in 1901 and the third counts in 1902. The maximum is tied, so return 1901 rather than the last tied year.",
+        "edgeCases": "No people, same-year lifetimes, duplicate date rows. Birth coinciding with another death; earliest tied year and the 2000 endpoint.",
+        "timeDerivation": "O(p+Y) time for p people and Y=101 admitted years, hence O(p+1) for this fixed domain.",
+        "spaceDerivation": "O(Y) change counters including a death-after-2000 sentinel; Y is fixed at 101.",
+        "callableAgreement": "All five use 102 zero counters for 101 admitted years plus the final sentinel. Decrement occurs at death+1, preserving the inclusive death year. Strict best updates retain earliest ties and return 1900 for no people. Independent direct population counting covers small lifetime multisets, repeated people, same-year lifetimes and year 2000. Read all actual methods. Integer arithmetic uses justified bounds, except the intentionally wrapping subtraction whose bit pattern is observed with >>>. Returned int[] arrays match declared types, String indexing uses charAt, and the frequency table is local per call. Inputs are unchanged."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_10.json",
+        "solutions/java/ctci6_16_10.java",
+        "solutions/notes/java/ctci6_16_10.json"
+      ]
+    },
+    "ctci6_16_19/csharp": {
+      "codePath": "solutions/csharp/ctci6_16_19.cs",
+      "notesPath": "solutions/notes/ctci6_16_19.json",
+      "contentSha256": "12a7b69e59ad16957681f6410a0f6ff9a03f59254f516e065b04b093aa8ffe17",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Iterative eight-neighbor water component counting with a separate visited matrix; sort all component sizes preserving duplicates.",
+        "correctness": "The search starts within one pond, and each discovered water neighbor is connected to a reached water cell, so it remains in that same pond. Every water cell in the pond has a water path from the start; induction along that path shows it is eventually reached. Marking at discovery gives exactly one count per cell. The outer scan starts no later search in an already visited component, while every other pond eventually supplies an unvisited starting cell. Thus the recorded sizes include every pond once. Sorting changes only their order, not multiplicity, and the elevation grid is never changed.",
+        "workedTrace": "In [[0,1,0],[1,0,1],[0,1,0]], the center water cell touches every corner diagonally. All five zeros are therefore one pond, so return [5]. Four-neighbor searches would incorrectly report five ponds of size one.",
+        "edgeCases": "No water, all water, empty dimensions. Diagonal-only connections, separate equal-sized ponds, and boundary/corner cells.",
+        "timeDerivation": "O(rows*columns + p*log(p+1)) time for the scan/search and sorting p pond sizes. Each cell and its eight neighbors are checked a constant number of times.",
+        "spaceDerivation": "O(rows*columns) visited flags and worst-case work stack, excluding the p returned sizes.",
+        "callableAgreement": "Every language marks water at discovery, preserves elevations and input row identities, and explores diagonals. Python/JS allocate independent visited rows, C# uses a rectangular Boolean table, Java Boolean rows, C++ nested vector<bool>. Each cell enters one work stack once. Independent DSU unions establish components, including all binary 3x3 grids, all-water 50x50, diagonal-only links and equal-sized separate ponds. Sorting p sizes is included in the time bound. Read all actual signed-int bodies. Array return expressions match int[] signatures. NumberMax uses uint sign extraction and an explicit unchecked difference, then signed masks; no conditional comparison helper. MasterMind IndexOf uses the admitted ASCII alphabet. Mutable array inputs are read only in this batch."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_19.json",
+        "solutions/csharp/ctci6_16_19.cs",
+        "solutions/notes/ctci6_16_19.json"
+      ]
+    },
+    "ctci6_16_19/javascript": {
+      "codePath": "solutions/javascript/ctci6_16_19.js",
+      "notesPath": "solutions/notes/javascript/ctci6_16_19.json",
+      "contentSha256": "e6ec4621f6ab5e8c7ca09c7dedaedac2f2560b82d74a47ab6bd8e8fa4ed3c1ca",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Iterative eight-neighbor water component counting with a separate visited matrix; sort all component sizes preserving duplicates.",
+        "correctness": "The search starts within one pond, and each discovered water neighbor is connected to a reached water cell, so it remains in that same pond. Every water cell in the pond has a water path from the start; induction along that path shows it is eventually reached. Marking at discovery gives exactly one count per cell. The outer scan starts no later search in an already visited component, while every other pond eventually supplies an unvisited starting cell. Thus the recorded sizes include every pond once. Sorting changes only their order, not multiplicity, and the elevation grid is never changed.",
+        "workedTrace": "In [[0,1,0],[1,0,1],[0,1,0]], the center water cell touches every corner diagonally. All five zeros are therefore one pond, so return [5]. Four-neighbor searches would incorrectly report five ponds of size one.",
+        "edgeCases": "No water, all water, empty dimensions. Diagonal-only connections, separate equal-sized ponds, and boundary/corner cells.",
+        "timeDerivation": "O(rows*columns + p*log(p+1)) time for the scan/search and sorting p pond sizes. Each cell and its eight neighbors are checked a constant number of times.",
+        "spaceDerivation": "O(rows*columns) visited flags and worst-case work stack, excluding the p returned sizes.",
+        "callableAgreement": "Every language marks water at discovery, preserves elevations and input row identities, and explores diagonals. Python/JS allocate independent visited rows, C# uses a rectangular Boolean table, Java Boolean rows, C++ nested vector<bool>. Each cell enters one work stack once. Independent DSU unions establish components, including all binary 3x3 grids, all-water 50x50, diagonal-only links and equal-sized separate ponds. Sorting p sizes is included in the time bound. Read all actual functions. Factorial division is floored, NumberMax bit operations coerce the intended signed 32-bit patterns, and bounded ordinary arithmetic stays exactly representable. All array results are materialized, not generators. Inputs remain unchanged."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_19.json",
+        "solutions/javascript/ctci6_16_19.js",
+        "solutions/notes/javascript/ctci6_16_19.json"
+      ]
+    },
+    "ctci6_16_19/python": {
+      "codePath": "solutions/python/ctci6_16_19.py",
+      "notesPath": "solutions/notes/python/ctci6_16_19.json",
+      "contentSha256": "cb50a3caf47fc6f3bbe4de5ab7f57a732082cba6e34f78652b40c20c093c94e0",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Iterative eight-neighbor water component counting with a separate visited matrix; sort all component sizes preserving duplicates.",
+        "correctness": "The search starts within one pond, and each discovered water neighbor is connected to a reached water cell, so it remains in that same pond. Every water cell in the pond has a water path from the start; induction along that path shows it is eventually reached. Marking at discovery gives exactly one count per cell. The outer scan starts no later search in an already visited component, while every other pond eventually supplies an unvisited starting cell. Thus the recorded sizes include every pond once. Sorting changes only their order, not multiplicity, and the elevation grid is never changed.",
+        "workedTrace": "In [[0,1,0],[1,0,1],[0,1,0]], the center water cell touches every corner diagonally. All five zeros are therefore one pond, so return [5]. Four-neighbor searches would incorrectly report five ponds of size one.",
+        "edgeCases": "No water, all water, empty dimensions. Diagonal-only connections, separate equal-sized ponds, and boundary/corner cells.",
+        "timeDerivation": "O(rows*columns + p*log(p+1)) time for the scan/search and sorting p pond sizes. Each cell and its eight neighbors are checked a constant number of times.",
+        "spaceDerivation": "O(rows*columns) visited flags and worst-case work stack, excluding the p returned sizes.",
+        "callableAgreement": "Every language marks water at discovery, preserves elevations and input row identities, and explores diagonals. Python/JS allocate independent visited rows, C# uses a rectangular Boolean table, Java Boolean rows, C++ nested vector<bool>. Each cell enters one work stack once. Independent DSU unions establish components, including all binary 3x3 grids, all-water 50x50, diagonal-only links and equal-sized separate ponds. Sorting p sizes is included in the time bound. Read all actual function bodies and exact annotations. NumberMax masks the potentially wider difference before extracting its 32-bit sign; the signed selection mask works with arbitrary-width bitwise operations. Arrays are concrete lists and bool is not an integer observation. The admitted numeric bounds remain shared."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_19.json",
+        "solutions/python/ctci6_16_19.py",
+        "solutions/notes/python/ctci6_16_19.json"
+      ]
+    },
+    "ctci6_16_19/cpp": {
+      "codePath": "solutions/cpp/ctci6_16_19.cpp",
+      "notesPath": "solutions/notes/cpp/ctci6_16_19.json",
+      "contentSha256": "2e67e8cfd82d242f52be0c569baf894df4420a8545353cd7b91391b2cef4747a",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Iterative eight-neighbor water component counting with a separate visited matrix; sort all component sizes preserving duplicates.",
+        "correctness": "The search starts within one pond, and each discovered water neighbor is connected to a reached water cell, so it remains in that same pond. Every water cell in the pond has a water path from the start; induction along that path shows it is eventually reached. Marking at discovery gives exactly one count per cell. The outer scan starts no later search in an already visited component, while every other pond eventually supplies an unvisited starting cell. Thus the recorded sizes include every pond once. Sorting changes only their order, not multiplicity, and the elevation grid is never changed.",
+        "workedTrace": "In [[0,1,0],[1,0,1],[0,1,0]], the center water cell touches every corner diagonally. All five zeros are therefore one pond, so return [5]. Four-neighbor searches would incorrectly report five ponds of size one.",
+        "edgeCases": "No water, all water, empty dimensions. Diagonal-only connections, separate equal-sized ponds, and boundary/corner cells.",
+        "timeDerivation": "O(rows*columns + p*log(p+1)) time for the scan/search and sorting p pond sizes. Each cell and its eight neighbors are checked a constant number of times.",
+        "spaceDerivation": "O(rows*columns) visited flags and worst-case work stack, excluding the p returned sizes.",
+        "callableAgreement": "Every language marks water at discovery, preserves elevations and input row identities, and explores diagonals. Python/JS allocate independent visited rows, C# uses a rectangular Boolean table, Java Boolean rows, C++ nested vector<bool>. Each cell enters one work stack once. Independent DSU unions establish components, including all binary 3x3 grids, all-water 50x50, diagonal-only links and equal-sized separate ponds. Sorting p sizes is included in the time bound. Read all actual methods with const vector/string references. NumberMax difference is uint32_t and final operand multiplication by 0/1 cannot overflow. No undefined signed subtraction or implementation-defined unsigned narrowing is used. Returned vectors own their values; prefix/suffix scans index only nonempty input."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_19.json",
+        "solutions/cpp/ctci6_16_19.cpp",
+        "solutions/notes/cpp/ctci6_16_19.json"
+      ]
+    },
+    "ctci6_16_19/java": {
+      "codePath": "solutions/java/ctci6_16_19.java",
+      "notesPath": "solutions/notes/java/ctci6_16_19.json",
+      "contentSha256": "f9c03b07ac33e69599af8596dfa53510281363d66cf99081473cbd4136140371",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review16.json",
+      "checks": {
+        "actualAlgorithm": "Iterative eight-neighbor water component counting with a separate visited matrix; sort all component sizes preserving duplicates.",
+        "correctness": "The search starts within one pond, and each discovered water neighbor is connected to a reached water cell, so it remains in that same pond. Every water cell in the pond has a water path from the start; induction along that path shows it is eventually reached. Marking at discovery gives exactly one count per cell. The outer scan starts no later search in an already visited component, while every other pond eventually supplies an unvisited starting cell. Thus the recorded sizes include every pond once. Sorting changes only their order, not multiplicity, and the elevation grid is never changed.",
+        "workedTrace": "In [[0,1,0],[1,0,1],[0,1,0]], the center water cell touches every corner diagonally. All five zeros are therefore one pond, so return [5]. Four-neighbor searches would incorrectly report five ponds of size one.",
+        "edgeCases": "No water, all water, empty dimensions. Diagonal-only connections, separate equal-sized ponds, and boundary/corner cells.",
+        "timeDerivation": "O(rows*columns + p*log(p+1)) time for the scan/search and sorting p pond sizes. Each cell and its eight neighbors are checked a constant number of times.",
+        "spaceDerivation": "O(rows*columns) visited flags and worst-case work stack, excluding the p returned sizes.",
+        "callableAgreement": "Every language marks water at discovery, preserves elevations and input row identities, and explores diagonals. Python/JS allocate independent visited rows, C# uses a rectangular Boolean table, Java Boolean rows, C++ nested vector<bool>. Each cell enters one work stack once. Independent DSU unions establish components, including all binary 3x3 grids, all-water 50x50, diagonal-only links and equal-sized separate ponds. Sorting p sizes is included in the time bound. Read all actual methods. Integer arithmetic uses justified bounds, except the intentionally wrapping subtraction whose bit pattern is observed with >>>. Returned int[] arrays match declared types, String indexing uses charAt, and the frequency table is local per call. Inputs are unchanged."
+      },
+      "evidence": [
+        "ctci6/review16.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_16_19.json",
+        "solutions/java/ctci6_16_19.java",
+        "solutions/notes/java/ctci6_16_19.json"
       ]
     }
   }
