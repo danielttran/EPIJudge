@@ -1,0 +1,31 @@
+{
+  "explanation": "For each odd position, put the largest value among it and its existing neighbors at that position. It then dominates both neighbors. If the left neighbor is swapped, it receives a value no greater than its old value, so it cannot break the previous peak. This permits a single local pass instead of sorting.",
+  "correctness": "After processing an odd position, it is at least both adjacent values by construction. The only cell shared with the preceding processed triple is its left neighbor. If that neighbor is chosen as the new peak, the displaced center is no larger than the old neighbor, so the previous peak still dominates it; other swaps do not change that shared neighbor. Induction therefore preserves all earlier peaks. Every odd position is processed, so the final array has the full alternating pattern. Swaps alone preserve every original occurrence.",
+  "walkthrough": "Starting with [1,2,3,4,5], put 3 at odd index 1 by swapping it with 2, giving [1,3,2,4,5]. Then swap 5 into odd index 3, yielding [1,3,2,5,4]. Both peaks dominate their neighbors; the middle valley 2 is below both 3 and 5.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    ],
+    "expected": [
+      1,
+      3,
+      2,
+      5,
+      4
+    ]
+  },
+  "timeComplexity": "O(n) time for one constant-work step per odd position; the C++ returned copy is also O(n).",
+  "spaceComplexity": "O(1) auxiliary rearrangement storage, excluding the C++ returned value copy.",
+  "edgeCases": [
+    "Empty, singleton, equal values and two-element arrays.",
+    "Signed extremes must not be confused with out-of-bounds sentinels.",
+    "Multiple valid outputs are accepted, but all input occurrences must remain."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 10.11. No affiliation is implied."
+}

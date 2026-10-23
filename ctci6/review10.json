@@ -1,0 +1,62 @@
+{
+  "stage": "standalone-authoring-and-separate-module",
+  "liveIntegration": "pending-local-export",
+  "reviewScope": "Six sorting/searching coding tasks and thirty actual language bodies; mutable-first/readonly-other contracts, string-array decoding, group/property graders and nonunique duplicate/coordinate results reviewed individually.",
+  "questions": [
+    {
+      "ref": "10.1",
+      "algorithm": "Merge sorted prefixes backward into the first array tail without a merged working buffer.",
+      "review": "All five ignore arbitrary spare-slot values and read second without changing it. First-array-only mutation observation checks returned values against the original mutable first argument and independently snapshots the readonly second array. Executed negative programs in all five languages return correct merged values from a copy or mutate second afterward; both violations fail. Empty inputs, duplicates, signed extremes and 10000 total slots are executed."
+    },
+    {
+      "ref": "10.2",
+      "algorithm": "Cache canonical sorted-letter keys, order decorated occurrences, and write words back into the original array.",
+      "review": "The task is in-place grouping with unrestricted group/member order, not nested-group output. C# key/word tuples, Java original/index/key arrays, C++ pairs and JS decorated records preserve unread word occurrences; Python key sorting caches each key once. Language-specific WHY notes explain these differences. Property grading checks full word multiplicity and contiguous anagram keys while accepting alternative group order. Empty strings, repeated words and 200-word bounds are covered."
+    },
+    {
+      "ref": "10.3",
+      "algorithm": "Iterative rotated binary search with equal-boundary trimming before sorted-half decisions.",
+      "review": "Repeated values are admitted and any matching index is valid. All five test the midpoint first, trim only known nonmatching equal boundaries, then retain the possible sorted/rotated half. Exhaustive rotations of small nondecreasing repeated-value arrays and all-equal 10000-element bounds exercise the linear worst case. Direct host lookup checks existence independently without forcing the first duplicate index."
+    },
+    {
+      "ref": "10.5",
+      "algorithm": "Binary search with an outward nonempty-pivot scan inside the current interval.",
+      "review": "Empty targets are explicitly not searchable, following the public wrapper. All five preserve gap positions and accept any matching original index. C# uses ordinal comparison, Java compareTo, and the shared ASCII domain makes other languages consistent. Empty/all-gap arrays, long gap blocks, duplicate words and dense sorted subsequences agree with independent direct lookup. Complexity explicitly allows linear gap work instead of promising logarithmic worst case."
+    },
+    {
+      "ref": "10.9",
+      "algorithm": "Top-right staircase search discards one impossible row or column at each comparison.",
+      "review": "The input is row/column sorted, not necessarily globally flattened-sorted. All five handle empty dimensions before indexing and preserve original row references and cells. Any coordinate holding target is accepted. Independent direct row scanning covers all small sorted matrices, duplicates, signed endpoints and 50x50 overlapping row ranges."
+    },
+    {
+      "ref": "10.11",
+      "algorithm": "At each odd index swap in the largest value among the index and existing neighbors.",
+      "review": "All five explicitly bounds-check the optional right neighbor rather than using a signed-minimum sentinel. Swapping a left neighbor cannot increase the valley beside a previously fixed peak. Input object/length and complete multiset are preserved. Property grading accepts any odd-peak arrangement with equality. Exhaustive small repeated-value arrays, maximum-sized arrays and signed endpoints are checked against an independent sorted-then-interleaved construction."
+    }
+  ],
+  "languagesReviewed": [
+    "csharp",
+    "javascript",
+    "python",
+    "cpp",
+    "java"
+  ],
+  "languageBindingReview": {
+    "csharp": "Read all actual bodies and typed string[]/int[] contracts. Backward merge and local peak swaps mutate only the first array. Grouping computes tuple keys once and uses StringComparer.Ordinal. Sparse word comparisons are ordinal. The property grader does not demand one canonical output ordering or duplicate index.",
+    "javascript": "Read exact functions: mutable arrays are changed by indexed writes or swaps before return. Decorated anagram keys avoid comparator recomputation. Map-free searches use ASCII comparisons and bounded integer indices. Snapshot observations preserve all other argument values and original array references.",
+    "python": "Read exact functions: backward merge and local swaps mutate the supplied lists; grouping sorts the list in place before returning a copy. The gap search never compacts input. First-array observations compare every other input against the original snapshot and reject a correct result computed only on a rebound copy.",
+    "cpp": "Read exact C++17 signatures: only the first array reference is mutable where specified, while the second merge input stays const. Return copies are accounted for in complexity. Group key/word pairs retain occurrences during writeback. String vectors use the generic JSON decoder; comparator decisions do not subtract signed integer endpoints.",
+    "java": "Read exact methods: string-array JSON decoding and Object[] observation encoding preserve empty gaps. Grouping sorts cached-key indices and reads an original clone during writeback. Mutable first arrays retain their object identities; second arrays are independently observed unchanged. Searches compare primitives/ASCII strings without narrowing or locale assumptions."
+  },
+  "executionEvidence": "staged10/validation.json",
+  "submissionEvidence": "runtime/validation.json",
+  "graderRegressions": [
+    "scripts/ctci6/test_sorting10.py",
+    "EpiJudge.Tests/CtciStagingTests.cs"
+  ],
+  "remainingAcceptance": [
+    "remaining known content and classification",
+    "final full-bank execution and rendered checks",
+    "authorized push and exact-commit CI"
+  ]
+}

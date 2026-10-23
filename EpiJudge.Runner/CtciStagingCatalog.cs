@@ -49,7 +49,7 @@ public static class CtciStagingCatalog
         foreach (var row in rows)
         {
             if (!Regex.IsMatch(row.Ref, @"^[1-9]\d*\.[1-9]\d*$") || row.Id != "ctci6_" + row.Ref.Replace('.', '_') ||
-                row.StagingDirectory != (row.Batch switch { 1 => "staged", 2 => "staged02", 3 => "staged03", 5 => "staged05", 8 => "staged08", 16 => "staged16", 17 => "staged17", _ => "" }) || row.Batch is not (1 or 2 or 3 or 5 or 8 or 16 or 17) ||
+                row.StagingDirectory != (row.Batch switch { 1 => "staged", 2 => "staged02", 3 => "staged03", 5 => "staged05", 8 => "staged08", 10 => "staged10", 16 => "staged16", 17 => "staged17", _ => "" }) || row.Batch is not (1 or 2 or 3 or 5 or 8 or 10 or 16 or 17) ||
                 row.TestCount < 1 || !row.Languages.Keys.ToHashSet().SetEquals(SolutionCatalog.Languages) ||
                 row.Example.ValueKind != JsonValueKind.Array || row.Example.GetArrayLength() != 2 ||
                 row.Languages.Values.Any(value => new[] { value.Signature, value.StarterCode, value.SolutionCode, value.Harness }.Any(string.IsNullOrWhiteSpace)))

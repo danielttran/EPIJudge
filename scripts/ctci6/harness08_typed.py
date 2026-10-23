@@ -5,7 +5,7 @@ from core import ROOT
 from models08 import header, TYPES
 
 
-def source(language, starters=False, only_ref=None, staging_name='staged08'):
+def _source(language, starters=False, only_ref=None, staging_name='staged08'):
     entries = json.loads((ROOT / 'ctci6' / staging_name / 'catalog.json').read_text())
     if only_ref is not None:
         entries = [e for e in entries if e['ref'] == only_ref]
@@ -26,47 +26,50 @@ def source(language, starters=False, only_ref=None, staging_name='staged08'):
             continue
         decode, names, checks = [], [], []
         for i, (_, kind) in enumerate(entry['params']):
+            mutating = i == 0 and entry['mutation'] in ('screen', 'first-array')
             name = 'p' + str(i)
             names.append(name)
             if language == 'csharp':
                 value = f'JsonSerializer.Deserialize<{TYPES[language][kind]}>(args[{i}].GetRawText())!'
                 decode.append(f'var {name}={value};')
-                if kind in ('ai', 'aai'):
+                if kind in ('ai', 'aai', 'as'):
                     decode.append(f'var before{i}=JsonSerializer.Serialize({name});')
                     
-                    if entry['mutation'] != 'screen':
+                    if not mutating:
                         checks.append(f'JsonSerializer.Serialize({name})==before{i}')
                     if kind == 'aai':
                         decode.append(f'var rows{i}={name}.ToArray();')
                         checks.append(f'{name}.Length==rows{i}.Length && {name}.Select((r,j)=>ReferenceEquals(r,rows{i}[j])).All(v=>v)')
             elif language == 'java':
-                value = f'args.get({i}).' + {'i':'asInt()', 's':'asString()', 'b':'asBoolean()', 'ai':'asArray()', 'aai':'asArray()'}[kind]
+                value = f'args.get({i}).' + {'i':'asInt()', 's':'asString()', 'b':'asBoolean()', 'ai':'asArray()', 'aai':'asArray()', 'as':'asArray()'}[kind]
                 if kind == 'ai':
                     decode.append(f'int[] {name}=integers({value});')
                 elif kind == 'aai':
                     decode.append(f'int[][] {name}=matrix({value});')
+                elif kind == 'as':
+                    decode.append(f'String[] {name}=strings({value});')
                 else:
                     decode.append(f'var {name}={value};')
-                if kind in ('ai','aai'):
+                if kind in ('ai','aai','as'):
                     decode.append(f'String before{i}=encode({name}).toString();')
                     
-                    if entry['mutation'] != 'screen':
+                    if not mutating:
                         checks.append(f'encode({name}).toString().equals(before{i})')
                     if kind == 'aai':
                         decode.append(f'int[][] rows{i}={name}.clone();')
                         checks.append(f'sameRows({name},rows{i})')
             else:
                 decode.append(f'auto {name}=args[{i}].get<{TYPES[language][kind]}>();')
-                if kind in ('ai', 'aai'):
+                if kind in ('ai', 'aai', 'as'):
                     decode.append(f'auto before{i}={name};')
                     
-                    if entry['mutation'] != 'screen':
+                    if not mutating:
                         checks.append(f'{name}==before{i}')
                     if kind == 'aai':
                         decode.append(f'std::vector<const int*> rows{i};for(const auto& row:{name})rows{i}.push_back(row.data());')
                         checks.append(f'sameRows({name},rows{i})')
         call = ('new ' + cls + '()' if language != 'cpp' else cls + '()') + '.' + entry['method'] + '(' + ','.join(names) + ')'
-        if entry['mutation'] == 'screen':
+        if entry['mutation'] in ('screen', 'first-array'):
             checks.append('JsonSerializer.Serialize(actual)==JsonSerializer.Serialize(p0)' if language == 'csharp' else 'encode(actual).toString().equals(encode(p0).toString())' if language == 'java' else 'actual==p0')
         check = ' && '.join('(' + v + ')' for v in checks) or 'true'
         emit = f'return new {{actual,mutationOk={check}}};' if language == 'csharp' else f'return new JsonObject().add("actual",encode(actual)).add("mutationOk",{check});' if language == 'java' else 'return json{{"actual",actual},{"mutationOk",' + check + '}};'
@@ -125,3 +128,29 @@ bool sameRows(const std::vector<std::vector<int>>& values,const std::vector<cons
 json execute(const json& row){{std::string reference=row["ref"].get<std::string>();const auto& args=row["arguments"];{dispatch}throw std::runtime_error("Unknown reference");}}
 int main(){{std::ifstream input("cases.json");json rows;input>>rows;json results=json::array();for(const auto& row:rows){{try{{results.push_back(execute(row));}}catch(const std::exception& error){{results.push_back(json{{{{"error",error.what()}}}});}}}}std::ofstream("results.json")<<results;}}
 '''
+
+
+def source(language, starters=False, only_ref=None, staging_name='staged08'):
+    """Extend only new shapes; unchanged per-reference adapters remain byte-identical."""
+    value = _source(language, starters, only_ref, staging_name)
+    entries = json.loads((ROOT / 'ctci6' / staging_name / 'catalog.json').read_text())
+    if only_ref is not None:
+        entries = [entry for entry in entries if entry['ref'] == only_ref]
+    if language == 'java' and any(kind == 'as' for entry in entries for _, kind in entry['params']):
+        helper = 'static String[] strings(JsonArray values){String[] output=new String[values.size()];for(int i=0;i<output.length;++i)output[i]=values.get(i).asString();return output;}\n'
+        value = value.replace('public class Harness {\n', 'public class Harness {\n' + helper, 1)
+        value = value.replace('else if(value instanceof Iterable<?> values)', 'else if(value instanceof Object[] values){for(Object v:values)result.add(encode(v));}else if(value instanceof Iterable<?> values)', 1)
+    mutable = [entry['ref'] for entry in entries if entry['mutation'] == 'first-array']
+    if mutable and language == 'python':
+        value = value.replace("args=row['arguments'];before=json.dumps(args);", "args=row['arguments'];before=json.dumps(args);saved_args=list(args);", 1)
+        original = "(actual==args[0] if row['ref']=='8.10' else json.dumps(args)==before)"
+        replacement = "(actual==args[0] and json.dumps(args[1:])==json.dumps(json.loads(before)[1:]) and len(args)==len(saved_args) and all(a is b if isinstance(a,list) else a==b for a,b in zip(args,saved_args)) if row['ref'] in " + repr(mutable) + ' else ' + original + ')'
+        if original not in value:raise ValueError('Unknown Python mutation observation')
+        value = value.replace(original, replacement, 1)
+    if mutable and language == 'javascript':
+        value = value.replace('const args=row.arguments,before=JSON.stringify(args),outer=', 'const args=row.arguments,before=JSON.stringify(args),savedArgs=args.slice(),outer=', 1)
+        original = "row.ref==='8.10'?JSON.stringify(actual)===JSON.stringify(args[0]):JSON.stringify(args)===before"
+        replacement = json.dumps(mutable) + '.includes(row.ref)?JSON.stringify(actual)===JSON.stringify(args[0])&&JSON.stringify(args.slice(1))===JSON.stringify(JSON.parse(before).slice(1))&&args.length===savedArgs.length&&args.every((v,i)=>v===savedArgs[i]):(' + original + ')'
+        if original not in value:raise ValueError('Unknown JavaScript mutation observation')
+        value = value.replace(original,replacement,1)
+    return value

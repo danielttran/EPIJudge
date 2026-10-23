@@ -1,0 +1,38 @@
+{
+  "explanation": "At the top-right remaining cell, everything below it is at least as large and everything to its left is no larger. A value above target rules out that entire column; a value below target rules out that entire row. This staircase walk removes one row or column per comparison.",
+  "correctness": "Initially every possible target position is in the full remaining rectangle. If its top-right value is larger than target, all values below in that column are also too large, so removing the column is safe. If smaller, all remaining values in that row are too small, so removing the row is safe. Equality returns a verified coordinate. This invariant preserves every possible match until the rectangle empties, proving the [-1,-1] result then means absence.",
+  "walkthrough": "For [[1,4,7],[2,5,8],[3,6,9]] and target 6, begin at 7 and move left to 4. Move down to 5, then down to 6, returning [2,1]. Flattened binary search would be invalid because 7 at the end of row 0 exceeds 2 at the start of row 1.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          1,
+          4,
+          7
+        ],
+        [
+          2,
+          5,
+          8
+        ],
+        [
+          3,
+          6,
+          9
+        ]
+      ],
+      6
+    ],
+    "expected": [
+      2,
+      1
+    ]
+  },
+  "timeComplexity": "O(rows+columns) comparisons, since each step removes one row or column.",
+  "spaceComplexity": "O(1) auxiliary row/column indices.",
+  "edgeCases": [
+    "Empty dimensions, one row or column, target outside the value range.",
+    "Duplicates, signed endpoints and row ranges that overlap."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 10.9. No affiliation is implied."
+}

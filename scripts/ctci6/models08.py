@@ -28,6 +28,7 @@ TYPES = {
 }
 
 for _language in TYPES:
+    TYPES[_language]["as"] = {"csharp": "string[]", "java": "String[]", "cpp": "std::vector<std::string>", "python": "list[str]"}[_language]
     TYPES[_language]["arrangements"] = TYPES[_language]["sets"]
     TYPES[_language]["path"] = TYPES[_language]["sets"]
     TYPES[_language]["b"] = {
@@ -73,12 +74,12 @@ def declare(spec, language, body, class_name="Solution"):
         + spec["method"]
         + "("
         + ", ".join(
-            ("const " if language == "cpp" and t in ("s", "ai", "aai") and spec["mutation"] != "screen" else "")
+            ("const " if language == "cpp" and t in ("s", "ai", "aai", "as") and not (index == 0 and spec["mutation"] in ("screen", "first-array")) else "")
             + types[t]
-            + ("&" if language == "cpp" and t in ("s", "ai", "aai") else "")
+            + ("&" if language == "cpp" and t in ("s", "ai", "aai", "as") else "")
             + " "
             + n
-            for n, t in spec["params"]
+            for index, (n, t) in enumerate(spec["params"])
         )
         + ")"
     )

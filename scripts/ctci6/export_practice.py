@@ -43,6 +43,7 @@ def export():
         "review03.json",
         "review05.json",
         "review08.json",
+        "review10.json",
         "review16.json",
         "review17.json",
     ):
@@ -69,6 +70,7 @@ def export():
         3: "Stacks and queues",
         5: "Bit manipulation",
         8: "Recursion and dynamic programming",
+        10: "Sorting and searching",
         16: "Moderate interview problems",
         17: "Hard interview problems",
     }
@@ -92,7 +94,7 @@ def export():
         contracts = {}
         for language in LANGUAGES:
             config = row["languages"][language]
-            grader = (
+            grader = hashlib.sha256((ROOT / "scripts/ctci6/corpus10.py").read_bytes()).hexdigest() if row["batch"] == 10 else (
                 hashlib.sha256(
                     (
                         ROOT

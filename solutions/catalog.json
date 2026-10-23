@@ -32800,6 +32800,491 @@
     ]
   },
   {
+    "problemId": "ctci6_10_1",
+    "collection": "ctci6",
+    "language": "csharp",
+    "code": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic class Solution\n{\n    public int[] MergeSortedIntoFirst(int[] first, int realCount, int[] second)\n    {\n        int a = realCount - 1, b = second.Length - 1, write = first.Length - 1;\n        while (b >= 0)\n        {\n            if (a >= 0 && first[a] > second[b])\n                first[write--] = first[a--];\n            else\n                first[write--] = second[b--];\n        }\n        return first;\n    }\n}\n",
+    "explanation": "Merging from the front would overwrite unread values in first unless they were shifted or copied. Its unused tail is safe output space. Compare the largest unread values and place the larger at the last free output position, moving backward until second has been consumed.",
+    "timeComplexity": "O(realCount+second.length) worst-case merge time. C++ by-value return also copies that many result values, including a no-op merge.",
+    "spaceComplexity": "O(1) auxiliary merge workspace, excluding the C++ returned value copy. No second merged working array is allocated.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 10.1. No affiliation is implied.",
+    "correctness": "Before each write, the output suffix already contains the largest consumed values in their final sorted positions. The largest unread item is at the end of one sorted input prefix, so placing that item next preserves the invariant. While second remains, the write position is strictly after the unread first prefix, so no unread first value is destroyed. When second is exhausted, any remaining first prefix is already in its correct positions. Thus first contains exactly both original sequences, in order, and second was only read.",
+    "walkthrough": "For first=[1,4,7,99,99], realCount=3, second=[2,6], write 7 at index 4, then 6 at index 3, then 4 at index 2, then 2 at index 1. The untouched 1 stays at index 0, yielding [1,2,4,6,7]. The 99 placeholders are never merged.",
+    "edgeCases": [
+      "Either real sequence empty; both empty.",
+      "Nonzero/extreme spare values, duplicates across inputs and signed endpoints."
+    ]
+  },
+  {
+    "problemId": "ctci6_10_1",
+    "collection": "ctci6",
+    "language": "javascript",
+    "code": "'use strict';\nfunction MergeSortedIntoFirst(first, realCount, second) {\n  let a = realCount - 1,\n    b = second.length - 1,\n    write = first.length - 1;\n  while (b >= 0) {\n    if (a >= 0 && first[a] > second[b]) first[write--] = first[a--];\n    else first[write--] = second[b--];\n  }\n  return first;\n}\n\nmodule.exports = {MergeSortedIntoFirst};\n",
+    "explanation": "Merging from the front would overwrite unread values in first unless they were shifted or copied. Its unused tail is safe output space. Compare the largest unread values and place the larger at the last free output position, moving backward until second has been consumed.",
+    "timeComplexity": "O(realCount+second.length) worst-case merge time. C++ by-value return also copies that many result values, including a no-op merge.",
+    "spaceComplexity": "O(1) auxiliary merge workspace, excluding the C++ returned value copy. No second merged working array is allocated.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 10.1. No affiliation is implied.",
+    "correctness": "Before each write, the output suffix already contains the largest consumed values in their final sorted positions. The largest unread item is at the end of one sorted input prefix, so placing that item next preserves the invariant. While second remains, the write position is strictly after the unread first prefix, so no unread first value is destroyed. When second is exhausted, any remaining first prefix is already in its correct positions. Thus first contains exactly both original sequences, in order, and second was only read.",
+    "walkthrough": "For first=[1,4,7,99,99], realCount=3, second=[2,6], write 7 at index 4, then 6 at index 3, then 4 at index 2, then 2 at index 1. The untouched 1 stays at index 0, yielding [1,2,4,6,7]. The 99 placeholders are never merged.",
+    "edgeCases": [
+      "Either real sequence empty; both empty.",
+      "Nonzero/extreme spare values, duplicates across inputs and signed endpoints."
+    ]
+  },
+  {
+    "problemId": "ctci6_10_1",
+    "collection": "ctci6",
+    "language": "python",
+    "code": "def MergeSortedIntoFirst(first: list[int], realCount: int, second: list[int]) -> list[int]:\n    a, b, write = realCount - 1, len(second) - 1, len(first) - 1\n    while b >= 0:\n        if a >= 0 and first[a] > second[b]:\n            first[write] = first[a]\n            a -= 1\n        else:\n            first[write] = second[b]\n            b -= 1\n        write -= 1\n    return first\n",
+    "explanation": "Merging from the front would overwrite unread values in first unless they were shifted or copied. Its unused tail is safe output space. Compare the largest unread values and place the larger at the last free output position, moving backward until second has been consumed.",
+    "timeComplexity": "O(realCount+second.length) worst-case merge time. C++ by-value return also copies that many result values, including a no-op merge.",
+    "spaceComplexity": "O(1) auxiliary merge workspace, excluding the C++ returned value copy. No second merged working array is allocated.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 10.1. No affiliation is implied.",
+    "correctness": "Before each write, the output suffix already contains the largest consumed values in their final sorted positions. The largest unread item is at the end of one sorted input prefix, so placing that item next preserves the invariant. While second remains, the write position is strictly after the unread first prefix, so no unread first value is destroyed. When second is exhausted, any remaining first prefix is already in its correct positions. Thus first contains exactly both original sequences, in order, and second was only read.",
+    "walkthrough": "For first=[1,4,7,99,99], realCount=3, second=[2,6], write 7 at index 4, then 6 at index 3, then 4 at index 2, then 2 at index 1. The untouched 1 stays at index 0, yielding [1,2,4,6,7]. The 99 placeholders are never merged.",
+    "edgeCases": [
+      "Either real sequence empty; both empty.",
+      "Nonzero/extreme spare values, duplicates across inputs and signed endpoints."
+    ]
+  },
+  {
+    "problemId": "ctci6_10_1",
+    "collection": "ctci6",
+    "language": "cpp",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\nclass Solution {\n public:\n  std::vector<int> MergeSortedIntoFirst(std::vector<int>& first, int realCount,\n                                        const std::vector<int>& second) {\n    int a = realCount - 1, b = static_cast<int>(second.size()) - 1,\n        write = static_cast<int>(first.size()) - 1;\n    while (b >= 0) {\n      if (a >= 0 && first[a] > second[b])\n        first[write--] = first[a--];\n      else\n        first[write--] = second[b--];\n    }\n    return first;\n  }\n};\n",
+    "explanation": "Merging from the front would overwrite unread values in first unless they were shifted or copied. Its unused tail is safe output space. Compare the largest unread values and place the larger at the last free output position, moving backward until second has been consumed.",
+    "timeComplexity": "O(realCount+second.length) worst-case merge time. C++ by-value return also copies that many result values, including a no-op merge.",
+    "spaceComplexity": "O(1) auxiliary merge workspace, excluding the C++ returned value copy. No second merged working array is allocated.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 10.1. No affiliation is implied.",
+    "correctness": "Before each write, the output suffix already contains the largest consumed values in their final sorted positions. The largest unread item is at the end of one sorted input prefix, so placing that item next preserves the invariant. While second remains, the write position is strictly after the unread first prefix, so no unread first value is destroyed. When second is exhausted, any remaining first prefix is already in its correct positions. Thus first contains exactly both original sequences, in order, and second was only read.",
+    "walkthrough": "For first=[1,4,7,99,99], realCount=3, second=[2,6], write 7 at index 4, then 6 at index 3, then 4 at index 2, then 2 at index 1. The untouched 1 stays at index 0, yielding [1,2,4,6,7]. The 99 placeholders are never merged.",
+    "edgeCases": [
+      "Either real sequence empty; both empty.",
+      "Nonzero/extreme spare values, duplicates across inputs and signed endpoints."
+    ]
+  },
+  {
+    "problemId": "ctci6_10_1",
+    "collection": "ctci6",
+    "language": "java",
+    "code": "import java.util.*;\nclass Solution {\n  public int[] MergeSortedIntoFirst(int[] first, int realCount, int[] second) {\n    int a = realCount - 1, b = second.length - 1, write = first.length - 1;\n    while (b >= 0) {\n      if (a >= 0 && first[a] > second[b])\n        first[write--] = first[a--];\n      else\n        first[write--] = second[b--];\n    }\n    return first;\n  }\n}\n",
+    "explanation": "Merging from the front would overwrite unread values in first unless they were shifted or copied. Its unused tail is safe output space. Compare the largest unread values and place the larger at the last free output position, moving backward until second has been consumed.",
+    "timeComplexity": "O(realCount+second.length) worst-case merge time. C++ by-value return also copies that many result values, including a no-op merge.",
+    "spaceComplexity": "O(1) auxiliary merge workspace, excluding the C++ returned value copy. No second merged working array is allocated.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 10.1. No affiliation is implied.",
+    "correctness": "Before each write, the output suffix already contains the largest consumed values in their final sorted positions. The largest unread item is at the end of one sorted input prefix, so placing that item next preserves the invariant. While second remains, the write position is strictly after the unread first prefix, so no unread first value is destroyed. When second is exhausted, any remaining first prefix is already in its correct positions. Thus first contains exactly both original sequences, in order, and second was only read.",
+    "walkthrough": "For first=[1,4,7,99,99], realCount=3, second=[2,6], write 7 at index 4, then 6 at index 3, then 4 at index 2, then 2 at index 1. The untouched 1 stays at index 0, yielding [1,2,4,6,7]. The 99 placeholders are never merged.",
+    "edgeCases": [
+      "Either real sequence empty; both empty.",
+      "Nonzero/extreme spare values, duplicates across inputs and signed endpoints."
+    ]
+  },
+  {
+    "problemId": "ctci6_10_2",
+    "collection": "ctci6",
+    "language": "csharp",
+    "code": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic class Solution\n{\n    public List<string> GroupAnagrams(string[] words)\n    {\n        var decorated = new(string Key, string Word)[words.Length];\n        for (int i = 0; i < words.Length; ++i)\n        {\n            var letters = words[i].ToCharArray();\n            Array.Sort(letters);\n            decorated[i] = (new string(letters), words[i]);\n        }\n        Array.Sort(decorated, (a, b) => StringComparer.Ordinal.Compare(a.Key, b.Key));\n        for (int i = 0; i < words.Length; ++i)\n            words[i] = decorated[i].Word;\n        return new List<string>(words);\n    }\n}\n",
+    "explanation": "Sorting the letters inside a word gives a canonical key: equal keys mean equal letter multiplicities. Compute each key once, order the decorated words by that key, then write the words back. This puts each equivalence class next to itself without changing any word or losing duplicate occurrences. The C# tuple array stores both each canonical key and its original word before sorting. This avoids recomputing sorted letters during comparisons and prevents writeback from overwriting an unread original word. StringComparer.Ordinal keeps key comparisons independent of locale.",
+    "timeComplexity": "O(n*L*log(L+1) + n*L*log(n+1)) worst-case character work for n words of length at most L, including key creation and key comparisons.",
+    "spaceComplexity": "O(n*L) auxiliary decorated/key storage; returned word references or C++ value copies are additional output storage.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 10.2. No affiliation is implied.",
+    "correctness": "Two lowercase words have the same sorted-character key exactly when each letter occurs equally often, so key equality is precisely the anagram relation. Sorting decorated entries by key makes every equal-key class contiguous. Decoration retains one entry for each original occurrence, and writing every decorated word back preserves the complete multiset and length. Returned values mirror that final array. Ordering inside an equal-key group is irrelevant to the contract.",
+    "walkthrough": "For [ate,eat,tea,bat,nat,tan], the keys are aet,aet,aet,abt,ant,ant. Ordering groups by those keys gives [bat,ate,eat,tea,nat,tan]. The three aet words form one group even though their internal letter order differs. Two copies of eat would remain two occurrences.",
+    "edgeCases": [
+      "Empty array, empty strings and duplicate words.",
+      "Repeated letters distinguish multiplicities; anagram groups may appear in any order but may not be split."
+    ]
+  },
+  {
+    "problemId": "ctci6_10_2",
+    "collection": "ctci6",
+    "language": "javascript",
+    "code": "'use strict';\nfunction GroupAnagrams(words) {\n  const decorated = words.map((word) => ({ key: [...word].sort().join(\"\"), word }));\n  decorated.sort((a, b) => (a.key < b.key ? -1 : a.key > b.key ? 1 : 0));\n  for (let i = 0; i < words.length; ++i) words[i] = decorated[i].word;\n  return words.slice();\n}\n\nmodule.exports = {GroupAnagrams};\n",
+    "explanation": "Sorting the letters inside a word gives a canonical key: equal keys mean equal letter multiplicities. Compute each key once, order the decorated words by that key, then write the words back. This puts each equivalence class next to itself without changing any word or losing duplicate occurrences. JavaScript first decorates each word with a precomputed sorted-letter key. Sorting the decorated records avoids recomputing that key during comparisons. Copying record.word back by index preserves the original words array object; slice returns its final values afterward.",
+    "timeComplexity": "O(n*L*log(L+1) + n*L*log(n+1)) worst-case character work for n words of length at most L, including key creation and key comparisons.",
+    "spaceComplexity": "O(n*L) auxiliary decorated/key storage; returned word references or C++ value copies are additional output storage.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 10.2. No affiliation is implied.",
+    "correctness": "Two lowercase words have the same sorted-character key exactly when each letter occurs equally often, so key equality is precisely the anagram relation. Sorting decorated entries by key makes every equal-key class contiguous. Decoration retains one entry for each original occurrence, and writing every decorated word back preserves the complete multiset and length. Returned values mirror that final array. Ordering inside an equal-key group is irrelevant to the contract.",
+    "walkthrough": "For [ate,eat,tea,bat,nat,tan], the keys are aet,aet,aet,abt,ant,ant. Ordering groups by those keys gives [bat,ate,eat,tea,nat,tan]. The three aet words form one group even though their internal letter order differs. Two copies of eat would remain two occurrences.",
+    "edgeCases": [
+      "Empty array, empty strings and duplicate words.",
+      "Repeated letters distinguish multiplicities; anagram groups may appear in any order but may not be split."
+    ]
+  },
+  {
+    "problemId": "ctci6_10_2",
+    "collection": "ctci6",
+    "language": "python",
+    "code": "def GroupAnagrams(words: list[str]) -> list[str]:\n    words.sort(key=lambda word: \"\".join(sorted(word)))\n    return words.copy()\n",
+    "explanation": "Sorting the letters inside a word gives a canonical key: equal keys mean equal letter multiplicities. Compute each key once, order the decorated words by that key, then write the words back. This puts each equivalence class next to itself without changing any word or losing duplicate occurrences. Python list.sort computes its key function once per word. Sorting those keys groups anagrams without repeatedly sorting letters during comparisons. The list is changed in place; the returned copy contains the same final values and is not a substitute for mutation.",
+    "timeComplexity": "O(n*L*log(L+1) + n*L*log(n+1)) worst-case character work for n words of length at most L, including key creation and key comparisons.",
+    "spaceComplexity": "O(n*L) auxiliary decorated/key storage; returned word references or C++ value copies are additional output storage.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 10.2. No affiliation is implied.",
+    "correctness": "Two lowercase words have the same sorted-character key exactly when each letter occurs equally often, so key equality is precisely the anagram relation. Sorting decorated entries by key makes every equal-key class contiguous. Decoration retains one entry for each original occurrence, and writing every decorated word back preserves the complete multiset and length. Returned values mirror that final array. Ordering inside an equal-key group is irrelevant to the contract.",
+    "walkthrough": "For [ate,eat,tea,bat,nat,tan], the keys are aet,aet,aet,abt,ant,ant. Ordering groups by those keys gives [bat,ate,eat,tea,nat,tan]. The three aet words form one group even though their internal letter order differs. Two copies of eat would remain two occurrences.",
+    "edgeCases": [
+      "Empty array, empty strings and duplicate words.",
+      "Repeated letters distinguish multiplicities; anagram groups may appear in any order but may not be split."
+    ]
+  },
+  {
+    "problemId": "ctci6_10_2",
+    "collection": "ctci6",
+    "language": "cpp",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\nclass Solution {\n public:\n  std::vector<std::string> GroupAnagrams(std::vector<std::string>& words) {\n    std::vector<std::pair<std::string, std::string>> decorated;\n    decorated.reserve(words.size());\n    for (const auto& word : words) {\n      auto key = word;\n      std::sort(key.begin(), key.end());\n      decorated.emplace_back(key, word);\n    }\n    std::sort(decorated.begin(), decorated.end());\n    for (size_t i = 0; i < words.size(); ++i)\n      words[i] = decorated[i].second;\n    return words;\n  }\n};\n",
+    "explanation": "Sorting the letters inside a word gives a canonical key: equal keys mean equal letter multiplicities. Compute each key once, order the decorated words by that key, then write the words back. This puts each equivalence class next to itself without changing any word or losing duplicate occurrences. C++ stores key/word pairs, sorts the pairs, then copies their words back into the original vector. Pair ordering may also order words within a group, which is permitted. The returned vector is a value copy after the input has already been reordered.",
+    "timeComplexity": "O(n*L*log(L+1) + n*L*log(n+1)) worst-case character work for n words of length at most L, including key creation and key comparisons.",
+    "spaceComplexity": "O(n*L) auxiliary decorated/key storage; returned word references or C++ value copies are additional output storage.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 10.2. No affiliation is implied.",
+    "correctness": "Two lowercase words have the same sorted-character key exactly when each letter occurs equally often, so key equality is precisely the anagram relation. Sorting decorated entries by key makes every equal-key class contiguous. Decoration retains one entry for each original occurrence, and writing every decorated word back preserves the complete multiset and length. Returned values mirror that final array. Ordering inside an equal-key group is irrelevant to the contract.",
+    "walkthrough": "For [ate,eat,tea,bat,nat,tan], the keys are aet,aet,aet,abt,ant,ant. Ordering groups by those keys gives [bat,ate,eat,tea,nat,tan]. The three aet words form one group even though their internal letter order differs. Two copies of eat would remain two occurrences.",
+    "edgeCases": [
+      "Empty array, empty strings and duplicate words.",
+      "Repeated letters distinguish multiplicities; anagram groups may appear in any order but may not be split."
+    ]
+  },
+  {
+    "problemId": "ctci6_10_2",
+    "collection": "ctci6",
+    "language": "java",
+    "code": "import java.util.*;\nclass Solution {\n  public List<String> GroupAnagrams(String[] words) {\n    int n = words.length;\n    String[] original = words.clone(), keys = new String[n];\n    Integer[] order = new Integer[n];\n    for (int i = 0; i < n; ++i) {\n      char[] letters = words[i].toCharArray();\n      Arrays.sort(letters);\n      keys[i] = new String(letters);\n      order[i] = i;\n    }\n    Arrays.sort(order, (a, b) -> keys[a].compareTo(keys[b]));\n    for (int i = 0; i < n; ++i)\n      words[i] = original[order[i]];\n    return new ArrayList<>(Arrays.asList(words));\n  }\n}\n",
+    "explanation": "Sorting the letters inside a word gives a canonical key: equal keys mean equal letter multiplicities. Compute each key once, order the decorated words by that key, then write the words back. This puts each equivalence class next to itself without changing any word or losing duplicate occurrences. Java keeps original word references in a cloned array and sorts an Integer index array by precomputed keys. Writing directly from a partly reordered input could destroy a word needed by a later index, so writeback reads the clone. Arrays.asList then supplies the already reordered values for the returned List.",
+    "timeComplexity": "O(n*L*log(L+1) + n*L*log(n+1)) worst-case character work for n words of length at most L, including key creation and key comparisons.",
+    "spaceComplexity": "O(n*L) auxiliary decorated/key storage; returned word references or C++ value copies are additional output storage.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 10.2. No affiliation is implied.",
+    "correctness": "Two lowercase words have the same sorted-character key exactly when each letter occurs equally often, so key equality is precisely the anagram relation. Sorting decorated entries by key makes every equal-key class contiguous. Decoration retains one entry for each original occurrence, and writing every decorated word back preserves the complete multiset and length. Returned values mirror that final array. Ordering inside an equal-key group is irrelevant to the contract.",
+    "walkthrough": "For [ate,eat,tea,bat,nat,tan], the keys are aet,aet,aet,abt,ant,ant. Ordering groups by those keys gives [bat,ate,eat,tea,nat,tan]. The three aet words form one group even though their internal letter order differs. Two copies of eat would remain two occurrences.",
+    "edgeCases": [
+      "Empty array, empty strings and duplicate words.",
+      "Repeated letters distinguish multiplicities; anagram groups may appear in any order but may not be split."
+    ]
+  },
+  {
+    "problemId": "ctci6_10_3",
+    "collection": "ctci6",
+    "language": "csharp",
+    "code": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic class Solution\n{\n    public int SearchRotated(int[] values, int target)\n    {\n        int left = 0, right = values.Length - 1;\n        while (left <= right)\n        {\n            int middle = left + (right - left) / 2;\n            if (values[middle] == target)\n                return middle;\n            if (values[left] == values[middle] && values[middle] == values[right])\n            {\n                ++left;\n                --right;\n            }\n            else if (values[left] <= values[middle])\n            {\n                if (values[left] <= target && target < values[middle])\n                    right = middle - 1;\n                else\n                    left = middle + 1;\n            }\n            else\n            {\n                if (values[middle] < target && target <= values[right])\n                    left = middle + 1;\n                else\n                    right = middle - 1;\n            }\n        }\n        return -1;\n    }\n}\n",
+    "explanation": "Unless equal boundary/middle values obscure the pivot, at least one half is normally sorted. Its endpoint range tells whether the target can be inside it. When both boundaries equal the middle and it is not the target, discard those equal boundary items safely rather than applying an unjustified sorted-half decision.",
+    "timeComplexity": "O(log n) when distinct values permit half-interval decisions; O(n) worst case with duplicates.",
+    "spaceComplexity": "O(1) auxiliary scalar storage in the iterative search.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 10.3. No affiliation is implied.",
+    "correctness": "Test the middle value before discarding anything. If left, middle and right values are equal but not the target, removing the two boundaries cannot remove a match. Otherwise a normally ordered half can be identified; target comparisons either retain that half or prove it contains no match and retain the other. This preserves every possible target occurrence in the remaining interval. Every iteration shrinks the interval, and returning -1 after it empties therefore means the target is absent. A returned index is checked directly.",
+    "walkthrough": "For [4,5,6,7,0,1,2] and target 0, middle value 7 shows the left half 4..7 is sorted and cannot contain 0. Search indices 4..6, then narrow to index 4, whose value is 0. For all-equal nonmatching input, boundary trimming may require a linear scan.",
+    "edgeCases": [
+      "Empty and unrotated arrays, target absent.",
+      "Duplicate pivot values, all-equal input, multiple matching indices and signed endpoints."
+    ]
+  },
+  {
+    "problemId": "ctci6_10_3",
+    "collection": "ctci6",
+    "language": "javascript",
+    "code": "'use strict';\nfunction SearchRotated(values, target) {\n  let left = 0,\n    right = values.length - 1;\n  while (left <= right) {\n    const middle = left + Math.floor((right - left) / 2);\n    if (values[middle] === target) return middle;\n    if (values[left] === values[middle] && values[middle] === values[right]) {\n      ++left;\n      --right;\n    } else if (values[left] <= values[middle]) {\n      if (values[left] <= target && target < values[middle]) right = middle - 1;\n      else left = middle + 1;\n    } else {\n      if (values[middle] < target && target <= values[right]) left = middle + 1;\n      else right = middle - 1;\n    }\n  }\n  return -1;\n}\n\nmodule.exports = {SearchRotated};\n",
+    "explanation": "Unless equal boundary/middle values obscure the pivot, at least one half is normally sorted. Its endpoint range tells whether the target can be inside it. When both boundaries equal the middle and it is not the target, discard those equal boundary items safely rather than applying an unjustified sorted-half decision.",
+    "timeComplexity": "O(log n) when distinct values permit half-interval decisions; O(n) worst case with duplicates.",
+    "spaceComplexity": "O(1) auxiliary scalar storage in the iterative search.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 10.3. No affiliation is implied.",
+    "correctness": "Test the middle value before discarding anything. If left, middle and right values are equal but not the target, removing the two boundaries cannot remove a match. Otherwise a normally ordered half can be identified; target comparisons either retain that half or prove it contains no match and retain the other. This preserves every possible target occurrence in the remaining interval. Every iteration shrinks the interval, and returning -1 after it empties therefore means the target is absent. A returned index is checked directly.",
+    "walkthrough": "For [4,5,6,7,0,1,2] and target 0, middle value 7 shows the left half 4..7 is sorted and cannot contain 0. Search indices 4..6, then narrow to index 4, whose value is 0. For all-equal nonmatching input, boundary trimming may require a linear scan.",
+    "edgeCases": [
+      "Empty and unrotated arrays, target absent.",
+      "Duplicate pivot values, all-equal input, multiple matching indices and signed endpoints."
+    ]
+  },
+  {
+    "problemId": "ctci6_10_3",
+    "collection": "ctci6",
+    "language": "python",
+    "code": "def SearchRotated(values: list[int], target: int) -> int:\n    left, right = 0, len(values) - 1\n    while left <= right:\n        middle = left + (right - left) // 2\n        if values[middle] == target:\n            return middle\n        if values[left] == values[middle] == values[right]:\n            left += 1\n            right -= 1\n        elif values[left] <= values[middle]:\n            if values[left] <= target < values[middle]:\n                right = middle - 1\n            else:\n                left = middle + 1\n        else:\n            if values[middle] < target <= values[right]:\n                left = middle + 1\n            else:\n                right = middle - 1\n    return -1\n",
+    "explanation": "Unless equal boundary/middle values obscure the pivot, at least one half is normally sorted. Its endpoint range tells whether the target can be inside it. When both boundaries equal the middle and it is not the target, discard those equal boundary items safely rather than applying an unjustified sorted-half decision.",
+    "timeComplexity": "O(log n) when distinct values permit half-interval decisions; O(n) worst case with duplicates.",
+    "spaceComplexity": "O(1) auxiliary scalar storage in the iterative search.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 10.3. No affiliation is implied.",
+    "correctness": "Test the middle value before discarding anything. If left, middle and right values are equal but not the target, removing the two boundaries cannot remove a match. Otherwise a normally ordered half can be identified; target comparisons either retain that half or prove it contains no match and retain the other. This preserves every possible target occurrence in the remaining interval. Every iteration shrinks the interval, and returning -1 after it empties therefore means the target is absent. A returned index is checked directly.",
+    "walkthrough": "For [4,5,6,7,0,1,2] and target 0, middle value 7 shows the left half 4..7 is sorted and cannot contain 0. Search indices 4..6, then narrow to index 4, whose value is 0. For all-equal nonmatching input, boundary trimming may require a linear scan.",
+    "edgeCases": [
+      "Empty and unrotated arrays, target absent.",
+      "Duplicate pivot values, all-equal input, multiple matching indices and signed endpoints."
+    ]
+  },
+  {
+    "problemId": "ctci6_10_3",
+    "collection": "ctci6",
+    "language": "cpp",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\nclass Solution {\n public:\n  int SearchRotated(const std::vector<int>& values, int target) {\n    int left = 0, right = static_cast<int>(values.size()) - 1;\n    while (left <= right) {\n      int middle = left + (right - left) / 2;\n      if (values[middle] == target)\n        return middle;\n      if (values[left] == values[middle] && values[middle] == values[right]) {\n        ++left;\n        --right;\n      } else if (values[left] <= values[middle]) {\n        if (values[left] <= target && target < values[middle])\n          right = middle - 1;\n        else\n          left = middle + 1;\n      } else {\n        if (values[middle] < target && target <= values[right])\n          left = middle + 1;\n        else\n          right = middle - 1;\n      }\n    }\n    return -1;\n  }\n};\n",
+    "explanation": "Unless equal boundary/middle values obscure the pivot, at least one half is normally sorted. Its endpoint range tells whether the target can be inside it. When both boundaries equal the middle and it is not the target, discard those equal boundary items safely rather than applying an unjustified sorted-half decision.",
+    "timeComplexity": "O(log n) when distinct values permit half-interval decisions; O(n) worst case with duplicates.",
+    "spaceComplexity": "O(1) auxiliary scalar storage in the iterative search.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 10.3. No affiliation is implied.",
+    "correctness": "Test the middle value before discarding anything. If left, middle and right values are equal but not the target, removing the two boundaries cannot remove a match. Otherwise a normally ordered half can be identified; target comparisons either retain that half or prove it contains no match and retain the other. This preserves every possible target occurrence in the remaining interval. Every iteration shrinks the interval, and returning -1 after it empties therefore means the target is absent. A returned index is checked directly.",
+    "walkthrough": "For [4,5,6,7,0,1,2] and target 0, middle value 7 shows the left half 4..7 is sorted and cannot contain 0. Search indices 4..6, then narrow to index 4, whose value is 0. For all-equal nonmatching input, boundary trimming may require a linear scan.",
+    "edgeCases": [
+      "Empty and unrotated arrays, target absent.",
+      "Duplicate pivot values, all-equal input, multiple matching indices and signed endpoints."
+    ]
+  },
+  {
+    "problemId": "ctci6_10_3",
+    "collection": "ctci6",
+    "language": "java",
+    "code": "import java.util.*;\nclass Solution {\n  public int SearchRotated(int[] values, int target) {\n    int left = 0, right = values.length - 1;\n    while (left <= right) {\n      int middle = left + (right - left) / 2;\n      if (values[middle] == target)\n        return middle;\n      if (values[left] == values[middle] && values[middle] == values[right]) {\n        ++left;\n        --right;\n      } else if (values[left] <= values[middle]) {\n        if (values[left] <= target && target < values[middle])\n          right = middle - 1;\n        else\n          left = middle + 1;\n      } else {\n        if (values[middle] < target && target <= values[right])\n          left = middle + 1;\n        else\n          right = middle - 1;\n      }\n    }\n    return -1;\n  }\n}\n",
+    "explanation": "Unless equal boundary/middle values obscure the pivot, at least one half is normally sorted. Its endpoint range tells whether the target can be inside it. When both boundaries equal the middle and it is not the target, discard those equal boundary items safely rather than applying an unjustified sorted-half decision.",
+    "timeComplexity": "O(log n) when distinct values permit half-interval decisions; O(n) worst case with duplicates.",
+    "spaceComplexity": "O(1) auxiliary scalar storage in the iterative search.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 10.3. No affiliation is implied.",
+    "correctness": "Test the middle value before discarding anything. If left, middle and right values are equal but not the target, removing the two boundaries cannot remove a match. Otherwise a normally ordered half can be identified; target comparisons either retain that half or prove it contains no match and retain the other. This preserves every possible target occurrence in the remaining interval. Every iteration shrinks the interval, and returning -1 after it empties therefore means the target is absent. A returned index is checked directly.",
+    "walkthrough": "For [4,5,6,7,0,1,2] and target 0, middle value 7 shows the left half 4..7 is sorted and cannot contain 0. Search indices 4..6, then narrow to index 4, whose value is 0. For all-equal nonmatching input, boundary trimming may require a linear scan.",
+    "edgeCases": [
+      "Empty and unrotated arrays, target absent.",
+      "Duplicate pivot values, all-equal input, multiple matching indices and signed endpoints."
+    ]
+  },
+  {
+    "problemId": "ctci6_10_5",
+    "collection": "ctci6",
+    "language": "csharp",
+    "code": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic class Solution\n{\n    public int SparseSearch(string[] words, string target)\n    {\n        if (target.Length == 0)\n            return -1;\n        int low = 0, high = words.Length - 1;\n        while (low <= high)\n        {\n            int middle = low + (high - low) / 2;\n            if (words[middle].Length == 0)\n            {\n                int left = middle - 1, right = middle + 1;\n                while (true)\n                {\n                    if (left < low && right > high)\n                        return -1;\n                    if (right <= high && !(words[right].Length == 0))\n                    {\n                        middle = right;\n                        break;\n                    }\n                    if (left >= low && !(words[left].Length == 0))\n                    {\n                        middle = left;\n                        break;\n                    }\n                    --left;\n                    ++right;\n                }\n            }\n            int comparison = StringComparer.Ordinal.Compare(words[middle], target);\n            if (comparison == 0)\n                return middle;\n            if (comparison < 0)\n                low = middle + 1;\n            else\n                high = middle - 1;\n        }\n        return -1;\n    }\n}\n",
+    "explanation": "A gap cannot determine the binary-search direction. Move outward from the midpoint to find a nearby nonempty word inside the remaining interval, then use its sorted order to discard an impossible side. If that whole interval contains only gaps, the target is absent there. Gap scans can be long, so logarithmic worst-case time is not promised.",
+    "timeComplexity": "O(n*(L+1)) conservative worst-case time for n positions and maximum word length L: gaps can require linear index scans and comparing words costs up to L. Dense nonempty input uses O(L*log(n+1)) time.",
+    "spaceComplexity": "O(1) auxiliary scalar/index storage; no compacted array is created.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 10.5. No affiliation is implied.",
+    "correctness": "Empty target is rejected by the explicit gap convention. For a nonempty target, finding a nonempty pivot does not change the fact that all nonempty words before it are no greater and those after it are no smaller. Comparing pivot and target therefore safely retains the only side that may contain a match, or returns the matching pivot. If no nonempty pivot exists inside the interval, no nonempty target exists there. Repeated shrinking terminates and preserves original indices without compacting the input.",
+    "walkthrough": "In [at,\"\",\"\",ball,\"\",\"\",car,\"\",\"\",dad,\"\",\"\"], target ball is at index 3. The initial midpoint is a gap; scanning outward finds car at index 6, so search earlier positions. A later gap scan finds ball and returns its original index, not its index in a compacted word list.",
+    "edgeCases": [
+      "Empty array, all gaps, and empty target.",
+      "Long gaps at endpoints or midpoint, duplicate target words and absent targets."
+    ]
+  },
+  {
+    "problemId": "ctci6_10_5",
+    "collection": "ctci6",
+    "language": "javascript",
+    "code": "'use strict';\nfunction SparseSearch(words, target) {\n  if (target.length === 0) return -1;\n  let low = 0,\n    high = words.length - 1;\n  while (low <= high) {\n    let middle = low + Math.floor((high - low) / 2);\n    if (words[middle].length === 0) {\n      let left = middle - 1,\n        right = middle + 1;\n      while (true) {\n        if (left < low && right > high) return -1;\n        if (right <= high && words[right].length !== 0) {\n          middle = right;\n          break;\n        }\n        if (left >= low && words[left].length !== 0) {\n          middle = left;\n          break;\n        }\n        --left;\n        ++right;\n      }\n    }\n    if (words[middle] === target) return middle;\n    if (words[middle] < target) low = middle + 1;\n    else high = middle - 1;\n  }\n  return -1;\n}\n\nmodule.exports = {SparseSearch};\n",
+    "explanation": "A gap cannot determine the binary-search direction. Move outward from the midpoint to find a nearby nonempty word inside the remaining interval, then use its sorted order to discard an impossible side. If that whole interval contains only gaps, the target is absent there. Gap scans can be long, so logarithmic worst-case time is not promised.",
+    "timeComplexity": "O(n*(L+1)) conservative worst-case time for n positions and maximum word length L: gaps can require linear index scans and comparing words costs up to L. Dense nonempty input uses O(L*log(n+1)) time.",
+    "spaceComplexity": "O(1) auxiliary scalar/index storage; no compacted array is created.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 10.5. No affiliation is implied.",
+    "correctness": "Empty target is rejected by the explicit gap convention. For a nonempty target, finding a nonempty pivot does not change the fact that all nonempty words before it are no greater and those after it are no smaller. Comparing pivot and target therefore safely retains the only side that may contain a match, or returns the matching pivot. If no nonempty pivot exists inside the interval, no nonempty target exists there. Repeated shrinking terminates and preserves original indices without compacting the input.",
+    "walkthrough": "In [at,\"\",\"\",ball,\"\",\"\",car,\"\",\"\",dad,\"\",\"\"], target ball is at index 3. The initial midpoint is a gap; scanning outward finds car at index 6, so search earlier positions. A later gap scan finds ball and returns its original index, not its index in a compacted word list.",
+    "edgeCases": [
+      "Empty array, all gaps, and empty target.",
+      "Long gaps at endpoints or midpoint, duplicate target words and absent targets."
+    ]
+  },
+  {
+    "problemId": "ctci6_10_5",
+    "collection": "ctci6",
+    "language": "python",
+    "code": "def SparseSearch(words: list[str], target: str) -> int:\n    if not target:\n        return -1\n    low, high = 0, len(words) - 1\n    while low <= high:\n        middle = low + (high - low) // 2\n        if not words[middle]:\n            left, right = middle - 1, middle + 1\n            while True:\n                if left < low and right > high:\n                    return -1\n                if right <= high and words[right]:\n                    middle = right\n                    break\n                if left >= low and words[left]:\n                    middle = left\n                    break\n                left -= 1\n                right += 1\n        if words[middle] == target:\n            return middle\n        if words[middle] < target:\n            low = middle + 1\n        else:\n            high = middle - 1\n    return -1\n",
+    "explanation": "A gap cannot determine the binary-search direction. Move outward from the midpoint to find a nearby nonempty word inside the remaining interval, then use its sorted order to discard an impossible side. If that whole interval contains only gaps, the target is absent there. Gap scans can be long, so logarithmic worst-case time is not promised.",
+    "timeComplexity": "O(n*(L+1)) conservative worst-case time for n positions and maximum word length L: gaps can require linear index scans and comparing words costs up to L. Dense nonempty input uses O(L*log(n+1)) time.",
+    "spaceComplexity": "O(1) auxiliary scalar/index storage; no compacted array is created.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 10.5. No affiliation is implied.",
+    "correctness": "Empty target is rejected by the explicit gap convention. For a nonempty target, finding a nonempty pivot does not change the fact that all nonempty words before it are no greater and those after it are no smaller. Comparing pivot and target therefore safely retains the only side that may contain a match, or returns the matching pivot. If no nonempty pivot exists inside the interval, no nonempty target exists there. Repeated shrinking terminates and preserves original indices without compacting the input.",
+    "walkthrough": "In [at,\"\",\"\",ball,\"\",\"\",car,\"\",\"\",dad,\"\",\"\"], target ball is at index 3. The initial midpoint is a gap; scanning outward finds car at index 6, so search earlier positions. A later gap scan finds ball and returns its original index, not its index in a compacted word list.",
+    "edgeCases": [
+      "Empty array, all gaps, and empty target.",
+      "Long gaps at endpoints or midpoint, duplicate target words and absent targets."
+    ]
+  },
+  {
+    "problemId": "ctci6_10_5",
+    "collection": "ctci6",
+    "language": "cpp",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\nclass Solution {\n public:\n  int SparseSearch(const std::vector<std::string>& words, const std::string& target) {\n    if (target.empty())\n      return -1;\n    int low = 0, high = static_cast<int>(words.size()) - 1;\n    while (low <= high) {\n      int middle = low + (high - low) / 2;\n      if (words[middle].empty()) {\n        int left = middle - 1, right = middle + 1;\n        while (true) {\n          if (left < low && right > high)\n            return -1;\n          if (right <= high && !(words[right].empty())) {\n            middle = right;\n            break;\n          }\n          if (left >= low && !(words[left].empty())) {\n            middle = left;\n            break;\n          }\n          --left;\n          ++right;\n        }\n      }\n      int comparison = words[middle].compare(target);\n      if (comparison == 0)\n        return middle;\n      if (comparison < 0)\n        low = middle + 1;\n      else\n        high = middle - 1;\n    }\n    return -1;\n  }\n};\n",
+    "explanation": "A gap cannot determine the binary-search direction. Move outward from the midpoint to find a nearby nonempty word inside the remaining interval, then use its sorted order to discard an impossible side. If that whole interval contains only gaps, the target is absent there. Gap scans can be long, so logarithmic worst-case time is not promised.",
+    "timeComplexity": "O(n*(L+1)) conservative worst-case time for n positions and maximum word length L: gaps can require linear index scans and comparing words costs up to L. Dense nonempty input uses O(L*log(n+1)) time.",
+    "spaceComplexity": "O(1) auxiliary scalar/index storage; no compacted array is created.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 10.5. No affiliation is implied.",
+    "correctness": "Empty target is rejected by the explicit gap convention. For a nonempty target, finding a nonempty pivot does not change the fact that all nonempty words before it are no greater and those after it are no smaller. Comparing pivot and target therefore safely retains the only side that may contain a match, or returns the matching pivot. If no nonempty pivot exists inside the interval, no nonempty target exists there. Repeated shrinking terminates and preserves original indices without compacting the input.",
+    "walkthrough": "In [at,\"\",\"\",ball,\"\",\"\",car,\"\",\"\",dad,\"\",\"\"], target ball is at index 3. The initial midpoint is a gap; scanning outward finds car at index 6, so search earlier positions. A later gap scan finds ball and returns its original index, not its index in a compacted word list.",
+    "edgeCases": [
+      "Empty array, all gaps, and empty target.",
+      "Long gaps at endpoints or midpoint, duplicate target words and absent targets."
+    ]
+  },
+  {
+    "problemId": "ctci6_10_5",
+    "collection": "ctci6",
+    "language": "java",
+    "code": "import java.util.*;\nclass Solution {\n  public int SparseSearch(String[] words, String target) {\n    if (target.isEmpty())\n      return -1;\n    int low = 0, high = words.length - 1;\n    while (low <= high) {\n      int middle = low + (high - low) / 2;\n      if (words[middle].isEmpty()) {\n        int left = middle - 1, right = middle + 1;\n        while (true) {\n          if (left < low && right > high)\n            return -1;\n          if (right <= high && !(words[right].isEmpty())) {\n            middle = right;\n            break;\n          }\n          if (left >= low && !(words[left].isEmpty())) {\n            middle = left;\n            break;\n          }\n          --left;\n          ++right;\n        }\n      }\n      int comparison = words[middle].compareTo(target);\n      if (comparison == 0)\n        return middle;\n      if (comparison < 0)\n        low = middle + 1;\n      else\n        high = middle - 1;\n    }\n    return -1;\n  }\n}\n",
+    "explanation": "A gap cannot determine the binary-search direction. Move outward from the midpoint to find a nearby nonempty word inside the remaining interval, then use its sorted order to discard an impossible side. If that whole interval contains only gaps, the target is absent there. Gap scans can be long, so logarithmic worst-case time is not promised.",
+    "timeComplexity": "O(n*(L+1)) conservative worst-case time for n positions and maximum word length L: gaps can require linear index scans and comparing words costs up to L. Dense nonempty input uses O(L*log(n+1)) time.",
+    "spaceComplexity": "O(1) auxiliary scalar/index storage; no compacted array is created.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 10.5. No affiliation is implied.",
+    "correctness": "Empty target is rejected by the explicit gap convention. For a nonempty target, finding a nonempty pivot does not change the fact that all nonempty words before it are no greater and those after it are no smaller. Comparing pivot and target therefore safely retains the only side that may contain a match, or returns the matching pivot. If no nonempty pivot exists inside the interval, no nonempty target exists there. Repeated shrinking terminates and preserves original indices without compacting the input.",
+    "walkthrough": "In [at,\"\",\"\",ball,\"\",\"\",car,\"\",\"\",dad,\"\",\"\"], target ball is at index 3. The initial midpoint is a gap; scanning outward finds car at index 6, so search earlier positions. A later gap scan finds ball and returns its original index, not its index in a compacted word list.",
+    "edgeCases": [
+      "Empty array, all gaps, and empty target.",
+      "Long gaps at endpoints or midpoint, duplicate target words and absent targets."
+    ]
+  },
+  {
+    "problemId": "ctci6_10_9",
+    "collection": "ctci6",
+    "language": "csharp",
+    "code": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic class Solution\n{\n    public int[] SearchSortedMatrix(int[][] matrix, int target)\n    {\n        int rows = matrix.Length, columns = rows == 0 ? 0 : matrix[0].Length, row = 0,\n            column = columns - 1;\n        while (row < rows && column >= 0)\n        {\n            int value = matrix[row][column];\n            if (value == target)\n                return [row, column];\n            if (value > target)\n                --column;\n            else\n                ++row;\n        }\n        return [-1, -1];\n    }\n}\n",
+    "explanation": "At the top-right remaining cell, everything below it is at least as large and everything to its left is no larger. A value above target rules out that entire column; a value below target rules out that entire row. This staircase walk removes one row or column per comparison.",
+    "timeComplexity": "O(rows+columns) comparisons, since each step removes one row or column.",
+    "spaceComplexity": "O(1) auxiliary row/column indices.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 10.9. No affiliation is implied.",
+    "correctness": "Initially every possible target position is in the full remaining rectangle. If its top-right value is larger than target, all values below in that column are also too large, so removing the column is safe. If smaller, all remaining values in that row are too small, so removing the row is safe. Equality returns a verified coordinate. This invariant preserves every possible match until the rectangle empties, proving the [-1,-1] result then means absence.",
+    "walkthrough": "For [[1,4,7],[2,5,8],[3,6,9]] and target 6, begin at 7 and move left to 4. Move down to 5, then down to 6, returning [2,1]. Flattened binary search would be invalid because 7 at the end of row 0 exceeds 2 at the start of row 1.",
+    "edgeCases": [
+      "Empty dimensions, one row or column, target outside the value range.",
+      "Duplicates, signed endpoints and row ranges that overlap."
+    ]
+  },
+  {
+    "problemId": "ctci6_10_9",
+    "collection": "ctci6",
+    "language": "javascript",
+    "code": "'use strict';\nfunction SearchSortedMatrix(matrix, target) {\n  const rows = matrix.length,\n    columns = rows ? matrix[0].length : 0;\n  let row = 0,\n    column = columns - 1;\n  while (row < rows && column >= 0) {\n    const value = matrix[row][column];\n    if (value === target) return [row, column];\n    if (value > target) --column;\n    else ++row;\n  }\n  return [-1, -1];\n}\n\nmodule.exports = {SearchSortedMatrix};\n",
+    "explanation": "At the top-right remaining cell, everything below it is at least as large and everything to its left is no larger. A value above target rules out that entire column; a value below target rules out that entire row. This staircase walk removes one row or column per comparison.",
+    "timeComplexity": "O(rows+columns) comparisons, since each step removes one row or column.",
+    "spaceComplexity": "O(1) auxiliary row/column indices.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 10.9. No affiliation is implied.",
+    "correctness": "Initially every possible target position is in the full remaining rectangle. If its top-right value is larger than target, all values below in that column are also too large, so removing the column is safe. If smaller, all remaining values in that row are too small, so removing the row is safe. Equality returns a verified coordinate. This invariant preserves every possible match until the rectangle empties, proving the [-1,-1] result then means absence.",
+    "walkthrough": "For [[1,4,7],[2,5,8],[3,6,9]] and target 6, begin at 7 and move left to 4. Move down to 5, then down to 6, returning [2,1]. Flattened binary search would be invalid because 7 at the end of row 0 exceeds 2 at the start of row 1.",
+    "edgeCases": [
+      "Empty dimensions, one row or column, target outside the value range.",
+      "Duplicates, signed endpoints and row ranges that overlap."
+    ]
+  },
+  {
+    "problemId": "ctci6_10_9",
+    "collection": "ctci6",
+    "language": "python",
+    "code": "def SearchSortedMatrix(matrix: list[list[int]], target: int) -> list[int]:\n    rows = len(matrix)\n    columns = len(matrix[0]) if rows else 0\n    row, column = 0, columns - 1\n    while row < rows and column >= 0:\n        value = matrix[row][column]\n        if value == target:\n            return [row, column]\n        if value > target:\n            column -= 1\n        else:\n            row += 1\n    return [-1, -1]\n",
+    "explanation": "At the top-right remaining cell, everything below it is at least as large and everything to its left is no larger. A value above target rules out that entire column; a value below target rules out that entire row. This staircase walk removes one row or column per comparison.",
+    "timeComplexity": "O(rows+columns) comparisons, since each step removes one row or column.",
+    "spaceComplexity": "O(1) auxiliary row/column indices.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 10.9. No affiliation is implied.",
+    "correctness": "Initially every possible target position is in the full remaining rectangle. If its top-right value is larger than target, all values below in that column are also too large, so removing the column is safe. If smaller, all remaining values in that row are too small, so removing the row is safe. Equality returns a verified coordinate. This invariant preserves every possible match until the rectangle empties, proving the [-1,-1] result then means absence.",
+    "walkthrough": "For [[1,4,7],[2,5,8],[3,6,9]] and target 6, begin at 7 and move left to 4. Move down to 5, then down to 6, returning [2,1]. Flattened binary search would be invalid because 7 at the end of row 0 exceeds 2 at the start of row 1.",
+    "edgeCases": [
+      "Empty dimensions, one row or column, target outside the value range.",
+      "Duplicates, signed endpoints and row ranges that overlap."
+    ]
+  },
+  {
+    "problemId": "ctci6_10_9",
+    "collection": "ctci6",
+    "language": "cpp",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\nclass Solution {\n public:\n  std::vector<int> SearchSortedMatrix(const std::vector<std::vector<int>>& matrix, int target) {\n    int rows = static_cast<int>(matrix.size()),\n        columns = rows == 0 ? 0 : static_cast<int>(matrix[0].size()), row = 0, column = columns - 1;\n    while (row < rows && column >= 0) {\n      int value = matrix[row][column];\n      if (value == target)\n        return {row, column};\n      if (value > target)\n        --column;\n      else\n        ++row;\n    }\n    return {-1, -1};\n  }\n};\n",
+    "explanation": "At the top-right remaining cell, everything below it is at least as large and everything to its left is no larger. A value above target rules out that entire column; a value below target rules out that entire row. This staircase walk removes one row or column per comparison.",
+    "timeComplexity": "O(rows+columns) comparisons, since each step removes one row or column.",
+    "spaceComplexity": "O(1) auxiliary row/column indices.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 10.9. No affiliation is implied.",
+    "correctness": "Initially every possible target position is in the full remaining rectangle. If its top-right value is larger than target, all values below in that column are also too large, so removing the column is safe. If smaller, all remaining values in that row are too small, so removing the row is safe. Equality returns a verified coordinate. This invariant preserves every possible match until the rectangle empties, proving the [-1,-1] result then means absence.",
+    "walkthrough": "For [[1,4,7],[2,5,8],[3,6,9]] and target 6, begin at 7 and move left to 4. Move down to 5, then down to 6, returning [2,1]. Flattened binary search would be invalid because 7 at the end of row 0 exceeds 2 at the start of row 1.",
+    "edgeCases": [
+      "Empty dimensions, one row or column, target outside the value range.",
+      "Duplicates, signed endpoints and row ranges that overlap."
+    ]
+  },
+  {
+    "problemId": "ctci6_10_9",
+    "collection": "ctci6",
+    "language": "java",
+    "code": "import java.util.*;\nclass Solution {\n  public int[] SearchSortedMatrix(int[][] matrix, int target) {\n    int rows = matrix.length, columns = rows == 0 ? 0 : matrix[0].length, row = 0,\n        column = columns - 1;\n    while (row < rows && column >= 0) {\n      int value = matrix[row][column];\n      if (value == target)\n        return new int[] {row, column};\n      if (value > target)\n        --column;\n      else\n        ++row;\n    }\n    return new int[] {-1, -1};\n  }\n}\n",
+    "explanation": "At the top-right remaining cell, everything below it is at least as large and everything to its left is no larger. A value above target rules out that entire column; a value below target rules out that entire row. This staircase walk removes one row or column per comparison.",
+    "timeComplexity": "O(rows+columns) comparisons, since each step removes one row or column.",
+    "spaceComplexity": "O(1) auxiliary row/column indices.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 10.9. No affiliation is implied.",
+    "correctness": "Initially every possible target position is in the full remaining rectangle. If its top-right value is larger than target, all values below in that column are also too large, so removing the column is safe. If smaller, all remaining values in that row are too small, so removing the row is safe. Equality returns a verified coordinate. This invariant preserves every possible match until the rectangle empties, proving the [-1,-1] result then means absence.",
+    "walkthrough": "For [[1,4,7],[2,5,8],[3,6,9]] and target 6, begin at 7 and move left to 4. Move down to 5, then down to 6, returning [2,1]. Flattened binary search would be invalid because 7 at the end of row 0 exceeds 2 at the start of row 1.",
+    "edgeCases": [
+      "Empty dimensions, one row or column, target outside the value range.",
+      "Duplicates, signed endpoints and row ranges that overlap."
+    ]
+  },
+  {
+    "problemId": "ctci6_10_11",
+    "collection": "ctci6",
+    "language": "csharp",
+    "code": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic class Solution\n{\n    public int[] ArrangePeaksValleys(int[] values)\n    {\n        for (int i = 1; i < values.Length; i += 2)\n        {\n            int best = i;\n            if (values[i - 1] > values[best])\n                best = i - 1;\n            if (i + 1 < values.Length && values[i + 1] > values[best])\n                best = i + 1;\n            int temporary = values[i];\n            values[i] = values[best];\n            values[best] = temporary;\n        }\n        return values;\n    }\n}\n",
+    "explanation": "For each odd position, put the largest value among it and its existing neighbors at that position. It then dominates both neighbors. If the left neighbor is swapped, it receives a value no greater than its old value, so it cannot break the previous peak. This permits a single local pass instead of sorting.",
+    "timeComplexity": "O(n) time for one constant-work step per odd position; the C++ returned copy is also O(n).",
+    "spaceComplexity": "O(1) auxiliary rearrangement storage, excluding the C++ returned value copy.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 10.11. No affiliation is implied.",
+    "correctness": "After processing an odd position, it is at least both adjacent values by construction. The only cell shared with the preceding processed triple is its left neighbor. If that neighbor is chosen as the new peak, the displaced center is no larger than the old neighbor, so the previous peak still dominates it; other swaps do not change that shared neighbor. Induction therefore preserves all earlier peaks. Every odd position is processed, so the final array has the full alternating pattern. Swaps alone preserve every original occurrence.",
+    "walkthrough": "Starting with [1,2,3,4,5], put 3 at odd index 1 by swapping it with 2, giving [1,3,2,4,5]. Then swap 5 into odd index 3, yielding [1,3,2,5,4]. Both peaks dominate their neighbors; the middle valley 2 is below both 3 and 5.",
+    "edgeCases": [
+      "Empty, singleton, equal values and two-element arrays.",
+      "Signed extremes must not be confused with out-of-bounds sentinels.",
+      "Multiple valid outputs are accepted, but all input occurrences must remain."
+    ]
+  },
+  {
+    "problemId": "ctci6_10_11",
+    "collection": "ctci6",
+    "language": "javascript",
+    "code": "'use strict';\nfunction ArrangePeaksValleys(values) {\n  for (let i = 1; i < values.length; i += 2) {\n    let best = i;\n    if (values[i - 1] > values[best]) best = i - 1;\n    if (i + 1 < values.length && values[i + 1] > values[best]) best = i + 1;\n    [values[i], values[best]] = [values[best], values[i]];\n  }\n  return values;\n}\n\nmodule.exports = {ArrangePeaksValleys};\n",
+    "explanation": "For each odd position, put the largest value among it and its existing neighbors at that position. It then dominates both neighbors. If the left neighbor is swapped, it receives a value no greater than its old value, so it cannot break the previous peak. This permits a single local pass instead of sorting.",
+    "timeComplexity": "O(n) time for one constant-work step per odd position; the C++ returned copy is also O(n).",
+    "spaceComplexity": "O(1) auxiliary rearrangement storage, excluding the C++ returned value copy.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 10.11. No affiliation is implied.",
+    "correctness": "After processing an odd position, it is at least both adjacent values by construction. The only cell shared with the preceding processed triple is its left neighbor. If that neighbor is chosen as the new peak, the displaced center is no larger than the old neighbor, so the previous peak still dominates it; other swaps do not change that shared neighbor. Induction therefore preserves all earlier peaks. Every odd position is processed, so the final array has the full alternating pattern. Swaps alone preserve every original occurrence.",
+    "walkthrough": "Starting with [1,2,3,4,5], put 3 at odd index 1 by swapping it with 2, giving [1,3,2,4,5]. Then swap 5 into odd index 3, yielding [1,3,2,5,4]. Both peaks dominate their neighbors; the middle valley 2 is below both 3 and 5.",
+    "edgeCases": [
+      "Empty, singleton, equal values and two-element arrays.",
+      "Signed extremes must not be confused with out-of-bounds sentinels.",
+      "Multiple valid outputs are accepted, but all input occurrences must remain."
+    ]
+  },
+  {
+    "problemId": "ctci6_10_11",
+    "collection": "ctci6",
+    "language": "python",
+    "code": "def ArrangePeaksValleys(values: list[int]) -> list[int]:\n    for index in range(1, len(values), 2):\n        best = index\n        if values[index - 1] > values[best]:\n            best = index - 1\n        if index + 1 < len(values) and values[index + 1] > values[best]:\n            best = index + 1\n        values[index], values[best] = values[best], values[index]\n    return values\n",
+    "explanation": "For each odd position, put the largest value among it and its existing neighbors at that position. It then dominates both neighbors. If the left neighbor is swapped, it receives a value no greater than its old value, so it cannot break the previous peak. This permits a single local pass instead of sorting.",
+    "timeComplexity": "O(n) time for one constant-work step per odd position; the C++ returned copy is also O(n).",
+    "spaceComplexity": "O(1) auxiliary rearrangement storage, excluding the C++ returned value copy.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 10.11. No affiliation is implied.",
+    "correctness": "After processing an odd position, it is at least both adjacent values by construction. The only cell shared with the preceding processed triple is its left neighbor. If that neighbor is chosen as the new peak, the displaced center is no larger than the old neighbor, so the previous peak still dominates it; other swaps do not change that shared neighbor. Induction therefore preserves all earlier peaks. Every odd position is processed, so the final array has the full alternating pattern. Swaps alone preserve every original occurrence.",
+    "walkthrough": "Starting with [1,2,3,4,5], put 3 at odd index 1 by swapping it with 2, giving [1,3,2,4,5]. Then swap 5 into odd index 3, yielding [1,3,2,5,4]. Both peaks dominate their neighbors; the middle valley 2 is below both 3 and 5.",
+    "edgeCases": [
+      "Empty, singleton, equal values and two-element arrays.",
+      "Signed extremes must not be confused with out-of-bounds sentinels.",
+      "Multiple valid outputs are accepted, but all input occurrences must remain."
+    ]
+  },
+  {
+    "problemId": "ctci6_10_11",
+    "collection": "ctci6",
+    "language": "cpp",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\nclass Solution {\n public:\n  std::vector<int> ArrangePeaksValleys(std::vector<int>& values) {\n    for (int i = 1; i < static_cast<int>(values.size()); i += 2) {\n      int best = i;\n      if (values[i - 1] > values[best])\n        best = i - 1;\n      if (i + 1 < static_cast<int>(values.size()) && values[i + 1] > values[best])\n        best = i + 1;\n      std::swap(values[i], values[best]);\n    }\n    return values;\n  }\n};\n",
+    "explanation": "For each odd position, put the largest value among it and its existing neighbors at that position. It then dominates both neighbors. If the left neighbor is swapped, it receives a value no greater than its old value, so it cannot break the previous peak. This permits a single local pass instead of sorting.",
+    "timeComplexity": "O(n) time for one constant-work step per odd position; the C++ returned copy is also O(n).",
+    "spaceComplexity": "O(1) auxiliary rearrangement storage, excluding the C++ returned value copy.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 10.11. No affiliation is implied.",
+    "correctness": "After processing an odd position, it is at least both adjacent values by construction. The only cell shared with the preceding processed triple is its left neighbor. If that neighbor is chosen as the new peak, the displaced center is no larger than the old neighbor, so the previous peak still dominates it; other swaps do not change that shared neighbor. Induction therefore preserves all earlier peaks. Every odd position is processed, so the final array has the full alternating pattern. Swaps alone preserve every original occurrence.",
+    "walkthrough": "Starting with [1,2,3,4,5], put 3 at odd index 1 by swapping it with 2, giving [1,3,2,4,5]. Then swap 5 into odd index 3, yielding [1,3,2,5,4]. Both peaks dominate their neighbors; the middle valley 2 is below both 3 and 5.",
+    "edgeCases": [
+      "Empty, singleton, equal values and two-element arrays.",
+      "Signed extremes must not be confused with out-of-bounds sentinels.",
+      "Multiple valid outputs are accepted, but all input occurrences must remain."
+    ]
+  },
+  {
+    "problemId": "ctci6_10_11",
+    "collection": "ctci6",
+    "language": "java",
+    "code": "import java.util.*;\nclass Solution {\n  public int[] ArrangePeaksValleys(int[] values) {\n    for (int i = 1; i < values.length; i += 2) {\n      int best = i;\n      if (values[i - 1] > values[best])\n        best = i - 1;\n      if (i + 1 < values.length && values[i + 1] > values[best])\n        best = i + 1;\n      int temporary = values[i];\n      values[i] = values[best];\n      values[best] = temporary;\n    }\n    return values;\n  }\n}\n",
+    "explanation": "For each odd position, put the largest value among it and its existing neighbors at that position. It then dominates both neighbors. If the left neighbor is swapped, it receives a value no greater than its old value, so it cannot break the previous peak. This permits a single local pass instead of sorting.",
+    "timeComplexity": "O(n) time for one constant-work step per odd position; the C++ returned copy is also O(n).",
+    "spaceComplexity": "O(1) auxiliary rearrangement storage, excluding the C++ returned value copy.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 10.11. No affiliation is implied.",
+    "correctness": "After processing an odd position, it is at least both adjacent values by construction. The only cell shared with the preceding processed triple is its left neighbor. If that neighbor is chosen as the new peak, the displaced center is no larger than the old neighbor, so the previous peak still dominates it; other swaps do not change that shared neighbor. Induction therefore preserves all earlier peaks. Every odd position is processed, so the final array has the full alternating pattern. Swaps alone preserve every original occurrence.",
+    "walkthrough": "Starting with [1,2,3,4,5], put 3 at odd index 1 by swapping it with 2, giving [1,3,2,4,5]. Then swap 5 into odd index 3, yielding [1,3,2,5,4]. Both peaks dominate their neighbors; the middle valley 2 is below both 3 and 5.",
+    "edgeCases": [
+      "Empty, singleton, equal values and two-element arrays.",
+      "Signed extremes must not be confused with out-of-bounds sentinels.",
+      "Multiple valid outputs are accepted, but all input occurrences must remain."
+    ]
+  },
+  {
     "problemId": "ctci6_16_1",
     "collection": "ctci6",
     "language": "csharp",

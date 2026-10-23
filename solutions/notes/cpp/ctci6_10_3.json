@@ -1,0 +1,27 @@
+{
+  "explanation": "Unless equal boundary/middle values obscure the pivot, at least one half is normally sorted. Its endpoint range tells whether the target can be inside it. When both boundaries equal the middle and it is not the target, discard those equal boundary items safely rather than applying an unjustified sorted-half decision.",
+  "correctness": "Test the middle value before discarding anything. If left, middle and right values are equal but not the target, removing the two boundaries cannot remove a match. Otherwise a normally ordered half can be identified; target comparisons either retain that half or prove it contains no match and retain the other. This preserves every possible target occurrence in the remaining interval. Every iteration shrinks the interval, and returning -1 after it empties therefore means the target is absent. A returned index is checked directly.",
+  "walkthrough": "For [4,5,6,7,0,1,2] and target 0, middle value 7 shows the left half 4..7 is sorted and cannot contain 0. Search indices 4..6, then narrow to index 4, whose value is 0. For all-equal nonmatching input, boundary trimming may require a linear scan.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        4,
+        5,
+        6,
+        7,
+        0,
+        1,
+        2
+      ],
+      0
+    ],
+    "expected": 4
+  },
+  "timeComplexity": "O(log n) when distinct values permit half-interval decisions; O(n) worst case with duplicates.",
+  "spaceComplexity": "O(1) auxiliary scalar storage in the iterative search.",
+  "edgeCases": [
+    "Empty and unrotated arrays, target absent.",
+    "Duplicate pivot values, all-equal input, multiple matching indices and signed endpoints."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 10.3. No affiliation is implied."
+}

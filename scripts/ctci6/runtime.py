@@ -13,6 +13,7 @@ import harness02
 import harness03
 import harness05
 import harness08
+import harness10
 import harness16
 import harness17
 import models08
@@ -107,7 +108,7 @@ return json{{{{"observation",observed}},{{"elapsedMs",elapsed}}}};
 
 
 def submission_prefix(batch, language, reference=None):
-    if batch in (8, 16, 17):
+    if batch in (8, 10, 16, 17):
         return models08.header(reference, language)
     if batch in (1, 5):
         return HEADERS[language] + (
@@ -121,7 +122,7 @@ def submission_prefix(batch, language, reference=None):
 
 
 def adapter(entry, language, batch):
-    module = {1: harness01, 2: harness02, 3: harness03, 5: harness05, 8: harness08, 16: harness16, 17: harness17}[
+    module = {1: harness01, 2: harness02, 3: harness03, 5: harness05, 8: harness08, 10: harness10, 16: harness16, 17: harness17}[
         batch
     ]
     bank = module.source(language, only_ref=entry["ref"])
@@ -185,6 +186,7 @@ def generate_runtime():
         (3, "staged03"),
         (5, "staged05"),
         (8, "staged08"),
+        (10, "staged10"),
         (16, "staged16"),
         (17, "staged17"),
     ):

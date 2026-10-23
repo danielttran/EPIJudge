@@ -11,6 +11,58 @@ public static class CtciStagingGrader
     private static int[] Integers(JsonElement value) => value.EnumerateArray().Select(v =>
         v.ValueKind == JsonValueKind.Number && v.TryGetInt32(out int number) ? number : throw new ArgumentException("Return signed 32-bit integer members.")).ToArray();
 
+    private static string[] Strings(JsonElement value) => value.EnumerateArray().Select(v =>
+        v.ValueKind == JsonValueKind.String && v.GetString() is string word ? word : throw new ArgumentException("Return nonnull strings.")).ToArray();
+
+    private static string? SortingFailure(CtciStagingDefinition definition, TestCase test, JsonElement observed)
+    {
+        if (observed.GetProperty("mutationOk").ValueKind != JsonValueKind.True) return "Preserve the required input objects and readonly values, and perform the stated in-place changes.";
+        var actual = observed.GetProperty("actual");
+        if (definition.Ref is "10.3" or "10.5")
+        {
+            if (actual.ValueKind != JsonValueKind.Number || !actual.TryGetInt32(out int index)) return "Return an integer index or -1.";
+            if (definition.Ref == "10.5" && test.Arguments[1].GetString() == "") return index == -1 ? null : "Empty strings are gaps, not searchable targets.";
+            if (index == -1) return test.Expected.GetInt32() == -1 ? null : "The target is present.";
+            return index >= 0 && index < test.Arguments[0].GetArrayLength() && Equal(test.Arguments[0][index], test.Arguments[1]) ? null : "Return an original-array index containing target.";
+        }
+        if (definition.Ref == "10.2")
+        {
+            var words = Strings(actual);
+            var originals = Strings(test.Arguments[0]);
+            var remaining = originals.GroupBy(word => word, StringComparer.Ordinal).ToDictionary(group => group.Key, group => group.Count(), StringComparer.Ordinal);
+            if (words.Length != originals.Length) return "Preserve every word occurrence.";
+            var groups = new HashSet<string>(StringComparer.Ordinal);
+            string? previous = null;
+            foreach (string word in words)
+            {
+                if (!remaining.TryGetValue(word, out int count) || count == 0) return "Preserve the original word multiset, including duplicates.";
+                remaining[word] = count - 1;
+                string key = new(word.Order().ToArray());
+                if (key != previous && !groups.Add(key)) return "Each complete anagram group must be contiguous.";
+                previous = key;
+            }
+            return null;
+        }
+        if (definition.Ref == "10.9")
+        {
+            var coordinate = Integers(actual);
+            if (coordinate.Length != 2) return "Return [row,column] or [-1,-1].";
+            if (coordinate[0] == -1 && coordinate[1] == -1) return Equal(actual, test.Expected) ? null : "The target is present.";
+            var matrix = test.Arguments[0];
+            int row = coordinate[0], column = coordinate[1];
+            return row >= 0 && row < matrix.GetArrayLength() && column >= 0 && column < matrix[row].GetArrayLength() && Equal(matrix[row][column], test.Arguments[1]) ? null : "Return a coordinate containing target.";
+        }
+        if (definition.Ref == "10.11")
+        {
+            var values = Integers(actual);
+            if (!values.Order().SequenceEqual(Integers(test.Arguments[0]).Order())) return "Preserve every original integer occurrence.";
+            for (int i = 1; i < values.Length; i += 2)
+                if (values[i] < values[i - 1] || i + 1 < values.Length && values[i] < values[i + 1]) return "Every odd position must be a peak, allowing equality.";
+            return null;
+        }
+        return Equal(actual, test.Expected) ? null : "The filled array does not match the stated merge.";
+    }
+
     private static int?[][] InputGraph(CtciStagingDefinition definition, TestCase test)
     {
         var count = definition.Ref == "2.7" ? 3 : definition.Ref == "2.5" ? 2 : 1;
@@ -69,6 +121,7 @@ public static class CtciStagingGrader
         {
             if (observed.ValueKind != JsonValueKind.Object || observed.TryGetProperty("error", out var error) && error.ValueKind != JsonValueKind.Null)
                 return "Your code did not finish this case successfully.";
+            if (definition.Batch == 10) return SortingFailure(definition, test, observed);
             if (definition.Batch == 8 && definition.Ref == "8.2")
             {
                 if (observed.GetProperty("mutationOk").ValueKind != JsonValueKind.True) return "Preserve the grid and its original rows.";
@@ -191,7 +244,7 @@ public static class CtciStagingGrader
     {
         try
         {
-            if (definition.Batch is 1 or 3 or 5 or 8 or 16 or 17) return observed.GetProperty("actual").Clone();
+            if (definition.Batch is 1 or 3 or 5 or 8 or 10 or 16 or 17) return observed.GetProperty("actual").Clone();
             if (definition.Ref is "2.1" or "2.4" or "2.5") return observed.GetProperty("reachableValues").Clone();
             if (definition.Ref == "2.3") return Encode(new { success = observed.GetProperty("returnedBool"), values = observed.GetProperty("reachableValues") });
             if (definition.Ref == "2.6") return observed.GetProperty("returnedBool").Clone();

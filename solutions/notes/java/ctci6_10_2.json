@@ -1,0 +1,32 @@
+{
+  "explanation": "Sorting the letters inside a word gives a canonical key: equal keys mean equal letter multiplicities. Compute each key once, order the decorated words by that key, then write the words back. This puts each equivalence class next to itself without changing any word or losing duplicate occurrences. Java keeps original word references in a cloned array and sorts an Integer index array by precomputed keys. Writing directly from a partly reordered input could destroy a word needed by a later index, so writeback reads the clone. Arrays.asList then supplies the already reordered values for the returned List.",
+  "correctness": "Two lowercase words have the same sorted-character key exactly when each letter occurs equally often, so key equality is precisely the anagram relation. Sorting decorated entries by key makes every equal-key class contiguous. Decoration retains one entry for each original occurrence, and writing every decorated word back preserves the complete multiset and length. Returned values mirror that final array. Ordering inside an equal-key group is irrelevant to the contract.",
+  "walkthrough": "For [ate,eat,tea,bat,nat,tan], the keys are aet,aet,aet,abt,ant,ant. Ordering groups by those keys gives [bat,ate,eat,tea,nat,tan]. The three aet words form one group even though their internal letter order differs. Two copies of eat would remain two occurrences.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        "ate",
+        "eat",
+        "tea",
+        "bat",
+        "nat",
+        "tan"
+      ]
+    ],
+    "expected": [
+      "bat",
+      "ate",
+      "eat",
+      "tea",
+      "nat",
+      "tan"
+    ]
+  },
+  "timeComplexity": "O(n*L*log(L+1) + n*L*log(n+1)) worst-case character work for n words of length at most L, including key creation and key comparisons.",
+  "spaceComplexity": "O(n*L) auxiliary decorated/key storage; returned word references or C++ value copies are additional output storage.",
+  "edgeCases": [
+    "Empty array, empty strings and duplicate words.",
+    "Repeated letters distinguish multiplicities; anagram groups may appear in any order but may not be split."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 10.2. No affiliation is implied."
+}

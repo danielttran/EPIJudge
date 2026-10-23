@@ -19,6 +19,7 @@ from core import EXT, LANGUAGES, ROOT
 from corpus02 import valid_observation
 from corpus03 import valid_observation as state_match
 from corpus08 import valid_observation as recursive_match
+from corpus10 import valid_observation as sorting_match
 from runtime import generate_runtime
 from verify01 import execute
 
@@ -67,6 +68,7 @@ def verify(only_ref=None, only_language=None, starters=False):
     tools = tool_versions()
     grader_hashes = dict(
         core=digest(inspect.getsource(core_match)),
+        searching=hashlib.sha256((ROOT / "scripts/ctci6/corpus10.py").read_bytes()).hexdigest(),
         combinatorial=hashlib.sha256(
             (ROOT / "scripts/ctci6/corpus08.py").read_bytes()
         ).hexdigest(),
@@ -134,6 +136,7 @@ def verify(only_ref=None, only_language=None, starters=False):
                         cases=cases,
                         tool=tools[language],
                         grader=grader_hashes[
+                            "searching" if entry["batch"] == 10 else
                             "combinatorial"
                             if entry["batch"] == 8
                             and (entry["result"] in ("sets", "strings", "arrangements") or entry["ref"] in ("8.2", "8.3"))
@@ -201,6 +204,7 @@ def verify(only_ref=None, only_language=None, starters=False):
                 elapsed += value["elapsedMs"]
                 try:
                     accepted = (
+                        sorting_match(entry["ref"], case, observed) if entry["batch"] == 10 else
                         recursive_match(entry["ref"], case, observed)
                         if entry["batch"] == 8
                         and (entry["result"] in ("sets", "strings", "arrangements") or entry["ref"] in ("8.2", "8.3"))

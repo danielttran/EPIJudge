@@ -1,0 +1,35 @@
+{
+  "explanation": "Merging from the front would overwrite unread values in first unless they were shifted or copied. Its unused tail is safe output space. Compare the largest unread values and place the larger at the last free output position, moving backward until second has been consumed.",
+  "correctness": "Before each write, the output suffix already contains the largest consumed values in their final sorted positions. The largest unread item is at the end of one sorted input prefix, so placing that item next preserves the invariant. While second remains, the write position is strictly after the unread first prefix, so no unread first value is destroyed. When second is exhausted, any remaining first prefix is already in its correct positions. Thus first contains exactly both original sequences, in order, and second was only read.",
+  "walkthrough": "For first=[1,4,7,99,99], realCount=3, second=[2,6], write 7 at index 4, then 6 at index 3, then 4 at index 2, then 2 at index 1. The untouched 1 stays at index 0, yielding [1,2,4,6,7]. The 99 placeholders are never merged.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        1,
+        4,
+        7,
+        99,
+        99
+      ],
+      3,
+      [
+        2,
+        6
+      ]
+    ],
+    "expected": [
+      1,
+      2,
+      4,
+      6,
+      7
+    ]
+  },
+  "timeComplexity": "O(realCount+second.length) worst-case merge time. C++ by-value return also copies that many result values, including a no-op merge.",
+  "spaceComplexity": "O(1) auxiliary merge workspace, excluding the C++ returned value copy. No second merged working array is allocated.",
+  "edgeCases": [
+    "Either real sequence empty; both empty.",
+    "Nonzero/extreme spare values, duplicates across inputs and signed endpoints."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 10.1. No affiliation is implied."
+}

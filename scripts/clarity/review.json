@@ -9756,6 +9756,126 @@
         "ctci6/runtime/validation.json",
         "ctci6/cases/ctci6_17_24.json"
       ]
+    },
+    "ctci6_10_1": {
+      "collection": "ctci6",
+      "statementSha256": "f36a83146a2f997689771289e5e22ba0417f861605f84d34492114c309030729",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review10.json",
+      "checks": {
+        "inputDomain": "0 <= realCount <= 5000, 0 <= second.length <= 5000, and first.length is exactly realCount+second.length. The first real prefix and all of second are independently sorted nondecreasing signed 32-bit integers. Duplicates are allowed. The spare first-array slots may contain ANY signed values and must be ignored as input. Preserve the first array object and final length; do not allocate another merged working array. The two supplied arrays are distinct, nonnull objects. Preserve second, including its order. C#/Java/Python/JavaScript return the filled first array; C++ returns its values by value after mutating the supplied reference. Returning a merged copy while leaving first unchanged is incorrect.",
+        "outputAndTies": "Merge two sorted integer sequences into the existing first array. Only first[0..realCount-1] initially contains real values; its remaining slots are spare capacity. Every entry of second is real. Write the complete nondecreasing merge into first in place and return its filled values. Preserve second.",
+        "mutationAndIdentity": "All five ignore arbitrary spare-slot values and read second without changing it. First-array-only mutation observation checks returned values against the original mutable first argument and independently snapshots the readonly second array. Executed negative programs in all five languages return correct merged values from a copy or mutate second afterward; both violations fail. Empty inputs, duplicates, signed extremes and 10000 total slots are executed.",
+        "boundaryBehavior": "Either real sequence empty; both empty. Nonzero/extreme spare values, duplicates across inputs and signed endpoints.",
+        "examples": "The independently checked displayed example and algorithm trace agree with the executed five-language bodies.",
+        "languageContracts": "{\"csharp\": \"Read all actual bodies and typed string[]/int[] contracts. Backward merge and local peak swaps mutate only the first array. Grouping computes tuple keys once and uses StringComparer.Ordinal. Sparse word comparisons are ordinal. The property grader does not demand one canonical output ordering or duplicate index.\", \"javascript\": \"Read exact functions: mutable arrays are changed by indexed writes or swaps before return. Decorated anagram keys avoid comparator recomputation. Map-free searches use ASCII comparisons and bounded integer indices. Snapshot observations preserve all other argument values and original array references.\", \"python\": \"Read exact functions: backward merge and local swaps mutate the supplied lists; grouping sorts the list in place before returning a copy. The gap search never compacts input. First-array observations compare every other input against the original snapshot and reject a correct result computed only on a rebound copy.\", \"cpp\": \"Read exact C++17 signatures: only the first array reference is mutable where specified, while the second merge input stays const. Return copies are accounted for in complexity. Group key/word pairs retain occurrences during writeback. String vectors use the generic JSON decoder; comparator decisions do not subtract signed integer endpoints.\", \"java\": \"Read exact methods: string-array JSON decoding and Object[] observation encoding preserve empty gaps. Grouping sorts cached-key indices and reads an original clone during writeback. Mutable first arrays retain their object identities; second arrays are independently observed unchanged. Searches compare primitives/ASCII strings without narrowing or locale assumptions.\"}",
+        "judgeAgreement": "All five ignore arbitrary spare-slot values and read second without changing it. First-array-only mutation observation checks returned values against the original mutable first argument and independently snapshots the readonly second array. Executed negative programs in all five languages return correct merged values from a copy or mutate second afterward; both violations fail. Empty inputs, duplicates, signed extremes and 10000 total slots are executed."
+      },
+      "evidence": [
+        "ctci6/review10.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_10_1.json"
+      ]
+    },
+    "ctci6_10_2": {
+      "collection": "ctci6",
+      "statementSha256": "c2062fd0294d94ef40cb9e7a364789e2a7058c60a9741ef40e8f6122f5525c7b",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review10.json",
+      "checks": {
+        "inputDomain": "words is a nonnull array of 0..200 nonnull strings, each 0..20 lowercase ASCII letters a..z. Words are anagrams exactly when their letter multiplicities agree. Empty strings are anagrams of one another. Preserve the supplied array object and length; only reorder its entries. Do not deduplicate words or return groups while leaving an ungrouped input unchanged. The returned collection must equal the final words values in order. Examples show one concrete valid ordering; the judge accepts every ordering with contiguous complete anagram groups and the original multiset.",
+        "outputAndTies": "Reorder the supplied words array in place so all words that are anagrams of one another occur in one contiguous group. Return the reordered word values as a materialized collection. Preserve every original word occurrence, including duplicates. Group order and order within a group are unrestricted.",
+        "mutationAndIdentity": "The task is in-place grouping with unrestricted group/member order, not nested-group output. C# key/word tuples, Java original/index/key arrays, C++ pairs and JS decorated records preserve unread word occurrences; Python key sorting caches each key once. Language-specific WHY notes explain these differences. Property grading checks full word multiplicity and contiguous anagram keys while accepting alternative group order. Empty strings, repeated words and 200-word bounds are covered.",
+        "boundaryBehavior": "Empty array, empty strings and duplicate words. Repeated letters distinguish multiplicities; anagram groups may appear in any order but may not be split.",
+        "examples": "The independently checked displayed example and algorithm trace agree with the executed five-language bodies.",
+        "languageContracts": "{\"csharp\": \"Read all actual bodies and typed string[]/int[] contracts. Backward merge and local peak swaps mutate only the first array. Grouping computes tuple keys once and uses StringComparer.Ordinal. Sparse word comparisons are ordinal. The property grader does not demand one canonical output ordering or duplicate index.\", \"javascript\": \"Read exact functions: mutable arrays are changed by indexed writes or swaps before return. Decorated anagram keys avoid comparator recomputation. Map-free searches use ASCII comparisons and bounded integer indices. Snapshot observations preserve all other argument values and original array references.\", \"python\": \"Read exact functions: backward merge and local swaps mutate the supplied lists; grouping sorts the list in place before returning a copy. The gap search never compacts input. First-array observations compare every other input against the original snapshot and reject a correct result computed only on a rebound copy.\", \"cpp\": \"Read exact C++17 signatures: only the first array reference is mutable where specified, while the second merge input stays const. Return copies are accounted for in complexity. Group key/word pairs retain occurrences during writeback. String vectors use the generic JSON decoder; comparator decisions do not subtract signed integer endpoints.\", \"java\": \"Read exact methods: string-array JSON decoding and Object[] observation encoding preserve empty gaps. Grouping sorts cached-key indices and reads an original clone during writeback. Mutable first arrays retain their object identities; second arrays are independently observed unchanged. Searches compare primitives/ASCII strings without narrowing or locale assumptions.\"}",
+        "judgeAgreement": "The task is in-place grouping with unrestricted group/member order, not nested-group output. C# key/word tuples, Java original/index/key arrays, C++ pairs and JS decorated records preserve unread word occurrences; Python key sorting caches each key once. Language-specific WHY notes explain these differences. Property grading checks full word multiplicity and contiguous anagram keys while accepting alternative group order. Empty strings, repeated words and 200-word bounds are covered."
+      },
+      "evidence": [
+        "ctci6/review10.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_10_2.json"
+      ]
+    },
+    "ctci6_10_3": {
+      "collection": "ctci6",
+      "statementSha256": "d166860c896e5d4583d4ee63b2accf0be6a5ee64cd70d4ab1530b2e557db1b18",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review10.json",
+      "checks": {
+        "inputDomain": "values contains 0..10000 signed 32-bit integers and has the stated rotated-sorted structure. target is any signed 32-bit integer. Preserve all input values and ordering. When target occurs more than once, any matching index is valid; the first occurrence is not required. Empty input returns -1. Duplicate boundaries can prevent logarithmic progress.",
+        "outputAndTies": "Search an array obtained by rotating a nondecreasing sorted array at an unknown position. Return any zero-based index containing target, or -1 if it is absent. Equal values may occur, and a zero-position rotation is allowed.",
+        "mutationAndIdentity": "Repeated values are admitted and any matching index is valid. All five test the midpoint first, trim only known nonmatching equal boundaries, then retain the possible sorted/rotated half. Exhaustive rotations of small nondecreasing repeated-value arrays and all-equal 10000-element bounds exercise the linear worst case. Direct host lookup checks existence independently without forcing the first duplicate index.",
+        "boundaryBehavior": "Empty and unrotated arrays, target absent. Duplicate pivot values, all-equal input, multiple matching indices and signed endpoints.",
+        "examples": "The independently checked displayed example and algorithm trace agree with the executed five-language bodies.",
+        "languageContracts": "{\"csharp\": \"Read all actual bodies and typed string[]/int[] contracts. Backward merge and local peak swaps mutate only the first array. Grouping computes tuple keys once and uses StringComparer.Ordinal. Sparse word comparisons are ordinal. The property grader does not demand one canonical output ordering or duplicate index.\", \"javascript\": \"Read exact functions: mutable arrays are changed by indexed writes or swaps before return. Decorated anagram keys avoid comparator recomputation. Map-free searches use ASCII comparisons and bounded integer indices. Snapshot observations preserve all other argument values and original array references.\", \"python\": \"Read exact functions: backward merge and local swaps mutate the supplied lists; grouping sorts the list in place before returning a copy. The gap search never compacts input. First-array observations compare every other input against the original snapshot and reject a correct result computed only on a rebound copy.\", \"cpp\": \"Read exact C++17 signatures: only the first array reference is mutable where specified, while the second merge input stays const. Return copies are accounted for in complexity. Group key/word pairs retain occurrences during writeback. String vectors use the generic JSON decoder; comparator decisions do not subtract signed integer endpoints.\", \"java\": \"Read exact methods: string-array JSON decoding and Object[] observation encoding preserve empty gaps. Grouping sorts cached-key indices and reads an original clone during writeback. Mutable first arrays retain their object identities; second arrays are independently observed unchanged. Searches compare primitives/ASCII strings without narrowing or locale assumptions.\"}",
+        "judgeAgreement": "Repeated values are admitted and any matching index is valid. All five test the midpoint first, trim only known nonmatching equal boundaries, then retain the possible sorted/rotated half. Exhaustive rotations of small nondecreasing repeated-value arrays and all-equal 10000-element bounds exercise the linear worst case. Direct host lookup checks existence independently without forcing the first duplicate index."
+      },
+      "evidence": [
+        "ctci6/review10.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_10_3.json"
+      ]
+    },
+    "ctci6_10_5": {
+      "collection": "ctci6",
+      "statementSha256": "6bd69cf680106e302fbf3adc89a9717d55f4686ab97904616d4ebe789ef25081",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review10.json",
+      "checks": {
+        "inputDomain": "words is nonnull with 0..10000 nonnull strings, each 0..20 lowercase ASCII letters a..z. Removing its empty strings leaves a nondecreasing lexicographic sequence. target is a nonnull lowercase ASCII string of length 0..20. Preserve the array, its gap positions and word values. Repeated nonempty words are allowed; any matching index is accepted. Comparisons use ASCII lexicographic order, consistently across languages.",
+        "outputAndTies": "Search a lexicographically sorted sequence of nonempty words with empty-string gaps inserted at arbitrary positions. Return any original-array index containing target, or -1 if absent. Empty strings are gaps, not searchable words: an empty target returns -1.",
+        "mutationAndIdentity": "Empty targets are explicitly not searchable, following the public wrapper. All five preserve gap positions and accept any matching original index. C# uses ordinal comparison, Java compareTo, and the shared ASCII domain makes other languages consistent. Empty/all-gap arrays, long gap blocks, duplicate words and dense sorted subsequences agree with independent direct lookup. Complexity explicitly allows linear gap work instead of promising logarithmic worst case.",
+        "boundaryBehavior": "Empty array, all gaps, and empty target. Long gaps at endpoints or midpoint, duplicate target words and absent targets.",
+        "examples": "The independently checked displayed example and algorithm trace agree with the executed five-language bodies.",
+        "languageContracts": "{\"csharp\": \"Read all actual bodies and typed string[]/int[] contracts. Backward merge and local peak swaps mutate only the first array. Grouping computes tuple keys once and uses StringComparer.Ordinal. Sparse word comparisons are ordinal. The property grader does not demand one canonical output ordering or duplicate index.\", \"javascript\": \"Read exact functions: mutable arrays are changed by indexed writes or swaps before return. Decorated anagram keys avoid comparator recomputation. Map-free searches use ASCII comparisons and bounded integer indices. Snapshot observations preserve all other argument values and original array references.\", \"python\": \"Read exact functions: backward merge and local swaps mutate the supplied lists; grouping sorts the list in place before returning a copy. The gap search never compacts input. First-array observations compare every other input against the original snapshot and reject a correct result computed only on a rebound copy.\", \"cpp\": \"Read exact C++17 signatures: only the first array reference is mutable where specified, while the second merge input stays const. Return copies are accounted for in complexity. Group key/word pairs retain occurrences during writeback. String vectors use the generic JSON decoder; comparator decisions do not subtract signed integer endpoints.\", \"java\": \"Read exact methods: string-array JSON decoding and Object[] observation encoding preserve empty gaps. Grouping sorts cached-key indices and reads an original clone during writeback. Mutable first arrays retain their object identities; second arrays are independently observed unchanged. Searches compare primitives/ASCII strings without narrowing or locale assumptions.\"}",
+        "judgeAgreement": "Empty targets are explicitly not searchable, following the public wrapper. All five preserve gap positions and accept any matching original index. C# uses ordinal comparison, Java compareTo, and the shared ASCII domain makes other languages consistent. Empty/all-gap arrays, long gap blocks, duplicate words and dense sorted subsequences agree with independent direct lookup. Complexity explicitly allows linear gap work instead of promising logarithmic worst case."
+      },
+      "evidence": [
+        "ctci6/review10.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_10_5.json"
+      ]
+    },
+    "ctci6_10_9": {
+      "collection": "ctci6",
+      "statementSha256": "82863d4ec88d1a2f36c8f8824db3d967c28b8bb4aa1eaa894d269ff3026afe19",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review10.json",
+      "checks": {
+        "inputDomain": "matrix is nonnull, rectangular, with 0..50 rows and 0..50 columns. All entries and target are signed 32-bit integers. Duplicate values are allowed. Preserve outer/row objects and all values. Either empty dimension has no match. Any valid target coordinate is accepted when several exist. Do not assume the last value of one row is below the first value of the next row.",
+        "outputAndTies": "Find target in a rectangular integer matrix whose rows and columns are each nondecreasing. Return any matching [row,column] coordinate using zero-based indices, or [-1,-1] when absent. Rows need not form one globally sorted flattened sequence.",
+        "mutationAndIdentity": "The input is row/column sorted, not necessarily globally flattened-sorted. All five handle empty dimensions before indexing and preserve original row references and cells. Any coordinate holding target is accepted. Independent direct row scanning covers all small sorted matrices, duplicates, signed endpoints and 50x50 overlapping row ranges.",
+        "boundaryBehavior": "Empty dimensions, one row or column, target outside the value range. Duplicates, signed endpoints and row ranges that overlap.",
+        "examples": "The independently checked displayed example and algorithm trace agree with the executed five-language bodies.",
+        "languageContracts": "{\"csharp\": \"Read all actual bodies and typed string[]/int[] contracts. Backward merge and local peak swaps mutate only the first array. Grouping computes tuple keys once and uses StringComparer.Ordinal. Sparse word comparisons are ordinal. The property grader does not demand one canonical output ordering or duplicate index.\", \"javascript\": \"Read exact functions: mutable arrays are changed by indexed writes or swaps before return. Decorated anagram keys avoid comparator recomputation. Map-free searches use ASCII comparisons and bounded integer indices. Snapshot observations preserve all other argument values and original array references.\", \"python\": \"Read exact functions: backward merge and local swaps mutate the supplied lists; grouping sorts the list in place before returning a copy. The gap search never compacts input. First-array observations compare every other input against the original snapshot and reject a correct result computed only on a rebound copy.\", \"cpp\": \"Read exact C++17 signatures: only the first array reference is mutable where specified, while the second merge input stays const. Return copies are accounted for in complexity. Group key/word pairs retain occurrences during writeback. String vectors use the generic JSON decoder; comparator decisions do not subtract signed integer endpoints.\", \"java\": \"Read exact methods: string-array JSON decoding and Object[] observation encoding preserve empty gaps. Grouping sorts cached-key indices and reads an original clone during writeback. Mutable first arrays retain their object identities; second arrays are independently observed unchanged. Searches compare primitives/ASCII strings without narrowing or locale assumptions.\"}",
+        "judgeAgreement": "The input is row/column sorted, not necessarily globally flattened-sorted. All five handle empty dimensions before indexing and preserve original row references and cells. Any coordinate holding target is accepted. Independent direct row scanning covers all small sorted matrices, duplicates, signed endpoints and 50x50 overlapping row ranges."
+      },
+      "evidence": [
+        "ctci6/review10.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_10_9.json"
+      ]
+    },
+    "ctci6_10_11": {
+      "collection": "ctci6",
+      "statementSha256": "e855ea39e7adc8619a22e7a81413b04c23c3b451d61714ecbe0d3b013f3c0c06",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review10.json",
+      "checks": {
+        "inputDomain": "values is a nonnull array of 0..10000 signed 32-bit integers. Preserve its original array object and length; only reorder entries. Empty and singleton arrays already satisfy the pattern. Use O(n) time and O(1) auxiliary rearrangement storage. Do not sort the full array. C#/Java/Python/JavaScript return the same array; C++ returns a value copy after mutating the reference. Returning a different valid arrangement while leaving an invalid input unchanged is incorrect.",
+        "outputAndTies": "Reorder values in place so every odd zero-based position is a peak: its value is at least each existing adjacent neighbor. Consequently even positions are valleys. Equal neighbors are allowed. Return the final values; any arrangement satisfying this pattern and preserving the original multiset is accepted.",
+        "mutationAndIdentity": "All five explicitly bounds-check the optional right neighbor rather than using a signed-minimum sentinel. Swapping a left neighbor cannot increase the valley beside a previously fixed peak. Input object/length and complete multiset are preserved. Property grading accepts any odd-peak arrangement with equality. Exhaustive small repeated-value arrays, maximum-sized arrays and signed endpoints are checked against an independent sorted-then-interleaved construction.",
+        "boundaryBehavior": "Empty, singleton, equal values and two-element arrays. Signed extremes must not be confused with out-of-bounds sentinels. Multiple valid outputs are accepted, but all input occurrences must remain.",
+        "examples": "The independently checked displayed example and algorithm trace agree with the executed five-language bodies.",
+        "languageContracts": "{\"csharp\": \"Read all actual bodies and typed string[]/int[] contracts. Backward merge and local peak swaps mutate only the first array. Grouping computes tuple keys once and uses StringComparer.Ordinal. Sparse word comparisons are ordinal. The property grader does not demand one canonical output ordering or duplicate index.\", \"javascript\": \"Read exact functions: mutable arrays are changed by indexed writes or swaps before return. Decorated anagram keys avoid comparator recomputation. Map-free searches use ASCII comparisons and bounded integer indices. Snapshot observations preserve all other argument values and original array references.\", \"python\": \"Read exact functions: backward merge and local swaps mutate the supplied lists; grouping sorts the list in place before returning a copy. The gap search never compacts input. First-array observations compare every other input against the original snapshot and reject a correct result computed only on a rebound copy.\", \"cpp\": \"Read exact C++17 signatures: only the first array reference is mutable where specified, while the second merge input stays const. Return copies are accounted for in complexity. Group key/word pairs retain occurrences during writeback. String vectors use the generic JSON decoder; comparator decisions do not subtract signed integer endpoints.\", \"java\": \"Read exact methods: string-array JSON decoding and Object[] observation encoding preserve empty gaps. Grouping sorts cached-key indices and reads an original clone during writeback. Mutable first arrays retain their object identities; second arrays are independently observed unchanged. Searches compare primitives/ASCII strings without narrowing or locale assumptions.\"}",
+        "judgeAgreement": "All five explicitly bounds-check the optional right neighbor rather than using a signed-minimum sentinel. Swapping a left neighbor cannot increase the valley beside a previously fixed peak. Input object/length and complete multiset are preserved. Property grading accepts any odd-peak arrangement with equality. Exhaustive small repeated-value arrays, maximum-sized arrays and signed endpoints are checked against an independent sorted-then-interleaved construction."
+      },
+      "evidence": [
+        "ctci6/review10.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_10_11.json"
+      ]
     }
   },
   "solutions": {
@@ -56696,6 +56816,696 @@
         "ctci6/cases/ctci6_17_24.json",
         "solutions/java/ctci6_17_24.java",
         "solutions/notes/java/ctci6_17_24.json"
+      ]
+    },
+    "ctci6_10_1/csharp": {
+      "codePath": "solutions/csharp/ctci6_10_1.cs",
+      "notesPath": "solutions/notes/ctci6_10_1.json",
+      "contentSha256": "389c3463a07737fb4b296a2e094d8fb323cfc8fc6f9d5cd76459666a5d8ef9b3",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review10.json",
+      "checks": {
+        "actualAlgorithm": "Merge sorted prefixes backward into the first array tail without a merged working buffer.",
+        "correctness": "Before each write, the output suffix already contains the largest consumed values in their final sorted positions. The largest unread item is at the end of one sorted input prefix, so placing that item next preserves the invariant. While second remains, the write position is strictly after the unread first prefix, so no unread first value is destroyed. When second is exhausted, any remaining first prefix is already in its correct positions. Thus first contains exactly both original sequences, in order, and second was only read.",
+        "workedTrace": "For first=[1,4,7,99,99], realCount=3, second=[2,6], write 7 at index 4, then 6 at index 3, then 4 at index 2, then 2 at index 1. The untouched 1 stays at index 0, yielding [1,2,4,6,7]. The 99 placeholders are never merged.",
+        "edgeCases": "Either real sequence empty; both empty. Nonzero/extreme spare values, duplicates across inputs and signed endpoints.",
+        "timeDerivation": "O(realCount+second.length) worst-case merge time. C++ by-value return also copies that many result values, including a no-op merge.",
+        "spaceDerivation": "O(1) auxiliary merge workspace, excluding the C++ returned value copy. No second merged working array is allocated.",
+        "callableAgreement": "All five ignore arbitrary spare-slot values and read second without changing it. First-array-only mutation observation checks returned values against the original mutable first argument and independently snapshots the readonly second array. Executed negative programs in all five languages return correct merged values from a copy or mutate second afterward; both violations fail. Empty inputs, duplicates, signed extremes and 10000 total slots are executed. Read all actual bodies and typed string[]/int[] contracts. Backward merge and local peak swaps mutate only the first array. Grouping computes tuple keys once and uses StringComparer.Ordinal. Sparse word comparisons are ordinal. The property grader does not demand one canonical output ordering or duplicate index."
+      },
+      "evidence": [
+        "ctci6/review10.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_10_1.json",
+        "solutions/csharp/ctci6_10_1.cs",
+        "solutions/notes/ctci6_10_1.json"
+      ]
+    },
+    "ctci6_10_1/javascript": {
+      "codePath": "solutions/javascript/ctci6_10_1.js",
+      "notesPath": "solutions/notes/javascript/ctci6_10_1.json",
+      "contentSha256": "e078fe78e12405af468d7f6102b91aebfb264255f661c39b02405aaf39a79396",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review10.json",
+      "checks": {
+        "actualAlgorithm": "Merge sorted prefixes backward into the first array tail without a merged working buffer.",
+        "correctness": "Before each write, the output suffix already contains the largest consumed values in their final sorted positions. The largest unread item is at the end of one sorted input prefix, so placing that item next preserves the invariant. While second remains, the write position is strictly after the unread first prefix, so no unread first value is destroyed. When second is exhausted, any remaining first prefix is already in its correct positions. Thus first contains exactly both original sequences, in order, and second was only read.",
+        "workedTrace": "For first=[1,4,7,99,99], realCount=3, second=[2,6], write 7 at index 4, then 6 at index 3, then 4 at index 2, then 2 at index 1. The untouched 1 stays at index 0, yielding [1,2,4,6,7]. The 99 placeholders are never merged.",
+        "edgeCases": "Either real sequence empty; both empty. Nonzero/extreme spare values, duplicates across inputs and signed endpoints.",
+        "timeDerivation": "O(realCount+second.length) worst-case merge time. C++ by-value return also copies that many result values, including a no-op merge.",
+        "spaceDerivation": "O(1) auxiliary merge workspace, excluding the C++ returned value copy. No second merged working array is allocated.",
+        "callableAgreement": "All five ignore arbitrary spare-slot values and read second without changing it. First-array-only mutation observation checks returned values against the original mutable first argument and independently snapshots the readonly second array. Executed negative programs in all five languages return correct merged values from a copy or mutate second afterward; both violations fail. Empty inputs, duplicates, signed extremes and 10000 total slots are executed. Read exact functions: mutable arrays are changed by indexed writes or swaps before return. Decorated anagram keys avoid comparator recomputation. Map-free searches use ASCII comparisons and bounded integer indices. Snapshot observations preserve all other argument values and original array references."
+      },
+      "evidence": [
+        "ctci6/review10.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_10_1.json",
+        "solutions/javascript/ctci6_10_1.js",
+        "solutions/notes/javascript/ctci6_10_1.json"
+      ]
+    },
+    "ctci6_10_1/python": {
+      "codePath": "solutions/python/ctci6_10_1.py",
+      "notesPath": "solutions/notes/python/ctci6_10_1.json",
+      "contentSha256": "906440be4f2a54cd0daa121af93ae762ad1399ed166cf767951e3bb39a7c37a0",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review10.json",
+      "checks": {
+        "actualAlgorithm": "Merge sorted prefixes backward into the first array tail without a merged working buffer.",
+        "correctness": "Before each write, the output suffix already contains the largest consumed values in their final sorted positions. The largest unread item is at the end of one sorted input prefix, so placing that item next preserves the invariant. While second remains, the write position is strictly after the unread first prefix, so no unread first value is destroyed. When second is exhausted, any remaining first prefix is already in its correct positions. Thus first contains exactly both original sequences, in order, and second was only read.",
+        "workedTrace": "For first=[1,4,7,99,99], realCount=3, second=[2,6], write 7 at index 4, then 6 at index 3, then 4 at index 2, then 2 at index 1. The untouched 1 stays at index 0, yielding [1,2,4,6,7]. The 99 placeholders are never merged.",
+        "edgeCases": "Either real sequence empty; both empty. Nonzero/extreme spare values, duplicates across inputs and signed endpoints.",
+        "timeDerivation": "O(realCount+second.length) worst-case merge time. C++ by-value return also copies that many result values, including a no-op merge.",
+        "spaceDerivation": "O(1) auxiliary merge workspace, excluding the C++ returned value copy. No second merged working array is allocated.",
+        "callableAgreement": "All five ignore arbitrary spare-slot values and read second without changing it. First-array-only mutation observation checks returned values against the original mutable first argument and independently snapshots the readonly second array. Executed negative programs in all five languages return correct merged values from a copy or mutate second afterward; both violations fail. Empty inputs, duplicates, signed extremes and 10000 total slots are executed. Read exact functions: backward merge and local swaps mutate the supplied lists; grouping sorts the list in place before returning a copy. The gap search never compacts input. First-array observations compare every other input against the original snapshot and reject a correct result computed only on a rebound copy."
+      },
+      "evidence": [
+        "ctci6/review10.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_10_1.json",
+        "solutions/python/ctci6_10_1.py",
+        "solutions/notes/python/ctci6_10_1.json"
+      ]
+    },
+    "ctci6_10_1/cpp": {
+      "codePath": "solutions/cpp/ctci6_10_1.cpp",
+      "notesPath": "solutions/notes/cpp/ctci6_10_1.json",
+      "contentSha256": "38319f3aaed56cc08332fe285cc9085ca8871e93789866f21450ae2c408607b9",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review10.json",
+      "checks": {
+        "actualAlgorithm": "Merge sorted prefixes backward into the first array tail without a merged working buffer.",
+        "correctness": "Before each write, the output suffix already contains the largest consumed values in their final sorted positions. The largest unread item is at the end of one sorted input prefix, so placing that item next preserves the invariant. While second remains, the write position is strictly after the unread first prefix, so no unread first value is destroyed. When second is exhausted, any remaining first prefix is already in its correct positions. Thus first contains exactly both original sequences, in order, and second was only read.",
+        "workedTrace": "For first=[1,4,7,99,99], realCount=3, second=[2,6], write 7 at index 4, then 6 at index 3, then 4 at index 2, then 2 at index 1. The untouched 1 stays at index 0, yielding [1,2,4,6,7]. The 99 placeholders are never merged.",
+        "edgeCases": "Either real sequence empty; both empty. Nonzero/extreme spare values, duplicates across inputs and signed endpoints.",
+        "timeDerivation": "O(realCount+second.length) worst-case merge time. C++ by-value return also copies that many result values, including a no-op merge.",
+        "spaceDerivation": "O(1) auxiliary merge workspace, excluding the C++ returned value copy. No second merged working array is allocated.",
+        "callableAgreement": "All five ignore arbitrary spare-slot values and read second without changing it. First-array-only mutation observation checks returned values against the original mutable first argument and independently snapshots the readonly second array. Executed negative programs in all five languages return correct merged values from a copy or mutate second afterward; both violations fail. Empty inputs, duplicates, signed extremes and 10000 total slots are executed. Read exact C++17 signatures: only the first array reference is mutable where specified, while the second merge input stays const. Return copies are accounted for in complexity. Group key/word pairs retain occurrences during writeback. String vectors use the generic JSON decoder; comparator decisions do not subtract signed integer endpoints."
+      },
+      "evidence": [
+        "ctci6/review10.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_10_1.json",
+        "solutions/cpp/ctci6_10_1.cpp",
+        "solutions/notes/cpp/ctci6_10_1.json"
+      ]
+    },
+    "ctci6_10_1/java": {
+      "codePath": "solutions/java/ctci6_10_1.java",
+      "notesPath": "solutions/notes/java/ctci6_10_1.json",
+      "contentSha256": "d4fa1d611f535c235c2ab8bd325a6a86bd4d420f4619820fd378a7c64a01656f",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review10.json",
+      "checks": {
+        "actualAlgorithm": "Merge sorted prefixes backward into the first array tail without a merged working buffer.",
+        "correctness": "Before each write, the output suffix already contains the largest consumed values in their final sorted positions. The largest unread item is at the end of one sorted input prefix, so placing that item next preserves the invariant. While second remains, the write position is strictly after the unread first prefix, so no unread first value is destroyed. When second is exhausted, any remaining first prefix is already in its correct positions. Thus first contains exactly both original sequences, in order, and second was only read.",
+        "workedTrace": "For first=[1,4,7,99,99], realCount=3, second=[2,6], write 7 at index 4, then 6 at index 3, then 4 at index 2, then 2 at index 1. The untouched 1 stays at index 0, yielding [1,2,4,6,7]. The 99 placeholders are never merged.",
+        "edgeCases": "Either real sequence empty; both empty. Nonzero/extreme spare values, duplicates across inputs and signed endpoints.",
+        "timeDerivation": "O(realCount+second.length) worst-case merge time. C++ by-value return also copies that many result values, including a no-op merge.",
+        "spaceDerivation": "O(1) auxiliary merge workspace, excluding the C++ returned value copy. No second merged working array is allocated.",
+        "callableAgreement": "All five ignore arbitrary spare-slot values and read second without changing it. First-array-only mutation observation checks returned values against the original mutable first argument and independently snapshots the readonly second array. Executed negative programs in all five languages return correct merged values from a copy or mutate second afterward; both violations fail. Empty inputs, duplicates, signed extremes and 10000 total slots are executed. Read exact methods: string-array JSON decoding and Object[] observation encoding preserve empty gaps. Grouping sorts cached-key indices and reads an original clone during writeback. Mutable first arrays retain their object identities; second arrays are independently observed unchanged. Searches compare primitives/ASCII strings without narrowing or locale assumptions."
+      },
+      "evidence": [
+        "ctci6/review10.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_10_1.json",
+        "solutions/java/ctci6_10_1.java",
+        "solutions/notes/java/ctci6_10_1.json"
+      ]
+    },
+    "ctci6_10_2/csharp": {
+      "codePath": "solutions/csharp/ctci6_10_2.cs",
+      "notesPath": "solutions/notes/ctci6_10_2.json",
+      "contentSha256": "21973f2723a9327217e79b07f9c4ac567cdc288017748bf3ad9f1e678c66b553",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review10.json",
+      "checks": {
+        "actualAlgorithm": "Cache canonical sorted-letter keys, order decorated occurrences, and write words back into the original array.",
+        "correctness": "Two lowercase words have the same sorted-character key exactly when each letter occurs equally often, so key equality is precisely the anagram relation. Sorting decorated entries by key makes every equal-key class contiguous. Decoration retains one entry for each original occurrence, and writing every decorated word back preserves the complete multiset and length. Returned values mirror that final array. Ordering inside an equal-key group is irrelevant to the contract.",
+        "workedTrace": "For [ate,eat,tea,bat,nat,tan], the keys are aet,aet,aet,abt,ant,ant. Ordering groups by those keys gives [bat,ate,eat,tea,nat,tan]. The three aet words form one group even though their internal letter order differs. Two copies of eat would remain two occurrences.",
+        "edgeCases": "Empty array, empty strings and duplicate words. Repeated letters distinguish multiplicities; anagram groups may appear in any order but may not be split.",
+        "timeDerivation": "O(n*L*log(L+1) + n*L*log(n+1)) worst-case character work for n words of length at most L, including key creation and key comparisons.",
+        "spaceDerivation": "O(n*L) auxiliary decorated/key storage; returned word references or C++ value copies are additional output storage.",
+        "callableAgreement": "The task is in-place grouping with unrestricted group/member order, not nested-group output. C# key/word tuples, Java original/index/key arrays, C++ pairs and JS decorated records preserve unread word occurrences; Python key sorting caches each key once. Language-specific WHY notes explain these differences. Property grading checks full word multiplicity and contiguous anagram keys while accepting alternative group order. Empty strings, repeated words and 200-word bounds are covered. Read all actual bodies and typed string[]/int[] contracts. Backward merge and local peak swaps mutate only the first array. Grouping computes tuple keys once and uses StringComparer.Ordinal. Sparse word comparisons are ordinal. The property grader does not demand one canonical output ordering or duplicate index."
+      },
+      "evidence": [
+        "ctci6/review10.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_10_2.json",
+        "solutions/csharp/ctci6_10_2.cs",
+        "solutions/notes/ctci6_10_2.json"
+      ]
+    },
+    "ctci6_10_2/javascript": {
+      "codePath": "solutions/javascript/ctci6_10_2.js",
+      "notesPath": "solutions/notes/javascript/ctci6_10_2.json",
+      "contentSha256": "d13ec0b030def52bce91c1811d0cfd7425baa13d68f6a2601784cd3ac40572d1",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review10.json",
+      "checks": {
+        "actualAlgorithm": "Cache canonical sorted-letter keys, order decorated occurrences, and write words back into the original array.",
+        "correctness": "Two lowercase words have the same sorted-character key exactly when each letter occurs equally often, so key equality is precisely the anagram relation. Sorting decorated entries by key makes every equal-key class contiguous. Decoration retains one entry for each original occurrence, and writing every decorated word back preserves the complete multiset and length. Returned values mirror that final array. Ordering inside an equal-key group is irrelevant to the contract.",
+        "workedTrace": "For [ate,eat,tea,bat,nat,tan], the keys are aet,aet,aet,abt,ant,ant. Ordering groups by those keys gives [bat,ate,eat,tea,nat,tan]. The three aet words form one group even though their internal letter order differs. Two copies of eat would remain two occurrences.",
+        "edgeCases": "Empty array, empty strings and duplicate words. Repeated letters distinguish multiplicities; anagram groups may appear in any order but may not be split.",
+        "timeDerivation": "O(n*L*log(L+1) + n*L*log(n+1)) worst-case character work for n words of length at most L, including key creation and key comparisons.",
+        "spaceDerivation": "O(n*L) auxiliary decorated/key storage; returned word references or C++ value copies are additional output storage.",
+        "callableAgreement": "The task is in-place grouping with unrestricted group/member order, not nested-group output. C# key/word tuples, Java original/index/key arrays, C++ pairs and JS decorated records preserve unread word occurrences; Python key sorting caches each key once. Language-specific WHY notes explain these differences. Property grading checks full word multiplicity and contiguous anagram keys while accepting alternative group order. Empty strings, repeated words and 200-word bounds are covered. Read exact functions: mutable arrays are changed by indexed writes or swaps before return. Decorated anagram keys avoid comparator recomputation. Map-free searches use ASCII comparisons and bounded integer indices. Snapshot observations preserve all other argument values and original array references."
+      },
+      "evidence": [
+        "ctci6/review10.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_10_2.json",
+        "solutions/javascript/ctci6_10_2.js",
+        "solutions/notes/javascript/ctci6_10_2.json"
+      ]
+    },
+    "ctci6_10_2/python": {
+      "codePath": "solutions/python/ctci6_10_2.py",
+      "notesPath": "solutions/notes/python/ctci6_10_2.json",
+      "contentSha256": "da4ce2810075521fd58ae12485e4e048678e21ce925cf18d61af48339548a559",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review10.json",
+      "checks": {
+        "actualAlgorithm": "Cache canonical sorted-letter keys, order decorated occurrences, and write words back into the original array.",
+        "correctness": "Two lowercase words have the same sorted-character key exactly when each letter occurs equally often, so key equality is precisely the anagram relation. Sorting decorated entries by key makes every equal-key class contiguous. Decoration retains one entry for each original occurrence, and writing every decorated word back preserves the complete multiset and length. Returned values mirror that final array. Ordering inside an equal-key group is irrelevant to the contract.",
+        "workedTrace": "For [ate,eat,tea,bat,nat,tan], the keys are aet,aet,aet,abt,ant,ant. Ordering groups by those keys gives [bat,ate,eat,tea,nat,tan]. The three aet words form one group even though their internal letter order differs. Two copies of eat would remain two occurrences.",
+        "edgeCases": "Empty array, empty strings and duplicate words. Repeated letters distinguish multiplicities; anagram groups may appear in any order but may not be split.",
+        "timeDerivation": "O(n*L*log(L+1) + n*L*log(n+1)) worst-case character work for n words of length at most L, including key creation and key comparisons.",
+        "spaceDerivation": "O(n*L) auxiliary decorated/key storage; returned word references or C++ value copies are additional output storage.",
+        "callableAgreement": "The task is in-place grouping with unrestricted group/member order, not nested-group output. C# key/word tuples, Java original/index/key arrays, C++ pairs and JS decorated records preserve unread word occurrences; Python key sorting caches each key once. Language-specific WHY notes explain these differences. Property grading checks full word multiplicity and contiguous anagram keys while accepting alternative group order. Empty strings, repeated words and 200-word bounds are covered. Read exact functions: backward merge and local swaps mutate the supplied lists; grouping sorts the list in place before returning a copy. The gap search never compacts input. First-array observations compare every other input against the original snapshot and reject a correct result computed only on a rebound copy."
+      },
+      "evidence": [
+        "ctci6/review10.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_10_2.json",
+        "solutions/python/ctci6_10_2.py",
+        "solutions/notes/python/ctci6_10_2.json"
+      ]
+    },
+    "ctci6_10_2/cpp": {
+      "codePath": "solutions/cpp/ctci6_10_2.cpp",
+      "notesPath": "solutions/notes/cpp/ctci6_10_2.json",
+      "contentSha256": "de6b090000584764f0199b3d27d23ef8428226f174b5ae403f4fa73a816fc591",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review10.json",
+      "checks": {
+        "actualAlgorithm": "Cache canonical sorted-letter keys, order decorated occurrences, and write words back into the original array.",
+        "correctness": "Two lowercase words have the same sorted-character key exactly when each letter occurs equally often, so key equality is precisely the anagram relation. Sorting decorated entries by key makes every equal-key class contiguous. Decoration retains one entry for each original occurrence, and writing every decorated word back preserves the complete multiset and length. Returned values mirror that final array. Ordering inside an equal-key group is irrelevant to the contract.",
+        "workedTrace": "For [ate,eat,tea,bat,nat,tan], the keys are aet,aet,aet,abt,ant,ant. Ordering groups by those keys gives [bat,ate,eat,tea,nat,tan]. The three aet words form one group even though their internal letter order differs. Two copies of eat would remain two occurrences.",
+        "edgeCases": "Empty array, empty strings and duplicate words. Repeated letters distinguish multiplicities; anagram groups may appear in any order but may not be split.",
+        "timeDerivation": "O(n*L*log(L+1) + n*L*log(n+1)) worst-case character work for n words of length at most L, including key creation and key comparisons.",
+        "spaceDerivation": "O(n*L) auxiliary decorated/key storage; returned word references or C++ value copies are additional output storage.",
+        "callableAgreement": "The task is in-place grouping with unrestricted group/member order, not nested-group output. C# key/word tuples, Java original/index/key arrays, C++ pairs and JS decorated records preserve unread word occurrences; Python key sorting caches each key once. Language-specific WHY notes explain these differences. Property grading checks full word multiplicity and contiguous anagram keys while accepting alternative group order. Empty strings, repeated words and 200-word bounds are covered. Read exact C++17 signatures: only the first array reference is mutable where specified, while the second merge input stays const. Return copies are accounted for in complexity. Group key/word pairs retain occurrences during writeback. String vectors use the generic JSON decoder; comparator decisions do not subtract signed integer endpoints."
+      },
+      "evidence": [
+        "ctci6/review10.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_10_2.json",
+        "solutions/cpp/ctci6_10_2.cpp",
+        "solutions/notes/cpp/ctci6_10_2.json"
+      ]
+    },
+    "ctci6_10_2/java": {
+      "codePath": "solutions/java/ctci6_10_2.java",
+      "notesPath": "solutions/notes/java/ctci6_10_2.json",
+      "contentSha256": "8cc9f1ca648e3506d7b7aa78de90f5b8112d1d846658fb100fdad5adaf5de748",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review10.json",
+      "checks": {
+        "actualAlgorithm": "Cache canonical sorted-letter keys, order decorated occurrences, and write words back into the original array.",
+        "correctness": "Two lowercase words have the same sorted-character key exactly when each letter occurs equally often, so key equality is precisely the anagram relation. Sorting decorated entries by key makes every equal-key class contiguous. Decoration retains one entry for each original occurrence, and writing every decorated word back preserves the complete multiset and length. Returned values mirror that final array. Ordering inside an equal-key group is irrelevant to the contract.",
+        "workedTrace": "For [ate,eat,tea,bat,nat,tan], the keys are aet,aet,aet,abt,ant,ant. Ordering groups by those keys gives [bat,ate,eat,tea,nat,tan]. The three aet words form one group even though their internal letter order differs. Two copies of eat would remain two occurrences.",
+        "edgeCases": "Empty array, empty strings and duplicate words. Repeated letters distinguish multiplicities; anagram groups may appear in any order but may not be split.",
+        "timeDerivation": "O(n*L*log(L+1) + n*L*log(n+1)) worst-case character work for n words of length at most L, including key creation and key comparisons.",
+        "spaceDerivation": "O(n*L) auxiliary decorated/key storage; returned word references or C++ value copies are additional output storage.",
+        "callableAgreement": "The task is in-place grouping with unrestricted group/member order, not nested-group output. C# key/word tuples, Java original/index/key arrays, C++ pairs and JS decorated records preserve unread word occurrences; Python key sorting caches each key once. Language-specific WHY notes explain these differences. Property grading checks full word multiplicity and contiguous anagram keys while accepting alternative group order. Empty strings, repeated words and 200-word bounds are covered. Read exact methods: string-array JSON decoding and Object[] observation encoding preserve empty gaps. Grouping sorts cached-key indices and reads an original clone during writeback. Mutable first arrays retain their object identities; second arrays are independently observed unchanged. Searches compare primitives/ASCII strings without narrowing or locale assumptions."
+      },
+      "evidence": [
+        "ctci6/review10.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_10_2.json",
+        "solutions/java/ctci6_10_2.java",
+        "solutions/notes/java/ctci6_10_2.json"
+      ]
+    },
+    "ctci6_10_3/csharp": {
+      "codePath": "solutions/csharp/ctci6_10_3.cs",
+      "notesPath": "solutions/notes/ctci6_10_3.json",
+      "contentSha256": "dcc099fb0b0c2343bb3040af75e0f967d1a07c601f86e5a7cedb096e23100c45",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review10.json",
+      "checks": {
+        "actualAlgorithm": "Iterative rotated binary search with equal-boundary trimming before sorted-half decisions.",
+        "correctness": "Test the middle value before discarding anything. If left, middle and right values are equal but not the target, removing the two boundaries cannot remove a match. Otherwise a normally ordered half can be identified; target comparisons either retain that half or prove it contains no match and retain the other. This preserves every possible target occurrence in the remaining interval. Every iteration shrinks the interval, and returning -1 after it empties therefore means the target is absent. A returned index is checked directly.",
+        "workedTrace": "For [4,5,6,7,0,1,2] and target 0, middle value 7 shows the left half 4..7 is sorted and cannot contain 0. Search indices 4..6, then narrow to index 4, whose value is 0. For all-equal nonmatching input, boundary trimming may require a linear scan.",
+        "edgeCases": "Empty and unrotated arrays, target absent. Duplicate pivot values, all-equal input, multiple matching indices and signed endpoints.",
+        "timeDerivation": "O(log n) when distinct values permit half-interval decisions; O(n) worst case with duplicates.",
+        "spaceDerivation": "O(1) auxiliary scalar storage in the iterative search.",
+        "callableAgreement": "Repeated values are admitted and any matching index is valid. All five test the midpoint first, trim only known nonmatching equal boundaries, then retain the possible sorted/rotated half. Exhaustive rotations of small nondecreasing repeated-value arrays and all-equal 10000-element bounds exercise the linear worst case. Direct host lookup checks existence independently without forcing the first duplicate index. Read all actual bodies and typed string[]/int[] contracts. Backward merge and local peak swaps mutate only the first array. Grouping computes tuple keys once and uses StringComparer.Ordinal. Sparse word comparisons are ordinal. The property grader does not demand one canonical output ordering or duplicate index."
+      },
+      "evidence": [
+        "ctci6/review10.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_10_3.json",
+        "solutions/csharp/ctci6_10_3.cs",
+        "solutions/notes/ctci6_10_3.json"
+      ]
+    },
+    "ctci6_10_3/javascript": {
+      "codePath": "solutions/javascript/ctci6_10_3.js",
+      "notesPath": "solutions/notes/javascript/ctci6_10_3.json",
+      "contentSha256": "7187ed204ee6f57ff1eed765e60fdadf953b928b94ba1985e7c5c74dc660df7a",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review10.json",
+      "checks": {
+        "actualAlgorithm": "Iterative rotated binary search with equal-boundary trimming before sorted-half decisions.",
+        "correctness": "Test the middle value before discarding anything. If left, middle and right values are equal but not the target, removing the two boundaries cannot remove a match. Otherwise a normally ordered half can be identified; target comparisons either retain that half or prove it contains no match and retain the other. This preserves every possible target occurrence in the remaining interval. Every iteration shrinks the interval, and returning -1 after it empties therefore means the target is absent. A returned index is checked directly.",
+        "workedTrace": "For [4,5,6,7,0,1,2] and target 0, middle value 7 shows the left half 4..7 is sorted and cannot contain 0. Search indices 4..6, then narrow to index 4, whose value is 0. For all-equal nonmatching input, boundary trimming may require a linear scan.",
+        "edgeCases": "Empty and unrotated arrays, target absent. Duplicate pivot values, all-equal input, multiple matching indices and signed endpoints.",
+        "timeDerivation": "O(log n) when distinct values permit half-interval decisions; O(n) worst case with duplicates.",
+        "spaceDerivation": "O(1) auxiliary scalar storage in the iterative search.",
+        "callableAgreement": "Repeated values are admitted and any matching index is valid. All five test the midpoint first, trim only known nonmatching equal boundaries, then retain the possible sorted/rotated half. Exhaustive rotations of small nondecreasing repeated-value arrays and all-equal 10000-element bounds exercise the linear worst case. Direct host lookup checks existence independently without forcing the first duplicate index. Read exact functions: mutable arrays are changed by indexed writes or swaps before return. Decorated anagram keys avoid comparator recomputation. Map-free searches use ASCII comparisons and bounded integer indices. Snapshot observations preserve all other argument values and original array references."
+      },
+      "evidence": [
+        "ctci6/review10.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_10_3.json",
+        "solutions/javascript/ctci6_10_3.js",
+        "solutions/notes/javascript/ctci6_10_3.json"
+      ]
+    },
+    "ctci6_10_3/python": {
+      "codePath": "solutions/python/ctci6_10_3.py",
+      "notesPath": "solutions/notes/python/ctci6_10_3.json",
+      "contentSha256": "782b2c0f6929d32f8f51a2e6df09f8fcdbad2a4ebc699a1f57e6d06a7fe2f94b",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review10.json",
+      "checks": {
+        "actualAlgorithm": "Iterative rotated binary search with equal-boundary trimming before sorted-half decisions.",
+        "correctness": "Test the middle value before discarding anything. If left, middle and right values are equal but not the target, removing the two boundaries cannot remove a match. Otherwise a normally ordered half can be identified; target comparisons either retain that half or prove it contains no match and retain the other. This preserves every possible target occurrence in the remaining interval. Every iteration shrinks the interval, and returning -1 after it empties therefore means the target is absent. A returned index is checked directly.",
+        "workedTrace": "For [4,5,6,7,0,1,2] and target 0, middle value 7 shows the left half 4..7 is sorted and cannot contain 0. Search indices 4..6, then narrow to index 4, whose value is 0. For all-equal nonmatching input, boundary trimming may require a linear scan.",
+        "edgeCases": "Empty and unrotated arrays, target absent. Duplicate pivot values, all-equal input, multiple matching indices and signed endpoints.",
+        "timeDerivation": "O(log n) when distinct values permit half-interval decisions; O(n) worst case with duplicates.",
+        "spaceDerivation": "O(1) auxiliary scalar storage in the iterative search.",
+        "callableAgreement": "Repeated values are admitted and any matching index is valid. All five test the midpoint first, trim only known nonmatching equal boundaries, then retain the possible sorted/rotated half. Exhaustive rotations of small nondecreasing repeated-value arrays and all-equal 10000-element bounds exercise the linear worst case. Direct host lookup checks existence independently without forcing the first duplicate index. Read exact functions: backward merge and local swaps mutate the supplied lists; grouping sorts the list in place before returning a copy. The gap search never compacts input. First-array observations compare every other input against the original snapshot and reject a correct result computed only on a rebound copy."
+      },
+      "evidence": [
+        "ctci6/review10.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_10_3.json",
+        "solutions/python/ctci6_10_3.py",
+        "solutions/notes/python/ctci6_10_3.json"
+      ]
+    },
+    "ctci6_10_3/cpp": {
+      "codePath": "solutions/cpp/ctci6_10_3.cpp",
+      "notesPath": "solutions/notes/cpp/ctci6_10_3.json",
+      "contentSha256": "500f770a217fc5f7cf8036f6b79c21344b5fd3c2afbe283773ff2fb4eac94dbd",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review10.json",
+      "checks": {
+        "actualAlgorithm": "Iterative rotated binary search with equal-boundary trimming before sorted-half decisions.",
+        "correctness": "Test the middle value before discarding anything. If left, middle and right values are equal but not the target, removing the two boundaries cannot remove a match. Otherwise a normally ordered half can be identified; target comparisons either retain that half or prove it contains no match and retain the other. This preserves every possible target occurrence in the remaining interval. Every iteration shrinks the interval, and returning -1 after it empties therefore means the target is absent. A returned index is checked directly.",
+        "workedTrace": "For [4,5,6,7,0,1,2] and target 0, middle value 7 shows the left half 4..7 is sorted and cannot contain 0. Search indices 4..6, then narrow to index 4, whose value is 0. For all-equal nonmatching input, boundary trimming may require a linear scan.",
+        "edgeCases": "Empty and unrotated arrays, target absent. Duplicate pivot values, all-equal input, multiple matching indices and signed endpoints.",
+        "timeDerivation": "O(log n) when distinct values permit half-interval decisions; O(n) worst case with duplicates.",
+        "spaceDerivation": "O(1) auxiliary scalar storage in the iterative search.",
+        "callableAgreement": "Repeated values are admitted and any matching index is valid. All five test the midpoint first, trim only known nonmatching equal boundaries, then retain the possible sorted/rotated half. Exhaustive rotations of small nondecreasing repeated-value arrays and all-equal 10000-element bounds exercise the linear worst case. Direct host lookup checks existence independently without forcing the first duplicate index. Read exact C++17 signatures: only the first array reference is mutable where specified, while the second merge input stays const. Return copies are accounted for in complexity. Group key/word pairs retain occurrences during writeback. String vectors use the generic JSON decoder; comparator decisions do not subtract signed integer endpoints."
+      },
+      "evidence": [
+        "ctci6/review10.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_10_3.json",
+        "solutions/cpp/ctci6_10_3.cpp",
+        "solutions/notes/cpp/ctci6_10_3.json"
+      ]
+    },
+    "ctci6_10_3/java": {
+      "codePath": "solutions/java/ctci6_10_3.java",
+      "notesPath": "solutions/notes/java/ctci6_10_3.json",
+      "contentSha256": "fe067baaa8405162b8bd71431e048331d9abcd43206043653f63eaa33c36159e",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review10.json",
+      "checks": {
+        "actualAlgorithm": "Iterative rotated binary search with equal-boundary trimming before sorted-half decisions.",
+        "correctness": "Test the middle value before discarding anything. If left, middle and right values are equal but not the target, removing the two boundaries cannot remove a match. Otherwise a normally ordered half can be identified; target comparisons either retain that half or prove it contains no match and retain the other. This preserves every possible target occurrence in the remaining interval. Every iteration shrinks the interval, and returning -1 after it empties therefore means the target is absent. A returned index is checked directly.",
+        "workedTrace": "For [4,5,6,7,0,1,2] and target 0, middle value 7 shows the left half 4..7 is sorted and cannot contain 0. Search indices 4..6, then narrow to index 4, whose value is 0. For all-equal nonmatching input, boundary trimming may require a linear scan.",
+        "edgeCases": "Empty and unrotated arrays, target absent. Duplicate pivot values, all-equal input, multiple matching indices and signed endpoints.",
+        "timeDerivation": "O(log n) when distinct values permit half-interval decisions; O(n) worst case with duplicates.",
+        "spaceDerivation": "O(1) auxiliary scalar storage in the iterative search.",
+        "callableAgreement": "Repeated values are admitted and any matching index is valid. All five test the midpoint first, trim only known nonmatching equal boundaries, then retain the possible sorted/rotated half. Exhaustive rotations of small nondecreasing repeated-value arrays and all-equal 10000-element bounds exercise the linear worst case. Direct host lookup checks existence independently without forcing the first duplicate index. Read exact methods: string-array JSON decoding and Object[] observation encoding preserve empty gaps. Grouping sorts cached-key indices and reads an original clone during writeback. Mutable first arrays retain their object identities; second arrays are independently observed unchanged. Searches compare primitives/ASCII strings without narrowing or locale assumptions."
+      },
+      "evidence": [
+        "ctci6/review10.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_10_3.json",
+        "solutions/java/ctci6_10_3.java",
+        "solutions/notes/java/ctci6_10_3.json"
+      ]
+    },
+    "ctci6_10_5/csharp": {
+      "codePath": "solutions/csharp/ctci6_10_5.cs",
+      "notesPath": "solutions/notes/ctci6_10_5.json",
+      "contentSha256": "6ab5c21dd82c4b5f346d6355275c533ee3bc8dbc3a561d1f1578fd244b0870a4",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review10.json",
+      "checks": {
+        "actualAlgorithm": "Binary search with an outward nonempty-pivot scan inside the current interval.",
+        "correctness": "Empty target is rejected by the explicit gap convention. For a nonempty target, finding a nonempty pivot does not change the fact that all nonempty words before it are no greater and those after it are no smaller. Comparing pivot and target therefore safely retains the only side that may contain a match, or returns the matching pivot. If no nonempty pivot exists inside the interval, no nonempty target exists there. Repeated shrinking terminates and preserves original indices without compacting the input.",
+        "workedTrace": "In [at,\"\",\"\",ball,\"\",\"\",car,\"\",\"\",dad,\"\",\"\"], target ball is at index 3. The initial midpoint is a gap; scanning outward finds car at index 6, so search earlier positions. A later gap scan finds ball and returns its original index, not its index in a compacted word list.",
+        "edgeCases": "Empty array, all gaps, and empty target. Long gaps at endpoints or midpoint, duplicate target words and absent targets.",
+        "timeDerivation": "O(n*(L+1)) conservative worst-case time for n positions and maximum word length L: gaps can require linear index scans and comparing words costs up to L. Dense nonempty input uses O(L*log(n+1)) time.",
+        "spaceDerivation": "O(1) auxiliary scalar/index storage; no compacted array is created.",
+        "callableAgreement": "Empty targets are explicitly not searchable, following the public wrapper. All five preserve gap positions and accept any matching original index. C# uses ordinal comparison, Java compareTo, and the shared ASCII domain makes other languages consistent. Empty/all-gap arrays, long gap blocks, duplicate words and dense sorted subsequences agree with independent direct lookup. Complexity explicitly allows linear gap work instead of promising logarithmic worst case. Read all actual bodies and typed string[]/int[] contracts. Backward merge and local peak swaps mutate only the first array. Grouping computes tuple keys once and uses StringComparer.Ordinal. Sparse word comparisons are ordinal. The property grader does not demand one canonical output ordering or duplicate index."
+      },
+      "evidence": [
+        "ctci6/review10.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_10_5.json",
+        "solutions/csharp/ctci6_10_5.cs",
+        "solutions/notes/ctci6_10_5.json"
+      ]
+    },
+    "ctci6_10_5/javascript": {
+      "codePath": "solutions/javascript/ctci6_10_5.js",
+      "notesPath": "solutions/notes/javascript/ctci6_10_5.json",
+      "contentSha256": "8b8e97e7ee6a7760d165b80c2821934f01205461e23acd447cf66e418f9ea800",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review10.json",
+      "checks": {
+        "actualAlgorithm": "Binary search with an outward nonempty-pivot scan inside the current interval.",
+        "correctness": "Empty target is rejected by the explicit gap convention. For a nonempty target, finding a nonempty pivot does not change the fact that all nonempty words before it are no greater and those after it are no smaller. Comparing pivot and target therefore safely retains the only side that may contain a match, or returns the matching pivot. If no nonempty pivot exists inside the interval, no nonempty target exists there. Repeated shrinking terminates and preserves original indices without compacting the input.",
+        "workedTrace": "In [at,\"\",\"\",ball,\"\",\"\",car,\"\",\"\",dad,\"\",\"\"], target ball is at index 3. The initial midpoint is a gap; scanning outward finds car at index 6, so search earlier positions. A later gap scan finds ball and returns its original index, not its index in a compacted word list.",
+        "edgeCases": "Empty array, all gaps, and empty target. Long gaps at endpoints or midpoint, duplicate target words and absent targets.",
+        "timeDerivation": "O(n*(L+1)) conservative worst-case time for n positions and maximum word length L: gaps can require linear index scans and comparing words costs up to L. Dense nonempty input uses O(L*log(n+1)) time.",
+        "spaceDerivation": "O(1) auxiliary scalar/index storage; no compacted array is created.",
+        "callableAgreement": "Empty targets are explicitly not searchable, following the public wrapper. All five preserve gap positions and accept any matching original index. C# uses ordinal comparison, Java compareTo, and the shared ASCII domain makes other languages consistent. Empty/all-gap arrays, long gap blocks, duplicate words and dense sorted subsequences agree with independent direct lookup. Complexity explicitly allows linear gap work instead of promising logarithmic worst case. Read exact functions: mutable arrays are changed by indexed writes or swaps before return. Decorated anagram keys avoid comparator recomputation. Map-free searches use ASCII comparisons and bounded integer indices. Snapshot observations preserve all other argument values and original array references."
+      },
+      "evidence": [
+        "ctci6/review10.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_10_5.json",
+        "solutions/javascript/ctci6_10_5.js",
+        "solutions/notes/javascript/ctci6_10_5.json"
+      ]
+    },
+    "ctci6_10_5/python": {
+      "codePath": "solutions/python/ctci6_10_5.py",
+      "notesPath": "solutions/notes/python/ctci6_10_5.json",
+      "contentSha256": "ee98778c2d8dc41f0b1937b5e823846241fe52444aa1089079e82a175fc8c0e4",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review10.json",
+      "checks": {
+        "actualAlgorithm": "Binary search with an outward nonempty-pivot scan inside the current interval.",
+        "correctness": "Empty target is rejected by the explicit gap convention. For a nonempty target, finding a nonempty pivot does not change the fact that all nonempty words before it are no greater and those after it are no smaller. Comparing pivot and target therefore safely retains the only side that may contain a match, or returns the matching pivot. If no nonempty pivot exists inside the interval, no nonempty target exists there. Repeated shrinking terminates and preserves original indices without compacting the input.",
+        "workedTrace": "In [at,\"\",\"\",ball,\"\",\"\",car,\"\",\"\",dad,\"\",\"\"], target ball is at index 3. The initial midpoint is a gap; scanning outward finds car at index 6, so search earlier positions. A later gap scan finds ball and returns its original index, not its index in a compacted word list.",
+        "edgeCases": "Empty array, all gaps, and empty target. Long gaps at endpoints or midpoint, duplicate target words and absent targets.",
+        "timeDerivation": "O(n*(L+1)) conservative worst-case time for n positions and maximum word length L: gaps can require linear index scans and comparing words costs up to L. Dense nonempty input uses O(L*log(n+1)) time.",
+        "spaceDerivation": "O(1) auxiliary scalar/index storage; no compacted array is created.",
+        "callableAgreement": "Empty targets are explicitly not searchable, following the public wrapper. All five preserve gap positions and accept any matching original index. C# uses ordinal comparison, Java compareTo, and the shared ASCII domain makes other languages consistent. Empty/all-gap arrays, long gap blocks, duplicate words and dense sorted subsequences agree with independent direct lookup. Complexity explicitly allows linear gap work instead of promising logarithmic worst case. Read exact functions: backward merge and local swaps mutate the supplied lists; grouping sorts the list in place before returning a copy. The gap search never compacts input. First-array observations compare every other input against the original snapshot and reject a correct result computed only on a rebound copy."
+      },
+      "evidence": [
+        "ctci6/review10.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_10_5.json",
+        "solutions/python/ctci6_10_5.py",
+        "solutions/notes/python/ctci6_10_5.json"
+      ]
+    },
+    "ctci6_10_5/cpp": {
+      "codePath": "solutions/cpp/ctci6_10_5.cpp",
+      "notesPath": "solutions/notes/cpp/ctci6_10_5.json",
+      "contentSha256": "b50d65eedb06b7054012eb3ac7251ea61395afc80cd1f020195e49515aca790f",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review10.json",
+      "checks": {
+        "actualAlgorithm": "Binary search with an outward nonempty-pivot scan inside the current interval.",
+        "correctness": "Empty target is rejected by the explicit gap convention. For a nonempty target, finding a nonempty pivot does not change the fact that all nonempty words before it are no greater and those after it are no smaller. Comparing pivot and target therefore safely retains the only side that may contain a match, or returns the matching pivot. If no nonempty pivot exists inside the interval, no nonempty target exists there. Repeated shrinking terminates and preserves original indices without compacting the input.",
+        "workedTrace": "In [at,\"\",\"\",ball,\"\",\"\",car,\"\",\"\",dad,\"\",\"\"], target ball is at index 3. The initial midpoint is a gap; scanning outward finds car at index 6, so search earlier positions. A later gap scan finds ball and returns its original index, not its index in a compacted word list.",
+        "edgeCases": "Empty array, all gaps, and empty target. Long gaps at endpoints or midpoint, duplicate target words and absent targets.",
+        "timeDerivation": "O(n*(L+1)) conservative worst-case time for n positions and maximum word length L: gaps can require linear index scans and comparing words costs up to L. Dense nonempty input uses O(L*log(n+1)) time.",
+        "spaceDerivation": "O(1) auxiliary scalar/index storage; no compacted array is created.",
+        "callableAgreement": "Empty targets are explicitly not searchable, following the public wrapper. All five preserve gap positions and accept any matching original index. C# uses ordinal comparison, Java compareTo, and the shared ASCII domain makes other languages consistent. Empty/all-gap arrays, long gap blocks, duplicate words and dense sorted subsequences agree with independent direct lookup. Complexity explicitly allows linear gap work instead of promising logarithmic worst case. Read exact C++17 signatures: only the first array reference is mutable where specified, while the second merge input stays const. Return copies are accounted for in complexity. Group key/word pairs retain occurrences during writeback. String vectors use the generic JSON decoder; comparator decisions do not subtract signed integer endpoints."
+      },
+      "evidence": [
+        "ctci6/review10.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_10_5.json",
+        "solutions/cpp/ctci6_10_5.cpp",
+        "solutions/notes/cpp/ctci6_10_5.json"
+      ]
+    },
+    "ctci6_10_5/java": {
+      "codePath": "solutions/java/ctci6_10_5.java",
+      "notesPath": "solutions/notes/java/ctci6_10_5.json",
+      "contentSha256": "1ffd228b4ef43bb99d6d9ca0b224fb90faf204ba661898dbf426335e34c739ac",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review10.json",
+      "checks": {
+        "actualAlgorithm": "Binary search with an outward nonempty-pivot scan inside the current interval.",
+        "correctness": "Empty target is rejected by the explicit gap convention. For a nonempty target, finding a nonempty pivot does not change the fact that all nonempty words before it are no greater and those after it are no smaller. Comparing pivot and target therefore safely retains the only side that may contain a match, or returns the matching pivot. If no nonempty pivot exists inside the interval, no nonempty target exists there. Repeated shrinking terminates and preserves original indices without compacting the input.",
+        "workedTrace": "In [at,\"\",\"\",ball,\"\",\"\",car,\"\",\"\",dad,\"\",\"\"], target ball is at index 3. The initial midpoint is a gap; scanning outward finds car at index 6, so search earlier positions. A later gap scan finds ball and returns its original index, not its index in a compacted word list.",
+        "edgeCases": "Empty array, all gaps, and empty target. Long gaps at endpoints or midpoint, duplicate target words and absent targets.",
+        "timeDerivation": "O(n*(L+1)) conservative worst-case time for n positions and maximum word length L: gaps can require linear index scans and comparing words costs up to L. Dense nonempty input uses O(L*log(n+1)) time.",
+        "spaceDerivation": "O(1) auxiliary scalar/index storage; no compacted array is created.",
+        "callableAgreement": "Empty targets are explicitly not searchable, following the public wrapper. All five preserve gap positions and accept any matching original index. C# uses ordinal comparison, Java compareTo, and the shared ASCII domain makes other languages consistent. Empty/all-gap arrays, long gap blocks, duplicate words and dense sorted subsequences agree with independent direct lookup. Complexity explicitly allows linear gap work instead of promising logarithmic worst case. Read exact methods: string-array JSON decoding and Object[] observation encoding preserve empty gaps. Grouping sorts cached-key indices and reads an original clone during writeback. Mutable first arrays retain their object identities; second arrays are independently observed unchanged. Searches compare primitives/ASCII strings without narrowing or locale assumptions."
+      },
+      "evidence": [
+        "ctci6/review10.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_10_5.json",
+        "solutions/java/ctci6_10_5.java",
+        "solutions/notes/java/ctci6_10_5.json"
+      ]
+    },
+    "ctci6_10_9/csharp": {
+      "codePath": "solutions/csharp/ctci6_10_9.cs",
+      "notesPath": "solutions/notes/ctci6_10_9.json",
+      "contentSha256": "5267618ee71db978acd6d7d30dc3e859c2feacf0f9c85ff556d7571260371ab1",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review10.json",
+      "checks": {
+        "actualAlgorithm": "Top-right staircase search discards one impossible row or column at each comparison.",
+        "correctness": "Initially every possible target position is in the full remaining rectangle. If its top-right value is larger than target, all values below in that column are also too large, so removing the column is safe. If smaller, all remaining values in that row are too small, so removing the row is safe. Equality returns a verified coordinate. This invariant preserves every possible match until the rectangle empties, proving the [-1,-1] result then means absence.",
+        "workedTrace": "For [[1,4,7],[2,5,8],[3,6,9]] and target 6, begin at 7 and move left to 4. Move down to 5, then down to 6, returning [2,1]. Flattened binary search would be invalid because 7 at the end of row 0 exceeds 2 at the start of row 1.",
+        "edgeCases": "Empty dimensions, one row or column, target outside the value range. Duplicates, signed endpoints and row ranges that overlap.",
+        "timeDerivation": "O(rows+columns) comparisons, since each step removes one row or column.",
+        "spaceDerivation": "O(1) auxiliary row/column indices.",
+        "callableAgreement": "The input is row/column sorted, not necessarily globally flattened-sorted. All five handle empty dimensions before indexing and preserve original row references and cells. Any coordinate holding target is accepted. Independent direct row scanning covers all small sorted matrices, duplicates, signed endpoints and 50x50 overlapping row ranges. Read all actual bodies and typed string[]/int[] contracts. Backward merge and local peak swaps mutate only the first array. Grouping computes tuple keys once and uses StringComparer.Ordinal. Sparse word comparisons are ordinal. The property grader does not demand one canonical output ordering or duplicate index."
+      },
+      "evidence": [
+        "ctci6/review10.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_10_9.json",
+        "solutions/csharp/ctci6_10_9.cs",
+        "solutions/notes/ctci6_10_9.json"
+      ]
+    },
+    "ctci6_10_9/javascript": {
+      "codePath": "solutions/javascript/ctci6_10_9.js",
+      "notesPath": "solutions/notes/javascript/ctci6_10_9.json",
+      "contentSha256": "9f9d722b625321774df7487cbb0c2904503bae04e9185326ca61a8f9d2abab80",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review10.json",
+      "checks": {
+        "actualAlgorithm": "Top-right staircase search discards one impossible row or column at each comparison.",
+        "correctness": "Initially every possible target position is in the full remaining rectangle. If its top-right value is larger than target, all values below in that column are also too large, so removing the column is safe. If smaller, all remaining values in that row are too small, so removing the row is safe. Equality returns a verified coordinate. This invariant preserves every possible match until the rectangle empties, proving the [-1,-1] result then means absence.",
+        "workedTrace": "For [[1,4,7],[2,5,8],[3,6,9]] and target 6, begin at 7 and move left to 4. Move down to 5, then down to 6, returning [2,1]. Flattened binary search would be invalid because 7 at the end of row 0 exceeds 2 at the start of row 1.",
+        "edgeCases": "Empty dimensions, one row or column, target outside the value range. Duplicates, signed endpoints and row ranges that overlap.",
+        "timeDerivation": "O(rows+columns) comparisons, since each step removes one row or column.",
+        "spaceDerivation": "O(1) auxiliary row/column indices.",
+        "callableAgreement": "The input is row/column sorted, not necessarily globally flattened-sorted. All five handle empty dimensions before indexing and preserve original row references and cells. Any coordinate holding target is accepted. Independent direct row scanning covers all small sorted matrices, duplicates, signed endpoints and 50x50 overlapping row ranges. Read exact functions: mutable arrays are changed by indexed writes or swaps before return. Decorated anagram keys avoid comparator recomputation. Map-free searches use ASCII comparisons and bounded integer indices. Snapshot observations preserve all other argument values and original array references."
+      },
+      "evidence": [
+        "ctci6/review10.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_10_9.json",
+        "solutions/javascript/ctci6_10_9.js",
+        "solutions/notes/javascript/ctci6_10_9.json"
+      ]
+    },
+    "ctci6_10_9/python": {
+      "codePath": "solutions/python/ctci6_10_9.py",
+      "notesPath": "solutions/notes/python/ctci6_10_9.json",
+      "contentSha256": "d75e70f67bbb08e8acba7b496252af4770145c00db7813f94294566d9460df6c",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review10.json",
+      "checks": {
+        "actualAlgorithm": "Top-right staircase search discards one impossible row or column at each comparison.",
+        "correctness": "Initially every possible target position is in the full remaining rectangle. If its top-right value is larger than target, all values below in that column are also too large, so removing the column is safe. If smaller, all remaining values in that row are too small, so removing the row is safe. Equality returns a verified coordinate. This invariant preserves every possible match until the rectangle empties, proving the [-1,-1] result then means absence.",
+        "workedTrace": "For [[1,4,7],[2,5,8],[3,6,9]] and target 6, begin at 7 and move left to 4. Move down to 5, then down to 6, returning [2,1]. Flattened binary search would be invalid because 7 at the end of row 0 exceeds 2 at the start of row 1.",
+        "edgeCases": "Empty dimensions, one row or column, target outside the value range. Duplicates, signed endpoints and row ranges that overlap.",
+        "timeDerivation": "O(rows+columns) comparisons, since each step removes one row or column.",
+        "spaceDerivation": "O(1) auxiliary row/column indices.",
+        "callableAgreement": "The input is row/column sorted, not necessarily globally flattened-sorted. All five handle empty dimensions before indexing and preserve original row references and cells. Any coordinate holding target is accepted. Independent direct row scanning covers all small sorted matrices, duplicates, signed endpoints and 50x50 overlapping row ranges. Read exact functions: backward merge and local swaps mutate the supplied lists; grouping sorts the list in place before returning a copy. The gap search never compacts input. First-array observations compare every other input against the original snapshot and reject a correct result computed only on a rebound copy."
+      },
+      "evidence": [
+        "ctci6/review10.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_10_9.json",
+        "solutions/python/ctci6_10_9.py",
+        "solutions/notes/python/ctci6_10_9.json"
+      ]
+    },
+    "ctci6_10_9/cpp": {
+      "codePath": "solutions/cpp/ctci6_10_9.cpp",
+      "notesPath": "solutions/notes/cpp/ctci6_10_9.json",
+      "contentSha256": "ce2d834a0b4a0e0ad358d4ca7954725eddd6757da09e425311b2616c7c5bd7fe",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review10.json",
+      "checks": {
+        "actualAlgorithm": "Top-right staircase search discards one impossible row or column at each comparison.",
+        "correctness": "Initially every possible target position is in the full remaining rectangle. If its top-right value is larger than target, all values below in that column are also too large, so removing the column is safe. If smaller, all remaining values in that row are too small, so removing the row is safe. Equality returns a verified coordinate. This invariant preserves every possible match until the rectangle empties, proving the [-1,-1] result then means absence.",
+        "workedTrace": "For [[1,4,7],[2,5,8],[3,6,9]] and target 6, begin at 7 and move left to 4. Move down to 5, then down to 6, returning [2,1]. Flattened binary search would be invalid because 7 at the end of row 0 exceeds 2 at the start of row 1.",
+        "edgeCases": "Empty dimensions, one row or column, target outside the value range. Duplicates, signed endpoints and row ranges that overlap.",
+        "timeDerivation": "O(rows+columns) comparisons, since each step removes one row or column.",
+        "spaceDerivation": "O(1) auxiliary row/column indices.",
+        "callableAgreement": "The input is row/column sorted, not necessarily globally flattened-sorted. All five handle empty dimensions before indexing and preserve original row references and cells. Any coordinate holding target is accepted. Independent direct row scanning covers all small sorted matrices, duplicates, signed endpoints and 50x50 overlapping row ranges. Read exact C++17 signatures: only the first array reference is mutable where specified, while the second merge input stays const. Return copies are accounted for in complexity. Group key/word pairs retain occurrences during writeback. String vectors use the generic JSON decoder; comparator decisions do not subtract signed integer endpoints."
+      },
+      "evidence": [
+        "ctci6/review10.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_10_9.json",
+        "solutions/cpp/ctci6_10_9.cpp",
+        "solutions/notes/cpp/ctci6_10_9.json"
+      ]
+    },
+    "ctci6_10_9/java": {
+      "codePath": "solutions/java/ctci6_10_9.java",
+      "notesPath": "solutions/notes/java/ctci6_10_9.json",
+      "contentSha256": "dd0c1eab363cf7e551a42215cbf173ea48fed998711a76f13a53e31eef07ff6c",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review10.json",
+      "checks": {
+        "actualAlgorithm": "Top-right staircase search discards one impossible row or column at each comparison.",
+        "correctness": "Initially every possible target position is in the full remaining rectangle. If its top-right value is larger than target, all values below in that column are also too large, so removing the column is safe. If smaller, all remaining values in that row are too small, so removing the row is safe. Equality returns a verified coordinate. This invariant preserves every possible match until the rectangle empties, proving the [-1,-1] result then means absence.",
+        "workedTrace": "For [[1,4,7],[2,5,8],[3,6,9]] and target 6, begin at 7 and move left to 4. Move down to 5, then down to 6, returning [2,1]. Flattened binary search would be invalid because 7 at the end of row 0 exceeds 2 at the start of row 1.",
+        "edgeCases": "Empty dimensions, one row or column, target outside the value range. Duplicates, signed endpoints and row ranges that overlap.",
+        "timeDerivation": "O(rows+columns) comparisons, since each step removes one row or column.",
+        "spaceDerivation": "O(1) auxiliary row/column indices.",
+        "callableAgreement": "The input is row/column sorted, not necessarily globally flattened-sorted. All five handle empty dimensions before indexing and preserve original row references and cells. Any coordinate holding target is accepted. Independent direct row scanning covers all small sorted matrices, duplicates, signed endpoints and 50x50 overlapping row ranges. Read exact methods: string-array JSON decoding and Object[] observation encoding preserve empty gaps. Grouping sorts cached-key indices and reads an original clone during writeback. Mutable first arrays retain their object identities; second arrays are independently observed unchanged. Searches compare primitives/ASCII strings without narrowing or locale assumptions."
+      },
+      "evidence": [
+        "ctci6/review10.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_10_9.json",
+        "solutions/java/ctci6_10_9.java",
+        "solutions/notes/java/ctci6_10_9.json"
+      ]
+    },
+    "ctci6_10_11/csharp": {
+      "codePath": "solutions/csharp/ctci6_10_11.cs",
+      "notesPath": "solutions/notes/ctci6_10_11.json",
+      "contentSha256": "59918523e2bc3a4a9e81ef43d07b3875b21aacb337d45fee8947abd6b9928e4b",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review10.json",
+      "checks": {
+        "actualAlgorithm": "At each odd index swap in the largest value among the index and existing neighbors.",
+        "correctness": "After processing an odd position, it is at least both adjacent values by construction. The only cell shared with the preceding processed triple is its left neighbor. If that neighbor is chosen as the new peak, the displaced center is no larger than the old neighbor, so the previous peak still dominates it; other swaps do not change that shared neighbor. Induction therefore preserves all earlier peaks. Every odd position is processed, so the final array has the full alternating pattern. Swaps alone preserve every original occurrence.",
+        "workedTrace": "Starting with [1,2,3,4,5], put 3 at odd index 1 by swapping it with 2, giving [1,3,2,4,5]. Then swap 5 into odd index 3, yielding [1,3,2,5,4]. Both peaks dominate their neighbors; the middle valley 2 is below both 3 and 5.",
+        "edgeCases": "Empty, singleton, equal values and two-element arrays. Signed extremes must not be confused with out-of-bounds sentinels. Multiple valid outputs are accepted, but all input occurrences must remain.",
+        "timeDerivation": "O(n) time for one constant-work step per odd position; the C++ returned copy is also O(n).",
+        "spaceDerivation": "O(1) auxiliary rearrangement storage, excluding the C++ returned value copy.",
+        "callableAgreement": "All five explicitly bounds-check the optional right neighbor rather than using a signed-minimum sentinel. Swapping a left neighbor cannot increase the valley beside a previously fixed peak. Input object/length and complete multiset are preserved. Property grading accepts any odd-peak arrangement with equality. Exhaustive small repeated-value arrays, maximum-sized arrays and signed endpoints are checked against an independent sorted-then-interleaved construction. Read all actual bodies and typed string[]/int[] contracts. Backward merge and local peak swaps mutate only the first array. Grouping computes tuple keys once and uses StringComparer.Ordinal. Sparse word comparisons are ordinal. The property grader does not demand one canonical output ordering or duplicate index."
+      },
+      "evidence": [
+        "ctci6/review10.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_10_11.json",
+        "solutions/csharp/ctci6_10_11.cs",
+        "solutions/notes/ctci6_10_11.json"
+      ]
+    },
+    "ctci6_10_11/javascript": {
+      "codePath": "solutions/javascript/ctci6_10_11.js",
+      "notesPath": "solutions/notes/javascript/ctci6_10_11.json",
+      "contentSha256": "a4d5fd257489e8883ad6a4da1a8415e9374a9841f32ea71b4b4580b130c30501",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review10.json",
+      "checks": {
+        "actualAlgorithm": "At each odd index swap in the largest value among the index and existing neighbors.",
+        "correctness": "After processing an odd position, it is at least both adjacent values by construction. The only cell shared with the preceding processed triple is its left neighbor. If that neighbor is chosen as the new peak, the displaced center is no larger than the old neighbor, so the previous peak still dominates it; other swaps do not change that shared neighbor. Induction therefore preserves all earlier peaks. Every odd position is processed, so the final array has the full alternating pattern. Swaps alone preserve every original occurrence.",
+        "workedTrace": "Starting with [1,2,3,4,5], put 3 at odd index 1 by swapping it with 2, giving [1,3,2,4,5]. Then swap 5 into odd index 3, yielding [1,3,2,5,4]. Both peaks dominate their neighbors; the middle valley 2 is below both 3 and 5.",
+        "edgeCases": "Empty, singleton, equal values and two-element arrays. Signed extremes must not be confused with out-of-bounds sentinels. Multiple valid outputs are accepted, but all input occurrences must remain.",
+        "timeDerivation": "O(n) time for one constant-work step per odd position; the C++ returned copy is also O(n).",
+        "spaceDerivation": "O(1) auxiliary rearrangement storage, excluding the C++ returned value copy.",
+        "callableAgreement": "All five explicitly bounds-check the optional right neighbor rather than using a signed-minimum sentinel. Swapping a left neighbor cannot increase the valley beside a previously fixed peak. Input object/length and complete multiset are preserved. Property grading accepts any odd-peak arrangement with equality. Exhaustive small repeated-value arrays, maximum-sized arrays and signed endpoints are checked against an independent sorted-then-interleaved construction. Read exact functions: mutable arrays are changed by indexed writes or swaps before return. Decorated anagram keys avoid comparator recomputation. Map-free searches use ASCII comparisons and bounded integer indices. Snapshot observations preserve all other argument values and original array references."
+      },
+      "evidence": [
+        "ctci6/review10.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_10_11.json",
+        "solutions/javascript/ctci6_10_11.js",
+        "solutions/notes/javascript/ctci6_10_11.json"
+      ]
+    },
+    "ctci6_10_11/python": {
+      "codePath": "solutions/python/ctci6_10_11.py",
+      "notesPath": "solutions/notes/python/ctci6_10_11.json",
+      "contentSha256": "ad9531a911109a59962881fa279d8f0cd89dc3cea02487240b22833ae07b9724",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review10.json",
+      "checks": {
+        "actualAlgorithm": "At each odd index swap in the largest value among the index and existing neighbors.",
+        "correctness": "After processing an odd position, it is at least both adjacent values by construction. The only cell shared with the preceding processed triple is its left neighbor. If that neighbor is chosen as the new peak, the displaced center is no larger than the old neighbor, so the previous peak still dominates it; other swaps do not change that shared neighbor. Induction therefore preserves all earlier peaks. Every odd position is processed, so the final array has the full alternating pattern. Swaps alone preserve every original occurrence.",
+        "workedTrace": "Starting with [1,2,3,4,5], put 3 at odd index 1 by swapping it with 2, giving [1,3,2,4,5]. Then swap 5 into odd index 3, yielding [1,3,2,5,4]. Both peaks dominate their neighbors; the middle valley 2 is below both 3 and 5.",
+        "edgeCases": "Empty, singleton, equal values and two-element arrays. Signed extremes must not be confused with out-of-bounds sentinels. Multiple valid outputs are accepted, but all input occurrences must remain.",
+        "timeDerivation": "O(n) time for one constant-work step per odd position; the C++ returned copy is also O(n).",
+        "spaceDerivation": "O(1) auxiliary rearrangement storage, excluding the C++ returned value copy.",
+        "callableAgreement": "All five explicitly bounds-check the optional right neighbor rather than using a signed-minimum sentinel. Swapping a left neighbor cannot increase the valley beside a previously fixed peak. Input object/length and complete multiset are preserved. Property grading accepts any odd-peak arrangement with equality. Exhaustive small repeated-value arrays, maximum-sized arrays and signed endpoints are checked against an independent sorted-then-interleaved construction. Read exact functions: backward merge and local swaps mutate the supplied lists; grouping sorts the list in place before returning a copy. The gap search never compacts input. First-array observations compare every other input against the original snapshot and reject a correct result computed only on a rebound copy."
+      },
+      "evidence": [
+        "ctci6/review10.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_10_11.json",
+        "solutions/python/ctci6_10_11.py",
+        "solutions/notes/python/ctci6_10_11.json"
+      ]
+    },
+    "ctci6_10_11/cpp": {
+      "codePath": "solutions/cpp/ctci6_10_11.cpp",
+      "notesPath": "solutions/notes/cpp/ctci6_10_11.json",
+      "contentSha256": "d5ed38d42bfd83a7ed2d8bcc4652053af3038e0352d1c3f1145708d234bb24dc",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review10.json",
+      "checks": {
+        "actualAlgorithm": "At each odd index swap in the largest value among the index and existing neighbors.",
+        "correctness": "After processing an odd position, it is at least both adjacent values by construction. The only cell shared with the preceding processed triple is its left neighbor. If that neighbor is chosen as the new peak, the displaced center is no larger than the old neighbor, so the previous peak still dominates it; other swaps do not change that shared neighbor. Induction therefore preserves all earlier peaks. Every odd position is processed, so the final array has the full alternating pattern. Swaps alone preserve every original occurrence.",
+        "workedTrace": "Starting with [1,2,3,4,5], put 3 at odd index 1 by swapping it with 2, giving [1,3,2,4,5]. Then swap 5 into odd index 3, yielding [1,3,2,5,4]. Both peaks dominate their neighbors; the middle valley 2 is below both 3 and 5.",
+        "edgeCases": "Empty, singleton, equal values and two-element arrays. Signed extremes must not be confused with out-of-bounds sentinels. Multiple valid outputs are accepted, but all input occurrences must remain.",
+        "timeDerivation": "O(n) time for one constant-work step per odd position; the C++ returned copy is also O(n).",
+        "spaceDerivation": "O(1) auxiliary rearrangement storage, excluding the C++ returned value copy.",
+        "callableAgreement": "All five explicitly bounds-check the optional right neighbor rather than using a signed-minimum sentinel. Swapping a left neighbor cannot increase the valley beside a previously fixed peak. Input object/length and complete multiset are preserved. Property grading accepts any odd-peak arrangement with equality. Exhaustive small repeated-value arrays, maximum-sized arrays and signed endpoints are checked against an independent sorted-then-interleaved construction. Read exact C++17 signatures: only the first array reference is mutable where specified, while the second merge input stays const. Return copies are accounted for in complexity. Group key/word pairs retain occurrences during writeback. String vectors use the generic JSON decoder; comparator decisions do not subtract signed integer endpoints."
+      },
+      "evidence": [
+        "ctci6/review10.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_10_11.json",
+        "solutions/cpp/ctci6_10_11.cpp",
+        "solutions/notes/cpp/ctci6_10_11.json"
+      ]
+    },
+    "ctci6_10_11/java": {
+      "codePath": "solutions/java/ctci6_10_11.java",
+      "notesPath": "solutions/notes/java/ctci6_10_11.json",
+      "contentSha256": "e83badbc107fe3658747a3066998517f689bd25e2a98515ac28f5129ef7ff2be",
+      "status": "reviewed",
+      "reviewSource": "ctci6/review10.json",
+      "checks": {
+        "actualAlgorithm": "At each odd index swap in the largest value among the index and existing neighbors.",
+        "correctness": "After processing an odd position, it is at least both adjacent values by construction. The only cell shared with the preceding processed triple is its left neighbor. If that neighbor is chosen as the new peak, the displaced center is no larger than the old neighbor, so the previous peak still dominates it; other swaps do not change that shared neighbor. Induction therefore preserves all earlier peaks. Every odd position is processed, so the final array has the full alternating pattern. Swaps alone preserve every original occurrence.",
+        "workedTrace": "Starting with [1,2,3,4,5], put 3 at odd index 1 by swapping it with 2, giving [1,3,2,4,5]. Then swap 5 into odd index 3, yielding [1,3,2,5,4]. Both peaks dominate their neighbors; the middle valley 2 is below both 3 and 5.",
+        "edgeCases": "Empty, singleton, equal values and two-element arrays. Signed extremes must not be confused with out-of-bounds sentinels. Multiple valid outputs are accepted, but all input occurrences must remain.",
+        "timeDerivation": "O(n) time for one constant-work step per odd position; the C++ returned copy is also O(n).",
+        "spaceDerivation": "O(1) auxiliary rearrangement storage, excluding the C++ returned value copy.",
+        "callableAgreement": "All five explicitly bounds-check the optional right neighbor rather than using a signed-minimum sentinel. Swapping a left neighbor cannot increase the valley beside a previously fixed peak. Input object/length and complete multiset are preserved. Property grading accepts any odd-peak arrangement with equality. Exhaustive small repeated-value arrays, maximum-sized arrays and signed endpoints are checked against an independent sorted-then-interleaved construction. Read exact methods: string-array JSON decoding and Object[] observation encoding preserve empty gaps. Grouping sorts cached-key indices and reads an original clone during writeback. Mutable first arrays retain their object identities; second arrays are independently observed unchanged. Searches compare primitives/ASCII strings without narrowing or locale assumptions."
+      },
+      "evidence": [
+        "ctci6/review10.json",
+        "ctci6/runtime/validation.json",
+        "ctci6/cases/ctci6_10_11.json",
+        "solutions/java/ctci6_10_11.java",
+        "solutions/notes/java/ctci6_10_11.json"
       ]
     }
   }

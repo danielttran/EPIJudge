@@ -1,0 +1,32 @@
+{
+  "explanation": "A gap cannot determine the binary-search direction. Move outward from the midpoint to find a nearby nonempty word inside the remaining interval, then use its sorted order to discard an impossible side. If that whole interval contains only gaps, the target is absent there. Gap scans can be long, so logarithmic worst-case time is not promised.",
+  "correctness": "Empty target is rejected by the explicit gap convention. For a nonempty target, finding a nonempty pivot does not change the fact that all nonempty words before it are no greater and those after it are no smaller. Comparing pivot and target therefore safely retains the only side that may contain a match, or returns the matching pivot. If no nonempty pivot exists inside the interval, no nonempty target exists there. Repeated shrinking terminates and preserves original indices without compacting the input.",
+  "walkthrough": "In [at,\"\",\"\",ball,\"\",\"\",car,\"\",\"\",dad,\"\",\"\"], target ball is at index 3. The initial midpoint is a gap; scanning outward finds car at index 6, so search earlier positions. A later gap scan finds ball and returns its original index, not its index in a compacted word list.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        "at",
+        "",
+        "",
+        "ball",
+        "",
+        "",
+        "car",
+        "",
+        "",
+        "dad",
+        "",
+        ""
+      ],
+      "ball"
+    ],
+    "expected": 3
+  },
+  "timeComplexity": "O(n*(L+1)) conservative worst-case time for n positions and maximum word length L: gaps can require linear index scans and comparing words costs up to L. Dense nonempty input uses O(L*log(n+1)) time.",
+  "spaceComplexity": "O(1) auxiliary scalar/index storage; no compacted array is created.",
+  "edgeCases": [
+    "Empty array, all gaps, and empty target.",
+    "Long gaps at endpoints or midpoint, duplicate target words and absent targets."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 10.5. No affiliation is implied."
+}

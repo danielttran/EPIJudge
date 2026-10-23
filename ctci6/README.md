@@ -1,6 +1,6 @@
 # Cracking the Coding Interview, sixth edition
 
-This collection is being authored. **66 verified coding exercises are registered in the local website; the collection has not been pushed.**
+This collection is being authored. **72 verified coding exercises are registered in the local website; the collection has not been pushed.**
 The advertised 189 is a book question count, not a count of executable exercises.
 
 `inventory.json` records numbered references established from the author's public
@@ -41,9 +41,9 @@ It does **not** prove statement clarity, solution correctness, test adequacy, or
 completed semantic review. Those are separately recorded and executed before the
 collection is published.
 
-The current local checkpoint stages 66 coding exercises: chapters 1–3, all seven
-coding tasks of chapter 5, all fourteen tasks from chapter 8, and ten tasks from chapter 16, and twelve from chapter 17. Their 330 language implementations
-pass standalone and separate-submission runs with 372,395 positive cases per stage
+The current local checkpoint stages 72 coding exercises: chapters 1–3, all seven
+coding tasks of chapter 5, all fourteen tasks from chapter 8, and six sorting/searching tasks, ten tasks from chapter 16, and twelve from chapter 17. Their 360 language implementations
+pass standalone and separate-submission runs with 499,435 positive cases per stage
 and the same number of starter observations. A starter passes its negative check
 only when at least one case rejects it; this does not mean every starter fails
 every case. Five conceptual and eight system-design references are explicitly
@@ -61,7 +61,7 @@ exercises, three initial bit exercises, four further bit exercises, three initia
 recursion/DP exercises, and four combinatorial generation exercises. Each batch passed both submission formats. The individual
 reports under `runtime/application-validation*.json` and `checkpoint.json` retain
 these scopes. They are not one final combined current-build acceptance run.
-The verified 66-exercise subset is integrated locally into a 400-problem bank.
+The verified 72-exercise subset is integrated locally into a 406-problem bank.
 Remaining known content/classifications, final whole-bank runs and publication
 remain pending. Local integration preserves existing progress and drafts.
 See `workflow-review.md` for the measured workflow diagnosis and next batch gates.

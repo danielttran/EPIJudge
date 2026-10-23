@@ -74,6 +74,59 @@ public sealed class CtciStagingTests
     }
 
     [Fact]
+    public void AnagramsAcceptAnyContiguousGroupOrderButKeepEveryOccurrence()
+    {
+        var definition = Definition("10.2");
+        var test = Case([new[] { "ab", "x", "ba", "ab", "" }], new[] { "", "ab", "ab", "ba", "x" });
+        Assert.Null(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new[] { "ba", "ab", "ab", "", "x" }, mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new[] { "ab", "x", "ba", "ab", "" }, mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new[] { "ab", "ba", "x", "" }, mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new object?[] { "ab", "ba", "ab", "x", null }, mutationOk = true })));
+    }
+
+    [Fact]
+    public void DuplicateSearchesAcceptAnyMatchAndSparseGapsAreNotTargets()
+    {
+        var rotated = Definition("10.3");
+        var test = Case([new[] { 1, 1, 2, 1 }, 1], 0);
+        foreach (int index in new[] { 0, 1, 3 }) Assert.Null(CtciStagingGrader.FailureReason(rotated, test, Json(new { actual = index, mutationOk = true })));
+        foreach (int index in new[] { -1, 2, 4 }) Assert.NotNull(CtciStagingGrader.FailureReason(rotated, test, Json(new { actual = index, mutationOk = true })));
+        var sparse = Definition("10.5");
+        var gaps = Case([new[] { "", "a", "", "a" }, ""], -1);
+        Assert.Null(CtciStagingGrader.FailureReason(sparse, gaps, Json(new { actual = -1, mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(sparse, gaps, Json(new { actual = 0, mutationOk = true })));
+    }
+
+    [Fact]
+    public void MatrixSearchAcceptsAlternativeCoordinatesAndRejectsInvalidOnes()
+    {
+        var definition = Definition("10.9");
+        var test = Case([new int[][] { [1, 1], [1, 2] }, 1], new[] { 0, 0 });
+        Assert.Null(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new[] { 1, 0 }, mutationOk = true })));
+        foreach (var coordinate in new int[][] { [-1, -1], [1, 1], [2, 0], [] })
+            Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = coordinate, mutationOk = true })));
+    }
+
+    [Fact]
+    public void PeaksRequireTheMultisetAndOddPeakOrientation()
+    {
+        var definition = Definition("10.11");
+        var test = Case([new[] { 3, 1, 2 }], new[] { 1, 3, 2 });
+        Assert.Null(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new[] { 2, 3, 1 }, mutationOk = true })));
+        foreach (var values in new int[][] { [3, 1, 2], [1, 9, 2] }) Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = values, mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new[] { 2, 3, 1 }, mutationOk = false })));
+    }
+
+    [Fact]
+    public void MergeRequiresBothCorrectValuesAndPreservationObservation()
+    {
+        var definition = Definition("10.1");
+        var test = Case([new[] { 1, 4, 99, 99 }, 2, new[] { 2, 3 }], new[] { 1, 2, 3, 4 });
+        Assert.Null(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new[] { 1, 2, 3, 4 }, mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new[] { 1, 2, 3, 4 }, mutationOk = false })));
+    }
+
+    [Fact]
     public void RobotAcceptsAlternativePathsButRejectsDiagonalAndBlockedSteps()
     {
         var definition = Definition("8.2");
