@@ -58,6 +58,36 @@ public static class CtciStagingGrader
         return height == minimum ? null : "The returned BST must have the smallest possible height.";
     }
 
+    private static string? GroupOrLineFailure(CtciStagingDefinition definition, TestCase test, JsonElement observed)
+    {
+        if (observed.GetProperty("mutationOk").ValueKind != JsonValueKind.True) return "Preserve all input arrays, row identities and values.";
+        var actual = observed.GetProperty("actual");
+        if (definition.Ref == "16.14")
+        {
+            var points = test.Arguments[0].EnumerateArray().Select(Integers).ToArray();
+            var line = Integers(actual);
+            if (points.Length == 0) return line.Length == 0 ? null : "Empty input requires an empty result.";
+            if (line.Length != 3 || line[0] == 0 && line[1] == 0) return "Return a nondegenerate integer line [A,B,C].";
+            int Score(int[] coefficients) => points.Count(point => (long)coefficients[0] * point[0] + (long)coefficients[1] * point[1] + coefficients[2] == 0);
+            return Score(line) == Score(Integers(test.Expected)) ? null : "The line must contain the maximum number of input occurrences, including duplicates.";
+        }
+        var frequencies = Integers(test.Arguments[1]);
+        var parent = Enumerable.Range(0, frequencies.Length).ToArray();
+        int Find(int node) { while (parent[node] != node) { parent[node] = parent[parent[node]]; node = parent[node]; } return node; }
+        foreach (var edge in test.Arguments[2].EnumerateArray()) parent[Find(edge[0].GetInt32())] = Find(edge[1].GetInt32());
+        var totals = new Dictionary<int, int>();
+        for (int i = 0; i < frequencies.Length; i++) { int root = Find(i); totals[root] = totals.GetValueOrDefault(root) + frequencies[i]; }
+        var seen = new HashSet<int>();
+        foreach (var rowValue in actual.EnumerateArray())
+        {
+            var row = Integers(rowValue);
+            if (row.Length != 2 || row[0] < 0 || row[0] >= frequencies.Length) return "Return [originalNameIndex,totalFrequency] rows.";
+            int root = Find(row[0]);
+            if (!seen.Add(root) || row[1] != totals[root]) return "Represent each synonym component once with its exact frequency total.";
+        }
+        return seen.Count == totals.Count ? null : "Include isolated names and zero-frequency components.";
+    }
+
     private static string? StructuredHardFailure(CtciStagingDefinition definition, TestCase test, JsonElement observed)
     {
         if (observed.GetProperty("mutationOk").ValueKind != JsonValueKind.True) return "Preserve the required input arrays, original rows and values, and return the selected signature's concrete collection type.";
@@ -227,6 +257,7 @@ public static class CtciStagingGrader
         {
             if (observed.ValueKind != JsonValueKind.Object || observed.TryGetProperty("error", out var error) && error.ValueKind != JsonValueKind.Null)
                 return "Your code did not finish this case successfully.";
+            if (definition.Ref is "16.14" or "17.7") return GroupOrLineFailure(definition, test, observed);
             if (definition.Batch == 10) return SortingFailure(definition, test, observed);
             if (definition.Batch == 17 && definition.Ref is ("17.8" or "17.13" or "17.22" or "17.25" or "17.26")) return StructuredHardFailure(definition, test, observed);
             if (definition.Batch == 4 && definition.Ref == "4.2") return MinimalTreeFailure(test, observed);

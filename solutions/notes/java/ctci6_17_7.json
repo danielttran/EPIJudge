@@ -1,0 +1,49 @@
+{
+  "explanation": "Synonymous names are connected components of an undirected graph. Build adjacency from the given pairs, visit each name once, and sum its frequency into that component. Mark names when adding them to the work queue so repeated/cyclic synonym declarations cannot double-count a name.",
+  "correctness": "A graph path is exactly a chain of synonym declarations, so connected components coincide with the required equivalence groups. Starting at an unvisited name, traversal reaches every and only name in its component. Marking on discovery makes each name enter once, so adding its frequency once yields the exact component total despite duplicate/self edges. Later starts skip visited components, producing one row per group. The starting name is an original member and therefore a valid representative; no lexical or insertion-order representative is required.",
+  "walkthrough": "For names=[John,Jon,Johnny,Chris], frequencies=[10,3,0,4] and pairs [[0,1],[1,2]], the first three spellings form one group totaling 13, including the zero-count bridge Johnny. Chris remains a separate group with 4. [[0,13],[3,4]] and [[2,13],[3,4]] are both valid results.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        "John",
+        "Jon",
+        "Johnny",
+        "Chris"
+      ],
+      [
+        10,
+        3,
+        0,
+        4
+      ],
+      [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          2
+        ]
+      ]
+    ],
+    "expected": [
+      [
+        0,
+        13
+      ],
+      [
+        3,
+        4
+      ]
+    ]
+  },
+  "timeComplexity": "O(n+e) traversal time for n names and e listed synonym pairs, using direct index adjacency; duplicate pair contributions are still visited only as listed edges.",
+  "spaceComplexity": "O(n+e) adjacency, visited/work queue and returned group rows.",
+  "edgeCases": [
+    "No names, isolated names and all-zero frequencies.",
+    "Transitive synonym chains, zero-frequency bridge spellings, duplicate/reverse/self pairs.",
+    "Any original representative and arbitrary group-row order are accepted."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.7. No affiliation is implied."
+}

@@ -570,4 +570,23 @@ public sealed class CtciStagingTests
         var observed = Observe([[6, 1], [1, 2], [6, 3], [4, 4], [8, 2]], returned: 3);
         Assert.Contains("cycle-entry", CtciStagingGrader.FailureReason(Definition("2.8"), test, observed)!);
     }
+    [Fact]
+    public void BestLineAcceptsScalingAndUsesExactWideArithmetic()
+    {
+        var definition = Definition("16.14");
+        var test = Case([new int[][] { [0, 0], [1, 1], [2, 2], [0, 1] }], new[] { 1, -1, 0 });
+        Assert.Null(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new[] { int.MaxValue, -int.MaxValue, 0 }, mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new[] { 0, 0, 0 }, mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new[] { 1, 0, 0 }, mutationOk = true })));
+    }
+
+    [Fact]
+    public void BabyNamesAcceptsAnyRepresentativeAndIncludesZeroComponents()
+    {
+        var definition = Definition("17.7");
+        var test = Case([new[] { "John", "Jon", "Johnny", "Chris" }, new[] { 10, 3, 0, 0 }, new int[][] { [0, 1], [1, 2], [1, 0] }], new int[][] { [0, 13], [3, 0] });
+        Assert.Null(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new int[][] { [3, 0], [2, 13] }, mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new int[][] { [0, 13] }, mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = new int[][] { [0, 13], [1, 13], [3, 0] }, mutationOk = true })));
+    }
 }

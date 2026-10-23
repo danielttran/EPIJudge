@@ -1,0 +1,40 @@
+{
+  "explanation": "Fix one input point as an anchor. Every different point on one line through it has the same reduced direction after dividing by gcd and normalizing orientation. Count those direction groups and add coincident occurrences to every group. Repeat for every anchor, keeping the highest score. This stores only one anchor's groups rather than every pairwise line object.",
+  "correctness": "For a fixed anchor, normalized directions agree exactly for points on the same undirected line through it; gcd reduction avoids fractional/vertical special guesses. Coincident occurrences lie on every such line and must be added to each group. For any maximum line containing distinct locations, its earliest original anchor has all its other occurrences among the later points, so that anchor's group reaches the full optimum count. No reported group can exceed the true optimum because its coefficients define a real line through all counted occurrences. All-coincident input is covered by the explicit vertical fallback. Integer cross-products give exact membership without tolerance ambiguity.",
+  "walkthrough": "For [[0,0],[1,1],[2,2],[0,1]], anchoring at [0,0] groups [1,1] and [2,2] under reduced direction (1,1). That line has three occurrences and equation x-y=0, so [1,-1,0] is valid. Vertical lines use B=0; repeated [0,0] occurrences add to every line through that anchor.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          0,
+          1
+        ]
+      ]
+    ],
+    "expected": [
+      1,
+      -1,
+      0
+    ]
+  },
+  "timeComplexity": "Expected O(n^2*log(C+1)) arithmetic/hash work for coordinate-difference bound C=2000, hence expected O(n^2) in this fixed domain. Hash collisions can worsen the bound.",
+  "spaceComplexity": "O(n) direction counts for one anchor plus constant-size returned coefficients.",
+  "edgeCases": [
+    "No points, one point and all coincident points.",
+    "Vertical/horizontal lines, negative slopes, duplicate occurrences and multiple optimal lines.",
+    "Nearly parallel rational slopes must remain distinct; exact integer arithmetic replaces an epsilon guess."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.14. No affiliation is implied."
+}

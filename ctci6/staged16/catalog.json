@@ -730,6 +730,91 @@
     }
   },
   {
+    "ref": "16.14",
+    "method": "BestLine",
+    "params": [
+      [
+        "points",
+        "aai"
+      ]
+    ],
+    "result": "ai",
+    "mutation": "none",
+    "description": "Find a straight line passing through the largest number of input point occurrences. Return integer coefficients [A,B,C] for A*x+B*y+C=0, with A and B not both zero. Any maximum line is accepted, including equivalent coefficient scaling/sign. Collinearity is exact, with no floating-point epsilon.",
+    "constraints": [
+      "points is a nonnull array of 0..100 nonnull [x,y] rows, with coordinates in -1000..1000. Duplicate coordinates are allowed and each original occurrence counts. Preserve the outer array, original rows, values and order.",
+      "Return three signed 32-bit coefficients for a nonempty input. Every nonempty integer-point set has a suitable maximum line with representable integer coefficients. Empty input returns []. For one point or all coincident points, any valid line through that location is accepted; the reference chooses a vertical line."
+    ],
+    "why": "Fix one input point as an anchor. Every different point on one line through it has the same reduced direction after dividing by gcd and normalizing orientation. Count those direction groups and add coincident occurrences to every group. Repeat for every anchor, keeping the highest score. This stores only one anchor's groups rather than every pairwise line object.",
+    "correctness": "For a fixed anchor, normalized directions agree exactly for points on the same undirected line through it; gcd reduction avoids fractional/vertical special guesses. Coincident occurrences lie on every such line and must be added to each group. For any maximum line containing distinct locations, its earliest original anchor has all its other occurrences among the later points, so that anchor's group reaches the full optimum count. No reported group can exceed the true optimum because its coefficients define a real line through all counted occurrences. All-coincident input is covered by the explicit vertical fallback. Integer cross-products give exact membership without tolerance ambiguity.",
+    "walkthrough": "For [[0,0],[1,1],[2,2],[0,1]], anchoring at [0,0] groups [1,1] and [2,2] under reduced direction (1,1). That line has three occurrences and equation x-y=0, so [1,-1,0] is valid. Vertical lines use B=0; repeated [0,0] occurrences add to every line through that anchor.",
+    "example": [
+      [
+        [
+          [
+            0,
+            0
+          ],
+          [
+            1,
+            1
+          ],
+          [
+            2,
+            2
+          ],
+          [
+            0,
+            1
+          ]
+        ]
+      ],
+      [
+        1,
+        -1,
+        0
+      ]
+    ],
+    "time": "Expected O(n^2*log(C+1)) arithmetic/hash work for coordinate-difference bound C=2000, hence expected O(n^2) in this fixed domain. Hash collisions can worsen the bound.",
+    "space": "O(n) direction counts for one anchor plus constant-size returned coefficients.",
+    "edges": [
+      "No points, one point and all coincident points.",
+      "Vertical/horizontal lines, negative slopes, duplicate occurrences and multiple optimal lines.",
+      "Nearly parallel rational slopes must remain distinct; exact integer arithmetic replaces an epsilon guess."
+    ],
+    "related": "The author task asks for the line through most points. Bounded integer coordinates and integer line equations preserve that task while making vertical, duplicate and numerical-boundary behavior explicit.",
+    "id": "ctci6_16_14",
+    "title": "Best Line",
+    "testCount": 882,
+    "languages": {
+      "csharp": {
+        "signature": "int[] BestLine(int[][] points)",
+        "starterCode": "public class Solution\n{\n    public int[] BestLine(int[][] points)\n    {\n        return [];\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public int[] BestLine(int[][] points)\n    {\n        if (points.Length == 0)\n            return [];\n        int Gcd(int a, int b)\n        {\n            while (b != 0)\n            {\n                int next = a % b;\n                a = b;\n                b = next;\n            }\n            return a;\n        }\n        int[] best = [1, 0,\n                      -points [0]\n                      [0]];\n        int bestCount = 0;\n        for (int anchor = 0; anchor < points.Length; ++anchor)\n        {\n            var groups = new Dictionary<(int Dy, int Dx), int>();\n            int duplicates = 0, x = points[anchor][0], y = points[anchor][1];\n            for (int other = anchor + 1; other < points.Length; ++other)\n            {\n                int dx = points[other][0] - x, dy = points[other][1] - y;\n                if (dx == 0 && dy == 0)\n                {\n                    ++duplicates;\n                    continue;\n                }\n                int divisor = Gcd(Math.Abs(dx), Math.Abs(dy));\n                dx /= divisor;\n                dy /= divisor;\n                if (dx < 0 || (dx == 0 && dy < 0))\n                {\n                    dx = -dx;\n                    dy = -dy;\n                }\n                groups.TryGetValue((dy, dx), out int count);\n                groups[(dy, dx)] = count + 1;\n            }\n            foreach (var entry in groups)\n                if (entry.Value + duplicates + 1 > bestCount)\n                {\n                    bestCount = entry.Value + duplicates + 1;\n                    int a = entry.Key.Dy, b = -entry.Key.Dx, c = -a * x - b * y;\n                    if (a < 0 || (a == 0 && b < 0))\n                    {\n                        a = -a;\n                        b = -b;\n                        c = -c;\n                    }\n                    best = [a, b, c];\n                }\n        }\n        return best;\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function BestLine(points)",
+        "starterCode": "function BestLine(points) {\n  return [];\n}\n",
+        "solutionCode": "function BestLine(points) {\n  if (points.length === 0) return [];\n  function gcd(a, b) {\n    while (b !== 0) {\n      const next = a % b;\n      a = b;\n      b = next;\n    }\n    return a;\n  }\n  let best = [1, 0, -points[0][0]],\n    bestCount = 0;\n  for (let anchor = 0; anchor < points.length; ++anchor) {\n    const groups = new Map(),\n      [x, y] = points[anchor];\n    let duplicates = 0;\n    for (let other = anchor + 1; other < points.length; ++other) {\n      let dx = points[other][0] - x,\n        dy = points[other][1] - y;\n      if (dx === 0 && dy === 0) {\n        ++duplicates;\n        continue;\n      }\n      const divisor = gcd(Math.abs(dx), Math.abs(dy));\n      dx /= divisor;\n      dy /= divisor;\n      if (dx < 0 || (dx === 0 && dy < 0)) {\n        dx = -dx;\n        dy = -dy;\n      }\n      const key = dy + \",\" + dx;\n      groups.set(key, (groups.get(key) || 0) + 1);\n    }\n    for (const [key, count] of groups)\n      if (count + duplicates + 1 > bestCount) {\n        bestCount = count + duplicates + 1;\n        const [dy, dx] = key.split(\",\").map(Number);\n        let a = dy,\n          b = -dx,\n          c = -a * x - b * y;\n        if (a < 0 || (a === 0 && b < 0)) {\n          a = -a;\n          b = -b;\n          c = -c;\n        }\n        best = [a, b, c];\n      }\n  }\n  return best;\n}\n"
+      },
+      "python": {
+        "signature": "def BestLine(points: list[list[int]]) -> list[int]",
+        "starterCode": "def BestLine(points: list[list[int]]) -> list[int]:\n    return []\n",
+        "solutionCode": "def BestLine(points: list[list[int]]) -> list[int]:\n    from math import gcd\n\n    if not points:\n        return []\n    best = [1, 0, -points[0][0]]\n    best_count = 0\n    for anchor in range(len(points)):\n        groups = {}\n        duplicates = 0\n        x, y = points[anchor]\n        for other in range(anchor + 1, len(points)):\n            dx, dy = points[other][0] - x, points[other][1] - y\n            if dx == 0 and dy == 0:\n                duplicates += 1\n                continue\n            divisor = gcd(abs(dx), abs(dy))\n            dx //= divisor\n            dy //= divisor\n            if dx < 0 or (dx == 0 and dy < 0):\n                dx, dy = -dx, -dy\n            groups[(dy, dx)] = groups.get((dy, dx), 0) + 1\n        for (dy, dx), count in groups.items():\n            if count + duplicates + 1 > best_count:\n                best_count = count + duplicates + 1\n                a, b = dy, -dx\n                c = -a * x - b * y\n                if a < 0 or (a == 0 and b < 0):\n                    a, b, c = -a, -b, -c\n                best = [a, b, c]\n    return best\n"
+      },
+      "cpp": {
+        "signature": "std::vector<int> BestLine(const std::vector<std::vector<int>>& points)",
+        "starterCode": "class Solution {\n public:\n  std::vector<int> BestLine(const std::vector<std::vector<int>>& points) {\n    return {};\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  std::vector<int> BestLine(const std::vector<std::vector<int>>& points) {\n    if (points.empty())\n      return {};\n    auto gcd = [](int a, int b) {\n      while (b != 0) {\n        int next = a % b;\n        a = b;\n        b = next;\n      }\n      return a;\n    };\n    std::vector<int> best{1, 0, -points[0][0]};\n    int bestCount = 0;\n    for (size_t anchor = 0; anchor < points.size(); ++anchor) {\n      std::unordered_map<int, int> groups;\n      int duplicates = 0, x = points[anchor][0], y = points[anchor][1];\n      for (size_t other = anchor + 1; other < points.size(); ++other) {\n        int dx = points[other][0] - x, dy = points[other][1] - y;\n        if (dx == 0 && dy == 0) {\n          ++duplicates;\n          continue;\n        }\n        int divisor = gcd(dx < 0 ? -dx : dx, dy < 0 ? -dy : dy);\n        dx /= divisor;\n        dy /= divisor;\n        if (dx < 0 || (dx == 0 && dy < 0)) {\n          dx = -dx;\n          dy = -dy;\n        }\n        ++groups[(dy + 2000) * 4001 + dx];\n      }\n      for (const auto& entry : groups)\n        if (entry.second + duplicates + 1 > bestCount) {\n          bestCount = entry.second + duplicates + 1;\n          int a = entry.first / 4001 - 2000, b = -(entry.first % 4001), c = -a * x - b * y;\n          if (a < 0 || (a == 0 && b < 0)) {\n            a = -a;\n            b = -b;\n            c = -c;\n          }\n          best = {a, b, c};\n        }\n    }\n    return best;\n  }\n};\n"
+      },
+      "java": {
+        "signature": "int[] BestLine(int[][] points)",
+        "starterCode": "class Solution {\n  public int[] BestLine(int[][] points) {\n    return new int[0];\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public int[] BestLine(int[][] points) {\n    if (points.length == 0)\n      return new int[0];\n    class MathHelper {\n      int gcd(int a, int b) {\n        while (b != 0) {\n          int next = a % b;\n          a = b;\n          b = next;\n        }\n        return a;\n      }\n    }\n    var math = new MathHelper();\n    int[] best = {1, 0, -points[0][0]};\n    int bestCount = 0;\n    for (int anchor = 0; anchor < points.length; ++anchor) {\n      Map<Integer, Integer> groups = new HashMap<>();\n      int duplicates = 0, x = points[anchor][0], y = points[anchor][1];\n      for (int other = anchor + 1; other < points.length; ++other) {\n        int dx = points[other][0] - x, dy = points[other][1] - y;\n        if (dx == 0 && dy == 0) {\n          ++duplicates;\n          continue;\n        }\n        int divisor = math.gcd(Math.abs(dx), Math.abs(dy));\n        dx /= divisor;\n        dy /= divisor;\n        if (dx < 0 || (dx == 0 && dy < 0)) {\n          dx = -dx;\n          dy = -dy;\n        }\n        int key = (dy + 2000) * 4001 + dx;\n        groups.put(key, groups.getOrDefault(key, 0) + 1);\n      }\n      for (var entry : groups.entrySet())\n        if (entry.getValue() + duplicates + 1 > bestCount) {\n          bestCount = entry.getValue() + duplicates + 1;\n          int a = entry.getKey() / 4001 - 2000, b = -(entry.getKey() % 4001), c = -a * x - b * y;\n          if (a < 0 || (a == 0 && b < 0)) {\n            a = -a;\n            b = -b;\n            c = -c;\n          }\n          best = new int[] {a, b, c};\n        }\n    }\n    return best;\n  }\n}\n"
+      }
+    }
+  },
+  {
     "ref": "16.15",
     "method": "ScoreMasterMind",
     "params": [

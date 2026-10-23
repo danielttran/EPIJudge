@@ -35240,6 +35240,91 @@
     ]
   },
   {
+    "problemId": "ctci6_16_14",
+    "collection": "ctci6",
+    "language": "csharp",
+    "code": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic class Solution\n{\n    public int[] BestLine(int[][] points)\n    {\n        if (points.Length == 0)\n            return [];\n        int Gcd(int a, int b)\n        {\n            while (b != 0)\n            {\n                int next = a % b;\n                a = b;\n                b = next;\n            }\n            return a;\n        }\n        int[] best = [1, 0,\n                      -points [0]\n                      [0]];\n        int bestCount = 0;\n        for (int anchor = 0; anchor < points.Length; ++anchor)\n        {\n            var groups = new Dictionary<(int Dy, int Dx), int>();\n            int duplicates = 0, x = points[anchor][0], y = points[anchor][1];\n            for (int other = anchor + 1; other < points.Length; ++other)\n            {\n                int dx = points[other][0] - x, dy = points[other][1] - y;\n                if (dx == 0 && dy == 0)\n                {\n                    ++duplicates;\n                    continue;\n                }\n                int divisor = Gcd(Math.Abs(dx), Math.Abs(dy));\n                dx /= divisor;\n                dy /= divisor;\n                if (dx < 0 || (dx == 0 && dy < 0))\n                {\n                    dx = -dx;\n                    dy = -dy;\n                }\n                groups.TryGetValue((dy, dx), out int count);\n                groups[(dy, dx)] = count + 1;\n            }\n            foreach (var entry in groups)\n                if (entry.Value + duplicates + 1 > bestCount)\n                {\n                    bestCount = entry.Value + duplicates + 1;\n                    int a = entry.Key.Dy, b = -entry.Key.Dx, c = -a * x - b * y;\n                    if (a < 0 || (a == 0 && b < 0))\n                    {\n                        a = -a;\n                        b = -b;\n                        c = -c;\n                    }\n                    best = [a, b, c];\n                }\n        }\n        return best;\n    }\n}\n",
+    "explanation": "Fix one input point as an anchor. Every different point on one line through it has the same reduced direction after dividing by gcd and normalizing orientation. Count those direction groups and add coincident occurrences to every group. Repeat for every anchor, keeping the highest score. This stores only one anchor's groups rather than every pairwise line object.",
+    "timeComplexity": "Expected O(n^2*log(C+1)) arithmetic/hash work for coordinate-difference bound C=2000, hence expected O(n^2) in this fixed domain. Hash collisions can worsen the bound.",
+    "spaceComplexity": "O(n) direction counts for one anchor plus constant-size returned coefficients.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.14. No affiliation is implied.",
+    "correctness": "For a fixed anchor, normalized directions agree exactly for points on the same undirected line through it; gcd reduction avoids fractional/vertical special guesses. Coincident occurrences lie on every such line and must be added to each group. For any maximum line containing distinct locations, its earliest original anchor has all its other occurrences among the later points, so that anchor's group reaches the full optimum count. No reported group can exceed the true optimum because its coefficients define a real line through all counted occurrences. All-coincident input is covered by the explicit vertical fallback. Integer cross-products give exact membership without tolerance ambiguity.",
+    "walkthrough": "For [[0,0],[1,1],[2,2],[0,1]], anchoring at [0,0] groups [1,1] and [2,2] under reduced direction (1,1). That line has three occurrences and equation x-y=0, so [1,-1,0] is valid. Vertical lines use B=0; repeated [0,0] occurrences add to every line through that anchor.",
+    "edgeCases": [
+      "No points, one point and all coincident points.",
+      "Vertical/horizontal lines, negative slopes, duplicate occurrences and multiple optimal lines.",
+      "Nearly parallel rational slopes must remain distinct; exact integer arithmetic replaces an epsilon guess."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_14",
+    "collection": "ctci6",
+    "language": "javascript",
+    "code": "'use strict';\nfunction BestLine(points) {\n  if (points.length === 0) return [];\n  function gcd(a, b) {\n    while (b !== 0) {\n      const next = a % b;\n      a = b;\n      b = next;\n    }\n    return a;\n  }\n  let best = [1, 0, -points[0][0]],\n    bestCount = 0;\n  for (let anchor = 0; anchor < points.length; ++anchor) {\n    const groups = new Map(),\n      [x, y] = points[anchor];\n    let duplicates = 0;\n    for (let other = anchor + 1; other < points.length; ++other) {\n      let dx = points[other][0] - x,\n        dy = points[other][1] - y;\n      if (dx === 0 && dy === 0) {\n        ++duplicates;\n        continue;\n      }\n      const divisor = gcd(Math.abs(dx), Math.abs(dy));\n      dx /= divisor;\n      dy /= divisor;\n      if (dx < 0 || (dx === 0 && dy < 0)) {\n        dx = -dx;\n        dy = -dy;\n      }\n      const key = dy + \",\" + dx;\n      groups.set(key, (groups.get(key) || 0) + 1);\n    }\n    for (const [key, count] of groups)\n      if (count + duplicates + 1 > bestCount) {\n        bestCount = count + duplicates + 1;\n        const [dy, dx] = key.split(\",\").map(Number);\n        let a = dy,\n          b = -dx,\n          c = -a * x - b * y;\n        if (a < 0 || (a === 0 && b < 0)) {\n          a = -a;\n          b = -b;\n          c = -c;\n        }\n        best = [a, b, c];\n      }\n  }\n  return best;\n}\n\nmodule.exports = {BestLine};\n",
+    "explanation": "Fix one input point as an anchor. Every different point on one line through it has the same reduced direction after dividing by gcd and normalizing orientation. Count those direction groups and add coincident occurrences to every group. Repeat for every anchor, keeping the highest score. This stores only one anchor's groups rather than every pairwise line object.",
+    "timeComplexity": "Expected O(n^2*log(C+1)) arithmetic/hash work for coordinate-difference bound C=2000, hence expected O(n^2) in this fixed domain. Hash collisions can worsen the bound.",
+    "spaceComplexity": "O(n) direction counts for one anchor plus constant-size returned coefficients.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.14. No affiliation is implied.",
+    "correctness": "For a fixed anchor, normalized directions agree exactly for points on the same undirected line through it; gcd reduction avoids fractional/vertical special guesses. Coincident occurrences lie on every such line and must be added to each group. For any maximum line containing distinct locations, its earliest original anchor has all its other occurrences among the later points, so that anchor's group reaches the full optimum count. No reported group can exceed the true optimum because its coefficients define a real line through all counted occurrences. All-coincident input is covered by the explicit vertical fallback. Integer cross-products give exact membership without tolerance ambiguity.",
+    "walkthrough": "For [[0,0],[1,1],[2,2],[0,1]], anchoring at [0,0] groups [1,1] and [2,2] under reduced direction (1,1). That line has three occurrences and equation x-y=0, so [1,-1,0] is valid. Vertical lines use B=0; repeated [0,0] occurrences add to every line through that anchor.",
+    "edgeCases": [
+      "No points, one point and all coincident points.",
+      "Vertical/horizontal lines, negative slopes, duplicate occurrences and multiple optimal lines.",
+      "Nearly parallel rational slopes must remain distinct; exact integer arithmetic replaces an epsilon guess."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_14",
+    "collection": "ctci6",
+    "language": "python",
+    "code": "def BestLine(points: list[list[int]]) -> list[int]:\n    from math import gcd\n\n    if not points:\n        return []\n    best = [1, 0, -points[0][0]]\n    best_count = 0\n    for anchor in range(len(points)):\n        groups = {}\n        duplicates = 0\n        x, y = points[anchor]\n        for other in range(anchor + 1, len(points)):\n            dx, dy = points[other][0] - x, points[other][1] - y\n            if dx == 0 and dy == 0:\n                duplicates += 1\n                continue\n            divisor = gcd(abs(dx), abs(dy))\n            dx //= divisor\n            dy //= divisor\n            if dx < 0 or (dx == 0 and dy < 0):\n                dx, dy = -dx, -dy\n            groups[(dy, dx)] = groups.get((dy, dx), 0) + 1\n        for (dy, dx), count in groups.items():\n            if count + duplicates + 1 > best_count:\n                best_count = count + duplicates + 1\n                a, b = dy, -dx\n                c = -a * x - b * y\n                if a < 0 or (a == 0 and b < 0):\n                    a, b, c = -a, -b, -c\n                best = [a, b, c]\n    return best\n",
+    "explanation": "Fix one input point as an anchor. Every different point on one line through it has the same reduced direction after dividing by gcd and normalizing orientation. Count those direction groups and add coincident occurrences to every group. Repeat for every anchor, keeping the highest score. This stores only one anchor's groups rather than every pairwise line object.",
+    "timeComplexity": "Expected O(n^2*log(C+1)) arithmetic/hash work for coordinate-difference bound C=2000, hence expected O(n^2) in this fixed domain. Hash collisions can worsen the bound.",
+    "spaceComplexity": "O(n) direction counts for one anchor plus constant-size returned coefficients.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.14. No affiliation is implied.",
+    "correctness": "For a fixed anchor, normalized directions agree exactly for points on the same undirected line through it; gcd reduction avoids fractional/vertical special guesses. Coincident occurrences lie on every such line and must be added to each group. For any maximum line containing distinct locations, its earliest original anchor has all its other occurrences among the later points, so that anchor's group reaches the full optimum count. No reported group can exceed the true optimum because its coefficients define a real line through all counted occurrences. All-coincident input is covered by the explicit vertical fallback. Integer cross-products give exact membership without tolerance ambiguity.",
+    "walkthrough": "For [[0,0],[1,1],[2,2],[0,1]], anchoring at [0,0] groups [1,1] and [2,2] under reduced direction (1,1). That line has three occurrences and equation x-y=0, so [1,-1,0] is valid. Vertical lines use B=0; repeated [0,0] occurrences add to every line through that anchor.",
+    "edgeCases": [
+      "No points, one point and all coincident points.",
+      "Vertical/horizontal lines, negative slopes, duplicate occurrences and multiple optimal lines.",
+      "Nearly parallel rational slopes must remain distinct; exact integer arithmetic replaces an epsilon guess."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_14",
+    "collection": "ctci6",
+    "language": "cpp",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n#include <unordered_map>\n#include <unordered_set>\nclass Solution {\n public:\n  std::vector<int> BestLine(const std::vector<std::vector<int>>& points) {\n    if (points.empty())\n      return {};\n    auto gcd = [](int a, int b) {\n      while (b != 0) {\n        int next = a % b;\n        a = b;\n        b = next;\n      }\n      return a;\n    };\n    std::vector<int> best{1, 0, -points[0][0]};\n    int bestCount = 0;\n    for (size_t anchor = 0; anchor < points.size(); ++anchor) {\n      std::unordered_map<int, int> groups;\n      int duplicates = 0, x = points[anchor][0], y = points[anchor][1];\n      for (size_t other = anchor + 1; other < points.size(); ++other) {\n        int dx = points[other][0] - x, dy = points[other][1] - y;\n        if (dx == 0 && dy == 0) {\n          ++duplicates;\n          continue;\n        }\n        int divisor = gcd(dx < 0 ? -dx : dx, dy < 0 ? -dy : dy);\n        dx /= divisor;\n        dy /= divisor;\n        if (dx < 0 || (dx == 0 && dy < 0)) {\n          dx = -dx;\n          dy = -dy;\n        }\n        ++groups[(dy + 2000) * 4001 + dx];\n      }\n      for (const auto& entry : groups)\n        if (entry.second + duplicates + 1 > bestCount) {\n          bestCount = entry.second + duplicates + 1;\n          int a = entry.first / 4001 - 2000, b = -(entry.first % 4001), c = -a * x - b * y;\n          if (a < 0 || (a == 0 && b < 0)) {\n            a = -a;\n            b = -b;\n            c = -c;\n          }\n          best = {a, b, c};\n        }\n    }\n    return best;\n  }\n};\n",
+    "explanation": "Fix one input point as an anchor. Every different point on one line through it has the same reduced direction after dividing by gcd and normalizing orientation. Count those direction groups and add coincident occurrences to every group. Repeat for every anchor, keeping the highest score. This stores only one anchor's groups rather than every pairwise line object.",
+    "timeComplexity": "Expected O(n^2*log(C+1)) arithmetic/hash work for coordinate-difference bound C=2000, hence expected O(n^2) in this fixed domain. Hash collisions can worsen the bound.",
+    "spaceComplexity": "O(n) direction counts for one anchor plus constant-size returned coefficients.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.14. No affiliation is implied.",
+    "correctness": "For a fixed anchor, normalized directions agree exactly for points on the same undirected line through it; gcd reduction avoids fractional/vertical special guesses. Coincident occurrences lie on every such line and must be added to each group. For any maximum line containing distinct locations, its earliest original anchor has all its other occurrences among the later points, so that anchor's group reaches the full optimum count. No reported group can exceed the true optimum because its coefficients define a real line through all counted occurrences. All-coincident input is covered by the explicit vertical fallback. Integer cross-products give exact membership without tolerance ambiguity.",
+    "walkthrough": "For [[0,0],[1,1],[2,2],[0,1]], anchoring at [0,0] groups [1,1] and [2,2] under reduced direction (1,1). That line has three occurrences and equation x-y=0, so [1,-1,0] is valid. Vertical lines use B=0; repeated [0,0] occurrences add to every line through that anchor.",
+    "edgeCases": [
+      "No points, one point and all coincident points.",
+      "Vertical/horizontal lines, negative slopes, duplicate occurrences and multiple optimal lines.",
+      "Nearly parallel rational slopes must remain distinct; exact integer arithmetic replaces an epsilon guess."
+    ]
+  },
+  {
+    "problemId": "ctci6_16_14",
+    "collection": "ctci6",
+    "language": "java",
+    "code": "import java.util.*;\nclass Solution {\n  public int[] BestLine(int[][] points) {\n    if (points.length == 0)\n      return new int[0];\n    class MathHelper {\n      int gcd(int a, int b) {\n        while (b != 0) {\n          int next = a % b;\n          a = b;\n          b = next;\n        }\n        return a;\n      }\n    }\n    var math = new MathHelper();\n    int[] best = {1, 0, -points[0][0]};\n    int bestCount = 0;\n    for (int anchor = 0; anchor < points.length; ++anchor) {\n      Map<Integer, Integer> groups = new HashMap<>();\n      int duplicates = 0, x = points[anchor][0], y = points[anchor][1];\n      for (int other = anchor + 1; other < points.length; ++other) {\n        int dx = points[other][0] - x, dy = points[other][1] - y;\n        if (dx == 0 && dy == 0) {\n          ++duplicates;\n          continue;\n        }\n        int divisor = math.gcd(Math.abs(dx), Math.abs(dy));\n        dx /= divisor;\n        dy /= divisor;\n        if (dx < 0 || (dx == 0 && dy < 0)) {\n          dx = -dx;\n          dy = -dy;\n        }\n        int key = (dy + 2000) * 4001 + dx;\n        groups.put(key, groups.getOrDefault(key, 0) + 1);\n      }\n      for (var entry : groups.entrySet())\n        if (entry.getValue() + duplicates + 1 > bestCount) {\n          bestCount = entry.getValue() + duplicates + 1;\n          int a = entry.getKey() / 4001 - 2000, b = -(entry.getKey() % 4001), c = -a * x - b * y;\n          if (a < 0 || (a == 0 && b < 0)) {\n            a = -a;\n            b = -b;\n            c = -c;\n          }\n          best = new int[] {a, b, c};\n        }\n    }\n    return best;\n  }\n}\n",
+    "explanation": "Fix one input point as an anchor. Every different point on one line through it has the same reduced direction after dividing by gcd and normalizing orientation. Count those direction groups and add coincident occurrences to every group. Repeat for every anchor, keeping the highest score. This stores only one anchor's groups rather than every pairwise line object.",
+    "timeComplexity": "Expected O(n^2*log(C+1)) arithmetic/hash work for coordinate-difference bound C=2000, hence expected O(n^2) in this fixed domain. Hash collisions can worsen the bound.",
+    "spaceComplexity": "O(n) direction counts for one anchor plus constant-size returned coefficients.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 16.14. No affiliation is implied.",
+    "correctness": "For a fixed anchor, normalized directions agree exactly for points on the same undirected line through it; gcd reduction avoids fractional/vertical special guesses. Coincident occurrences lie on every such line and must be added to each group. For any maximum line containing distinct locations, its earliest original anchor has all its other occurrences among the later points, so that anchor's group reaches the full optimum count. No reported group can exceed the true optimum because its coefficients define a real line through all counted occurrences. All-coincident input is covered by the explicit vertical fallback. Integer cross-products give exact membership without tolerance ambiguity.",
+    "walkthrough": "For [[0,0],[1,1],[2,2],[0,1]], anchoring at [0,0] groups [1,1] and [2,2] under reduced direction (1,1). That line has three occurrences and equation x-y=0, so [1,-1,0] is valid. Vertical lines use B=0; repeated [0,0] occurrences add to every line through that anchor.",
+    "edgeCases": [
+      "No points, one point and all coincident points.",
+      "Vertical/horizontal lines, negative slopes, duplicate occurrences and multiple optimal lines.",
+      "Nearly parallel rational slopes must remain distinct; exact integer arithmetic replaces an epsilon guess."
+    ]
+  },
+  {
     "problemId": "ctci6_16_15",
     "collection": "ctci6",
     "language": "csharp",
@@ -36282,6 +36367,91 @@
     "edgeCases": [
       "Zero, 2, 12, 22, and boundaries around powers of ten.",
       "Current digit below/equal/above two; the largest signed input needs wide place intermediates."
+    ]
+  },
+  {
+    "problemId": "ctci6_17_7",
+    "collection": "ctci6",
+    "language": "csharp",
+    "code": "using System;\nusing System.Collections.Generic;\nusing System.Text;\npublic class Solution\n{\n    public int[][] TrueNameFrequencies(string[] names, int[] frequencies, int[][] synonyms)\n    {\n        int n = names.Length;\n        var adjacent = new List<int>[n];\n        for (int i = 0; i < n; ++i)\n            adjacent[i] = new List<int>();\n        foreach (var edge in synonyms)\n        {\n            adjacent[edge[0]].Add(edge[1]);\n            adjacent[edge[1]].Add(edge[0]);\n        }\n        bool[] visited = new bool[n];\n        var result = new List<int[]>();\n        for (int start = 0; start < n; ++start)\n        {\n            if (visited[start])\n                continue;\n            visited[start] = true;\n            var queue = new List<int> { start };\n            int total = 0;\n            for (int head = 0; head < queue.Count; ++head)\n            {\n                int name = queue[head];\n                total += frequencies[name];\n                foreach (int other in adjacent[name])\n                    if (!visited[other])\n                    {\n                        visited[other] = true;\n                        queue.Add(other);\n                    }\n            }\n            result.Add([start, total]);\n        }\n        return result.ToArray();\n    }\n}\n",
+    "explanation": "Synonymous names are connected components of an undirected graph. Build adjacency from the given pairs, visit each name once, and sum its frequency into that component. Mark names when adding them to the work queue so repeated/cyclic synonym declarations cannot double-count a name.",
+    "timeComplexity": "O(n+e) traversal time for n names and e listed synonym pairs, using direct index adjacency; duplicate pair contributions are still visited only as listed edges.",
+    "spaceComplexity": "O(n+e) adjacency, visited/work queue and returned group rows.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.7. No affiliation is implied.",
+    "correctness": "A graph path is exactly a chain of synonym declarations, so connected components coincide with the required equivalence groups. Starting at an unvisited name, traversal reaches every and only name in its component. Marking on discovery makes each name enter once, so adding its frequency once yields the exact component total despite duplicate/self edges. Later starts skip visited components, producing one row per group. The starting name is an original member and therefore a valid representative; no lexical or insertion-order representative is required.",
+    "walkthrough": "For names=[John,Jon,Johnny,Chris], frequencies=[10,3,0,4] and pairs [[0,1],[1,2]], the first three spellings form one group totaling 13, including the zero-count bridge Johnny. Chris remains a separate group with 4. [[0,13],[3,4]] and [[2,13],[3,4]] are both valid results.",
+    "edgeCases": [
+      "No names, isolated names and all-zero frequencies.",
+      "Transitive synonym chains, zero-frequency bridge spellings, duplicate/reverse/self pairs.",
+      "Any original representative and arbitrary group-row order are accepted."
+    ]
+  },
+  {
+    "problemId": "ctci6_17_7",
+    "collection": "ctci6",
+    "language": "javascript",
+    "code": "'use strict';\nfunction TrueNameFrequencies(names, frequencies, synonyms) {\n  const adjacent = Array.from({ length: names.length }, () => []),\n    visited = new Array(names.length).fill(false),\n    result = [];\n  for (const [first, second] of synonyms) {\n    adjacent[first].push(second);\n    adjacent[second].push(first);\n  }\n  for (let start = 0; start < names.length; ++start) {\n    if (visited[start]) continue;\n    visited[start] = true;\n    const queue = [start];\n    let total = 0;\n    for (let head = 0; head < queue.length; ++head) {\n      const name = queue[head];\n      total += frequencies[name];\n      for (const other of adjacent[name])\n        if (!visited[other]) {\n          visited[other] = true;\n          queue.push(other);\n        }\n    }\n    result.push([start, total]);\n  }\n  return result;\n}\n\nmodule.exports = {TrueNameFrequencies};\n",
+    "explanation": "Synonymous names are connected components of an undirected graph. Build adjacency from the given pairs, visit each name once, and sum its frequency into that component. Mark names when adding them to the work queue so repeated/cyclic synonym declarations cannot double-count a name.",
+    "timeComplexity": "O(n+e) traversal time for n names and e listed synonym pairs, using direct index adjacency; duplicate pair contributions are still visited only as listed edges.",
+    "spaceComplexity": "O(n+e) adjacency, visited/work queue and returned group rows.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.7. No affiliation is implied.",
+    "correctness": "A graph path is exactly a chain of synonym declarations, so connected components coincide with the required equivalence groups. Starting at an unvisited name, traversal reaches every and only name in its component. Marking on discovery makes each name enter once, so adding its frequency once yields the exact component total despite duplicate/self edges. Later starts skip visited components, producing one row per group. The starting name is an original member and therefore a valid representative; no lexical or insertion-order representative is required.",
+    "walkthrough": "For names=[John,Jon,Johnny,Chris], frequencies=[10,3,0,4] and pairs [[0,1],[1,2]], the first three spellings form one group totaling 13, including the zero-count bridge Johnny. Chris remains a separate group with 4. [[0,13],[3,4]] and [[2,13],[3,4]] are both valid results.",
+    "edgeCases": [
+      "No names, isolated names and all-zero frequencies.",
+      "Transitive synonym chains, zero-frequency bridge spellings, duplicate/reverse/self pairs.",
+      "Any original representative and arbitrary group-row order are accepted."
+    ]
+  },
+  {
+    "problemId": "ctci6_17_7",
+    "collection": "ctci6",
+    "language": "python",
+    "code": "def TrueNameFrequencies(\n    names: list[str], frequencies: list[int], synonyms: list[list[int]]\n) -> list[list[int]]:\n    adjacent = [[] for _ in names]\n    for first, second in synonyms:\n        adjacent[first].append(second)\n        adjacent[second].append(first)\n    visited = [False] * len(names)\n    result = []\n    for start in range(len(names)):\n        if visited[start]:\n            continue\n        visited[start] = True\n        queue = [start]\n        total = 0\n        for name in queue:\n            total += frequencies[name]\n            for other in adjacent[name]:\n                if not visited[other]:\n                    visited[other] = True\n                    queue.append(other)\n        result.append([start, total])\n    return result\n",
+    "explanation": "Synonymous names are connected components of an undirected graph. Build adjacency from the given pairs, visit each name once, and sum its frequency into that component. Mark names when adding them to the work queue so repeated/cyclic synonym declarations cannot double-count a name.",
+    "timeComplexity": "O(n+e) traversal time for n names and e listed synonym pairs, using direct index adjacency; duplicate pair contributions are still visited only as listed edges.",
+    "spaceComplexity": "O(n+e) adjacency, visited/work queue and returned group rows.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.7. No affiliation is implied.",
+    "correctness": "A graph path is exactly a chain of synonym declarations, so connected components coincide with the required equivalence groups. Starting at an unvisited name, traversal reaches every and only name in its component. Marking on discovery makes each name enter once, so adding its frequency once yields the exact component total despite duplicate/self edges. Later starts skip visited components, producing one row per group. The starting name is an original member and therefore a valid representative; no lexical or insertion-order representative is required.",
+    "walkthrough": "For names=[John,Jon,Johnny,Chris], frequencies=[10,3,0,4] and pairs [[0,1],[1,2]], the first three spellings form one group totaling 13, including the zero-count bridge Johnny. Chris remains a separate group with 4. [[0,13],[3,4]] and [[2,13],[3,4]] are both valid results.",
+    "edgeCases": [
+      "No names, isolated names and all-zero frequencies.",
+      "Transitive synonym chains, zero-frequency bridge spellings, duplicate/reverse/self pairs.",
+      "Any original representative and arbitrary group-row order are accepted."
+    ]
+  },
+  {
+    "problemId": "ctci6_17_7",
+    "collection": "ctci6",
+    "language": "cpp",
+    "code": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\nclass Solution {\n public:\n  std::vector<std::vector<int>> TrueNameFrequencies(const std::vector<std::string>& names,\n                                                    const std::vector<int>& frequencies,\n                                                    const std::vector<std::vector<int>>& synonyms) {\n    int n = static_cast<int>(names.size());\n    std::vector<std::vector<int>> adjacent(n), result;\n    for (const auto& edge : synonyms) {\n      adjacent[edge[0]].push_back(edge[1]);\n      adjacent[edge[1]].push_back(edge[0]);\n    }\n    std::vector<bool> visited(n, false);\n    for (int start = 0; start < n; ++start) {\n      if (visited[start])\n        continue;\n      visited[start] = true;\n      std::vector<int> queue{start};\n      int total = 0;\n      for (size_t head = 0; head < queue.size(); ++head) {\n        int name = queue[head];\n        total += frequencies[name];\n        for (int other : adjacent[name])\n          if (!visited[other]) {\n            visited[other] = true;\n            queue.push_back(other);\n          }\n      }\n      result.push_back({start, total});\n    }\n    return result;\n  }\n};\n",
+    "explanation": "Synonymous names are connected components of an undirected graph. Build adjacency from the given pairs, visit each name once, and sum its frequency into that component. Mark names when adding them to the work queue so repeated/cyclic synonym declarations cannot double-count a name.",
+    "timeComplexity": "O(n+e) traversal time for n names and e listed synonym pairs, using direct index adjacency; duplicate pair contributions are still visited only as listed edges.",
+    "spaceComplexity": "O(n+e) adjacency, visited/work queue and returned group rows.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.7. No affiliation is implied.",
+    "correctness": "A graph path is exactly a chain of synonym declarations, so connected components coincide with the required equivalence groups. Starting at an unvisited name, traversal reaches every and only name in its component. Marking on discovery makes each name enter once, so adding its frequency once yields the exact component total despite duplicate/self edges. Later starts skip visited components, producing one row per group. The starting name is an original member and therefore a valid representative; no lexical or insertion-order representative is required.",
+    "walkthrough": "For names=[John,Jon,Johnny,Chris], frequencies=[10,3,0,4] and pairs [[0,1],[1,2]], the first three spellings form one group totaling 13, including the zero-count bridge Johnny. Chris remains a separate group with 4. [[0,13],[3,4]] and [[2,13],[3,4]] are both valid results.",
+    "edgeCases": [
+      "No names, isolated names and all-zero frequencies.",
+      "Transitive synonym chains, zero-frequency bridge spellings, duplicate/reverse/self pairs.",
+      "Any original representative and arbitrary group-row order are accepted."
+    ]
+  },
+  {
+    "problemId": "ctci6_17_7",
+    "collection": "ctci6",
+    "language": "java",
+    "code": "import java.util.*;\nclass Solution {\n  public int[][] TrueNameFrequencies(String[] names, int[] frequencies, int[][] synonyms) {\n    int n = names.length;\n    List<List<Integer>> adjacent = new ArrayList<>();\n    for (int i = 0; i < n; ++i)\n      adjacent.add(new ArrayList<>());\n    for (int[] edge : synonyms) {\n      adjacent.get(edge[0]).add(edge[1]);\n      adjacent.get(edge[1]).add(edge[0]);\n    }\n    boolean[] visited = new boolean[n];\n    List<int[]> result = new ArrayList<>();\n    for (int start = 0; start < n; ++start) {\n      if (visited[start])\n        continue;\n      visited[start] = true;\n      List<Integer> queue = new ArrayList<>();\n      queue.add(start);\n      int total = 0;\n      for (int head = 0; head < queue.size(); ++head) {\n        int name = queue.get(head);\n        total += frequencies[name];\n        for (int other : adjacent.get(name))\n          if (!visited[other]) {\n            visited[other] = true;\n            queue.add(other);\n          }\n      }\n      result.add(new int[] {start, total});\n    }\n    return result.toArray(new int[0][]);\n  }\n}\n",
+    "explanation": "Synonymous names are connected components of an undirected graph. Build adjacency from the given pairs, visit each name once, and sum its frequency into that component. Mark names when adding them to the work queue so repeated/cyclic synonym declarations cannot double-count a name.",
+    "timeComplexity": "O(n+e) traversal time for n names and e listed synonym pairs, using direct index adjacency; duplicate pair contributions are still visited only as listed edges.",
+    "spaceComplexity": "O(n+e) adjacency, visited/work queue and returned group rows.",
+    "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 17.7. No affiliation is implied.",
+    "correctness": "A graph path is exactly a chain of synonym declarations, so connected components coincide with the required equivalence groups. Starting at an unvisited name, traversal reaches every and only name in its component. Marking on discovery makes each name enter once, so adding its frequency once yields the exact component total despite duplicate/self edges. Later starts skip visited components, producing one row per group. The starting name is an original member and therefore a valid representative; no lexical or insertion-order representative is required.",
+    "walkthrough": "For names=[John,Jon,Johnny,Chris], frequencies=[10,3,0,4] and pairs [[0,1],[1,2]], the first three spellings form one group totaling 13, including the zero-count bridge Johnny. Chris remains a separate group with 4. [[0,13],[3,4]] and [[2,13],[3,4]] are both valid results.",
+    "edgeCases": [
+      "No names, isolated names and all-zero frequencies.",
+      "Transitive synonym chains, zero-frequency bridge spellings, duplicate/reverse/self pairs.",
+      "Any original representative and arbitrary group-row order are accepted."
     ]
   },
   {

@@ -4,7 +4,11 @@ from chapter17 import SPECS
 from core import LANGUAGES
 from core import ROOT
 import json
-from corpus17 import cases,oracle
+from corpus17 import cases as base_cases,oracle as base_oracle
+import corpus_names17
+
+def cases(spec):return corpus_names17.cases(spec) if spec["ref"]=="17.7" else base_cases(spec)
+def oracle(reference,args):return corpus_names17.oracle(reference,args) if reference=="17.7" else base_oracle(reference,args)
 from generate import generate
 from models17 import declare,header,neutral
 

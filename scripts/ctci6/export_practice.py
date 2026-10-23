@@ -97,7 +97,7 @@ def export():
         contracts = {}
         for language in LANGUAGES:
             config = row["languages"][language]
-            grader = hashlib.sha256((ROOT / "scripts/ctci6/corpus17.py").read_bytes()).hexdigest() if row["batch"] == 17 and ref in STRUCTURED_REFS else hashlib.sha256((ROOT / "scripts/ctci6/corpus04.py").read_bytes()).hexdigest() if row["batch"] == 4 else hashlib.sha256((ROOT / "scripts/ctci6/corpus10.py").read_bytes()).hexdigest() if row["batch"] == 10 else (
+            grader = hashlib.sha256((ROOT / "scripts/ctci6/corpus_line16.py").read_bytes()).hexdigest() if ref == "16.14" else hashlib.sha256((ROOT / "scripts/ctci6/corpus_names17.py").read_bytes()).hexdigest() if ref == "17.7" else hashlib.sha256((ROOT / "scripts/ctci6/corpus17.py").read_bytes()).hexdigest() if row["batch"] == 17 and ref in STRUCTURED_REFS else hashlib.sha256((ROOT / "scripts/ctci6/corpus04.py").read_bytes()).hexdigest() if row["batch"] == 4 else hashlib.sha256((ROOT / "scripts/ctci6/corpus10.py").read_bytes()).hexdigest() if row["batch"] == 10 else (
                 hashlib.sha256(
                     (
                         ROOT

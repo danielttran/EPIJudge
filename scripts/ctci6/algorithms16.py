@@ -417,3 +417,41 @@ class LRUCache:
     if language=='csharp':return 'public class LRUCache {private readonly int capacity;private readonly LinkedList<(int Key,string Text)> order=new();private readonly Dictionary<int,LinkedListNode<(int Key,string Text)>> index=new();public LRUCache(int capacity){this.capacity=capacity;}public string? Get(int key){if(!index.TryGetValue(key,out var node))return null;order.Remove(node);order.AddLast(node);return node.Value.Text;}public void Set(int key,string value){if(index.TryGetValue(key,out var node)){node.Value=(key,value);order.Remove(node);order.AddLast(node);}else{index[key]=order.AddLast((key,value));if(index.Count>capacity){var oldest=order.First!;order.RemoveFirst();index.Remove(oldest.Value.Key);}}}}'
     if language=='java':return 'class LRUCache {private final int capacity;private final LinkedHashMap<Integer,String> entries=new LinkedHashMap<>(16,0.75f,true);public LRUCache(int capacity){this.capacity=capacity;}public String Get(int key){return entries.get(key);}public void Set(int key,String value){entries.put(key,value);if(entries.size()>capacity)entries.remove(entries.keySet().iterator().next());}}'
     return '#include <list>\n#include <optional>\n#include <iterator>\n#include <unordered_map>\nclass LRUCache {using Entry=std::pair<int,std::string>;int capacity;std::list<Entry> order;std::unordered_map<int,std::list<Entry>::iterator> index;public:explicit LRUCache(int capacity):capacity(capacity){}std::optional<std::string> Get(int key){auto found=index.find(key);if(found==index.end())return std::nullopt;order.splice(order.end(),order,found->second);return found->second->second;}void Set(int key,const std::string& value){auto found=index.find(key);if(found!=index.end()){found->second->second=value;order.splice(order.end(),order,found->second);}else{order.emplace_back(key,value);index[key]=std::prev(order.end());if(order.size()>static_cast<size_t>(capacity)){index.erase(order.front().first);order.pop_front();}}}};'
+
+_previous_line_body=body
+
+def body(ref,language):
+    if ref!='16.14':return _previous_line_body(ref,language)
+    if language=='python':return '''from math import gcd
+if not points:
+    return []
+best = [1, 0, -points[0][0]]
+best_count = 0
+for anchor in range(len(points)):
+    groups = {}
+    duplicates = 0
+    x, y = points[anchor]
+    for other in range(anchor + 1, len(points)):
+        dx, dy = points[other][0] - x, points[other][1] - y
+        if dx == 0 and dy == 0:
+            duplicates += 1
+            continue
+        divisor = gcd(abs(dx), abs(dy))
+        dx //= divisor
+        dy //= divisor
+        if dx < 0 or (dx == 0 and dy < 0):
+            dx, dy = -dx, -dy
+        groups[(dy, dx)] = groups.get((dy, dx), 0) + 1
+    for (dy, dx), count in groups.items():
+        if count + duplicates + 1 > best_count:
+            best_count = count + duplicates + 1
+            a, b = dy, -dx
+            c = -a * x - b * y
+            if a < 0 or (a == 0 and b < 0):
+                a, b, c = -a, -b, -c
+            best = [a, b, c]
+return best'''
+    if language=='javascript':return 'if(points.length===0)return [];function gcd(a,b){while(b!==0){const next=a%b;a=b;b=next;}return a;}let best=[1,0,-points[0][0]],bestCount=0;for(let anchor=0;anchor<points.length;++anchor){const groups=new Map(),[x,y]=points[anchor];let duplicates=0;for(let other=anchor+1;other<points.length;++other){let dx=points[other][0]-x,dy=points[other][1]-y;if(dx===0&&dy===0){++duplicates;continue;}const divisor=gcd(Math.abs(dx),Math.abs(dy));dx/=divisor;dy/=divisor;if(dx<0||(dx===0&&dy<0)){dx=-dx;dy=-dy;}const key=dy+","+dx;groups.set(key,(groups.get(key)||0)+1);}for(const [key,count] of groups)if(count+duplicates+1>bestCount){bestCount=count+duplicates+1;const [dy,dx]=key.split(",").map(Number);let a=dy,b=-dx,c=-a*x-b*y;if(a<0||(a===0&&b<0)){a=-a;b=-b;c=-c;}best=[a,b,c];}}return best;'
+    if language=='csharp':return 'if(points.Length==0)return [];int Gcd(int a,int b){while(b!=0){int next=a%b;a=b;b=next;}return a;}int[] best=[1,0,-points[0][0]];int bestCount=0;for(int anchor=0;anchor<points.Length;++anchor){var groups=new Dictionary<(int Dy,int Dx),int>();int duplicates=0,x=points[anchor][0],y=points[anchor][1];for(int other=anchor+1;other<points.Length;++other){int dx=points[other][0]-x,dy=points[other][1]-y;if(dx==0&&dy==0){++duplicates;continue;}int divisor=Gcd(Math.Abs(dx),Math.Abs(dy));dx/=divisor;dy/=divisor;if(dx<0||(dx==0&&dy<0)){dx=-dx;dy=-dy;}groups.TryGetValue((dy,dx),out int count);groups[(dy,dx)]=count+1;}foreach(var entry in groups)if(entry.Value+duplicates+1>bestCount){bestCount=entry.Value+duplicates+1;int a=entry.Key.Dy,b=-entry.Key.Dx,c=-a*x-b*y;if(a<0||(a==0&&b<0)){a=-a;b=-b;c=-c;}best=[a,b,c];}}return best;'
+    if language=='java':return 'if(points.length==0)return new int[0];class MathHelper {int gcd(int a,int b){while(b!=0){int next=a%b;a=b;b=next;}return a;}}var math=new MathHelper();int[] best={1,0,-points[0][0]};int bestCount=0;for(int anchor=0;anchor<points.length;++anchor){Map<Integer,Integer> groups=new HashMap<>();int duplicates=0,x=points[anchor][0],y=points[anchor][1];for(int other=anchor+1;other<points.length;++other){int dx=points[other][0]-x,dy=points[other][1]-y;if(dx==0&&dy==0){++duplicates;continue;}int divisor=math.gcd(Math.abs(dx),Math.abs(dy));dx/=divisor;dy/=divisor;if(dx<0||(dx==0&&dy<0)){dx=-dx;dy=-dy;}int key=(dy+2000)*4001+dx;groups.put(key,groups.getOrDefault(key,0)+1);}for(var entry:groups.entrySet())if(entry.getValue()+duplicates+1>bestCount){bestCount=entry.getValue()+duplicates+1;int a=entry.getKey()/4001-2000,b=-(entry.getKey()%4001),c=-a*x-b*y;if(a<0||(a==0&&b<0)){a=-a;b=-b;c=-c;}best=new int[]{a,b,c};}}return best;'
+    return 'if(points.empty())return {};auto gcd=[](int a,int b){while(b!=0){int next=a%b;a=b;b=next;}return a;};std::vector<int> best{1,0,-points[0][0]};int bestCount=0;for(size_t anchor=0;anchor<points.size();++anchor){std::unordered_map<int,int> groups;int duplicates=0,x=points[anchor][0],y=points[anchor][1];for(size_t other=anchor+1;other<points.size();++other){int dx=points[other][0]-x,dy=points[other][1]-y;if(dx==0&&dy==0){++duplicates;continue;}int divisor=gcd(dx<0?-dx:dx,dy<0?-dy:dy);dx/=divisor;dy/=divisor;if(dx<0||(dx==0&&dy<0)){dx=-dx;dy=-dy;}++groups[(dy+2000)*4001+dx];}for(const auto& entry:groups)if(entry.second+duplicates+1>bestCount){bestCount=entry.second+duplicates+1;int a=entry.first/4001-2000,b=-(entry.first%4001),c=-a*x-b*y;if(a<0||(a==0&&b<0)){a=-a;b=-b;c=-c;}best={a,b,c};}}return best;'

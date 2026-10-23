@@ -197,6 +197,109 @@
     }
   },
   {
+    "ref": "17.7",
+    "method": "TrueNameFrequencies",
+    "params": [
+      [
+        "names",
+        "as"
+      ],
+      [
+        "frequencies",
+        "ai"
+      ],
+      [
+        "synonyms",
+        "aai"
+      ]
+    ],
+    "result": "aai",
+    "mutation": "none",
+    "description": "Aggregate baby-name counts across synonymous spellings. Synonym pairs are undirected and transitive. Return one [representativeNameIndex,totalFrequency] row for each equivalence group, including isolated names and zero-frequency groups. The representative may be ANY original name in its group, and result rows may be in any order.",
+    "constraints": [
+      "names has 0..200 distinct nonnull ASCII-letter names, each length 1..20; names are case-sensitive unless linked explicitly. frequencies has the same length with values 0..1000000, so all totals fit signed 32-bit integers. A returned name index refers to this original names array.",
+      "synonyms contains 0..10000 rows [firstNameIndex,secondNameIndex] with valid indices. Duplicate pairs, reverse duplicates and self-pairs are allowed and do not add frequency. Include an uncounted spelling in names with frequency 0 if it is needed as a synonym-chain bridge.",
+      "Every original name belongs to exactly one output group, represented once. Sum each name's given frequency once, not once per edge. Preserve all arrays, synonym row objects, values and order."
+    ],
+    "why": "Synonymous names are connected components of an undirected graph. Build adjacency from the given pairs, visit each name once, and sum its frequency into that component. Mark names when adding them to the work queue so repeated/cyclic synonym declarations cannot double-count a name.",
+    "correctness": "A graph path is exactly a chain of synonym declarations, so connected components coincide with the required equivalence groups. Starting at an unvisited name, traversal reaches every and only name in its component. Marking on discovery makes each name enter once, so adding its frequency once yields the exact component total despite duplicate/self edges. Later starts skip visited components, producing one row per group. The starting name is an original member and therefore a valid representative; no lexical or insertion-order representative is required.",
+    "walkthrough": "For names=[John,Jon,Johnny,Chris], frequencies=[10,3,0,4] and pairs [[0,1],[1,2]], the first three spellings form one group totaling 13, including the zero-count bridge Johnny. Chris remains a separate group with 4. [[0,13],[3,4]] and [[2,13],[3,4]] are both valid results.",
+    "example": [
+      [
+        [
+          "John",
+          "Jon",
+          "Johnny",
+          "Chris"
+        ],
+        [
+          10,
+          3,
+          0,
+          4
+        ],
+        [
+          [
+            0,
+            1
+          ],
+          [
+            1,
+            2
+          ]
+        ]
+      ],
+      [
+        [
+          0,
+          13
+        ],
+        [
+          3,
+          4
+        ]
+      ]
+    ],
+    "time": "O(n+e) traversal time for n names and e listed synonym pairs, using direct index adjacency; duplicate pair contributions are still visited only as listed edges.",
+    "space": "O(n+e) adjacency, visited/work queue and returned group rows.",
+    "edges": [
+      "No names, isolated names and all-zero frequencies.",
+      "Transitive synonym chains, zero-frequency bridge spellings, duplicate/reverse/self pairs.",
+      "Any original representative and arbitrary group-row order are accepted."
+    ],
+    "related": "Original name indices replace map key strings without losing spelling identity. The author component-frequency task permits an arbitrary representative; this grader preserves that freedom rather than demanding one canonical name.",
+    "id": "ctci6_17_7",
+    "title": "Baby Names",
+    "testCount": 5290,
+    "languages": {
+      "csharp": {
+        "signature": "int[][] TrueNameFrequencies(string[] names, int[] frequencies, int[][] synonyms)",
+        "starterCode": "public class Solution\n{\n    public int[][] TrueNameFrequencies(string[] names, int[] frequencies, int[][] synonyms)\n    {\n        return [];\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public int[][] TrueNameFrequencies(string[] names, int[] frequencies, int[][] synonyms)\n    {\n        int n = names.Length;\n        var adjacent = new List<int>[n];\n        for (int i = 0; i < n; ++i)\n            adjacent[i] = new List<int>();\n        foreach (var edge in synonyms)\n        {\n            adjacent[edge[0]].Add(edge[1]);\n            adjacent[edge[1]].Add(edge[0]);\n        }\n        bool[] visited = new bool[n];\n        var result = new List<int[]>();\n        for (int start = 0; start < n; ++start)\n        {\n            if (visited[start])\n                continue;\n            visited[start] = true;\n            var queue = new List<int> { start };\n            int total = 0;\n            for (int head = 0; head < queue.Count; ++head)\n            {\n                int name = queue[head];\n                total += frequencies[name];\n                foreach (int other in adjacent[name])\n                    if (!visited[other])\n                    {\n                        visited[other] = true;\n                        queue.Add(other);\n                    }\n            }\n            result.Add([start, total]);\n        }\n        return result.ToArray();\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function TrueNameFrequencies(names, frequencies, synonyms)",
+        "starterCode": "function TrueNameFrequencies(names, frequencies, synonyms) {\n  return [];\n}\n",
+        "solutionCode": "function TrueNameFrequencies(names, frequencies, synonyms) {\n  const adjacent = Array.from({ length: names.length }, () => []),\n    visited = new Array(names.length).fill(false),\n    result = [];\n  for (const [first, second] of synonyms) {\n    adjacent[first].push(second);\n    adjacent[second].push(first);\n  }\n  for (let start = 0; start < names.length; ++start) {\n    if (visited[start]) continue;\n    visited[start] = true;\n    const queue = [start];\n    let total = 0;\n    for (let head = 0; head < queue.length; ++head) {\n      const name = queue[head];\n      total += frequencies[name];\n      for (const other of adjacent[name])\n        if (!visited[other]) {\n          visited[other] = true;\n          queue.push(other);\n        }\n    }\n    result.push([start, total]);\n  }\n  return result;\n}\n"
+      },
+      "python": {
+        "signature": "def TrueNameFrequencies(names: list[str], frequencies: list[int], synonyms: list[list[int]]) -> list[list[int]]",
+        "starterCode": "def TrueNameFrequencies(\n    names: list[str], frequencies: list[int], synonyms: list[list[int]]\n) -> list[list[int]]:\n    return []\n",
+        "solutionCode": "def TrueNameFrequencies(\n    names: list[str], frequencies: list[int], synonyms: list[list[int]]\n) -> list[list[int]]:\n    adjacent = [[] for _ in names]\n    for first, second in synonyms:\n        adjacent[first].append(second)\n        adjacent[second].append(first)\n    visited = [False] * len(names)\n    result = []\n    for start in range(len(names)):\n        if visited[start]:\n            continue\n        visited[start] = True\n        queue = [start]\n        total = 0\n        for name in queue:\n            total += frequencies[name]\n            for other in adjacent[name]:\n                if not visited[other]:\n                    visited[other] = True\n                    queue.append(other)\n        result.append([start, total])\n    return result\n"
+      },
+      "cpp": {
+        "signature": "std::vector<std::vector<int>> TrueNameFrequencies(const std::vector<std::string>& names, const std::vector<int>& frequencies, const std::vector<std::vector<int>>& synonyms)",
+        "starterCode": "class Solution {\n public:\n  std::vector<std::vector<int>> TrueNameFrequencies(const std::vector<std::string>& names,\n                                                    const std::vector<int>& frequencies,\n                                                    const std::vector<std::vector<int>>& synonyms) {\n    return {};\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  std::vector<std::vector<int>> TrueNameFrequencies(const std::vector<std::string>& names,\n                                                    const std::vector<int>& frequencies,\n                                                    const std::vector<std::vector<int>>& synonyms) {\n    int n = static_cast<int>(names.size());\n    std::vector<std::vector<int>> adjacent(n), result;\n    for (const auto& edge : synonyms) {\n      adjacent[edge[0]].push_back(edge[1]);\n      adjacent[edge[1]].push_back(edge[0]);\n    }\n    std::vector<bool> visited(n, false);\n    for (int start = 0; start < n; ++start) {\n      if (visited[start])\n        continue;\n      visited[start] = true;\n      std::vector<int> queue{start};\n      int total = 0;\n      for (size_t head = 0; head < queue.size(); ++head) {\n        int name = queue[head];\n        total += frequencies[name];\n        for (int other : adjacent[name])\n          if (!visited[other]) {\n            visited[other] = true;\n            queue.push_back(other);\n          }\n      }\n      result.push_back({start, total});\n    }\n    return result;\n  }\n};\n"
+      },
+      "java": {
+        "signature": "int[][] TrueNameFrequencies(String[] names, int[] frequencies, int[][] synonyms)",
+        "starterCode": "class Solution {\n  public int[][] TrueNameFrequencies(String[] names, int[] frequencies, int[][] synonyms) {\n    return new int[0][];\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public int[][] TrueNameFrequencies(String[] names, int[] frequencies, int[][] synonyms) {\n    int n = names.length;\n    List<List<Integer>> adjacent = new ArrayList<>();\n    for (int i = 0; i < n; ++i)\n      adjacent.add(new ArrayList<>());\n    for (int[] edge : synonyms) {\n      adjacent.get(edge[0]).add(edge[1]);\n      adjacent.get(edge[1]).add(edge[0]);\n    }\n    boolean[] visited = new boolean[n];\n    List<int[]> result = new ArrayList<>();\n    for (int start = 0; start < n; ++start) {\n      if (visited[start])\n        continue;\n      visited[start] = true;\n      List<Integer> queue = new ArrayList<>();\n      queue.add(start);\n      int total = 0;\n      for (int head = 0; head < queue.size(); ++head) {\n        int name = queue.get(head);\n        total += frequencies[name];\n        for (int other : adjacent.get(name))\n          if (!visited[other]) {\n            visited[other] = true;\n            queue.add(other);\n          }\n      }\n      result.add(new int[] {start, total});\n    }\n    return result.toArray(new int[0][]);\n  }\n}\n"
+      }
+    }
+  },
+  {
     "ref": "17.8",
     "method": "CircusTower",
     "params": [

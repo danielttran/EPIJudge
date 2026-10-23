@@ -3,7 +3,11 @@ from algorithms16 import body
 from chapter16 import SPECS
 from core import LANGUAGES,ROOT
 import json
-from corpus16 import cases,oracle
+from corpus16 import cases as base_cases,oracle as base_oracle
+import corpus_line16
+
+def cases(spec):return corpus_line16.cases(spec) if spec["ref"]=="16.14" else base_cases(spec)
+def oracle(reference,args):return corpus_line16.oracle(reference,args) if reference=="16.14" else base_oracle(reference,args)
 from generate import generate
 from models16 import declare,header,neutral
 

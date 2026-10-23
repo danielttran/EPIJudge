@@ -21747,6 +21747,126 @@
       }
     },
     {
+      "problemId": "ctci6_16_14",
+      "language": "cpp",
+      "filename": "solution.cpp",
+      "signature": "std::vector<int> BestLine(const std::vector<std::vector<int>>& points)",
+      "starterCode": "class Solution {\n public:\n  std::vector<int> BestLine(const std::vector<std::vector<int>>& points) {\n    return {};\n  }\n};\n",
+      "solutionCode": "class Solution {\n public:\n  std::vector<int> BestLine(const std::vector<std::vector<int>>& points) {\n    if (points.empty())\n      return {};\n    auto gcd = [](int a, int b) {\n      while (b != 0) {\n        int next = a % b;\n        a = b;\n        b = next;\n      }\n      return a;\n    };\n    std::vector<int> best{1, 0, -points[0][0]};\n    int bestCount = 0;\n    for (size_t anchor = 0; anchor < points.size(); ++anchor) {\n      std::unordered_map<int, int> groups;\n      int duplicates = 0, x = points[anchor][0], y = points[anchor][1];\n      for (size_t other = anchor + 1; other < points.size(); ++other) {\n        int dx = points[other][0] - x, dy = points[other][1] - y;\n        if (dx == 0 && dy == 0) {\n          ++duplicates;\n          continue;\n        }\n        int divisor = gcd(dx < 0 ? -dx : dx, dy < 0 ? -dy : dy);\n        dx /= divisor;\n        dy /= divisor;\n        if (dx < 0 || (dx == 0 && dy < 0)) {\n          dx = -dx;\n          dy = -dy;\n        }\n        ++groups[(dy + 2000) * 4001 + dx];\n      }\n      for (const auto& entry : groups)\n        if (entry.second + duplicates + 1 > bestCount) {\n          bestCount = entry.second + duplicates + 1;\n          int a = entry.first / 4001 - 2000, b = -(entry.first % 4001), c = -a * x - b * y;\n          if (a < 0 || (a == 0 && b < 0)) {\n            a = -a;\n            b = -b;\n            c = -c;\n          }\n          best = {a, b, c};\n        }\n    }\n    return best;\n  }\n};\n",
+      "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n#include <unordered_map>\n#include <unordered_set>\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/cpp/ctci6_16_14.cpp"
+      ],
+      "sourceSha256": {
+        "starter": "e89b40171b8247c68a5b7136342243d89cead379feb0f993c555c7a978c288ab",
+        "solution": "31d57f1e14e1e136acd147dee6e24a57dbf590364041548a5c0d744c23512c6d"
+      }
+    },
+    {
+      "problemId": "ctci6_16_14",
+      "language": "csharp",
+      "filename": "Solution.cs",
+      "signature": "int[] BestLine(int[][] points)",
+      "starterCode": "public class Solution\n{\n    public int[] BestLine(int[][] points)\n    {\n        return [];\n    }\n}\n",
+      "solutionCode": "public class Solution\n{\n    public int[] BestLine(int[][] points)\n    {\n        if (points.Length == 0)\n            return [];\n        int Gcd(int a, int b)\n        {\n            while (b != 0)\n            {\n                int next = a % b;\n                a = b;\n                b = next;\n            }\n            return a;\n        }\n        int[] best = [1, 0,\n                      -points [0]\n                      [0]];\n        int bestCount = 0;\n        for (int anchor = 0; anchor < points.Length; ++anchor)\n        {\n            var groups = new Dictionary<(int Dy, int Dx), int>();\n            int duplicates = 0, x = points[anchor][0], y = points[anchor][1];\n            for (int other = anchor + 1; other < points.Length; ++other)\n            {\n                int dx = points[other][0] - x, dy = points[other][1] - y;\n                if (dx == 0 && dy == 0)\n                {\n                    ++duplicates;\n                    continue;\n                }\n                int divisor = Gcd(Math.Abs(dx), Math.Abs(dy));\n                dx /= divisor;\n                dy /= divisor;\n                if (dx < 0 || (dx == 0 && dy < 0))\n                {\n                    dx = -dx;\n                    dy = -dy;\n                }\n                groups.TryGetValue((dy, dx), out int count);\n                groups[(dy, dx)] = count + 1;\n            }\n            foreach (var entry in groups)\n                if (entry.Value + duplicates + 1 > bestCount)\n                {\n                    bestCount = entry.Value + duplicates + 1;\n                    int a = entry.Key.Dy, b = -entry.Key.Dx, c = -a * x - b * y;\n                    if (a < 0 || (a == 0 && b < 0))\n                    {\n                        a = -a;\n                        b = -b;\n                        c = -c;\n                    }\n                    best = [a, b, c];\n                }\n        }\n        return best;\n    }\n}\n",
+      "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/csharp/ctci6_16_14.cs"
+      ],
+      "sourceSha256": {
+        "starter": "681ac7d9cfadc37147a890e3fe4628380f878d1e2bc5938960c486ae9303a436",
+        "solution": "af31a4cbe88b81253ee8e346552525e826c0dc4c9a6e4dd0fef918d8d7c600bf"
+      }
+    },
+    {
+      "problemId": "ctci6_16_14",
+      "language": "java",
+      "filename": "Solution.java",
+      "signature": "int[] BestLine(int[][] points)",
+      "starterCode": "class Solution {\n  public int[] BestLine(int[][] points) {\n    return new int[0];\n  }\n}\n",
+      "solutionCode": "class Solution {\n  public int[] BestLine(int[][] points) {\n    if (points.length == 0)\n      return new int[0];\n    class MathHelper {\n      int gcd(int a, int b) {\n        while (b != 0) {\n          int next = a % b;\n          a = b;\n          b = next;\n        }\n        return a;\n      }\n    }\n    var math = new MathHelper();\n    int[] best = {1, 0, -points[0][0]};\n    int bestCount = 0;\n    for (int anchor = 0; anchor < points.length; ++anchor) {\n      Map<Integer, Integer> groups = new HashMap<>();\n      int duplicates = 0, x = points[anchor][0], y = points[anchor][1];\n      for (int other = anchor + 1; other < points.length; ++other) {\n        int dx = points[other][0] - x, dy = points[other][1] - y;\n        if (dx == 0 && dy == 0) {\n          ++duplicates;\n          continue;\n        }\n        int divisor = math.gcd(Math.abs(dx), Math.abs(dy));\n        dx /= divisor;\n        dy /= divisor;\n        if (dx < 0 || (dx == 0 && dy < 0)) {\n          dx = -dx;\n          dy = -dy;\n        }\n        int key = (dy + 2000) * 4001 + dx;\n        groups.put(key, groups.getOrDefault(key, 0) + 1);\n      }\n      for (var entry : groups.entrySet())\n        if (entry.getValue() + duplicates + 1 > bestCount) {\n          bestCount = entry.getValue() + duplicates + 1;\n          int a = entry.getKey() / 4001 - 2000, b = -(entry.getKey() % 4001), c = -a * x - b * y;\n          if (a < 0 || (a == 0 && b < 0)) {\n            a = -a;\n            b = -b;\n            c = -c;\n          }\n          best = new int[] {a, b, c};\n        }\n    }\n    return best;\n  }\n}\n",
+      "prefix": "import java.util.*;\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/java/ctci6_16_14.java"
+      ],
+      "sourceSha256": {
+        "starter": "4992604728d9b3bfde6ad796c7ce4eab24d1780f3b96146a80f8470a5fa51cd6",
+        "solution": "c204b8323d7e29e0e1a944ee1d33054255077acab8b5f96fd71a0416fdd73468"
+      }
+    },
+    {
+      "problemId": "ctci6_16_14",
+      "language": "javascript",
+      "filename": "solution.js",
+      "signature": "function BestLine(points)",
+      "starterCode": "function BestLine(points) {\n  return [];\n}\n",
+      "solutionCode": "function BestLine(points) {\n  if (points.length === 0) return [];\n  function gcd(a, b) {\n    while (b !== 0) {\n      const next = a % b;\n      a = b;\n      b = next;\n    }\n    return a;\n  }\n  let best = [1, 0, -points[0][0]],\n    bestCount = 0;\n  for (let anchor = 0; anchor < points.length; ++anchor) {\n    const groups = new Map(),\n      [x, y] = points[anchor];\n    let duplicates = 0;\n    for (let other = anchor + 1; other < points.length; ++other) {\n      let dx = points[other][0] - x,\n        dy = points[other][1] - y;\n      if (dx === 0 && dy === 0) {\n        ++duplicates;\n        continue;\n      }\n      const divisor = gcd(Math.abs(dx), Math.abs(dy));\n      dx /= divisor;\n      dy /= divisor;\n      if (dx < 0 || (dx === 0 && dy < 0)) {\n        dx = -dx;\n        dy = -dy;\n      }\n      const key = dy + \",\" + dx;\n      groups.set(key, (groups.get(key) || 0) + 1);\n    }\n    for (const [key, count] of groups)\n      if (count + duplicates + 1 > bestCount) {\n        bestCount = count + duplicates + 1;\n        const [dy, dx] = key.split(\",\").map(Number);\n        let a = dy,\n          b = -dx,\n          c = -a * x - b * y;\n        if (a < 0 || (a === 0 && b < 0)) {\n          a = -a;\n          b = -b;\n          c = -c;\n        }\n        best = [a, b, c];\n      }\n  }\n  return best;\n}\n",
+      "prefix": "'use strict';\n",
+      "suffix": "\nmodule.exports = {BestLine};\n",
+      "references": [],
+      "visibleSymbols": [
+        "BestLine"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/javascript/ctci6_16_14.js"
+      ],
+      "sourceSha256": {
+        "starter": "afbacf15f3f482b5243631119be6470d6c5d192ab7b143eb35e8e44d196a5a8c",
+        "solution": "8b29d2db223f1ce559c1736b357130e648d297bf65783e60f501d63132dcc505"
+      }
+    },
+    {
+      "problemId": "ctci6_16_14",
+      "language": "python",
+      "filename": "solution.py",
+      "signature": "def BestLine(points: list[list[int]]) -> list[int]",
+      "starterCode": "def BestLine(points: list[list[int]]) -> list[int]:\n    return []\n",
+      "solutionCode": "def BestLine(points: list[list[int]]) -> list[int]:\n    from math import gcd\n\n    if not points:\n        return []\n    best = [1, 0, -points[0][0]]\n    best_count = 0\n    for anchor in range(len(points)):\n        groups = {}\n        duplicates = 0\n        x, y = points[anchor]\n        for other in range(anchor + 1, len(points)):\n            dx, dy = points[other][0] - x, points[other][1] - y\n            if dx == 0 and dy == 0:\n                duplicates += 1\n                continue\n            divisor = gcd(abs(dx), abs(dy))\n            dx //= divisor\n            dy //= divisor\n            if dx < 0 or (dx == 0 and dy < 0):\n                dx, dy = -dx, -dy\n            groups[(dy, dx)] = groups.get((dy, dx), 0) + 1\n        for (dy, dx), count in groups.items():\n            if count + duplicates + 1 > best_count:\n                best_count = count + duplicates + 1\n                a, b = dy, -dx\n                c = -a * x - b * y\n                if a < 0 or (a == 0 and b < 0):\n                    a, b, c = -a, -b, -c\n                best = [a, b, c]\n    return best\n",
+      "prefix": "",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "BestLine"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/python/ctci6_16_14.py"
+      ],
+      "sourceSha256": {
+        "starter": "0d299714ab50a1ca6e96022d0dac6ee3e3dd20f8a461108892f407b391177e97",
+        "solution": "649cb925983b4b89ab41340927714abf57dbb4829704cd4054a9e1b779cce827"
+      }
+    },
+    {
       "problemId": "ctci6_16_15",
       "language": "cpp",
       "filename": "solution.cpp",
@@ -25944,6 +26064,126 @@
       "sourceSha256": {
         "starter": "e4306bb07ce7b656385af5f7679582c8ad13995516a41ed57b022ddd717a62eb",
         "solution": "1833814618c25ae9159134646a36e65ce07d89dcf40b1e152748087420426d91"
+      }
+    },
+    {
+      "problemId": "ctci6_17_7",
+      "language": "cpp",
+      "filename": "solution.cpp",
+      "signature": "std::vector<std::vector<int>> TrueNameFrequencies(const std::vector<std::string>& names, const std::vector<int>& frequencies, const std::vector<std::vector<int>>& synonyms)",
+      "starterCode": "class Solution {\n public:\n  std::vector<std::vector<int>> TrueNameFrequencies(const std::vector<std::string>& names,\n                                                    const std::vector<int>& frequencies,\n                                                    const std::vector<std::vector<int>>& synonyms) {\n    return {};\n  }\n};\n",
+      "solutionCode": "class Solution {\n public:\n  std::vector<std::vector<int>> TrueNameFrequencies(const std::vector<std::string>& names,\n                                                    const std::vector<int>& frequencies,\n                                                    const std::vector<std::vector<int>>& synonyms) {\n    int n = static_cast<int>(names.size());\n    std::vector<std::vector<int>> adjacent(n), result;\n    for (const auto& edge : synonyms) {\n      adjacent[edge[0]].push_back(edge[1]);\n      adjacent[edge[1]].push_back(edge[0]);\n    }\n    std::vector<bool> visited(n, false);\n    for (int start = 0; start < n; ++start) {\n      if (visited[start])\n        continue;\n      visited[start] = true;\n      std::vector<int> queue{start};\n      int total = 0;\n      for (size_t head = 0; head < queue.size(); ++head) {\n        int name = queue[head];\n        total += frequencies[name];\n        for (int other : adjacent[name])\n          if (!visited[other]) {\n            visited[other] = true;\n            queue.push_back(other);\n          }\n      }\n      result.push_back({start, total});\n    }\n    return result;\n  }\n};\n",
+      "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/cpp/ctci6_17_7.cpp"
+      ],
+      "sourceSha256": {
+        "starter": "6fecd60a57fa0e292a8d58b995777cece76ee7d6f36671ecd5121cd1f4616607",
+        "solution": "651712175258571ee96a3e69dad4bd89613d23424b2f0464ded4d0414a8f69e0"
+      }
+    },
+    {
+      "problemId": "ctci6_17_7",
+      "language": "csharp",
+      "filename": "Solution.cs",
+      "signature": "int[][] TrueNameFrequencies(string[] names, int[] frequencies, int[][] synonyms)",
+      "starterCode": "public class Solution\n{\n    public int[][] TrueNameFrequencies(string[] names, int[] frequencies, int[][] synonyms)\n    {\n        return [];\n    }\n}\n",
+      "solutionCode": "public class Solution\n{\n    public int[][] TrueNameFrequencies(string[] names, int[] frequencies, int[][] synonyms)\n    {\n        int n = names.Length;\n        var adjacent = new List<int>[n];\n        for (int i = 0; i < n; ++i)\n            adjacent[i] = new List<int>();\n        foreach (var edge in synonyms)\n        {\n            adjacent[edge[0]].Add(edge[1]);\n            adjacent[edge[1]].Add(edge[0]);\n        }\n        bool[] visited = new bool[n];\n        var result = new List<int[]>();\n        for (int start = 0; start < n; ++start)\n        {\n            if (visited[start])\n                continue;\n            visited[start] = true;\n            var queue = new List<int> { start };\n            int total = 0;\n            for (int head = 0; head < queue.Count; ++head)\n            {\n                int name = queue[head];\n                total += frequencies[name];\n                foreach (int other in adjacent[name])\n                    if (!visited[other])\n                    {\n                        visited[other] = true;\n                        queue.Add(other);\n                    }\n            }\n            result.Add([start, total]);\n        }\n        return result.ToArray();\n    }\n}\n",
+      "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/csharp/ctci6_17_7.cs"
+      ],
+      "sourceSha256": {
+        "starter": "ea3ea26de5496de9719a796a312997634d22bfcf5b67365a62f45c2c55bf88d8",
+        "solution": "b33f76bc005500dc4c41682453e351c602a54fab0a339e94b6833d9faf790d93"
+      }
+    },
+    {
+      "problemId": "ctci6_17_7",
+      "language": "java",
+      "filename": "Solution.java",
+      "signature": "int[][] TrueNameFrequencies(String[] names, int[] frequencies, int[][] synonyms)",
+      "starterCode": "class Solution {\n  public int[][] TrueNameFrequencies(String[] names, int[] frequencies, int[][] synonyms) {\n    return new int[0][];\n  }\n}\n",
+      "solutionCode": "class Solution {\n  public int[][] TrueNameFrequencies(String[] names, int[] frequencies, int[][] synonyms) {\n    int n = names.length;\n    List<List<Integer>> adjacent = new ArrayList<>();\n    for (int i = 0; i < n; ++i)\n      adjacent.add(new ArrayList<>());\n    for (int[] edge : synonyms) {\n      adjacent.get(edge[0]).add(edge[1]);\n      adjacent.get(edge[1]).add(edge[0]);\n    }\n    boolean[] visited = new boolean[n];\n    List<int[]> result = new ArrayList<>();\n    for (int start = 0; start < n; ++start) {\n      if (visited[start])\n        continue;\n      visited[start] = true;\n      List<Integer> queue = new ArrayList<>();\n      queue.add(start);\n      int total = 0;\n      for (int head = 0; head < queue.size(); ++head) {\n        int name = queue.get(head);\n        total += frequencies[name];\n        for (int other : adjacent.get(name))\n          if (!visited[other]) {\n            visited[other] = true;\n            queue.add(other);\n          }\n      }\n      result.add(new int[] {start, total});\n    }\n    return result.toArray(new int[0][]);\n  }\n}\n",
+      "prefix": "import java.util.*;\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/java/ctci6_17_7.java"
+      ],
+      "sourceSha256": {
+        "starter": "8e5e8a4a26b557b02e3ce89fb98093274f27d46373c0eccc166e4e80959e6666",
+        "solution": "261a0c35ca13274129e5ff27c139d3b931c66426366d87c15401477f05aaed4c"
+      }
+    },
+    {
+      "problemId": "ctci6_17_7",
+      "language": "javascript",
+      "filename": "solution.js",
+      "signature": "function TrueNameFrequencies(names, frequencies, synonyms)",
+      "starterCode": "function TrueNameFrequencies(names, frequencies, synonyms) {\n  return [];\n}\n",
+      "solutionCode": "function TrueNameFrequencies(names, frequencies, synonyms) {\n  const adjacent = Array.from({ length: names.length }, () => []),\n    visited = new Array(names.length).fill(false),\n    result = [];\n  for (const [first, second] of synonyms) {\n    adjacent[first].push(second);\n    adjacent[second].push(first);\n  }\n  for (let start = 0; start < names.length; ++start) {\n    if (visited[start]) continue;\n    visited[start] = true;\n    const queue = [start];\n    let total = 0;\n    for (let head = 0; head < queue.length; ++head) {\n      const name = queue[head];\n      total += frequencies[name];\n      for (const other of adjacent[name])\n        if (!visited[other]) {\n          visited[other] = true;\n          queue.push(other);\n        }\n    }\n    result.push([start, total]);\n  }\n  return result;\n}\n",
+      "prefix": "'use strict';\n",
+      "suffix": "\nmodule.exports = {TrueNameFrequencies};\n",
+      "references": [],
+      "visibleSymbols": [
+        "TrueNameFrequencies"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/javascript/ctci6_17_7.js"
+      ],
+      "sourceSha256": {
+        "starter": "86ef279e26fcb6d7f5ee90d443dfdd42ba820d8f55740db3ff012294d925b3de",
+        "solution": "920a22fb612db284d6c75353557b4d2b00916d05cef72c0ff436c6d21f091757"
+      }
+    },
+    {
+      "problemId": "ctci6_17_7",
+      "language": "python",
+      "filename": "solution.py",
+      "signature": "def TrueNameFrequencies(names: list[str], frequencies: list[int], synonyms: list[list[int]]) -> list[list[int]]",
+      "starterCode": "def TrueNameFrequencies(\n    names: list[str], frequencies: list[int], synonyms: list[list[int]]\n) -> list[list[int]]:\n    return []\n",
+      "solutionCode": "def TrueNameFrequencies(\n    names: list[str], frequencies: list[int], synonyms: list[list[int]]\n) -> list[list[int]]:\n    adjacent = [[] for _ in names]\n    for first, second in synonyms:\n        adjacent[first].append(second)\n        adjacent[second].append(first)\n    visited = [False] * len(names)\n    result = []\n    for start in range(len(names)):\n        if visited[start]:\n            continue\n        visited[start] = True\n        queue = [start]\n        total = 0\n        for name in queue:\n            total += frequencies[name]\n            for other in adjacent[name]:\n                if not visited[other]:\n                    visited[other] = True\n                    queue.append(other)\n        result.append([start, total])\n    return result\n",
+      "prefix": "",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "TrueNameFrequencies"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/python/ctci6_17_7.py"
+      ],
+      "sourceSha256": {
+        "starter": "c19fd3a6ce8f54c20398bf0c4c7ddfcdc235b26c123dd70a8cafdbe5735785f8",
+        "solution": "b2a91af205c2a6c5db20ead451f47b8e90b324a094a892a03692d7dda79558f6"
       }
     },
     {
