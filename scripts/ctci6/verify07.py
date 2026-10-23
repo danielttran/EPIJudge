@@ -11,7 +11,7 @@ if __name__=='__main__':
     path=ROOT/'ctci6/staged07/validation.json';report=json.loads(path.read_text())
     for language in ('python','javascript','csharp','java','cpp'):
         helper=ROOT/'scripts/ctci6'/('harness_circular07_'+language+'.py');report['sourceHashes'][str(helper.relative_to(ROOT))]=hashlib.sha256(helper.read_bytes()).hexdigest()
-    for name in ('models_hash07.py','algorithms_hash07.py','corpus_hash07.py','algorithms_jigsaw07.py','corpus_jigsaw07.py'):
+    for name in ('models_hash07.py','algorithms_hash07.py','corpus_hash07.py','algorithms_jigsaw07.py','corpus_jigsaw07.py','algorithms_mines07.py','corpus_mines07.py'):
         helper=ROOT/'scripts/ctci6'/name;report['sourceHashes'][str(helper.relative_to(ROOT))]=hashlib.sha256(helper.read_bytes()).hexdigest()
     for language in ('python','javascript','csharp','java','cpp'):
         helper=ROOT/'scripts/ctci6'/('harness_hash07_'+language+'.py');report['sourceHashes'][str(helper.relative_to(ROOT))]=hashlib.sha256(helper.read_bytes()).hexdigest()

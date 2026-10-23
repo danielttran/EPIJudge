@@ -1,0 +1,105 @@
+{
+  "explanation": "Separate the immutable bomb layout from the player-visible board. A reveal changes each safe cell from hidden to exposed at most once, so marking it before putting a zero into the queue prevents repeated work and duplicate counters. Expanding only zeros includes their numbered boundary without propagating past numbered cells. Keep a remaining-safe count: reaching zero is precisely the winning condition, independent of flags on bombs. Python nested helpers use nonlocal only for the remaining-safe counter. Each snapshot flattens current values into a fresh list. A list plus monotonically increasing head processes zeros without front-deletion shifts; visible marking prevents duplicate enqueue.",
+  "correctness": "Initially the visible board is all hidden and remainingSafe equals the number of safe cells. Reveal accepts only a hidden unflagged cell. If it is a bomb, exposing it and setting loss is correct. Otherwise exposing it computes the exact adjacent count and decrements remainingSafe once. A newly exposed zero is queued; its safe unflagged neighbors are exposed, and only new zeros are queued, so the queue reaches exactly the permitted zero-connected region and safe boundary. Already exposed or flagged cells are skipped, preventing double counting and flag changes during expansion. Thus remainingSafe always equals the unexposed safe-cell count; zero implies and is implied by victory. Flag operations change only hidden/flag state. Rejected and terminal operations change nothing. Each copied snapshot consequently records the exact resulting state without aliasing later updates.",
+  "walkthrough": "For bombs [[0,1],[0,0]], reveal [1,0,0] exposes count 1, giving [0,1,9,9,1,9]. Flag [0,1,1] gives [0,1,9,10,1,9]. Revealing that flagged bomb [0,1,0] is rejected, giving [0,0,9,10,1,9]. Reveal the other safe cells [0,0,0] and [1,1,0]; the last snapshot is [1,1,1,10,1,1], a win. The flag is preserved and no bomb was exposed.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          0
+        ]
+      ],
+      [
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          1,
+          0
+        ]
+      ]
+    ],
+    "expected": [
+      [
+        0,
+        0,
+        9,
+        9,
+        9,
+        9
+      ],
+      [
+        0,
+        1,
+        9,
+        9,
+        1,
+        9
+      ],
+      [
+        0,
+        1,
+        9,
+        10,
+        1,
+        9
+      ],
+      [
+        0,
+        0,
+        9,
+        10,
+        1,
+        9
+      ],
+      [
+        0,
+        1,
+        1,
+        10,
+        1,
+        9
+      ],
+      [
+        1,
+        1,
+        1,
+        10,
+        1,
+        1
+      ]
+    ]
+  },
+  "timeComplexity": "O(R*C + Q*R*C) time for R rows, C columns and Q actions, including the required full-board snapshots. Across the entire game each safe cell is exposed at most once and each zero scans at most eight neighbors; snapshot copying dominates long action sequences.",
+  "spaceComplexity": "O(R*C) auxiliary visible board and zero-expansion queue, plus O((Q+1)*R*C) returned snapshot storage. The immutable input layout is not duplicated by the solver.",
+  "edgeCases": [
+    "No bombs, a single safe cell, eight-neighbor rather than four-neighbor counts.",
+    "Flag/unflag, flagged bomb reveal, flagged zero blocking expansion, repeated reveals.",
+    "Invalid coordinates, first-move loss, safe-only win and ignored requests after either terminal outcome.",
+    "Snapshots must retain prior contents instead of sharing one changing row."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 7.10. No affiliation is implied."
+}

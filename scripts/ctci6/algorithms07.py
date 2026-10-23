@@ -95,3 +95,10 @@ def body(ref,language):
         from algorithms_jigsaw07 import body as run
         return run(language)
     return _generic_previous_body(ref,language)
+
+_jigsaw_previous_body=body
+def body(ref,language):
+    if ref=='7.10':
+        from algorithms_mines07 import body as run
+        return run(language)
+    return _jigsaw_previous_body(ref,language)

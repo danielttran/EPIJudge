@@ -3205,6 +3205,164 @@
         ]
       }
     },
+    "ctci6_7_10": {
+      "description": "Implement the state transitions of a Minesweeper game: reveal a hidden cell, toggle a flag, expand connected blank areas, and stop after winning or hitting a bomb. The bomb layout is supplied explicitly so the exercise and tests are deterministic. Return a complete visible-board snapshot before play and after every requested action. Do not implement a bomb-location solver or reveal hidden bombs merely because the caller supplied the layout.",
+      "constraints": [
+        "bombs is a rectangular 1..12 by 1..12 matrix of 0 (safe) and 1 (bomb), containing at least one safe cell. All cells initially are hidden and unflagged; the game is running. Every safe revealed cell displays the count of bombs in its eight surrounding positions, excluding itself and out-of-bounds positions.",
+        "actions has 0..100 rows [row,column,kind]. kind=0 requests reveal; kind=1 toggles a flag. Coordinates are signed 32-bit integers; out-of-bounds requests are rejected without changing state. A flag can be toggled only on a hidden or already flagged cell. Revealing a flagged or previously revealed cell is rejected; rejected requests have accepted=0.",
+        "Revealing a hidden safe zero exposes its eight-neighbor connected component of safe zero cells and the safe numbered boundary of that component. Flagged cells remain hidden and block expansion through that cell. They must be unflagged and revealed later if needed for winning. A numbered safe cell reveals only itself. A bomb reveal exposes that bomb and loses immediately. Flagging a bomb does not lose.",
+        "Win exactly when every safe cell is exposed; flags are not required on bombs. After a win or loss, all further requests are rejected without changing visible cells or outcome. A valid reveal/flag operation has accepted=1 even when it ends the game.",
+        "Return actions.length+1 integer rows. Each row is [state,accepted,...visibleCellsInRowMajorOrder], where state=0 running, 1 won, 2 lost. Initial accepted=0. Visible cell codes are 0..8 for an exposed safe count, 9 hidden, 10 flagged, 11 exposed bomb. Only the bomb actually hit is exposed on loss; other cells retain their prior display. Preserve the caller bomb/action matrices and rows.",
+        "This callable captures the public Board/Game reveal/flag/blank-expansion behavior using deterministic supplied layouts and machine-readable snapshots. Random board generation and console/UI parsing are outside the callable; no gameplay guessing is required."
+      ],
+      "examples": [
+        {
+          "input": "[[[0, 1], [0, 0]], [[1, 0, 0], [0, 1, 1], [0, 1, 0], [0, 0, 0], [1, 1, 0]]]",
+          "output": "[[0, 0, 9, 9, 9, 9], [0, 1, 9, 9, 1, 9], [0, 1, 9, 10, 1, 9], [0, 0, 9, 10, 1, 9], [0, 1, 1, 10, 1, 9], [1, 1, 1, 10, 1, 1]]",
+          "explanation": "For bombs [[0,1],[0,0]], reveal [1,0,0] exposes count 1, giving [0,1,9,9,1,9]. Flag [0,1,1] gives [0,1,9,10,1,9]. Revealing that flagged bomb [0,1,0] is rejected, giving [0,0,9,10,1,9]. Reveal the other safe cells [0,0,0] and [1,1,0]; the last snapshot is [1,1,1,10,1,1], a win. The flag is preserved and no bomb was exposed."
+        }
+      ],
+      "exampleCases": [
+        {
+          "arguments": [
+            [
+              [
+                0,
+                1
+              ],
+              [
+                0,
+                0
+              ]
+            ],
+            [
+              [
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                1,
+                1
+              ],
+              [
+                0,
+                1,
+                0
+              ],
+              [
+                0,
+                0,
+                0
+              ],
+              [
+                1,
+                1,
+                0
+              ]
+            ]
+          ],
+          "expected": [
+            [
+              0,
+              0,
+              9,
+              9,
+              9,
+              9
+            ],
+            [
+              0,
+              1,
+              9,
+              9,
+              1,
+              9
+            ],
+            [
+              0,
+              1,
+              9,
+              10,
+              1,
+              9
+            ],
+            [
+              0,
+              0,
+              9,
+              10,
+              1,
+              9
+            ],
+            [
+              0,
+              1,
+              1,
+              10,
+              1,
+              9
+            ],
+            [
+              1,
+              1,
+              1,
+              10,
+              1,
+              1
+            ]
+          ]
+        }
+      ],
+      "contracts": {
+        "csharp": [
+          "Callable: int[][] PlayMinesweeper(int[][] bombs, int[][] actions)",
+          "bombs is a rectangular 1..12 by 1..12 matrix of 0 (safe) and 1 (bomb), containing at least one safe cell. All cells initially are hidden and unflagged; the game is running. Every safe revealed cell displays the count of bombs in its eight surrounding positions, excluding itself and out-of-bounds positions.",
+          "actions has 0..100 rows [row,column,kind]. kind=0 requests reveal; kind=1 toggles a flag. Coordinates are signed 32-bit integers; out-of-bounds requests are rejected without changing state. A flag can be toggled only on a hidden or already flagged cell. Revealing a flagged or previously revealed cell is rejected; rejected requests have accepted=0.",
+          "Revealing a hidden safe zero exposes its eight-neighbor connected component of safe zero cells and the safe numbered boundary of that component. Flagged cells remain hidden and block expansion through that cell. They must be unflagged and revealed later if needed for winning. A numbered safe cell reveals only itself. A bomb reveal exposes that bomb and loses immediately. Flagging a bomb does not lose.",
+          "Win exactly when every safe cell is exposed; flags are not required on bombs. After a win or loss, all further requests are rejected without changing visible cells or outcome. A valid reveal/flag operation has accepted=1 even when it ends the game.",
+          "Return actions.length+1 integer rows. Each row is [state,accepted,...visibleCellsInRowMajorOrder], where state=0 running, 1 won, 2 lost. Initial accepted=0. Visible cell codes are 0..8 for an exposed safe count, 9 hidden, 10 flagged, 11 exposed bomb. Only the bomb actually hit is exposed on loss; other cells retain their prior display. Preserve the caller bomb/action matrices and rows.",
+          "This callable captures the public Board/Game reveal/flag/blank-expansion behavior using deterministic supplied layouts and machine-readable snapshots. Random board generation and console/UI parsing are outside the callable; no gameplay guessing is required."
+        ],
+        "javascript": [
+          "Callable: function PlayMinesweeper(bombs, actions)",
+          "bombs is a rectangular 1..12 by 1..12 matrix of 0 (safe) and 1 (bomb), containing at least one safe cell. All cells initially are hidden and unflagged; the game is running. Every safe revealed cell displays the count of bombs in its eight surrounding positions, excluding itself and out-of-bounds positions.",
+          "actions has 0..100 rows [row,column,kind]. kind=0 requests reveal; kind=1 toggles a flag. Coordinates are signed 32-bit integers; out-of-bounds requests are rejected without changing state. A flag can be toggled only on a hidden or already flagged cell. Revealing a flagged or previously revealed cell is rejected; rejected requests have accepted=0.",
+          "Revealing a hidden safe zero exposes its eight-neighbor connected component of safe zero cells and the safe numbered boundary of that component. Flagged cells remain hidden and block expansion through that cell. They must be unflagged and revealed later if needed for winning. A numbered safe cell reveals only itself. A bomb reveal exposes that bomb and loses immediately. Flagging a bomb does not lose.",
+          "Win exactly when every safe cell is exposed; flags are not required on bombs. After a win or loss, all further requests are rejected without changing visible cells or outcome. A valid reveal/flag operation has accepted=1 even when it ends the game.",
+          "Return actions.length+1 integer rows. Each row is [state,accepted,...visibleCellsInRowMajorOrder], where state=0 running, 1 won, 2 lost. Initial accepted=0. Visible cell codes are 0..8 for an exposed safe count, 9 hidden, 10 flagged, 11 exposed bomb. Only the bomb actually hit is exposed on loss; other cells retain their prior display. Preserve the caller bomb/action matrices and rows.",
+          "This callable captures the public Board/Game reveal/flag/blank-expansion behavior using deterministic supplied layouts and machine-readable snapshots. Random board generation and console/UI parsing are outside the callable; no gameplay guessing is required."
+        ],
+        "python": [
+          "Callable: def PlayMinesweeper(bombs: list[list[int]], actions: list[list[int]]) -> list[list[int]]",
+          "bombs is a rectangular 1..12 by 1..12 matrix of 0 (safe) and 1 (bomb), containing at least one safe cell. All cells initially are hidden and unflagged; the game is running. Every safe revealed cell displays the count of bombs in its eight surrounding positions, excluding itself and out-of-bounds positions.",
+          "actions has 0..100 rows [row,column,kind]. kind=0 requests reveal; kind=1 toggles a flag. Coordinates are signed 32-bit integers; out-of-bounds requests are rejected without changing state. A flag can be toggled only on a hidden or already flagged cell. Revealing a flagged or previously revealed cell is rejected; rejected requests have accepted=0.",
+          "Revealing a hidden safe zero exposes its eight-neighbor connected component of safe zero cells and the safe numbered boundary of that component. Flagged cells remain hidden and block expansion through that cell. They must be unflagged and revealed later if needed for winning. A numbered safe cell reveals only itself. A bomb reveal exposes that bomb and loses immediately. Flagging a bomb does not lose.",
+          "Win exactly when every safe cell is exposed; flags are not required on bombs. After a win or loss, all further requests are rejected without changing visible cells or outcome. A valid reveal/flag operation has accepted=1 even when it ends the game.",
+          "Return actions.length+1 integer rows. Each row is [state,accepted,...visibleCellsInRowMajorOrder], where state=0 running, 1 won, 2 lost. Initial accepted=0. Visible cell codes are 0..8 for an exposed safe count, 9 hidden, 10 flagged, 11 exposed bomb. Only the bomb actually hit is exposed on loss; other cells retain their prior display. Preserve the caller bomb/action matrices and rows.",
+          "This callable captures the public Board/Game reveal/flag/blank-expansion behavior using deterministic supplied layouts and machine-readable snapshots. Random board generation and console/UI parsing are outside the callable; no gameplay guessing is required."
+        ],
+        "cpp": [
+          "Callable: std::vector<std::vector<int>> PlayMinesweeper(const std::vector<std::vector<int>>& bombs, const std::vector<std::vector<int>>& actions)",
+          "bombs is a rectangular 1..12 by 1..12 matrix of 0 (safe) and 1 (bomb), containing at least one safe cell. All cells initially are hidden and unflagged; the game is running. Every safe revealed cell displays the count of bombs in its eight surrounding positions, excluding itself and out-of-bounds positions.",
+          "actions has 0..100 rows [row,column,kind]. kind=0 requests reveal; kind=1 toggles a flag. Coordinates are signed 32-bit integers; out-of-bounds requests are rejected without changing state. A flag can be toggled only on a hidden or already flagged cell. Revealing a flagged or previously revealed cell is rejected; rejected requests have accepted=0.",
+          "Revealing a hidden safe zero exposes its eight-neighbor connected component of safe zero cells and the safe numbered boundary of that component. Flagged cells remain hidden and block expansion through that cell. They must be unflagged and revealed later if needed for winning. A numbered safe cell reveals only itself. A bomb reveal exposes that bomb and loses immediately. Flagging a bomb does not lose.",
+          "Win exactly when every safe cell is exposed; flags are not required on bombs. After a win or loss, all further requests are rejected without changing visible cells or outcome. A valid reveal/flag operation has accepted=1 even when it ends the game.",
+          "Return actions.length+1 integer rows. Each row is [state,accepted,...visibleCellsInRowMajorOrder], where state=0 running, 1 won, 2 lost. Initial accepted=0. Visible cell codes are 0..8 for an exposed safe count, 9 hidden, 10 flagged, 11 exposed bomb. Only the bomb actually hit is exposed on loss; other cells retain their prior display. Preserve the caller bomb/action matrices and rows.",
+          "This callable captures the public Board/Game reveal/flag/blank-expansion behavior using deterministic supplied layouts and machine-readable snapshots. Random board generation and console/UI parsing are outside the callable; no gameplay guessing is required."
+        ],
+        "java": [
+          "Callable: int[][] PlayMinesweeper(int[][] bombs, int[][] actions)",
+          "bombs is a rectangular 1..12 by 1..12 matrix of 0 (safe) and 1 (bomb), containing at least one safe cell. All cells initially are hidden and unflagged; the game is running. Every safe revealed cell displays the count of bombs in its eight surrounding positions, excluding itself and out-of-bounds positions.",
+          "actions has 0..100 rows [row,column,kind]. kind=0 requests reveal; kind=1 toggles a flag. Coordinates are signed 32-bit integers; out-of-bounds requests are rejected without changing state. A flag can be toggled only on a hidden or already flagged cell. Revealing a flagged or previously revealed cell is rejected; rejected requests have accepted=0.",
+          "Revealing a hidden safe zero exposes its eight-neighbor connected component of safe zero cells and the safe numbered boundary of that component. Flagged cells remain hidden and block expansion through that cell. They must be unflagged and revealed later if needed for winning. A numbered safe cell reveals only itself. A bomb reveal exposes that bomb and loses immediately. Flagging a bomb does not lose.",
+          "Win exactly when every safe cell is exposed; flags are not required on bombs. After a win or loss, all further requests are rejected without changing visible cells or outcome. A valid reveal/flag operation has accepted=1 even when it ends the game.",
+          "Return actions.length+1 integer rows. Each row is [state,accepted,...visibleCellsInRowMajorOrder], where state=0 running, 1 won, 2 lost. Initial accepted=0. Visible cell codes are 0..8 for an exposed safe count, 9 hidden, 10 flagged, 11 exposed bomb. Only the bomb actually hit is exposed on loss; other cells retain their prior display. Preserve the caller bomb/action matrices and rows.",
+          "This callable captures the public Board/Game reveal/flag/blank-expansion behavior using deterministic supplied layouts and machine-readable snapshots. Random board generation and console/UI parsing are outside the callable; no gameplay guessing is required."
+        ]
+      }
+    },
     "ctci6_7_12": {
       "description": "Implement a generic HashTable<K,V> using a fixed bucket array and your own singly linked collision chains. Put(key,value) inserts a new key or replaces its current value; it returns void. Get(key) returns the current value or raises the documented missing-key exception. Remove(key) removes one entry and returns whether the key existed. Contains(key) returns whether it is present. Equal keys denote one entry, even when their object identities differ. Different keys with the same hash must remain distinct entries.",
       "constraints": [

@@ -4224,6 +4224,174 @@
     }
   },
   {
+    "id": "ctci6_7_10",
+    "ref": "7.10",
+    "title": "Minesweeper",
+    "description": "Implement the state transitions of a Minesweeper game: reveal a hidden cell, toggle a flag, expand connected blank areas, and stop after winning or hitting a bomb. The bomb layout is supplied explicitly so the exercise and tests are deterministic. Return a complete visible-board snapshot before play and after every requested action. Do not implement a bomb-location solver or reveal hidden bombs merely because the caller supplied the layout.",
+    "constraints": [
+      "bombs is a rectangular 1..12 by 1..12 matrix of 0 (safe) and 1 (bomb), containing at least one safe cell. All cells initially are hidden and unflagged; the game is running. Every safe revealed cell displays the count of bombs in its eight surrounding positions, excluding itself and out-of-bounds positions.",
+      "actions has 0..100 rows [row,column,kind]. kind=0 requests reveal; kind=1 toggles a flag. Coordinates are signed 32-bit integers; out-of-bounds requests are rejected without changing state. A flag can be toggled only on a hidden or already flagged cell. Revealing a flagged or previously revealed cell is rejected; rejected requests have accepted=0.",
+      "Revealing a hidden safe zero exposes its eight-neighbor connected component of safe zero cells and the safe numbered boundary of that component. Flagged cells remain hidden and block expansion through that cell. They must be unflagged and revealed later if needed for winning. A numbered safe cell reveals only itself. A bomb reveal exposes that bomb and loses immediately. Flagging a bomb does not lose.",
+      "Win exactly when every safe cell is exposed; flags are not required on bombs. After a win or loss, all further requests are rejected without changing visible cells or outcome. A valid reveal/flag operation has accepted=1 even when it ends the game.",
+      "Return actions.length+1 integer rows. Each row is [state,accepted,...visibleCellsInRowMajorOrder], where state=0 running, 1 won, 2 lost. Initial accepted=0. Visible cell codes are 0..8 for an exposed safe count, 9 hidden, 10 flagged, 11 exposed bomb. Only the bomb actually hit is exposed on loss; other cells retain their prior display. Preserve the caller bomb/action matrices and rows.",
+      "This callable captures the public Board/Game reveal/flag/blank-expansion behavior using deterministic supplied layouts and machine-readable snapshots. Random board generation and console/UI parsing are outside the callable; no gameplay guessing is required."
+    ],
+    "method": "PlayMinesweeper",
+    "params": [
+      [
+        "bombs",
+        "aai"
+      ],
+      [
+        "actions",
+        "aai"
+      ]
+    ],
+    "result": "aai",
+    "mutation": "none",
+    "testCount": 1780,
+    "batch": 7,
+    "stagingDirectory": "",
+    "example": [
+      [
+        [
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            0
+          ]
+        ],
+        [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            1
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            0
+          ],
+          [
+            1,
+            1,
+            0
+          ]
+        ]
+      ],
+      [
+        [
+          0,
+          0,
+          9,
+          9,
+          9,
+          9
+        ],
+        [
+          0,
+          1,
+          9,
+          9,
+          1,
+          9
+        ],
+        [
+          0,
+          1,
+          9,
+          10,
+          1,
+          9
+        ],
+        [
+          0,
+          0,
+          9,
+          10,
+          1,
+          9
+        ],
+        [
+          0,
+          1,
+          1,
+          10,
+          1,
+          9
+        ],
+        [
+          1,
+          1,
+          1,
+          10,
+          1,
+          1
+        ]
+      ]
+    ],
+    "languages": {
+      "csharp": {
+        "signature": "int[][] PlayMinesweeper(int[][] bombs, int[][] actions)",
+        "starterCode": "public class Solution\n{\n    public int[][] PlayMinesweeper(int[][] bombs, int[][] actions)\n    {\n        return [];\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public int[][] PlayMinesweeper(int[][] bombs, int[][] actions)\n    {\n        int rows = bombs.Length, columns = bombs[0].Length;\n        var visible = Enumerable.Range(0, rows)\n                          .Select(\n                              _ => Enumerable.Repeat(9, columns).ToArray())\n                          .ToArray();\n        int remaining = 0, state = 0;\n        foreach (var row in bombs)\n            foreach (int value in row)\n                if (value == 0)\n                    remaining++;\n        var trace = new List<int[]>();\n        void Snapshot(int accepted)\n        {\n            var result = new int[2 + rows * columns];\n            result[0] = state;\n            result[1] = accepted;\n            for (int r = 0; r < rows; r++)\n                for (int c = 0; c < columns; c++)\n                    result[2 + r * columns + c] = visible[r][c];\n            trace.Add(result);\n        }\n        void Expose(int row, int column, List<int[]> queue)\n        {\n            if (visible[row][column] != 9 || bombs[row][column] != 0)\n                return;\n            int number = 0;\n            for (int r = Math.Max(0, row - 1); r < Math.Min(rows, row + 2); ++r)\n                for (int c = Math.Max(0, column - 1); c < Math.Min(columns, column + 2); ++c)\n                    number += bombs[r][c];\n            visible[row][column] = number;\n            --remaining;\n            if (number == 0)\n                queue.Add(new int[] { row, column });\n        }\n        Snapshot(0);\n        foreach (var action in actions)\n        {\n            int row = action[0], column = action[1], kind = action[2], accepted = 0;\n            if (state == 0 && row >= 0 && row < rows && column >= 0 && column < columns)\n            {\n                if (kind == 1 && (visible[row][column] == 9 || visible[row][column] == 10))\n                {\n                    visible[row][column] = 19 - visible[row][column];\n                    accepted = 1;\n                }\n                else if (kind == 0 && visible[row][column] == 9)\n                {\n                    accepted = 1;\n                    if (bombs[row][column] != 0)\n                    {\n                        visible[row][column] = 11;\n                        state = 2;\n                    }\n                    else\n                    {\n                        var queue = new List<int[]>();\n                        Expose(row, column, queue);\n                        for (int head = 0; head < queue.Count; ++head)\n                        {\n                            int r = queue[head][0], c = queue[head][1];\n                            for (int nr = Math.Max(0, r - 1); nr < Math.Min(rows, r + 2); ++nr)\n                                for (int nc = Math.Max(0, c - 1); nc < Math.Min(columns, c + 2);\n                                     ++nc)\n                                    Expose(nr, nc, queue);\n                        }\n                        if (remaining == 0)\n                            state = 1;\n                    }\n                }\n            }\n            Snapshot(accepted);\n        }\n        return trace.ToArray();\n    }\n}\n",
+        "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\n",
+        "suffix": "",
+        "harness": "using System;\nusing System.Collections.Generic;\nusing System.Text;\nusing System.IO;\nusing System.Text.Json;\n\nclass Harness {\nstatic object Execute(JsonElement row){string reference=row.GetProperty(\"ref\").GetString()!;var args=row.GetProperty(\"arguments\");if(reference==\"7.10\"){var p0=JsonSerializer.Deserialize<int[][]>(args[0].GetRawText())!;var before0=JsonSerializer.Serialize(p0);var rows0=p0.ToArray();var p1=JsonSerializer.Deserialize<int[][]>(args[1].GetRawText())!;var before1=JsonSerializer.Serialize(p1);var rows1=p1.ToArray();var actual=new Solution().PlayMinesweeper(p0,p1);return new {actual,mutationOk=(JsonSerializer.Serialize(p0)==before0) && (p0.Length==rows0.Length && p0.Select((r,j)=>ReferenceEquals(r,rows0[j])).All(v=>v)) && (JsonSerializer.Serialize(p1)==before1) && (p1.Length==rows1.Length && p1.Select((r,j)=>ReferenceEquals(r,rows1[j])).All(v=>v))};}throw new Exception(\"Unknown reference\");}\nstatic object TimedExecute(JsonElement row) {\nvar clock=System.Diagnostics.Stopwatch.StartNew();object observed;\ntry { observed=Execute(row); } catch(Exception error) { observed=new {error=error.ToString()}; }\nreturn new {observation=observed,elapsedMs=clock.Elapsed.TotalMilliseconds};\n}\nstatic void Main(){using var document=JsonDocument.Parse(File.ReadAllText(\"cases.json\"));var results=new List<object>();foreach(var row in document.RootElement.EnumerateArray()){try{results.Add(TimedExecute(row));}catch(Exception error){results.Add(new {error=error.ToString()});}}File.WriteAllText(\"results.json\",JsonSerializer.Serialize(results));}\n}\n",
+        "reference": ""
+      },
+      "javascript": {
+        "signature": "function PlayMinesweeper(bombs, actions)",
+        "starterCode": "function PlayMinesweeper(bombs, actions) {\n  return [];\n}\n",
+        "solutionCode": "function PlayMinesweeper(bombs, actions) {\n  const rows = bombs.length,\n    columns = bombs[0].length,\n    visible = bombs.map((row) => row.map(() => 9)),\n    trace = [];\n  let safe = bombs.flat().filter((v) => v === 0).length,\n    state = 0;\n  function snapshot(accepted) {\n    trace.push([state, accepted, ...visible.flat()]);\n  }\n  function expose(row, column, queue) {\n    if (visible[row][column] !== 9 || bombs[row][column]) return;\n    let number = 0;\n    for (let r = Math.max(0, row - 1); r < Math.min(rows, row + 2); ++r)\n      for (let c = Math.max(0, column - 1); c < Math.min(columns, column + 2); ++c)\n        number += bombs[r][c];\n    visible[row][column] = number;\n    --safe;\n    if (number === 0) queue.push([row, column]);\n  }\n  snapshot(0);\n  for (const [row, column, kind] of actions) {\n    let accepted = 0;\n    if (state === 0 && row >= 0 && row < rows && column >= 0 && column < columns) {\n      if (kind === 1 && (visible[row][column] === 9 || visible[row][column] === 10)) {\n        visible[row][column] = 19 - visible[row][column];\n        accepted = 1;\n      } else if (kind === 0 && visible[row][column] === 9) {\n        accepted = 1;\n        if (bombs[row][column]) {\n          visible[row][column] = 11;\n          state = 2;\n        } else {\n          const queue = [];\n          expose(row, column, queue);\n          for (let head = 0; head < queue.length; ++head) {\n            const [r, c] = queue[head];\n            for (let nr = Math.max(0, r - 1); nr < Math.min(rows, r + 2); ++nr)\n              for (let nc = Math.max(0, c - 1); nc < Math.min(columns, c + 2); ++nc)\n                expose(nr, nc, queue);\n          }\n          if (safe === 0) state = 1;\n        }\n      }\n    }\n    snapshot(accepted);\n  }\n  return trace;\n}\n",
+        "prefix": "'use strict';\n",
+        "suffix": "\nmodule.exports = {PlayMinesweeper};\n",
+        "harness": "const user = require('./solution.js');\nconst PlayMinesweeper = user.PlayMinesweeper;\n\nconst fs=require('node:fs'),kinds={\"7.10\": \"aai\"};\nfunction invoke(row){const ref=row.ref,args=row.arguments;if(ref===\"7.10\")return PlayMinesweeper(...args);throw new Error('Unknown reference');}\nfunction execute(row){const args=row.arguments,before=JSON.stringify(args),outer=args.filter(Array.isArray),rows=outer.filter(v=>v.length&&Array.isArray(v[0])).map(v=>[v,v.slice()]);const actual=invoke(row),kind=kinds[row.ref];const valid=kind==='strings'?Array.isArray(actual)&&actual.every(v=>typeof v==='string'):['sets','arrangements','path','aai'].includes(kind)?Array.isArray(actual)&&actual.every(r=>Array.isArray(r)&&r.every(Number.isInteger)):kind==='ai'?Array.isArray(actual)&&actual.every(v=>Number.isInteger(v)&&v>=-2147483648&&v<=2147483647):Number.isInteger(actual)&&actual>=-2147483648&&actual<=2147483647;return {actual,mutationOk:valid&&(row.ref==='8.10'?JSON.stringify(actual)===JSON.stringify(args[0]):JSON.stringify(args)===before)&&outer.every(v=>args.includes(v))&&rows.every(([v,old])=>v.length===old.length&&v.every((r,i)=>r===old[i]))};}\nconst results=JSON.parse(fs.readFileSync('cases.json','utf8')).map(timed(row=>{try{return execute(row);}catch(error){return {error:String(error)};}}));\nfs.writeFileSync('results.json',JSON.stringify(results));\n\nfunction timed(fn) { return row => { const start=performance.now(); let observation; try { observation=fn(row); } catch(error) { observation={error:String(error)}; } return {observation,elapsedMs:performance.now()-start}; }; }\n",
+        "reference": ""
+      },
+      "python": {
+        "signature": "def PlayMinesweeper(bombs: list[list[int]], actions: list[list[int]]) -> list[list[int]]",
+        "starterCode": "def PlayMinesweeper(bombs: list[list[int]], actions: list[list[int]]) -> list[list[int]]:\n    return []\n",
+        "solutionCode": "def PlayMinesweeper(bombs: list[list[int]], actions: list[list[int]]) -> list[list[int]]:\n    rows, columns = len(bombs), len(bombs[0])\n    visible = [[9] * columns for _ in bombs]\n    safe = sum(value == 0 for row in bombs for value in row)\n    state = 0\n    trace = []\n\n    def snapshot(accepted):\n        trace.append([state, accepted] + [v for row in visible for v in row])\n\n    def expose(row, column, queue):\n        nonlocal safe\n        if visible[row][column] != 9 or bombs[row][column]:\n            return\n        visible[row][column] = sum(\n            bombs[r][c]\n            for r in range(max(0, row - 1), min(rows, row + 2))\n            for c in range(max(0, column - 1), min(columns, column + 2))\n        )\n        safe -= 1\n        if visible[row][column] == 0:\n            queue.append((row, column))\n\n    snapshot(0)\n    for row, column, kind in actions:\n        accepted = 0\n        if state == 0 and 0 <= row < rows and 0 <= column < columns:\n            if kind == 1 and visible[row][column] in (9, 10):\n                visible[row][column] = 19 - visible[row][column]\n                accepted = 1\n            elif kind == 0 and visible[row][column] == 9:\n                accepted = 1\n                if bombs[row][column]:\n                    visible[row][column] = 11\n                    state = 2\n                else:\n                    queue = []\n                    expose(row, column, queue)\n                    head = 0\n                    while head < len(queue):\n                        r, c = queue[head]\n                        head += 1\n                        for nr in range(max(0, r - 1), min(rows, r + 2)):\n                            for nc in range(max(0, c - 1), min(columns, c + 2)):\n                                expose(nr, nc, queue)\n                    if safe == 0:\n                        state = 1\n        snapshot(accepted)\n    return trace\n",
+        "prefix": "",
+        "suffix": "",
+        "harness": "import time\nimport solution as user\nPlayMinesweeper = user.PlayMinesweeper\n\nimport json\nKINDS={'7.10': 'aai'}\ndef invoke(row):\n    ref,args=row['ref'],row['arguments']\n    if ref == '7.10': return PlayMinesweeper(*args)\n    raise ValueError('Unknown reference')\ndef execute(row):\n    args=row['arguments'];before=json.dumps(args);outer=[v for v in args if type(v) is list];rows=[(v,list(v)) for v in outer if v and type(v[0]) is list]\n    actual=invoke(row);kind=KINDS[row['ref']]\n    valid=(type(actual) is list and all(type(v) is str for v in actual)) if kind=='strings' else (type(actual) is list and all(type(r) is list and all(type(v) is int for v in r) for r in actual)) if kind in ('sets','arrangements','path','aai') else (type(actual) is list and all(type(v) is int for v in actual)) if kind=='ai' else type(actual) is int and -2147483648<=actual<=2147483647\n    return dict(actual=actual,mutationOk=valid and (actual==args[0] if row['ref']=='8.10' else json.dumps(args)==before) and all(any(v is original for v in args) for original in outer) and all(len(v)==len(old) and all(a is b for a,b in zip(v,old)) for v,old in rows))\nresults=[]\nfor row in json.load(open('cases.json',encoding='utf-8')):\n    clock = time.perf_counter()\n    try:results.append(execute(row))\n    except Exception as error:results.append(dict(error=repr(error)))\n    results[-1] = dict(observation=results[-1], elapsedMs=(time.perf_counter()-clock)*1000)\njson.dump(results,open('results.json','w',encoding='utf-8'))\n",
+        "reference": ""
+      },
+      "cpp": {
+        "signature": "std::vector<std::vector<int>> PlayMinesweeper(const std::vector<std::vector<int>>& bombs, const std::vector<std::vector<int>>& actions)",
+        "starterCode": "class Solution {\n public:\n  std::vector<std::vector<int>> PlayMinesweeper(const std::vector<std::vector<int>>& bombs,\n                                                const std::vector<std::vector<int>>& actions) {\n    return {};\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  std::vector<std::vector<int>> PlayMinesweeper(const std::vector<std::vector<int>>& bombs,\n                                                const std::vector<std::vector<int>>& actions) {\n    int rows = bombs.size(), columns = bombs[0].size(), safe = 0, state = 0;\n    for (const auto& row : bombs)\n      for (int v : row)\n        if (v == 0)\n          ++safe;\n    std::vector<std::vector<int>> visible(rows, std::vector<int>(columns, 9)), trace;\n    auto snapshot = [&](int accepted) {\n      std::vector<int> result{state, accepted};\n      for (const auto& row : visible)\n        result.insert(result.end(), row.begin(), row.end());\n      trace.push_back(std::move(result));\n    };\n    auto expose = [&](int row, int column, std::vector<std::pair<int, int>>& queue) {\n      if (visible[row][column] != 9 || bombs[row][column])\n        return;\n      int number = 0;\n      for (int r = std::max(0, row - 1); r < std::min(rows, row + 2); ++r)\n        for (int c = std::max(0, column - 1); c < std::min(columns, column + 2); ++c)\n          number += bombs[r][c];\n      visible[row][column] = number;\n      --safe;\n      if (number == 0)\n        queue.push_back({row, column});\n    };\n    snapshot(0);\n    for (const auto& action : actions) {\n      int row = action[0], column = action[1], kind = action[2], accepted = 0;\n      if (state == 0 && row >= 0 && row < rows && column >= 0 && column < columns) {\n        if (kind == 1 && (visible[row][column] == 9 || visible[row][column] == 10)) {\n          visible[row][column] = 19 - visible[row][column];\n          accepted = 1;\n        } else if (kind == 0 && visible[row][column] == 9) {\n          accepted = 1;\n          if (bombs[row][column]) {\n            visible[row][column] = 11;\n            state = 2;\n          } else {\n            std::vector<std::pair<int, int>> queue;\n            expose(row, column, queue);\n            for (size_t head = 0; head < queue.size(); ++head) {\n              auto [r, c] = queue[head];\n              for (int nr = std::max(0, r - 1); nr < std::min(rows, r + 2); ++nr)\n                for (int nc = std::max(0, c - 1); nc < std::min(columns, c + 2); ++nc)\n                  expose(nr, nc, queue);\n            }\n            if (safe == 0)\n              state = 1;\n          }\n        }\n      }\n      snapshot(accepted);\n    }\n    return trace;\n  }\n};\n",
+        "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n#include <iterator>\n#include <stdexcept>\n",
+        "suffix": "",
+        "harness": "#include <chrono>\n#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include \"solution.cpp\"\n#include <fstream>\n#include \"test_framework/json.h\"\nusing json=nlohmann::json;\n\nbool sameRows(const std::vector<std::vector<int>>& values,const std::vector<const int*>& rows){if(values.size()!=rows.size())return false;for(size_t i=0;i<rows.size();++i)if(values[i].data()!=rows[i])return false;return true;}\njson execute(const json& row){std::string reference=row[\"ref\"].get<std::string>();const auto& args=row[\"arguments\"];if(reference==\"7.10\"){auto p0=args[0].get<std::vector<std::vector<int>>>();auto before0=p0;std::vector<const int*> rows0;for(const auto& row:p0)rows0.push_back(row.data());auto p1=args[1].get<std::vector<std::vector<int>>>();auto before1=p1;std::vector<const int*> rows1;for(const auto& row:p1)rows1.push_back(row.data());auto actual=Solution().PlayMinesweeper(p0,p1);return json{{\"actual\",actual},{\"mutationOk\",(p0==before0) && (sameRows(p0,rows0)) && (p1==before1) && (sameRows(p1,rows1))}};}throw std::runtime_error(\"Unknown reference\");}\njson timedExecute(const json& row) {\nauto start=std::chrono::steady_clock::now();json observed;\ntry { observed=execute(row); } catch(const std::exception& error) { observed=json{{\"error\",error.what()}}; }\ndouble elapsed=std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-start).count();\nreturn json{{\"observation\",observed},{\"elapsedMs\",elapsed}};\n}\nint main(){std::ifstream input(\"cases.json\");json rows;input>>rows;json results=json::array();for(const auto& row:rows){try{results.push_back(timedExecute(row));}catch(const std::exception& error){results.push_back(json{{\"error\",error.what()}});}}std::ofstream(\"results.json\")<<results;}\n",
+        "reference": ""
+      },
+      "java": {
+        "signature": "int[][] PlayMinesweeper(int[][] bombs, int[][] actions)",
+        "starterCode": "class Solution {\n  public int[][] PlayMinesweeper(int[][] bombs, int[][] actions) {\n    return new int[0][];\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public int[][] PlayMinesweeper(int[][] bombs, int[][] actions) {\n    int rows = bombs.length, columns = bombs[0].length;\n    int[][] visible = new int[rows][columns];\n    for (int[] row : visible)\n      Arrays.fill(row, 9);\n    int[] remaining = {0}, state = {0};\n    for (int[] row : bombs)\n      for (int value : row)\n        if (value == 0)\n          remaining[0]++;\n    var trace = new ArrayList<int[]>();\n    class Observer {\n      void snapshot(int accepted) {\n        int[] result = new int[2 + rows * columns];\n        result[0] = state[0];\n        result[1] = accepted;\n        for (int r = 0; r < rows; r++)\n          for (int c = 0; c < columns; c++)\n            result[2 + r * columns + c] = visible[r][c];\n        trace.add(result);\n      }\n      void expose(int row, int column, ArrayList<int[]> queue) {\n        if (visible[row][column] != 9 || bombs[row][column] != 0)\n          return;\n        int number = 0;\n        for (int r = Math.max(0, row - 1); r < Math.min(rows, row + 2); ++r)\n          for (int c = Math.max(0, column - 1); c < Math.min(columns, column + 2); ++c)\n            number += bombs[r][c];\n        visible[row][column] = number;\n        --remaining[0];\n        if (number == 0)\n          queue.add(new int[] {row, column});\n      }\n    }\n    var observer = new Observer();\n    observer.snapshot(0);\n    for (int[] action : actions) {\n      int row = action[0], column = action[1], kind = action[2], accepted = 0;\n      if (state[0] == 0 && row >= 0 && row < rows && column >= 0 && column < columns) {\n        if (kind == 1 && (visible[row][column] == 9 || visible[row][column] == 10)) {\n          visible[row][column] = 19 - visible[row][column];\n          accepted = 1;\n        } else if (kind == 0 && visible[row][column] == 9) {\n          accepted = 1;\n          if (bombs[row][column] != 0) {\n            visible[row][column] = 11;\n            state[0] = 2;\n          } else {\n            var queue = new ArrayList<int[]>();\n            observer.expose(row, column, queue);\n            for (int head = 0; head < queue.size(); ++head) {\n              int r = queue.get(head)[0], c = queue.get(head)[1];\n              for (int nr = Math.max(0, r - 1); nr < Math.min(rows, r + 2); ++nr)\n                for (int nc = Math.max(0, c - 1); nc < Math.min(columns, c + 2); ++nc)\n                  observer.expose(nr, nc, queue);\n            }\n            if (remaining[0] == 0)\n              state[0] = 1;\n          }\n        }\n      }\n      observer.snapshot(accepted);\n    }\n    return trace.toArray(new int[0][]);\n  }\n}\n",
+        "prefix": "import java.util.*;\n",
+        "suffix": "",
+        "harness": "import java.util.*;\nimport java.nio.file.*;\nimport epi.test_framework.minimal_json.*;\n\npublic class Harness {\nstatic int[] integers(JsonArray values){int[] output=new int[values.size()];for(int i=0;i<output.length;++i)output[i]=values.get(i).asInt();return output;}\nstatic int[][] matrix(JsonArray values){int[][] output=new int[values.size()][];for(int i=0;i<output.length;++i)output[i]=integers(values.get(i).asArray());return output;}\nstatic boolean sameRows(int[][] values,int[][] before){if(values.length!=before.length)return false;for(int i=0;i<values.length;++i)if(values[i]!=before[i])return false;return true;}\nstatic JsonValue encode(Object value){if(value==null)return Json.NULL;if(value instanceof Integer v)return Json.value(v);if(value instanceof String v)return Json.value(v);var result=new JsonArray();if(value instanceof int[] values){for(int v:values)result.add(v);}else if(value instanceof int[][] values){for(int[] v:values)result.add(encode(v));}else if(value instanceof Iterable<?> values){for(Object v:values)result.add(encode(v));}else throw new IllegalArgumentException(\"Invalid result\");return result;}\nstatic JsonValue execute(JsonObject row){String reference=row.get(\"ref\").asString();var args=row.get(\"arguments\").asArray();if(reference.equals(\"7.10\")){int[][] p0=matrix(args.get(0).asArray());String before0=encode(p0).toString();int[][] rows0=p0.clone();int[][] p1=matrix(args.get(1).asArray());String before1=encode(p1).toString();int[][] rows1=p1.clone();var actual=new Solution().PlayMinesweeper(p0,p1);return new JsonObject().add(\"actual\",encode(actual)).add(\"mutationOk\",(encode(p0).toString().equals(before0)) && (sameRows(p0,rows0)) && (encode(p1).toString().equals(before1)) && (sameRows(p1,rows1)));}throw new RuntimeException(\"Unknown reference\");}\nstatic JsonValue timedExecute(JsonObject row) {\nlong start=System.nanoTime();JsonValue observed;\ntry { observed=execute(row); } catch(Throwable error) { observed=new JsonObject().add(\"error\",error.toString()); }\nreturn new JsonObject().add(\"observation\",observed).add(\"elapsedMs\",(System.nanoTime()-start)/1000000.0);\n}\npublic static void main(String[] ignored)throws Exception{var results=new JsonArray();for(var row:Json.parse(Files.readString(Path.of(\"cases.json\"))).asArray()){try{results.add(timedExecute(row.asObject()));}catch(Throwable error){results.add(new JsonObject().add(\"error\",error.toString()));}}Files.writeString(Path.of(\"results.json\"),results.toString());}\n}\n",
+        "reference": ""
+      }
+    }
+  },
+  {
     "id": "ctci6_7_12",
     "ref": "7.12",
     "title": "Hash Table",
