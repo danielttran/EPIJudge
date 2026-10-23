@@ -655,6 +655,87 @@ it('keeps the Solution view on selection changes and loads only the new question
   expect(fetchMock.mock.calls.some(([, options]) => options?.method === 'PUT')).toBe(false);
 });
 
+it('switches all five solution languages independently of the draft and persists the reading preference', async () => {
+  const original = fetchMock.getMockImplementation() as (
+    url: string,
+    options?: RequestInit,
+  ) => Promise<Response>;
+  fetchMock.mockImplementation(async (url: string, options?: RequestInit) => {
+    if (url.includes('/solution?language=')) {
+      const language = new URL(url, 'http://local').searchParams.get('language');
+      return json({
+        problemId: url.split('/')[3],
+        language,
+        code: `${language} implementation`,
+        explanation: `${language} algorithm reasoning`,
+        walkthrough: `${language} worked trace`,
+        timeComplexity: 'O(n).',
+        spaceComplexity: 'O(1).',
+        attribution: 'Independent test implementation.',
+      });
+    }
+    return original(url, options);
+  });
+  const editor = (await loaded()) as HTMLTextAreaElement;
+  fireEvent.change(editor, { target: { value: 'preserve this C# draft Ω' } });
+  await waitFor(() => expect(fetchMock.mock.calls.some(([, o]) => o?.method === 'PUT')).toBe(true));
+  const writes = fetchMock.mock.calls.filter(([, options]) => options?.method === 'PUT').length;
+  fireEvent.click(screen.getByRole('tab', { name: 'Solution' }));
+  const selector = screen.getByRole('combobox', { name: 'Solution language' }) as HTMLSelectElement;
+  expect(within(selector).getAllByRole('option')).toHaveLength(5);
+  selector.focus();
+  for (const [language, label] of [
+    ['csharp', 'C#'],
+    ['javascript', 'JavaScript'],
+    ['python', 'Python'],
+    ['cpp', 'C++'],
+    ['java', 'Java'],
+  ]) {
+    fireEvent.change(selector, { target: { value: language } });
+    expect(await screen.findByLabelText(`${label} reference solution code`)).toBeTruthy();
+    expect(screen.getByText(`${language} algorithm reasoning`)).toBeTruthy();
+    expect(screen.getByText(`${language} worked trace`)).toBeTruthy();
+    expect(screen.getByRole('combobox', { name: 'Solution language' })).toBe(selector);
+    expect(document.activeElement).toBe(selector);
+    expect(editor.value).toBe('preserve this C# draft Ω');
+    expect(
+      (screen.getByRole('combobox', { name: 'Select programming language' }) as HTMLSelectElement)
+        .value,
+    ).toBe('csharp');
+  }
+  expect(fetchMock.mock.calls.filter(([, options]) => options?.method === 'PUT')).toHaveLength(
+    writes,
+  );
+  expect(JSON.parse(localStorage.getItem('epi:solution-language')!)).toBe('java');
+  fireEvent.click(screen.getByRole('tab', { name: 'Problem' }));
+  fireEvent.click(screen.getByRole('tab', { name: 'Solution' }));
+  expect(
+    (screen.getByRole('combobox', { name: 'Solution language' }) as HTMLSelectElement).value,
+  ).toBe('java');
+  cleanup();
+  await loaded();
+  fireEvent.click(screen.getByRole('tab', { name: 'Solution' }));
+  expect(await screen.findByLabelText('Java reference solution code')).toBeTruthy();
+  expect(
+    (screen.getByRole('combobox', { name: 'Solution language' }) as HTMLSelectElement).value,
+  ).toBe('java');
+  expect(
+    (screen.getByRole('combobox', { name: 'Select programming language' }) as HTMLSelectElement)
+      .value,
+  ).toBe('csharp');
+});
+
+it('ignores an invalid saved solution language and falls back to the editor language', async () => {
+  localStorage.setItem('epi:solution-language', JSON.stringify('unsupported'));
+  localStorage.setItem('epi:language', JSON.stringify('python'));
+  await loaded();
+  fireEvent.click(screen.getByRole('tab', { name: 'Solution' }));
+  expect(await screen.findByLabelText('Python reference solution code')).toBeTruthy();
+  expect(
+    (screen.getByRole('combobox', { name: 'Solution language' }) as HTMLSelectElement).value,
+  ).toBe('python');
+});
+
 it('supports keyboard tab navigation with associated panels and keeps editor focus separate', async () => {
   const editor = await loaded();
   const description = screen.getByRole('tab', { name: 'Problem' });

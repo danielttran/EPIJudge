@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Check, Copy, LoaderCircle } from 'lucide-react';
 import { ReadOnlyCode } from './Editor';
 import { CodeReferences } from './CodeReferences';
+import { LanguageSelect } from './LanguageSelect';
 import type { CodeReference } from './workspaceModels';
 import type { CodeFormat } from './practiceModels';
 
@@ -72,11 +73,13 @@ export function SolutionPanel({
   problemId,
   title,
   language,
+  onLanguageChange,
   example,
 }: {
   problemId: string;
   title: string;
   language: string;
+  onLanguageChange?: (language: string) => void;
   example?: { input: string; output: string; explanation: string };
 }) {
   const scope = `${problemId}:${language}`;
@@ -194,29 +197,50 @@ export function SolutionPanel({
               ) : null}
             </section>
           )}
-          <section aria-labelledby="solution-implementation-heading">
-            <div className="solution-code-heading">
-              <h2 id="solution-implementation-heading">Implementation</h2>
-              <button type="button" className="solution-copy" onClick={() => void copyCode()}>
-                {copyState === 'copied' ? <Check size={14} /> : <Copy size={14} />} Copy code
-              </button>
-            </div>
-            {copyState === 'copied' && (
-              <p className="solution-copy-status" role="status">
-                Code copied.
-              </p>
-            )}
-            {copyState === 'error' && (
-              <p className="solution-copy-status" role="alert">
-                Could not copy. Select the code and copy it manually.
-              </p>
-            )}
-            <ReadOnlyCode
-              code={visible.solution.code}
-              language={language}
-              label={`${languageName} reference solution code`}
+        </>
+      )}
+      <section aria-labelledby="solution-implementation-heading">
+        <div className="solution-code-heading">
+          <h2 id="solution-implementation-heading">Implementation</h2>
+          <button
+            type="button"
+            className="solution-copy"
+            disabled={visible.status !== 'ready'}
+            onClick={() => void copyCode()}
+          >
+            {copyState === 'copied' ? <Check size={14} /> : <Copy size={14} />} Copy code
+          </button>
+        </div>
+        {onLanguageChange && (
+          <div className="solution-language-control">
+            <span>Solution language</span>
+            <LanguageSelect
+              value={language}
+              onChange={onLanguageChange}
+              label="Solution language"
             />
-          </section>
+          </div>
+        )}
+        {copyState === 'copied' && (
+          <p className="solution-copy-status" role="status">
+            Code copied.
+          </p>
+        )}
+        {copyState === 'error' && (
+          <p className="solution-copy-status" role="alert">
+            Could not copy. Select the code and copy it manually.
+          </p>
+        )}
+        {visible.status === 'ready' && (
+          <ReadOnlyCode
+            code={visible.solution.code}
+            language={language}
+            label={`${languageName} reference solution code`}
+          />
+        )}
+      </section>
+      {visible.status === 'ready' && (
+        <>
           {visible.solution.correctness && (
             <section aria-labelledby="solution-correctness-heading">
               <h2 id="solution-correctness-heading">Correctness</h2>

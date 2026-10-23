@@ -1,0 +1,647 @@
+[
+  {
+    "ref": "1.1",
+    "method": "IsUnique",
+    "params": [
+      [
+        "text",
+        "s"
+      ]
+    ],
+    "result": "b",
+    "description": "Return whether every character in text occurs at most once. Character case, whitespace, and punctuation are significant. Preserve the input.",
+    "constraints": [
+      "text contains 0..10000 ASCII characters (codes 0..127).",
+      "The empty string returns true. This bank specifies ASCII so character units agree in every language."
+    ],
+    "why": "A repeated character is exactly a character whose presence flag was already set. Recording presence avoids comparing each character with every earlier character.",
+    "correctness": "Before each iteration, the flags represent exactly the characters in the processed prefix. An already-set flag supplies two occurrences and proves failure. Otherwise setting it preserves the invariant. Finishing without a repeat proves that every character occurs at most once.",
+    "walkthrough": "For 'ink', the flags for i, n and k change from false to true, so the result is true. For 'level', l and e are recorded, then v; the next e already has a flag, so the result is false immediately.",
+    "example": [
+      [
+        "level"
+      ],
+      false
+    ],
+    "time": "O(n) time in the input length n.",
+    "space": "O(128) = O(1) auxiliary space for the fixed ASCII alphabet.",
+    "edges": [
+      "Empty input is unique.",
+      "'aA' is unique; 'aa' is not.",
+      "Two spaces or two null characters are duplicates."
+    ],
+    "mutation": "preserve",
+    "id": "ctci6_1_1",
+    "title": "Is Unique",
+    "testCount": 49,
+    "languages": {
+      "csharp": {
+        "signature": "bool IsUnique(string text)",
+        "starterCode": "public class Solution {\n    public bool IsUnique(string text) {\n        return false;\n    }\n}\n",
+        "solutionCode": "public class Solution {\n    public bool IsUnique(string text) {\n        bool[] seen = new bool[128];\n        for (int i = 0; i < text.Length; ++i) {\n            int code = text[i];\n            if (seen[code]) return false;\n            seen[code] = true;\n        }\n        return true;\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function IsUnique(text)",
+        "starterCode": "function IsUnique(text) {\n  return false;\n}\n",
+        "solutionCode": "function IsUnique(text) {\n  const seen = Array(128).fill(false);\n  for (let i = 0; i < text.length; ++i) {\n      const code = text.charCodeAt(i);\n      if (seen[code]) return false;\n      seen[code] = true;\n  }\n  return true;\n}\n"
+      },
+      "python": {
+        "signature": "def IsUnique(text: str) -> bool",
+        "starterCode": "def IsUnique(text: str) -> bool:\n    return False\n",
+        "solutionCode": "def IsUnique(text: str) -> bool:\n    seen = [False] * 128\n    for character in text:\n        code = ord(character)\n        if seen[code]:\n            return False\n        seen[code] = True\n    return True\n"
+      },
+      "cpp": {
+        "signature": "bool IsUnique(const std::string& text)",
+        "starterCode": "class Solution {\npublic:\n    bool IsUnique(const std::string& text) {\n        return false;\n    }\n};\n",
+        "solutionCode": "class Solution {\npublic:\n    bool IsUnique(const std::string& text) {\n        std::vector<bool> seen(128, false);\n        for (int i = 0; i < static_cast<int>(text.size()); ++i) {\n            int code = text[i];\n            if (seen[code]) return false;\n            seen[code] = true;\n        }\n        return true;\n    }\n};\n"
+      },
+      "java": {
+        "signature": "boolean IsUnique(String text)",
+        "starterCode": "class Solution {\n    public boolean IsUnique(String text) {\n        return false;\n    }\n}\n",
+        "solutionCode": "class Solution {\n    public boolean IsUnique(String text) {\n        boolean[] seen = new boolean[128];\n        for (int i = 0; i < text.length(); ++i) {\n            int code = text.charAt(i);\n            if (seen[code]) return false;\n            seen[code] = true;\n        }\n        return true;\n    }\n}\n"
+      }
+    }
+  },
+  {
+    "ref": "1.2",
+    "method": "CheckPermutation",
+    "params": [
+      [
+        "first",
+        "s"
+      ],
+      [
+        "second",
+        "s"
+      ]
+    ],
+    "result": "b",
+    "description": "Return whether second can be obtained by rearranging all characters of first, using every occurrence exactly once. Character case, spaces, and punctuation are significant. Preserve both inputs.",
+    "constraints": [
+      "Each string has 0..10000 ASCII characters (codes 0..127).",
+      "Two empty strings return true; unequal lengths return false."
+    ],
+    "why": "Order may change, but the count of each character cannot. Add counts from first and subtract counts from second; a negative count detects an occurrence that first cannot supply.",
+    "correctness": "After processing first, each counter equals its frequency. While processing second, a counter equals the number of that character still available. A negative counter makes a permutation impossible. With equal lengths, consuming every character without a negative counter consumes the entire multiset, proving equivalence.",
+    "walkthrough": "For 'a!ba' and 'ba!a', the first counts are a:2, !:1, b:1. Consuming b, a, !, a leaves all counts zero, so the result is true. Replacing the final a by b would make b's counter negative.",
+    "example": [
+      [
+        "a!ba",
+        "ba!a"
+      ],
+      true
+    ],
+    "time": "O(n + m) time for input lengths n and m; an unequal-length pair is rejected immediately.",
+    "space": "O(128) = O(1) auxiliary space.",
+    "edges": [
+      "Multiplicity matters: 'aab' and 'abb' differ.",
+      "Case and whitespace are not normalized.",
+      "Both empty and unequal-length inputs are covered."
+    ],
+    "mutation": "preserve",
+    "id": "ctci6_1_2",
+    "title": "Check Permutation",
+    "testCount": 81,
+    "languages": {
+      "csharp": {
+        "signature": "bool CheckPermutation(string first, string second)",
+        "starterCode": "public class Solution {\n    public bool CheckPermutation(string first, string second) {\n        return false;\n    }\n}\n",
+        "solutionCode": "public class Solution {\n    public bool CheckPermutation(string first, string second) {\n        if (first.Length != second.Length) return false;\n        int[] counts = new int[128];\n        for (int i = 0; i < first.Length; ++i) ++counts[first[i]];\n        for (int i = 0; i < second.Length; ++i) {\n            int code = second[i];\n            --counts[code];\n            if (counts[code] < 0) return false;\n        }\n        return true;\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function CheckPermutation(first, second)",
+        "starterCode": "function CheckPermutation(first, second) {\n  return false;\n}\n",
+        "solutionCode": "function CheckPermutation(first, second) {\n  if (first.length !== second.length) return false;\n  const counts = Array(128).fill(0);\n  for (let i = 0; i < first.length; ++i) ++counts[first.charCodeAt(i)];\n  for (let i = 0; i < second.length; ++i) {\n      const code = second.charCodeAt(i);\n      if (--counts[code] < 0) return false;\n  }\n  return true;\n}\n"
+      },
+      "python": {
+        "signature": "def CheckPermutation(first: str, second: str) -> bool",
+        "starterCode": "def CheckPermutation(first: str, second: str) -> bool:\n    return False\n",
+        "solutionCode": "def CheckPermutation(first: str, second: str) -> bool:\n    if len(first) != len(second):\n        return False\n    counts = [0] * 128\n    for character in first:\n        counts[ord(character)] += 1\n    for character in second:\n        code = ord(character)\n        counts[code] -= 1\n        if counts[code] < 0:\n            return False\n    return True\n"
+      },
+      "cpp": {
+        "signature": "bool CheckPermutation(const std::string& first, const std::string& second)",
+        "starterCode": "class Solution {\npublic:\n    bool CheckPermutation(const std::string& first, const std::string& second) {\n        return false;\n    }\n};\n",
+        "solutionCode": "class Solution {\npublic:\n    bool CheckPermutation(const std::string& first, const std::string& second) {\n        if (static_cast<int>(first.size()) != static_cast<int>(second.size())) return false;\n        std::array<int,128> counts{};\n        for (int i = 0; i < static_cast<int>(first.size()); ++i) ++counts[first[i]];\n        for (int i = 0; i < static_cast<int>(second.size()); ++i) {\n            int code = second[i];\n            --counts[code];\n            if (counts[code] < 0) return false;\n        }\n        return true;\n    }\n};\n"
+      },
+      "java": {
+        "signature": "boolean CheckPermutation(String first, String second)",
+        "starterCode": "class Solution {\n    public boolean CheckPermutation(String first, String second) {\n        return false;\n    }\n}\n",
+        "solutionCode": "class Solution {\n    public boolean CheckPermutation(String first, String second) {\n        if (first.length() != second.length()) return false;\n        int[] counts = new int[128];\n        for (int i = 0; i < first.length(); ++i) ++counts[first.charAt(i)];\n        for (int i = 0; i < second.length(); ++i) {\n            int code = second.charAt(i);\n            --counts[code];\n            if (counts[code] < 0) return false;\n        }\n        return true;\n    }\n}\n"
+      }
+    }
+  },
+  {
+    "ref": "1.3",
+    "method": "Urlify",
+    "params": [
+      [
+        "buffer",
+        "chars"
+      ],
+      [
+        "trueLength",
+        "i"
+      ]
+    ],
+    "result": "void",
+    "description": "Replace every ordinary space in buffer's first trueLength characters with the three characters '%20'. Modify that same character array. Only the first trueLength characters are original text; all later cells are spare capacity. Return no value. The judge displays the resulting entire buffer.",
+    "constraints": [
+      "buffer is a mutable array of ASCII characters; every JavaScript/Python element is a one-character string.",
+      "0 <= trueLength <= 10000. If the original prefix contains s spaces, buffer has exactly trueLength + 2*s cells.",
+      "Spare cells may contain any characters; ignore their original values. Literal '%' and digits in the original text are preserved.",
+      "An empty prefix has an empty buffer. A trailing space inside the prefix must be encoded; do not infer length by trimming."
+    ],
+    "why": "Each replacement expands one cell to three. Filling from the right keeps writes at or beyond the next unread character, so expansion cannot destroy text that still needs processing.",
+    "correctness": "Initially the write position is the last cell of the required output. Before each backward step, the completed output suffix is correct and all unread original characters remain intact. Copying a nonspace consumes one input and one output cell; encoding a space consumes one input and three output cells. The remaining output length equals the remaining input length plus twice its space count, so writes never overwrite an earlier unread cell. Exhaustion produces exactly the encoded buffer.",
+    "walkthrough": "For buffer ['g','o',' ','!','?','?'] and trueLength=4, write ! into cell 5, then write %,2,0 into cells 2..4, then copy o and g into cells 1 and 0. The final buffer is ['g','o','%','2','0','!']. Spare '?' values never become text.",
+    "example": [
+      [
+        [
+          "g",
+          "o",
+          " ",
+          "!",
+          "?",
+          "?"
+        ],
+        4
+      ],
+      [
+        "g",
+        "o",
+        "%",
+        "2",
+        "0",
+        "!"
+      ]
+    ],
+    "time": "O(n) time for the original prefix length n: one backward pass writes n + 2*s cells, where s <= n is the number of spaces. Exact capacity supplies the initial write position without a counting pass.",
+    "space": "O(1) auxiliary space; the provided buffer is modified in place.",
+    "edges": [
+      "Empty and space-free buffers.",
+      "Leading, trailing, adjacent, and all-space text.",
+      "Spare cells are not necessarily spaces; trueLength is authoritative."
+    ],
+    "mutation": "chars",
+    "id": "ctci6_1_3",
+    "title": "URLify",
+    "testCount": 49,
+    "languages": {
+      "csharp": {
+        "signature": "void Urlify(char[] buffer, int trueLength)",
+        "starterCode": "public class Solution {\n    public void Urlify(char[] buffer, int trueLength) {\n        // Write your solution here.\n    }\n}\n",
+        "solutionCode": "public class Solution {\n    public void Urlify(char[] buffer, int trueLength) {\n        int write = buffer.Length - 1;\n        for (int read = trueLength - 1; read >= 0; --read) {\n            char current = buffer[read];\n            if (current == ' ') {\n                buffer[write--] = '0';\n                buffer[write--] = '2';\n                buffer[write--] = '%';\n            } else {\n                buffer[write--] = current;\n            }\n        }\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function Urlify(buffer, trueLength)",
+        "starterCode": "function Urlify(buffer, trueLength) {\n  // Write your solution here.\n}\n",
+        "solutionCode": "function Urlify(buffer, trueLength) {\n  let write = buffer.length - 1;\n  for (let read = trueLength - 1; read >= 0; --read) {\n      const current = buffer[read];\n      if (current === ' ') {\n          buffer[write--] = '0';\n          buffer[write--] = '2';\n          buffer[write--] = '%';\n      } else {\n          buffer[write--] = current;\n      }\n  }\n}\n"
+      },
+      "python": {
+        "signature": "def Urlify(buffer: list[str], trueLength: int) -> None",
+        "starterCode": "def Urlify(buffer: list[str], trueLength: int) -> None:\n    pass\n",
+        "solutionCode": "def Urlify(buffer: list[str], trueLength: int) -> None:\n    write = len(buffer) - 1\n    for read in range(trueLength - 1, -1, -1):\n        current = buffer[read]\n        if current == ' ':\n            buffer[write] = '0'\n            buffer[write - 1] = '2'\n            buffer[write - 2] = '%'\n            write -= 3\n        else:\n            buffer[write] = current\n            write -= 1\n"
+      },
+      "cpp": {
+        "signature": "void Urlify(std::vector<char>& buffer, int trueLength)",
+        "starterCode": "class Solution {\npublic:\n    void Urlify(std::vector<char>& buffer, int trueLength) {\n        // Write your solution here.\n    }\n};\n",
+        "solutionCode": "class Solution {\npublic:\n    void Urlify(std::vector<char>& buffer, int trueLength) {\n        int write = static_cast<int>(buffer.size()) - 1;\n        for (int read = trueLength - 1; read >= 0; --read) {\n            char current = buffer[read];\n            if (current == ' ') {\n                buffer[write--] = '0';\n                buffer[write--] = '2';\n                buffer[write--] = '%';\n            } else {\n                buffer[write--] = current;\n            }\n        }\n    }\n};\n"
+      },
+      "java": {
+        "signature": "void Urlify(char[] buffer, int trueLength)",
+        "starterCode": "class Solution {\n    public void Urlify(char[] buffer, int trueLength) {\n        // Write your solution here.\n    }\n}\n",
+        "solutionCode": "class Solution {\n    public void Urlify(char[] buffer, int trueLength) {\n        int write = buffer.length - 1;\n        for (int read = trueLength - 1; read >= 0; --read) {\n            char current = buffer[read];\n            if (current == ' ') {\n                buffer[write--] = '0';\n                buffer[write--] = '2';\n                buffer[write--] = '%';\n            } else {\n                buffer[write--] = current;\n            }\n        }\n    }\n}\n"
+      }
+    }
+  },
+  {
+    "ref": "1.4",
+    "method": "PalindromePermutation",
+    "params": [
+      [
+        "text",
+        "s"
+      ]
+    ],
+    "result": "b",
+    "description": "Return whether the letters in text can be rearranged into a palindrome. Use only English letters A..Z and a..z, treating uppercase and lowercase as the same letter. Ignore spaces, digits, punctuation, and other ASCII nonletters. Preserve text.",
+    "constraints": [
+      "text contains 0..10000 ASCII characters.",
+      "Zero retained letters counts as a palindrome permutation."
+    ],
+    "why": "Matching positions on opposite sides of a palindrome consume equal letters in pairs. Only a possible center may consume one unpaired letter, so at most one letter frequency may be odd.",
+    "correctness": "After scanning, each of the 26 counts equals its retained letter's case-insensitive frequency. Necessity follows because all positions except a single center form equal pairs. For sufficiency, place half of each even part on either side in mirrored order and place the sole odd leftover, if present, at the center. Therefore at most one odd count is exactly the required condition.",
+    "walkthrough": "For 'R!aCar', ignoring ! and folding case leaves racar. Counts are r:2, a:2, c:1, so c can be the center and the pairs can mirror around it. The answer is true. 'R!aCat' has three odd counts and returns false.",
+    "example": [
+      [
+        "R!aCar"
+      ],
+      true
+    ],
+    "time": "O(n) time, plus a fixed 26-letter scan.",
+    "space": "O(128) = O(1) auxiliary space; only the 26 lowercase-letter slots are used.",
+    "edges": [
+      "Punctuation-only and empty strings return true.",
+      "Case is folded only for ASCII English letters.",
+      "Two odd letter counts must fail even when spaces separate them."
+    ],
+    "mutation": "preserve",
+    "id": "ctci6_1_4",
+    "title": "Palindrome Permutation",
+    "testCount": 51,
+    "languages": {
+      "csharp": {
+        "signature": "bool PalindromePermutation(string text)",
+        "starterCode": "public class Solution {\n    public bool PalindromePermutation(string text) {\n        return false;\n    }\n}\n",
+        "solutionCode": "public class Solution {\n    public bool PalindromePermutation(string text) {\n        int[] counts = new int[128];\n        for (int i = 0; i < text.Length; ++i) {\n            int code = text[i];\n            if (code >= 65 && code <= 90) code += 32;\n            if (code >= 97 && code <= 122) ++counts[code];\n        }\n        int odd = 0;\n        for (int code = 97; code <= 122; ++code) odd += counts[code] % 2;\n        return odd <= 1;\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function PalindromePermutation(text)",
+        "starterCode": "function PalindromePermutation(text) {\n  return false;\n}\n",
+        "solutionCode": "function PalindromePermutation(text) {\n  const counts = Array(128).fill(0);\n  for (let i = 0; i < text.length; ++i) {\n      let code = text.charCodeAt(i);\n      if (code >= 65 && code <= 90) code += 32;\n      if (code >= 97 && code <= 122) ++counts[code];\n  }\n  let odd = 0;\n  for (let code = 97; code <= 122; ++code) odd += counts[code] % 2;\n  return odd <= 1;\n}\n"
+      },
+      "python": {
+        "signature": "def PalindromePermutation(text: str) -> bool",
+        "starterCode": "def PalindromePermutation(text: str) -> bool:\n    return False\n",
+        "solutionCode": "def PalindromePermutation(text: str) -> bool:\n    counts = [0] * 128\n    for character in text:\n        code = ord(character)\n        if 65 <= code <= 90:\n            code += 32\n        if 97 <= code <= 122:\n            counts[code] += 1\n    return sum(counts[code] % 2 for code in range(97, 123)) <= 1\n"
+      },
+      "cpp": {
+        "signature": "bool PalindromePermutation(const std::string& text)",
+        "starterCode": "class Solution {\npublic:\n    bool PalindromePermutation(const std::string& text) {\n        return false;\n    }\n};\n",
+        "solutionCode": "class Solution {\npublic:\n    bool PalindromePermutation(const std::string& text) {\n        std::array<int,128> counts{};\n        for (int i = 0; i < static_cast<int>(text.size()); ++i) {\n            int code = text[i];\n            if (code >= 65 && code <= 90) code += 32;\n            if (code >= 97 && code <= 122) ++counts[code];\n        }\n        int odd = 0;\n        for (int code = 97; code <= 122; ++code) odd += counts[code] % 2;\n        return odd <= 1;\n    }\n};\n"
+      },
+      "java": {
+        "signature": "boolean PalindromePermutation(String text)",
+        "starterCode": "class Solution {\n    public boolean PalindromePermutation(String text) {\n        return false;\n    }\n}\n",
+        "solutionCode": "class Solution {\n    public boolean PalindromePermutation(String text) {\n        int[] counts = new int[128];\n        for (int i = 0; i < text.length(); ++i) {\n            int code = text.charAt(i);\n            if (code >= 65 && code <= 90) code += 32;\n            if (code >= 97 && code <= 122) ++counts[code];\n        }\n        int odd = 0;\n        for (int code = 97; code <= 122; ++code) odd += counts[code] % 2;\n        return odd <= 1;\n    }\n}\n"
+      }
+    }
+  },
+  {
+    "ref": "1.5",
+    "method": "OneAway",
+    "params": [
+      [
+        "first",
+        "s"
+      ],
+      [
+        "second",
+        "s"
+      ]
+    ],
+    "result": "b",
+    "description": "Return whether first can be changed into second using at most one single-character insertion, deletion, or replacement. Zero edits is allowed. Swapping two positions is not one edit. Character case and whitespace are significant. Preserve both strings.",
+    "constraints": [
+      "Each string contains 0..10000 ASCII characters.",
+      "A single edit operates on one character, not a word or a substring."
+    ],
+    "why": "The equal prefix needs no editing. At the first mismatch there is only one possible kind of repair given the two lengths: advance both pointers for replacement, or advance only the longer string for insertion/deletion. Any later mismatch requires a second edit.",
+    "correctness": "Before a mismatch, both pointers delimit equal prefixes after the edits already used. A length difference above one is impossible to repair with one edit. With equal lengths, an insertion or deletion would leave unequal lengths, so the mismatch must be replaced. With unequal lengths, only skipping the longer string's next character can align the remaining suffixes. Accepting at most one such mismatch, including a possible final extra character, is necessary and sufficient.",
+    "walkthrough": "For 'plane' and 'pane', p matches p. At l versus a, the lengths differ by one, so skip only l in the longer string. The remaining a,n,e match, giving true. For 'ab' and 'ba', replacing the first mismatch leaves a second mismatch, so the result is false.",
+    "example": [
+      [
+        "plane",
+        "pane"
+      ],
+      true
+    ],
+    "time": "O(n + m) time in the input lengths.",
+    "space": "O(1) auxiliary space, without allocating normalized or sliced copies.",
+    "edges": [
+      "Equal strings need zero edits.",
+      "Empty versus one character succeeds; empty versus two fails.",
+      "An extra character at either end is one edit; a transposition usually needs two."
+    ],
+    "mutation": "preserve",
+    "id": "ctci6_1_5",
+    "title": "One Away",
+    "testCount": 81,
+    "languages": {
+      "csharp": {
+        "signature": "bool OneAway(string first, string second)",
+        "starterCode": "public class Solution {\n    public bool OneAway(string first, string second) {\n        return false;\n    }\n}\n",
+        "solutionCode": "public class Solution {\n    public bool OneAway(string first, string second) {\n        int n = first.Length, m = second.Length;\n        if (n - m > 1 || m - n > 1) return false;\n        int i = 0, j = 0;\n        bool used = false;\n        while (i < n && j < m) {\n            if (first[i] == second[j]) { ++i; ++j; }\n            else {\n                if (used) return false;\n                used = true;\n                if (n >= m) ++i;\n                if (m >= n) ++j;\n            }\n        }\n        return true;\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function OneAway(first, second)",
+        "starterCode": "function OneAway(first, second) {\n  return false;\n}\n",
+        "solutionCode": "function OneAway(first, second) {\n  const n = first.length, m = second.length;\n  if (Math.abs(n - m) > 1) return false;\n  let i = 0, j = 0, used = false;\n  while (i < n && j < m) {\n      if (first[i] === second[j]) { ++i; ++j; }\n      else {\n          if (used) return false;\n          used = true;\n          if (n >= m) ++i;\n          if (m >= n) ++j;\n      }\n  }\n  return true;\n}\n"
+      },
+      "python": {
+        "signature": "def OneAway(first: str, second: str) -> bool",
+        "starterCode": "def OneAway(first: str, second: str) -> bool:\n    return False\n",
+        "solutionCode": "def OneAway(first: str, second: str) -> bool:\n    n, m = len(first), len(second)\n    if abs(n - m) > 1:\n        return False\n    i = j = 0\n    used = False\n    while i < n and j < m:\n        if first[i] == second[j]:\n            i += 1\n            j += 1\n        else:\n            if used:\n                return False\n            used = True\n            if n >= m:\n                i += 1\n            if m >= n:\n                j += 1\n    return True\n"
+      },
+      "cpp": {
+        "signature": "bool OneAway(const std::string& first, const std::string& second)",
+        "starterCode": "class Solution {\npublic:\n    bool OneAway(const std::string& first, const std::string& second) {\n        return false;\n    }\n};\n",
+        "solutionCode": "class Solution {\npublic:\n    bool OneAway(const std::string& first, const std::string& second) {\n        int n = static_cast<int>(first.size()), m = static_cast<int>(second.size());\n        if (n - m > 1 || m - n > 1) return false;\n        int i = 0, j = 0;\n        bool used = false;\n        while (i < n && j < m) {\n            if (first[i] == second[j]) { ++i; ++j; }\n            else {\n                if (used) return false;\n                used = true;\n                if (n >= m) ++i;\n                if (m >= n) ++j;\n            }\n        }\n        return true;\n    }\n};\n"
+      },
+      "java": {
+        "signature": "boolean OneAway(String first, String second)",
+        "starterCode": "class Solution {\n    public boolean OneAway(String first, String second) {\n        return false;\n    }\n}\n",
+        "solutionCode": "class Solution {\n    public boolean OneAway(String first, String second) {\n        int n = first.length(), m = second.length();\n        if (n - m > 1 || m - n > 1) return false;\n        int i = 0, j = 0;\n        boolean used = false;\n        while (i < n && j < m) {\n            if (first.charAt(i) == second.charAt(j)) { ++i; ++j; }\n            else {\n                if (used) return false;\n                used = true;\n                if (n >= m) ++i;\n                if (m >= n) ++j;\n            }\n        }\n        return true;\n    }\n}\n"
+      }
+    }
+  },
+  {
+    "ref": "1.6",
+    "method": "Compress",
+    "params": [
+      [
+        "text",
+        "s"
+      ]
+    ],
+    "result": "s",
+    "description": "Replace each maximal run of equal consecutive letters by that letter followed by its decimal run length, including length one. Return the encoded string only when it is strictly shorter than text; otherwise return text unchanged. Letter case is significant.",
+    "constraints": [
+      "text contains 0..10000 English letters A..Z or a..z.",
+      "Counts use ordinary base-ten digits without leading zeroes. Empty text returns an empty string.",
+      "This is a run encoding, not a total character-frequency encoding: separate runs remain separate."
+    ],
+    "why": "A run's contribution is determined when its right boundary is reached. Collecting each contribution once preserves order and avoids repeatedly rescanning earlier characters. Comparing the final lengths prevents compression from expanding short runs.",
+    "correctness": "At each run boundary the scan has found exactly one maximal contiguous block of the current letter. Appending its letter and length represents precisely that block; blocks partition the input, so concatenating their encodings produces the required candidate. Returning that candidate only for a strict length reduction implements the final selection rule, including ties.",
+    "walkthrough": "For 'zzzzQQQQQx', the runs are z:4, Q:5, x:1. Their encodings form 'z4Q5x1', length 6 instead of 10, so it is returned. For 'zz', the candidate 'z2' ties length 2, so the original 'zz' is returned.",
+    "example": [
+      [
+        "zzzzQQQQQx"
+      ],
+      "z4Q5x1"
+    ],
+    "time": "O(n) time to scan and build the candidate, where n is the input length. Counts have at most five digits under this bank's bound.",
+    "space": "O(n) auxiliary/output-building space for the candidate.",
+    "edges": [
+      "Empty string and one-letter input.",
+      "A length tie preserves the original.",
+      "Runs longer than nine need multidigit counts; uppercase and lowercase form separate runs."
+    ],
+    "mutation": "preserve",
+    "id": "ctci6_1_6",
+    "title": "String Compression",
+    "testCount": 51,
+    "languages": {
+      "csharp": {
+        "signature": "string Compress(string text)",
+        "starterCode": "public class Solution {\n    public string Compress(string text) {\n        return \"\";\n    }\n}\n",
+        "solutionCode": "public class Solution {\n    public string Compress(string text) {\n        var output = new System.Text.StringBuilder();\n        int n = text.Length;\n        for (int start = 0; start < n;) {\n            int end = start + 1;\n            while (end < n && text[end] == text[start]) ++end;\n            output.Append(text[start]); output.Append(end - start);\n            start = end;\n        }\n        return output.Length < n ? output.ToString() : text;\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function Compress(text)",
+        "starterCode": "function Compress(text) {\n  return \"\";\n}\n",
+        "solutionCode": "function Compress(text) {\n  const parts = [];\n  for (let start = 0; start < text.length;) {\n      let end = start + 1;\n      while (end < text.length && text[end] === text[start]) ++end;\n      parts.push(text[start], String(end - start));\n      start = end;\n  }\n  const output = parts.join('');\n  return output.length < text.length ? output : text;\n}\n"
+      },
+      "python": {
+        "signature": "def Compress(text: str) -> str",
+        "starterCode": "def Compress(text: str) -> str:\n    return \"\"\n",
+        "solutionCode": "def Compress(text: str) -> str:\n    parts = []\n    start = 0\n    while start < len(text):\n        end = start + 1\n        while end < len(text) and text[end] == text[start]:\n            end += 1\n        parts.append(text[start])\n        parts.append(str(end - start))\n        start = end\n    output = ''.join(parts)\n    return output if len(output) < len(text) else text\n"
+      },
+      "cpp": {
+        "signature": "std::string Compress(const std::string& text)",
+        "starterCode": "class Solution {\npublic:\n    std::string Compress(const std::string& text) {\n        return \"\";\n    }\n};\n",
+        "solutionCode": "class Solution {\npublic:\n    std::string Compress(const std::string& text) {\n        std::string output;\n        int n = static_cast<int>(text.size());\n        for (int start = 0; start < n;) {\n            int end = start + 1;\n            while (end < n && text[end] == text[start]) ++end;\n            output.push_back(text[start]); output += std::to_string(end - start);\n            start = end;\n        }\n        return static_cast<int>(output.size()) < n ? output : text;\n    }\n};\n"
+      },
+      "java": {
+        "signature": "String Compress(String text)",
+        "starterCode": "class Solution {\n    public String Compress(String text) {\n        return \"\";\n    }\n}\n",
+        "solutionCode": "class Solution {\n    public String Compress(String text) {\n        StringBuilder output = new StringBuilder();\n        int n = text.length();\n        for (int start = 0; start < n;) {\n            int end = start + 1;\n            while (end < n && text.charAt(end) == text.charAt(start)) ++end;\n            output.append(text.charAt(start)); output.append(end - start);\n            start = end;\n        }\n        return output.length() < n ? output.toString() : text;\n    }\n}\n"
+      }
+    }
+  },
+  {
+    "ref": "1.7",
+    "method": "Rotate",
+    "params": [
+      [
+        "matrix",
+        "aai"
+      ]
+    ],
+    "result": "void",
+    "description": "Rotate a square integer matrix 90 degrees clockwise in place. An entry originally at row r, column c moves to row c, column n-1-r. Preserve the original outer array and every row object; return no value. The judge displays the mutated matrix.",
+    "constraints": [
+      "matrix is n by n, with 0 <= n <= 100 and signed 32-bit entries. [] is the empty matrix.",
+      "Rows are separate mutable arrays, not aliases. Do not allocate a second matrix or replace rows."
+    ],
+    "why": "A clockwise rotation is a transpose followed by a reversal of each row. Transposing swaps row and column coordinates; row reversal changes the new column from r to n-1-r. Both steps use pairwise swaps on existing cells.",
+    "correctness": "After transpose, the original cell (r,c) occupies (c,r). Reversing that row moves it to (c,n-1-r), exactly the required destination. Each transpose pair is swapped once using only positions above the diagonal; each row pair is swapped once. These are bijections, so no cell is lost or duplicated and row identities remain unchanged.",
+    "walkthrough": "For [[2,5],[7,9]], transpose swaps 5 and 7 to get [[2,7],[5,9]]. Reversing each row produces [[7,2],[9,5]], the clockwise rotation. No row reference is replaced.",
+    "example": [
+      [
+        [
+          [
+            2,
+            5
+          ],
+          [
+            7,
+            9
+          ]
+        ]
+      ],
+      [
+        [
+          7,
+          2
+        ],
+        [
+          9,
+          5
+        ]
+      ]
+    ],
+    "time": "O(n^2) time for an n by n matrix.",
+    "space": "O(1) auxiliary space using individual swaps.",
+    "edges": [
+      "Empty and one-cell matrices.",
+      "Odd size leaves the center in place.",
+      "Repeated and negative values do not change coordinate rules."
+    ],
+    "mutation": "matrix",
+    "id": "ctci6_1_7",
+    "title": "Rotate Matrix",
+    "testCount": 34,
+    "languages": {
+      "csharp": {
+        "signature": "void Rotate(int[][] matrix)",
+        "starterCode": "public class Solution {\n    public void Rotate(int[][] matrix) {\n        // Write your solution here.\n    }\n}\n",
+        "solutionCode": "public class Solution {\n    public void Rotate(int[][] matrix) {\n        int n = matrix.Length;\n        for (int r = 0; r < n; ++r) {\n            for (int c = r + 1; c < n; ++c) {\n                int saved = matrix[r][c]; matrix[r][c] = matrix[c][r]; matrix[c][r] = saved;\n            }\n        }\n        for (int r = 0; r < n; ++r) {\n            for (int c = 0; c < n / 2; ++c) {\n                int saved = matrix[r][c]; matrix[r][c] = matrix[r][n - 1 - c]; matrix[r][n - 1 - c] = saved;\n            }\n        }\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function Rotate(matrix)",
+        "starterCode": "function Rotate(matrix) {\n  // Write your solution here.\n}\n",
+        "solutionCode": "function Rotate(matrix) {\n  const n = matrix.length;\n  for (let r = 0; r < n; ++r) {\n      for (let c = r + 1; c < n; ++c) {\n          const saved = matrix[r][c]; matrix[r][c] = matrix[c][r]; matrix[c][r] = saved;\n      }\n  }\n  for (let r = 0; r < n; ++r) {\n      for (let c = 0; c < Math.floor(n / 2); ++c) {\n          const saved = matrix[r][c]; matrix[r][c] = matrix[r][n - 1 - c]; matrix[r][n - 1 - c] = saved;\n      }\n  }\n}\n"
+      },
+      "python": {
+        "signature": "def Rotate(matrix: list[list[int]]) -> None",
+        "starterCode": "def Rotate(matrix: list[list[int]]) -> None:\n    pass\n",
+        "solutionCode": "def Rotate(matrix: list[list[int]]) -> None:\n    n = len(matrix)\n    for r in range(n):\n        for c in range(r + 1, n):\n            matrix[r][c], matrix[c][r] = matrix[c][r], matrix[r][c]\n    for r in range(n):\n        for c in range(n // 2):\n            matrix[r][c], matrix[r][n - 1 - c] = matrix[r][n - 1 - c], matrix[r][c]\n"
+      },
+      "cpp": {
+        "signature": "void Rotate(std::vector<std::vector<int>>& matrix)",
+        "starterCode": "class Solution {\npublic:\n    void Rotate(std::vector<std::vector<int>>& matrix) {\n        // Write your solution here.\n    }\n};\n",
+        "solutionCode": "class Solution {\npublic:\n    void Rotate(std::vector<std::vector<int>>& matrix) {\n        int n = static_cast<int>(matrix.size());\n        for (int r = 0; r < n; ++r) {\n            for (int c = r + 1; c < n; ++c) {\n                int saved = matrix[r][c]; matrix[r][c] = matrix[c][r]; matrix[c][r] = saved;\n            }\n        }\n        for (int r = 0; r < n; ++r) {\n            for (int c = 0; c < n / 2; ++c) {\n                int saved = matrix[r][c]; matrix[r][c] = matrix[r][n - 1 - c]; matrix[r][n - 1 - c] = saved;\n            }\n        }\n    }\n};\n"
+      },
+      "java": {
+        "signature": "void Rotate(int[][] matrix)",
+        "starterCode": "class Solution {\n    public void Rotate(int[][] matrix) {\n        // Write your solution here.\n    }\n}\n",
+        "solutionCode": "class Solution {\n    public void Rotate(int[][] matrix) {\n        int n = matrix.length;\n        for (int r = 0; r < n; ++r) {\n            for (int c = r + 1; c < n; ++c) {\n                int saved = matrix[r][c]; matrix[r][c] = matrix[c][r]; matrix[c][r] = saved;\n            }\n        }\n        for (int r = 0; r < n; ++r) {\n            for (int c = 0; c < n / 2; ++c) {\n                int saved = matrix[r][c]; matrix[r][c] = matrix[r][n - 1 - c]; matrix[r][n - 1 - c] = saved;\n            }\n        }\n    }\n}\n"
+      }
+    }
+  },
+  {
+    "ref": "1.8",
+    "method": "ZeroMatrix",
+    "params": [
+      [
+        "matrix",
+        "aai"
+      ]
+    ],
+    "result": "void",
+    "description": "For every zero in the original integer matrix, set its entire row and column to zero. Base all decisions on the original matrix; newly written zeroes must not trigger more clearing. Modify existing cells, preserve the outer array and row objects, and return no value. The judge displays the mutated matrix.",
+    "constraints": [
+      "The matrix is rectangular with 0..100 rows and 0..100 columns; entries fit signed 32 bits.",
+      "[] and rows of length zero are valid and unchanged. Rows are distinct mutable arrays."
+    ],
+    "why": "Changing cells during discovery can mistake a newly written zero for an original zero. Record all affected row and column indices first, then clear cells in a separate pass using those records.",
+    "correctness": "After the discovery pass, a row flag is true exactly when that original row contains a zero, and likewise for each column. The second pass writes zero if and only if either flag is true. Thus it clears exactly the union of originally affected rows and columns and leaves every other cell unchanged.",
+    "walkthrough": "For [[4,0,6],[7,8,9]], discovery marks row 0 and column 1. Clearing those produces [[0,0,0],[7,0,9]]. The new zero at (1,1) does not mark row 1, so 7 and 9 survive.",
+    "example": [
+      [
+        [
+          [
+            4,
+            0,
+            6
+          ],
+          [
+            7,
+            8,
+            9
+          ]
+        ]
+      ],
+      [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          7,
+          0,
+          9
+        ]
+      ]
+    ],
+    "time": "O(r*c + r + c) time for r rows and c columns, including zero-column matrices; O(r*c) when both dimensions are positive.",
+    "space": "O(r + c) auxiliary space for the row and column flags.",
+    "edges": [
+      "No zero leaves the matrix unchanged; all zero stays all zero.",
+      "A single original zero clears only its row and column.",
+      "Rectangular, empty, single-row, single-column, and zero-column inputs."
+    ],
+    "mutation": "matrix",
+    "id": "ctci6_1_8",
+    "title": "Zero Matrix",
+    "testCount": 42,
+    "languages": {
+      "csharp": {
+        "signature": "void ZeroMatrix(int[][] matrix)",
+        "starterCode": "public class Solution {\n    public void ZeroMatrix(int[][] matrix) {\n        // Write your solution here.\n    }\n}\n",
+        "solutionCode": "public class Solution {\n    public void ZeroMatrix(int[][] matrix) {\n        int rows = matrix.Length;\n        if (rows == 0) return;\n        int cols = matrix[0].Length;\n        bool[] zeroRows = new bool[rows];\n        bool[] zeroCols = new bool[cols];\n        for (int r = 0; r < rows; ++r) {\n            for (int c = 0; c < cols; ++c) {\n                if (matrix[r][c] == 0) { zeroRows[r] = true; zeroCols[c] = true; }\n            }\n        }\n        for (int r = 0; r < rows; ++r) {\n            for (int c = 0; c < cols; ++c) {\n                if (zeroRows[r] || zeroCols[c]) matrix[r][c] = 0;\n            }\n        }\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function ZeroMatrix(matrix)",
+        "starterCode": "function ZeroMatrix(matrix) {\n  // Write your solution here.\n}\n",
+        "solutionCode": "function ZeroMatrix(matrix) {\n  const rows = matrix.length;\n  if (rows === 0) return;\n  const cols = matrix[0].length;\n  const zeroRows = Array(rows).fill(false), zeroCols = Array(cols).fill(false);\n  for (let r = 0; r < rows; ++r) {\n      for (let c = 0; c < cols; ++c) {\n          if (matrix[r][c] === 0) { zeroRows[r] = true; zeroCols[c] = true; }\n      }\n  }\n  for (let r = 0; r < rows; ++r) {\n      for (let c = 0; c < cols; ++c) {\n          if (zeroRows[r] || zeroCols[c]) matrix[r][c] = 0;\n      }\n  }\n}\n"
+      },
+      "python": {
+        "signature": "def ZeroMatrix(matrix: list[list[int]]) -> None",
+        "starterCode": "def ZeroMatrix(matrix: list[list[int]]) -> None:\n    pass\n",
+        "solutionCode": "def ZeroMatrix(matrix: list[list[int]]) -> None:\n    rows = len(matrix)\n    if rows == 0:\n        return\n    cols = len(matrix[0])\n    zero_rows, zero_cols = [False] * rows, [False] * cols\n    for r in range(rows):\n        for c in range(cols):\n            if matrix[r][c] == 0:\n                zero_rows[r] = True\n                zero_cols[c] = True\n    for r in range(rows):\n        for c in range(cols):\n            if zero_rows[r] or zero_cols[c]:\n                matrix[r][c] = 0\n"
+      },
+      "cpp": {
+        "signature": "void ZeroMatrix(std::vector<std::vector<int>>& matrix)",
+        "starterCode": "class Solution {\npublic:\n    void ZeroMatrix(std::vector<std::vector<int>>& matrix) {\n        // Write your solution here.\n    }\n};\n",
+        "solutionCode": "class Solution {\npublic:\n    void ZeroMatrix(std::vector<std::vector<int>>& matrix) {\n        int rows = static_cast<int>(matrix.size());\n        if (rows == 0) return;\n        int cols = static_cast<int>(matrix[0].size());\n        std::vector<bool> zeroRows(rows, false);\n        std::vector<bool> zeroCols(cols, false);\n        for (int r = 0; r < rows; ++r) {\n            for (int c = 0; c < cols; ++c) {\n                if (matrix[r][c] == 0) { zeroRows[r] = true; zeroCols[c] = true; }\n            }\n        }\n        for (int r = 0; r < rows; ++r) {\n            for (int c = 0; c < cols; ++c) {\n                if (zeroRows[r] || zeroCols[c]) matrix[r][c] = 0;\n            }\n        }\n    }\n};\n"
+      },
+      "java": {
+        "signature": "void ZeroMatrix(int[][] matrix)",
+        "starterCode": "class Solution {\n    public void ZeroMatrix(int[][] matrix) {\n        // Write your solution here.\n    }\n}\n",
+        "solutionCode": "class Solution {\n    public void ZeroMatrix(int[][] matrix) {\n        int rows = matrix.length;\n        if (rows == 0) return;\n        int cols = matrix[0].length;\n        boolean[] zeroRows = new boolean[rows];\n        boolean[] zeroCols = new boolean[cols];\n        for (int r = 0; r < rows; ++r) {\n            for (int c = 0; c < cols; ++c) {\n                if (matrix[r][c] == 0) { zeroRows[r] = true; zeroCols[c] = true; }\n            }\n        }\n        for (int r = 0; r < rows; ++r) {\n            for (int c = 0; c < cols; ++c) {\n                if (zeroRows[r] || zeroCols[c]) matrix[r][c] = 0;\n            }\n        }\n    }\n}\n"
+      }
+    }
+  },
+  {
+    "ref": "1.9",
+    "method": "IsRotation",
+    "params": [
+      [
+        "first",
+        "s"
+      ],
+      [
+        "second",
+        "s"
+      ]
+    ],
+    "result": "b",
+    "description": "Return whether second is a cyclic rotation of first: split first between any two characters and move its prefix to the end. Use at most one substring-search operation. Case, punctuation, and whitespace are significant. Preserve both strings.",
+    "constraints": [
+      "Each input has 0..10000 ASCII characters.",
+      "Lengths must match and be positive. Following the public reference implementation, two empty strings return false.",
+      "An unchanged nonempty string is a valid rotation (the split may be at an end)."
+    ],
+    "why": "If first is x+y and second is y+x, doubling first gives x+y+x+y, which contains y+x across the joining point. One search in the doubled string checks every split without testing each split separately.",
+    "correctness": "Any rotation y+x appears in (x+y)+(x+y). Conversely, a length-n substring of first+first beginning in the first n positions consists of a suffix of first followed by its complementary prefix, so it is a rotation. Equality of positive lengths rules out shorter substrings and enforces the specified empty-input policy.",
+    "walkthrough": "For 'orbit' and 'bitor', doubling gives 'orbitorbit'. Its length-five substring beginning at index 2 is 'bitor', so the answer is true. 'obrit' has the same characters but never occurs in the doubled text and is not a rotation.",
+    "example": [
+      [
+        "orbit",
+        "bitor"
+      ],
+      true
+    ],
+    "time": "O(n + S(2n,n)) time, where S(h,p) is the runtime's substring-search cost. A conservative worst-case bound for an unspecified search implementation is O(n^2); do not assume a linear search guarantee in every language.",
+    "space": "O(n) auxiliary space for the doubled string, plus any internal substring-search workspace.",
+    "edges": [
+      "Two empty strings return false; unequal lengths return false.",
+      "Identity and repeated-character rotations.",
+      "A rearrangement need not be a cyclic rotation."
+    ],
+    "mutation": "preserve",
+    "id": "ctci6_1_9",
+    "title": "String Rotation",
+    "testCount": 83,
+    "languages": {
+      "csharp": {
+        "signature": "bool IsRotation(string first, string second)",
+        "starterCode": "public class Solution {\n    public bool IsRotation(string first, string second) {\n        return false;\n    }\n}\n",
+        "solutionCode": "public class Solution {\n    public bool IsRotation(string first, string second) {\n        if (first.Length == 0 || first.Length != second.Length) return false;\n        return (first + first).Contains(second, StringComparison.Ordinal);\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function IsRotation(first, second)",
+        "starterCode": "function IsRotation(first, second) {\n  return false;\n}\n",
+        "solutionCode": "function IsRotation(first, second) {\n  if (first.length === 0 || first.length !== second.length) return false;\n  return (first + first).includes(second);\n}\n"
+      },
+      "python": {
+        "signature": "def IsRotation(first: str, second: str) -> bool",
+        "starterCode": "def IsRotation(first: str, second: str) -> bool:\n    return False\n",
+        "solutionCode": "def IsRotation(first: str, second: str) -> bool:\n    if not first or len(first) != len(second):\n        return False\n    return second in first + first\n"
+      },
+      "cpp": {
+        "signature": "bool IsRotation(const std::string& first, const std::string& second)",
+        "starterCode": "class Solution {\npublic:\n    bool IsRotation(const std::string& first, const std::string& second) {\n        return false;\n    }\n};\n",
+        "solutionCode": "class Solution {\npublic:\n    bool IsRotation(const std::string& first, const std::string& second) {\n        if (static_cast<int>(first.size()) == 0 || static_cast<int>(first.size()) != static_cast<int>(second.size())) return false;\n        return (first + first).find(second) != std::string::npos;\n    }\n};\n"
+      },
+      "java": {
+        "signature": "boolean IsRotation(String first, String second)",
+        "starterCode": "class Solution {\n    public boolean IsRotation(String first, String second) {\n        return false;\n    }\n}\n",
+        "solutionCode": "class Solution {\n    public boolean IsRotation(String first, String second) {\n        if (first.length() == 0 || first.length() != second.length()) return false;\n        return (first + first).contains(second);\n    }\n}\n"
+      }
+    }
+  }
+]

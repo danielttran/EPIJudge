@@ -1,0 +1,41 @@
+{
+  "explanation": "Changing cells during discovery can mistake a newly written zero for an original zero. Record all affected row and column indices first, then clear cells in a separate pass using those records.",
+  "correctness": "After the discovery pass, a row flag is true exactly when that original row contains a zero, and likewise for each column. The second pass writes zero if and only if either flag is true. Thus it clears exactly the union of originally affected rows and columns and leaves every other cell unchanged.",
+  "walkthrough": "For [[4,0,6],[7,8,9]], discovery marks row 0 and column 1. Clearing those produces [[0,0,0],[7,0,9]]. The new zero at (1,1) does not mark row 1, so 7 and 9 survive.",
+  "walkthroughCase": {
+    "arguments": [
+      [
+        [
+          4,
+          0,
+          6
+        ],
+        [
+          7,
+          8,
+          9
+        ]
+      ]
+    ],
+    "expected": [
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        7,
+        0,
+        9
+      ]
+    ]
+  },
+  "timeComplexity": "O(r*c + r + c) time for r rows and c columns, including zero-column matrices; O(r*c) when both dimensions are positive.",
+  "spaceComplexity": "O(r + c) auxiliary space for the row and column flags.",
+  "edgeCases": [
+    "No zero leaves the matrix unchanged; all zero stays all zero.",
+    "A single original zero clears only its row and column.",
+    "Rectangular, empty, single-row, single-column, and zero-column inputs."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 1.8. No affiliation is implied."
+}

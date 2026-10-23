@@ -16,7 +16,11 @@ def main():
     directory = create_run_directory(ROOT)
     server = Server(args.dll.resolve(), directory)
     try:
-        for script in ("verify_theme_browser.cjs", "verify_format_browser.cjs"):
+        for script in (
+            "verify_theme_browser.cjs",
+            "verify_format_browser.cjs",
+            "verify_solution_language_browser.cjs",
+        ):
             subprocess.run(
                 ["node", str(ROOT / "scripts" / script), server.base],
                 cwd=ROOT,

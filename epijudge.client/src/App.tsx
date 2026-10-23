@@ -10,6 +10,7 @@ import { ProblemLibrary } from './ProblemLibrary';
 import { HistoryPanel } from './HistoryPanel';
 import { EmptyState } from './EmptyState';
 import { SolutionPanel } from './SolutionPanel';
+import { LanguageSelect } from './LanguageSelect';
 import { libraryEntries } from './studyPlans';
 import { collectionName, problemNumber } from './collections';
 import {
@@ -74,6 +75,10 @@ export default function App() {
   const [resultsOpen, setResultsOpen] = useState(false);
   const libraryTrigger = useRef<HTMLButtonElement>(null);
   const [language, setLanguage] = useState<string>(() => load('epi:language', 'csharp'));
+  const [solutionLanguage, setSolutionLanguage] = useState<string | null>(() => {
+    const saved = load<unknown>('epi:solution-language', null);
+    return LANGUAGES.some((item) => item.id === saved) ? (saved as string) : null;
+  });
   const [problems, setProblems] = useState<Problem[]>([]);
   const [selected, setSelected] = useState(
     () => appRoute().problemId || load('epi:selected', 'count_bits'),
@@ -625,7 +630,11 @@ export default function App() {
                   <SolutionPanel
                     problemId={problem.id}
                     title={problem.title}
-                    language={currentLang.id}
+                    language={solutionLanguage ?? currentLang.id}
+                    onLanguageChange={(value) => {
+                      setSolutionLanguage(value);
+                      save('epi:solution-language', value);
+                    }}
                     example={problem.examples[0]}
                   />
                 )}
@@ -669,21 +678,12 @@ export default function App() {
                 </div>
                 <div className="editor-language-row">
                   {' '}
-                  <div className="language-selector-wrapper">
-                    <select
-                      className="language-select"
-                      value={language}
-                      onChange={(e) => handleLanguageChange(e.target.value)}
-                      disabled={busy || !practice.ready}
-                      aria-label="Select programming language"
-                    >
-                      {LANGUAGES.map((lang) => (
-                        <option key={lang.id} value={lang.id}>
-                          {lang.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                  <LanguageSelect
+                    value={language}
+                    onChange={handleLanguageChange}
+                    disabled={busy || !practice.ready}
+                    label="Select programming language"
+                  />
                   <select
                     className="code-format-select"
                     aria-label="Code format"

@@ -21,6 +21,8 @@ const inputPaths = [
   "epijudge.client/public/theme.js",
   "epijudge.client/src/theme.ts",
   "epijudge.client/src/App.tsx",
+  "epijudge.client/src/SolutionPanel.tsx",
+  "epijudge.client/src/LanguageSelect.tsx",
   "epijudge.client/src/Editor.tsx",
   "epijudge.client/src/ErrorBoundary.tsx",
   "epijudge.client/src/styles.css",
