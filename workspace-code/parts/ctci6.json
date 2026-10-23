@@ -6283,6 +6283,126 @@
       }
     },
     {
+      "problemId": "ctci6_7_6",
+      "language": "csharp",
+      "filename": "Solution.cs",
+      "signature": "int[][] SolveJigsaw(int size, int[][] pieces)",
+      "starterCode": "public class Solution\n{\n    public int[][] SolveJigsaw(int size, int[][] pieces)\n    {\n        return [];\n    }\n}\n",
+      "solutionCode": "public class Solution\n{\n    public int[][] SolveJigsaw(int size, int[][] pieces)\n    {\n        int count = pieces.Length;\n        var placed = Enumerable.Range(0, count)\n                         .Select(\n                             _ => new int[2])\n                         .ToArray();\n        var used = new bool[count];\n        int Edge(int index, int turn, int side) => pieces[index][(side - turn + 4) % 4];\n        bool Search(int position)\n        {\n            if (position == count)\n                return true;\n            int row = position / size, column = position % size;\n            for (int index = 0; index < count; ++index)\n            {\n                if (used[index])\n                    continue;\n                for (int turn = 0; turn < 4; ++turn)\n                {\n                    int[] values = new int[4];\n                    bool[] bounds = { row == 0, column == size - 1, row == size - 1, column == 0 };\n                    bool fits = true;\n                    for (int side = 0; side < 4; ++side)\n                    {\n                        values[side] = Edge(index, turn, side);\n                        if ((values[side] == 0) != bounds[side])\n                            fits = false;\n                    }\n                    if (!fits)\n                        continue;\n                    if (row > 0 && values[0] != -Edge(placed[position - size][0],\n                                                      placed[position - size][1], 2))\n                        continue;\n                    if (column > 0 &&\n                        values[3] != -Edge(placed[position - 1][0], placed[position - 1][1], 1))\n                        continue;\n                    used[index] = true;\n                    placed[position][0] = index;\n                    placed[position][1] = turn;\n                    if (Search(position + 1))\n                        return true;\n                    used[index] = false;\n                }\n            }\n            return false;\n        }\n        return Search(0) ? placed : Array.Empty<int[]>();\n    }\n}\n",
+      "prefix": "using System;\nusing System.Collections.Generic;\nusing System.Text;\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/csharp/ctci6_7_6.cs"
+      ],
+      "sourceSha256": {
+        "starter": "9db4737d094377f5a2dcfafccb6aad1b2daa1a012068d995f0b2326b64f6da35",
+        "solution": "eb1ad67cdd90e7c164c576dfb7ff94ff7c82b19e000eb4465b84c07814922c88"
+      }
+    },
+    {
+      "problemId": "ctci6_7_6",
+      "language": "javascript",
+      "filename": "solution.js",
+      "signature": "function SolveJigsaw(size, pieces)",
+      "starterCode": "function SolveJigsaw(size, pieces) {\n  return [];\n}\n",
+      "solutionCode": "function SolveJigsaw(size, pieces) {\n  const count = pieces.length,\n    placed = Array(count),\n    used = Array(count).fill(false);\n  const edge = (index, turn, side) => pieces[index][(side - turn + 4) % 4];\n  function search(position) {\n    if (position === count) return true;\n    const row = Math.floor(position / size),\n      column = position % size;\n    for (let index = 0; index < count; ++index) {\n      if (used[index]) continue;\n      for (let turn = 0; turn < 4; ++turn) {\n        const values = [0, 1, 2, 3].map((s) => edge(index, turn, s)),\n          bounds = [row === 0, column === size - 1, row === size - 1, column === 0];\n        if (values.some((v, s) => (v === 0) !== bounds[s])) continue;\n        if (row && values[0] !== -edge(...placed[position - size], 2)) continue;\n        if (column && values[3] !== -edge(...placed[position - 1], 1)) continue;\n        used[index] = true;\n        placed[position] = [index, turn];\n        if (search(position + 1)) return true;\n        used[index] = false;\n      }\n    }\n    return false;\n  }\n  return search(0) ? placed : [];\n}\n",
+      "prefix": "'use strict';\n",
+      "suffix": "\nmodule.exports = {SolveJigsaw};\n",
+      "references": [],
+      "visibleSymbols": [
+        "SolveJigsaw"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/javascript/ctci6_7_6.js"
+      ],
+      "sourceSha256": {
+        "starter": "be338e1f171bb0d8466b6fdc72fde9828ff5855eb44efe22d64ecc193e01bf83",
+        "solution": "00cb625a2fca1d70273491881159478ff7cb35b5119ce8899896ad14f6bb01d4"
+      }
+    },
+    {
+      "problemId": "ctci6_7_6",
+      "language": "python",
+      "filename": "solution.py",
+      "signature": "def SolveJigsaw(size: int, pieces: list[list[int]]) -> list[list[int]]",
+      "starterCode": "def SolveJigsaw(size: int, pieces: list[list[int]]) -> list[list[int]]:\n    return []\n",
+      "solutionCode": "def SolveJigsaw(size: int, pieces: list[list[int]]) -> list[list[int]]:\n    count = len(pieces)\n    placed = [None] * count\n    used = [False] * count\n\n    def edge(index, turn, side):\n        return pieces[index][(side - turn) % 4]\n\n    def search(position):\n        if position == count:\n            return True\n        row, column = divmod(position, size)\n        for index in range(count):\n            if used[index]:\n                continue\n            for turn in range(4):\n                values = [edge(index, turn, s) for s in range(4)]\n                if any(\n                    (value == 0) != boundary\n                    for value, boundary in zip(\n                        values, (row == 0, column == size - 1, row == size - 1, column == 0)\n                    )\n                ):\n                    continue\n                if row and values[0] != -edge(*placed[position - size], 2):\n                    continue\n                if column and values[3] != -edge(*placed[position - 1], 1):\n                    continue\n                used[index] = True\n                placed[position] = (index, turn)\n                if search(position + 1):\n                    return True\n                used[index] = False\n        return False\n\n    return [list(pair) for pair in placed] if search(0) else []\n",
+      "prefix": "",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "SolveJigsaw"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/python/ctci6_7_6.py"
+      ],
+      "sourceSha256": {
+        "starter": "2c8ab01ac7a5246d08bca65434da7e93d3f2affbc593b767488ebf66b2003ac3",
+        "solution": "db773403fc5c2ffff443aa675836944c19b784e4e65d03faf728812a40d39c7a"
+      }
+    },
+    {
+      "problemId": "ctci6_7_6",
+      "language": "cpp",
+      "filename": "solution.cpp",
+      "signature": "std::vector<std::vector<int>> SolveJigsaw(int size, const std::vector<std::vector<int>>& pieces)",
+      "starterCode": "class Solution {\n public:\n  std::vector<std::vector<int>> SolveJigsaw(int size, const std::vector<std::vector<int>>& pieces) {\n    return {};\n  }\n};\n",
+      "solutionCode": "class Solution {\n public:\n  std::vector<std::vector<int>> SolveJigsaw(int size, const std::vector<std::vector<int>>& pieces) {\n    int count = static_cast<int>(pieces.size());\n    std::vector<std::vector<int>> placed(count, std::vector<int>(2));\n    std::vector<bool> used(count, false);\n    auto edge = [&](int index, int turn, int side) { return pieces[index][(side - turn + 4) % 4]; };\n    std::function<bool(int)> search = [&](int position) {\n      if (position == count)\n        return true;\n      int row = position / size, column = position % size;\n      for (int index = 0; index < count; ++index) {\n        if (used[index])\n          continue;\n        for (int turn = 0; turn < 4; ++turn) {\n          int values[4];\n          bool bounds[4] = {row == 0, column == size - 1, row == size - 1, column == 0},\n               fits = true;\n          for (int side = 0; side < 4; ++side) {\n            values[side] = edge(index, turn, side);\n            if ((values[side] == 0) != bounds[side])\n              fits = false;\n          }\n          if (!fits)\n            continue;\n          if (row && values[0] != -edge(placed[position - size][0], placed[position - size][1], 2))\n            continue;\n          if (column && values[3] != -edge(placed[position - 1][0], placed[position - 1][1], 1))\n            continue;\n          used[index] = true;\n          placed[position] = {index, turn};\n          if (search(position + 1))\n            return true;\n          used[index] = false;\n        }\n      }\n      return false;\n    };\n    return search(0) ? placed : std::vector<std::vector<int>>{};\n  }\n};\n",
+      "prefix": "#include <algorithm>\n#include <array>\n#include <string>\n#include <vector>\n#include <cstdint>\n#include <functional>\n#include <utility>\n#include <iterator>\n#include <stdexcept>\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/cpp/ctci6_7_6.cpp"
+      ],
+      "sourceSha256": {
+        "starter": "11d6e93c8bcce333399e4275423cf254ad95f40888b16deb36c729b9428bd2f4",
+        "solution": "22b48914c1ecae0d368c25e4b0b3eb8f48b9010eaed955a40cd034b8429898f5"
+      }
+    },
+    {
+      "problemId": "ctci6_7_6",
+      "language": "java",
+      "filename": "Solution.java",
+      "signature": "int[][] SolveJigsaw(int size, int[][] pieces)",
+      "starterCode": "class Solution {\n  public int[][] SolveJigsaw(int size, int[][] pieces) {\n    return new int[0][];\n  }\n}\n",
+      "solutionCode": "class Solution {\n  public int[][] SolveJigsaw(int size, int[][] pieces) {\n    int count = pieces.length;\n    int[][] placed = new int[count][2];\n    boolean[] used = new boolean[count];\n    class Searcher {\n      int edge(int index, int turn, int side) {\n        return pieces[index][(side - turn + 4) % 4];\n      }\n      boolean search(int position) {\n        if (position == count)\n          return true;\n        int row = position / size, column = position % size;\n        for (int index = 0; index < count; ++index) {\n          if (used[index])\n            continue;\n          for (int turn = 0; turn < 4; ++turn) {\n            int[] values = new int[4];\n            boolean[] bounds = {row == 0, column == size - 1, row == size - 1, column == 0};\n            boolean fits = true;\n            for (int side = 0; side < 4; ++side) {\n              values[side] = edge(index, turn, side);\n              if ((values[side] == 0) != bounds[side])\n                fits = false;\n            }\n            if (!fits)\n              continue;\n            if (row > 0\n                && values[0] != -edge(placed[position - size][0], placed[position - size][1], 2))\n              continue;\n            if (column > 0\n                && values[3] != -edge(placed[position - 1][0], placed[position - 1][1], 1))\n              continue;\n            used[index] = true;\n            placed[position][0] = index;\n            placed[position][1] = turn;\n            if (search(position + 1))\n              return true;\n            used[index] = false;\n          }\n        }\n        return false;\n      }\n    }\n    return new Searcher().search(0) ? placed : new int[0][];\n  }\n}\n",
+      "prefix": "import java.util.*;\n",
+      "suffix": "",
+      "references": [],
+      "visibleSymbols": [
+        "Solution"
+      ],
+      "hiddenSymbols": [],
+      "removedUnrelatedSymbols": [],
+      "sourcePaths": [
+        "ctci6/practice/catalog.json",
+        "solutions/java/ctci6_7_6.java"
+      ],
+      "sourceSha256": {
+        "starter": "311c8344b607b89e68a5b6c53a537f33f553e51425fb854fdfce5c1a41b6a5e6",
+        "solution": "20dec1909589b936e35ca60a63d7990f1bbaac3aeb8e93abde38c3bb52dcd0d3"
+      }
+    },
+    {
       "problemId": "ctci6_7_9",
       "language": "csharp",
       "filename": "Solution.cs",

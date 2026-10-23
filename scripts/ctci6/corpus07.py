@@ -64,3 +64,22 @@ def valid_observation(ref,case,observed):
         from corpus_hash07 import valid_observation as run
         return run(ref,case,observed)
     return _previous_observation(ref,case,observed)
+
+_state_oracle=oracle
+_state_cases=cases
+_state_observation=valid_observation
+def oracle(ref,args):
+    if ref=='7.6':
+        from corpus_jigsaw07 import oracle as run
+        return run(ref,args)
+    return _state_oracle(ref,args)
+def cases(spec):
+    if spec['ref']=='7.6':
+        from corpus_jigsaw07 import cases as run
+        return run(spec)
+    return _state_cases(spec)
+def valid_observation(ref,case,observed):
+    if ref=='7.6':
+        from corpus_jigsaw07 import valid_observation as run
+        return run(ref,case,observed)
+    return _state_observation(ref,case,observed)

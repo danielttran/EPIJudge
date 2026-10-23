@@ -1,0 +1,63 @@
+{
+  "explanation": "Fill the board in row-major order. At a new cell, its top and left neighbors are already fixed, so those two edge matches and the perimeter rules can be checked immediately. Try each unused piece in each of four rotations; undo a choice if its remaining suffix cannot be completed. Backtracking is necessary for a general feasibility contract: a locally fitting piece need not imply the rest of the puzzle is solvable. C++ const vector references prevent input mutation. std::function recursion captures owned placements and vector<bool> flags by reference. Modulo uses side-turn+4, which is nonnegative for the four allowed turns. The returned vector is an owned value.",
+  "correctness": "Maintain a prefix containing distinct input pieces, with all perimeter edges and all already adjacent pairs valid. Each candidate checks all four perimeter requirements and the existing top/left joins, so appending it preserves the invariant. At a full board, every input piece occurs once and every join was checked when its later endpoint was placed, yielding a valid assembly. For completeness, consider any valid completion of the current prefix. The search enumerates its next unused piece and its rotation; those pass all local checks. Induction therefore reaches that completion unless an earlier valid solution was already returned. If every branch fails, no completion exists. Undoing the used flag restores the parent search state; the input pieces are never rotated in place.",
+  "walkthrough": "For size 2 and pieces [[0,1,2,0],[0,0,3,-1],[-2,4,0,0],[-3,0,0,-4]], [0,0] fits top left. [1,0] fits top right because its left edge -1 matches 1 and its top/right edges are flat. [2,0] fits bottom left with top -2 matching 2. [3,0] closes the board: top -3 matches 3 and left -4 matches 4. Thus [[0,0],[1,0],[2,0],[3,0]] is valid. Rotating the entire completed board can yield another accepted answer. Replacing only edge -4 with -99 leaves unmatched identifiers and makes this board impossible.",
+  "walkthroughCase": {
+    "arguments": [
+      2,
+      [
+        [
+          0,
+          1,
+          2,
+          0
+        ],
+        [
+          0,
+          0,
+          3,
+          -1
+        ],
+        [
+          -2,
+          4,
+          0,
+          0
+        ],
+        [
+          -3,
+          0,
+          0,
+          -4
+        ]
+      ]
+    ],
+    "expected": [
+      [
+        0,
+        0
+      ],
+      [
+        1,
+        0
+      ],
+      [
+        2,
+        0
+      ],
+      [
+        3,
+        0
+      ]
+    ]
+  },
+  "timeComplexity": "For p=size^2 pieces, O(p*p!*4^p) is a conservative exhaustive-search upper bound, including candidate scans at partial boards. Early edge/perimeter pruning and unique matching identifiers make the supplied cases much smaller; no polynomial worst-case search claim is required.",
+  "spaceComplexity": "O(p) auxiliary used flags, placements and recursion depth, excluding input and returned placement pairs. Each attempted orientation reads four edges without copying or mutating the input puzzle.",
+  "edgeCases": [
+    "A single all-flat piece versus a singleton with a nonflat perimeter edge.",
+    "Shuffled/rotated corners, edges and center; odd board side 3.",
+    "Unmatched or same-sign edges, unsolvable arrangements, and global rotations with multiple valid answers.",
+    "Returning duplicated piece indices, using reflections or changing the caller puzzle is invalid."
+  ],
+  "attribution": "Independently authored EPI Practice description, examples, implementation and explanation. Exercise reference: Cracking the Coding Interview, sixth edition, 7.6. No affiliation is implied."
+}

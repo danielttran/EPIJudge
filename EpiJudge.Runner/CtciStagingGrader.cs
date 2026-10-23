@@ -373,6 +373,25 @@ public static class CtciStagingGrader
         return Integers(actual.GetProperty("finalValues")).SequenceEqual(finalValues) ? null : "Preserve all remaining occurrences in BST order.";
     }
 
+    private static string? JigsawFailure(TestCase test, JsonElement observed)
+    {
+        if (observed.GetProperty("mutationOk").ValueKind != JsonValueKind.True) return "Preserve the input puzzle and its rows.";
+        int size = test.Arguments[0].GetInt32();
+        var pieces = test.Arguments[1].EnumerateArray().Select(Integers).ToArray();
+        var actual = observed.GetProperty("actual").EnumerateArray().Select(Integers).ToArray();
+        if (test.Expected.GetArrayLength() == 0) return actual.Length == 0 ? null : "This puzzle has no valid assembly.";
+        if (actual.Length != pieces.Length || actual.Any(p => p.Length != 2 || p[0] < 0 || p[0] >= pieces.Length || p[1] < 0 || p[1] > 3) || actual.Select(p => p[0]).Distinct().Count() != pieces.Length) return "Use every piece exactly once with a clockwise turn in 0..3.";
+        int Edge(int position, int side) => pieces[actual[position][0]][(side - actual[position][1] + 4) % 4];
+        for (int position = 0; position < pieces.Length; position++)
+        {
+            int row = position / size, column = position % size;
+            bool[] boundary = [row == 0, column == size - 1, row == size - 1, column == 0];
+            for (int side = 0; side < 4; side++) if ((Edge(position, side) == 0) != boundary[side]) return "Only perimeter edges must be flat.";
+            if (row > 0 && Edge(position, 0) + Edge(position - size, 2) != 0 || column > 0 && Edge(position, 3) + Edge(position - 1, 1) != 0) return "Every adjacent edge pair must have opposite nonzero identifiers.";
+        }
+        return null;
+    }
+
     private static string? ExternalFileFailure(TestCase test, JsonElement observed)
     {
         if (observed.GetProperty("mutationOk").ValueKind != JsonValueKind.True || observed.GetProperty("ownedResult").ValueKind != JsonValueKind.True) return "Preserve the input and return a live file owned by the input/workspace.";
@@ -434,6 +453,7 @@ public static class CtciStagingGrader
             if (definition.Ref is "16.3" or "16.13") return GeometryFailure(definition, test, observed);
             if (definition.Ref is "16.26" or "17.20") return NumericFailure(definition, test, observed);
             if (definition.Ref is "16.14" or "17.7") return GroupOrLineFailure(definition, test, observed);
+            if (definition.Ref == "7.6") return JigsawFailure(test, observed);
             if (definition.Ref == "10.6") return ExternalFileFailure(test, observed);
             if (definition.Batch == 10) return SortingFailure(definition, test, observed);
             if (definition.Batch == 17 && definition.Ref is ("17.8" or "17.13" or "17.22" or "17.25" or "17.26")) return StructuredHardFailure(definition, test, observed);

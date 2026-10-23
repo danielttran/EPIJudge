@@ -7,7 +7,7 @@ from models07 import header
 from harness08_typed import source as typed_source
 
 def source(language,starters=False,only_ref=None):
-    value=typed_source(language,starters,only_ref,staging_name='staged07',exclude_refs=('7.9',),allow_empty=True)
+    value=typed_source(language,starters,only_ref,staging_name='staged07',exclude_refs=('7.9','7.12'),allow_empty=True)
     base=base_header('7.9',language);provided=header('7.9',language)
     value=value.replace(base,provided,1) if base else provided+value
     entry=next(e for e in json.loads((ROOT/'ctci6/staged07/catalog.json').read_text()) if e['ref']=='7.9')
@@ -23,7 +23,7 @@ _circular_source=source
 def source(language,starters=False,only_ref=None):
     entries=json.loads((ROOT/'ctci6/staged07/catalog.json').read_text())
     selected=[e for e in entries if only_ref is None or e['ref']==only_ref]
-    if any(e['ref']=='7.9' for e in selected):value=_circular_source(language,starters,only_ref='7.9')
+    if any(e['ref']=='7.9' for e in selected):value=_circular_source(language,starters,only_ref=only_ref)
     else:
         value=typed_source(language,starters,only_ref,staging_name='staged07',exclude_refs=('7.9','7.12'),allow_empty=True)
         base=base_header('7.12',language);provided=header('7.12',language)

@@ -803,4 +803,16 @@ public sealed class CtciStagingTests
         Assert.Equal(new[] { "LineRecord", "TextFile", "TextWorkspace" }, model.Names.Order().ToArray());
     }
 
+    [Fact]
+    public void JigsawAcceptsDifferentValidGlobalRotationsAndRejectsInvalidUsage()
+    {
+        var definition = Definition("7.6");
+        var test = new TestCase(definition.Example[0].EnumerateArray().Select(value => value.Clone()).ToArray(), definition.Example[1].Clone());
+        int[][] rotated = [[2,1],[0,1],[3,1],[1,1]];
+        Assert.Null(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = rotated, mutationOk = true })));
+        foreach (int[][] invalid in new int[][][] { [], [[0,0],[0,0],[2,0],[3,0]], [[0,4],[1,0],[2,0],[3,0]], [[1,0],[0,0],[2,0],[3,0]] })
+            Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = invalid, mutationOk = true })));
+        Assert.NotNull(CtciStagingGrader.FailureReason(definition, test, Json(new { actual = rotated, mutationOk = false })));
+    }
+
 }

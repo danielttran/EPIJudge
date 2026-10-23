@@ -34,3 +34,16 @@ def neutral(spec,language):
         from models_hash07 import neutral as run
         return run(language)
     return _previous_neutral(spec,language)
+
+_state_declare=declare
+_state_neutral=neutral
+def declare(spec,language,body,class_name='Solution'):
+    if spec['ref']=='7.6':
+        from models08 import declare as run
+        return run(spec,language,body,class_name)
+    return _state_declare(spec,language,body,class_name)
+def neutral(spec,language):
+    if spec['ref']=='7.6':
+        from models08 import neutral as run
+        return run(spec,language)
+    return _state_neutral(spec,language)

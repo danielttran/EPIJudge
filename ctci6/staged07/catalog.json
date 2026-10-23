@@ -286,5 +286,126 @@
         "solutionCode": "class HashTable<K, V> {\n  private static class Node<K, V> {\n    final K key;\n    V value;\n    Node<K, V> next;\n    Node(K key, V value, Node<K, V> next) {\n      this.key = key;\n      this.value = value;\n      this.next = next;\n    }\n  }\n  private final ArrayList<Node<K, V>> buckets;\n  public HashTable(int capacity) {\n    buckets = new ArrayList<>(Collections.nCopies(capacity, null));\n  }\n  private int index(K key) {\n    return Math.floorMod(key.hashCode(), buckets.size());\n  }\n  private Node<K, V> find(K key) {\n    for (var node = buckets.get(index(key)); node != null; node = node.next)\n      if (Objects.equals(node.key, key))\n        return node;\n    return null;\n  }\n  public void Put(K key, V value) {\n    var node = find(key);\n    if (node != null) {\n      node.value = value;\n      return;\n    }\n    int slot = index(key);\n    buckets.set(slot, new Node<>(key, value, buckets.get(slot)));\n  }\n  public V Get(K key) {\n    var node = find(key);\n    if (node == null)\n      throw new NoSuchElementException();\n    return node.value;\n  }\n  public boolean Contains(K key) {\n    return find(key) != null;\n  }\n  public boolean Remove(K key) {\n    int slot = index(key);\n    Node<K, V> previous = null;\n    var node = buckets.get(slot);\n    while (node != null) {\n      if (Objects.equals(node.key, key)) {\n        if (previous == null)\n          buckets.set(slot, node.next);\n        else\n          previous.next = node.next;\n        return true;\n      }\n      previous = node;\n      node = node.next;\n    }\n    return false;\n  }\n}\n"
       }
     }
+  },
+  {
+    "ref": "7.6",
+    "method": "SolveJigsaw",
+    "params": [
+      [
+        "size",
+        "i"
+      ],
+      [
+        "pieces",
+        "aai"
+      ]
+    ],
+    "result": "aai",
+    "mutation": "none",
+    "description": "Assemble a square jigsaw from shuffled, independently rotated pieces using only their edge shapes and matching identifiers. Return a row-major list [pieceIndex,clockwiseQuarterTurns] for every board position, or [] when no assembly exists. Every input piece must be used once. Any valid assembly is accepted; original coordinates and original orientations are not given.",
+    "constraints": [
+      "size is 1..3 and pieces has exactly size*size rows. Each row has four signed integer edges in top,right,bottom,left order. Zero is a flat edge; nonzero values are in -1000000..1000000. Opposite nonzero values mate (for example 7 and -7). A nonzero absolute identifier occurs at most twice in the input. Repeated zero edges are allowed. A sign encodes complementary shapes, not an original coordinate.",
+      "A piece may be rotated clockwise by 0,1,2 or 3 quarter-turns; reflection is forbidden. After one clockwise turn, [top,right,bottom,left] becomes [left,top,right,bottom]. Every outward-facing perimeter edge must be flat, and every edge facing another board cell must be nonflat and match its neighbor. Input is not guaranteed solvable.",
+      "Return exactly size*size pairs when solvable. pieceIndex is the zero-based row index in the supplied pieces, and each index occurs exactly once. The pair list is ordered by board rows from top left to bottom right; it is not the order of the input pieces. Return [] only for impossibility. Preserve all input rows and their order/values.",
+      "This callable makes the public Puzzle.solve/getCurrentSolution behavior executable with an explicit edge encoding and bounded board size. It does not ask for a UI, generation from hidden coordinates, or comparison with one preselected original assembly."
+    ],
+    "why": "Fill the board in row-major order. At a new cell, its top and left neighbors are already fixed, so those two edge matches and the perimeter rules can be checked immediately. Try each unused piece in each of four rotations; undo a choice if its remaining suffix cannot be completed. Backtracking is necessary for a general feasibility contract: a locally fitting piece need not imply the rest of the puzzle is solvable.",
+    "correctness": "Maintain a prefix containing distinct input pieces, with all perimeter edges and all already adjacent pairs valid. Each candidate checks all four perimeter requirements and the existing top/left joins, so appending it preserves the invariant. At a full board, every input piece occurs once and every join was checked when its later endpoint was placed, yielding a valid assembly. For completeness, consider any valid completion of the current prefix. The search enumerates its next unused piece and its rotation; those pass all local checks. Induction therefore reaches that completion unless an earlier valid solution was already returned. If every branch fails, no completion exists. Undoing the used flag restores the parent search state; the input pieces are never rotated in place.",
+    "walkthrough": "For size 2 and pieces [[0,1,2,0],[0,0,3,-1],[-2,4,0,0],[-3,0,0,-4]], [0,0] fits top left. [1,0] fits top right because its left edge -1 matches 1 and its top/right edges are flat. [2,0] fits bottom left with top -2 matching 2. [3,0] closes the board: top -3 matches 3 and left -4 matches 4. Thus [[0,0],[1,0],[2,0],[3,0]] is valid. Rotating the entire completed board can yield another accepted answer. Replacing only edge -4 with -99 leaves unmatched identifiers and makes this board impossible.",
+    "example": [
+      [
+        2,
+        [
+          [
+            0,
+            1,
+            2,
+            0
+          ],
+          [
+            0,
+            0,
+            3,
+            -1
+          ],
+          [
+            -2,
+            4,
+            0,
+            0
+          ],
+          [
+            -3,
+            0,
+            0,
+            -4
+          ]
+        ]
+      ],
+      [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          0
+        ]
+      ]
+    ],
+    "time": "For p=size^2 pieces, O(p*p!*4^p) is a conservative exhaustive-search upper bound, including candidate scans at partial boards. Early edge/perimeter pruning and unique matching identifiers make the supplied cases much smaller; no polynomial worst-case search claim is required.",
+    "space": "O(p) auxiliary used flags, placements and recursion depth, excluding input and returned placement pairs. Each attempted orientation reads four edges without copying or mutating the input puzzle.",
+    "edges": [
+      "A single all-flat piece versus a singleton with a nonflat perimeter edge.",
+      "Shuffled/rotated corners, edges and center; odd board side 3.",
+      "Unmatched or same-sign edges, unsolvable arrangements, and global rotations with multiple valid answers.",
+      "Returning duplicated piece indices, using reflections or changing the caller puzzle is invalid."
+    ],
+    "related": "The primary Piece/Edge/Puzzle classes establish rotation, flat borders, complementary matching and assembly. The public greedy solver relies on its generated puzzle structure; this independently authored backtracking version also reports failure for the explicitly admitted unsolvable inputs.",
+    "languageWhy": {
+      "csharp": "C# local Edge/Search functions capture only owned placement/used arrays. Each output row is distinct; setting a used flag is undone after a failed recursive suffix. Arrays.Empty<int[]>() is the no-solution result.",
+      "java": "Java uses a local Searcher class to recurse while capturing the final input references and owned arrays. The class reads pieces through edge(index,turn,side); it never rotates input rows. The returned int[][] has one independent pair row per position.",
+      "cpp": "C++ const vector references prevent input mutation. std::function recursion captures owned placements and vector<bool> flags by reference. Modulo uses side-turn+4, which is nonnegative for the four allowed turns. The returned vector is an owned value.",
+      "python": "Python uses a nested search with a used list and placement tuples. Modulo by four correctly maps a rotated side back to its original edge. The result converts tuples into concrete pair lists only after a complete successful search.",
+      "javascript": "JavaScript closures retain only owned arrays; each successful tentative position receives a fresh [index,turn] pair. side-turn+4 avoids negative remainder. Recursion returns a boolean separately from the result array, so an impossible branch cannot be confused with a partially filled solution."
+    },
+    "id": "ctci6_7_6",
+    "title": "Jigsaw",
+    "testCount": 318,
+    "languages": {
+      "csharp": {
+        "signature": "int[][] SolveJigsaw(int size, int[][] pieces)",
+        "starterCode": "public class Solution\n{\n    public int[][] SolveJigsaw(int size, int[][] pieces)\n    {\n        return [];\n    }\n}\n",
+        "solutionCode": "public class Solution\n{\n    public int[][] SolveJigsaw(int size, int[][] pieces)\n    {\n        int count = pieces.Length;\n        var placed = Enumerable.Range(0, count)\n                         .Select(\n                             _ => new int[2])\n                         .ToArray();\n        var used = new bool[count];\n        int Edge(int index, int turn, int side) => pieces[index][(side - turn + 4) % 4];\n        bool Search(int position)\n        {\n            if (position == count)\n                return true;\n            int row = position / size, column = position % size;\n            for (int index = 0; index < count; ++index)\n            {\n                if (used[index])\n                    continue;\n                for (int turn = 0; turn < 4; ++turn)\n                {\n                    int[] values = new int[4];\n                    bool[] bounds = { row == 0, column == size - 1, row == size - 1, column == 0 };\n                    bool fits = true;\n                    for (int side = 0; side < 4; ++side)\n                    {\n                        values[side] = Edge(index, turn, side);\n                        if ((values[side] == 0) != bounds[side])\n                            fits = false;\n                    }\n                    if (!fits)\n                        continue;\n                    if (row > 0 && values[0] != -Edge(placed[position - size][0],\n                                                      placed[position - size][1], 2))\n                        continue;\n                    if (column > 0 &&\n                        values[3] != -Edge(placed[position - 1][0], placed[position - 1][1], 1))\n                        continue;\n                    used[index] = true;\n                    placed[position][0] = index;\n                    placed[position][1] = turn;\n                    if (Search(position + 1))\n                        return true;\n                    used[index] = false;\n                }\n            }\n            return false;\n        }\n        return Search(0) ? placed : Array.Empty<int[]>();\n    }\n}\n"
+      },
+      "javascript": {
+        "signature": "function SolveJigsaw(size, pieces)",
+        "starterCode": "function SolveJigsaw(size, pieces) {\n  return [];\n}\n",
+        "solutionCode": "function SolveJigsaw(size, pieces) {\n  const count = pieces.length,\n    placed = Array(count),\n    used = Array(count).fill(false);\n  const edge = (index, turn, side) => pieces[index][(side - turn + 4) % 4];\n  function search(position) {\n    if (position === count) return true;\n    const row = Math.floor(position / size),\n      column = position % size;\n    for (let index = 0; index < count; ++index) {\n      if (used[index]) continue;\n      for (let turn = 0; turn < 4; ++turn) {\n        const values = [0, 1, 2, 3].map((s) => edge(index, turn, s)),\n          bounds = [row === 0, column === size - 1, row === size - 1, column === 0];\n        if (values.some((v, s) => (v === 0) !== bounds[s])) continue;\n        if (row && values[0] !== -edge(...placed[position - size], 2)) continue;\n        if (column && values[3] !== -edge(...placed[position - 1], 1)) continue;\n        used[index] = true;\n        placed[position] = [index, turn];\n        if (search(position + 1)) return true;\n        used[index] = false;\n      }\n    }\n    return false;\n  }\n  return search(0) ? placed : [];\n}\n"
+      },
+      "python": {
+        "signature": "def SolveJigsaw(size: int, pieces: list[list[int]]) -> list[list[int]]",
+        "starterCode": "def SolveJigsaw(size: int, pieces: list[list[int]]) -> list[list[int]]:\n    return []\n",
+        "solutionCode": "def SolveJigsaw(size: int, pieces: list[list[int]]) -> list[list[int]]:\n    count = len(pieces)\n    placed = [None] * count\n    used = [False] * count\n\n    def edge(index, turn, side):\n        return pieces[index][(side - turn) % 4]\n\n    def search(position):\n        if position == count:\n            return True\n        row, column = divmod(position, size)\n        for index in range(count):\n            if used[index]:\n                continue\n            for turn in range(4):\n                values = [edge(index, turn, s) for s in range(4)]\n                if any(\n                    (value == 0) != boundary\n                    for value, boundary in zip(\n                        values, (row == 0, column == size - 1, row == size - 1, column == 0)\n                    )\n                ):\n                    continue\n                if row and values[0] != -edge(*placed[position - size], 2):\n                    continue\n                if column and values[3] != -edge(*placed[position - 1], 1):\n                    continue\n                used[index] = True\n                placed[position] = (index, turn)\n                if search(position + 1):\n                    return True\n                used[index] = False\n        return False\n\n    return [list(pair) for pair in placed] if search(0) else []\n"
+      },
+      "cpp": {
+        "signature": "std::vector<std::vector<int>> SolveJigsaw(int size, const std::vector<std::vector<int>>& pieces)",
+        "starterCode": "class Solution {\n public:\n  std::vector<std::vector<int>> SolveJigsaw(int size, const std::vector<std::vector<int>>& pieces) {\n    return {};\n  }\n};\n",
+        "solutionCode": "class Solution {\n public:\n  std::vector<std::vector<int>> SolveJigsaw(int size, const std::vector<std::vector<int>>& pieces) {\n    int count = static_cast<int>(pieces.size());\n    std::vector<std::vector<int>> placed(count, std::vector<int>(2));\n    std::vector<bool> used(count, false);\n    auto edge = [&](int index, int turn, int side) { return pieces[index][(side - turn + 4) % 4]; };\n    std::function<bool(int)> search = [&](int position) {\n      if (position == count)\n        return true;\n      int row = position / size, column = position % size;\n      for (int index = 0; index < count; ++index) {\n        if (used[index])\n          continue;\n        for (int turn = 0; turn < 4; ++turn) {\n          int values[4];\n          bool bounds[4] = {row == 0, column == size - 1, row == size - 1, column == 0},\n               fits = true;\n          for (int side = 0; side < 4; ++side) {\n            values[side] = edge(index, turn, side);\n            if ((values[side] == 0) != bounds[side])\n              fits = false;\n          }\n          if (!fits)\n            continue;\n          if (row && values[0] != -edge(placed[position - size][0], placed[position - size][1], 2))\n            continue;\n          if (column && values[3] != -edge(placed[position - 1][0], placed[position - 1][1], 1))\n            continue;\n          used[index] = true;\n          placed[position] = {index, turn};\n          if (search(position + 1))\n            return true;\n          used[index] = false;\n        }\n      }\n      return false;\n    };\n    return search(0) ? placed : std::vector<std::vector<int>>{};\n  }\n};\n"
+      },
+      "java": {
+        "signature": "int[][] SolveJigsaw(int size, int[][] pieces)",
+        "starterCode": "class Solution {\n  public int[][] SolveJigsaw(int size, int[][] pieces) {\n    return new int[0][];\n  }\n}\n",
+        "solutionCode": "class Solution {\n  public int[][] SolveJigsaw(int size, int[][] pieces) {\n    int count = pieces.length;\n    int[][] placed = new int[count][2];\n    boolean[] used = new boolean[count];\n    class Searcher {\n      int edge(int index, int turn, int side) {\n        return pieces[index][(side - turn + 4) % 4];\n      }\n      boolean search(int position) {\n        if (position == count)\n          return true;\n        int row = position / size, column = position % size;\n        for (int index = 0; index < count; ++index) {\n          if (used[index])\n            continue;\n          for (int turn = 0; turn < 4; ++turn) {\n            int[] values = new int[4];\n            boolean[] bounds = {row == 0, column == size - 1, row == size - 1, column == 0};\n            boolean fits = true;\n            for (int side = 0; side < 4; ++side) {\n              values[side] = edge(index, turn, side);\n              if ((values[side] == 0) != bounds[side])\n                fits = false;\n            }\n            if (!fits)\n              continue;\n            if (row > 0\n                && values[0] != -edge(placed[position - size][0], placed[position - size][1], 2))\n              continue;\n            if (column > 0\n                && values[3] != -edge(placed[position - 1][0], placed[position - 1][1], 1))\n              continue;\n            used[index] = true;\n            placed[position][0] = index;\n            placed[position][1] = turn;\n            if (search(position + 1))\n              return true;\n            used[index] = false;\n          }\n        }\n        return false;\n      }\n    }\n    return new Searcher().search(0) ? placed : new int[0][];\n  }\n}\n"
+      }
+    }
   }
 ]
