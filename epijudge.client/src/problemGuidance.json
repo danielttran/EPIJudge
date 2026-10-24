@@ -4,7 +4,7 @@
       "Bit manipulation"
     ],
     "hints": [
-      "Which bit positions matter independently, and what happens to them when equal bits cancel or a mask selects a subset?",
+      "How does subtracting one change the lowest set bit and the zeros below it? Keep the input restricted to its 32-bit representation, including for negative values.",
       "Interpret the signed input as its 32-bit unsigned bit pattern. Clearing the lowest set bit removes one 1 at a time, so the number of iterations equals the requested population count, including negative inputs."
     ]
   },
@@ -13,7 +13,7 @@
       "Two pointers"
     ],
     "hints": [
-      "Can two positions delimit the candidates still worth considering? What fact would justify moving one position without losing an answer?",
+      "The array is already sorted, and this variant allows one position to be used twice. How does changing either endpoint affect the pair sum?",
       "Use two pointers on the already sorted array. Increase the left pointer when the sum is too small and decrease the right pointer when it is too large. Allow the pointers to coincide because this EPI contract permits reusing one element."
     ]
   },
@@ -22,7 +22,7 @@
       "Hashing and counting"
     ],
     "hints": [
-      "What information about earlier occurrences would let you answer a lookup without scanning those occurrences again?",
+      "An entire entry’s character counts determine its group. Unlike some anagram exercises, this variant omits singleton groups.",
       "Use the sorted characters of each entire entry as its key. Entries with identical character frequencies share a group. Preserve the original entries and omit singleton groups, as required by this EPI variant."
     ]
   },
@@ -103,8 +103,8 @@
       "Linear scan"
     ],
     "hints": [
-      "What small summary of the entries already visited is enough to process the next entry?",
-      "Build a result sequence from left to right. Append a value only when the result is empty or its last value differs. Sorting makes all copies of a value consecutive, so only one representative is appended."
+      "Equal values are adjacent in sorted input. How can one write position mark the retained distinct prefix while a read position scans the original values?",
+      "Scan the sorted values with a read position and a write position. Retain a value only when it differs from the last retained value. For an in-place callable, compact those values into the original prefix and return its length; for a sequence-returning callable, return the retained sequence."
     ]
   },
   "buy_and_sell_stock": {
@@ -112,7 +112,7 @@
       "Greedy"
     ],
     "hints": [
-      "What can you settle now without making a later choice worse? Try to justify that choice before committing to it.",
+      "No trade is allowed, so zero profit is a valid answer. At a possible selling day, what earlier price gives the best purchase?",
       "Keep the cheapest earlier price and the best profit so far. Evaluate selling at the current price before updating the minimum, so a purchase used for that sale comes from an earlier day. Start the best profit at zero to allow making no trade."
     ]
   },
@@ -211,7 +211,7 @@
       "Simulation"
     ],
     "hints": [
-      "Write down the state before and after one legal step. Which observations must be completed before you mutate that state?",
+      "A partial board can be conflict-free without being solvable. Which three groups must each filled digit be unique within, and how should a zero be treated?",
       "Track the nonzero values already seen in each row, column and square subgrid. Reject an out-of-range value or a repeated value in any of its three groups; zero is an unfilled cell."
     ]
   },
@@ -220,7 +220,7 @@
       "Array transformations"
     ],
     "hints": [
-      "Track where an original element must end up. Which boundaries or saved observations prevent a write from destroying information you still need?",
+      "After reading one outside layer, what smaller unvisited rectangle remains? Consider the final single row or single column so no cell is emitted twice.",
       "Read the current top, right, bottom and left boundaries, then move each boundary inward. Guard the last row and column so the center is never repeated."
     ]
   },
@@ -247,8 +247,8 @@
       "Binary search tree"
     ],
     "hints": [
-      "Which candidates can you rule out using the ordering of a node and its subtrees? Check this problem’s exact rule for duplicate keys.",
-      "Compare the target with the current BST key and follow the only subtree that can contain it. Return -1 after reaching a missing child."
+      "Compare the target with the current key: which single subtree can still contain it? The selected callable determines whether to return the node or its key.",
+      "Compare the target with the current BST key and follow the only subtree that can contain it. On a match, return the original node or its key as specified by the selected callable. If no match exists, use that callable’s absence result, not a wrapper’s displayed value."
     ]
   },
   "is_tree_a_bst": {
@@ -319,7 +319,7 @@
       "Binary search tree"
     ],
     "hints": [
-      "Which candidates can you rule out using the ordering of a node and its subtrees? Check this problem’s exact rule for duplicate keys.",
+      "The input order already determines inorder traversal. Which root position leaves the two subtrees as balanced in size as possible?",
       "Choose a middle element as root and recursively build the two sorted halves. The subtree sizes differ by at most one, giving minimum height while preserving the sorted inorder sequence."
     ]
   },
@@ -355,7 +355,7 @@
       "Tree traversal"
     ],
     "hints": [
-      "What information does a node need from its ancestors or children? Use that dependency to choose the order in which you visit nodes.",
+      "Balance must hold at every node, not just the root. What result from each child would let a parent detect either an existing imbalance or a new height difference?",
       "Compute subtree heights in postorder. Return a sentinel of −1 immediately when a child is unbalanced or the child heights differ by more than one. A nonnegative height at the root means every node is balanced."
     ]
   },
@@ -409,8 +409,8 @@
       "Tree traversal"
     ],
     "hints": [
-      "What information does a node need from its ancestors or children? Use that dependency to choose the order in which you visit nodes.",
-      "Perform an iterative inorder traversal and count visited nodes. Return the Data of the kth visited node. This follows the displayed contract without relying on precomputed subtree sizes."
+      "Rank is measured in inorder, not by value or depth. If left-subtree sizes are available, how many nodes can you skip before considering the current node?",
+      "An inorder traversal can count visits until rank k. If subtree sizes are available, compare k with the left size plus one and skip the irrelevant subtree instead. Return the original node or its data according to the selected callable, rather than assuming the judge’s displayed value is the return type."
     ]
   },
   "successor_in_tree": {
@@ -418,8 +418,8 @@
       "Tree traversal"
     ],
     "hints": [
-      "What information does a node need from its ancestors or children? Use that dependency to choose the order in which you visit nodes.",
-      "First locate the node by its Data value. Its successor is the leftmost node in its right subtree, if that subtree exists; otherwise climb Parent links until leaving a left child. No such ancestor means no successor."
+      "What node would an inorder traversal visit immediately after this one? Consider a right subtree first, then the direction of each upward parent step.",
+      "Start from the supplied node, locating it first only when the callable takes a value rather than a node. Its successor is the leftmost node in its right subtree, if present; otherwise climb parent links until leaving a left child. No such ancestor means there is no successor."
     ]
   },
   "tree_with_parent_inorder": {
@@ -455,7 +455,7 @@
     ],
     "hints": [
       "What information does a node need from its ancestors or children? Use that dependency to choose the order in which you visit nodes.",
-      "Traverse left before right and append only nodes with neither child. This produces the leaf values in their left-to-right order."
+      "Traverse left before right and collect only nodes with neither child. Preserve this left-to-right order and return the original leaf nodes or their values according to the selected callable."
     ]
   },
   "tree_exterior": {
@@ -490,7 +490,7 @@
       "Dynamic programming"
     ],
     "hints": [
-      "What smaller state would summarize all relevant earlier choices? Define that state before deciding how to update it.",
+      "An empty subarray is allowed here. When would keeping a negative running suffix make any later choice worse?",
       "Maintain the best nonnegative sum ending at the current entry. A negative suffix is discarded because it cannot improve any future subarray. Starting the answer at zero permits the empty subarray."
     ]
   },
@@ -535,7 +535,7 @@
       "Dynamic programming"
     ],
     "hints": [
-      "What smaller state would summarize all relevant earlier choices? Define that state before deciding how to update it.",
+      "Revisiting a cell is permitted in this question. Can the state be just a cell and the number of sequence entries matched, without a used-cell set?",
       "For each pattern prefix, record which cells can end a matching walk. A cell is reachable for the next value when one of its four neighbors ended the previous prefix. Keep only two layers; revisiting cells is allowed by this question."
     ]
   },
@@ -715,7 +715,7 @@
       "Two pointers"
     ],
     "hints": [
-      "Can two positions delimit the candidates still worth considering? What fact would justify moving one position without losing an answer?",
+      "This variant allows reusing an element. After choosing a first value, which positions must remain eligible for the remaining pair?",
       "Sort the values. For each possible first value, run a two-pointer sum search over the entire array. The pointers may coincide and the first value remains eligible, matching this EPI contract that permits element reuse."
     ]
   },
@@ -877,8 +877,8 @@
       "Heap"
     ],
     "hints": [
-      "Do you need every candidate in sorted order, or only repeated access to an extreme among the current candidates?",
-      "Keep a size-k max heap of squared distances. Whenever the heap grows too large, remove its farthest star. Square roots are needed only for the final returned Euclidean distances, whose order is unrestricted."
+      "Keep enough information to return the selected stars, not just to compare them. Squared distance gives the same ordering without square roots.",
+      "Keep a size-k max heap of candidates ordered by squared distance, retaining each associated star. Remove the farthest whenever the heap exceeds k. Return the retained Star objects or their Euclidean distances as the selected callable requires; only a distance-returning callable needs final square roots."
     ]
   },
   "online_median": {
@@ -1084,7 +1084,7 @@
       "Binary search tree"
     ],
     "hints": [
-      "Which candidates can you rule out using the ordering of a node and its subtrees? Check this problem’s exact rule for duplicate keys.",
+      "Each BST can supply a sorted sequence. How can the two sequences be combined, and which middle-index convention does this question require when rebuilding?",
       "Read each BST in sorted inorder order, merge the sequences without removing duplicates, then build from half-open ranges. Choosing start+(end−start)/2 exactly matches the required structural convention."
     ]
   },
@@ -1229,7 +1229,7 @@
     ],
     "hints": [
       "Before changing a link, which references must you save so every required original node remains reachable?",
-      "Walk to the node immediately before the selected non-head position, then bypass the selected node. All retained nodes preserve their values and identities."
+      "Use the supplied predecessor, or locate it from the head only when the callable takes a position. Bypass the selected node through that predecessor’s next link. Preserve all retained node identities and values; return a head only if the selected callable requires one."
     ]
   },
   "insert_in_list": {
@@ -1238,7 +1238,7 @@
     ],
     "hints": [
       "Before changing a link, which references must you save so every required original node remains reachable?",
-      "Walk to the selected 1-based node position. Link the new node to its successor, then link the selected node to the new node. The existing head and all existing nodes are retained."
+      "Use the selected node and new node directly when supplied; otherwise locate the selected 1-based position and create the new node. Point the new node to the old successor before linking it after the selected node. Preserve every original node and follow the selected callable’s return contract."
     ]
   },
   "search_in_list": {
@@ -1247,7 +1247,7 @@
     ],
     "hints": [
       "What small summary of the entries already visited is enough to process the next entry?",
-      "Walk through the list until a matching Data value is found. If the end is reached first, return -1."
+      "Follow next links until a node’s data equals the key. Return that node or its data according to the selected callable. At the end of the list, use its specified absence result: null for a node-returning callable, or -1 for a value-returning callable."
     ]
   },
   "sorted_lists_merge": {
@@ -1301,7 +1301,7 @@
     ],
     "hints": [
       "Before changing a link, which references must you save so every required original node remains reachable?",
-      "Locate the selected node, copy its successor’s value into it, then bypass that successor. After locating the node, deletion uses only that node and its successor, as requested; the selected position cannot be the tail."
+      "Use the supplied non-tail node, locating it first only when the callable takes an index. Copy its successor’s data into it and bypass that successor. This removes the selected logical value without requiring access to its predecessor."
     ]
   },
   "delete_kth_last_from_list": {
@@ -1372,8 +1372,8 @@
       "Bit manipulation"
     ],
     "hints": [
-      "Which bit positions matter independently, and what happens to them when equal bits cancel or a mask selects a subset?",
-      "Each iteration clears the lowest set bit and flips the parity. Casting to ulong preserves all 64 bits, including the sign bit."
+      "Do you need the exact number of set bits, or only whether that number is odd? What happens to parity when exactly one set bit is removed?",
+      "Restrict the input to its 64-bit bit pattern. Clear one lowest set bit per iteration and flip a zero/one parity accumulator each time. Fixed-width masking is needed when the language does not automatically limit integers to 64 bits."
     ]
   },
   "swap_bits": {
@@ -1381,7 +1381,7 @@
       "Bit manipulation"
     ],
     "hints": [
-      "Which bit positions matter independently, and what happens to them when equal bits cancel or a mask selects a subset?",
+      "When do exchanging two bit positions and leaving them unchanged have the same result? Only the case where their values differ needs an update.",
       "If the selected bits differ, toggle both with XOR; if equal, leave the integer unchanged. Unsigned shifts expose all 64 bit positions, including the sign bit."
     ]
   },
@@ -1390,7 +1390,7 @@
       "Bit manipulation"
     ],
     "hints": [
-      "Which bit positions matter independently, and what happens to them when equal bits cancel or a mask selects a subset?",
+      "Where must the least significant input bit appear in the reversed result? Repeat the same reasoning for exactly 64 positions, including leading zeros.",
       "Take the source bits from least significant to most significant, appending each to the result. Use unsigned shifts so all 64 bits, including negative input bit patterns, are handled correctly."
     ]
   },
@@ -1399,7 +1399,7 @@
       "Bit manipulation"
     ],
     "hints": [
-      "Which bit positions matter independently, and what happens to them when equal bits cancel or a mask selects a subset?",
+      "Moving a one into a zero position preserves weight. Which unequal neighboring bit positions give the smallest possible numeric change?",
       "Find the lowest adjacent pair of unequal bits and swap them. This preserves the set-bit count, and using the least significant such pair gives the smallest possible absolute change without making the result negative."
     ]
   },
@@ -1408,7 +1408,7 @@
       "Bit manipulation"
     ],
     "hints": [
-      "Which bit positions matter independently, and what happens to them when equal bits cancel or a mask selects a subset?",
+      "A binary multiplier describes a sum of shifted copies of the other operand. How can sum bits and carry bits be handled separately without arithmetic addition?",
       "Accumulate shifted copies of y for the set bits of x. The helper adds using XOR for sum bits and shifted AND for carries, avoiding arithmetic addition and multiplication."
     ]
   },
@@ -1417,7 +1417,7 @@
       "Bit manipulation"
     ],
     "hints": [
-      "Which bit positions matter independently, and what happens to them when equal bits cancel or a mask selects a subset?",
+      "Which shifted copy of the divisor is the largest that still fits in the remaining dividend? Its position determines one quotient bit.",
       "Try shifted copies of the divisor from the largest quotient bit downward. Subtract a copy whenever it fits, setting that quotient bit without division, multiplication, or remainder."
     ]
   },
@@ -1427,7 +1427,7 @@
     ],
     "hints": [
       "Can you work with digits, place values, or a smaller arithmetic identity instead of constructing every possible candidate?",
-      "Use exponentiation by squaring: an odd exponent contributes the current factor, then the factor is squared and the exponent is halved. Widen before negating to handle int.MinValue."
+      "Use exponentiation by squaring: an odd exponent contributes the current factor, then square the factor and halve the remaining exponent. For a negative exponent, invert the base; widen the exponent before negating if the most negative supported value cannot be represented positively in its original type."
     ]
   },
   "reverse_digits": {
@@ -1436,7 +1436,7 @@
     ],
     "hints": [
       "Can you work with digits, place values, or a smaller arithmetic identity instead of constructing every possible candidate?",
-      "Repeatedly remove the final decimal digit and append it to a long accumulator. Widen before taking the absolute value so int.MinValue is safe, then restore the sign."
+      "Extract decimal digits from the nonnegative magnitude and append them to an accumulator. Use a sufficiently wide representation before taking the absolute value, then restore the original sign; do not assume negating the most negative input is safe in its original type."
     ]
   },
   "is_number_palindromic": {
@@ -1462,7 +1462,7 @@
       "Geometry"
     ],
     "hints": [
-      "Separate coordinate relationships from drawing intuition. Explicitly consider touching boundaries, coincident points, and degenerate shapes allowed by the contract.",
+      "Intersect the horizontal and vertical ranges separately. Here boundary-only contact is retained, so distinguish a zero length from a negative length.",
       "Intersect the horizontal and vertical coordinate intervals independently. Strictly separated intervals mean disjoint rectangles; equal endpoints retain a zero-width or zero-height intersection. Endpoint arithmetic is widened before addition to avoid overflow."
     ]
   },
@@ -1543,8 +1543,8 @@
       "Backtracking"
     ],
     "hints": [
-      "Build a partial candidate. Which choices can extend it, which conditions already make it impossible, and what state must be restored after trying a choice?",
-      "Choose every possible left-subtree node count and combine every left and right shape. Memoize these immutable shape sets. Serialize each root breadth-first, emitting 1 for nodes and 0 for all null child positions; the null root therefore becomes [0]."
+      "For a fixed root, how many nodes can go on the left? For each split, every left shape can be paired with every right shape.",
+      "For each possible left-subtree size, combine every left shape with every right shape of the remaining size. Include the null shape as the zero-node base case. Return roots for a tree-returning callable; produce breadth-first 1/0 markers, including null children, only for a marker-array callable."
     ]
   },
   "sudoku_solve": {
@@ -1561,7 +1561,7 @@
       "Bit manipulation"
     ],
     "hints": [
-      "Which bit positions matter independently, and what happens to them when equal bits cancel or a mask selects a subset?",
+      "Ordinary binary counting may flip several bits at once. Can a transformation of adjacent binary bits make successive output words differ in only one position?",
       "Map each binary counter value i to i XOR (i shifted right once). This reflected Gray-code mapping visits every bit pattern once and changes one bit between consecutive outputs."
     ]
   },
@@ -1687,8 +1687,8 @@
       "Hashing and counting"
     ],
     "hints": [
-      "What information about earlier occurrences would let you answer a lookup without scanning those occurrences again?",
-      "Insert only the first name of each pair into a set. Set membership removes repeated first names regardless of last names; the contract permits any output order."
+      "Which part of a person record defines equality here? Two different last names must not prevent duplicate first names from being grouped.",
+      "Group or mark records by first name alone, retaining one representative per first name. A sequence-returning callable may return the distinct names; a record-mutating callable must keep representative records in its input instead. Last names do not define duplicate identity."
     ]
   },
   "smallest_nonconstructible_value": {
@@ -1705,7 +1705,7 @@
       "Sweep line"
     ],
     "hints": [
-      "At which positions can the answer change? Decide how simultaneous events must be ordered under the stated endpoint rules.",
+      "Touching endpoints count as overlapping here. At an equal time, should a start be counted before or after a finish?",
       "Sweep sorted event endpoints, counting active intervals. Process starts before finishes at an equal time because this contract counts touching endpoints as overlapping. The largest active count is the answer."
     ]
   },
@@ -1723,7 +1723,7 @@
       "Intervals"
     ],
     "hints": [
-      "What does touching at an endpoint mean in this contract? Ordering intervals can make the only possible next overlap easier to identify.",
+      "Two intervals can meet at equal coordinates but include that point differently. When does their union have a gap at the meeting point?",
       "Sort intervals by left endpoint, putting a closed endpoint first on ties. Merge intersecting intervals and intervals that touch at an endpoint included by either interval. On equal boundaries, keep the boundary closed if either interval includes it. Two open endpoints at the same value leave a gap and stay separate."
     ]
   },
@@ -1769,7 +1769,7 @@
     ],
     "hints": [
       "Which unfinished operation or earlier state must be resumed first? Consider whether the most recent one is the relevant one.",
-      "Store each value together with the maximum of its stack prefix. Pop reveals the previous prefix maximum immediately. Initialize clears the logical stack; the underlying value-tuple stack retains its allocated capacity."
+      "Store each pushed value together with the maximum of its stack prefix. Popping reveals the preceding prefix maximum immediately. Initialization or construction must start with an empty logical stack."
     ]
   },
   "evaluate_rpn": {
@@ -1778,7 +1778,7 @@
     ],
     "hints": [
       "Which unfinished operation or earlier state must be resumed first? Consider whether the most recent one is the relevant one.",
-      "Push integer operands onto a stack. An operator consumes the most recent operand as its right argument and the preceding operand as its left argument, then pushes the result."
+      "Push integer operands onto a stack. An operator consumes the most recent operand as its right argument and the preceding operand as its left argument, then pushes the result. Division must truncate toward zero, including for negative operands."
     ]
   },
   "is_valid_parenthesization": {
@@ -1859,7 +1859,7 @@
     ],
     "hints": [
       "Can you work with digits, place values, or a smaller arithmetic identity instead of constructing every possible candidate?",
-      "Format by repeatedly extracting decimal digits from a nonnegative long magnitude, then reverse the digits and optional sign. Parse by accumulating base-10 digits after an optional sign. The wider accumulator handles the magnitude of Int32.MinValue."
+      "Format by extracting decimal digits from a nonnegative magnitude and reversing them, with a minus sign only for a negative input. Parse by accumulating base-10 digits after an optional sign. Use a sufficiently wide magnitude so the most negative supported input is handled safely."
     ]
   },
   "convert_base": {
@@ -1886,7 +1886,7 @@
     ],
     "hints": [
       "What makes a segment, token, or match unambiguous in this contract? Try tracking boundaries rather than repeatedly rebuilding the whole string.",
-      "Read only the active prefix. Skip b, append two d characters for a, and copy any other character. Returning a new list excludes unused buffer capacity."
+      "Read only the active prefix. For an in-place buffer callable, first compact away b characters and count a characters, then fill backward, expanding each a to dd so unread characters survive; return the active length. For a sequence-returning callable, build the same transformed characters in a new sequence."
     ]
   },
   "is_string_palindromic_punctuation": {
@@ -1930,7 +1930,7 @@
       "String processing"
     ],
     "hints": [
-      "What makes a segment, token, or match unambiguous in this contract? Try tracking boundaries rather than repeatedly rebuilding the whole string.",
+      "Four parts require exactly three cuts. Which part lengths, values and leading-zero cases can be rejected before emitting an address?",
       "Enumerate all three cut positions with at most three digits per part. Keep a candidate only if each part is at most 255 and has no leading zero unless the part is exactly zero."
     ]
   },
@@ -1939,7 +1939,7 @@
       "String processing"
     ],
     "hints": [
-      "What makes a segment, token, or match unambiguous in this contract? Try tracking boundaries rather than repeatedly rebuilding the whole string.",
+      "Write down the input indices on each of the three rows. Can you read those index patterns directly without building a drawing?",
       "Read the three snake rows directly from their index patterns: 1,5,9,...; 0,2,4,...; and 3,7,11,... . Every input character appears exactly once."
     ]
   },
@@ -1966,7 +1966,7 @@
       "Hashing and counting"
     ],
     "hints": [
-      "What information about earlier occurrences would let you answer a lookup without scanning those occurrences again?",
+      "You need two different positions, not merely two values. What must be checked before recording the current position so it cannot pair with itself?",
       "Scan left to right while mapping each previous value to its index. Look up target minus the current value before inserting it, which prevents reusing the same position."
     ]
   },
@@ -2011,7 +2011,7 @@
       "Two pointers"
     ],
     "hints": [
-      "Can two positions delimit the candidates still worth considering? What fact would justify moving one position without losing an answer?",
+      "All three positions must be different, but output triples are unique by value. How can sorting help both find sums and suppress duplicate triples?",
       "Sort the values, fix one position, and move two pointers through the remaining suffix. Skip repeated fixed values and pointer values after each match so every triple appears once."
     ]
   },
@@ -2029,7 +2029,7 @@
       "Greedy"
     ],
     "hints": [
-      "What can you settle now without making a later choice worse? Try to justify that choice before committing to it.",
+      "The purchase must precede the sale, but making no trade is allowed. What is the cheapest eligible purchase when examining each possible selling day?",
       "Keep the lowest earlier price and the best profit found so far. Each price can be the selling day; a zero profit represents making no trade."
     ]
   },
@@ -2083,7 +2083,7 @@
       "Sweep line"
     ],
     "hints": [
-      "At which positions can the answer change? Decide how simultaneous events must be ordered under the stated endpoint rules.",
+      "A room is free at its ending time. At an equal time, should a finish be processed before or after a new start?",
       "Turn meetings into start and end events and sort them. Process ends before starts at equal times; the maximum active count is the number of rooms needed."
     ]
   },
@@ -2101,7 +2101,7 @@
       "String processing"
     ],
     "hints": [
-      "What makes a segment, token, or match unambiguous in this contract? Try tracking boundaries rather than repeatedly rebuilding the whole string.",
+      "Order does not matter, but the number of occurrences of each letter does. What canonical representation lets you compare those multiplicities?",
       "Sort the characters of both strings and compare the resulting sequences. Equal sorted sequences have exactly the same character multiplicities."
     ]
   },
@@ -2110,7 +2110,7 @@
       "Hashing and counting"
     ],
     "hints": [
-      "What information about earlier occurrences would let you answer a lookup without scanning those occurrences again?",
+      "Every input occurrence must survive, including singleton groups and duplicate words. Which key identifies an entry’s character multiset?",
       "Use the sorted characters of a word as its grouping key. Return every group, including singleton groups, as required by this Blind75 contract."
     ]
   },
@@ -2128,7 +2128,7 @@
       "String processing"
     ],
     "hints": [
-      "What makes a segment, token, or match unambiguous in this contract? Try tracking boundaries rather than repeatedly rebuilding the whole string.",
+      "Which characters count under this exact contract? Remove only the ignored characters and normalize case before comparing mirrored positions.",
       "Keep ASCII letters and digits, normalize letters to lowercase, and compare the filtered sequence with its reverse."
     ]
   },
@@ -2164,7 +2164,7 @@
       "Two pointers"
     ],
     "hints": [
-      "Can two positions delimit the candidates still worth considering? What fact would justify moving one position without losing an answer?",
+      "A palindrome expands symmetrically from one character or from a gap. How will you preserve the leftmost answer when two maximum lengths tie?",
       "Expand around every character and every gap between characters. Track the longest palindrome and choose the earliest starting index when lengths tie."
     ]
   },
@@ -2173,7 +2173,7 @@
       "Two pointers"
     ],
     "hints": [
-      "Can two positions delimit the candidates still worth considering? What fact would justify moving one position without losing an answer?",
+      "Every nonempty palindrome has a center and a radius. Remember both single-character centers and centers between adjacent characters.",
       "Expand around odd and even centers, counting each successful expansion. Every palindrome has exactly one such center and radius."
     ]
   },
@@ -2200,7 +2200,7 @@
       "Array transformations"
     ],
     "hints": [
-      "Track where an original element must end up. Which boundaries or saved observations prevent a write from destroying information you still need?",
+      "Track the unvisited rectangle rather than rotating the input. Which edges still exist when only one row or one column remains?",
       "Maintain the unvisited top, bottom, left, and right boundaries. Consume each outside edge in clockwise order, checking boundaries before the final two edges."
     ]
   },
@@ -2425,7 +2425,7 @@
       "Backtracking"
     ],
     "hints": [
-      "Build a partial candidate. Which choices can extend it, which conditions already make it impossible, and what state must be restored after trying a choice?",
+      "A cell may be used only once within one candidate path. Which visited marks must be undone before trying a different path?",
       "Backtrack from every board cell. A visited matrix prevents using a cell twice in one path; restore the mark when returning so other paths can use it."
     ]
   },
@@ -2596,7 +2596,7 @@
       "Dynamic programming"
     ],
     "hints": [
-      "What smaller state would summarize all relevant earlier choices? Define that state before deciding how to update it.",
+      "The subarray must be nonempty. How will your best-so-far value avoid incorrectly returning zero when every entry is negative?",
       "Track the best sum ending at the current index: either start here or extend the previous sum. Retain the largest ending sum seen, including for all-negative arrays."
     ]
   },
@@ -2605,7 +2605,7 @@
       "Bit manipulation"
     ],
     "hints": [
-      "Which bit positions matter independently, and what happens to them when equal bits cancel or a mask selects a subset?",
+      "Can one operation remove exactly one set bit? The representation is 32 bits even though the parameter can hold a wider integer.",
       "Repeatedly clear the lowest set bit with n AND (n minus one). Count the iterations; the input represents an unsigned 32-bit bit pattern in a long."
     ]
   },
@@ -2623,7 +2623,7 @@
       "Bit manipulation"
     ],
     "hints": [
-      "Which bit positions matter independently, and what happens to them when equal bits cancel or a mask selects a subset?",
+      "The output must contain exactly 32 reversed bit positions. Where does each removed low input bit go as the output grows?",
       "Repeat exactly 32 times: shift the result left, append the current low input bit, and shift the input right. Leading zeros are included."
     ]
   },
@@ -2650,8 +2650,8 @@
       "Greedy"
     ],
     "hints": [
-      "What can you settle now without making a later choice worse? Try to justify that choice before committing to it.",
-      "Keep the lowest earlier price and the best profit seen. Evaluate a sale before allowing its own price to become the next minimum."
+      "A transaction is mandatory and the sale must be later. How will you represent the best profit when every possible transaction loses money?",
+      "Initialize the best profit from a real buy/sell pair, not zero, because a trade is required even when all profits are negative. For each later price, evaluate selling against the lowest earlier price before allowing today’s price to update that minimum."
     ]
   },
   "interviewcake_balanced-binary-tree": {
@@ -2659,7 +2659,7 @@
       "Tree traversal"
     ],
     "hints": [
-      "What information does a node need from its ancestors or children? Use that dependency to choose the order in which you visit nodes.",
+      "This question compares the shallowest and deepest leaves globally, not the two child heights at each node. What leaf-depth information is enough?",
       "Traverse nodes with their depths, tracking the smallest and largest depths encountered at leaves. Reject once their difference exceeds one."
     ]
   },
@@ -2678,7 +2678,7 @@
     ],
     "hints": [
       "Which unfinished operation or earlier state must be resumed first? Consider whether the most recent one is the relevant one.",
-      "Push openers onto a stack and compare each closer with the top. Reject a mismatch or an empty stack at a closer."
+      "Ignore nonbracket characters. Push openers and require each closer to match the most recent unmatched opener. Reject an empty stack or mismatched opener at a closer, and require an empty stack after the entire string."
     ]
   },
   "interviewcake_cafe-order-checker": {
@@ -2687,7 +2687,7 @@
     ],
     "hints": [
       "Can two positions delimit the candidates still worth considering? What fact would justify moving one position without losing an answer?",
-      "Maintain the next unread index in each source. Each served ID must consume the next ID from exactly one source."
+      "Maintain the next unread index in each source. Each served ID must consume the next ID from exactly one source, preserving both source orders. Reject an unmatched ID and require both sources to be fully consumed at the end."
     ]
   },
   "interviewcake_nth-fibonacci": {
@@ -2866,7 +2866,7 @@
       "String processing"
     ],
     "hints": [
-      "What makes a segment, token, or match unambiguous in this contract? Try tracking boundaries rather than repeatedly rebuilding the whole string.",
+      "Starting at the designated opener, how many opening parentheses are still unmatched? The answer is not necessarily the next closing parenthesis.",
       "Scan starting at the designated opening parenthesis, including it in the depth count. Increment for each opener and decrement for each closer; the first decrement to zero identifies its matching closer."
     ]
   },
@@ -2893,7 +2893,7 @@
       "Geometry"
     ],
     "hints": [
-      "Separate coordinate relationships from drawing intuition. Explicitly consider touching boundaries, coincident points, and degenerate shapes allowed by the contract.",
+      "This question requires positive intersection area. Touching at an edge or a corner is not enough, even when the coordinate ranges meet.",
       "Intersect the x intervals and y intervals separately. Both resulting lengths must be positive."
     ]
   },
@@ -2965,7 +2965,7 @@
       "Dynamic programming"
     ],
     "hints": [
-      "What smaller state would summarize all relevant earlier choices? Define that state before deciding how to update it.",
+      "Unlimited reuse changes the meaning of a zero-weight positive-value item. Check that case before treating capacity as a finite dynamic-programming state.",
       "First detect an unbounded zero-weight type. Otherwise compute the best value for each capacity by considering the last positive-weight item selected."
     ]
   },
@@ -3226,7 +3226,7 @@
       "Binary search tree"
     ],
     "hints": [
-      "Which candidates can you rule out using the ordering of a node and its subtrees? Check this problem’s exact rule for duplicate keys.",
+      "Which root choice splits the sorted sequence into nearly equal-sized parts while preserving BST order? Apply the same choice to each remaining range.",
       "The middle value leaves nearly equal-sized sorted ranges on either side. Every left-range value is smaller and every right-range value larger, so recursive middle selection directly builds a BST without repeated insertion. Balanced range sizes keep the tallest branch as short as the binary-tree capacity bound permits."
     ]
   },
@@ -3244,7 +3244,7 @@
       "Tree traversal"
     ],
     "hints": [
-      "What information does a node need from its ancestors or children? Use that dependency to choose the order in which you visit nodes.",
+      "A tree can have similar root-child heights but still contain an unbalanced subtree. What must each completed subtree report to its parent?",
       "A parent needs both child heights, so process nodes in postorder. An explicit enter/exit stack visits children before computing a parent height and avoids recursion-depth failures in a long chain. Store computed heights once and reject any local difference above one."
     ]
   },
@@ -3316,7 +3316,7 @@
       "Prefix and suffix accumulation"
     ],
     "hints": [
-      "What can you precompute or carry about prefixes and suffixes so each candidate does not require recomputing its entire range?",
+      "Subtracting two prefix sums on the same ancestor path gives a downward-path sum. Why must a prefix be removed before visiting a sibling branch?",
       "A downward path ending at the current node has sum target exactly when an earlier prefix sum on the same ancestor path equals runningSum-target. Maintain frequencies of active prefixes, starting with one zero prefix before root. An explicit exit event removes the current prefix before processing a sibling branch, preventing nonexistent cross-branch paths."
     ]
   },
@@ -3352,7 +3352,7 @@
       "Bit manipulation"
     ],
     "hints": [
-      "Which bit positions matter independently, and what happens to them when equal bits cancel or a mask selects a subset?",
+      "Keep the count of ones fixed. To find a nearby larger word, which lowest run of bits can be rearranged, and where should the remaining ones go?",
       "Adding the lowest set bit carries the lowest movable run of ones into its next zero position. To get the smallest larger word with the same weight, put all remaining ones into the lowest available positions. Complementing within 31 bits reverses numeric order, so the same successor operation on the complement yields the predecessor without another complicated bit-case algorithm."
     ]
   },
@@ -3568,7 +3568,7 @@
       "String processing"
     ],
     "hints": [
-      "What makes a segment, token, or match unambiguous in this contract? Try tracking boundaries rather than repeatedly rebuilding the whole string.",
+      "Anagrams have the same character multiset. What canonical key could place every equivalent word next to its group without losing duplicate word occurrences?",
       "Sorting the letters inside a word gives a canonical key: equal keys mean equal letter multiplicities. Compute each key once, order the decorated words by that key, then write the words back. This puts each equivalence class next to itself without changing any word or losing duplicate occurrences."
     ]
   },
@@ -3748,7 +3748,7 @@
       "Simulation"
     ],
     "hints": [
-      "Write down the state before and after one legal step. Which observations must be completed before you mutate that state?",
+      "Which complete rows, columns and diagonals could certify a winner? An empty cell must never be mistaken for a player.",
       "A winning line can only belong to one of a finite set: n rows, n columns and two full diagonals. For each candidate, take its first cell as the proposed player and verify the remaining cells; an empty first cell immediately disqualifies the line. This covers the generic square-board follow-up without assuming the board is always 3 by 3."
     ]
   },
@@ -3775,7 +3775,7 @@
       "Bit manipulation"
     ],
     "hints": [
-      "Which bit positions matter independently, and what happens to them when equal bits cancel or a mask selects a subset?",
+      "A subtraction sign can identify the larger input, but can subtraction overflow? Separate the equal-sign and different-sign cases before choosing a selector.",
       "The sign of first-second decides which input is larger only when subtraction cannot overflow. If signs differ, the nonnegative input is larger regardless of the wrapped difference. If signs agree, the difference fits signed range and its sign is reliable. Combine those two choices as zero/one selectors instead of branching."
     ]
   },
@@ -3853,10 +3853,10 @@
   },
   "ctci6_16_16": {
     "tags": [
-      "Array transformations"
+      "Linear scan"
     ],
     "hints": [
-      "Track where an original element must end up. Which boundaries or saved observations prevent a write from destroying information you still need?",
+      "Which positions are smaller than something earlier, or larger than something later? Such positions must lie inside any sorting window; the input itself must stay unchanged.",
       "Scanning left to right, any value below the largest earlier value is too far right and must lie inside the sorting window. Its last occurrence of such a violation fixes the right endpoint. Symmetrically, a value above the smallest later value is too far left; scanning backward locates the left endpoint. This avoids sorting a full copy just to find mismatches."
     ]
   },
@@ -3892,7 +3892,7 @@
       "String processing"
     ],
     "hints": [
-      "What makes a segment, token, or match unambiguous in this contract? Try tracking boundaries rather than repeatedly rebuilding the whole string.",
+      "Each dictionary word has one fixed keypad encoding. Is generating every possible letter combination necessary when the dictionary is already available?",
       "Each dictionary word has exactly one keypad encoding. Check only words of the requested length and compare each letter's digit with the query. This avoids generating all exponential letter combinations, most of which might not be dictionary words."
     ]
   },
@@ -3946,7 +3946,7 @@
       "String processing"
     ],
     "hints": [
-      "What makes a segment, token, or match unambiguous in this contract? Try tracking boundaries rather than repeatedly rebuilding the whole string.",
+      "Multiplication and division bind more tightly than addition and subtraction. Can you keep the unfinished high-precedence chain separate from completed terms?",
       "Addition and subtraction separate an expression into signed multiplication/division chains. Keep the current chain in term and the sum of completed chains in total. A high-precedence operator extends term; a + or - commits the completed term and begins a new signed term. This preserves precedence without a stack or eval."
     ]
   },
@@ -3982,7 +3982,7 @@
       "Bit manipulation"
     ],
     "hints": [
-      "Which bit positions matter independently, and what happens to them when equal bits cancel or a mask selects a subset?",
+      "You cannot read a whole hidden value. How do counts of zero and one bits at the lowest unresolved position change when one member of a consecutive range is missing?",
       "At the least significant bit, a complete consecutive range has as many zeros as ones or one extra zero. Removing a zero leaves zero-count no larger than one-count; removing a one leaves more zeros. This identifies the missing low bit without reconstructing any number. Retain only indices with that bit, discard the known low bit conceptually, and repeat. Each retained set shrinks by roughly half."
     ]
   },
@@ -3991,7 +3991,7 @@
       "Prefix and suffix accumulation"
     ],
     "hints": [
-      "What can you precompute or carry about prefixes and suffixes so each candidate does not require recomputing its entire range?",
+      "Assign opposite weights to letters and digits. What does it mean when the same running balance occurs at two different boundaries?",
       "Give each letter weight +1 and each digit weight -1. An interval has equal category counts exactly when its endpoint prefix balances agree. For each balance, keep its earliest prefix position; using a later occurrence could only shorten a future interval. A dense offset array suffices because every balance is between -n and n."
     ]
   },
@@ -4099,7 +4099,7 @@
       "String processing"
     ],
     "hints": [
-      "What makes a segment, token, or match unambiguous in this contract? Try tracking boundaries rather than repeatedly rebuilding the whole string.",
+      "Different queries may overlap or repeat. How can each query preserve all starting positions without combining results into a map that loses query order?",
       "The direct baseline tests each legal start position independently for each query. Bounding starts by text.length-pattern.length prevents overreads, while advancing by one retains overlaps. Returning rows rather than a map preserves the order and multiplicity of the supplied query list."
     ]
   },
@@ -4150,10 +4150,10 @@
   },
   "ctci6_17_23": {
     "tags": [
-      "Array transformations"
+      "Dynamic programming"
     ],
     "hints": [
-      "Track where an original element must end up. Which boundaries or saved observations prevent a write from destroying information you still need?",
+      "Only a square’s border must be black, not its interior. What directional run lengths would let you check its four edges without rescanning each edge?",
       "Precompute how many consecutive black cells begin at each position going right and down. Four run-length checks then verify any candidate border in constant time. Search side lengths from largest to smallest and top-left positions in row order so the first valid candidate also satisfies the tie rule."
     ]
   },

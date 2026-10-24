@@ -71,3 +71,37 @@ it('filters and searches by exact reviewed pattern without losing collection beh
   expect(libraryEntries(problems, 'pattern:unknown')).toHaveLength(0);
   expect(patternTags('unknown')).toEqual([]);
 });
+it('keeps keyboard focus on revealed hints and returns it to reveal after hiding', () => {
+  render(<ProblemHints problemId="count_bits" />);
+  const reveal = screen.getByRole('button', { name: 'Reveal first hint' });
+  reveal.focus();
+  fireEvent.click(reveal);
+  expect(document.activeElement?.textContent).toContain('Hint 1');
+  fireEvent.click(screen.getByRole('button', { name: 'Reveal next hint' }));
+  expect(document.activeElement?.textContent).toContain('Hint 2');
+  fireEvent.click(screen.getByRole('button', { name: 'Hide hints' }));
+  expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Reveal first hint' }));
+});
+it('uses nonmutating scan and border-precomputation tags for the corresponding contracts', () => {
+  expect(patternTags('ctci6_16_16')).toEqual(['Linear scan']);
+  expect(patternTags('ctci6_17_23')).toEqual(['Dynamic programming']);
+});
+it('keeps shared hints compatible with node and in-place language contracts', () => {
+  for (const id of ['search_in_bst', 'search_in_list', 'kth_node_in_tree', 'tree_connect_leaves']) {
+    expect(guidanceFor(id)!.hints[1], id).toMatch(/selected callable/);
+  }
+  expect(guidanceFor('replace_and_remove')!.hints[1]).toContain('fill backward');
+  expect(guidanceFor('sorted_array_remove_dups')!.hints[1]).toContain('original prefix');
+  expect(guidanceFor('enumerate_trees')!.hints[1]).toContain('tree-returning callable');
+  expect(guidanceFor('k_closest_stars')!.hints[1]).toContain('Star objects');
+});
+it('distinguishes similarly named problems with different rules in the first hint', () => {
+  expect(guidanceFor('two_sum')!.hints[0]).toContain('used twice');
+  expect(guidanceFor('blind75_two_sum')!.hints[0]).toContain('different positions');
+  expect(guidanceFor('interviewcake_stock-price')!.hints[1]).toContain('not zero');
+  expect(guidanceFor('interviewcake_balanced-binary-tree')!.hints[0]).toContain('globally');
+  expect(guidanceFor('calendar_rendering')!.hints[0]).toContain('Touching endpoints count');
+  expect(guidanceFor('blind75_meeting_rooms_ii')!.hints[0]).toContain('free at its ending time');
+  expect(guidanceFor('is_string_in_matrix')!.hints[0]).toContain('Revisiting a cell is permitted');
+  expect(guidanceFor('blind75_word_search')!.hints[0]).toContain('only once');
+});

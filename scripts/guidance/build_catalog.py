@@ -21,9 +21,9 @@ GROUPS = {
 'Partitioning': '''even_odd_array dutch_national_flag first_missing_positive_entry kth_largest_in_array''',
 'Arithmetic and number theory': '''int_as_array_increment int_as_array_multiply prime_sieve binomial_coefficients gcd max_product_all_but_one int_as_list_add power_x_y reverse_digits is_number_palindromic string_integer_interconversion convert_base spreadsheet_encoding interviewcake_which-appears-twice ctci6_2_5 ctci6_5_2 ctci6_8_5 ctci6_16_5 ctci6_16_8 ctci6_16_9 ctci6_16_11 ctci6_17_6''',
 'Greedy': '''advance_by_offsets buy_and_sell_stock alternating_array making_change minimum_waiting_time minimum_points_covering_intervals majority_element refueling_schedule left_right_justify_text bonus smallest_nonconstructible_value is_array_dominated find_salary_threshold blind75_best_time_to_buy_and_sell_stock blind75_non_overlapping_intervals blind75_jump_game interviewcake_stock-price interviewcake_graph-coloring ctci6_10_11 ctci6_17_10''',
-'Array transformations': '''apply_permutation next_permutation spiral_ordering matrix_rotation rotate_array rook_attack blind75_rotate_image blind75_spiral_matrix blind75_set_matrix_zeroes ctci6_1_7 ctci6_1_8 ctci6_16_16 ctci6_17_23''',
+'Array transformations': '''apply_permutation next_permutation spiral_ordering matrix_rotation rotate_array rook_attack blind75_rotate_image blind75_spiral_matrix blind75_set_matrix_zeroes ctci6_1_7 ctci6_1_8''',
 'Randomized algorithms': '''offline_sampling online_sampling random_permutation random_subset nonuniform_random_number uniform_random_number interviewcake_shuffle interviewcake_simulate-5-sided-die interviewcake_simulate-7-sided-die ctci6_4_11 ctci6_13_8 ctci6_16_23 ctci6_17_2 ctci6_17_3''',
-'Dynamic programming': '''pascal_triangle fibonacci max_sum_subarray number_of_score_combinations levenshtein_distance number_of_traversals_matrix is_string_in_matrix knapsack is_string_decomposable_into_words minimum_weight_path_in_a_triangle picking_up_coins number_of_traversals_staircase pretty_printing longest_nondecreasing_subsequence buy_and_sell_stock_twice buy_and_sell_stock_k_times smallest_subarray_covering_all_values regular_expression defective_jugs maximum_subarray_in_circular_array max_safe_height max_square_submatrix blind75_climbing_stairs blind75_house_robber blind75_house_robber_ii blind75_decode_ways blind75_coin_change blind75_maximum_product_subarray blind75_word_break blind75_longest_increasing_subsequence blind75_unique_paths blind75_combination_sum_iv blind75_maximum_subarray blind75_counting_bits interviewcake_nth-fibonacci interviewcake_highest-product-of-3 interviewcake_coin interviewcake_cake-thief ctci6_8_1 ctci6_8_2 ctci6_8_11 ctci6_8_13 ctci6_8_14 ctci6_16_17 ctci6_17_8 ctci6_17_13 ctci6_17_15 ctci6_17_16 ctci6_17_24''',
+'Dynamic programming': '''ctci6_17_23 pascal_triangle fibonacci max_sum_subarray number_of_score_combinations levenshtein_distance number_of_traversals_matrix is_string_in_matrix knapsack is_string_decomposable_into_words minimum_weight_path_in_a_triangle picking_up_coins number_of_traversals_staircase pretty_printing longest_nondecreasing_subsequence buy_and_sell_stock_twice buy_and_sell_stock_k_times smallest_subarray_covering_all_values regular_expression defective_jugs maximum_subarray_in_circular_array max_safe_height max_square_submatrix blind75_climbing_stairs blind75_house_robber blind75_house_robber_ii blind75_decode_ways blind75_coin_change blind75_maximum_product_subarray blind75_word_break blind75_longest_increasing_subsequence blind75_unique_paths blind75_combination_sum_iv blind75_maximum_subarray blind75_counting_bits interviewcake_nth-fibonacci interviewcake_highest-product-of-3 interviewcake_coin interviewcake_cake-thief ctci6_8_1 ctci6_8_2 ctci6_8_11 ctci6_8_13 ctci6_8_14 ctci6_16_17 ctci6_17_8 ctci6_17_13 ctci6_17_15 ctci6_17_16 ctci6_17_24''',
 'Breadth-first search': '''search_maze painting string_transformability tree_level_order blind75_binary_tree_level_order_traversal blind75_number_of_islands interviewcake_mesh-message ctci6_4_1 ctci6_4_3 ctci6_7_10 ctci6_17_7 ctci6_17_22''',
 'Flood fill': '''matrix_enclosed_regions blind75_pacific_atlantic_water_flow ctci6_8_10 ctci6_16_19''',
 'Topological sorting': '''deadlock_detection max_teams_in_photograph blind75_course_schedule blind75_alien_dictionary ctci6_4_7''',
@@ -47,7 +47,7 @@ GROUPS = {
 'Trie': '''blind75_implement_trie_prefix_tree blind75_design_add_and_search_words_data_structure interviewcake_compress-url-list''',
 'String processing': '''replace_and_remove look_and_say roman_to_integer valid_ip_addresses snake_string run_length_compression substring_match blind75_valid_anagram blind75_encode_and_decode_strings blind75_valid_palindrome interviewcake_matching-parens ctci6_1_6 ctci6_1_9 ctci6_4_10 ctci6_10_2 ctci6_16_18 ctci6_16_20 ctci6_16_26 ctci6_17_17''',
 'Simulation': '''is_valid_sudoku collatz_checker ctci6_7_8 ctci6_16_4 ctci6_16_22''',
-'Linear scan': '''sorted_array_remove_dups longest_increasing_subarray search_in_list search_for_min_max_in_array sunset_view ctci6_13_7 ctci6_17_11''',
+'Linear scan': '''ctci6_16_16 sorted_array_remove_dups longest_increasing_subarray search_in_list search_for_min_max_in_array sunset_view ctci6_13_7 ctci6_17_11''',
 'Bitset': '''ctci6_10_7 ctci6_10_8''',
 'Concurrency': '''ctci6_15_3 ctci6_15_5 ctci6_15_7''',
 }
@@ -105,13 +105,22 @@ def build():
     missing = set(solutions)-set(assignments)
     extra = set(assignments)-set(solutions)
     if missing or extra: raise ValueError(f'Missing: {sorted(missing)}; extra: {sorted(extra)}')
+    overrides = json.loads((ROOT/'scripts/guidance/overrides.json').read_text())
+    for kind, entries in overrides.items():
+        if kind not in ('observations', 'approaches') or set(entries)-set(solutions):
+            raise ValueError(f'Unknown guidance override: {kind}')
+        if any(not text.strip() for text in entries.values()):
+            raise ValueError(f'Empty guidance override: {kind}')
     result = {}
     for pid, solution in solutions.items():
         tag = assignments[pid]
         approach = solution['explanation'].split(' C#')[0].split(' The\n')[0].strip()
         if approach.endswith(' The'): approach = approach[:-4]
         if pid == 'evaluate_rpn': approach = approach.replace('C# integer division supplies', 'Integer division must use')
-        result[pid] = {'tags':[tag], 'hints':[PROMPTS[tag], approach]}
+        result[pid] = {'tags':[tag], 'hints':[
+            overrides['observations'].get(pid, PROMPTS[tag]),
+            overrides['approaches'].get(pid, approach),
+        ]}
     return result
 if __name__ == '__main__':
     target = ROOT/'epijudge.client/src/problemGuidance.json'

@@ -98,6 +98,7 @@ export function ProblemLibrary({
           value={filter}
           onChange={(event) => onFilterChange(event.target.value)}
           aria-label="Filter by topic or study plan"
+          aria-description="Includes collections, study plans, patterns, and topics."
         >
           <option value="">All topics</option>
           <option value="kind:coding">Coding</option>
@@ -171,6 +172,9 @@ export function ProblemLibrary({
                   (entry.reason ?? (status || 'Not started'))
                 }
                 aria-label={`${entry.number}. ${entry.title} — ${item ? status || 'Not started' : lesson ? status || 'Reading companion' : 'Book only'}`}
+                aria-describedby={
+                  item && patternTags(item.id).length ? `library-pattern-${item.id}` : undefined
+                }
                 aria-current={id === selected ? 'page' : undefined}
                 onClick={() => {
                   if (!id) return;
@@ -192,7 +196,9 @@ export function ProblemLibrary({
                     {entry.number}. {entry.title}
                   </strong>
                   {item && (
-                    <span className="library-patterns">{patternTags(item.id).join(' · ')}</span>
+                    <span id={`library-pattern-${item.id}`} className="library-patterns">
+                      {patternTags(item.id).join(' · ')}
+                    </span>
                   )}
                 </span>
                 {lesson && (

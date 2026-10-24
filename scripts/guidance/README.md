@@ -2,9 +2,11 @@
 
 The existing bank is unchanged. `problemGuidance.json` provides one reviewed
 primary technique tag and two opt-in hints for every runnable problem ID.
-The first hint is a technique-level observation prompt; the second is the
-problem-specific strategy from the existing independently authored C# explanation,
-with C#-specific tail notes removed. These are learning aids, not new solutions or
+The first hint is a technique-level observation prompt unless an explicit
+problem-specific observation is supplied in `overrides.json`. The second starts
+from the existing independently authored strategy, with reviewed overrides where
+language-specific return types, mutation contracts or important variant rules
+make that paragraph unsuitable as a shared hint. These are learning aids, not new solutions or
 claims that every valid solution must use the tagged technique. Examples such as
 sorted EPI Two Sum and unsorted Blind 75 Two Sum deliberately have different tags.
 
@@ -33,3 +35,22 @@ Solution view excludes hints, checks draft preservation across five solution
 languages, and exercises pattern filtering/search. Screenshots and a JSON report
 are uploaded as `guidance-browser-audit`. Rendered checks are not algorithm tests;
 existing execution workflows continue to validate those separately.
+
+## Follow-up content and UI audit
+
+Reviewed all 465 problem statements against their primary tags and second hints,
+and checked the shared first prompts for applicability. Corrected the sorting-window
+tag to Linear scan (the input is not transformed) and black-border square to Dynamic
+programming (directional run lengths, not array mutation). Explicit overrides refine
+64 first hints and 22 strategy hints, including node-versus-value returns, native
+in-place buffers, required negative stock profits, and endpoint/bit-width rules.
+The other first prompts remain technique-level prompts, not individually authored
+observations. No solution code or judge contract was changed.
+
+Regression tests cover variant distinctions and cross-language output guidance.
+UI checks include focus after reveal/hide, accessible pattern descriptions, all
+pattern filters and every library row at three widths in both themes, browser
+Back/Forward resets, and zoomed hint controls. Labels have a 12px minimum instead
+of inheriting the legacy row's 10px secondary-text rule. Browser checks verify
+rendering and interaction, not semantic correctness of prose; the content review
+and contract-specific tests are separate evidence.

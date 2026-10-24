@@ -42,8 +42,10 @@ function check(value, label) { assert(value, label); report.checks++; }
       check(JSON.stringify(await page.locator('.pattern-tag').allTextContents()) === JSON.stringify(entry.tags), problem.id + ' tags');
       await hints.getByRole('button', { name: 'Reveal first hint' }).click();
       check(await hints.locator('details').count() === 1, problem.id + ' only first revealed');
+      check(await hints.locator('summary').first().evaluate(el => el === document.activeElement), problem.id + ' first hint receives focus');
       await hints.getByRole('button', { name: 'Reveal next hint' }).click();
       check(JSON.stringify(await hints.locator('details p').allTextContents()) === JSON.stringify(entry.hints), problem.id + ' exact hints');
+      check(await hints.locator('summary').nth(1).evaluate(el => el === document.activeElement), problem.id + ' second hint receives focus');
       report.renderedProblems++;
     }
     const representatives = ['count_bits', 'two_sum', 'blind75_two_sum', 'interviewcake_stock-price', 'ctci6_15_4', 'ctci6_10_6'];
@@ -110,6 +112,59 @@ function check(value, label) { assert(value, label); report.checks++; }
       }
     }
     await library.getByRole('button', { name: 'Close problem list' }).click();
+    // Browser history must not expose another problem's hint state.
+    await go('two_sum');
+    await page.getByRole('button', { name: 'Reveal first hint' }).click();
+    await go('blind75_two_sum');
+    await page.goBack();
+    await page.locator('#hints-two_sum').waitFor();
+    check(await page.locator('#hints-two_sum details').count() === 0, 'Back resets problem hints');
+    await page.goForward();
+    await page.locator('#hints-blind75_two_sum').waitFor();
+    check(await page.locator('#hints-blind75_two_sum details').count() === 0, 'Forward resets problem hints');
+    await page.getByRole('button', { name: 'Reveal first hint' }).click();
+    await page.getByRole('button', { name: 'Reveal next hint' }).click();
+    await page.getByRole('button', { name: 'Hide hints' }).click();
+    check(await page.getByRole('button', { name: 'Reveal first hint' }).evaluate(el => el === document.activeElement), 'Hide restores keyboard focus');
+
+    await page.getByRole('button', { name: 'Toggle problem list' }).click();
+    await library.getByLabel('Search problems').fill('');
+    for (const tag of [...new Set(Object.values(catalog).flatMap(entry => entry.tags))]) {
+      await library.getByLabel('Filter by topic or study plan').selectOption('pattern:' + tag);
+      check(await library.locator('.problem-link').count() === problems.filter(p => catalog[p.id].tags.includes(tag)).length, 'exact filter ' + tag);
+    }
+    await library.getByLabel('Filter by topic or study plan').selectOption('');
+    check(await library.locator('.problem-link').evaluateAll(rows => rows.every(row => {
+      const id = row.getAttribute('aria-describedby');
+      const label = id && document.getElementById(id);
+      return label && label.textContent.trim().length > 0;
+    })), 'all pattern labels accessible to assistive technology');
+    for (const theme of ['light', 'dark']) {
+      await page.evaluate(theme => { document.documentElement.dataset.theme = theme; }, theme);
+      for (const width of [320, 768, 1440]) {
+        await page.setViewportSize({ width, height: 640 });
+        check(await library.locator('.problem-link').evaluateAll(rows => rows.every((row, index) => {
+          const r = row.getBoundingClientRect();
+          const label = row.querySelector('.problem-link-text').getBoundingClientRect();
+          const next = rows[index + 1]?.getBoundingClientRect();
+          return label.top >= r.top && label.bottom <= r.bottom + 1 && label.left >= r.left && label.right <= r.right + 1 && (!next || r.bottom <= next.top + 1);
+        })), `${theme}/${width} all-bank library row bounds`);
+        check(await library.locator('.library-patterns').evaluateAll(labels => labels.every(el => parseFloat(getComputedStyle(el).fontSize) >= 12)), 'pattern labels at least 12px');
+        await page.screenshot({ path: path.join(output, `${theme}-${width}-all-patterns.png`) });
+      }
+    }
+    await library.getByRole('button', { name: 'Close problem list' }).click();
+    // Emulate a 200% zoomed desktop through CSS zoom plus a reduced viewport.
+    await page.setViewportSize({ width: 768, height: 640 });
+    await page.evaluate(() => { document.documentElement.style.zoom = '2'; });
+    await go('ctci6_17_23');
+    await page.getByRole('button', { name: 'Reveal first hint' }).click();
+    await page.getByRole('button', { name: 'Reveal next hint' }).click();
+    const zoomHints = page.locator('#hints-ctci6_17_23');
+    check(await zoomHints.evaluate(el => el.scrollWidth <= el.clientWidth + 1), 'zoomed hints wrap');
+    await page.getByRole('button', { name: 'Hide hints' }).click();
+    check(await page.getByRole('button', { name: 'Reveal first hint' }).isVisible(), 'zoomed controls operable');
+    await page.evaluate(() => { document.documentElement.style.zoom = ''; });
     check(report.errors.length === 0, 'no browser runtime errors');
     report.passed = true;
     console.log(JSON.stringify(report, null, 2));

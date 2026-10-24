@@ -202,3 +202,10 @@ it('offers collection choices only for questions actually registered by the API'
   fireEvent.click(screen.getByRole('button', { name: 'IC41. API fixture question — Not started' }));
   expect(props.onSelect).toHaveBeenCalledWith(registered.id);
 });
+
+it('exposes pattern labels as accessible descriptions for library rows', () => {
+  library();
+  const row = screen.getByRole('button', { name: '03. Anagrams — Not started' });
+  const label = document.getElementById(row.getAttribute('aria-describedby')!);
+  expect(label?.textContent).toBe('Hashing and counting');
+});
