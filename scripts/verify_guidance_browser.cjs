@@ -95,7 +95,20 @@ function check(value, label) { assert(value, label); report.checks++; }
     check(await library.locator('.problem-link').count() === expected.length, 'pattern filter exact count');
     await library.getByLabel('Search problems').fill('two pointers');
     check(await library.locator('.problem-link').count() === expected.length, 'pattern search matches tags');
-    await page.screenshot({ path: path.join(output, 'pattern-library.png') });
+    for (const theme of ['light', 'dark']) {
+      await page.evaluate(theme => { document.documentElement.dataset.theme = theme; }, theme);
+      for (const width of [320, 768, 1440]) {
+        await page.setViewportSize({ width, height: 1000 });
+        check(await library.locator('.problem-link').evaluateAll(rows => rows.every((row, index) => {
+          const r = row.getBoundingClientRect();
+          const label = row.querySelector('.problem-link-text').getBoundingClientRect();
+          const next = rows[index + 1]?.getBoundingClientRect();
+          return label.top >= r.top && label.bottom <= r.bottom && (!next || r.bottom <= next.top + 1);
+        })), `${theme}/${width} library labels fit their rows without overlap`);
+        check(await library.evaluate(el => el.scrollWidth <= el.clientWidth + 1), `${theme}/${width} library fits horizontally`);
+        await page.screenshot({ path: path.join(output, `${theme}-${width}-pattern-library.png`) });
+      }
+    }
     await library.getByRole('button', { name: 'Close problem list' }).click();
     check(report.errors.length === 0, 'no browser runtime errors');
     report.passed = true;
