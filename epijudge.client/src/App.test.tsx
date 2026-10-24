@@ -813,3 +813,23 @@ it('keeps the theme control first, persists switching, and preserves drafts acro
   ).toBe('draft retained across themes Ω');
   await waitFor(() => expect(screen.getByText('Saved')).toBeTruthy(), { timeout: 3000 });
 });
+
+it('places progressive hints at the bottom of Description, not Solution, and preserves the draft', async () => {
+  render(<App />);
+  await screen.findByRole('heading', { name: /Count Bits/ });
+  const editor = screen.getByRole('textbox', { name: 'Test code editor' });
+  fireEvent.change(editor, { target: { value: 'my private draft' } });
+  const description = screen.getByRole('tabpanel', { name: 'Problem' });
+  const hints = within(description).getByRole('region', { name: 'Problem hints' });
+  expect(hints.parentElement?.lastElementChild).toBe(hints);
+  expect(within(description).getByLabelText('Problem patterns').textContent).toContain(
+    'Bit manipulation',
+  );
+  fireEvent.click(within(hints).getByRole('button', { name: 'Reveal first hint' }));
+  fireEvent.click(screen.getByRole('tab', { name: 'Solution' }));
+  const solution = screen.getByRole('tabpanel', { name: 'Solution' });
+  expect(within(solution).queryByRole('region', { name: 'Problem hints' })).toBeNull();
+  expect((editor as HTMLTextAreaElement).value).toBe('my private draft');
+  fireEvent.click(screen.getByRole('tab', { name: 'Problem' }));
+  expect(within(hints).getByRole('button', { name: 'Reveal next hint' })).toBeTruthy();
+});

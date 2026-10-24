@@ -15,6 +15,7 @@ import type { Problem } from './workspaceModels';
 import type { PracticeClient } from './practiceClient';
 import { libraryEntries, selectedStudyPlan, STUDY_PLANS } from './studyPlans';
 import { availableCollections } from './collections';
+import { availablePatterns, patternTags } from './problemGuidance';
 import { EMPTY_READING_JSON, parseReading } from './reading/readingLessons';
 
 type Props = {
@@ -114,6 +115,13 @@ export function ProblemLibrary({
               </option>
             ))}
           </optgroup>
+          <optgroup label="Patterns">
+            {availablePatterns(problems).map((tag) => (
+              <option key={tag} value={`pattern:${tag}`}>
+                {tag}
+              </option>
+            ))}
+          </optgroup>
           <optgroup label="Topics">
             {topics.map((name) => (
               <option key={name} value={name}>
@@ -183,6 +191,9 @@ export function ProblemLibrary({
                   <strong>
                     {entry.number}. {entry.title}
                   </strong>
+                  {item && (
+                    <span className="library-patterns">{patternTags(item.id).join(' · ')}</span>
+                  )}
                 </span>
                 {lesson && (
                   <span className="reading-badge">

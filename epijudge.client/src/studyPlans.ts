@@ -1,4 +1,5 @@
 import guide from './studyGuide.json';
+import { patternTags } from './problemGuidance';
 import { problemNumber } from './collections';
 import type { Problem } from './workspaceModels';
 import { READING_LESSONS, type ReadingLesson } from './reading/readingLessons';
@@ -55,6 +56,7 @@ export function libraryEntries(problems: Problem[], filter: string, query = ''):
     entries = problems.flatMap((problem, index) =>
       !filter ||
       filter === 'kind:coding' ||
+      (filter.startsWith('pattern:') && patternTags(problem.id).includes(filter.slice(8))) ||
       (filter.startsWith('collection:') && (problem.collection ?? 'epi') === filter.slice(11)) ||
       problem.topic === filter
         ? [
@@ -84,7 +86,7 @@ export function libraryEntries(problems: Problem[], filter: string, query = ''):
   }
   const search = query.trim().toLowerCase();
   return entries.filter((item) =>
-    `${item.number} ${item.title} ${item.topic} ${item.problem?.id ?? ''}`
+    `${item.number} ${item.title} ${item.topic} ${item.problem?.id ?? ''} ${item.problem ? patternTags(item.problem.id).join(' ') : ''}`
       .toLowerCase()
       .includes(search),
   );

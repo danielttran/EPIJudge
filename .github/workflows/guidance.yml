@@ -1,0 +1,35 @@
+name: Pattern tags and hints
+on:
+  push:
+  pull_request:
+jobs:
+  guidance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: epijudge.client/package-lock.json
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - run: python scripts/guidance/build_catalog.py --check
+      - run: npm ci --prefix epijudge.client
+      - run: npm --prefix epijudge.client run test:coverage
+      - run: npm --prefix epijudge.client run build
+      - run: dotnet build EpiJudge.Web/EpiJudge.Web.csproj -c Release --disable-build-servers --maxcpucount:1 -p:ShouldRunNpmInstall=false
+      - name: Install Chromium for rendered acceptance
+        working-directory: epijudge.client
+        run: npx playwright-core install --with-deps chromium
+      - run: python scripts/verify_guidance_browser.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: guidance-browser-audit
+          path: .epi-runs/guidance-audit/

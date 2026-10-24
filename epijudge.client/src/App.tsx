@@ -10,6 +10,8 @@ import { ProblemLibrary } from './ProblemLibrary';
 import { HistoryPanel } from './HistoryPanel';
 import { EmptyState } from './EmptyState';
 import { SolutionPanel } from './SolutionPanel';
+import { ProblemHints } from './ProblemHints';
+import { patternTags } from './problemGuidance';
 import { LanguageSelect } from './LanguageSelect';
 import { libraryEntries } from './studyPlans';
 import { collectionName, problemNumber } from './collections';
@@ -523,6 +525,20 @@ export default function App() {
                           </span>
                         )}
                     </div>
+                    {patternTags(problem.id).length > 0 && (
+                      <div
+                        className="pattern-tags"
+                        aria-label="Problem patterns"
+                        title="Tags describe a supported approach; other valid approaches may exist."
+                      >
+                        <span className="pattern-label">Patterns</span>
+                        {patternTags(problem.id).map((tag) => (
+                          <span className="pattern-tag" key={tag}>
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                     <p className="description-copy">{problem.description}</p>
                     {relatedArticles(problem.id).length > 0 && (
                       <nav className="related-reading" aria-label="Related reading">
@@ -616,6 +632,7 @@ export default function App() {
                         ? 'Practice data from Elements of Programming Interviews Judge. For trusted local use.'
                         : `Original ${collectionName(problem.collection)} statements, test corpora, and local illustrations. For trusted local use.`}
                     </p>
+                    <ProblemHints key={problem.id} problemId={problem.id} />
                   </article>
                 )}
               </div>
