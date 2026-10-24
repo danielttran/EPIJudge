@@ -70,7 +70,7 @@ function check(value, label) { assert(value, label); report.checks++; }
           await page.keyboard.press('Enter');
           check(await hints.locator('details').first().getAttribute('open') !== null, 'keyboard expand');
           report.scenes.push({ theme, width, id });
-          if (id === 'ctci6_15_4') await page.screenshot({ path: path.join(output, `${theme}-${width}-hints.png`) });
+          if (id === 'ctci6_15_4') await page.screenshot({ animations: 'disabled', path: path.join(output, `${theme}-${width}-hints.png`) });
           await page.getByRole('tab', { name: 'Solution', exact: true }).click();
           check(await page.getByRole('region', { name: 'Problem hints' }).count() === 0, 'hints not in solution view');
         }
@@ -92,13 +92,41 @@ function check(value, label) { assert(value, label); report.checks++; }
     }
     await page.getByRole('button', { name: 'Toggle problem list' }).click();
     const library = page.getByRole('dialog', { name: 'Problem library' });
+    const setLibraryTheme = async theme => {
+      // Use the real control so React, Monaco, color-scheme and tokens agree.
+      await library.getByRole('button', { name: 'Close problem list' }).click();
+      const toggle = page.getByRole('button', { name: 'Dark mode' });
+      if ((await toggle.getAttribute('aria-pressed') === 'true') !== (theme === 'dark')) await toggle.click();
+      await page.getByRole('button', { name: 'Toggle problem list' }).click();
+    };
+    const checkLibraryContrast = async label => {
+      check(await library.locator('.problem-link-text strong, .library-patterns').evaluateAll(elements => {
+        const luminance = rgb => rgb.slice(0, 3).map(value => {
+          value /= 255;
+          return value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;
+        }).reduce((sum, value, i) => sum + value * [0.2126, 0.7152, 0.0722][i], 0);
+        const parse = value => value.match(/[\d.]+/g)?.map(Number) ?? [];
+        return elements.every(el => {
+          const foreground = parse(getComputedStyle(el).color);
+          let parent = el, background = [];
+          while (parent) {
+            background = parse(getComputedStyle(parent).backgroundColor);
+            if (background.length >= 3 && (background.length === 3 || background[3] === 1)) break;
+            parent = parent.parentElement;
+          }
+          if (!parent || foreground.length < 3) return false;
+          const a = luminance(foreground), b = luminance(background);
+          return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05) >= 4.5;
+        });
+      }), label + ' normal text contrast at least 4.5:1');
+    };
     await library.getByLabel('Filter by topic or study plan').selectOption('pattern:Two pointers');
     const expected = problems.filter(p => catalog[p.id].tags.includes('Two pointers'));
     check(await library.locator('.problem-link').count() === expected.length, 'pattern filter exact count');
     await library.getByLabel('Search problems').fill('two pointers');
     check(await library.locator('.problem-link').count() === expected.length, 'pattern search matches tags');
     for (const theme of ['light', 'dark']) {
-      await page.evaluate(theme => { document.documentElement.dataset.theme = theme; }, theme);
+      await setLibraryTheme(theme);
       for (const width of [320, 768, 1440]) {
         await page.setViewportSize({ width, height: 1000 });
         check(await library.locator('.problem-link').evaluateAll(rows => rows.every((row, index) => {
@@ -108,7 +136,8 @@ function check(value, label) { assert(value, label); report.checks++; }
           return label.top >= r.top && label.bottom <= r.bottom && (!next || r.bottom <= next.top + 1);
         })), `${theme}/${width} library labels fit their rows without overlap`);
         check(await library.evaluate(el => el.scrollWidth <= el.clientWidth + 1), `${theme}/${width} library fits horizontally`);
-        await page.screenshot({ path: path.join(output, `${theme}-${width}-pattern-library.png`) });
+        await page.screenshot({ animations: 'disabled', path: path.join(output, `${theme}-${width}-pattern-library.png`) });
+        await checkLibraryContrast(`${theme}/${width} filtered library`);
       }
     }
     await library.getByRole('button', { name: 'Close problem list' }).click();
@@ -140,7 +169,7 @@ function check(value, label) { assert(value, label); report.checks++; }
       return label && label.textContent.trim().length > 0;
     })), 'all pattern labels accessible to assistive technology');
     for (const theme of ['light', 'dark']) {
-      await page.evaluate(theme => { document.documentElement.dataset.theme = theme; }, theme);
+      await setLibraryTheme(theme);
       for (const width of [320, 768, 1440]) {
         await page.setViewportSize({ width, height: 640 });
         check(await library.locator('.problem-link').evaluateAll(rows => rows.every((row, index) => {
@@ -150,7 +179,8 @@ function check(value, label) { assert(value, label); report.checks++; }
           return label.top >= r.top && label.bottom <= r.bottom + 1 && label.left >= r.left && label.right <= r.right + 1 && (!next || r.bottom <= next.top + 1);
         })), `${theme}/${width} all-bank library row bounds`);
         check(await library.locator('.library-patterns').evaluateAll(labels => labels.every(el => parseFloat(getComputedStyle(el).fontSize) >= 12)), 'pattern labels at least 12px');
-        await page.screenshot({ path: path.join(output, `${theme}-${width}-all-patterns.png`) });
+        await page.screenshot({ animations: 'disabled', path: path.join(output, `${theme}-${width}-all-patterns.png`) });
+        await checkLibraryContrast(`${theme}/${width} all-bank library`);
       }
     }
     await library.getByRole('button', { name: 'Close problem list' }).click();
