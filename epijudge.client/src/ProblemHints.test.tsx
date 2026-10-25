@@ -105,3 +105,21 @@ it('distinguishes similarly named problems with different rules in the first hin
   expect(guidanceFor('is_string_in_matrix')!.hints[0]).toContain('Revisiting a cell is permitted');
   expect(guidanceFor('blind75_word_search')!.hints[0]).toContain('only once');
 });
+it('does not prescribe C# numeric types or saturation in shared numeric hints', () => {
+  for (const id of ['path_sum', 'binomial_coefficients', 'convert_base', 'blind75_decode_ways', 'blind75_combination_sum_iv', 'blind75_number_of_1_bits']) {
+    expect(guidanceFor(id)!.hints[1], id).not.toMatch(/\bBigInteger\b|\ba long\b|\bA long\b/);
+  }
+  expect(guidanceFor('max_safe_height')!.hints[1]).not.toMatch(/saturat/i);
+  expect(guidanceFor('max_safe_height')!.hints[1]).toContain('exact');
+});
+it('survives repeated reveal/hide cycles without duplicate hints or focus leakage', () => {
+  render(<ProblemHints problemId="count_bits" />);
+  for (let i = 0; i < 5; i++) {
+    fireEvent.click(screen.getByRole('button', { name: 'Reveal first hint' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Reveal next hint' }));
+    expect(document.querySelectorAll('.problem-hint')).toHaveLength(2);
+    fireEvent.click(screen.getByRole('button', { name: 'Hide hints' }));
+    expect(document.querySelectorAll('.problem-hint')).toHaveLength(0);
+    expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Reveal first hint' }));
+  }
+});

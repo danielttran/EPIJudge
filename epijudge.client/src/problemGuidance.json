@@ -392,7 +392,7 @@
     ],
     "hints": [
       "What information does a node need from its ancestors or children? Use that dependency to choose the order in which you visit nodes.",
-      "Subtract each visited value from the target. Only a leaf with zero remaining weight completes a root-to-leaf path. A long remainder prevents intermediate sums from overflowing 32 bits."
+      "Subtract each visited value from the target. Only a real leaf with zero remainder completes a root-to-leaf path; an empty tree never qualifies. Use enough integer precision for intermediate remainders, which may exceed the range of an individual node value."
     ]
   },
   "tree_inorder": {
@@ -527,7 +527,7 @@
     ],
     "hints": [
       "Can you work with digits, place values, or a smaller arithmetic identity instead of constructing every possible candidate?",
-      "Use symmetry to minimize k, then multiply and divide one factor at a time using C(n−k+i,i). Each division is exact. A long intermediate holds the product before division for the contract’s int-sized result."
+      "Use symmetry to minimize k, then multiply and divide one factor at a time using C(n−k+i,i). Each division is exact. Keep intermediate products exact with sufficiently wide or arbitrary-precision integer arithmetic; a representable final result does not by itself guarantee that intermediate multiplication is safe."
     ]
   },
   "is_string_in_matrix": {
@@ -1148,7 +1148,7 @@
     ],
     "hints": [
       "What smaller state would summarize all relevant earlier choices? Define that state before deciding how to update it.",
-      "With e objects and d drops, one drop covers one floor plus the ranges distinguishable if it breaks and if it survives. Update this recurrence from larger e downwards so both branches use the preceding drop count. Values saturate at the int return limit."
+      "With e objects and d drops, one drop covers one floor plus the ranges distinguishable when it breaks and when it survives. Update from larger e downward so both branches read the preceding drop count. Zero objects or zero drops covers zero floors. Compute the exact result within the selected callable’s supported range; clamping a larger result is not part of the problem contract."
     ]
   },
   "max_submatrix": {
@@ -1382,7 +1382,7 @@
     ],
     "hints": [
       "When do exchanging two bit positions and leaving them unchanged have the same result? Only the case where their values differ needs an update.",
-      "If the selected bits differ, toggle both with XOR; if equal, leave the integer unchanged. Unsigned shifts expose all 64 bit positions, including the sign bit."
+      "Normalize the input to its 64-bit pattern. If the selected bits differ, toggle both with XOR; if equal, leave the pattern unchanged. Preserve all 64 positions using an appropriate fixed-width or arbitrary-precision representation, then return the signed or unsigned interpretation required by the selected callable."
     ]
   },
   "reverse_bits": {
@@ -1391,7 +1391,7 @@
     ],
     "hints": [
       "Where must the least significant input bit appear in the reversed result? Repeat the same reasoning for exactly 64 positions, including leading zeros.",
-      "Take the source bits from least significant to most significant, appending each to the result. Use unsigned shifts so all 64 bits, including negative input bit patterns, are handled correctly."
+      "Normalize the input to its 64-bit pattern, then take exactly 64 source bits from least to most significant, appending each to the result. Use logical shifts or explicit masking rather than sign-extending a negative value. Return the resulting pattern in the selected callable’s required representation."
     ]
   },
   "closest_int_same_weight": {
@@ -1868,7 +1868,7 @@
     ],
     "hints": [
       "Can you work with digits, place values, or a smaller arithmetic identity instead of constructing every possible candidate?",
-      "Accumulate the source digits using multiply-add in the source base, then repeatedly divide by the destination base to obtain digits from least to most significant. Reverse those digits and retain a minus sign only for a negative nonzero number. BigInteger prevents intermediate overflow."
+      "Accumulate source digits by multiplying by the source base and adding the next digit. Repeatedly divide the nonnegative magnitude by the destination base to obtain digits from least to most significant, then reverse them and restore a negative sign only for a nonzero negative number. Use exact integer arithmetic with enough precision for all intermediates."
     ]
   },
   "spreadsheet_encoding": {
@@ -2525,7 +2525,7 @@
     ],
     "hints": [
       "What smaller state would summarize all relevant earlier choices? Define that state before deciding how to update it.",
-      "Track counts for the previous two prefixes. A nonzero final digit extends the previous prefix; a final pair from 10 through 26 extends the prefix before it. BigInteger preserves intermediate counts before the guaranteed int-sized final result."
+      "Track counts for the previous two prefixes. A nonzero final digit extends the previous prefix; a final pair from 10 through 26 extends the prefix before it. Preserve exact intermediate counts, using arbitrary-precision arithmetic if necessary, even though the final count is guaranteed to fit the specified return range."
     ]
   },
   "blind75_coin_change": {
@@ -2588,7 +2588,7 @@
     ],
     "hints": [
       "What smaller state would summarize all relevant earlier choices? Define that state before deciding how to update it.",
-      "Let dp[v] count ordered sequences totaling v. Try every candidate as the final value and add dp[v minus candidate]. BigInteger avoids intermediate overflow before the contract's int-sized final count."
+      "Let dp[v] count ordered sequences totaling v, starting with one empty sequence for zero. Try each candidate as the final value and add the count for the remaining total. Use exact intermediate counts; the guarantee about the final return range alone does not bound every intermediate state."
     ]
   },
   "blind75_maximum_subarray": {
@@ -2606,7 +2606,7 @@
     ],
     "hints": [
       "Can one operation remove exactly one set bit? The representation is 32 bits even though the parameter can hold a wider integer.",
-      "Repeatedly clear the lowest set bit with n AND (n minus one). Count the iterations; the input represents an unsigned 32-bit bit pattern in a long."
+      "Repeatedly clear the lowest set bit with n AND (n minus one) and count the iterations. The input denotes an unsigned 32-bit pattern. Preserve all 32 bits when choosing the language’s bitwise representation rather than treating the storage type’s extra high bits as input bits."
     ]
   },
   "blind75_counting_bits": {

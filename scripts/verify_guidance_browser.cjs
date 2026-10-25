@@ -195,6 +195,23 @@ function check(value, label) { assert(value, label); report.checks++; }
     await page.getByRole('button', { name: 'Hide hints' }).click();
     check(await page.getByRole('button', { name: 'Reveal first hint' }).isVisible(), 'zoomed controls operable');
     await page.evaluate(() => { document.documentElement.style.zoom = ''; });
+    // Short landscape windows must retain a usable list, not just its chrome.
+    await page.setViewportSize({ width: 568, height: 320 });
+    await page.getByRole('button', { name: 'Toggle problem list' }).click();
+    await library.getByLabel('Filter by topic or study plan').selectOption('');
+    await library.getByLabel('Search problems').fill('');
+    check(await library.locator('.problem-list').evaluate(el => el.clientHeight >= 58), 'landscape list shows at least one full row');
+    await library.getByLabel('Search problems').fill('no-such-problem-xyz');
+    check(await library.getByText('No matching problems.').isVisible(), 'empty search result is visible');
+    await library.getByLabel('Search problems').fill('');
+    await page.keyboard.press('Escape');
+    check(!(await library.isVisible()), 'Escape dismisses library');
+    await page.getByRole('button', { name: 'Toggle problem list' }).click();
+    check(await library.locator('.problem-link').count() === problems.length, 'reopening keeps cleared search and complete bank');
+    await library.locator('.problem-link').last().click();
+    check(!(await library.isVisible()), 'selecting final row dismisses library');
+    await page.locator('[id="hints-' + problems[problems.length - 1].id + '"]').waitFor();
+    check(await page.getByRole('button', { name: 'Reveal first hint' }).count() === 1, 'final row has its own hidden hints');
     check(report.errors.length === 0, 'no browser runtime errors');
     report.passed = true;
     console.log(JSON.stringify(report, null, 2));
