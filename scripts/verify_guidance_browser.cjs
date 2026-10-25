@@ -200,6 +200,7 @@ function check(value, label) { assert(value, label); report.checks++; }
     await page.getByRole('button', { name: 'Toggle problem list' }).click();
     await library.getByLabel('Filter by topic or study plan').selectOption('');
     await library.getByLabel('Search problems').fill('');
+    await page.screenshot({ animations: 'disabled', path: path.join(output, 'landscape-library.png') });
     check(await library.locator('.problem-list').evaluate(el => el.clientHeight >= 58), 'landscape list shows at least one full row');
     await library.getByLabel('Search problems').fill('no-such-problem-xyz');
     check(await library.getByText('No matching problems.').isVisible(), 'empty search result is visible');

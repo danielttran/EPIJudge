@@ -54,3 +54,17 @@ Back/Forward resets, and zoomed hint controls. Labels have a 12px minimum instea
 of inheriting the legacy row's 10px secondary-text rule. Browser checks verify
 rendering and interaction, not semantic correctness of prose; the content review
 and contract-specific tests are separate evidence.
+
+## Additional three-pass audit
+
+1. Numeric contracts: removed remaining language-specific numeric-type advice from
+   nine shared strategy hints. In particular, the floor-coverage recurrence asks for
+   an exact representable result; saturating at a C# integer limit is not a universal
+   contract. Clarified exact intermediates and 64-bit representation handling.
+2. Interaction/layout: reproduced a real 568x320 landscape failure where fixed
+   library controls squeezed the list below one row. The short-window drawer now
+   scrolls as a whole while retaining at least two rows of list height. Added empty
+   search, Escape/reopen and final-row-selection checks and a landscape screenshot.
+3. Regression: added repeated reveal/hide focus cycles and numeric-hint tests,
+   rechecked exact 465-ID guidance coverage, every pattern filter, all five language
+   solution records, and the production build. No solution or judge code was edited.
